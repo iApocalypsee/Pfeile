@@ -6,13 +6,13 @@ public final class Mechanics {
 	 * @version 09.12.2013
 	 */
 	
-	/* Züge, die man in einer Runde machen kann */
+	/* ZÃ¼ge, die man in einer Runde machen kann */
 	// public static int movesPerRound = -1;
 	// 
 	// turnsPerRound !!!!!!
 	
 	
-	/** CLASSIC: Spieleranzahl standardmäßig auf zwei, später müssten mehr in einer Partie dazukommen */
+	/** CLASSIC: Spieleranzahl standardmï¿½ï¿½ig auf zwei, spï¿½ter mï¿½ssten mehr in einer Partie dazukommen */
 	public static int playerNumber = 2, stdArrowNumber;
 	
 	/** Zeitbegrenzung */
@@ -30,13 +30,13 @@ public final class Mechanics {
 	public static float damageMulti = -1f;
 	
 	
-	/** KI-Stärke */
+	/** KI-Stï¿½rke */
 	public static int KI = -1;
 	
-	/** Pfeilanzahl, die man vor jeder Runde auswählen muss */	
+	/** Pfeilanzahl, die man vor jeder Runde auswï¿½hlen muss */	
 	public static int arrowNumberPreSet = -1;
 	
-	/** Pfeilanzahl, die man jederzeit in seinen eigenen Zug auswählen kann 
+	/** Pfeilanzahl, die man jederzeit in seinen eigenen Zug auswï¿½hlen kann 
 	 * und dann damit den KI angreifen muss */
 	public static int arrowNumberFreeSet = -1;
 	
@@ -48,21 +48,21 @@ public final class Mechanics {
 	public static int timePerPlay;
 
 	
-	/** Weltengröße in X-Richtung für fields: Anzahl der Felder */
+	/** Weltengrï¿½ï¿½e in X-Richtung fï¿½r fields: Anzahl der Felder */
 	public static int worldSizeX;
 
-	/** Weltengröße in Y-Richtung für fields: Anzahl der Felder */
+	/** Weltengrï¿½ï¿½e in Y-Richtung fï¿½r fields: Anzahl der Felder */
 	public static int worldSizeY;
 
 
-	/** Anzahl der Züge pro Runde */
+	/** Anzahl der Zï¿½ge pro Runde */
 	public static int turnsPerRound;
 	
-	/** Anzahl der erledigten Züge pro Runde */
+	/** Anzahl der erledigten Zï¿½ge pro Runde */
 	public static int currentTurn = 0;
 	
 	/** boolean-Wert:
-	 * true:  Zug ist zuende (d.h. durch Drücken eines ZugBeenden-Buttons) 
+	 * true:  Zug ist zuende (d.h. durch Drï¿½cken eines ZugBeenden-Buttons) 
 	 * false: Spieler ist noch am Zug */
 	public static boolean isTurnEnd;
 	
@@ -72,19 +72,19 @@ public final class Mechanics {
 	public static byte HandicapKI = 0; 
 	
 	/** Handicap-Wert des Spielers 
-	 * Je höher, desto höher die Unterstützung für den Spieler
+	 * Je hï¿½her, desto hï¿½her die Unterstï¿½tzung fï¿½r den Spieler
 	 */
 	public static int handicapPlayer;
 	
 	/** Handicap-Wert des Computers 
-	 * Je höher, desto höher die Unterstützung für den Computer
+	 * Je hï¿½her, desto hï¿½her die Unterstï¿½tzung fï¿½r den Computer
 	 */
 	public static int handicapKI;
 	
 	/** Streckung der Welt in die Breite */
 	public static float widthStretching = 1.0f;
 	
-	/** Streckung der Welt in die Höhe */
+	/** Streckung der Welt in die HÃ¶he */
 	public static float heightStretching = 1.0f;
 	
 	/**
@@ -123,9 +123,12 @@ public final class Mechanics {
 		}
 		
 		// Nur mit positiven Zahlen rechnen, im nachhinein dann das Vorzeichen wieder hinzufügen (gespeichert in isPositive)
-		boolean isPositive = number > 0;
+		boolean isPositive = true; 
+		if (number < 0) {
+			isPositive = false; 
+		}
 			
-		number = Math.abs(number);
+		number = Math.abs(number); 
 		
 		// Letzten beiden Ziffern 
 		int lastDigits = Integer.parseInt(Character.toString(String.valueOf(number).charAt(String.valueOf(number).length() - 1))) + 
@@ -147,11 +150,13 @@ public final class Mechanics {
 		else if (lastDigits >= 88 && lastDigits <= 99)
 			number = number + 100; 
 		
-		// Vorzeichen hinzufügen und zurückgeben.
-		if (isPositive) 
+		// Vorzeichen hinzufügen und zurückgeben
+		if (isPositive == true) 
 			return number;
-		else {
-			return -number;
+		else if (isPositive == false){
+			number = 0 - number; 
+			return number;
 		}
+		return number;
 	}
 }

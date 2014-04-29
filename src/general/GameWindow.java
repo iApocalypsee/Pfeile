@@ -1,19 +1,12 @@
 package general;
 
 import gui.ArrowSelectionScreen;
-import gui.Field;
 import gui.GameScreen;
 import gui.MainMenuScreen;
 import gui.PauseScreen;
 import gui.ScreenManager;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsDevice;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -21,8 +14,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferStrategy;
 
-import javax.swing.JFrame;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 
 /**
  * <b>4.1.2014 (Josip):</b> Einfachere Initialisierung der Screens. <br>
@@ -158,20 +150,6 @@ public class GameWindow extends JFrame {
 		strat.show();
 	}
 	
-	/** Zeichnet die Felder, allerdings in dem Zustand, wie sie sind, wenn sie nicht sichtbar sind (grau)
-     * @deprecated Alte Field-Klasse wird hier benutzt.
-     */
-    @Deprecated
-	private void drawFieldGray(Graphics2D g) {
-		for (int i = 0; i < Field.fieldsList.size(); i++) {
-			g.drawImage(Field.getImage(Field.INDEX_IMAGE_TEXTURENOTFOUND), 
-					Field.fieldsList.get(i).getPosXscreen(), Field.fieldsList.get(i).getPosYscreen(), 
-					Math.round(Field.getImage(Field.INDEX_IMAGE_NOTVISIBLEFIELD).getWidth() * Mechanics.widthStretching), 
-					Math.round(Field.getImage(Field.INDEX_IMAGE_NOTVISIBLEFIELD).getHeight() * Mechanics.heightStretching), null);
-			
-		}
-	}
-
 	/**
 	 * Hauptbereich für EndSequence --> Initialisierungen, dann Aufruf der
 	 * Zeichenmethoden für die eigentliche Darstellung
@@ -184,6 +162,9 @@ public class GameWindow extends JFrame {
 
 		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
+
+
+		//drawFieldGray(g2D);
 		
 		drawEndSequenceDied(g2D);
 

@@ -3,8 +3,8 @@ package player;
 
 public class Bot extends Player {
 
-	public Bot(String name, int spawnX, int spawnY, EntityAttributes attributes) {
-		super(name, spawnX, spawnY, attributes);
+	public Bot(String name, SpawnEntityInstanceArgs instanceArgs) {
+		super(name, instanceArgs);
 	}
 	
 	/**

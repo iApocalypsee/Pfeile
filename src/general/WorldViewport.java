@@ -14,11 +14,6 @@ public class WorldViewport {
     private int shiftY = STD_SHIFT_Y;
     private World world;
 
-	/**
-	 * Is the gui of world auto-adjusting?
-	 */
-	private boolean autoAdjusting = true;
-
     private float zoom = 1.0f;
 
     public WorldViewport(World world) {
@@ -49,20 +44,19 @@ public class WorldViewport {
     public void shiftRel(int dx, int dy) {
         shiftX += dx;
         shiftY += dy;
-        world.updateGUI();
+//        world.updateGUI();
     }
 
-	/**
-	 * Shifts the map absolutely.
-	 * @param x The x position.
-	 * @param y The y position.
-	 */
-	public void shiftAbs(int x, int y) {
-		shiftX = x;
-		shiftY = y;
-		world.updateGUI();
-	}
-
+    /**
+     * Shifts the map absolutly. 
+     * @param x - The X-Position
+     * @param y - the y-position
+     */
+    public void shiftAbs (int x, int y) {
+    	shiftX = x; 
+    	shiftY = y;
+//		world.updateGUI();
+    }
     /**
      * Returns the zoom factor.
      * @return The zoom factor.
@@ -96,6 +90,4 @@ public class WorldViewport {
 	    Mechanics.heightStretching = zoom;
         world.updateGUI();
     }
-
-
 }

@@ -7,28 +7,20 @@ import gui.Screen;
 import player.*;
 
 import javax.imageio.ImageIO;
+
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
- * Represents a field.
- * <p>2.3.2014</p>
- * <ul>
- *     <li>See update <code>2.3.2014</code> in {@linkplain player.AttackContainer}</li>
- * </ul>
- * <p>30.3.2014</p>
- * <ul>
- *     <li>FIXME Shouldn't I move the class to package "player" and rename the package "player"?
- *     Because I need some methods from the vision system, which are not public.</li>
- * </ul>
- * @version 2.3.2014
+ * Feld akzeptiert jetzt Angriffe.
+ * @author Josip
+ * @version 16.2.2014
  */
 public abstract class Field extends Component implements AttackContainer, GUIUpdater {
 
@@ -73,14 +65,19 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 */
 	private LinkedList<AttackQueue> attackQueues = new LinkedList<AttackQueue>();
 
-
-
 	private static BufferedImage DEFAULT_IMAGE = null;
 
 	/**
 	 * The info box displaying some informations about the field currently pointed at.
 	 */
 	static FieldInfoBox infoBox = new FieldInfoBox();
+
+	/** Is the field accesible? 
+	 * sea, jungle, dessert and snow are not accessible
+	 */
+	protected boolean isAccessible;
+	
+	
 
 	static {
 		try {
@@ -123,8 +120,8 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 			@Override
 			public void mouseReleased(MouseEvent e) {
 
-				if (Field.this.world.getActivePlayer().hasTurn()) {
-					if (e.getButton() == 3) {
+				if(Field.this.world.getActivePlayer().hasTurn()) {
+					if(e.getButton() == 3) {
 						Player player = Field.this.world.getTurnPlayer();
 						player.move(getBoardX() - player.getBoardPosition().x,
 								getBoardY() - player.getBoardPosition().y);
@@ -142,20 +139,6 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 
 			}
 		});
-
-		Class<VisionableArea> t = VisionableArea.class;
-		try {
-			Method m = t.getDeclaredMethod("addEntry", Field.class);
-			//m = t.getMethod("addEntry", Field.class);
-			m.setAccessible(true);
-			m.invoke(null, this);
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -233,31 +216,18 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	Color background = new Color(0.30588236f, 0.53333336f, 0.7019608f, 0.5f);
 	Color shoot_attempt = new Color(0.59607846f, 0.27450982f, 0.19607843f, 0.6f);
 	Color invalid_shoot_field = new Color(0.4f, 0.4f, 0.4f, 0.5f);
-	Color non_visible_field_color = new Color(0.0f, 0.0f, 0.0f, 0.35f);
 
 	/**
 	 * Lil' helper function.
 	 * @param img The image to draw according to the field constraints.
 	 */
 	protected final void drawHelper(Graphics2D g, BufferedImage img) {
-
-		if(world.getActivePlayer().getVision().getVisibility(this) == VisionableArea.VisionState.UNREVEALED) {
-			g.setColor(Color.darkGray);
-			g.fillRect(getX(), getY(), getWidth(), getHeight());
-		} else {
+//		if(!inFogOfWar) {
 			g.drawImage(img, getX(), getY(), getWidth(), getHeight(), null);
-
-			if(world.getActivePlayer().getVision().getVisibility(this) == VisionableArea.VisionState.NONVISIBLE) {
-				g.setColor(non_visible_field_color);
-				g.fillRect(getX(), getY(), getWidth(), getHeight());
-			} else {
-				// just get the first entry in the entity collection and draw it
-				for(Entity entity : entities.values()) {
-					entity.draw(g);
-					break;
-				}
-			}
-		}
+//		} else {
+//			g.setColor(Color.DARK_GRAY);
+//			g.fillRect(getX(), getY(), getWidth(), getHeight());
+//		}
 
 		// check for mouse position
 		if(getBounds().contains(Screen.getMousePosition())) {
@@ -293,27 +263,72 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 		}
 	}
 
+	/**
+	 * updated die neue GUI-Position, wenn an 'Mechanics.heightStreching' oder
+	 * 'Mechanics.widthStreching' etwas geï¿½ndert wurde
+	 */
 	@Override
 	public void updateGUI() {
-		setX((int) (gridX * WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor() + world.getViewport().getShiftX()));
-		setY((int) (gridY * WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor() + world.getViewport().getShiftY()));
-		setWidth((int) (WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
-		setHeight((int) (WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
-		getBounds().invalidate();
+		
+		// die Positionen der Felder am Bildschirm werden gesetzt
 
-		/*
-		// TODO Vielleicht einen Pixel Rand lassen???
-		if(Main.getWindowDimensions().contains(getSimplifiedBounds())) {
+		setX((Math.round(world.getViewport().getShiftX()
+				+ getBoardX()
+				* WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor())));
+		setY(Math.round(world.getViewport().getShiftY() + getBoardY() * WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()));
 
-			world.getViewport().shiftAbs(
-					world.getViewport().getShiftX() - (world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getX() + WorldViewport.STD_FIELD_DIMENSION),
-					world.getViewport().getShiftY() - (world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getY() + WorldViewport.STD_FIELD_DIMENSION)
-			);
 
+		setWidth(Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
+		setHeight(Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
+		
+		// wenn die Karte insegsammt zu groß ist, muss sie  verkleinert werden: 
+		// zuerst der Randeinschub
+		if(world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getX() + WorldViewport.STD_FIELD_DIMENSION > Main.getWindowWidth() - 1 || 
+			world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getY() + WorldViewport.STD_FIELD_DIMENSION > Main.getWindowHeight() - 1) {
+				
+//			System.out.println(world.getViewport().getShiftX() + " " + world.getViewport().getShiftY());
+			world.getViewport().shiftAbs(world.getViewport().getShiftX() - ((world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getX() + Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor())) - Main.getWindowWidth()), 
+									world.getViewport().getShiftY() - ((world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getY() + Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor())) - Main.getWindowHeight()));
+//			System.out.println(world.getViewport().getShiftX() + " " + world.getViewport().getShiftY());
+			System.err.println("Map doesn't fit into the size of the screen. It gets smaller.");
 		}
-		*/
-	}
+		// wenn der Randeinschub zu klein (unter 0 --> außerhalb des Bildschirms ist) ist, 
+		// wird er wieder reingeschoben inset... = 0 und dann die Vergrößerungsfakorern angeglichen 
+			
+		if (world.getViewport().getShiftX() < 1 || world.getViewport().getShiftY() < 1) {
+			loop_inset: while (true) {
+				if (world.getViewport().getShiftX() >= 1 && world.getViewport().getShiftY() >= 1) {
+					while (true) {
+						if (world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getX() + WorldViewport.STD_FIELD_DIMENSION > Main.getWindowWidth() || 
+								world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getY() + WorldViewport.STD_FIELD_DIMENSION > Main.getWindowHeight()) {
 
+							world.getViewport().zoomRel(-0.02f);
+						} else {
+							// die Positionen der Felder am Bildschirm werden neu (angelichen) gesetzt
+							setX(Math.round(world.getViewport().getShiftX()
+									+ getBoardX()
+									* WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()));
+							setY(Math.round(world.getViewport().getShiftY() + getBoardY() * WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()));
+
+							setWidth(Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
+							setHeight(Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
+
+							// beide Schleifen verlassen 
+							break loop_inset;
+						}
+						
+					}
+				}
+				if (world.getViewport().getShiftX() < 1) {
+					world.getViewport().shiftRel(1, 0);
+				}
+				if (world.getViewport().getShiftY() < 0) {
+					world.getViewport().shiftRel(0, 1);
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Registers a new attack on the field.
 	 * @param attackQueue The attack queue to register.
@@ -388,6 +403,20 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 
 	/**
 	 * Returns all attack queues on this attack container which have specified
+	 * weapon. If no attack queue matches with specified weapon, <code>null</code>
+	 * is returned.
+	 *
+	 * @param aWeapon The weapon.
+	 * @return All attack queues matching with the weapon, or <code>null</code>
+	 * if nothing matches.
+	 */
+	@Override
+	public AttackQueue[] getAttackQueuesBy(Class<? extends Weapon> aWeapon) {
+		return new AttackQueue[0];
+	}
+
+	/**
+	 * Returns all attack queues on this attack container which have specified
 	 * aggressor. If no attack queue matches with specified combatant, <code>null</code>
 	 * is returned.
 	 *
@@ -396,49 +425,10 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * if nothing matches.
 	 */
 	@Override
-	public ArrayList<AttackQueue> getAttackQueuesBy(Combatant aggressor) {
-		ArrayList<AttackQueue> matches = new ArrayList<AttackQueue>();
-		matches.ensureCapacity(attackQueues.size());
-		for(AttackQueue queue : attackQueues) {
-			if(queue.getAggressor() == aggressor) {
-				matches.add(queue);
-			}
-		}
-		// return null if the array list is empty, to delete the not-needed memory immediately
-		if(matches.isEmpty()) {
-			return null;
-		} else {
-			return (ArrayList<AttackQueue>) Collections.unmodifiableCollection(matches);
-		}
+	public AttackQueue[] getAttackQueuesBy(Combatant aggressor) {
+		return new AttackQueue[0];
 	}
 
-	/**
-	 * Returns all attack queues on this attack container which have specified
-	 * weapon. If no attack queue matches with specified weapon, <code>null</code>
-	 * is returned.
-	 *
-	 *
-	 * @param aWeapon The weapon.
-	 * @return All attack queues matching with the weapon, or <code>null</code>
-	 * if nothing matches.
-	 */
-	@Override
-	public ArrayList<AttackQueue> getAttackQueuesBy(Class<? extends Weapon> aWeapon) {
-		// look for matches in queues
-		ArrayList<AttackQueue> matches = new ArrayList<AttackQueue>();
-		matches.ensureCapacity(attackQueues.size());
-		for(AttackQueue queue : attackQueues) {
-			if(queue.getWeapon().getClass() == aWeapon) {
-				matches.add(queue);
-			}
-		}
-		// return null if the array list is empty, to delete the not-needed memory immediately
-		if(matches.isEmpty()) {
-			return null;
-		} else {
-			return (ArrayList<AttackQueue>) Collections.unmodifiableCollection(matches);
-		}
-	}
 
 	public boolean isInFogOfWar() {
 		return inFogOfWar;
@@ -449,24 +439,17 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	}
 
 	/**
-	 * Returns <code>true</code> if the specified entity can observe the field
-	 * (if field is inside the vision borders of the entity)
-	 * @param entity The entity to check.
-	 * @return <code>true</code> if the specified entity can observe the field.
+	 * Returns <code>true</code>, if the active player can watch currently this field.
+	 * For convenience with {@link comp.Component}, the method has to be named
+	 * something else than isVisible().
+	 * @return <code>true</code>, if the active player can watch currently this field.
 	 */
-	public VisionableArea.VisionState isObservable(Entity entity) {
-		return entity.getVision().getVisibility(entity.getStandingOn());
+	public boolean isFieldVisible() {
+		return fieldVisible;
 	}
 
-	public LinkedList<Entity> getEntities() {
-		LinkedList<Entity> e = new LinkedList<Entity>();
-		Collection<Entity> c = world.getEntities().values();
-		for(Entity entity : c) {
-			if(entity.getStandingOn() == this) {
-				e.add(entity);
-			}
-		}
-		return e;
+	public void setFieldVisible(boolean fieldVisible) {
+		this.fieldVisible = fieldVisible;
 	}
 
 	/**
@@ -474,4 +457,28 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * @return The field type name.
 	 */
 	public abstract String getFieldType();
+	
+	
+	public int getGridX() {
+		return gridX;
+	}
+	public void setGridX(int gridX) {
+		this.gridX = gridX;
+	}
+	public int getGridY() {
+		return gridY;
+	}
+	public void setGridY(int gridY) {
+		this.gridY = gridY;
+	}
+
+	/** @return isAccessible - Ist das Feld zugaenglich?*/
+	public boolean isAccessible() {
+		return isAccessible;
+	}
+
+	/** sets 'isAccessible', wheather the field is or not */
+	public void setAccessible(boolean isAccessible) {
+		this.isAccessible = isAccessible;
+	}
 }

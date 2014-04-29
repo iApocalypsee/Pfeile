@@ -1,10 +1,11 @@
 package general;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-
 import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * @author Josip
@@ -25,6 +26,8 @@ public class JungleField extends Field {
 
     public JungleField(int x, int y, World w) {
         super(x, y, w);
+        
+        isAccessible = false;
     }
 
     @Override

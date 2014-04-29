@@ -1,28 +1,23 @@
 package player;
 
+import general.Field;
 import general.Main;
 import general.World;
 import gui.GameScreen;
 import gui.Screen;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.concurrent.*;
-import java.util.logging.Level;
+
+import javax.imageio.ImageIO;
 
 /**
- * Represents a player on the map.
- * <p>2.3.2014</p>
- * <ul>
- *     <li>Slight changes in {@link Player#attack(AttackEvent)}.</li>
- * </ul>
- * <p>3.3.2014</p>
- * <ul>
- *     <li>Attack process of player is now threaded.</li>
- * </ul>
- * @version 3.3.2014
+ * Repräsentiert einen Spieler auf der Karte.
+ * Kleine Änderungen.
+ * 
+ * @version 16.2.2014
  */
 public class Player extends Entity implements Combatant {
 
@@ -48,8 +43,6 @@ public class Player extends Entity implements Combatant {
 
 	static {
 
-		attackService = Executors.newFixedThreadPool(3);
-
 		try {
 			stdImage = ImageIO
 					.read(Player.class
@@ -61,14 +54,10 @@ public class Player extends Entity implements Combatant {
 		}
 
 	}
-
-	/**
-	 * Der Thread-Pool für die Angriffe.
-	 */
-	private static final ExecutorService attackService;
-
-	public Player(String name, int spawnX, int spawnY, EntityAttributes attributes) {
-		super(stdImage, spawnX, spawnY, attributes);
+	
+	public Player(String name, SpawnEntityInstanceArgs instanceArgs) {
+		super(stdImage, instanceArgs);
+		life = new Life(this);
 		setEntityImage(stdImage);
 		setName(name);
 	}
@@ -102,13 +91,6 @@ public class Player extends Entity implements Combatant {
 	 * Beendet die Runde des Spielers, der gerade am Zug ist.
 	 */
 	public void endTurn() {
-
-		if(!hasTurn()) {
-			return;
-		}
-
-		getWorld().getTurnManager().endTurn();
-		GameScreen.getInstance().lockUI();
 
 		World w = GameScreen.getInstance().getWorld();
 
@@ -191,13 +173,11 @@ public class Player extends Entity implements Combatant {
 	}
 
 	/**
-	 * Zeichnet die Lebensleiste des Spielers. <br></br>
-	 * TODO Wird nach {@link comp.LifeBar} verlegt.
+	 * Zeichnet die Lebensleiste des Spielers.
 	 * 
 	 * @param g Das Graphics-Objekt.
 	 */
 	private void drawLife(Graphics2D g) {
-		/*
 		// Lebensleiste
 		// Rechteck + Hintergrund für Lebensleiste
 		g.setColor(Color.RED);
@@ -263,7 +243,6 @@ public class Player extends Entity implements Combatant {
 		else
 			g.drawString("  " + life.getLife() + " / " + life.getMaxLife(),
 					lifePosX, lifePosY);
-		*/
 	}
 	
 	public Life getLife() {
@@ -276,49 +255,18 @@ public class Player extends Entity implements Combatant {
 	 * @param event The event to fire.
 	 */
 	@Override
-	public void attack(final AttackEvent event) {
-		attackService.submit(new Callable<Boolean>() {
-
-			@Override
-			public Boolean call() throws Exception {
-				// a row of checks and reports to the logger
-				// if the player does not have the type of ammo to attack, the thread returns false
-				if (!getInventory().contains(event.getWeapon().getClass())) {
-					Main.getLogger().log(Level.INFO,
-							"Player " + getName() + " does not have " + event.getWeapon().getName());
-					return false;
-				}
-
-
-				// if the attack is not registered as authorized by the current player
-				// the thread returns false
-				if (event.getAggressor() != Player.this) {
-					Main.getLogger().log(Level.WARNING, "Attack owner not matching to event.");
-					return false;
-				}
-
-				// if the specified target is null (for whatsoever reason)
-				// the thread (logs a severe problem and ?) throws exception TODO Log this one?
-				if (event.getTarget() == null) {
-					throw new NullPointerException("Target is null!");
-				}
-
-				AttackContainer target = event.getTarget();
-				// register  the attack on the target
-				target.registerAttack(event);
-				// remove the item from the inventory
-				try {
-					getInventory().removeItem(event.getWeapon().getClass(), 1);
-				} catch (Inventory.OutOfItemsException e) {
-					e.printStackTrace();
-				}
-				// use it
-				event.getWeapon().use();
-				// kick back true as everything went as planned. The attack should now be registered
-				// in the target
-				return true;
-			}
-		});
+	public void attack(AttackEvent event) {
+		if(!getInventory().contains(event.getWeapon().getClass())) {
+			throw new IllegalArgumentException(getName() + " does not have this type in inventory.");
+		} else {
+			Field target = getWorld().getFieldAt(event.getTargetX(), event.getTargetY());
+			// registriert den Angriff auf das Ziel
+			target.registerAttack(event);
+			// entfernt zuletzt das betroffene Item vom Inventar
+			getInventory().removeItem(event.getWeapon().getClass());
+			// benutzt das Item und feuert ItemUseEvent an die Listener des Items
+			event.getWeapon().use();
+		}
 	}
 
 	/**

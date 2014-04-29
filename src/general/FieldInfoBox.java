@@ -1,9 +1,11 @@
 package general;
 
+import comp.*;
+import general.Field;
 import gui.GameScreen;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
+import java.util.HashMap;
 
 /**
  * @author Josip
@@ -17,6 +19,7 @@ public class FieldInfoBox extends comp.Component {
 	private int insetX = 250, insetY = 175;
 
 	private String queriedFieldType = "";
+	private String queriedIsAccessible = "";
 
 	public FieldInfoBox() {
 		// standardmäßig ist der GameScreen für diese Component zuständig
@@ -39,6 +42,11 @@ public class FieldInfoBox extends comp.Component {
 	 */
 	void retrieveData(Field field) {
 		queriedFieldType = field.getFieldType();
+		if (field.isAccessible() == true) 
+			queriedIsAccessible = "true"; 
+		else 
+			queriedIsAccessible = "false";
+	
 		// TODO wenn noch weitere Informationen bezogen werden können, diese auch hineinschreiben
 	}
 
@@ -51,6 +59,7 @@ public class FieldInfoBox extends comp.Component {
 
 		g.drawString("Field type: " + queriedFieldType,
 				Main.getWindowWidth() - insetX + 20, Main.getWindowHeight() - insetY + 20);
+		g.drawString("isAccessible: " + queriedIsAccessible, Main.getWindowWidth() - insetX + 20, Main.getWindowHeight() - insetY + 20 + 17);
 
 
 	}

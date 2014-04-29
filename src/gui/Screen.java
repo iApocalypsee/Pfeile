@@ -14,6 +14,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 import comp.Component;
 import comp.Component.ComponentStatus;

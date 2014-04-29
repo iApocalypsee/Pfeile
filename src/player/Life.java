@@ -10,25 +10,28 @@ import java.awt.Rectangle;
  * @version 1.1.2014
  */
 public class Life {
-	private double lifemax;
-	private double liferegen;
-	private double life;
+	private int lifemax;
+	private int liferegen;
+	private int life;
 	private int relativeLife = 100;
-	private Rectangle boundingLife;
+	@SuppressWarnings("unused")
+	private Player player;
+	private Rectangle boundingLife;;
 	private int PosX;
 	private int PosY;
 	
 	
 	
-	/** KONSTRUCKTOR: zuerst allgemein: bei 'type = TYPE_PLAYER': Initialieserung fï¿½r speziel fï¿½r Spieler 
+	/** KONSTRUCKTOR: zuerst allgemein: bei 'type = TYPE_PLAYER': Initialieserung für speziel für Spieler 
 	 * @version 1.2 */
-	public Life () {
+	public Life (Player player) {
 		
 		this.lifemax = Mechanics.lifeMax;
 		this.liferegen = Mechanics.lifeRegeneration; 
 		life = lifemax;
+		this.player = player;
 		
-		/* Konstrucktoraufruf fï¿½r den Player */
+		/* Konstrucktoraufruf für den Player */
 //		if(!player.isBot()) {
 //			// INITIALISIERUNG
 //
@@ -46,26 +49,33 @@ public class Life {
 	}
 	
 	
-	/** nach jeden Zug aufrufen, um die neuen Werte fï¿½r Leben und Darstellung des Leben zu berechnen */ 
+	/** nach jeden Zug aufrufen, um die neuen Werte für Leben und Darstellung des Leben zu berechnen */ 
 	public void updateLife() {
 		life = life + liferegen; 
 		if (life > lifemax) 
 			life = lifemax;
-		relativeLife = (int) Math.round((life * 100) / lifemax );
+		relativeLife = Math.round((life * 100) / lifemax );
 		boundingLife.width = Math.round(relativeLife * 1.25f); 
+	}
+
+	
+	/** UNUSED
+	 * updatet das Rectangle für die GUI-Darstellung */ 
+	public void updateLifeGUI() {
+		
 	}
 	
 	
-	/** GETTER: gibt das Rectangle 'boundingLife' zurï¿½ck; z.B. fï¿½r GUI-Darstellung notwendig (v.a. da auf ein BufferedImage verzichtet wurde) */
+	/** GETTER: gibt das Rectangle 'boundingLife' zurück; z.B. für GUI-Darstellung notwendig (v.a. da auf ein BufferedImage verzichtet wurde) */
 	public Rectangle getBoundingLife () {
 		return boundingLife; 
 	}
 	/** GETTER: return 'life */
-	public double getLife() {
+	public int getLife() {
 		return life; 
 	}
 	/** GETTER: return 'LIFEMAX' */
-	public double getMaxLife() {
+	public int getMaxLife() {
 		return lifemax;
 	}
 	/** GETTER: return 'relativeLife' */
@@ -75,7 +85,7 @@ public class Life {
 	/** SETTER: set 'life' */
 	public void setLife(int newLife) {
 		this.life = newLife; 
-		this.relativeLife = (int) ((this.life / this.lifemax) * 100);
+		this.relativeLife = (this.life / this.lifemax) * 100;
 		this.boundingLife.width = Math.round(relativeLife * 1.25f);
 	} 
 }

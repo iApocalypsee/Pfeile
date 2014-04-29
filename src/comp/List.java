@@ -18,19 +18,20 @@ import java.util.LinkedList;
  * <p><b>Hello</b></p>
  * hello
  * 
- * @version 19.4.2014
+ * @version 17.1.2014
+ * @tag.requires Component: 17.1.2014 oder höher; 
  */
 public class List extends Component {
 	
 	/**
 	 * Die Auflistung aller Items in der Liste.
 	 */
-	private LinkedList<String> items = new LinkedList<String>();
+	private java.util.List<String> items = new LinkedList<String>();
 	
 	/**
 	 * Die Auflistung der Labels zur leicheren Handhabung.
 	 */
-	private LinkedList<Label> listItems = new LinkedList<Label>();
+	private java.util.List<Label> listItems = new LinkedList<Label>();
 	
 	/**
 	 * Der (nullbasierte!) Index des Items, der gerade ganz oben angezeigt wird. Beim Runter-/Raufscrollen kann sich dieser
@@ -44,47 +45,19 @@ public class List extends Component {
 	private int selectedIndex;
 	
 	static final Insets STD_INSETS = new Insets(20, 10, 20, 10);
-	
-	/**
-	 * Creates a new list.
-	 * @param x The x position.
-	 * @param y The y position.
-	 * @param width The width.
-	 * @param height The height.
-	 * @param backing The backing screen.
-	 * @param items The items.
-	 */
-	public List(int x, int y, int height, Screen backing, LinkedList<String> items) {
+
+	public List() {
 		super();
+	}
+	
+	
+
+	public List(int x, int y, int width, int height, Screen backing, java.util.List<String> items) {
+		super(x, y, width, height, backing);
 		
-		setBackingScreen(backing);
 		this.items = items;
-
-		Dimension dim = tfits();
-		int widest = dim.width;
-		int heighest = dim.height;
-
-		setX(x);
-		setY(y);
-		setWidth(widest + 20);
-		setHeight(height);
-
-		for (int i = 0; i < items.size(); i++) {
-
-			final Label l = new Label(0, 0, backing, items.get(i));
-			// set the position up
-			l.setX(x);
-			l.setY(y + heighest * i + 10);
-			// only set the label visible if their bounding boxes intersect each other
-			l.setVisible(l.getBounds().intersects(getX(), getY(), getWidth(), getHeight()));
-			// add the mouse listener
-			l.addMouseListener(new ListElementMouseHandler(l));
-			// add the label to the list
-			listItems.add(l);
-
-		}
 		
-		/*
+		tfits();
 		
 		for (int i = 0; i < items.size(); i++) {
 			final Label l = new Label(0, 0, items.get(i), this);
@@ -140,20 +113,23 @@ public class List extends Component {
 			listItems.add(l);
 		}
 		
-		*/
-		
 		
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
-
-		getBorder().draw(g);
-
-		for (int i = getFirstDisplayIndex(); i < getLastDisplayIndex(); i++) {
-			listItems.get(i).draw(g);
+		
+		if(isVisible()) {
+			
+			getBorder().draw(g);
+			
+			for (int i = getFirstDisplayIndex(); i < getLastDisplayIndex(); i++) {
+				listItems.get(i).draw(g);
+			}
+			
+			
 		}
-
+		
 	}
 	
 	/**
@@ -235,66 +211,6 @@ public class List extends Component {
 	 */
 	public void scroll(int delta) {
 		topIndex += delta;
-	}
-
-	private class ListElementMouseHandler implements MouseListener {
-
-		private Label handling;
-
-		private ListElementMouseHandler(Label label) {
-			handling = label;
-		}
-
-		/**
-		 * Invoked when the mouse button has been clicked (pressed
-		 * and released) on a component.
-		 *
-		 * @param e
-		 */
-		@Override
-		public void mouseClicked(MouseEvent e) {
-
-		}
-
-		/**
-		 * Invoked when a mouse button has been pressed on a component.
-		 *
-		 * @param e
-		 */
-		@Override
-		public void mousePressed(MouseEvent e) {
-
-		}
-
-		/**
-		 * Invoked when a mouse button has been released on a component.
-		 *
-		 * @param e
-		 */
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			selectedIndex = listItems.indexOf(handling);
-		}
-
-		/**
-		 * Invoked when the mouse enters a component.
-		 *
-		 * @param e
-		 */
-		@Override
-		public void mouseEntered(MouseEvent e) {
-
-		}
-
-		/**
-		 * Invoked when the mouse exits a component.
-		 *
-		 * @param e
-		 */
-		@Override
-		public void mouseExited(MouseEvent e) {
-
-		}
 	}
 
 }

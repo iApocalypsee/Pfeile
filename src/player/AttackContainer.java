@@ -1,17 +1,11 @@
 package player;
 
-import java.util.ArrayList;
+import com.sun.istack.internal.Nullable;
 
 /**
- * Represents a game object, which can be attacked.
- * <p>2.3.2014</p>
- * <ul>
- *     <li><code>AttackContainer</code>-objects return unmodifiable {@link java.util.ArrayList}s in methods
- *     {@link player.AttackContainer#getAttackQueuesBy(Class)} and
- *     {@link player.AttackContainer#getAttackQueuesBy(Combatant)} instead of plain arrays.</li>
- * </ul>
+ * RegisterAttackEvent und {@link player.AttackEvent} sind dasselbe...
  * @author Josip
- * @version 2.3.2014
+ * @version 16.2.2014
  */
 public interface AttackContainer extends BoardPositionable {
 
@@ -66,12 +60,12 @@ public interface AttackContainer extends BoardPositionable {
      * Returns all attack queues on this attack container which have specified
      * weapon. If no attack queue matches with specified weapon, <code>null</code>
      * is returned.
-     *
      * @param aWeapon The weapon.
      * @return All attack queues matching with the weapon, or <code>null</code>
      * if nothing matches.
      */
-    ArrayList<AttackQueue> getAttackQueuesBy(Class<? extends Weapon> aWeapon);
+    @Nullable
+    AttackQueue[] getAttackQueuesBy(Class<? extends Weapon> aWeapon);
 
     /**
      * Returns all attack queues on this attack container which have specified
@@ -81,6 +75,7 @@ public interface AttackContainer extends BoardPositionable {
      * @return All attack queues matching with the combatant, or <code>null</code>
      * if nothing matches.
      */
-    ArrayList<AttackQueue> getAttackQueuesBy(Combatant aggressor);
+    @Nullable
+    AttackQueue[] getAttackQueuesBy(Combatant aggressor);
 
 }

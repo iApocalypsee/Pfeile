@@ -42,10 +42,10 @@ public class PreWindow extends JFrame {
 	 * Initialisiert PreWindow mit den Konstruktor-Werten; erstellt JPanel
 	 * 'thisPanel' als Hauptpanel
 	 */
-	public PreWindow(int heigth, int width, int type, String heading) {
+	public PreWindow(int width, int height, int type, String heading) {
 		super(heading);
 
-		setSize(heigth, width);
+		setSize(width, height);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setResizable(false);
@@ -264,28 +264,28 @@ public class PreWindow extends JFrame {
 					else if (PreWindow.this.initBox.getSelectedIndex() == 8) { // "Weltengröße"
 
 						if (PreWindow.this.selectBoxGr.getSelectedIndex() == 0) { // "gigantisch"
-							Mechanics.worldSizeX = 22;
-							Mechanics.worldSizeY = 22;
+							Mechanics.worldSizeX = 23;
+							Mechanics.worldSizeY = 21;
 							isEnteredRight = true;
 						} else if (PreWindow.this.selectBoxGr
 								.getSelectedIndex() == 1) { // "groß"
-							Mechanics.worldSizeX = 16;
-							Mechanics.worldSizeY = 16;
+							Mechanics.worldSizeX = 17;
+							Mechanics.worldSizeY = 15;
 							isEnteredRight = true;
 						} else if (PreWindow.this.selectBoxGr
 								.getSelectedIndex() == 2) { // "normal"
-							Mechanics.worldSizeX = 12;
-							Mechanics.worldSizeY = 12;
+							Mechanics.worldSizeX = 13;
+							Mechanics.worldSizeY = 11;
 							isEnteredRight = true;
 						} else if (PreWindow.this.selectBoxGr
 								.getSelectedIndex() == 3) { // "klein"
-							Mechanics.worldSizeX = 8;
-							Mechanics.worldSizeY = 8;
+							Mechanics.worldSizeX = 9;
+							Mechanics.worldSizeY = 7;
 							isEnteredRight = true;
 						} else if (PreWindow.this.selectBoxGr
 								.getSelectedIndex() == 4) { // "winzig"
-							Mechanics.worldSizeX = 5;
-							Mechanics.worldSizeY = 5;
+							Mechanics.worldSizeX = 6;
+							Mechanics.worldSizeY = 4;
 							isEnteredRight = true;
 						}
 					} 
@@ -730,9 +730,9 @@ public class PreWindow extends JFrame {
 				Mechanics.timePerPlay = 1 * (60000);
 				PreWindow.this.label7.setText("Zeit pro Zug: " + "1 min");
 				
-				Mechanics.worldSizeX = 12;
-				Mechanics.worldSizeY = 12;
-				PreWindow.this.label8.setText("Weltgröße: " + "normal");
+				Mechanics.worldSizeX = 13;
+				Mechanics.worldSizeY = 11;
+				PreWindow.this.label8.setText("Weltgr��e: " + "normal");
 				
 				Mechanics.handicapPlayer = 0;
 				PreWindow.this.label9.setText("Handicap [Player]: " + "0%");

@@ -55,7 +55,13 @@ public class PauseScreen extends Screen {
 		items.add("bye");
 		items.add("hello again");
 		items.add("good bye");
-		list = new List(Main.getWindowWidth() - 200, 20, 200, this, items);
+		list = new List(Main.getWindowWidth() - 200, 50, 150, 200, this, items);
+		
+//		try {
+//			toGame.iconify(ImageIO.read(new FileInputStream("/home/josip/Documents/Test.png")));
+//		} catch (IOException e1) {
+//			e1.printStackTrace();
+//		}
 		
 		box.makeChildrenOf(toGame);
 		
@@ -63,7 +69,9 @@ public class PauseScreen extends Screen {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				onLeavingScreen(this, GameScreen.SCREEN_INDEX);
+//				if(toGame.getBounds().contains(e.getPoint())) {
+					onLeavingScreen(this, GameScreen.SCREEN_INDEX);
+//				}
 			}
 
 			@Override
@@ -87,7 +95,9 @@ public class PauseScreen extends Screen {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				onLeavingScreen(this, MainMenuScreen.SCREEN_INDEX);
+//				if(toMainMenu.getBounds().contains(e.getPoint())) {
+					onLeavingScreen(this, MainMenuScreen.SCREEN_INDEX);
+//				}
 			}
 
 			@Override

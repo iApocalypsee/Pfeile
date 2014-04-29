@@ -48,7 +48,7 @@ public class GameScreen extends Screen {
 	/**
 	 * Die Welt, die vom GameScreen gezeichnet wird.
 	 */
-	private volatile general.World loadedWorld = null; // FIXME FIXME FIXME VOLATILE!!!
+	private general.World loadedWorld = null;
 
 	private GameScreen() {
 		super(GameScreen.SCREEN_NAME, GameScreen.SCREEN_INDEX);
@@ -222,11 +222,11 @@ public class GameScreen extends Screen {
 		toggleStopwatch.acceptInput();
 	}
 
-    public synchronized World getWorld() {
+    public World getWorld() {
         return loadedWorld;
     }
 
-    public synchronized void setWorld(World world) {
+    public void setWorld(World world) {
         this.loadedWorld = world;
     }
 }

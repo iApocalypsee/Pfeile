@@ -1,5 +1,6 @@
 package player;
 
+import com.sun.istack.internal.Nullable;
 import comp.GUIUpdater;
 import general.*;
 import gui.ArrowSelectionScreen;
@@ -13,8 +14,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 
 import comp.Component;
@@ -23,11 +22,11 @@ import javax.imageio.ImageIO;
 
 /**
  * Represents an entity moving and "living" on the world. <p></p>
- * <p>2.3.2014</p>
+ * <b>10.2.2014:</b>
  * <ul>
- *     <li>See update 2.3.2014 in {@link player.AttackContainer}</li>
+ *     <li>Entity now relies on new abstract field classes instead of old one.</li>
  * </ul>
- * @version 2.3.2014
+ * @version 10.2.2014
  *
  */
 public abstract class Entity extends Component implements AttackContainer, GUIUpdater {
@@ -41,16 +40,10 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 	 * Das Inventar des Spielers an Pfeilen.
 	 */
 	private Inventory inventory;
-
 	/**
 	 * Die auf die Entity bezogene Attack-Queue.
 	 */
 	protected LinkedList<AttackQueue> queue = new LinkedList<AttackQueue>();
-
-	private EntityAttributes attributes;
-
-	private VisionableArea vision = new VisionableArea(this);
-
 	/**
 	 * Die x Koordinate der Entity.
 	 */
@@ -83,27 +76,18 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 		}
 	}
 
+	public Entity(SpawnEntityInstanceArgs instanceArgs) {
+		this(stdImage, instanceArgs);
+	}
 
-	public Entity(final BufferedImage img, int spawnX, int spawnY, EntityAttributes attribs) {
+	public Entity(final BufferedImage img, SpawnEntityInstanceArgs instanceArgs) {
 		super(0, 0, 0, 0, GameScreen.getInstance());
 		// writing to instance attributes
-		boardX = spawnX;
-		boardY = spawnY;
-		try {
-			java.lang.reflect.Field f = GameScreen.class.getDeclaredField("loadedWorld");
-			f.setAccessible(true);
-			this.world = (World) f.get(GameScreen.getInstance());
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			this.world = null;
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
-			this.world = null;
-		}
-		getStandingOn().addEntity(this);
+		boardX = instanceArgs.getSpawnX();
+		boardY = instanceArgs.getSpawnY();
+		world = instanceArgs.getWorld();
 		image = img;
 		inventory = new Inventory(this);
-		this.attributes = attribs;
 		// updates the gui as the last step
 		updateGUI();
 		// updates width and height
@@ -184,8 +168,6 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 
 		field = world.getFieldAt(boardX, boardY);
 		field.addEntity(this);
-
-		vision.updateVision();
 		/*
 		Field f = GameScreen.getWorld().getFields()[boardX][boardY];
 		if(f.getStandingEntities().contains(this)) {
@@ -237,7 +219,6 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 		boardX = world_x;
 		boardY = world_y;
 		world.getFieldAt(boardX, boardY).addEntity(this);
-		vision.updateVision();
 		// updates the screen
 		updateGUI();
 		/*
@@ -396,20 +377,18 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 	 * if nothing matches.
 	 */
 	@Override
-	public ArrayList<AttackQueue> getAttackQueuesBy(Combatant aggressor) {
-		// look for matches
-		ArrayList<AttackQueue> matches = new ArrayList<AttackQueue>();
-		matches.ensureCapacity(queue.size());
+	@Nullable
+	public AttackQueue[] getAttackQueuesBy(Combatant aggressor) {
+		LinkedList<AttackQueue> matching = new LinkedList<AttackQueue>();
 		for(AttackQueue q : queue) {
 			if(q.getAggressor() == aggressor) {
-				matches.add(q);
+				matching.add(q);
 			}
 		}
-		// return null if the array list is empty, to delete the not-needed memory immediately
-		if(matches.isEmpty()) {
+		if(matching.isEmpty()) {
 			return null;
 		} else {
-			return (ArrayList<AttackQueue>) Collections.unmodifiableCollection(matches);
+			return (AttackQueue[]) matching.toArray();
 		}
 	}
 
@@ -418,26 +397,23 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 	 * weapon. If no attack queue matches with specified weapon, <code>null</code>
 	 * is returned.
 	 *
-	 *
 	 * @param aWeapon The weapon.
 	 * @return All attack queues matching with the weapon, or <code>null</code>
 	 * if nothing matches.
 	 */
 	@Override
-	public ArrayList<AttackQueue> getAttackQueuesBy(Class<? extends Weapon> aWeapon) {
-		// look for matches
-		ArrayList<AttackQueue> matches = new ArrayList<AttackQueue>();
-		matches.ensureCapacity(queue.size());
+	@Nullable
+	public AttackQueue[] getAttackQueuesBy(Class<? extends Weapon> aWeapon) {
+		LinkedList<AttackQueue> matching = new LinkedList<AttackQueue>();
 		for(AttackQueue q : queue) {
 			if(q.getWeapon().getClass() == aWeapon) {
-				matches.add(q);
+				matching.add(q);
 			}
 		}
-		// return null if the array list is empty, to delete the not-needed memory immediately
-		if(matches.isEmpty()) {
+		if(matching.isEmpty()) {
 			return null;
 		} else {
-			return (ArrayList<AttackQueue>) Collections.unmodifiableCollection(matches);
+			return (AttackQueue[]) matching.toArray();
 		}
 	}
 
@@ -466,15 +442,4 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 		return world;
 	}
 
-	/**
-	 * Returns the attributes of the entity.
-	 * @return The attributes.
-	 */
-	public EntityAttributes getAttributes() {
-		return attributes;
-	}
-
-	public VisionableArea getVision() {
-		return vision;
-	}
 }

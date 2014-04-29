@@ -1,21 +1,30 @@
 package player;
 
+import general.Field;
+
 /**
- * Represents an attack on an attack queue.
- * <p>2.3.2014</p>
- * <ul>
- *     <li>See update <code>2.3.2014</code> in {@link player.AttackEvent}.</li>
- * </ul>
+ * Represents an attack on a conbatant.
+ * <p>Beim Auftreffen des Angriffs wird jetzt der Angriff ausgeloggt.</p>
  * 
  * @author Josip
- * @version 2.3.2014
+ * @version 9.2.2014
  */
 public class AttackQueue {
 
 	/**
-	 * The event with which the class {@link player.AttackQueue} is backed.
+	 * The combatant who autorised the attack.
+	 */
+	private Combatant aggressor;
+
+	/**
+	 * The type of weapon with which the {@link #aggressor} attacks.
 	 */
 	private AttackEvent event;
+
+	/**
+	 * Reference to the attacked container.
+	 */
+	private AttackContainer target;
 
 	/**
 	 * The current x position of the attack.
@@ -32,13 +41,17 @@ public class AttackQueue {
 	 */
 	private double distance;
 
-	/**
-	 * Creates a new attack queue and registers a new attack on the target.
-	 * @param e The event to handle.
-	 */
 	public AttackQueue(AttackEvent e) {
+		aggressor = e.getAggressor();
 		event = e;
-		event.getTarget().registerAttack(this);
+		target.registerAttack(this);
+	}
+
+	/**
+	 * @return Den Spielerindex, der den Pfeil geschossen hat.
+	 */
+	public Combatant getAggressor() {
+		return this.aggressor;
 	}
 
 	/**
@@ -50,29 +63,34 @@ public class AttackQueue {
 	}
 
 	/**
-	 * Returns the target.
-	 * @return The target of this attack.
+	 * @return the targetField
 	 */
 	public AttackContainer getTarget() {
-		return event.getTarget();
+		return target;
 	}
 
 	/**
-	 * Returns the combatant who authorized the attack.
-	 * @return The aggressor.
+	 * Changes the target to an entity.
+	 * @param entity The entity to attack.
 	 */
-	public Combatant getAggressor() {
-		return event.getAggressor();
+	public void varyTarget(Entity entity) {
+		event.setTargetX(entity.getBoardX());
+		event.setTargetY(entity.getBoardY());
+		target.unregisterAttack(this);
+		entity.registerAttack(this);
+		target = entity;
 	}
 
 	/**
-	 * Targets the attack queue to a new attack container.
-	 * @param target The new target.
+	 * Changes the target to a field.
+	 * @param field The field to attack.
 	 */
-	public void target(AttackContainer target) {
-		getTarget().unregisterAttack(this);
-		event.setTarget(target);
-		getTarget().registerAttack(this);
+	public void varyTarget(Field field) {
+		event.setTargetX(field.getBoardX());
+		event.setTargetY(field.getBoardY());
+		target.unregisterAttack(this);
+		field.registerAttack(this);
+		target = field;
 	}
 
 	public double getCurrentX() {
@@ -95,8 +113,8 @@ public class AttackQueue {
 		long finalx = Math.round(currentX);
 		long finaly = Math.round(currentY);
 
-		if(getTarget().getBoardX() == finalx) {
-			if(getTarget().getBoardY() == finaly) {
+		if(target.getBoardX() == finalx) {
+			if(target.getBoardY() == finaly) {
 				// if the coordinates match, just calculate the attack
 				// and jump out of the function
 				// I don't need additional calculations
@@ -115,7 +133,7 @@ public class AttackQueue {
 	 */
 	void impact() {
 		// TODO Schadensberechnung
-        getTarget().unregisterAttack(this);
+        target.unregisterAttack(this);
 	}
 
 }

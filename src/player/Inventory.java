@@ -1,21 +1,18 @@
 package player;
 
-import java.util.EmptyStackException;
 import java.util.LinkedList;
-import java.util.Stack;
 
 /**
  * Das Inventar einer Entity.
- * <p>31.3.2014</p>
+ * <p><b>13.2.2014</b></p>
  * <ul>
- *     <li>Die {@link player.Inventory.InventoryEntry}-Klasse wurde in die Klasse
- *     Inventory verschoben.</li>
+ *     <li>Anstelle von Combatant wird jetzt AttackContainer benutzt.</li>
  * </ul>
  * @author josip
  * @version 13.2.2014
  *
  */
-public class Inventory<T extends Item> {
+public class Inventory {
 	
 	/**
 	 * Die Standardgröße für das Inventar.
@@ -55,7 +52,7 @@ public class Inventory<T extends Item> {
 	 * @param i Das Item, das hinzugefügt werden soll.
 	 * @return <code>true</code>, wenn das Item hinzugefügt werden konnte.
 	 */
-	public boolean addItem(T i) {
+	public boolean addItem(Item i) {
 		for (InventoryEntry e : items) {
 			if(e.peek().getClass() == i.getClass()) {
 				if(e.hasRemainingSpace()) {
@@ -74,7 +71,7 @@ public class Inventory<T extends Item> {
 	 * @param stackSize Die Größe des neuen Inventareintrags. Wird ignoriert, wenn
 	 * {@link Inventory#addItem(Item)} für den Parameter i true zurückgeben würde.
 	 */
-	public void addItem(T i, int stackSize) {
+	public void addItem(Item i, int stackSize) {
 		for (InventoryEntry e : items) {
 			if(e.peek().getClass() == i.getClass()) {
 				if(e.hasRemainingSpace()) {
@@ -82,10 +79,10 @@ public class Inventory<T extends Item> {
 					return;
 				}
 			}
-		}// TODO
+		}
 		// erstellt einen neuen Eintrag im Inventar, da sonst ja
 		// kein Platz im Inventar ist
-		InventoryEntry<T> entry = new InventoryEntry<T>();
+		InventoryEntry entry = new InventoryEntry();
 		entry.resize(stackSize);
 		entry.push(i);
 		items.add(entry);
@@ -96,22 +93,14 @@ public class Inventory<T extends Item> {
 	 * falls die Anzahl der Einträge 0 sein sollte.
 	 * @param i Das Item, das entfernt werden soll.
 	 */
-	public void removeItem(Class<? extends Item> i, int amount) throws OutOfItemsException {
+	public void removeItem(Class<? extends Item> i) {
 		for (InventoryEntry e : items) {
 			if(e.peek().getClass() == i) {
-				for(int it = 0; it < amount; it++) {
-					if(!contains(i)) {
-						throw new OutOfItemsException();
-					}
-
-					if(e.isEmpty()) {
-						items.remove(e);
-						break;
-					}
-
-					e.pop();
-
+				e.pop();
+				if(e.isEmpty()) {
+					items.remove(e);
 				}
+				break;
 			}
 		}
 	}
@@ -156,102 +145,5 @@ public class Inventory<T extends Item> {
 	public void setSize(int size) {
 		this.size = size;
 	}
-
-	static class InventoryEntry<T extends Item> {
-
-		/**
-		 * Die Standard-Anzahl der maximalen Größe des Stacks.
-		 */
-		private static final int DEFAULT_MAX_STACK = 10;
-
-		/**
-		 * Die einzelnen Items, die organisiert werden.
-		 */
-		private Stack<T> items = new Stack<T>();
-
-		/**
-		 * Die maximale Anzahl vom Item, die auf dem Stack liegen können.
-		 * @see player.Inventory.InventoryEntry#DEFAULT_MAX_STACK
-		 */
-		private int maxStack = DEFAULT_MAX_STACK;
-
-		public InventoryEntry() {
-			items.setSize(maxStack);
-		}
-
-		/**
-		 * Legt ein Item auf den Eintrag ab.
-		 * @param item
-		 */
-		public void push(T item) {
-			items.add(item);
-		}
-
-		/**
-		 * Löscht ein Item vom Stack und gibt dieses als Rückgabewert
-		 * dieser Funktion zurück. Diese Funktion kann auch null
-		 * zurückgeben, wenn der Stack leer ist. In diesem Fall
-		 * sollte das {@link player.Inventory.InventoryEntry}-Objekt gar nicht mehr
-		 * existieren.
-		 * @return Ein Item vom definierten Typ, oder null, wenn der
-		 * Stack bereits leer ist.
-		 */
-		public T pop() {
-			try {
-				return items.pop();
-			} catch(EmptyStackException e) {
-				return null;
-			}
-		}
-
-		T peek() {
-			return items.peek();
-		}
-
-		public int getMaximumStack() {
-			return maxStack;
-		}
-
-		/**
-		 * Setzt die Anzahl der maximal aufnehmbaren Einträge neu.
-		 * @param maxStack
-		 */
-		public void resize(int maxStack) {
-			this.maxStack = maxStack;
-			items.setSize(maxStack);
-		}
-
-		/**
-		 * Gibt den noch verfügbaren Platz im Eintrag zurück.
-		 * @return
-		 */
-		public int getRemainingSpace() {
-			return maxStack - items.size();
-		}
-
-		/**
-		 * Sagt aus, ob dieser Inventareintrag noch Platz für weitere
-		 * Items dieses Typs hat.
-		 * @return
-		 */
-		public boolean hasRemainingSpace() {
-			return maxStack - items.size() > 0;
-		}
-
-		/**
-		 * Gibt die Anzahl der Items zurück, die sich in diesem Eintrag befinden.
-		 * @return
-		 */
-		public int getItemCount() {
-			return items.size();
-		}
-
-		public boolean isEmpty() {
-			return maxStack - items.size() == maxStack;
-		}
-
-	}
-
-	public static class OutOfItemsException extends Throwable {
-	}
+	
 }

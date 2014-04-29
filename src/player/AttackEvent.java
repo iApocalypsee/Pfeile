@@ -1,63 +1,56 @@
 package player;
 
 /**
- * Represents an upcoming attack.
- * <p>2.3.2014</p>
- * <ul>
- *     <li>Eliminated possible buggy coding. Fields <code>targetX</code> and <code>targetY</code>
- *     do not exist anymore. Replaced by {@link player.AttackEvent#target}.</li>
- * </ul>
  * @author Josip
- * @version 2.3.2014
+ * @version 16.2.2014
  */
 public class AttackEvent {
 
-	private AttackContainer target;
+	private int targetX;
+	private int targetY;
 	private Weapon weapon;
 	private Combatant aggressor;
 
 	/**
 	 * Constructs an attack event.
-	 * @param target The target.
+	 * @param targetX The target x position.
+	 * @param targetY The target y position.
 	 * @param weapon The weapon used.
 	 * @param aggressor The aggressor authorizing the attack.
 	 */
-	public AttackEvent(AttackContainer target, Weapon weapon, Combatant aggressor) {
-		this.target = target;
+	public AttackEvent(int targetX, int targetY, Weapon weapon, Combatant aggressor) {
+		this.targetX = targetX;
+		this.targetY = targetY;
 		this.weapon = weapon;
 		this.aggressor = aggressor;
 	}
 
-	/**
-	 * Returns the target.
-	 * @return The target of this attack.
-	 */
-	public AttackContainer getTarget() {
-		return target;
-	}
+    public int getTargetX() {
+	    return targetX;
+    }
+
+    public int getTargetY() {
+	    return targetY;
+    }
 
     /**
-     * Returns the weapon.
+     * Returns the weapon. Delegate.
      * @return The weapon.
      */
     public Weapon getWeapon() {
 	    return weapon;
     }
 
-	/**
-	 * Returns the combatant who authorized the attack.
-	 * @return The aggressor.
-	 */
+    void setTargetX(int targetX) {
+	    this.targetX = targetX;
+    }
+
+    void setTargetY(int targetY) {
+	    this.targetY = targetY;
+    }
+
     public Combatant getAggressor() {
         return aggressor;
     }
 
-	/**
-	 * Sets the target to a new one. Method is internally used when the attack
-	 * is changing the direction.
-	 * @param target The new target.
-	 */
-	void setTarget(AttackContainer target) {
-		this.target = target;
-	}
 }
