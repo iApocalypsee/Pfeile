@@ -1,34 +1,33 @@
 package general;
 
-import gui.ArrowSelection;
-import gui.GameScreen;
-import gui.PreWindow;
-
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
-import java.util.Properties;
-import java.util.Random;
-import java.util.logging.Logger;
-
+import gui.*;
 import player.Bot;
-import player.EntityAttributes;
 import player.Life;
 import player.Player;
+import player.SpawnEntityInstanceArgs;
+
+import java.awt.*;
+import java.util.Properties;
+import java.util.Random;
+
+import static general.Mechanics.*;
 
 /**
  * Hauptklasse mit der Main-Methode und den abstraktesten Objekten unseres Spiels.
- * <p>3.3.2014</p>
+ * <p>27.02.2014</p>
  * <ul>
- *     <li>Logger hinzugefügt. Nachrichten sollten in den Logger geschrieben werden und nicht
- *     mehr wie gehabt auf die Konsole.</li>
- *     <li>SpawnEntityInstanceArgs rausgenommen. Ich weiß wirklich nicht, was mich da geritten hat
- *     bei dieser Klasse...</li>
+ *     <li>Updater hinzugefügt. Der Updater stellt sicher, dass die Daten von Objekten geupdated werden.</li>
  * </ul>
- * @version 3.3.2014
+ * <p>1.3.2014</p>
+ * <ul>
+ *     <li>Zeichenprozess entschlackt. Vorher waren einfach zu viele while(true)-Schleifen drin.</li>
+ * </ul>
+ * @version 1.3.2014
  *
  */
 public class Main {
+
+	// NUR INTIALISIERUNG - WIE WERTE UND VARIABLEN ###############
 
 	/**
 	 * Die derzeitige Anzahl an FPS, die das Spiel gerade erzielt.
@@ -45,23 +44,7 @@ public class Main {
 	 * Der Timeout, der in der <code>Thread.sleep()</code>-Methode als Argument verwendet wird.
 	 */
 	private int framerateTimeout = 1000 / setFPS;
-
-	private static Rectangle windowDimensions = new Rectangle(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
-
-	public static Rectangle getWindowDimensions() {
-		return windowDimensions;
-	}
-
-	private static Logger logger = Logger.getLogger("log");
-
-	public static Logger getLogger() {
-		return logger;
-	}
-
-	/**
-	 * Is the game rendering images?
-	 */
-	private boolean rendering = true;
+	
 	private long lastFrame;
 
 	/** GETTER: Fenstergröße */
@@ -92,7 +75,7 @@ public class Main {
 
 	private long timeSinceLastFrame = 0;
 
-	private PreWindow settingWindow;
+	private static PreWindow settingWindow;
 	private static ArrowSelection arrowSelectionWindow;
 	private static GameWindow gameWindow;
 	private GraphicsEnvironment environmentG;
@@ -100,41 +83,51 @@ public class Main {
 
 	/**
 	 * Der Weltgenerierungsthread.
+	 * Spawnt die Spieler. 
 	 */
 	private final Thread worldgenThread = new Thread(new Runnable() {
 
 		/**
 		 * Initialisiert die Felder.
+		 * 
+		 * Spawnt den Spieler und den Bot
 		 */
 		@Override
 		public void run() {
-			synchronized (this) {
-				// Spawnprozess! Sollte später noch umgearbeitet werden
-				Random r = new Random();
+			synchronized (this) { 
+				Random r = new Random(); 
 				GameScreen s = GameScreen.getInstance();
-
-				if(s.getWorld() != null) {
+				// Spawn 
+				if(s.getWorld() == null) {
 					World newone = WorldFactory.generateDefault(Mechanics.worldSizeX, Mechanics.worldSizeY);
 					s.setWorld(newone);
-					s.getWorld().addPlayer(new Player(
-							Mechanics.getUsername(),
-							r.nextInt(s.getWorld().getSizeX()),
-							r.nextInt(s.getWorld().getSizeY()),
-							new EntityAttributes(
-									100.0, 5.0, 3.0, 1)
-					));
+					
+					SpawnEntityInstanceArgs e = new SpawnEntityInstanceArgs();
+					int x = 0, y = 0; 
+					// Kein Randfeld fuer x oder y
+					do {
+						x = r.nextInt(s.getWorld().getSizeX() - 2) + 1; 
+						y = r.nextInt(s.getWorld().getSizeY() - 2) + 1;
+					} while (WorldFactory.isSpawnPossible(x, y, s) == false);
+					e.setSpawnX(x);
+					e.setSpawnY(y);
+					e.setWorld(s.getWorld());
+					Player p = new Player(Mechanics.getUsername(), e);
+					s.getWorld().addPlayer(p);
+					s.getWorld().setActivePlayer(p);
+					s.getWorld().setTurnPlayer(p);
 
-					s.getWorld().addPlayer(new Bot(
-							"Dummie",
-							r.nextInt(s.getWorld().getSizeX()),
-							r.nextInt(s.getWorld().getSizeY()),
-							new EntityAttributes(
-									100.0, 5.0, 3.0, 1
-							)
-					));
-
+					SpawnEntityInstanceArgs bot_e = new SpawnEntityInstanceArgs();
+					
+					do {
+						x = r.nextInt(s.getWorld().getSizeX() - 2) + 1; 
+						y = r.nextInt(s.getWorld().getSizeY() - 2) + 1;
+					} while (WorldFactory.isSpawnPossible(x, y, s) == false);
+					bot_e.setSpawnX(x);
+					bot_e.setSpawnY(y);
+					bot_e.setWorld(s.getWorld());
+					s.getWorld().addPlayer(new Bot("Dummie", bot_e));
 				}
-
 			}
 		}
 
@@ -143,8 +136,8 @@ public class Main {
 
 
 	public static TimeClock timeObj;
-	public Life lifePlayer;
-	public Life lifeKI;
+	public static Life lifePlayer;
+	public static Life lifeKI;
 
 	private static Thread stopwatchThread;
 	private static Main main;
@@ -171,6 +164,7 @@ public class Main {
 	 * in <code>foo()</code> getätigt.
 	 */
 	private Main() {
+		System.out.println("DEBUG INFORMATION" + "\n");
 		
 		if(System.getProperty("os.name").equalsIgnoreCase("Linux")) {
 			System.setProperty("java.awt.headless", "false");
@@ -179,84 +173,97 @@ public class Main {
 		
 		Properties sys_props = System.getProperties();
 		
-		System.out.println("DEBUG INFORMATION");
 		System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
 		System.out.println("Total memory in JVM: " + Runtime.getRuntime().totalMemory() + " bytes");
+		System.out.println("Free memory: " + Runtime.getRuntime().freeMemory() + " bytes");
 		System.out.println("Java version: " + sys_props.getProperty("java.version"));
 		System.out.println("OS: " + sys_props.getProperty("os.name") + "; version " + sys_props.getProperty("os.version"));
-		System.out.println("OS architecture: " + sys_props.getProperty("os.arch") + "\n");
+		System.out.println("OS architecture: " + sys_props.getProperty("os.arch"));
+		System.out.println("----------------------------------" + "\n");
 
 	}
 
-	private void runGame() {
+	// METHODEN ################################################################
 
-		timeObj.start();
+	// Hier laeuft das Spiel nach allen Insizialisierungen 
+	private void runGame() {
 
 		// assign the last frame time
 		lastFrame = System.currentTimeMillis();
 		
-		while (rendering) {
-			render();
-		}
-
-		/*
 		while (true) {
 			// ++++++++++++++++++++++++++++++++++
 			// AUFRUF DER PFEILAUSWAHL
+			// TODO
 
 			// +++++++++++++++++++++++++++++++++++
 			// RUNDE
 			while (true) {
-				render();
-				if(lock) {
-					lock = false;
-					break;
+				timeObj.start();
+				
+				// +++++++++++++++++++++++++++++++
+				// ZUG
+				while(true){
+					render();
+					
+					// alle Bedingunen, bei denen ein Zug enden kann
+					if (timeObj.getMilliDeath() < 0) 
+						break;
+					if (isTurnEnd == true) 
+						break;
 				}
-			}
 
-			timeObj.stop();
-
-			if (lifePlayer.getLife() <= 0 || lifeKI.getLife() <= 0) {
-				break;
+				timeObj.stop();
+				timeObj.reset();
+				
+				// ++++SCHADENSBERECHNUNGEN++++
+				// TODO: alle Schadensberechungen, nach Endwe eines Zuges müssen hier rein
+				lifePlayer.updateLife();
+				
+				// alle Bedingungen, mit denen eine Runde enden kann
+				if (lifePlayer.getLife() <= 0 || lifeKI.getLife() <= 0) 
+					break;
+				if (timeObj.getMilliDeath() < 0) 
+					break;
+				if ((turnsPerRound - currentTurn) <= 0) 
+					break;
 			}
-			if (timeObj.getMilliDeath() < 0) {
+			// TODO Player und Leben richtig aufrufen
+			
+			// alle Bedingen, bei denen das Spiel endet
+			if (lifePlayer.getLife() <= 0 || lifeKI.getLife() <= 0) 
 				break;
-			}
-			if (turnsPerRound - currentTurn <= 0) {
+			if (timeObj.getMilliDeath() < 0) 
 				break;
-			}
-			if (isTurnEnd) {
-				break;
-			}
 
 			// ++++++++++++++++++++++++++++++++
 			// BELEOHNUNGSYSTEM
-
+			// TODO : Das kommplette Belohunungssystem
 		}
-		*/
-
-
 	}
 
 	/**
 	 * ruft die eigentlichen Schleifen auf, je nachdem ob man gewonnen /
-	 * verloren hat Gewonnen: doEndSequenceWonLoop Verloren:
-	 * doEndSequenceDiedLoop
+	 * Gewonnen: doEndSequenceWonLoop (Aktuell 1000 MilliSekunden lang);
+	 *  Verloren: doEndSequenceDiedLoop (Aktuell 1000 MilliSekunden lang)
 	 */
 	private void endSequenceLoop() {
 		if (lifePlayer.getLife() <= 0 || timeObj.getMilliDeath() < 0) {
-			doEndSequenceDiedLoop();
+			// Hier einstellen, wie lange Die End-Sequenz Schleife laufen soll
+			doEndSequenceDiedLoop(1000);
 		} else if (lifeKI.getLife() <= 0) {
-			doEndSequenceWonLoop();
+			// Hier einstellen, wie lange die End-Sequenz Schleife laufen soll
+			doEndSequenceWonLoop(1000);
 		}
 	}
 
 	/**
 	 * Berechnung der Endsequence: Gewonnen Aufruf durch: endSequenceLoop()
-	 * TODO While-Schleife kann nur durch Exception oder Terminieren des Programms verlassen werden.
+	 * milliSec: Die Zeit in Millisekunden, bis er automaisch terminiert
 	 */
-	private void doEndSequenceWonLoop() {
-		while (true) {
+	private void doEndSequenceWonLoop(long milliSec) {
+		long endSequenceWonStartTime = System.currentTimeMillis();
+		do {
 			gameWindow.endSequenceWon();
 
 			Keys.updateKeys();
@@ -266,15 +273,18 @@ public class Main {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
+		} while (endSequenceWonStartTime <= System.currentTimeMillis() + milliSec);
 	}
 
 	/**
 	 * Berechnung der Endsequence: Verloren Aufruf durch: endSequenceLoop()
-	 * // TODO While-Schleife kann nur durch Exception oder Terminieren des Programms verlassen werden.
+	 * 
 	 */
-	private void doEndSequenceDiedLoop() {
-		while (true) {
+	private void doEndSequenceDiedLoop(long milliSecDied) {
+		
+		long startTimeEndSequence = System.currentTimeMillis();
+		
+		do {
 			gameWindow.endSequenceDied();
 
 			Keys.updateKeys();
@@ -284,10 +294,10 @@ public class Main {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
+		} while (startTimeEndSequence <= milliSecDied + System.currentTimeMillis());
 	}
 	
-	/**
+	/** 
 	 * Nachverarbeitung von ArrowSelection.
 	 */
 	private void doArrowSelectionLoop() {
@@ -299,45 +309,20 @@ public class Main {
 			}
 		}
 
-		// Spawnprozess! Sollte später noch umgearbeitet werden
-		Random r = new Random();
+		arrowSelectionWindow.dispose();
+	}
+	
+	// Fuegt die Pfeile in das Inventar des Spielers ein 
+	private void doArrowSelectionAddingArrows() {
 		GameScreen s = GameScreen.getInstance();
 
-		if(s.getWorld() == null) {
-			World newone = WorldFactory.generateDefault(Mechanics.worldSizeX, Mechanics.worldSizeY);
-			s.setWorld(newone);
-			s.getWorld().addPlayer(new Player(
-					Mechanics.getUsername(),
-					r.nextInt(s.getWorld().getSizeX()),
-					r.nextInt(s.getWorld().getSizeY()),
-					new EntityAttributes(
-							100.0, 5.0, 3.0, 1)
-			));
-
-			s.getWorld().addPlayer(new Bot(
-					"Dummie",
-					r.nextInt(s.getWorld().getSizeX()),
-					r.nextInt(s.getWorld().getSizeY()),
-					new EntityAttributes(
-							100.0, 5.0, 3.0, 1
-					)
-			));
-
-		}
-
-		if(s.getWorld().getActivePlayer() == null) {
-			System.out.println("Active player is null!");
-		}
-
 		for (String selectedArrow : arrowSelectionWindow.selectedArrows) {
-		   s.getWorld().getPlayerByIndex(GameScreen.getInstance().getWorld().
-				getActivePlayer().getIndex()).getInventory().addItem(
-							getArrowSelection().
-									checkString(
-											selectedArrow));
+		   s.getWorld().getActivePlayer().getInventory().addArrow(
+					getArrowSelection().checkString(selectedArrow));
 		}
-
-		arrowSelectionWindow.dispose();
+		
+		input = ArrowSelection.convert(arrowSelectionWindow.selectedArrows);
+		
 	}
 
 	/** GETTER: PreWindow */
@@ -374,20 +359,16 @@ public class Main {
 
 	}
 
+	// HAUTAUFRUF 
+	/** Leitet die Main: ruft sowohl die Init-Methoden auf, als auch die Schleifen, die das Spiel laufen lassen */
 	private void foo() {
 		
-		initGameWindow();
-
-		// startet den Weltgenerierungsthread
-		worldgenThread.setName("worldgen");
-		worldgenThread.setDaemon(true);
-		worldgenThread.start();
-
-		int initHeight = 320;
-		int initWidth = 580;
-
-		// FIXME Daniel, bist du dir da ganz sicher, dass du width und height vertauschen willst?
-		// Schau in die Parameter vom Konstruktor PreWindows....
+		environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		graphicsDevice = environmentG.getDefaultScreenDevice();
+		
+		int initHeight = 370;
+		int initWidth = 620;
+		
 		settingWindow = new PreWindow(initWidth, initHeight, 0, "Einstellungen");
 
 		// Schleife nicht mehr nötig. Der wait()-Aufruf wird in PreWindows
@@ -399,15 +380,21 @@ public class Main {
 				e.printStackTrace();
 			}
 		}
-
-		arrowSelectionWindow = new ArrowSelection(initWidth, initHeight);
-		doArrowSelectionLoop();
-		environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		graphicsDevice = environmentG.getDefaultScreenDevice();
-
+		
+		gameWindow = new GameWindow(graphicsDevice, timeObj);
+		gameWindow.initializeScreens();
+		
 		// Initialisierungen
 		initClasses();
-
+		
+		// startet den Weltgenerierungsthread
+		worldgenThread.setName("worldgen");
+		worldgenThread.setDaemon(true);
+		worldgenThread.start();
+		
+		arrowSelectionWindow = new ArrowSelection(initWidth, initHeight);
+		doArrowSelectionLoop();
+		
 		/*
 		 * Da die Spielmechanik initialisiert wurde, kann auch der letzte Teil
 		 * der Feldinitialisierung ausgeführt werden.
@@ -416,15 +403,23 @@ public class Main {
 			worldgenThread.notify();
 		}
 		
-		Mechanics.worldSizeX++;
-		Mechanics.worldSizeY--;
+		// Feldgrößenanpassung
+		GameScreen.getInstance().getWorld().updateWorldSizeAtBeginning();		
 		
+		doArrowSelectionAddingArrows();
+		
+		initGameWindow();
+		
+		// Andere Initialisierungen 
+		timeObj.initNewPosition();
+		ArrowSelectionScreen.getInstance().init();
+		
+		// Starten wir das Spiel
 		stopwatchThread.start();
-
 		runGame();
 
+		// Das Spiel ist aus
 		endSequenceLoop();
-
 	}
 
 	/** Initialiert die Klassen */
@@ -432,10 +427,12 @@ public class Main {
 
 		// Feldinitialisierung in einen separaten Thread verschoben...
 
-		input = ArrowSelection.convert(arrowSelectionWindow.selectedArrows);
+		lifePlayer = new Life(null);
+		lifeKI = new Life(null);
 
 		/* Instanziert 'timeClock' */
 		timeObj = new TimeClock();
+		
 		/* TimeClock wird zu Thread */
 		stopwatchThread = new Thread(timeObj);
 		stopwatchThread.setDaemon(true);
@@ -444,13 +441,14 @@ public class Main {
 
 	/** Initialisiert GameWindow */
 	private void initGameWindow() {
-		
-		gameWindow = new GameWindow(graphicsDevice, timeObj);
+
+		// instanziert die Welt und damit den Player
+
+		// Doppelte Instanzierung von GameWindow!
+		// gameWindow = new GameWindow(graphicsDevice, timeObj);
 		GameWindow.createWindow(Main.getWindowWidth(), Main.getWindowHeight(),
 				gameWindow);
-		gameWindow.initializeScreens();
 
-		graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		graphicsDevice.setFullScreenWindow(gameWindow);
 
 		gameWindow.createBufferStrategy();
@@ -464,7 +462,7 @@ public class Main {
 		long thisFrame = System.currentTimeMillis();
 		timeSinceLastFrame = thisFrame - lastFrame;
 		lastFrame = thisFrame;
-		
+
 		Keys.updateKeys();
 
 		// Zeichnet die Objekte auf den Fullscreen
@@ -475,7 +473,6 @@ public class Main {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
 
 	}
 	
@@ -507,5 +504,9 @@ public class Main {
 		framerateTimeout = 1000 / setFPS;
 	}
 
-
+	private static Rectangle windowDimensions = new Rectangle (0, 0, Main.getWindowWidth(), Main.getWindowHeight()); 
+	
+	public static Rectangle getWindowDimensions () {
+		return windowDimensions;
+	}
 }

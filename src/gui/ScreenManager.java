@@ -46,7 +46,6 @@ public final class ScreenManager implements Drawable {
 	public void setActiveScreen(Screen activeScreen) {
 		if(getScreens().containsValue(activeScreen)) {
 			this.activeScreen = activeScreen;
-			System.out.println("Active screen: " + getActiveScreen().getName());
 			lastScreenChange = new Date();
 		} else throw new IllegalArgumentException("Screen is not listed!");
 	}

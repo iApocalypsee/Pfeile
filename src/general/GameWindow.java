@@ -60,7 +60,7 @@ public class GameWindow extends JFrame {
 				screenManager.getActiveScreen().mousePressed(arg0);
 			}
 			
-			@Override
+			@Override  
 			public void mouseExited(MouseEvent arg0) {
 			}
 			
@@ -107,8 +107,8 @@ public class GameWindow extends JFrame {
 		new MainMenuScreen();
 		GameScreen.getInstance();
 		new PauseScreen();
-		new ArrowSelectionScreen();
-		screenManager.setActiveScreen(MainMenuScreen.SCREEN_INDEX);
+		ArrowSelectionScreen.getInstance();
+		screenManager.setActiveScreen(GameScreen.SCREEN_INDEX);
 	}
 
 	/** Buffering */

@@ -10,9 +10,9 @@ public class ItemPickEvent {
 	/**
 	 * Das Item, das aufgehoben wird.
 	 */
-	private Item item;
+	private Arrow item;
 	
-	public ItemPickEvent(Combatant pickedUpBy, Item item) {
+	public ItemPickEvent(Combatant pickedUpBy, Arrow item) {
 		this.pickedUpBy = pickedUpBy;
 		this.item = item;
 	}
@@ -21,7 +21,7 @@ public class ItemPickEvent {
 		return pickedUpBy;
 	}
 	
-	public Item getItem() {
+	public Arrow getItem() {
 		return item;
 	}
 	

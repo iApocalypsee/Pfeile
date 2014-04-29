@@ -2,6 +2,7 @@ package gui;
 
 import general.Keys;
 import general.Main;
+import general.TimeClock;
 import general.World;
 
 import java.awt.Graphics2D;
@@ -107,6 +108,8 @@ public class GameScreen extends Screen {
 					// negiert den wert
 					w.getTurnPlayer().setAttemptingShoot(!w.getTurnPlayer().isAttemptingShoot());
 				}
+				
+				onLeavingScreen(this, ArrowSelectionScreen.SCREEN_INDEX);
 			}
 			
 			@Override

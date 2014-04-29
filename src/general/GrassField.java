@@ -42,6 +42,6 @@ public class GrassField extends Field {
 	 */
 	@Override
 	public String getFieldType() {
-		return "Grass";
+		return "Wiese";
 	}
 }

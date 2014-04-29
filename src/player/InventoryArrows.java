@@ -1,5 +1,7 @@
 package player;
 
+import general.Mechanics;
+
 import java.util.LinkedList;
 
 /**
@@ -12,17 +14,17 @@ import java.util.LinkedList;
  * @version 13.2.2014
  *
  */
-public class Inventory {
+public class InventoryArrows {
 	
 	/**
 	 * Die Standardgröße für das Inventar.
 	 */
-	private static final int DEFAULT_INVENTORY_SIZE = 20;
+	private static final int DEFAULT_INVENTORY_SIZE = Mechanics.arrowNumberPreSet + 1;
 	
 	/**
 	 * Die Einträge in der Inventory.
 	 */
-	private LinkedList<InventoryEntry> items = new LinkedList<InventoryEntry>();
+	private LinkedList<InventoryEntryArrows> arrows = new LinkedList<InventoryEntryArrows>();
 	
 	/**
 	 * Die Entity, die dieses Inventar trägt.
@@ -39,29 +41,53 @@ public class Inventory {
 	 * der aus diesem dann Items beziehen und benutzen kann.
 	 * @param carrier Der Träger des Inventars.
 	 */
-	public Inventory(AttackContainer carrier) {
+	public InventoryArrows(AttackContainer carrier) {
 		this.carrier = carrier;
 	}
 	
 	/**
 	 * Fügt ein Item dem Inventar hinzu und gibt einen boolean-Wert raus,
 	 * ob das Inventar das Item aufnehmen konnte oder nicht. Wenn diese Methode
-	 * <code>false</code> zurückgibt, versuchs mit {@link #addItem(Item, int)}.
+	 * <code>false</code> zurückgibt, versuchs mit {@link #addItem(Arrow, int)}.
 	 * Diese Methode erstellt keine neuen Einträge, sondern versucht, das Item
 	 * den bestehenden Einträgen zuzuteilen.
 	 * @param i Das Item, das hinzugefügt werden soll.
 	 * @return <code>true</code>, wenn das Item hinzugefügt werden konnte.
 	 */
-	public boolean addItem(Item i) {
-		for (InventoryEntry e : items) {
-			if(e.peek().getClass() == i.getClass()) {
+	public boolean addArrow(AbstractArrow i) {
+		
+		if (i != null) {
+			for (InventoryEntryArrows e : arrows) {
+				if(e.peek().getClass() == i.getClass()) {
+					if(e.hasRemainingSpace()) {
+						e.push(i);
+						return true;
+					}
+				} 
+			}
+			return false; 
+		}
+		
+		return false;
+	}
+	
+	/** TODO Josip, funktioniert das? */
+	public boolean addArrow(Class<AbstractArrow> class1) {
+		for (InventoryEntryArrows e : arrows) {
+			if(e.peek().getClass() == class1) {
 				if(e.hasRemainingSpace()) {
-					e.push(i);
+					try {
+						e.push(class1.newInstance());
+					} catch (InstantiationException | IllegalAccessException e1) {
+						e1.printStackTrace();
+						return false;
+					}
 					return true;
 				}
-			}
+			} 
+			return false;
 		}
-		return false;
+		return false; 
 	}
 	
 	/**
@@ -69,10 +95,10 @@ public class Inventory {
 	 * und fügt das Item dem Inventar hinzu.
 	 * @param i Das Item, das hinzugefügt werden soll.
 	 * @param stackSize Die Größe des neuen Inventareintrags. Wird ignoriert, wenn
-	 * {@link Inventory#addItem(Item)} für den Parameter i true zurückgeben würde.
+	 * {@link InventoryArrows#addItem(Arrow)} für den Parameter i true zurückgeben würde.
 	 */
-	public void addItem(Item i, int stackSize) {
-		for (InventoryEntry e : items) {
+	public void addArrow(AbstractArrow i, int stackSize) {
+		for (InventoryEntryArrows e : arrows) {
 			if(e.peek().getClass() == i.getClass()) {
 				if(e.hasRemainingSpace()) {
 					e.push(i);
@@ -82,10 +108,10 @@ public class Inventory {
 		}
 		// erstellt einen neuen Eintrag im Inventar, da sonst ja
 		// kein Platz im Inventar ist
-		InventoryEntry entry = new InventoryEntry();
+		InventoryEntryArrows entry = new InventoryEntryArrows();
 		entry.resize(stackSize);
 		entry.push(i);
-		items.add(entry);
+		arrows.add(entry);
 	}
 	
 	/**
@@ -93,20 +119,20 @@ public class Inventory {
 	 * falls die Anzahl der Einträge 0 sein sollte.
 	 * @param i Das Item, das entfernt werden soll.
 	 */
-	public void removeItem(Class<? extends Item> i) {
-		for (InventoryEntry e : items) {
+	public void removeArrow(Class<? extends AbstractArrow> i) {
+		for (InventoryEntryArrows e : arrows) {
 			if(e.peek().getClass() == i) {
 				e.pop();
 				if(e.isEmpty()) {
-					items.remove(e);
+					arrows.remove(e);
 				}
 				break;
 			}
 		}
 	}
 	
-	public boolean contains(Class<? extends Item> i) {
-		for (InventoryEntry e : items) {
+	public boolean contains(Class<? extends AbstractArrow> i) {
+		for (InventoryEntryArrows e : arrows) {
 			if(e.peek().getClass() == i) {
 				return true;
 			}
@@ -120,9 +146,9 @@ public class Inventory {
      * @param i The type of item to look for.
      * @return The amount of specified item type in the inventory.
      */
-	public int getItemCount(Class<? extends Item> i) {
+	public int getArrowCount(Class<? extends AbstractArrow> i) {
 		int x = 0;
-		for (InventoryEntry e : items) {
+		for (InventoryEntryArrows e : arrows) {
 			if(e.peek().getClass() == i) {
 				x += e.getItemCount();
 			}
@@ -145,5 +171,4 @@ public class Inventory {
 	public void setSize(int size) {
 		this.size = size;
 	}
-	
 }

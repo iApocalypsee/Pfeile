@@ -42,7 +42,7 @@ public class SeaField extends Field {
 	 */
 	@Override
 	public String getFieldType() {
-		return "Sea";
+		return "See";
 	}
 
 

@@ -42,6 +42,6 @@ public class WastelandField extends Field {
 	 */
 	@Override
 	public String getFieldType() {
-		return "Wasteland";
+		return "Ödland";
 	}
 }

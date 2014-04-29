@@ -42,6 +42,6 @@ public class SnowField extends Field {
 	 */
 	@Override
 	public String getFieldType() {
-		return "Snow";
+		return "Schnee";
 	}
 }

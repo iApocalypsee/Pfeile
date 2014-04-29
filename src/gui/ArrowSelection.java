@@ -82,9 +82,9 @@ public class ArrowSelection extends JFrame {
 			private static final long serialVersionUID = -1412378778727410007L;
 			private boolean sorted = false;
 
-			String[] values = new String[] { FireArrow.name, IceArrow.name,
-					LightArrow.name, LightningArrow.name, ShadowArrow.name,
-					StoneArrow.name, StormArrow.name, WaterArrow.name };
+			String[] values = new String[] { FireArrow.NAME, IceArrow.NAME,
+					LightArrow.NAME, LightningArrow.NAME, ShadowArrow.NAME,
+					StoneArrow.NAME, StormArrow.NAME, WaterArrow.NAME };
 
 			@Override
 			public String getElementAt(int arg0) {
@@ -128,7 +128,6 @@ public class ArrowSelection extends JFrame {
 							+ (Mechanics.arrowNumberPreSet - selectedArrows
 									.size()));
 				}
-
 			}
 
 			@Override
@@ -244,21 +243,21 @@ public class ArrowSelection extends JFrame {
 	 */
 	public AbstractArrow checkString(String s) {
 		// �berpr�ft den String
-		if (s.equals(FireArrow.name)) {
+		if (s.equals(FireArrow.NAME)) {
 			return new FireArrow();
-		} else if (s.equals(IceArrow.name)) {
+		} else if (s.equals(IceArrow.NAME)) {
 			return new IceArrow();
-		} else if (s.equals(LightArrow.name)) {
+		} else if (s.equals(LightArrow.NAME)) {
 			return new LightArrow();
-		} else if (s.equals(LightningArrow.name)) {
+		} else if (s.equals(LightningArrow.NAME)) {
 			return new LightningArrow();
-		} else if (s.equals(ShadowArrow.name)) {
+		} else if (s.equals(ShadowArrow.NAME)) {
 			return new ShadowArrow();
-		} else if (s.equals(StoneArrow.name)) {
+		} else if (s.equals(StoneArrow.NAME)) {
 			return new StoneArrow();
-		} else if (s.equals(StormArrow.name)) {
+		} else if (s.equals(StormArrow.NAME)) {
 			return new StormArrow();
-		} else if (s.equals(WaterArrow.name)) {
+		} else if (s.equals(WaterArrow.NAME)) {
 			return new WaterArrow();
 		} else {
 			return null;

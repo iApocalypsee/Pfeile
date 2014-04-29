@@ -131,7 +131,7 @@ public abstract class Component implements Drawable {
 	/**
 	 * Die Standardschriftart.
 	 */
-	public static final Font STD_FONT = new Font("Consolas", Font.PLAIN, 12);
+	public static final Font STD_FONT = new Font("Consolas", Font.PLAIN, 13);
 	
 	/**
 	 * Die Anzahl an Punkten, die je in {@link Polygon#xpoints} und {@link Polygon#ypoints}

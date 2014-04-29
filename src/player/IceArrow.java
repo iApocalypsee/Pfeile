@@ -12,10 +12,10 @@ import javax.imageio.ImageIO;
  */
 public class IceArrow extends AbstractArrow {
 	/** Index des Eispfeils */
-	public static final int index = 4;
+	public static final int INDEX = 4;
 	
 	/** Name des Pfeils */
-	public static final String name = "Eispfeil";
+	public static final String NAME = "Eispfeil";
 	
 	public static final Color UNIFIED_COLOR = new Color(204, 228, 237, 75);
 	
@@ -39,7 +39,7 @@ public class IceArrow extends AbstractArrow {
 	}
 	
 	/** Gibt das Bild des Eispfeiles zur�ck */
-	public BufferedImage getImage () {
+	public static BufferedImage getImage () {
 		return img_Ice;
 	}
 }

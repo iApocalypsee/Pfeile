@@ -35,7 +35,6 @@ public class Button extends Component {
 				Component.getTextBounds(text, Component.STD_FONT).height + 20,
 				backing);
 		this.text = text;
-		Component.getTextBounds(text, Component.STD_FONT);
 	}
 	
 	public Button(int x, int y, Component parent, String text) {
@@ -43,7 +42,6 @@ public class Button extends Component {
 				Component.getTextBounds(text, Component.STD_FONT).height + 20,
 				parent);
 		this.text = text;
-		Component.getTextBounds(text, Component.STD_FONT);
 	}
 	
 	/**
@@ -112,8 +110,18 @@ public class Button extends Component {
 			g.drawImage(optImage, getAbsoluteX() + STD_INSETS.left, getAbsoluteY() + STD_INSETS.top, 
 					optImage.getWidth(), optImage.getHeight(), null);
 			g.drawString(text, getAbsoluteX() + STD_INSETS.left + optImage.getWidth() + STD_INSETS.left, 
-					getAbsoluteY() + STD_INSETS.top);
-		}
-		
+					getAbsoluteY() + STD_INSETS.top + 20);
+		}	
 	}
+	
+	/** setzt, ob das Rechteck rund ist oder nicht */
+	public void setRoundBorder(boolean isRoundRect) {
+		getBorder().setRoundedBorder(isRoundRect);
+	}
+	
+	/** gibt zurück, ob das Rechteck (Border) das gezeichnet werden soll, rund ist oder nicht */
+	public boolean isRoundBorder () {
+		return getBorder().isRoundedBorder();
+	}
+
 }

@@ -1,6 +1,6 @@
 package player;
 
-public abstract class Weapon extends Item {
+public abstract class Weapon extends Arrow {
 	
 	/**
 	 * Der Angriffswert der Waffe.

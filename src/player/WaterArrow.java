@@ -12,10 +12,10 @@ import javax.imageio.ImageIO;
  */
 public class WaterArrow extends AbstractArrow {
 	/** Index des Wasserpfeils */
-	public static final int index = 1;
+	public static final int INDEX = 1;
 	
 	/** Name des Pfeils */
-	public static final String name = "Wasserpfeil";
+	public static final String NAME = "Wasserpfeil";
 	
 	public static final Color UNIFIED_COLOR = new Color(57, 126, 204, 75);
 	
@@ -39,7 +39,7 @@ public class WaterArrow extends AbstractArrow {
 	}
 	
 	/** Gibt das Bild des Wasserpfeiles zur�ck */
-	public BufferedImage getImage () {
+	public static BufferedImage getImage () {
 		return img_Water;
 	}
 }

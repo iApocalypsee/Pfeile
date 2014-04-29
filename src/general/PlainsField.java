@@ -41,7 +41,7 @@ public class PlainsField extends Field {
 	 */
 	@Override
 	public String getFieldType() {
-		return "Plains";
+		return "Ackerland";
 	}
 
 }

@@ -9,6 +9,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.LinkedList;
 
+import comp.Component.ComponentStatus;
+
 /**
  * Eine Liste, die gezeichnet werden und mit EintrÃ¤gen versehen werden kann.
  * 
@@ -61,7 +63,10 @@ public class List extends Component {
 		
 		for (int i = 0; i < items.size(); i++) {
 			final Label l = new Label(0, 0, items.get(i), this);
-			l.setY(l.getHeight() * i);
+			if (items.size() == 0) 
+				l.setY(l.getHeight() * i);
+			else 
+				l.setY(l.getHeight() * i + 1);
 			if(l.getAbsoluteY() >= this.getAbsoluteY()) {
 				if(l.getAbsoluteY() + l.getHeight() > this.getAbsoluteY() + this.getHeight()) {
 					l.setVisible(false);
@@ -112,8 +117,6 @@ public class List extends Component {
 //			});
 			listItems.add(l);
 		}
-		
-		
 	}
 
 	@Override
@@ -126,10 +129,7 @@ public class List extends Component {
 			for (int i = getFirstDisplayIndex(); i < getLastDisplayIndex(); i++) {
 				listItems.get(i).draw(g);
 			}
-			
-			
 		}
-		
 	}
 	
 	/**
@@ -139,7 +139,7 @@ public class List extends Component {
 	Dimension tfits() {
 		int width = 0, height = 0;
 		for (String s : items) {
-			Dimension bounds = Component.getTextBounds(s, STD_FONT);
+			Dimension bounds = new Dimension(getTextBounds(s, STD_FONT).width + 1, getTextBounds(s, STD_FONT).height + 1);
 			if(bounds.width > width) {
 				width = bounds.width;
 			}
@@ -212,5 +212,41 @@ public class List extends Component {
 	public void scroll(int delta) {
 		topIndex += delta;
 	}
-
+	
+	/** setzt, ob das Rechteck rund ist oder nicht */
+	public void setRoundBorder(boolean isRoundRect) {
+		getBorder().setRoundedBorder(isRoundRect);
+	}
+	
+	/** gibt zurück, ob das Rechteck (Border) das gezeichnet werden soll, rund ist oder nicht */
+	public boolean isRoundBorder () {
+		return getBorder().isRoundedBorder();
+	}
+	
+	/**
+	 * Veranlasst die komplette Liste, wieder Input zu akzeptieren.
+	 * @see declineInput
+	 */
+	@Override
+	public void acceptInput() {
+		
+		for (Label label : listItems) {
+			label.acceptInput();
+		}
+		
+		super.acceptInput(); 
+	}
+	
+	/**
+	 * Veranlasst das die Liste, keinen Input mehr zu akzeptieren.
+	 * @see acceptInput
+	 */
+	@Override
+	public void declineInput() {
+		for (Label label : listItems) {
+			label.declineInput();
+		}
+		
+		super.declineInput(); 
+	}
 }

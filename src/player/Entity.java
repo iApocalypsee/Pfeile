@@ -1,10 +1,8 @@
 package player;
 
 import com.sun.istack.internal.Nullable;
-
 import comp.GUIUpdater;
 import general.*;
-import general.SpawnEntityInstanceArgs;
 import gui.ArrowSelectionScreen;
 import gui.GameScreen;
 
@@ -41,7 +39,7 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 	/**
 	 * Das Inventar des Spielers an Pfeilen.
 	 */
-	private Inventory inventory;
+	private InventoryArrows inventory;
 	/**
 	 * Die auf die Entity bezogene Attack-Queue.
 	 */
@@ -82,14 +80,14 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 		this(stdImage, instanceArgs);
 	}
 
-	public Entity(final BufferedImage img, SpawnEntityInstanceArgs e) {
+	public Entity(final BufferedImage img, SpawnEntityInstanceArgs instanceArgs) {
 		super(0, 0, 0, 0, GameScreen.getInstance());
 		// writing to instance attributes
-		boardX = e.getSpawnX();
-		boardY = e.getSpawnY();
-		world = e.getWorld();
+		boardX = instanceArgs.getSpawnX();
+		boardY = instanceArgs.getSpawnY();
+		world = instanceArgs.getWorld();
 		image = img;
-		inventory = new Inventory(this);
+		inventory = new InventoryArrows(this);
 		// updates the gui as the last step
 		updateGUI();
 		// updates width and height
@@ -339,7 +337,7 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 	 * Returns the inventory of the entity.
 	 * @return The inventory of the entity.
 	 */
-	public Inventory getInventory() {
+	public InventoryArrows getInventory() {
 		return inventory;
 	}
 

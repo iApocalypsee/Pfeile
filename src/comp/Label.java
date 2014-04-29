@@ -14,6 +14,12 @@ public class Label extends Component {
 	 * Der Text, der vom Label dargestellt werden soll.
 	 */
 	private String text;
+	
+	/** Abstand nach oben, damit die Schrift nicht den oberen Rad berührt */
+	private final int STD_INSET_Y = 15; 
+	
+	/** Abstand links, damit die Schrift nicht am Rand steht */
+	private final int STD_INSET_X = 5; 
 
 	public Label() {
 		declineInput();
@@ -108,10 +114,7 @@ public class Label extends Component {
 			g.setFont(STD_FONT);
 			
 			// FIXME Einfachere Zeichnung: anstatt getParent().getX() + this.getX() jetzt this.getAbsoluteX()
-			g.drawString(text, getAbsoluteX(), getAbsoluteY());
-
+			g.drawString(text, getAbsoluteX() + STD_INSET_X, getAbsoluteY() + STD_INSET_Y);
 		}
-		
 	}
-
 }

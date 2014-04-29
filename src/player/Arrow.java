@@ -2,7 +2,7 @@ package player;
 
 import java.util.LinkedList;
 
-public abstract class Item {
+public abstract class Arrow {
 	
 	/**
 	 * Der Name des Items.
@@ -19,7 +19,7 @@ public abstract class Item {
 	 */
 	private LinkedList<ItemListener> itemListeners = new LinkedList<ItemListener>();
 	
-	public Item(String name) {
+	public Arrow(String name) {
 		this.name = name;
 	}
 	

@@ -12,12 +12,12 @@ public class ItemDropEvent {
 	/**
 	 * Das Item, das gedroppt wird.
 	 */
-	private Item item;
+	private Arrow item;
 	
 	private int x;
 	private int y;
 	
-	public ItemDropEvent(Combatant droppedBy, Item item, int dropX, int dropY) {
+	public ItemDropEvent(Combatant droppedBy, Arrow item, int dropX, int dropY) {
 		this.droppedBy = droppedBy;
 		this.item = item;
 		x = dropX;
@@ -28,7 +28,7 @@ public class ItemDropEvent {
 		return droppedBy;
 	}
 	
-	public Item getItem() {
+	public Arrow getItem() {
 		return item;
 	}
 	

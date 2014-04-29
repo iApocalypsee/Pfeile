@@ -42,6 +42,6 @@ public class HighlandField extends Field {
 	 */
 	@Override
 	public String getFieldType() {
-		return "Highlands";
+		return "Hügel";
 	}
 }

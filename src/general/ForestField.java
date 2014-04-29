@@ -42,7 +42,6 @@ public class ForestField extends Field {
 	 */
 	@Override
 	public String getFieldType() {
-		return "Forest";
+		return "Wald";
 	}
-
 }

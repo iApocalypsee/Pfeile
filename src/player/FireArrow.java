@@ -13,10 +13,10 @@ import javax.imageio.ImageIO;
  */
 public class FireArrow extends AbstractArrow {
 	/** Index des Feuerpfeils */
-	public static final int index = 0;
+	public static final int INDEX = 0;
 	
 	/** Name des Pfeils: */
-	public static final String name = "Feuerpfeil";
+	public static final String NAME = "Feuerpfeil";
 	
 	public static final Color UNIFIED_COLOR = new Color(255, 0, 0, 75);
 	
@@ -39,7 +39,7 @@ public class FireArrow extends AbstractArrow {
 	}
 	
 	/** Gibt das Bild des Feuerpfeiles zur�ck */
-	public BufferedImage getImage () {
+	public static BufferedImage getImage () {
 		return img_Fire;
 	}
 }

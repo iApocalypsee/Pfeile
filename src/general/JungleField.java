@@ -42,6 +42,6 @@ public class JungleField extends Field {
 	 */
 	@Override
 	public String getFieldType() {
-		return "Jungle";
+		return "Dschungel";
 	}
 }

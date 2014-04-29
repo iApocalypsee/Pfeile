@@ -171,4 +171,13 @@ public class TextBox extends Component {
 		}
 	}
 
+	/** setzt, ob das Rechteck rund ist oder nicht */
+	public void setRoundBorder(boolean isRoundRect) {
+		getBorder().setRoundedBorder(isRoundRect);
+	}
+	
+	/** gibt zurück, ob das Rechteck (Border) das gezeichnet werden soll, rund ist oder nicht */
+	public boolean isRoundBorder () {
+		return getBorder().isRoundedBorder();
+	}
 }

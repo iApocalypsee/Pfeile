@@ -12,10 +12,10 @@ import javax.imageio.ImageIO;
  */
 public class ShadowArrow extends AbstractArrow {
 	/** Index des Schattenpfeils */
-	public static final int index = 7;
+	public static final int INDEX = 7;
 	
 	/** Name des Pfeils */
-	public static final String name = "Schattenpfeil";
+	public static final String NAME = "Schattenpfeil";
 	
 	public static final Color UNIFIED_COLOR = new Color(74, 74, 50, 75);
 	
@@ -38,7 +38,7 @@ public class ShadowArrow extends AbstractArrow {
 	}
 	
 	/** Gibt das Bild des Schattenpfeils zur�ck */
-	public BufferedImage getImage () {
+	public static BufferedImage getImage () {
 		return img_Shadow;
 	}
 }

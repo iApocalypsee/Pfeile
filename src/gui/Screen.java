@@ -211,11 +211,9 @@ public abstract class Screen implements Drawable, MouseListener,
 	public void mouseReleased(MouseEvent e) {
 		if(e.getButton() == 1) {
 			isLeftMousePressed = false;
-			System.out.println("Left mouse released");
 		}
 		if(e.getButton() == 3) {
 			isRightMousePressed = false;
-			System.out.println("Right mouse released");
 		}
 		for (Component c : components) {
 			if(c.isAcceptingInput()) {
@@ -452,5 +450,4 @@ public abstract class Screen implements Drawable, MouseListener,
 	public void setPreprocessedDrawingEnabled(boolean preprocessedDrawingEnabled) {
 		this.preprocessedDrawingEnabled = preprocessedDrawingEnabled;
 	}
-
 }

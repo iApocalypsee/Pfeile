@@ -69,7 +69,7 @@ public abstract class AbstractArrow extends RangedWeapon {
 	// /** Wie Schnel sich der Pfeil bewegt */
 	// protected int arrowSpeed;
 	//
-	// /** Wie groï¿½ seine Beschleunigung ist */
+	// /** Wie groß seine Beschleunigung ist */
 	// protected int acceleration;
 	//
 	// /** Wie weit der Schaden des Pfeils nach dem Auftreffen reicht */
@@ -81,9 +81,9 @@ public abstract class AbstractArrow extends RangedWeapon {
 	protected int fieldY;
 	/** Nummer des Feldes Ã¼ber das sich der Pfeil befindet */
 	protected int fieldNr;
-	/** X-Position des Pfeils - fÃ¼r GUI */
+	/** X-Position des Pfeils - für GUI */
 	protected int posX;
-	/** Y-Position des Pfeils - fÃ¼r GUI */
+	/** Y-Position des Pfeils - für GUI */
 	protected int posY;
 	/**
 	 * X-Positon im Koordinatensystem der Felder: Hier ist die Position X des
@@ -132,7 +132,6 @@ public abstract class AbstractArrow extends RangedWeapon {
 		this.setAimMissingCurrent(aimMissing);
 		this.setDamageLosingRate(damageLosingRate);
 		this.setDistanceReached(0);
-		// this.setFieldX(gui.World.playerList[player.Player.getCurrentTurn()].getX());
 		this.setFieldX(GameScreen.getInstance().getWorld().getPlayerByIndex(GameScreen.getInstance().getWorld().getTurnPlayer().getIndex()).getX());
 		this.setFieldY(GameScreen.getInstance().getWorld().getPlayerByIndex(GameScreen.getInstance().getWorld().getTurnPlayer().getIndex()).getY());
 		// this.reFreshFieldNr();

@@ -42,7 +42,7 @@ public class DesertField extends Field {
 	 */
 	@Override
 	public String getFieldType() {
-		return "Desert";
+		return "Wüste";
 	}
 
 }

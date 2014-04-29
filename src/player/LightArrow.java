@@ -12,9 +12,9 @@ import javax.imageio.ImageIO;
  */
 public class LightArrow extends AbstractArrow {
 	/** Index des Lichtpfeils */
-	public static final int index = 6;
+	public static final int INDEX = 6;
 	
-	public static final String name = "Lichtpfeil";
+	public static final String NAME = "Lichtpfeil";
 	
 	public static final Color UNIFIED_COLOR = new Color(227, 200, 232, 75);
 	
@@ -37,7 +37,7 @@ public class LightArrow extends AbstractArrow {
 	}
 	
 	/** Gibt das Bild vom Lichtpfeil zur�ck */
-	public BufferedImage getImage () {
+	public static BufferedImage getImage () {
 		return img_Light;
 	}
 }

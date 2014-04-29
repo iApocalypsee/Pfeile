@@ -3,7 +3,7 @@ package player;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
-class InventoryEntry {
+class InventoryEntryArrows {
 	
 	/**
 	 * Die Standard-Anzahl der maximalen Größe des Stacks.
@@ -13,25 +13,25 @@ class InventoryEntry {
 	/**
 	 * Die einzelnen Items, die organisiert werden.
 	 */
-	private Stack<Item> items = new Stack<Item>();
+	private Stack<Arrow> arrows = new Stack<Arrow>();
 	
 	/**
 	 * Die maximale Anzahl vom Item, die auf dem Stack liegen können.
-	 * @see InventoryEntry#DEFAULT_MAX_STACK
+	 * @see InventoryEntryArrows#DEFAULT_MAX_STACK
 	 */
 	private int maxStack = DEFAULT_MAX_STACK;
 	
-	public InventoryEntry() {
-		items.setSize(maxStack);
+	public InventoryEntryArrows() {
+		arrows.setSize(maxStack);
 	}
 	
 	/**
 	 * Legt ein Item auf den Eintrag ab.
 	 * @param item
 	 */
-	public boolean push(Item item) {
+	public boolean push(Arrow item) {
 		if(hasRemainingSpace()) {
-			items.add(item);
+			arrows.add(item);
 			return true;
 		} else {
 			return false;
@@ -42,21 +42,21 @@ class InventoryEntry {
 	 * Löscht ein Item vom Stack und gibt dieses als Rückgabewert
 	 * dieser Funktion zurück. Diese Funktion kann auch null
 	 * zurückgeben, wenn der Stack leer ist. In diesem Fall
-	 * sollte das {@link InventoryEntry}-Objekt gar nicht mehr
+	 * sollte das {@link InventoryEntryArrows}-Objekt gar nicht mehr
 	 * existieren.
 	 * @return Ein Item vom definierten Typ, oder null, wenn der
 	 * Stack bereits leer ist.
 	 */
-	public Item pop() {
+	public Arrow pop() {
 		try {
-			return items.pop();
+			return arrows.pop();
 		} catch(EmptyStackException e) {
 			return null;
 		}
 	}
 	
-	Item peek() {
-		return items.peek();
+	Arrow peek() {
+		return arrows.peek();
 	}
 	
 	public int getMaximumStack() {
@@ -69,7 +69,7 @@ class InventoryEntry {
 	 */
 	public void resize(int maxStack) {
 		this.maxStack = maxStack;
-		items.setSize(maxStack);
+		arrows.setSize(maxStack);
 	}
 	
 	/**
@@ -77,7 +77,7 @@ class InventoryEntry {
 	 * @return
 	 */
 	public int getRemainingSpace() {
-		return maxStack - items.size();
+		return maxStack - arrows.size();
 	}
 	
 	/**
@@ -86,7 +86,7 @@ class InventoryEntry {
 	 * @return
 	 */
 	public boolean hasRemainingSpace() {
-		return maxStack - items.size() > 0;
+		return maxStack - arrows.size() > 0;
 	}
 	
 	/**
@@ -94,11 +94,11 @@ class InventoryEntry {
 	 * @return
 	 */
 	public int getItemCount() {
-		return items.size();
+		return arrows.size();
 	}
 	
 	public boolean isEmpty() {
-		return maxStack - items.size() == maxStack;
+		return maxStack - arrows.size() == maxStack;
 	}
 	
 }

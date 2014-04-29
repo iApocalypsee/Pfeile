@@ -3,8 +3,11 @@ package general;
 import gui.GameScreen;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
+import comp.Border;
 import comp.Component;
 
 
@@ -42,7 +45,6 @@ public class TimeClock extends Component implements Runnable {
 	/** String, der am Bildschirm die Zeit angeben soll */
 	private String timePrintString = null;
 	
-	
 	// KONSTURCKTOR
 	/** KONSTRUCKTOR der Klasse 
 	 */
@@ -74,15 +76,13 @@ public class TimeClock extends Component implements Runnable {
 		long deltaTime = System.currentTimeMillis(); 
 		
 		while (true) {
-			
-			currentTime = System.currentTimeMillis(); 
-			deltaTime = currentTime - lastTime; 
-			
-			update (deltaTime); 
-			lastTime = currentTime; 
-			
+			if (isRunning() == true) {
+				currentTime = System.currentTimeMillis(); 
+				deltaTime = currentTime - lastTime; 
+				update (deltaTime); 
+				lastTime = currentTime; 
+			}
 		}
-		
 	}
 
 	/** stoppt die Ausführung von TimeClock */
@@ -177,17 +177,6 @@ public class TimeClock extends Component implements Runnable {
         return time;
     }
 	
-	
-	
-	/**
-	 * Updated die BoundingBox auf den neuesten Stand.
-	 * @deprecated Wurde in {@link Component#setX(int)} und {@link Component#setY(int)} integriert.
-	 */
-	void updateBounds () {
-//		this.bounds. = this.x;
-//		this.bounds.y = this.y;
-	}
-	
 	/**
 	 * UNUSED
 	 * 
@@ -209,7 +198,7 @@ public class TimeClock extends Component implements Runnable {
 	public synchronized String getTimePrintString () {
 		return timePrintString;
 	}
-
+	
 	/** 
 	 * @return timeLeft - die übrige Zeit für diesen Zug
 	 */
@@ -224,22 +213,32 @@ public class TimeClock extends Component implements Runnable {
 
 	@Override
 	public void draw(Graphics2D g) {
-		g.setColor(Color.BLACK);
-		g.drawRoundRect(getX() - 1,
-				getY() - 1,
-				getWidth(),
-				getHeight(), 0, 0);
-		g.setColor(Color.DARK_GRAY);
+		g.setColor(Color.DARK_GRAY.brighter());
+		g.fillRoundRect(getX() - 2,
+				getY() - 2,
+				getWidth() + 4,
+				getHeight() + 4, 8, 5);
+		g.setColor(Color.LIGHT_GRAY);
 		g.fillRoundRect(getX(),
 				getY(),
 				getWidth(),
-				getHeight(), 0, 0);
+				getHeight(), 30, 12);
 		
-		g.setColor(Color.WHITE);
+		g.setColor(Color.BLACK);
 		g.setFont(STD_FONT);
 		if (this.getTimePrintString() != null) {
-			g.drawString(this.getTimePrintString(), getX(),
-					getY() + 15);
+			g.drawString(this.getTimePrintString(), getX() + 4,
+					getY() + 16);
 		}
+	}
+	
+	/** Iniziert Position abhängig von der Position der Lebensleiste */
+	public void initNewPosition () {
+		setX((int) (GameScreen.getInstance().getWorld().getActivePlayer().getLife().getBoundingLife().x + 
+				Math.round(GameScreen.getInstance().getWorld().getActivePlayer().getLife().getBoundingLife().width / 2.0 - getWidth() / 2.0)) - 2);
+		setY(GameScreen.getInstance().getWorld().getActivePlayer().getLife().getBoundingLife().y - 40);
+		
+		World.timeLifeBox.initNewPosition();
+		Field.infoBox.init();
 	}
 }

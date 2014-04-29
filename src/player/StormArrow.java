@@ -12,10 +12,10 @@ import javax.imageio.ImageIO;
  */
 public class StormArrow extends AbstractArrow {
 	/** Index des Sturmpfeils */
-	public static final int index = 2;
+	public static final int INDEX = 2;
 	
 	/** Name des Pfeils */
-	public static final String name = "Sturmpfeil";
+	public static final String NAME = "Sturmpfeil";
 	
 	public static final Color UNIFIED_COLOR = new Color(102, 237, 199, 75);
 	
@@ -39,7 +39,7 @@ public class StormArrow extends AbstractArrow {
 	}
 	
 	/** Gibt das Bild vom Sturmpfeil zur�ck */
-	public BufferedImage getImage () {
+	public static BufferedImage getImage () {
 		return img_Storm;
 	}
 }

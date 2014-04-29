@@ -4,17 +4,17 @@ import java.util.Date;
 
 public class ItemUseEvent {
 	
-	private Item usedItem;
+	private Arrow usedItem;
 	private Combatant usedBy;
 	private long when;
 	
-	public ItemUseEvent(Item item, Combatant user, long when) {
+	public ItemUseEvent(Arrow item, Combatant user, long when) {
 		usedItem = item;
 		usedBy = user;
 		this.when = when;
 	}
 
-	public Item getUsedItem() {
+	public Arrow getUsedItem() {
 		return usedItem;
 	}
 

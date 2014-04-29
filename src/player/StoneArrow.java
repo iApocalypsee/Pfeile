@@ -12,10 +12,10 @@ import javax.imageio.ImageIO;
  */
 public class StoneArrow extends AbstractArrow {
 	/** Index des Steinpfeils */
-	public static final int index = 3;
+	public static final int INDEX = 3;
 	
 	/** Name des Pfeils */
-	public static final String name = "Steinpfeil";
+	public static final String NAME = "Steinpfeil";
 	
 	public static final Color UNIFIED_COLOR = new Color(66, 57, 42, 75);
 	
@@ -39,7 +39,7 @@ public class StoneArrow extends AbstractArrow {
 	}
 	
 	/** Gibt das Bild des Steinpfeiles zur�ck */
-	public BufferedImage getImage () {
+	public static BufferedImage getImage () {
 		return img_Stone;
 	}
 }

@@ -13,9 +13,9 @@ import javax.imageio.ImageIO;
  */
 public class LightningArrow extends AbstractArrow {
 	/** Index des Blitzpfeils */
-	public static final int index = 5;
+	public static final int INDEX = 5;
 
-	public static final String name = "Blitzpfeil";
+	public static final String NAME = "Blitzpfeil";
 	
 	public static final Color UNIFIED_COLOR = new Color(235, 234, 176, 75);
 
@@ -40,7 +40,7 @@ public class LightningArrow extends AbstractArrow {
 	}
 
 	/** Gibt das Bild vom Blitzpfeils zur�ck */
-	public BufferedImage getImage() {
+	public static BufferedImage getImage() {
 		return img_Lightning;
 	}
 }

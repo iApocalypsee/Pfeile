@@ -2,8 +2,8 @@ package player;
 
 import general.Field;
 import general.Main;
-import general.SpawnEntityInstanceArgs;
 import general.World;
+import gui.ArrowSelectionScreen;
 import gui.GameScreen;
 import gui.Screen;
 
@@ -56,8 +56,8 @@ public class Player extends Entity implements Combatant {
 
 	}
 	
-	public Player(String name, SpawnEntityInstanceArgs e) {
-		super(stdImage, e);
+	public Player(String name, SpawnEntityInstanceArgs instanceArgs) {
+		super(stdImage, instanceArgs);
 		life = new Life(this);
 		setEntityImage(stdImage);
 		setName(name);
@@ -147,10 +147,13 @@ public class Player extends Entity implements Combatant {
 		 * Nur wenn dieser Spieler der eingeloggte Spieler ist und der aktive
 		 * Screen der GameScreen ist wird seine Lebensleiste gezeichnet
 		 */
-		if (GameScreen.getInstance().getWorld().getActivePlayer() == this
-				&& Main.getGameWindow().getScreenManager().getActiveScreen() == Main
+		if (GameScreen.getInstance().getWorld().getActivePlayer() == this &&
+				(Main.getGameWindow().getScreenManager().getActiveScreen() == Main
 						.getGameWindow().getScreenManager().getScreens()
-						.get(GameScreen.SCREEN_INDEX)) {
+						.get(GameScreen.SCREEN_INDEX) || 
+						Main.getGameWindow().getScreenManager().getActiveScreen() == Main
+						.getGameWindow().getScreenManager().getScreens()
+						.get(ArrowSelectionScreen.SCREEN_INDEX))) {
 			drawLife(g);
 		}
 		
@@ -252,19 +255,21 @@ public class Player extends Entity implements Combatant {
 
 	/**
 	 * Lets the combatant attack.
+	 * TODO: Inventory überarbeiten
 	 *
 	 * @param event The event to fire.
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void attack(AttackEvent event) {
-		if(!getInventory().contains(event.getWeapon().getClass())) {
+		if(!getInventory().contains((Class<? extends AbstractArrow>) event.getWeapon().getClass())) {
 			throw new IllegalArgumentException(getName() + " does not have this type in inventory.");
 		} else {
 			Field target = getWorld().getFieldAt(event.getTargetX(), event.getTargetY());
 			// registriert den Angriff auf das Ziel
 			target.registerAttack(event);
 			// entfernt zuletzt das betroffene Item vom Inventar
-			getInventory().removeItem(event.getWeapon().getClass());
+			getInventory().removeArrow((Class<? extends AbstractArrow>) event.getWeapon().getClass());
 			// benutzt das Item und feuert ItemUseEvent an die Listener des Items
 			event.getWeapon().use();
 		}
