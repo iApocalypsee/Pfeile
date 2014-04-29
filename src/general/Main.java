@@ -1,16 +1,21 @@
 package general;
 
-import gui.*;
-import player.Bot;
-import player.Life;
-import player.Player;
-import player.SpawnEntityInstanceArgs;
+import static general.Mechanics.currentTurn;
+import static general.Mechanics.isTurnEnd;
+import static general.Mechanics.turnsPerRound;
+import gui.ArrowSelection;
+import gui.GameScreen;
+import gui.PreWindow;
 
-import java.awt.*;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.util.Properties;
 import java.util.Random;
 
-import static general.Mechanics.*;
+import player.Bot;
+import player.Life;
+import player.Player;
 
 /**
  * Hauptklasse mit der Main-Methode und den abstraktesten Objekten unseres Spiels.

@@ -1,8 +1,10 @@
 package player;
 
 import com.sun.istack.internal.Nullable;
+
 import comp.GUIUpdater;
 import general.*;
+import general.SpawnEntityInstanceArgs;
 import gui.ArrowSelectionScreen;
 import gui.GameScreen;
 
@@ -80,12 +82,12 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 		this(stdImage, instanceArgs);
 	}
 
-	public Entity(final BufferedImage img, SpawnEntityInstanceArgs instanceArgs) {
+	public Entity(final BufferedImage img, SpawnEntityInstanceArgs e) {
 		super(0, 0, 0, 0, GameScreen.getInstance());
 		// writing to instance attributes
-		boardX = instanceArgs.getSpawnX();
-		boardY = instanceArgs.getSpawnY();
-		world = instanceArgs.getWorld();
+		boardX = e.getSpawnX();
+		boardY = e.getSpawnY();
+		world = e.getWorld();
 		image = img;
 		inventory = new Inventory(this);
 		// updates the gui as the last step

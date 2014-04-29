@@ -2,6 +2,7 @@ package player;
 
 import general.Field;
 import general.Main;
+import general.SpawnEntityInstanceArgs;
 import general.World;
 import gui.GameScreen;
 import gui.Screen;
@@ -55,8 +56,8 @@ public class Player extends Entity implements Combatant {
 
 	}
 	
-	public Player(String name, SpawnEntityInstanceArgs instanceArgs) {
-		super(stdImage, instanceArgs);
+	public Player(String name, SpawnEntityInstanceArgs e) {
+		super(stdImage, e);
 		life = new Life(this);
 		setEntityImage(stdImage);
 		setName(name);
