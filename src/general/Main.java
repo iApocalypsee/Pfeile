@@ -21,7 +21,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import player.Bot;
-import player.Life;
 import player.Player;
 import player.SpawnEntityInstanceArgs;
 
@@ -88,8 +87,6 @@ public class Main {
 		return this.timeSinceLastFrame;
 	}
 
-	public String[] input;
-
 	private long timeSinceLastFrame = 0;
 
 	private static PreWindow settingWindow;
@@ -99,8 +96,6 @@ public class Main {
 	private GraphicsDevice graphicsDevice;
 
 	public static TimeClock timeObj;
-	public static Life lifePlayer;
-	public static Life lifeKI;
 
 	private static Thread stopwatchThread;
 	private static Main main;
@@ -157,7 +152,6 @@ public class Main {
 				System.out.println("Free memory  in JVM: " + (int) (Runtime.getRuntime().freeMemory() / (1024 * 1024)) + " MB");
 				System.out.println("Java version: " + sys_props.getProperty("java.version"));
 				System.out.println("OS: " + sys_props.getProperty("os.name") + "; version " + sys_props.getProperty("os.version"));
-				System.out.println("OS architecture: " + sys_props.getProperty("os.arch"));
 				System.out.println("----------------------------------\n");
 			}
 		});
@@ -241,13 +235,13 @@ public class Main {
 	 */
 	@SuppressWarnings("unused")
 	private void endSequenceLoop() {
-		if (lifePlayer.getLife() <= 0 || timeObj.getMilliDeath() < 0) {
-			// Hier einstellen, wie lange Die End-Sequenz Schleife laufen soll
-			doEndSequenceDiedLoop(1000);
-		} else if (lifeKI.getLife() <= 0) {
-			// Hier einstellen, wie lange die End-Sequenz Schleife laufen soll
-			doEndSequenceWonLoop(1000);
-		}
+//		if (lifePlayer.getLife() <= 0 || timeObj.getMilliDeath() < 0) {
+//			// Hier einstellen, wie lange Die End-Sequenz Schleife laufen soll
+//			doEndSequenceDiedLoop(1000);
+//		} else if (lifeKI.getLife() <= 0) {
+//			// Hier einstellen, wie lange die End-Sequenz Schleife laufen soll
+//			doEndSequenceWonLoop(1000);
+//		}
 	}
 
 	/**
@@ -292,15 +286,15 @@ public class Main {
 
 	// Fuegt die Pfeile in das Inventar des Spielers ein 
 	private void doArrowSelectionAddingArrows() {
-		GameScreen s = GameScreen.getInstance();
-
+		
 		for (String selectedArrow : arrowSelectionWindow.selectedArrows) {
-			s.getWorld().getActivePlayer().getInventory().addItem(
-					getArrowSelection().checkString(selectedArrow));
+			if (GameScreen.getInstance().getWorld().getActivePlayer().getInventory().addItem (
+					getArrowSelection().checkString(selectedArrow)) == false) {
+				System.err.println("in Main: doArrowSelectionAddingArrows\n\t"
+						+ "Der Pfeil + " + selectedArrow + " konnte nicht hinzugefügt werden."); 
+			}
+			
 		}
-
-		input = ArrowSelection.convert(arrowSelectionWindow.selectedArrows);
-
 	}
 
 	/**
@@ -450,9 +444,6 @@ public class Main {
 
 		// Feldinitialisierung in einen separaten Thread verschoben...
 
-		lifePlayer = new Life();
-		lifeKI = new Life();
-
 		/* Instanziert 'timeClock' */
 		timeObj = new TimeClock();
 		
@@ -492,7 +483,6 @@ public class Main {
 
 	/**
 	 * Neueste Änderungen an der Erstellung von Spielern unten bei den r.nextInt() Aufrufen.
-	 * r.nextInt(s.getWorld().getSizeX() - 2) + 1 wirft die ganze Zeit Exceptions.
 	 */
 	private void populateWorld() {
 		Future<?>[] threads = futures.toArray(new Future<?>[]{});
@@ -516,10 +506,11 @@ public class Main {
 			s.setWorld(w);
 
 			int x = 0, y = 0;
-			// Kein Randfeld fuer x oder y
+			// Kein Randfeld fuer x oder y: zuerst durch 'getSize() - 2' Randfeld oben / unten verhindern; dann durch + 2 den Wert (0 und 1) verhindern
 			do {
-				x = r.nextInt(s.getWorld().getSizeX());
-				y = r.nextInt(s.getWorld().getSizeY());
+				x = r.nextInt(s.getWorld().getSizeX() - 2) + 2;
+				y = r.nextInt(s.getWorld().getSizeY() - 2) + 2;
+				
 			} while (!WorldFactory.isSpawnPossible(x, y));
 			e.setSpawnX(x);
 			e.setSpawnY(y);
@@ -532,8 +523,8 @@ public class Main {
 			SpawnEntityInstanceArgs bot_e = new SpawnEntityInstanceArgs();
 
 			do {
-				x = r.nextInt(s.getWorld().getSizeX() - 2) + 1;
-				y = r.nextInt(s.getWorld().getSizeY() - 2) + 1;
+				x = r.nextInt(s.getWorld().getSizeX() - 2) + 2;
+				y = r.nextInt(s.getWorld().getSizeY() - 2) + 2;
 			} while (!WorldFactory.isSpawnPossible(x, y));
 			bot_e.setSpawnX(x);
 			bot_e.setSpawnY(y);

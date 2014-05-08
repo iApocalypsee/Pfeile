@@ -29,58 +29,38 @@ public class WorldFactory {
 	 */
 	public static boolean isSpawnPossible(int x, int y) {
 		World ref = GameScreen.getInstance().getWorld();
-
+		
 		// checking all failure conditions first
 		if (!ref.isPositionValid(x, y)) {
 			throw new IllegalArgumentException("Invalid coordinates: (" + x + "|" + y + ")");
 		}
+		
 		if (!ref.getFieldAt(x, y).isAccessable()) {
 			return false;
 		}
-		// check if the coordinates are not making the edge of the map
-		// if at the edge, I would work with null objects
-		if (!(ref.isPositionValid(x - 1, y) && ref.isPositionValid(x, y - 1) && ref.isPositionValid(x + 1, y) && ref.isPositionValid(x, y + 1))) {
-			return false;
-		}
+		
+		// FIXME There is no use in checking it again
+		// It's already checked by isPositionValid(x, y) at the beginning and (x, y) cannot be 0 or sizeX/sizeY because Of r.nextInt(...) in Main
+		
+//		// check if the coordinates are not making the edge of the map
+//		// if at the edge, I would work with null objects
+//		if (!(ref.isPositionValid(x - 1, y) && ref.isPositionValid(x, y - 1) && ref.isPositionValid(x + 1, y) && ref.isPositionValid(x, y + 1))) {
+//			return false;
+//		}
+		
 		// check if no player is standing on the tile
 		if(!ref.getFieldAt(x, y).getEntities(Player.class).isEmpty()) {
 			return false;
 		}
 
 		// check if at least one player's neighbor tile is accessable aswell
-		// TODO Is this bugfree?
-		if(!(ref.getFieldAt(x - 1, y).isAccessable() || ref.getFieldAt(x, y - 1).isAccessable() || ref.getFieldAt(x + 1, y).isAccessable() || ref.getFieldAt(x, y + 1).isAccessable())) {
+		if(!(ref.getFieldAt(x - 1, y).isAccessable() || 
+				ref.getFieldAt(x, y - 1).isAccessable() || 
+				ref.getFieldAt(x + 1, y).isAccessable() || 
+				ref.getFieldAt(x, y + 1).isAccessable())) {
 			return false;
 		}
-
 		return true;
-
-		/*
-		 * OLD CODE
-		 *
-		// Kann das Feld auf dem der Spieler / Bot spawnen soll betreten werden?
-		if (ref.getFieldAt(x, y).isAccessable()) {
-			// Kann der Spieler / Bot auf mindestens einem Feld weitergehen?
-			if (ref.getFieldAt(x - 1, y).isAccessable()
-					|| ref.getFieldAt(x, y - 1).isAccessable()
-					|| ref.getFieldAt(x + 1, y).isAccessable()
-					|| ref.getFieldAt(x, y + 1).isAccessable()) {
-
-				// Spieler und Bot dürfen nicht auf dem selben Feld stehen
-				if (ref.getActivePlayer() != null) {
-					if (ref.getActivePlayer().getBoardX() == x &&
-							ref.getActivePlayer().getBoardY() == y) {
-						return false;
-					} else
-						return true;
-				} else
-					// Wenn kein Spieler spieler da ist, dann muss es auch true sein
-					return true;
-			} else
-				return false;
-		} else
-			return false;
-		*/
 	}
 
 }

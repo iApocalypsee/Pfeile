@@ -1,5 +1,7 @@
 package player;
 
+import general.Mechanics;
+
 import java.util.EmptyStackException;
 import java.util.LinkedList;
 import java.util.Stack;
@@ -9,7 +11,7 @@ class InventoryEntry<T extends Item> {
 	/**
 	 * Die Standard-Anzahl der maximalen GrÃ¶ÃŸe des Stacks.
 	 */
-	private static final int DEFAULT_MAX_STACK = 10;
+	private static final int DEFAULT_MAX_STACK = Mechanics.arrowNumberPreSet;
 	// FIXME Wenn das die Gröüe von Inventory.DEFAULT_INVENTORY_SIZE sein muss, dann müsste es Mechanics.arrowNumberPreSet sein.
 	
 	/**

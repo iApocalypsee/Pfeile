@@ -206,7 +206,7 @@ public class World implements Drawable, GUIUpdater {
 	}
 
 	/**
-	 * Returns the size of the world in x-direction.
+	 * Returns the size of the world in x-direction. (Nicht 0-basiert)
 	 *
 	 * @return The size of the world in x-direction.
 	 */
@@ -215,7 +215,7 @@ public class World implements Drawable, GUIUpdater {
 	}
 
 	/**
-	 * Returns the size of the world in y-direction.
+	 * Returns the size of the world in y-direction. (Nicht 0-basiert)
 	 *
 	 * @return The size of the world in y-direction.
 	 */
@@ -239,8 +239,7 @@ public class World implements Drawable, GUIUpdater {
 	 * @return <code>true</code> if the specified position can be mapped to a field
 	 */
 	public boolean isPositionValid(int x, int y) {
-
-		return x >= 0 && x < sizeX && y >= 0 && y < sizeY;
+		return x > 0 && x < sizeX && y > 0 && y < sizeY;
 	}
 
 

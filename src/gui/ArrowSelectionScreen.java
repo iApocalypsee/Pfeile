@@ -169,7 +169,6 @@ public class ArrowSelectionScreen extends Screen {
 			public void mouseReleased(MouseEvent e) {
 				Inventory inv = GameScreen.getInstance().getWorld().getActivePlayer().getInventory();
 				inv.addItem(selectedIndex);
-				updateInventoryList();
 				closeConfirmDialogQuestion();
 			}
 		});
@@ -367,6 +366,7 @@ public class ArrowSelectionScreen extends Screen {
 
 	/**
 	 * Updates the inventory list of the player registered in the client as the "active" player.
+	 * Is already used by Inventory. So there might be no need in using <code> updateInventoryList </code>
 	 */
 	public void updateInventoryList () {
 		Inventory inventory = GameScreen.getInstance().getWorld().getActivePlayer().getInventory();

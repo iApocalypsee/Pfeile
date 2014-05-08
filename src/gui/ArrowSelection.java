@@ -106,6 +106,7 @@ public class ArrowSelection extends JFrame {
 		selectedArrows.add("<keine Pfeile>");
 
 		arrowListSelected.setListData(convert(selectedArrows));
+		// TODO Scrolling through the arrows
 //		scrollPaneSelected = new JScrollPane();
 		// arrowListSelected.add(scrollPaneSelected);
 		// scrollPaneSelected = new JScrollPane (arrowListSelected);
@@ -279,7 +280,7 @@ public class ArrowSelection extends JFrame {
 						|| Mechanics.arrowNumberFreeSet == -1) {
 					couldBeReady = false;
 
-					warningMessage = "Unmï¿½gliche Pfeilanzahl!";
+					warningMessage = "Unmögliche Pfeilanzahl!";
 
 					JOptionPane.showMessageDialog(ArrowSelection.this,
 							warningMessage, "Warning", 1);
@@ -302,9 +303,8 @@ public class ArrowSelection extends JFrame {
 							warningMessage, "Warning",
 							JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
 						couldBeReady = false;
-					}
+					} 
 				}
-
 			}
 
 			if(couldBeReady == true) {
@@ -313,6 +313,13 @@ public class ArrowSelection extends JFrame {
 					Main.getMain().notify();
 				}
 				*/
+				
+				// nach Fehlern kontrolieren (d.h. zum Beispiel Pfeil wie <Übrige Pfeile auswählen>)
+				for (int i = 0; i < selectedArrows.size(); i++) {
+					if (checkString(selectedArrows.get(i)) == null) {
+						selectedArrows.remove(i);
+					}
+				}
 				
 				dispose();
 			}

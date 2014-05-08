@@ -2,6 +2,7 @@ package player;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import general.Mechanics;
+import gui.ArrowSelectionScreen;
 
 import java.util.LinkedList;
 
@@ -49,6 +50,7 @@ public class Inventory {
 	 * @param i Das Item, das hinzugefügt werden soll.
 	 * @return <code>true</code>, wenn das Item hinzugefügt werden konnte.
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean addItem(Item i) {
 		// first of all, a sort of checks
 		if (i == null) {
@@ -56,14 +58,14 @@ public class Inventory {
 			System.err.println("\ti == null");
 			return false;
 		}
-		if(getRemainingSpace() == 0) return false;
+		if(getRemainingSpace() == 0) 
+			return false;
 
 		for (InventoryEntry e : items) {
 			if(e.peek().getClass() == i.getClass()) {
-				if(e.hasRemainingSpace()) {
-					e.push(i);
-					return true;
-				}
+				e.push(i);
+				ArrowSelectionScreen.getInstance().updateInventoryList();
+				return true;
 			}
 		}
 
@@ -71,6 +73,7 @@ public class Inventory {
 		newEntry.resize(i.getMaximumStackCount());
 		newEntry.push(i);
 		items.add(newEntry);
+		ArrowSelectionScreen.getInstance().updateInventoryList();
 		return true;
 	}
 
@@ -117,6 +120,7 @@ public class Inventory {
 				break;
 			}
 		}
+		ArrowSelectionScreen.getInstance().updateInventoryList();
 	}
 	
 	public boolean contains(Class<? extends Item> i) {
