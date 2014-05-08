@@ -39,8 +39,6 @@ public class ArrowSelection extends JFrame {
 
 	private static final String REMAINING_ARROW = new String("Übrige Pfeile: ");
 
-	private static boolean isReady = false;
-
 	private JLabel remainingArrows;
 
 	private JPanel listsPanel;
@@ -309,8 +307,6 @@ public class ArrowSelection extends JFrame {
 
 			}
 
-			isReady = couldBeReady;
-			
 			if(couldBeReady == true) {
 				/* Multithreaded now.
 				synchronized(Main.getMain()) {

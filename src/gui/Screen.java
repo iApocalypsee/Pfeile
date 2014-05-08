@@ -12,11 +12,9 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 import comp.Component;
 import comp.Component.ComponentStatus;
@@ -140,6 +138,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * @return A copy of all components that screen currently holds. Notice that the
 	 * components won't ge updated.
 	 */
+	@SuppressWarnings("unchecked")
 	synchronized LinkedList<Component> getComponents() {
 		return (LinkedList<Component>) components.clone();
 	}

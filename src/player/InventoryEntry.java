@@ -10,6 +10,7 @@ class InventoryEntry<T extends Item> {
 	 * Die Standard-Anzahl der maximalen GrÃ¶ÃŸe des Stacks.
 	 */
 	private static final int DEFAULT_MAX_STACK = 10;
+	// FIXME Wenn das die Gröüe von Inventory.DEFAULT_INVENTORY_SIZE sein muss, dann müsste es Mechanics.arrowNumberPreSet sein.
 	
 	/**
 	 * Die einzelnen Items, die organisiert werden.

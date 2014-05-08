@@ -1,6 +1,5 @@
 package gui;
 
-import general.Main;
 import general.Mechanics;
 
 import java.awt.Dimension;

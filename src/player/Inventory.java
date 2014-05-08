@@ -1,6 +1,7 @@
 package player;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import general.Mechanics;
 
 import java.util.LinkedList;
 
@@ -14,10 +15,10 @@ public class Inventory {
 	/**
 	 * Die Standardgröße für das Inventar.
 	 */
-	private static final int DEFAULT_INVENTORY_SIZE = 10;
-	//                                                Mechanics.arrowNumberPreSet _+1_
-	// Das "+1" macht Sachen nur noch komplizierter und schwerer zu debuggen.
-	
+	private static final int DEFAULT_INVENTORY_SIZE = Mechanics.arrowNumberPreSet;
+	//                                                Mechanics.arrowNumberPreSet + 1;
+	// FIXME Das "+1" macht Sachen nur noch komplizierter und schwerer zu debuggen. 
+	// Allerdings muss es minderstens Mechanics.arrowNumberPreSet sein, da sonst vieleicht das Grundinventar nicht hineinpassen w�rde
 	/**
 	 * Die Einträge in der Inventory.
 	 */

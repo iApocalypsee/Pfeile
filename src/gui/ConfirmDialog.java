@@ -1,8 +1,6 @@
 package gui;
 
-import comp.*;
 import comp.Button;
-import comp.Component;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;

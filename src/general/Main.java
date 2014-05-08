@@ -239,6 +239,7 @@ public class Main {
 	 * Gewonnen: doEndSequenceWonLoop (Aktuell 1000 MilliSekunden lang);
 	 * Verloren: doEndSequenceDiedLoop (Aktuell 1000 MilliSekunden lang)
 	 */
+	@SuppressWarnings("unused")
 	private void endSequenceLoop() {
 		if (lifePlayer.getLife() <= 0 || timeObj.getMilliDeath() < 0) {
 			// Hier einstellen, wie lange Die End-Sequenz Schleife laufen soll
@@ -271,6 +272,7 @@ public class Main {
 	/**
 	 * Berechnung der Endsequence: Verloren Aufruf durch: endSequenceLoop()
 	 */
+	@SuppressWarnings("deprecation")
 	private void doEndSequenceDiedLoop(long milliSecDied) {
 
 		long startTimeEndSequence = System.currentTimeMillis();
@@ -305,7 +307,7 @@ public class Main {
 	 * GETTER: PreWindow
 	 */
 	public PreWindow getPreWindow() {
-		return this.settingWindow;
+		return Main.settingWindow;
 	}
 
 	/**

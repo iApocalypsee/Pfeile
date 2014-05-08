@@ -166,6 +166,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * @return A collection with all of the entities standing on this field currently.
 	 */
 	public Collection<Entity> getEntities() {
+		@SuppressWarnings("unchecked")
 		Collection<Entity> collection = ((HashMap<String, Entity>) (entities.clone())).values();
 		return Collections.unmodifiableCollection(collection);
 	}
@@ -176,6 +177,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * @return The entities of the specified type standing on the field.
 	 */
 	public Collection<Entity> getEntities(Class<? extends Entity> clazz) {
+		@SuppressWarnings("unchecked")
 		Collection<Entity> collection = ((HashMap<String, Entity>) (entities.clone())).values();
 		Collection<Entity> locentities = new LinkedList<Entity>();
 		for(Entity entity : collection) {
@@ -249,30 +251,23 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 //			g.fillRect(getX(), getY(), getWidth(), getHeight());
 //		}
 
+		// TODO Sobald die Maus-Position einmal gezeichnet worden ist, braucht es all das nicht mehr --> Performance Verbesserung
+		// TODO Wenn zum zweiten Mal in ArrowSelectionScreen gewechselt worden ist, dann wird hier nicht mehr richtig gezeichnet
 		// check for mouse position
 		if(getBounds().contains(Screen.getMousePosition())) {
 
 			if(world.getActivePlayer().hasTurn()) {
-
 				if(world.getActivePlayer().isAttemptingShoot()) {
-
 					// setzt die Farbe, je nachdem, ob der Spieler auf dem betreffenden Feld steht
 					if(world.getActivePlayer().getStandingOn() != this) {
 						g.setColor(shoot_attempt);
 					} else {
 						g.setColor(invalid_shoot_field);
 					}
-
-
-
 				} else {
-
 					g.setColor(background);
-
 				}
-
 				g.fillRect(getX(), getY(), getWidth(), getHeight());
-
 			}
 
 			if(getBackingScreen().getManager().getActiveScreen() == GameScreen.getInstance()) {

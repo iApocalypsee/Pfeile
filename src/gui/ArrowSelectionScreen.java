@@ -282,8 +282,6 @@ public class ArrowSelectionScreen extends Screen {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			
-			Inventory inventory = GameScreen.getInstance().getWorld().getActivePlayer().getInventory();
-			
 			if (fireArrowButton.getBounds().contains(e.getPoint())) {
 				openConfirmQuestion ("Wollen Sie einen Feuerpfeil hinzufügen?"); 
 				selectedIndex = FireArrow.class;
@@ -325,11 +323,11 @@ public class ArrowSelectionScreen extends Screen {
 			}
 			
 			if (confirmDialog.isVisible()){
-				if (confirmDialog.getBoundingBoxOkButton().contains(e.getPoint())) {
+				if (confirmDialog.getCancel().getSimplifiedBounds().contains(e.getPoint())) {
 					System.err.println("Could not add arrow to inventory: arrow index " + selectedIndex);
 					closeConfirmDialogQuestion();
 				}
-				if (confirmDialog.getBoundingBoxCancelButton().contains(e.getPoint())) {
+				if (confirmDialog.getOk().getSimplifiedBounds().contains(e.getPoint())) {
 					closeConfirmDialogQuestion();
 				}
 			}
