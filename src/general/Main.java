@@ -153,8 +153,8 @@ public class Main {
 				Properties sys_props = System.getProperties();
 
 				System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
-				System.out.println("Total memory in JVM: " + Runtime.getRuntime().totalMemory() + " bytes");
-				System.out.println("Free memory: " + Runtime.getRuntime().freeMemory() + " bytes");
+				System.out.println("Total memory in JVM: " + (int) (Runtime.getRuntime().totalMemory() / (1024 * 1024)) + " MB");
+				System.out.println("Free memory  in JVM: " + (int) (Runtime.getRuntime().freeMemory() / (1024 * 1024)) + " MB");
 				System.out.println("Java version: " + sys_props.getProperty("java.version"));
 				System.out.println("OS: " + sys_props.getProperty("os.name") + "; version " + sys_props.getProperty("os.version"));
 				System.out.println("OS architecture: " + sys_props.getProperty("os.arch"));
@@ -169,10 +169,12 @@ public class Main {
 
 	// Hier laeuft das Spiel nach allen Insizialisierungen 
 	private void runGame() {
-
+		
 		// assign the last frame time
 		lastFrame = System.currentTimeMillis();
 
+		timeObj.start();
+		
 		while (running) {
 			render();
 		}

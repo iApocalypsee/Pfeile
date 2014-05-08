@@ -25,22 +25,19 @@ public class TimeClock extends Component implements Runnable {
 	
 	// VARIABLEN - INITIALISIERUNG
 	
-	/** Initialisierungszeitpunkt */
-	private long timeInit = System.currentTimeMillis();
-	
 	/** Variable, ob die Zeit abläuft: 
 	 * true: Zeit läuft ab
 	 * false: TimeClock ist gestoppt */
-	private boolean isRunning = false;
+	private boolean isRunning;
 	
 	/** übrige Zeit (in Millisekunden) bis der Timmer abläuft */
 	private long timeLeft = Mechanics.timePerPlay; 
 	
+	/** letzter Zeitpunkt der Berechnungen */
+	private long lastTime;
+	
 	/** aktuelle Zeit */ 
 	private long timeCurrent = 0;
-	
-	/** maximal möglich Zeit für einen Zug */
-	private long timeMax = Mechanics.timePerPlay;
 	
 	/** String, der am Bildschirm die Zeit angeben soll */
 	private String timePrintString = null;
@@ -54,33 +51,22 @@ public class TimeClock extends Component implements Runnable {
 		stop();
 	}
 	
-	
-	// METHODEN 
-	/** updated die aktuelle Zeit; Aufruf i.d.R. durch die Main-Schleife 
-	 * updted 
-	 * @param timeSinceLastFrame (float) */
-	protected synchronized void update (float timeSinceLastFrame) {
-		if (isRunning == true) {
-			this.timeCurrent = (long) (timeCurrent + timeSinceLastFrame);
-			timePrintString = timeFormatter (timeMax - timeCurrent);
-		}
-	}
-	
 	/** Übernimmt timeSinceLastFrame + Aufruf durch 'Main'
 	 *  .... updated die aktuelle Zeit; übernimmt Thread */
 	@Override
 	public void run() {
-		
-		long currentTime = System.currentTimeMillis(); 
-		long lastTime = System.currentTimeMillis(); 
-		long deltaTime = System.currentTimeMillis(); 
-		
+		lastTime = System.currentTimeMillis(); 
+		long sumTime = 0;
 		while (true) {
-			if (isRunning() == true) {
-				currentTime = System.currentTimeMillis(); 
-				deltaTime = currentTime - lastTime; 
-				update (deltaTime); 
-				lastTime = currentTime; 
+			if (isRunning()) {
+				timeCurrent = System.currentTimeMillis(); 
+				sumTime = sumTime + (timeCurrent - lastTime);
+				timePrintString = timeFormatter (Mechanics.timePerPlay - sumTime);
+				lastTime = timeCurrent;
+			} else {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {e.printStackTrace();}
 			}
 		}
 	}
@@ -108,8 +94,8 @@ public class TimeClock extends Component implements Runnable {
         if(millisecTime < 0){  //überprüft ob die Zeit negativ ist
             //throw new RuntimeException("Negativ time value provided");
         	time = "00:00:000";
-        } else if (millisecTime > 357539999){   //überprüft ob das Limit des Formates nicht überschreitet
-            throw new RuntimeException("Time value exceeds allowed format");
+//        } else if (millisecTime > 357539999){   //überprüft ob das Limit des Formates nicht überschreitet
+//            throw new RuntimeException("Time value exceeds allowed format");
         } else {
           long min = millisecTime / (60 * 1000);
           long sec = (millisecTime - min * 60 * 1000) / 1000;
@@ -119,7 +105,7 @@ public class TimeClock extends Component implements Runnable {
         	  time = "00";
           else if (min < 10) 
         	  time = "0" + min;
-          else if (min >= 10)
+          else 
         	  time = "" + min;
           
           time = time + ":";
@@ -128,7 +114,7 @@ public class TimeClock extends Component implements Runnable {
         	  time = time + "00";
           else if (sec < 10)
         	  time = time + "0" + sec;
-          else if (sec >= 10) 
+          else 
         	  time = time + sec;
           
           time = time + ":";
@@ -187,7 +173,7 @@ public class TimeClock extends Component implements Runnable {
 	 */
 	public synchronized boolean isEnd () {
 		
-		if (this.timeMax - this.timeCurrent < 0) {
+		if (Mechanics.timePerPlay - this.timeCurrent < 0) {
 			return true;
 		} else 
 			return false;
@@ -203,7 +189,7 @@ public class TimeClock extends Component implements Runnable {
 	 * @return timeLeft - die übrige Zeit für diesen Zug
 	 */
 	public synchronized long getMilliDeath() {
-		return timeMax - timeCurrent;
+		return Mechanics.timePerPlay - timeCurrent;
 	}
 	
 	public boolean isRunning() {
@@ -229,7 +215,8 @@ public class TimeClock extends Component implements Runnable {
 		if (this.getTimePrintString() != null) {
 			g.drawString(this.getTimePrintString(), getX() + 4,
 					getY() + 16);
-		}
+		} else
+			System.err.println("String 'getTimePrintString()' == null; caused by 'TimeClock.draw(Graphics2D g)'");
 	}
 	
 	/** Iniziert Position abhängig von der Position der Lebensleiste */
