@@ -14,8 +14,6 @@ public class Life {
 	private int liferegen;
 	private int life;
 	private int relativeLife = 100;
-	@SuppressWarnings("unused")
-	private Player player;
 	private Rectangle boundingLife;;
 	private int PosX;
 	private int PosY;
@@ -24,12 +22,11 @@ public class Life {
 	
 	/** KONSTRUCKTOR: zuerst allgemein: bei 'type = TYPE_PLAYER': Initialieserung für speziel für Spieler 
 	 * @version 1.2 */
-	public Life (Player player) {
+	public Life () {
 		
 		this.lifemax = Mechanics.lifeMax;
 		this.liferegen = Mechanics.lifeRegeneration; 
 		life = lifemax;
-		this.player = player;
 		
 		/* Konstrucktoraufruf für den Player */
 //		if(!player.isBot()) {
@@ -57,14 +54,6 @@ public class Life {
 		relativeLife = Math.round((life * 100) / lifemax );
 		boundingLife.width = Math.round(relativeLife * 1.25f); 
 	}
-
-	
-	/** UNUSED
-	 * updatet das Rectangle für die GUI-Darstellung */ 
-	public void updateLifeGUI() {
-		
-	}
-	
 	
 	/** GETTER: gibt das Rectangle 'boundingLife' zurück; z.B. für GUI-Darstellung notwendig (v.a. da auf ein BufferedImage verzichtet wurde) */
 	public Rectangle getBoundingLife () {
@@ -89,4 +78,3 @@ public class Life {
 		this.boundingLife.width = Math.round(relativeLife * 1.25f);
 	} 
 }
-

@@ -20,7 +20,7 @@ import java.awt.image.BufferStrategy;
  */
 public class GameWindow extends JFrame {
 
-	private static final long serialVersionUID = 7012286076598906440L;
+	private static final long serialVersionUID = 1L;
 
 	private BufferStrategy strat;
 
@@ -83,6 +83,7 @@ public class GameWindow extends JFrame {
 		GameScreen.getInstance();
 		new PauseScreen();
 		ArrowSelectionScreen.getInstance();
+		new AimSelectionScreen();
 		screenManager.setActiveScreen(GameScreen.SCREEN_INDEX);
 	}
 

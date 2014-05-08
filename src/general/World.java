@@ -345,7 +345,8 @@ public class World implements Drawable, GUIUpdater {
 	}
 
 	/**
-	 * Zeichnet die Welt
+	 * Zeichnet die Welt: 
+	 * Felder, Spieler, Lebensleiste (mit Box), FieldInfoBox und TimeClock
 	 */
 	@Override
 	public void draw(Graphics2D g) {
@@ -362,6 +363,22 @@ public class World implements Drawable, GUIUpdater {
 		}
 
 		Field.infoBox.draw(g);
+		
+		Main.timeObj.draw(g);
+	}
+	
+	/** Draws the World: only Fields and Players will be drawn. 
+	 * @see draw
+	 */
+	public void drawReduced(Graphics2D g) {
+		for (Field[] fields1 : fields) {
+			for (Field f : fields1) {
+				f.draw(g);
+			}
+			for (Player p : turnManager.players) {
+				p.draw(g);
+			}
+		}
 	}
 
 	@Override

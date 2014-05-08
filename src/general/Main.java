@@ -450,8 +450,8 @@ public class Main {
 
 		// Feldinitialisierung in einen separaten Thread verschoben...
 
-		lifePlayer = new Life(null);
-		lifeKI = new Life(null);
+		lifePlayer = new Life();
+		lifeKI = new Life();
 
 		/* Instanziert 'timeClock' */
 		timeObj = new TimeClock();

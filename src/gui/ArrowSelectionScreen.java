@@ -190,7 +190,6 @@ public class ArrowSelectionScreen extends Screen {
 	public void draw(Graphics2D g) {
 		super.draw(g);
 		GameScreen.getInstance().getWorld().draw(g); 
-		Main.timeObj.draw(g);
 		
 		g.setColor(TRANSPARENT_BACKGROUND);
 		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
@@ -320,6 +319,7 @@ public class ArrowSelectionScreen extends Screen {
 //				onLeavingScreen(this, AimSelectionScreen.SCREEN_INDEX);
 				// TODO Bestätigen
 				// TODO dann irgendwie die Auswahl für das Zielfeld treffen: AimSelectionScreen
+				onLeavingScreen(this, AimSelectionScreen.SCREEN_INDEX);
 			}
 			
 			if (confirmDialog.isVisible()){

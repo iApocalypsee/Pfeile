@@ -36,6 +36,10 @@ public final class ScreenManager implements Drawable {
 		return activeScreen;
 	}
 	
+	public int getActiveScreenIndex() {
+		return activeScreen.SCREEN_INDEX;
+	}
+	
 	// sp�ter DAS HIER AUSKOMMENTIEREN
 	static GameScreen ref_gameScreen;
 

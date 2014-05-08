@@ -67,7 +67,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	/**
 	 * The info box displaying some informations about the field currently pointed at.
 	 */
-	static FieldInfoBox infoBox = new FieldInfoBox();
+	public static FieldInfoBox infoBox = new FieldInfoBox();
 
 	/** Is the field accesible? 
 	 * sea, jungle, dessert and snow are not accessible

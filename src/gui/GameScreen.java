@@ -169,7 +169,6 @@ public class GameScreen extends Screen {
 		endTurnButton.draw(g);
 		shootButton.draw(g);
 		toggleStopwatch.draw(g);
-		Main.timeObj.draw(g);
 	}
 
 	@Override

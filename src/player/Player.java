@@ -3,6 +3,7 @@ package player;
 import general.Field;
 import general.Main;
 import general.World;
+import gui.AimSelectionScreen;
 import gui.ArrowSelectionScreen;
 import gui.GameScreen;
 import gui.Screen;
@@ -58,7 +59,7 @@ public class Player extends Entity implements Combatant {
 	
 	public Player(String name, SpawnEntityInstanceArgs instanceArgs) {
 		super(stdImage, instanceArgs);
-		life = new Life(this);
+		life = new Life();
 		setEntityImage(stdImage);
 		setName(name);
 	}
@@ -147,13 +148,8 @@ public class Player extends Entity implements Combatant {
 		 * Nur wenn dieser Spieler der eingeloggte Spieler ist und der aktive
 		 * Screen der GameScreen ist wird seine Lebensleiste gezeichnet
 		 */
-		if (GameScreen.getInstance().getWorld().getActivePlayer() == this &&
-				(Main.getGameWindow().getScreenManager().getActiveScreen() == Main
-						.getGameWindow().getScreenManager().getScreens()
-						.get(GameScreen.SCREEN_INDEX) || 
-						Main.getGameWindow().getScreenManager().getActiveScreen() == Main
-						.getGameWindow().getScreenManager().getScreens()
-						.get(ArrowSelectionScreen.SCREEN_INDEX))) {
+		if (GameScreen.getInstance().getWorld().getActivePlayer() == this && 
+				GameScreen.getInstance().getManager().getActiveScreenIndex() != AimSelectionScreen.SCREEN_INDEX) {
 			drawLife(g);
 		}
 		
@@ -181,7 +177,7 @@ public class Player extends Entity implements Combatant {
 	 * 
 	 * @param g Das Graphics-Objekt.
 	 */
-	private void drawLife(Graphics2D g) {
+	public void drawLife(Graphics2D g) {
 		// Lebensleiste
 		// Rechteck + Hintergrund für Lebensleiste
 		g.setColor(Color.RED);
