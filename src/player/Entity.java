@@ -1,8 +1,10 @@
 package player;
 
 import com.sun.istack.internal.Nullable;
+
 import comp.GUIUpdater;
 import general.*;
+import general.field.Field;
 import gui.ArrowSelectionScreen;
 import gui.GameScreen;
 
@@ -19,6 +21,11 @@ import java.util.LinkedList;
 import comp.Component;
 
 import javax.imageio.ImageIO;
+
+import player.weapon.AttackContainer;
+import player.weapon.AttackEvent;
+import player.weapon.AttackQueue;
+import player.weapon.Weapon;
 
 /**
  * Represents an entity moving and "living" on the world. <p></p>
@@ -88,7 +95,7 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 		world = instanceArgs.getWorld();
 		image = img;
 		inventory = new Inventory(this);
-		// updates the gui as the last step
+		// updates the com.github.pfeile.gui as the last step
 		updateGUI();
 		// updates width and height
 		setWidth(image.getWidth());

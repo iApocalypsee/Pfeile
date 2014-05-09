@@ -1,18 +1,16 @@
 package player;
 
-import general.Mechanics;
-
 import java.util.EmptyStackException;
 import java.util.LinkedList;
-import java.util.Stack;
+
+import player.weapon.Item;
 
 class InventoryEntry<T extends Item> {
 	
 	/**
-	 * Die Standard-Anzahl der maximalen GrÃ¶ÃŸe des Stacks.
+	 * Die Standard-Anzahl der maximalen Größe des Stacks.
 	 */
-	private static final int DEFAULT_MAX_STACK = Mechanics.arrowNumberPreSet;
-	// FIXME Wenn das die Gröüe von Inventory.DEFAULT_INVENTORY_SIZE sein muss, dann müsste es Mechanics.arrowNumberPreSet sein.
+	private static final int DEFAULT_MAX_STACK = general.Mechanics.arrowNumberPreSet;
 	
 	/**
 	 * Die einzelnen Items, die organisiert werden.
@@ -20,7 +18,7 @@ class InventoryEntry<T extends Item> {
 	private LinkedList<T> items = new LinkedList<T>();
 	
 	/**
-	 * Die maximale Anzahl vom Item, die auf dem Stack liegen kÃ¶nnen.
+	 * Die maximale Anzahl vom Item, die auf dem Stack liegen können.
 	 * @see InventoryEntry#DEFAULT_MAX_STACK
 	 */
 	private int maxStack = DEFAULT_MAX_STACK;
@@ -35,6 +33,7 @@ class InventoryEntry<T extends Item> {
 	public boolean push(T item) {
 		if(hasRemainingSpace()) {
 			items.add(item);
+			gui.ArrowSelectionScreen.getInstance().updateInventoryList();
 			return true;
 		} else {
 			return false;
@@ -42,9 +41,9 @@ class InventoryEntry<T extends Item> {
 	}
 	
 	/**
-	 * LÃ¶scht ein Item vom Stack und gibt dieses als RÃ¼ckgabewert
-	 * dieser Funktion zurÃ¼ck. Diese Funktion kann auch null
-	 * zurÃ¼ckgeben, wenn der Stack leer ist. In diesem Fall
+	 * Löscht ein Item vom Stack und gibt dieses als Rückgabewert
+	 * dieser Funktion zurück. Diese Funktion kann auch null
+	 * zurückgeben, wenn der Stack leer ist. In diesem Fall
 	 * sollte das {@link InventoryEntry}-Objekt gar nicht mehr
 	 * existieren.
 	 * @return Ein Item vom definierten Typ, oder null, wenn der
@@ -67,8 +66,8 @@ class InventoryEntry<T extends Item> {
 	}
 	
 	/**
-	 * Setzt die Anzahl der maximal aufnehmbaren EintrÃ¤ge neu.
-	 * TODO Entfernt noch keine Items, die dann Ã¼berflÃ¼ssig wÃ¤ren.
+	 * Setzt die Anzahl der maximal aufnehmbaren Einträge neu.
+	 * TODO Entfernt noch keine Items, die dann überflüssig wären.
 	 * @param maxStack Neue Anzahl.
 	 */
 	public void resize(int maxStack) {
@@ -76,15 +75,15 @@ class InventoryEntry<T extends Item> {
 	}
 	
 	/**
-	 * Gibt den noch verfÃ¼gbaren Platz im Eintrag zurÃ¼ck.
-	 * @return Den noch verfÃ¼gbaren Platz im Eintrag.
+	 * Gibt den noch verfügbaren Platz im Eintrag zurück.
+	 * @return Den noch verfügbaren Platz im Eintrag.
 	 */
 	public int getRemainingSpace() {
 		return maxStack - items.size();
 	}
 	
 	/**
-	 * Sagt aus, ob dieser Inventareintrag noch Platz fÃ¼r weitere
+	 * Sagt aus, ob dieser Inventareintrag noch Platz für weitere
 	 * Items dieses Typs hat.
 	 * @return
 	 */
@@ -93,8 +92,8 @@ class InventoryEntry<T extends Item> {
 	}
 	
 	/**
-	 * Gibt die Anzahl der Items zurÃ¼ck, die sich in diesem Eintrag befinden.
-	 * @return
+	 * Gibt die Anzahl der Items zurück, die sich in diesem Eintrag befinden.
+	 * @return items.size()
 	 */
 	public int getItemCount() {
 		return items.size();

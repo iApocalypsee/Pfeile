@@ -1,10 +1,8 @@
 package player;
 
-import general.Field;
-import general.Main;
 import general.World;
+import general.field.Field;
 import gui.AimSelectionScreen;
-import gui.ArrowSelectionScreen;
 import gui.GameScreen;
 import gui.Screen;
 
@@ -14,6 +12,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+
+import player.weapon.AbstractArrow;
+import player.weapon.AttackEvent;
 
 /**
  * Repräsentiert einen Spieler auf der Karte.
@@ -212,7 +213,7 @@ public class Player extends Entity implements Combatant {
 		// Prozent
 //		Font font_lifePercent = new Font("Mangal", Font.ITALIC, 14);
 		g.setColor(Color.WHITE);
-		g.setFont(STD_FONT);
+		g.setFont(comp.Component.STD_FONT);
 		if (life.getRelativeLife() >= 10)
 			g.drawString(life.getRelativeLife() + "%", percentPosX, percentPosY);
 		else
@@ -233,7 +234,7 @@ public class Player extends Entity implements Combatant {
 		// Prozent
 //		Font font_lifeMax = new Font("Mangal", Font.ITALIC, 14);
 		g.setColor(Color.WHITE);
-		g.setFont(STD_FONT);
+		g.setFont(comp.Component.STD_FONT);
 		if (life.getLife() >= 100)
 			g.drawString(life.getLife() + " / " + life.getMaxLife(), lifePosX,
 					lifePosY);
@@ -272,8 +273,8 @@ public class Player extends Entity implements Combatant {
 	}
 
 	/**
-	 * Returns <code>true</code> if the player has permission to do game-relevant actions.
-	 * @return <code>true</code> if the player has turn.
+	 * Returns <code>true</code> if the com.github.pfeile.player has permission to do game-relevant actions.
+	 * @return <code>true</code> if the com.github.pfeile.player has turn.
 	 */
 	public boolean hasTurn() {
 		return getWorld().getTurnPlayer() == this;

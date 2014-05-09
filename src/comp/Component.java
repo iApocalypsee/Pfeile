@@ -26,7 +26,7 @@ import java.util.List;
  * @author Josip
  * @version 24.2.2014
  * @see Button
- * @see gui.Screen
+ * @see com.github.pfeile.gui.Screen
  *
  */
 public abstract class Component implements Drawable {

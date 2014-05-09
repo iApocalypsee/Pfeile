@@ -70,20 +70,20 @@ public class DeprecatedButton extends Component {
 	static {
 		// Die Pfade für jedes Bild
 		String[] path = new String[] {
-				"resources/gfx/button textures/left_nomouse.png", // left
+				"com/github/pfeile/resources/gfx/button textures/left_nomouse.png", // left
 																	// nomouse
-				"resources/gfx/button textures/mid_nomouse.png", // left mouse
-				"resources/gfx/button textures/right_nomouse.png", // left click
-				"resources/gfx/button textures/mid_nomouse.png", // left na
-				"resources/gfx/button textures/mid_nomouse.png", // mid nomouse
-				"resources/gfx/button textures/test_active.png", // mid mouse
-				"resources/gfx/button textures/test_active.png", // mid click
-				"resources/gfx/button textures/test_inactive.png", // mid na
-				"resources/gfx/button textures/right_nomouse.png", // right
+				"com/github/pfeile/resources/gfx/button textures/mid_nomouse.png", // left mouse
+				"com/github/pfeile/resources/gfx/button textures/right_nomouse.png", // left click
+				"com/github/pfeile/resources/gfx/button textures/mid_nomouse.png", // left na
+				"com/github/pfeile/resources/gfx/button textures/mid_nomouse.png", // mid nomouse
+				"com/github/pfeile/resources/gfx/button textures/test_active.png", // mid mouse
+				"com/github/pfeile/resources/gfx/button textures/test_active.png", // mid click
+				"com/github/pfeile/resources/gfx/button textures/test_inactive.png", // mid na
+				"com/github/pfeile/resources/gfx/button textures/right_nomouse.png", // right
 																	// nomouse
-				"resources/gfx/button textures/test_active.png", // right mouse
-				"resources/gfx/button textures/test_active.png", // right click
-				"resources/gfx/button textures/test_inactive.png", // right na
+				"com/github/pfeile/resources/gfx/button textures/test_active.png", // right mouse
+				"com/github/pfeile/resources/gfx/button textures/test_active.png", // right click
+				"com/github/pfeile/resources/gfx/button textures/test_inactive.png", // right na
 		};
 		// Das Bildarray
 		imgs = new BufferedImage[12];

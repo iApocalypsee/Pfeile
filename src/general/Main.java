@@ -293,8 +293,8 @@ public class Main {
 				System.err.println("in Main: doArrowSelectionAddingArrows\n\t"
 						+ "Der Pfeil + " + selectedArrow + " konnte nicht hinzugefügt werden."); 
 			}
-			
 		}
+		ArrowSelectionScreen.getInstance().updateInventoryList();
 	}
 
 	/**

@@ -1,6 +1,17 @@
 package general;
 
 import comp.GUIUpdater;
+import general.field.DesertField;
+import general.field.Field;
+import general.field.ForestField;
+import general.field.GrassField;
+import general.field.HighlandField;
+import general.field.JungleField;
+import general.field.MountainField;
+import general.field.PlainsField;
+import general.field.SeaField;
+import general.field.SnowField;
+import general.field.WastelandField;
 import gui.Drawable;
 import player.Entity;
 import player.Player;
@@ -232,14 +243,17 @@ public class World implements Drawable, GUIUpdater {
 	}
 
 	/**
-	 * Returns <code>true</code> if the specified position can be mapped to a field
+	 * Returns <code>true</code> if the specified position can be mapped to a field.
+	 * Note that the method returns true if the coordinates are valid array coordinates.
+	 * So the coordinates <code>(0|0)</code> are always valid.
+	 * This method is not subject to change anymore. It would cause a lot of confusion.
 	 *
 	 * @param x The x coordinate to check.
 	 * @param y The y coordinate to check.
 	 * @return <code>true</code> if the specified position can be mapped to a field
 	 */
 	public boolean isPositionValid(int x, int y) {
-		return x > 0 && x < sizeX && y > 0 && y < sizeY;
+		return x >= 0 && x < sizeX && y >= 0 && y < sizeY;
 	}
 
 
@@ -277,8 +291,8 @@ public class World implements Drawable, GUIUpdater {
 	}
 
 	/**
-	 * Adds an entity. If the entity is a player object, this method redirects request
-	 * to {@link World#addPlayer(player.Player)}.
+	 * Adds an entity. If the entity is a com.github.pfeile.player object, this method redirects request
+	 * to {@link World#addPlayer(com.github.pfeile.player.Player)}.
 	 *
 	 * @param entity The entity to add.
 	 */
@@ -295,8 +309,8 @@ public class World implements Drawable, GUIUpdater {
 	}
 
 	/**
-	 * Removes an entity. If the entity is a player object, this method redirects request
-	 * to {@link World#removePlayer(player.Player)}.
+	 * Removes an entity. If the entity is a com.github.pfeile.player object, this method redirects request
+	 * to {@link World#removePlayer(com.github.pfeile.player.Player)}.
 	 *
 	 * @param entity The entity to remove.
 	 */
@@ -309,9 +323,9 @@ public class World implements Drawable, GUIUpdater {
 	}
 
 	/**
-	 * Adds a player to the player list.
+	 * Adds a com.github.pfeile.player to the com.github.pfeile.player list.
 	 *
-	 * @param player The player to add.
+	 * @param player The com.github.pfeile.player to add.
 	 */
 	public void addPlayer(Player player) {
 		turnManager.addPlayer(player);
@@ -322,9 +336,9 @@ public class World implements Drawable, GUIUpdater {
 	}
 
 	/**
-	 * Removes a player from the player list.
+	 * Removes a com.github.pfeile.player from the com.github.pfeile.player list.
 	 *
-	 * @param player The player to remove.
+	 * @param player The com.github.pfeile.player to remove.
 	 */
 	public void removePlayer(Player player) {
 		turnManager.removePlayer(player);
@@ -367,7 +381,7 @@ public class World implements Drawable, GUIUpdater {
 	}
 	
 	/** Draws the World: only Fields and Players will be drawn. 
-	 * @see draw
+	 * @see #draw(java.awt.Graphics2D)
 	 */
 	public void drawReduced(Graphics2D g) {
 		for (Field[] fields1 : fields) {
@@ -416,9 +430,9 @@ public class World implements Drawable, GUIUpdater {
 		}
 
 		/**
-		 * Adds a player to the turn manager.
+		 * Adds a com.github.pfeile.player to the turn manager.
 		 *
-		 * @param p The player to add.
+		 * @param p The com.github.pfeile.player to add.
 		 */
 		public void addPlayer(Player p) {
 			players.add(p);
@@ -426,9 +440,9 @@ public class World implements Drawable, GUIUpdater {
 		}
 
 		/**
-		 * Removes a player from the turn manager.
+		 * Removes a com.github.pfeile.player from the turn manager.
 		 *
-		 * @param p The player to remove.
+		 * @param p The com.github.pfeile.player to remove.
 		 */
 		public void removePlayer(Player p) {
 			players.remove(p);
@@ -436,10 +450,10 @@ public class World implements Drawable, GUIUpdater {
 		}
 
 		/**
-		 * Returns the player mapped to the specified index.
+		 * Returns the com.github.pfeile.player mapped to the specified index.
 		 *
-		 * @param index The index of the player, retrieved by {@link player.Player#getIndex()}
-		 * @return The player mapped to the index.
+		 * @param index The index of the com.github.pfeile.player, retrieved by {@link com.github.pfeile.player.Player#getIndex()}
+		 * @return The com.github.pfeile.player mapped to the index.
 		 * @throws IndexOutOfBoundsException if the index is out of range.
 		 */
 		public Player getPlayerByIndex(int index) {
@@ -448,7 +462,7 @@ public class World implements Drawable, GUIUpdater {
 	}
 
 	/**
-	 * Used for instanciating a {@link general.World.TurnManager}
+	 * Used for instanciating a {@link com.github.pfeile.general.World.TurnManager}
 	 *
 	 * @author Josip
 	 * @version 2/10/14

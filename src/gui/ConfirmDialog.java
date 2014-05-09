@@ -1,6 +1,7 @@
 package gui;
 
 import comp.Button;
+import comp.Component;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -12,12 +13,12 @@ public class ConfirmDialog extends comp.Component {
 	private comp.Button ok, cancel;
 	
 	public ConfirmDialog(int posX, int posY, gui.Screen backing, String question) {
-		super(posX, posY, comp.Component.getTextBounds(question, STD_FONT).width * 2 + 50 + STD_INSETS.bottom, comp.Component.getTextBounds(question, STD_FONT).height + 67, backing);
+		super(posX, posY, Component.getTextBounds(question, STD_FONT).width * 2 + 50 + STD_INSETS.bottom, Component.getTextBounds(question, STD_FONT).height + 67, backing);
 		this.question = question;
 		declineInput();
 		
-		ok = new comp.Button(comp.Component.getTextBounds(question, STD_FONT).width + posX + 10, comp.Component.getTextBounds("Ok", STD_FONT).height + posY + 20, backing, "Ok");
-		cancel = new comp.Button(ok.getX() + ok.getWidth() + 10, ok.getY(), backing, "Abbrechen");
+		ok = new Button(Component.getTextBounds(question, STD_FONT).width + posX + 10, comp.Component.getTextBounds("Ok", STD_FONT).height + posY + 20, backing, "Ok");
+		cancel = new Button(ok.getX() + ok.getWidth() + 10, ok.getY(), backing, "Abbrechen");
 
 		ok.addMouseListener(new MouseAdapter() {
 			/**
@@ -60,9 +61,9 @@ public class ConfirmDialog extends comp.Component {
 		Dimension d;
 		// leerer Text bei text == null
 		if(question != null) {
-			d = comp.Component.getTextBounds(question, STD_FONT);
+			d = Component.getTextBounds(question, STD_FONT);
 		} else {
-			d = comp.Component.getTextBounds("", STD_FONT);
+			d = Component.getTextBounds("", STD_FONT);
 		}
 		
 		setWidth(STD_INSETS.left + d.width + STD_INSETS.right);

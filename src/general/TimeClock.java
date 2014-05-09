@@ -1,13 +1,11 @@
 package general;
 
+import general.field.Field;
 import gui.GameScreen;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 
-import comp.Border;
 import comp.Component;
 
 

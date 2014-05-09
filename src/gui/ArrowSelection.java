@@ -19,15 +19,15 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import player.AbstractArrow;
-import player.FireArrow;
-import player.IceArrow;
-import player.LightArrow;
-import player.LightningArrow;
-import player.ShadowArrow;
-import player.StoneArrow;
-import player.StormArrow;
-import player.WaterArrow;
+import player.weapon.AbstractArrow;
+import player.weapon.FireArrow;
+import player.weapon.IceArrow;
+import player.weapon.LightArrow;
+import player.weapon.LightningArrow;
+import player.weapon.ShadowArrow;
+import player.weapon.StoneArrow;
+import player.weapon.StormArrow;
+import player.weapon.WaterArrow;
 
 /**
  * Wir wären bald soweit, diese Klasse hier aus unserem System herauszunehmen, da
@@ -54,6 +54,7 @@ public class ArrowSelection extends JFrame {
 
 	private JButton readyButton;
 
+	@SuppressWarnings("serial")
 	public ArrowSelection(int heigth, int width) {
 
 		super("Pfeilauswahl");
@@ -80,7 +81,6 @@ public class ArrowSelection extends JFrame {
 		thisPanel.add(readyButton);
 
 		arrowList.setModel(new AbstractListModel<String>() {
-			private static final long serialVersionUID = -1412378778727410007L;
 			private boolean sorted = false;
 
 			String[] values = new String[] { FireArrow.NAME, IceArrow.NAME,

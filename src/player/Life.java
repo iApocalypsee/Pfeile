@@ -29,7 +29,7 @@ public class Life {
 		life = lifemax;
 		
 		/* Konstrucktoraufruf für den Player */
-//		if(!player.isBot()) {
+//		if(!com.github.pfeile.player.isBot()) {
 //			// INITIALISIERUNG
 //
 //			PosX = Main.getWindowWidth() - (55 + 125);

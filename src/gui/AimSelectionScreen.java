@@ -1,8 +1,8 @@
 package gui;
 
-import general.Field;
 import general.Main;
 import general.World;
+import general.field.Field;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

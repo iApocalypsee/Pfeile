@@ -1,56 +1,52 @@
 package player;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-import general.Mechanics;
-import gui.ArrowSelectionScreen;
+import player.weapon.*;
 
 import java.util.LinkedList;
 
 /**
- * ReprÃ¤sentiert das Inventar einer Entity.
+ * Repräsentiert das Inventar einer Entity.
  * @version 5.5.2014
  *
  */
 public class Inventory {
 	
 	/**
-	 * Die StandardgrÃ¶ÃŸe fÃ¼r das Inventar.
+	 * Die Standardgröße für das Inventar.
 	 */
-	private static final int DEFAULT_INVENTORY_SIZE = Mechanics.arrowNumberPreSet;
-	//                                                Mechanics.arrowNumberPreSet + 1;
-	// FIXME Das "+1" macht Sachen nur noch komplizierter und schwerer zu debuggen. 
-	// Allerdings muss es minderstens Mechanics.arrowNumberPreSet sein, da sonst vieleicht das Grundinventar nicht hineinpassen würde
+	private static final int DEFAULT_INVENTORY_SIZE = general.Mechanics.arrowNumberPreSet;
+	
 	/**
-	 * Die EintrÃ¤ge in der Inventory.
+	 * Die Einträge in der Inventory.
 	 */
 	private LinkedList<InventoryEntry<?>> items = new LinkedList<InventoryEntry<?>>();
 	
 	/**
-	 * Die Entity, die dieses Inventar trÃ¤gt.
+	 * Die Entity, die dieses Inventar trägt.
 	 */
 	private AttackContainer carrier;
 	
 	/**
-	 * Die maximale GrÃ¶ÃŸe des Inventars.
+	 * Die maximale Größe des Inventars.
 	 */
 	private int size = DEFAULT_INVENTORY_SIZE;
 	
 	/**
-	 * Erstellt ein Inventar mit dem angegebenen TrÃ¤ger des Inventars,
+	 * Erstellt ein Inventar mit dem angegebenen Träger des Inventars,
 	 * der aus diesem dann Items beziehen und benutzen kann.
-	 * @param carrier Der TrÃ¤ger des Inventars.
+	 * @param carrier Der Träger des Inventars.
 	 */
 	public Inventory(AttackContainer carrier) {
 		this.carrier = carrier;
 	}
 	
 	/**
-	 * FÃ¼gt ein Item dem Inventar hinzu und gibt einen boolean-Wert raus,
+	 * Fügt ein Item dem Inventar hinzu und gibt einen boolean-Wert raus,
 	 * ob das Inventar das Item aufnehmen konnte oder nicht.
-	 * @param i Das Item, das hinzugefÃ¼gt werden soll.
-	 * @return <code>true</code>, wenn das Item hinzugefÃ¼gt werden konnte.
+	 * @param i Das Item, das hinzugefügt werden soll.
+	 * @return <code>true</code>, wenn das Item hinzugefügt werden konnte.
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean addItem(Item i) {
 		// first of all, a sort of checks
 		if (i == null) {
@@ -63,22 +59,19 @@ public class Inventory {
 
 		for (InventoryEntry e : items) {
 			if(e.peek().getClass() == i.getClass()) {
-				e.push(i);
-				ArrowSelectionScreen.getInstance().updateInventoryList();
-				return true;
+				return e.push(i);
 			}
 		}
-
+		
 		InventoryEntry newEntry = new InventoryEntry();
-		newEntry.resize(i.getMaximumStackCount());
 		newEntry.push(i);
 		items.add(newEntry);
-		ArrowSelectionScreen.getInstance().updateInventoryList();
+		gui.ArrowSelectionScreen.getInstance().updateInventoryList();
 		return true;
 	}
 
 	/**
-	 * FÃ¼gt ein neues Item-Objekt zum Inventar basierend auf dessen Class-Objekt hinzu.
+	 * Fügt ein neues Item-Objekt zum Inventar basierend auf dessen Class-Objekt hinzu.
 	 * @param clazz Die Klasse.
 	 * @return <code>addItem(clazz.newInstance())</code>
 	 */
@@ -94,11 +87,11 @@ public class Inventory {
 	}
 	
 	/**
-	 * Wird spÃ¤ter entfernt.
-	 * Registriert, wenn nÃ¶tig, einen neuen Eintrag im Inventar der Entity
-	 * und fÃ¼gt das Item dem Inventar hinzu.
-	 * @param i Das Item, das hinzugefÃ¼gt werden soll.
-	 * @param stackSize Die GrÃ¶ÃŸe des neuen Inventareintrags.
+	 * Wird später entfernt.
+	 * Registriert, wenn nötig, einen neuen Eintrag im Inventar der Entity
+	 * und fügt das Item dem Inventar hinzu.
+	 * @param i Das Item, das hinzugefügt werden soll.
+	 * @param stackSize Die Größe des neuen Inventareintrags.
 	 */
 	@Deprecated
 	public void addArrow(AbstractArrow i, int stackSize) {
@@ -106,8 +99,8 @@ public class Inventory {
 	}
 	
 	/**
-	 * Entfernt das Item aus dem Inventar und den dazugehÃ¶rigen Eintrag,
-	 * falls die Anzahl der EintrÃ¤ge 0 sein sollte.
+	 * Entfernt das Item aus dem Inventar und den dazugehörigen Eintrag,
+	 * falls die Anzahl der Einträge 0 sein sollte.
 	 * @param i Das Item, das entfernt werden soll.
 	 */
 	public void removeItem(Class<? extends Item> i) {
@@ -116,11 +109,11 @@ public class Inventory {
 				e.pop();
 				if(e.isEmpty()) {
 					items.remove(e);
+					gui.ArrowSelectionScreen.getInstance().updateInventoryList();
 				}
 				break;
 			}
 		}
-		ArrowSelectionScreen.getInstance().updateInventoryList();
 	}
 	
 	public boolean contains(Class<? extends Item> i) {

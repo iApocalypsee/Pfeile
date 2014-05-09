@@ -1,5 +1,8 @@
 package player;
 
+import player.weapon.AttackContainer;
+import player.weapon.AttackEvent;
+
 /**
  * Represents a combatant which can carry items and other stuff.
  * @author Josip

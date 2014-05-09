@@ -12,7 +12,7 @@ import java.awt.image.BufferStrategy;
 
 /**
  * <b>4.1.2014 (Josip):</b> Einfachere Initialisierung der Screens. <br>
- * <b>10.1.2014 (Josip):</b> Verschiebung von GameWindow ins Package "general"
+ * <b>10.1.2014 (Josip):</b> Verschiebung von GameWindow ins Package "com.github.pfeile.general"
  * <b>24.1.2014 (Josip):</b> Entfernung von <code>readyToShow</code>, unnötige Variable
  *
  * @version 10.1.2014
@@ -20,7 +20,7 @@ import java.awt.image.BufferStrategy;
  */
 public class GameWindow extends JFrame {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 7012286076598906440L;
 
 	private BufferStrategy strat;
 

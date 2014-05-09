@@ -5,6 +5,15 @@ import comp.Component;
 import comp.TextBox;
 import general.Main;
 import player.*;
+import player.weapon.AbstractArrow;
+import player.weapon.FireArrow;
+import player.weapon.IceArrow;
+import player.weapon.LightArrow;
+import player.weapon.LightningArrow;
+import player.weapon.ShadowArrow;
+import player.weapon.StoneArrow;
+import player.weapon.StormArrow;
+import player.weapon.WaterArrow;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -62,7 +71,7 @@ public class ArrowSelectionScreen extends Screen {
 	
 	private static final Color TRANSPARENT_BACKGROUND = new Color(0, 0, 0, 185);
 	
-	private comp.List inventoryList; 
+	private comp.List inventoryList;
 	
 	private List<String> arrowList;
 
@@ -73,6 +82,12 @@ public class ArrowSelectionScreen extends Screen {
 	private int inventoryList_Height = 210;
 
 	private int inventoryList_Width; 
+	
+	private float transparencyWarningMessage = 0;
+	
+	private Point pointWarningMessage = new Point(Main.getWindowWidth() / 2 - 380, Main.getWindowHeight() - 230);
+	
+	private String warningMessage = "";
 	
 	private ConfirmDialog confirmDialog;
 	
@@ -129,7 +144,7 @@ public class ArrowSelectionScreen extends Screen {
 		
 		inventoryList_Width = fireArrowButton.getWidth() + 30; 
 		
-		inventoryList = new comp.List(inventoryList_PosX, inventoryList_PosY, inventoryList_Width, inventoryList_Height, this, arrowList); 
+		inventoryList = new comp.List(inventoryList_PosX, inventoryList_PosY, inventoryList_Width, inventoryList_Height, this, arrowList);
 		inventoryList.setRoundBorder(true);
 		inventoryList.setVisible(true); 
 		inventoryList.addMouseListener(new MouseListHandler());
@@ -168,7 +183,16 @@ public class ArrowSelectionScreen extends Screen {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				Inventory inv = GameScreen.getInstance().getWorld().getActivePlayer().getInventory();
-				inv.addItem(selectedIndex);
+				if (!inv.addItem(selectedIndex)) {
+					if (GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getRemainingSpace() == 0) {
+						warningMessage = "Das Inventar ist voll: Maximale Inventargröße " + GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getSize();
+						
+					} else {
+						System.err.println("Could not add arrow to inventory (with " + GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getRemainingSpace() + " remaining space) arrow index: " + selectedIndex);
+						warningMessage = "Could not add arrow to inventory (with " + GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getRemainingSpace() + " remaining space) arrow index: " + selectedIndex;
+						transparencyWarningMessage = 1f;
+					}
+				}
 				closeConfirmDialogQuestion();
 			}
 		});
@@ -219,8 +243,19 @@ public class ArrowSelectionScreen extends Screen {
 			g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 			confirmDialog.draw(g);
 		}
+		
+		g.setColor(new Color(1f, 0f, 0f, transparencyWarningMessage));
+		g.setFont(new Font(Component.STD_FONT.getFontName(), Font.BOLD, 26));
+		g.drawString(warningMessage, pointWarningMessage.x, pointWarningMessage.y);
+		
+		transparencyWarningMessage = transparencyWarningMessage - 0.02f;
+		
+		if (transparencyWarningMessage < 0) 
+			transparencyWarningMessage = 0;
 	}
 
+	
+	// LISTENER
 	@Override
 	public void keyDown (KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -268,6 +303,8 @@ public class ArrowSelectionScreen extends Screen {
 					break;
 				default: 
 					System.err.println("Not possible ArrowIndex!: " + inventoryList.getSelectedIndex() + "   in <ArrowSelectionScreen.MouseListHandler.mouseReleased()>");
+					warningMessage = "Not possible ArrowIndex!: " + inventoryList.getSelectedIndex();
+					transparencyWarningMessage = 1.0f;
 					break;
 				}
 			}
@@ -321,17 +358,12 @@ public class ArrowSelectionScreen extends Screen {
 				onLeavingScreen(this, AimSelectionScreen.SCREEN_INDEX);
 			}
 			
-			if (confirmDialog.isVisible()){
-				if (confirmDialog.getCancel().getSimplifiedBounds().contains(e.getPoint())) {
-					System.err.println("Could not add arrow to inventory: arrow index " + selectedIndex);
+			if (confirmDialog.isVisible()) {
+				if (confirmDialog.getCancel().getSimplifiedBounds().contains(e.getPoint())) 
 					closeConfirmDialogQuestion();
-				}
-				if (confirmDialog.getOk().getSimplifiedBounds().contains(e.getPoint())) {
+				if (confirmDialog.getOk().getSimplifiedBounds().contains(e.getPoint())) 
 					closeConfirmDialogQuestion();
-				}
 			}
-			
-			updateInventoryList();
 		}
 	}
 
@@ -383,13 +415,13 @@ public class ArrowSelectionScreen extends Screen {
 		arrowList.add("Schattenpfeil " + "[" + inventory.getItemCount(ShadowArrow.class) + "]");
 		
 		if (inventoryList.isAcceptingInput()) {
-			inventoryList = new comp.List(inventoryList_PosX, inventoryList_PosY, inventoryList_Width, inventoryList_Height, this, arrowList); 
+			inventoryList = new comp.List(inventoryList_PosX, inventoryList_PosY, inventoryList_Width, inventoryList_Height, this, arrowList);
 			inventoryList.setRoundBorder(true);
 			inventoryList.setVisible(true); 
 			inventoryList.addMouseListener(new MouseListHandler());
 			inventoryList.acceptInput();
 		} else {
-			inventoryList = new comp.List(inventoryList_PosX, inventoryList_PosY, inventoryList_Width, inventoryList_Height, this, arrowList); 
+			inventoryList = new comp.List(inventoryList_PosX, inventoryList_PosY, inventoryList_Width, inventoryList_Height, this, arrowList);
 			inventoryList.setRoundBorder(true);
 			inventoryList.setVisible(true); 
 			inventoryList.addMouseListener(new MouseListHandler());
