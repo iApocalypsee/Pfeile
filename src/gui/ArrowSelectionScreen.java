@@ -6,15 +6,7 @@ import comp.TextBox;
 import general.Main;
 import general.Mechanics;
 import player.*;
-import player.weapon.AbstractArrow;
-import player.weapon.FireArrow;
-import player.weapon.IceArrow;
-import player.weapon.LightArrow;
-import player.weapon.LightningArrow;
-import player.weapon.ShadowArrow;
-import player.weapon.StoneArrow;
-import player.weapon.StormArrow;
-import player.weapon.WaterArrow;
+import player.weapon.*;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -22,8 +14,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 public class ArrowSelectionScreen extends Screen {
 
@@ -280,7 +270,7 @@ public class ArrowSelectionScreen extends Screen {
 			if (inventoryList.getBounds().contains(e.getPoint())) {
 				
 				// Übernimmt ausgewählten Pfeil und schreibt ihn in den ausgewählten Pfeil für 'commit'
-				selectedArrowBox.setEnteredText(AbstractArrow.arrowIndexToName(inventoryList.getSelectedIndex()));
+				selectedArrowBox.setEnteredText(ArrowHelper.arrowIndexToName(inventoryList.getSelectedIndex()));
 //					System.err.println("Not possible ArrowIndex!: " + inventoryList.getSelectedIndex() + "   in <ArrowSelectionScreen.MouseListHandler.mouseReleased()>");
 //					warningMessage = "Not possible ArrowIndex!: " + inventoryList.getSelectedIndex();
 //					transparencyWarningMessage = 1.0f;
