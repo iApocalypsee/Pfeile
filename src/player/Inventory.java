@@ -64,6 +64,7 @@ public class Inventory {
 		}
 		
 		InventoryEntry newEntry = new InventoryEntry();
+		newEntry.resize(i.getMaximumStackCount());
 		newEntry.push(i);
 		items.add(newEntry);
 		gui.ArrowSelectionScreen.getInstance().updateInventoryList();
