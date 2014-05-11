@@ -56,8 +56,7 @@ public class AimSelectionScreen extends Screen {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			
+			// TODO wenn auf das Feld gecklickt wurde muss es makiert werden
 		}
-		
 	}
 }
