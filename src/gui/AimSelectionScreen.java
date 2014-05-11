@@ -6,6 +6,8 @@ import general.field.Field;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class AimSelectionScreen extends Screen {
 
@@ -34,9 +36,28 @@ public class AimSelectionScreen extends Screen {
 		g.setColor(TRANSPARENT_BACKGROUND);
 		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 		
-		// The World will be drawn drawed
+		// The World will be drawn 
 		GameScreen.getInstance().getWorld().drawReduced(g);
-		
+	}
+	
+	private class MouseHandler implements MouseListener {
+
+		@Override
+		public void mouseClicked(MouseEvent arg0) {}
+
+		@Override
+		public void mouseEntered(MouseEvent arg0) {}
+
+		@Override
+		public void mouseExited(MouseEvent arg0) {}
+
+		@Override
+		public void mousePressed(MouseEvent arg0) {}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			
+		}
 		
 	}
 }

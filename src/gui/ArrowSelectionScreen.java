@@ -22,6 +22,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
+
 public class ArrowSelectionScreen extends Screen {
 
 	public static final int SCREEN_INDEX = 3;
@@ -275,38 +277,10 @@ public class ArrowSelectionScreen extends Screen {
 			// TODO: Man muss zweimal klicken, um hierher zu kommen. --> Auf einmal reduzieren
 			if (inventoryList.getBounds().contains(e.getPoint())) {
 				
-				switch (inventoryList.getSelectedIndex()) {
-				
-				case FireArrow.INDEX: 
-					selectedArrowBox.setEnteredText("Feurpfeil");
-					break;
-				case WaterArrow.INDEX: 
-					selectedArrowBox.setEnteredText("Wasserpfeil");
-					break;
-				case StormArrow.INDEX: 
-					selectedArrowBox.setEnteredText("Sturmpfeil");
-					break;
-				case StoneArrow.INDEX: 
-					selectedArrowBox.setEnteredText("Steinpfeil");
-					break;
-				case IceArrow.INDEX: 
-					selectedArrowBox.setEnteredText("Eispfeil");
-					break;
-				case LightningArrow.INDEX: 
-					selectedArrowBox.setEnteredText("Blitzpfeil");
-					break;
-				case LightArrow.INDEX: 
-					selectedArrowBox.setEnteredText("Lichtpfeil");
-					break;
-				case ShadowArrow.INDEX: 
-					selectedArrowBox.setEnteredText("Schattenpfeil");
-					break;
-				default: 
-					System.err.println("Not possible ArrowIndex!: " + inventoryList.getSelectedIndex() + "   in <ArrowSelectionScreen.MouseListHandler.mouseReleased()>");
-					warningMessage = "Not possible ArrowIndex!: " + inventoryList.getSelectedIndex();
-					transparencyWarningMessage = 1.0f;
-					break;
-				}
+				selectedArrowBox.setEnteredText(AbstractArrow.arrowIndexToName(inventoryList.getSelectedIndex()));
+//					System.err.println("Not possible ArrowIndex!: " + inventoryList.getSelectedIndex() + "   in <ArrowSelectionScreen.MouseListHandler.mouseReleased()>");
+//					warningMessage = "Not possible ArrowIndex!: " + inventoryList.getSelectedIndex();
+//					transparencyWarningMessage = 1.0f;
 			}
 		}
 	}
@@ -352,9 +326,6 @@ public class ArrowSelectionScreen extends Screen {
 				onLeavingScreen(this, GameScreen.SCREEN_INDEX);
 			} 
 			if (confirmButton.getBounds().contains(e.getPoint())) {
-//				onLeavingScreen(this, AimSelectionScreen.SCREEN_INDEX);
-				// TODO Bestätigen
-				// TODO dann irgendwie die Auswahl für das Zielfeld treffen: AimSelectionScreen
 				onLeavingScreen(this, AimSelectionScreen.SCREEN_INDEX);
 			}
 			
@@ -366,6 +337,8 @@ public class ArrowSelectionScreen extends Screen {
 			}
 		}
 	}
+	
+
 
 	/**
 	 * Opens the "Are you sure?" dialog with specified question.
