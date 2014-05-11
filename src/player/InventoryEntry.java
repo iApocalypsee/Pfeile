@@ -1,8 +1,11 @@
 package player;
 
+import general.Mechanics;
+
 import java.util.EmptyStackException;
 import java.util.LinkedList;
 
+import player.weapon.AbstractArrow;
 import player.weapon.Item;
 
 class InventoryEntry<T extends Item> {
@@ -34,10 +37,13 @@ class InventoryEntry<T extends Item> {
 		if(hasRemainingSpace()) {
 			items.add(item);
 			gui.ArrowSelectionScreen.getInstance().updateInventoryList();
-			return true;
-		} else {
-			return false;
+			if (item.getClass() == AbstractArrow.class)
+				if (Mechanics.arrowNumberFreeSetUseable > 0) 
+					return true;
+				else
+					System.err.println("Could not Arrow: " + item.getClass() + " because of " + Mechanics.arrowNumberFreeSetUseable);
 		}
+		return false;
 	}
 	
 	/**

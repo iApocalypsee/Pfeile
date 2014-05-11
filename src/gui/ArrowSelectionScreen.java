@@ -4,6 +4,7 @@ import comp.Button;
 import comp.Component;
 import comp.TextBox;
 import general.Main;
+import general.Mechanics;
 import player.*;
 import player.weapon.AbstractArrow;
 import player.weapon.FireArrow;
@@ -87,7 +88,7 @@ public class ArrowSelectionScreen extends Screen {
 	
 	private float transparencyWarningMessage = 0;
 	
-	private Point pointWarningMessage = new Point(Main.getWindowWidth() / 2 - 380, Main.getWindowHeight() - 230);
+	private Point pointWarningMessage = new Point(50, Main.getWindowHeight() - 210);
 	
 	private String warningMessage = "";
 	
@@ -184,17 +185,18 @@ public class ArrowSelectionScreen extends Screen {
 			 */
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				Inventory inv = GameScreen.getInstance().getWorld().getActivePlayer().getInventory();
-				if (!inv.addItem(selectedIndex)) {
+				if (!GameScreen.getInstance().getWorld().getActivePlayer().getInventory().addItem(selectedIndex)) {
 					if (GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getRemainingSpace() == 0) {
-						warningMessage = "Das Inventar ist voll: Maximale Inventargröße " + GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getSize();
-						
+						warningMessage = "Das Inventar ist voll: Maximale Inventargröße " + GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getSize();	
+					} else if (Mechanics.arrowNumberFreeSetUseable <= 0){
+						warningMessage = "Es wurden bereits " + (Mechanics.arrowNumberFreeSet - Mechanics.arrowNumberFreeSetUseable) + " hinzugefügt. Die maximale Zahl von freisetzbaren Pfeilen beträgt : " + Mechanics.arrowNumberFreeSet + ".";
 					} else {
 						System.err.println("Could not add arrow to inventory (with " + GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getRemainingSpace() + " remaining space) arrow index: " + selectedIndex);
 						warningMessage = "Could not add arrow to inventory (with " + GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getRemainingSpace() + " remaining space) arrow index: " + selectedIndex;
-						transparencyWarningMessage = 1f;
 					}
-				}
+					transparencyWarningMessage = 1f;
+				} else
+					Mechanics.arrowNumberFreeSetUseable--;
 				closeConfirmDialogQuestion();
 			}
 		});
@@ -250,7 +252,7 @@ public class ArrowSelectionScreen extends Screen {
 		g.setFont(new Font(Component.STD_FONT.getFontName(), Font.BOLD, 26));
 		g.drawString(warningMessage, pointWarningMessage.x, pointWarningMessage.y);
 		
-		transparencyWarningMessage = transparencyWarningMessage - 0.02f;
+		transparencyWarningMessage = transparencyWarningMessage - 0.015f;
 		
 		if (transparencyWarningMessage < 0) 
 			transparencyWarningMessage = 0;
@@ -277,6 +279,7 @@ public class ArrowSelectionScreen extends Screen {
 			// TODO: Man muss zweimal klicken, um hierher zu kommen. --> Auf einmal reduzieren
 			if (inventoryList.getBounds().contains(e.getPoint())) {
 				
+				// Übernimmt ausgewählten Pfeil und schreibt ihn in den ausgewählten Pfeil für 'commit'
 				selectedArrowBox.setEnteredText(AbstractArrow.arrowIndexToName(inventoryList.getSelectedIndex()));
 //					System.err.println("Not possible ArrowIndex!: " + inventoryList.getSelectedIndex() + "   in <ArrowSelectionScreen.MouseListHandler.mouseReleased()>");
 //					warningMessage = "Not possible ArrowIndex!: " + inventoryList.getSelectedIndex();
