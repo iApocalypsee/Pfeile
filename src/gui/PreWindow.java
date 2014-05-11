@@ -74,7 +74,7 @@ public class PreWindow extends JFrame {
 			this.readyButton = new JButton("Ready");
 			this.standardButton = new JButton("Standard-Einstellungen");
 
-			this.label0 = new JLabel("ComputerstÃ¤rke: "); // "Computerstï¿½rke"
+			this.label0 = new JLabel("Computerstärke: "); // "Computerstï¿½rke"
 			this.label1 = new JLabel("Pfeilanzahl [frei wÃ¤hlbar]: "); // "Pfeilanzahl [frei wï¿½hlbar]"
 			this.label2 = new JLabel("Pfeilanzahl [vorher wÃ¤hlbar]: "); // "Pfeilanzahl [vorher wï¿½hlbar]"
 			this.label3 = new JLabel("Zuganzahl pro Runde: "); // "Zuganzahl pro Runde"
@@ -82,18 +82,18 @@ public class PreWindow extends JFrame {
 			this.label5 = new JLabel("Lebensregeneration: "); // "Lebensregeneration"
 			this.label6 = new JLabel("Schaden: "); // "Schaden"
 			this.label7 = new JLabel("Zeit pro Runde: "); // "Zeit pro Runde"
-			this.label8 = new JLabel("WeltgrÃ¶ÃŸe: "); // "Weltgrï¿½ï¿½e"
+			this.label8 = new JLabel("Weltgröße: "); // "Weltgrï¿½ï¿½e"
 			this.label9 = new JLabel("Handicap [Player]: "); // "Handicap [Player]"
 			this.label10 = new JLabel("Handicap [KI]: "); // "Handicap [KI]"
 
 			// Hauptauswahlfeld: initBox
 			this.initBox = new JComboBox<String>();
 
-			String[] stringArray = {"ComputerstÃ¤rke",
-					"Pfeilanzahl [frei wÃ¤hlbar]",
-					"Pfeilanzahl [vorher wÃ¤hlbar]", "Zuganzahl pro Runde",
+			String[] stringArray = {"Computerstärke",
+					"Pfeilanzahl [frei wählbar]",
+					"Pfeilanzahl [vorher wählbar]", "Zuganzahl pro Runde",
 					"maximales Leben", "Lebensregeneration", "Schaden",
-					"Zeit pro Zug", "WeltgrÃ¶ÃŸe", "Handicap"};
+					"Zeit pro Zug", "Weltgröße", "Handicap"};
 
 			for (int i = 0; i < stringArray.length; i++) {
 				this.initBox.addItem(stringArray[i]);
@@ -115,7 +115,7 @@ public class PreWindow extends JFrame {
 
 			// selectBoxGr: Auswahlfeld
 			this.selectBoxGr = new JComboBox<String>();
-			String[] stringArray5 = {"gigantisch", "groÃŸ", "normal", "klein",
+			String[] stringArray5 = {"gigantisch", "groß", "normal", "klein",
 					"winzig"};
 
 			for (int i = 0; i < stringArray5.length; i++) {
@@ -140,7 +140,7 @@ public class PreWindow extends JFrame {
 			this.selectBoxKI = new JComboBox<String>();
 
 			String[] stringArray4 = {"brutal", "stark", "mittel", "schwach",
-					"erbÃ¤rmlich"};
+					"erbärmlich"};
 
 			for (int i = 0; i < stringArray4.length; i++) {
 				this.selectBoxKI.addItem(stringArray4[i]);
@@ -267,7 +267,7 @@ public class PreWindow extends JFrame {
 							Mechanics.worldSizeY = 21;
 							isEnteredRight = true;
 						} else if (PreWindow.this.selectBoxGr
-								.getSelectedIndex() == 1) { // "groÃŸ"
+								.getSelectedIndex() == 1) { // "groß"
 							Mechanics.worldSizeX = 17;
 							Mechanics.worldSizeY = 15;
 							isEnteredRight = true;
@@ -682,7 +682,7 @@ public class PreWindow extends JFrame {
 						return;
 				}
 
-				setLifeRegenerationCorrect();
+				correctInits();
 				setTotalArrowNumberCorrect();
 				
 				dispose();
@@ -853,7 +853,7 @@ public class PreWindow extends JFrame {
 	 * nach Inititialisierung fï¿½r 'Mechanics.lifeRegeneration' (erst nachher
 	 * durchfï¿½rbar wegen Abhï¿½ngigkeit zu 'lifeMax')
 	 */
-	public static void setLifeRegenerationCorrect() {
+	public static void correctInits() {
 		if (Mechanics.lifeRegeneration != -1 && Mechanics.lifeMax != -1) {
 
 			if (Mechanics.lifeRegeneration == 1) { // 5 = hoch; 1 == niedrig
@@ -894,6 +894,7 @@ public class PreWindow extends JFrame {
 	private static void setTotalArrowNumberCorrect() {
 		Mechanics.totalArrowNumber = Mechanics.arrowNumberFreeSet
 				+ Mechanics.arrowNumberPreSet;
+		Mechanics.arrowNumberFreeSetUseable = Mechanics.arrowNumberFreeSet;
 	}
 
 }

@@ -40,6 +40,9 @@ public final class Mechanics {
 	 * und dann damit den KI angreifen muss */
 	public static int arrowNumberFreeSet = -1;
 	
+	/** Pfeilanzahl, die noch von den frei setzbaren (in ArrowSelectionScreen) Pfeil übrig ist */
+	public static int arrowNumberFreeSetUseable = -1;
+	
 	/** GesamtPfeilAnzahl: arrowNumberFreeSet + arrowNumberPreSet */
 	public static int totalArrowNumber;
 
