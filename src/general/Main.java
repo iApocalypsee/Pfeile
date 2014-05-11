@@ -507,8 +507,14 @@ public class Main {
 
 			int x = 0, y = 0;
 			// Kein Randfeld fuer x oder y: zuerst durch 'getSize() - 2' Randfeld oben / unten verhindern; dann durch + 2 den Wert (0 und 1) verhindern
+			// FIXME: durch die Spawnmethode kommt das richtige raus, wenn e.setSpawnX(...) nicht 0-basierte Werte erhählt
+			// Josip, weißt du ob spawnX bzw. spawnY 0-basiert sind?
 			do {
 				x = r.nextInt(s.getWorld().getSizeX() - 2) + 2;
+				// x = r.nextInt(13 - 2); 
+				// --> x = 0 bis 10
+				// x = x + 2;
+				// --> x = 2 bis 12
 				y = r.nextInt(s.getWorld().getSizeY() - 2) + 2;
 				
 			} while (!WorldFactory.isSpawnPossible(x, y));
