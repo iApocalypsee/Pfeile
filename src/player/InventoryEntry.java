@@ -37,11 +37,13 @@ class InventoryEntry<T extends Item> {
 		if(hasRemainingSpace()) {
 			items.add(item);
 			gui.ArrowSelectionScreen.getInstance().updateInventoryList();
-			if (item.getClass() == AbstractArrow.class)
+			if (item instanceof AbstractArrow)
 				if (Mechanics.arrowNumberFreeSetUseable > 0) 
 					return true;
-				else
+				else {
 					System.err.println("Could not Arrow: " + item.getClass() + " because of " + Mechanics.arrowNumberFreeSetUseable);
+					return false;
+				}
 		}
 		return false;
 	}
@@ -94,7 +96,7 @@ class InventoryEntry<T extends Item> {
 	 * @return
 	 */
 	public boolean hasRemainingSpace() {
-		return maxStack - items.size() > 0;
+		return getRemainingSpace() > 0;
 	}
 	
 	/**
