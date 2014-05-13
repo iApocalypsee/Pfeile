@@ -108,6 +108,26 @@ public class PointRef extends Point2D {
 	}
 
 	/**
+	 * Adds the specified point to this point.
+	 * @param p The point.
+	 */
+	public PointRef add(PointRef p) {
+		x.setValue(getX() + p.getX());
+		y.setValue(getY() + p.getY());
+		return this;
+	}
+
+	/**
+	 * Subtracts the specified point to this point.
+	 * @param p The point.
+	 */
+	public PointRef subtract(PointRef p) {
+		x.setValue(getX() - p.getX());
+		y.setValue(getY() - p.getY());
+		return this;
+	}
+
+	/**
 	 * Creates a deep copy of this object.
 	 * @return A deep copy of this object.
 	 */
