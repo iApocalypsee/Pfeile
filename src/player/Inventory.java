@@ -8,7 +8,7 @@ import java.util.LinkedList;
 /**
  * Repräsentiert das Inventar einer Entity.
  * @version 5.5.2014
- *
+ * TODO: somewhere in Inventory is an error
  */
 public class Inventory {
 	
