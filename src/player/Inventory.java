@@ -125,6 +125,22 @@ public class Inventory {
 		}
 		return false;
 	}
+	
+	/** return the default <code> InventoryIntoryEntry.getDefaultMaxStack() </code> */
+	public static int defaultMaxStack () {
+		return InventoryEntry.getDefaultMaxStack();
+	}
+	
+	/** returns the number of maximum stacks per kink of item i 
+	 *  (if i doesn't exit: return -1*/
+	public int maxStack (Class<? extends Item> i) {
+		for (InventoryEntry e : items) {
+			if(e.peek().getClass() == i) {
+				return e.getMaxStack();
+			}
+		}
+		return -1;
+	}
 
     /**
      * Returns the amount of specified item type in the inventory. The returned

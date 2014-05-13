@@ -116,4 +116,11 @@ class InventoryEntry<T extends Item> {
 		return maxStack - items.size() == maxStack;
 	}
 	
+	static int getDefaultMaxStack () {
+		return DEFAULT_MAX_STACK;
+	}
+	
+	int getMaxStack () {
+		return maxStack;
+	}
 }
