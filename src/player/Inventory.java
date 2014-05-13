@@ -15,7 +15,7 @@ public class Inventory {
 	/**
 	 * Die Standardgröße für das Inventar.
 	 */
-	private static final int DEFAULT_INVENTORY_SIZE = general.Mechanics.arrowNumberPreSet;
+	private static final int DEFAULT_INVENTORY_SIZE = general.Mechanics.arrowNumberPreSet + general.Mechanics.arrowNumberFreeSet + 2;
 	
 	/**
 	 * Die Einträge in der Inventory.

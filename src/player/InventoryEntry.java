@@ -37,13 +37,16 @@ class InventoryEntry<T extends Item> {
 		if(hasRemainingSpace()) {
 			items.add(item);
 			gui.ArrowSelectionScreen.getInstance().updateInventoryList();
-			if (item instanceof AbstractArrow)
+			if (item instanceof AbstractArrow) {
 				if (Mechanics.arrowNumberFreeSetUseable > 0) 
 					return true;
 				else {
-					System.err.println("Could not Arrow: " + item.getClass() + " because of " + Mechanics.arrowNumberFreeSetUseable);
+					System.err.println("Could not Arrow: " + item.getClass() + " because of " + Mechanics.arrowNumberFreeSetUseable + " (number of useable arrows)!");
 					return false;
 				}
+			} else 
+				return true;
+				
 		}
 		return false;
 	}
