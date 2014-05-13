@@ -179,8 +179,14 @@ public class ArrowSelectionScreen extends Screen {
 					if (GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getRemainingSpace() == 0) {
 						warningMessage = "Das Inventar ist voll: Maximale Inventargröße " + GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getSize();	
 					} else if (Mechanics.arrowNumberFreeSetUseable <= 0){
-						warningMessage = "Es wurden bereits " + (Mechanics.arrowNumberFreeSet - Mechanics.arrowNumberFreeSetUseable) + " hinzugefügt. Die maximale Zahl von freisetzbaren Pfeilen beträgt : " + Mechanics.arrowNumberFreeSet + ".";
-					} else {
+						warningMessage = "Es wurden bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + Mechanics.arrowNumberFreeSet + "";
+					} else if (GameScreen.getInstance().getWorld().getActivePlayer().getInventory().maxStack(selectedIndex) >= 
+								GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getItemCount(selectedIndex)){
+						
+						warningMessage = "Das Inventar kann maximal + " + GameScreen.getInstance().getWorld().getActivePlayer().getInventory().maxStack(selectedIndex) + " " + 
+											selectedIndex + " Pfeile aufnehmen";
+						
+					}else {
 						System.err.println("Could not add arrow to inventory (with " + GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getRemainingSpace() + " remaining space) arrow index: " + selectedIndex);
 						warningMessage = "Could not add arrow to inventory (with " + GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getRemainingSpace() + " remaining space) arrow index: " + selectedIndex;
 					}

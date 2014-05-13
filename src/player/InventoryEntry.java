@@ -35,18 +35,20 @@ class InventoryEntry<T extends Item> {
 	 */
 	public boolean push(T item) {
 		if(hasRemainingSpace()) {
-			items.add(item);
-			gui.ArrowSelectionScreen.getInstance().updateInventoryList();
 			if (item instanceof AbstractArrow) {
-				if (Mechanics.arrowNumberFreeSetUseable > 0) 
+				if (Mechanics.arrowNumberFreeSetUseable > 0) {
+					items.add(item);
+					gui.ArrowSelectionScreen.getInstance().updateInventoryList();
 					return true;
-				else {
-					System.err.println("Could not Arrow: " + item.getClass() + " because of " + Mechanics.arrowNumberFreeSetUseable + " (number of useable arrows)!");
+				} else {
+					System.err.println("Could not add Arrow: " + item.getClass() + " because of " + Mechanics.arrowNumberFreeSetUseable + " (number of useable arrows)!");
 					return false;
 				}
-			} else 
+			} else {
+				items.add(item);
+				gui.ArrowSelectionScreen.getInstance().updateInventoryList();
 				return true;
-				
+			}	
 		}
 		return false;
 	}
@@ -114,4 +116,11 @@ class InventoryEntry<T extends Item> {
 		return maxStack - items.size() == maxStack;
 	}
 	
+	static int getDefaultMaxStack () {
+		return DEFAULT_MAX_STACK;
+	}
+	
+	int getMaxStack () {
+		return maxStack;
+	}
 }
