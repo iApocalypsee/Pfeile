@@ -37,13 +37,6 @@ public class Button extends Component {
 		this.text = text;
 	}
 	
-	public Button(int x, int y, Component parent, String text) {
-		super(x, y, Component.getTextBounds(text, Component.STD_FONT).width + 50,
-				Component.getTextBounds(text, Component.STD_FONT).height + 20,
-				parent);
-		this.text = text;
-	}
-	
 	/**
 	 * Gibt den Text des Buttons zurück.
 	 * @return Den Text des Buttons.
