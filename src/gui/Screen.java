@@ -39,7 +39,13 @@ public abstract class Screen implements Drawable, MouseListener,
 	/**
 	 * Die Mausposition des Zeigers.
 	 */
-	protected static Point mousePosition = new Point(0, 0);
+	private static Point mousePosition = new Point(0, 0);
+
+	/**
+	 * The last position of a click.
+	 */
+	private static Point lastClickPosition = new Point(0, 0);
+
 	/**
 	 * Der Name des Screens.
 	 */
@@ -110,10 +116,11 @@ public abstract class Screen implements Drawable, MouseListener,
 	}
 
 	/**
-	 * @param mousePosition the mousePosition to set
+	 * Returns the last position of a click on the screen.
+	 * @return The last click position.
 	 */
-	public static void setMousePosition(Point mousePosition) {
-		Screen.mousePosition = mousePosition;
+	public static Point getLastClickPosition() {
+		return lastClickPosition;
 	}
 
 	public static boolean isLeftMousePressed() {
@@ -226,6 +233,8 @@ public abstract class Screen implements Drawable, MouseListener,
 			isRightMousePressed = false;
 		}
 
+		lastClickPosition = e.getPoint();
+
 		Iterator<Component> iterator = getComponents().iterator();
 		while(iterator.hasNext()) {
 			Component c = iterator.next();
@@ -319,7 +328,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		Screen.setMousePosition(e.getPoint());
+		mousePosition = e.getPoint();
 		for (Component c : getComponents()) {
 			if(c.isAcceptingInput()) {
 				if(c.getBounds().contains(e.getPoint())) {
