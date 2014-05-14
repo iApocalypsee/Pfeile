@@ -422,9 +422,8 @@ public class Main {
 			bot_e.setSpawnY(y);
 			bot_e.setWorld(s.getWorld());
 			s.getWorld().addPlayer(new Bot("Dummie", bot_e));
-
+			
 			GameScreen.getInstance().getWorld().updateWorldSizeAtBeginning();
-
 		}
 	}
 	

@@ -487,13 +487,20 @@ public class World implements Drawable, GUIUpdater {
 	 * udated die Weltgroesse bei Beginn des Spiels
 	 */
 	public void updateWorldSizeAtBeginning() {
-
-		getViewport().zoomAbs(12f / (Mechanics.worldSizeX + 1));
-
-		for (Field[] fields1 : fields) {
-			for (Field f : fields1) {
-				f.updateGUI();
-			}
-		}
+		
+		Thread updateGUI = new Thread (new Runnable () {
+			@Override
+			public void run() {
+				getViewport().zoomAbs(12f / (Mechanics.worldSizeX + 1));
+				for (Field[] fields1 : fields) {
+					for (Field f : fields1) {
+						f.updateGUI();
+					}
+				}
+			}		
+		});
+		
+		updateGUI.setPriority(Thread.MIN_PRIORITY);
+		updateGUI.start();
 	}
 }

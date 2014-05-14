@@ -99,6 +99,7 @@ public final class ScreenManager implements Drawable {
 
 	@Override
 	public void draw(Graphics2D g) {
-		getActiveScreen().draw(g);
+		if (getActiveScreen() != null)
+			getActiveScreen().draw(g);
 	}
 }
