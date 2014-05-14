@@ -200,7 +200,7 @@ public class World implements Drawable, GUIUpdater {
 	 *
 	 * @param sizeX The width of the world.
 	 * @param sizeY The height of the world. Measured downwards.
-	 * @param seed  The seed.
+	 * @param seed  The seed of the Random object. 
 	 */
 	World(int sizeX, int sizeY, long seed) {
 		this.sizeX = sizeX;
@@ -396,11 +396,7 @@ public class World implements Drawable, GUIUpdater {
 
 	@Override
 	public void updateGUI() {
-		for (int x = 0; x < fields.length; x++) {
-			for (int y = 0; y < fields[x].length; y++) {
-				fields[x][y].updateGUI();
-			}
-		}
+		Field.updateFields();
 		for (Player p : turnManager.players) {
 			p.updateGUI();
 		}
@@ -487,20 +483,7 @@ public class World implements Drawable, GUIUpdater {
 	 * udated die Weltgroesse bei Beginn des Spiels
 	 */
 	public void updateWorldSizeAtBeginning() {
-		
-		Thread updateGUI = new Thread (new Runnable () {
-			@Override
-			public void run() {
-				getViewport().zoomAbs(12f / (Mechanics.worldSizeX + 1));
-				for (Field[] fields1 : fields) {
-					for (Field f : fields1) {
-						f.updateGUI();
-					}
-				}
-			}		
-		});
-		
-		updateGUI.setPriority(Thread.MIN_PRIORITY);
-		updateGUI.start();
+		getViewport().zoomAbs(12f / (Mechanics.worldSizeX + 1));
+		updateGUI();
 	}
 }

@@ -48,7 +48,7 @@ public class WorldFactory {
 //			return false;
 //		}
 		
-		// this part is just useful for the secound player
+		// this part is only useful for the second (or third) player
 		if (ref.getPlayerCount() > 0) {
 			// check if no com.github.pfeile.player is standing on the tile / field and on no tile in the direct neighborhood 
 			if(ref.getFieldAt(x, y).getEntities(Player.class).isEmpty() == false && 

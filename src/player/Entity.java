@@ -152,8 +152,8 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 	 */
 	public void move(int x, int y) {
 		// Entity braucht keinen Dekrement mit den neuen Field-Klassen mehr
-//		x--;
-//		y--;
+		x--;
+		y--;
 		Field field = world.getFieldAt(boardX, boardY);
 		field.removeEntity(this);
 

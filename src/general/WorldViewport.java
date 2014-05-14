@@ -44,7 +44,7 @@ public class WorldViewport {
     public void shiftRel(int dx, int dy) {
         shiftX += dx;
         shiftY += dy;
-//        world.updateGUI();
+        world.updateGUI();
     }
 
     /**
@@ -55,7 +55,7 @@ public class WorldViewport {
     public void shiftAbs (int x, int y) {
     	shiftX = x; 
     	shiftY = y;
-//		world.updateGUI();
+		world.updateGUI();
     }
     /**
      * Returns the zoom factor.

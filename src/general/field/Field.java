@@ -3,6 +3,7 @@ package general.field;
 import comp.Component;
 import comp.GUIUpdater;
 import general.Main;
+import general.Mechanics;
 import general.World;
 import general.WorldViewport;
 import gui.GameScreen;
@@ -286,69 +287,92 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	}
 
 	/**
-	 * updated die neue GUI-Position, wenn an 'Mechanics.heightStreching' oder
-	 * 'Mechanics.widthStreching' etwas geï¿½ndert wurde
+	 * updated die neue GUI-Position, wenn an '<code> Mechanics.heightStreching </code>' oder
+	 * '<code> Mechanics.widthStreching </code> ' etwas geändert. 
+	 * 
+	 * <code> updateFields </code> entspricht updateGUI, bloß für alle Felder. 
+	 *  <code> updateFields </code> muss nur einmal für alle Felder aufgerufen werden.
+	 *  <code> updateFields </code> ist als Thread mit Priorität 3 geschrieben.
+	 *  
+	 *  TODO: updateFields wirft eine Exeption, wenn zu stark herausgezoomt wurde
 	 */
-	@Override
-	public void updateGUI() {
-		
-		// die Positionen der Felder am Bildschirm werden gesetzt
-
-		setX((Math.round(world.getViewport().getShiftX()
-				+ getBoardX()
-				* WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor())));
-		setY(Math.round(world.getViewport().getShiftY() + getBoardY() * WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()));
-
-
-		setWidth(Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
-		setHeight(Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
-		
-		// wenn die Karte insegsammt zu groß ist, muss sie  verkleinert werden: 
-		// zuerst der Randeinschub
-		if(world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getX() + WorldViewport.STD_FIELD_DIMENSION > Main.getWindowWidth() - 1 || 
-			world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getY() + WorldViewport.STD_FIELD_DIMENSION > Main.getWindowHeight() - 1) {
+	public static void updateFields() {
+		// den Thread starten
+		Thread threadUpdateGUI = new Thread (new Runnable () {
+			@Override
+			public void run() {
+				World world = GameScreen.getInstance().getWorld();
 				
-//			System.out.println(world.getViewport().getShiftX() + " " + world.getViewport().getShiftY());
-			world.getViewport().shiftAbs(world.getViewport().getShiftX() - ((world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getX() + Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor())) - Main.getWindowWidth()), 
-									world.getViewport().getShiftY() - ((world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getY() + Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor())) - Main.getWindowHeight()));
-//			System.out.println(world.getViewport().getShiftX() + " " + world.getViewport().getShiftY());
-			System.err.println("Map doesn't fit into the size of the screen. It gets smaller.");
-		}
-		// wenn der Randeinschub zu klein (unter 0 --> außerhalb des Bildschirms ist) ist, 
-		// wird er wieder reingeschoben inset... = 0 und dann die Vergrößerungsfakorern angeglichen 
-			
-		if (world.getViewport().getShiftX() < 1 || world.getViewport().getShiftY() < 1) {
-			loop_inset: while (true) {
-				if (world.getViewport().getShiftX() >= 1 && world.getViewport().getShiftY() >= 1) {
-					while (true) {
-						if (world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getX() + WorldViewport.STD_FIELD_DIMENSION > Main.getWindowWidth() || 
-								world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getY() + WorldViewport.STD_FIELD_DIMENSION > Main.getWindowHeight()) {
-
-							world.getViewport().zoomRel(-0.02f);
-						} else {
-							// die Positionen der Felder am Bildschirm werden neu (angelichen) gesetzt
-							setX(Math.round(world.getViewport().getShiftX()
-									+ getBoardX()
-									* WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()));
-							setY(Math.round(world.getViewport().getShiftY() + getBoardY() * WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()));
-
-							setWidth(Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
-							setHeight(Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
-
-							// beide Schleifen verlassen 
-							break loop_inset;
-						}
+				for (int x = 0; x < Mechanics.worldSizeX; x++) {
+					for (int y = 0; y < Mechanics.worldSizeY; y++) {
+						// aktuelles Feld 'f'
+						Field f = world.getFieldAt(x, y);
 						
+						
+						// die Positionen der Felder am Bildschirm werden gesetzt
+
+						f.setX((Math.round(world.getViewport().getShiftX()
+								+ f.getBoardX()
+								* WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor())));
+						f.setY(Math.round(world.getViewport().getShiftY() + f.getBoardY() * WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()));
+
+
+						f.setWidth(Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
+						f.setHeight(Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
+						
+						// wenn die Karte insegsammt zu groß ist, muss sie  verkleinert werden: 
+						// zuerst der Randeinschub
+						if(world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getX() + WorldViewport.STD_FIELD_DIMENSION > Main.getWindowWidth() - 1 || 
+							world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getY() + WorldViewport.STD_FIELD_DIMENSION > Main.getWindowHeight() - 1) {
+								
+//							System.out.println(world.getViewport().getShiftX() + " " + world.getViewport().getShiftY());
+							world.getViewport().shiftAbs(world.getViewport().getShiftX() - ((world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getX() + Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor())) - Main.getWindowWidth()), 
+													world.getViewport().getShiftY() - ((world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getY() + Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor())) - Main.getWindowHeight()));
+//							System.out.println(world.getViewport().getShiftX() + " " + world.getViewport().getShiftY());
+							System.err.println("Map doesn't fit into the size of the screen. It gets smaller.");
+						}
+						// wenn der Randeinschub zu klein (unter 0 --> außerhalb des Bildschirms ist) ist, 
+						// wird er wieder reingeschoben inset... = 0 und dann die Vergrößerungsfakorern angeglichen 
+							
+						if (world.getViewport().getShiftX() < 1 || world.getViewport().getShiftY() < 1) {
+							loop_inset: while (true) {
+								if (world.getViewport().getShiftX() >= 1 && world.getViewport().getShiftY() >= 1) {
+									while (true) {
+										if (world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getX() + WorldViewport.STD_FIELD_DIMENSION > Main.getWindowWidth() || 
+												world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getY() + WorldViewport.STD_FIELD_DIMENSION > Main.getWindowHeight()) {
+
+											world.getViewport().zoomRel(-0.02f);
+										} else {
+											// die Positionen der Felder am Bildschirm werden neu (angelichen) gesetzt
+											f.setX(Math.round(world.getViewport().getShiftX()
+													+ f.getBoardX()
+													* WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()));
+											f.setY(Math.round(world.getViewport().getShiftY() + f.getBoardY() * WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()));
+
+											f.setWidth(Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
+											f.setHeight(Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
+
+											// beide Schleifen verlassen 
+											break loop_inset;
+										}
+										
+									}
+								}
+								if (world.getViewport().getShiftX() < 1) {
+									world.getViewport().shiftRel(1, 0);
+								}
+								if (world.getViewport().getShiftY() < 0) {
+									world.getViewport().shiftRel(0, 1);
+								}
+							}
+						}
 					}
 				}
-				if (world.getViewport().getShiftX() < 1) {
-					world.getViewport().shiftRel(1, 0);
-				}
-				if (world.getViewport().getShiftY() < 0) {
-					world.getViewport().shiftRel(0, 1);
-				}
 			}
-		}
+		});
+		threadUpdateGUI.setPriority(3);
+		threadUpdateGUI.setDaemon(true);
+		threadUpdateGUI.start();
 	}
 	
 	/**
