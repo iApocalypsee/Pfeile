@@ -5,6 +5,7 @@ import gui.ArrowSelectionScreen;
 import gui.GameScreen;
 import gui.PreWindow;
 
+import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
@@ -155,6 +156,7 @@ public class Main {
 				System.out.println("----------------------------------\n");
 			}
 		});
+		sys_props_out_thread.setPriority(Thread.MIN_PRIORITY);
 		sys_props_out_thread.start();
 
 	}
@@ -164,10 +166,12 @@ public class Main {
 	// Hier laeuft das Spiel nach allen Insizialisierungen 
 	private void runGame() {
 		
+		// start TimeClock
+		stopwatchThread.start();
+		timeObj.start();
+		
 		// assign the last frame time
 		lastFrame = System.currentTimeMillis();
-
-		timeObj.start();
 		
 		while (running) {
 			render();
@@ -248,6 +252,7 @@ public class Main {
 	 * Berechnung der Endsequence: Gewonnen Aufruf durch: endSequenceLoop()
 	 * milliSec: Die Zeit in Millisekunden, bis er automaisch terminiert
 	 */
+	@SuppressWarnings("unused")
 	private void doEndSequenceWonLoop(long milliSec) {
 		long endSequenceWonStartTime = System.currentTimeMillis();
 		do {
@@ -266,7 +271,7 @@ public class Main {
 	/**
 	 * Berechnung der Endsequence: Verloren Aufruf durch: endSequenceLoop()
 	 */
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({ "deprecation", "unused" })
 	private void doEndSequenceDiedLoop(long milliSecDied) {
 
 		long startTimeEndSequence = System.currentTimeMillis();
@@ -338,10 +343,11 @@ public class Main {
 
 		main = new Main();
 		main.printSystemProperties();
+		
 		main.initPreWindow();
 		main.initArrowSelectionWindow();
 		main.initGameWindow();
-
+		
 		synchronized (main) {
 			try {
 				main.wait();
@@ -349,8 +355,6 @@ public class Main {
 				e.printStackTrace();
 			}
 		}
-
-		stopwatchThread.start();
 
 		// Starten wir das Spiel
 		main.runGame();
@@ -383,8 +387,6 @@ public class Main {
 						// window showing process
 						gameWindow.setVisible(true);
 						gameWindow.createBufferStrategy();
-
-						timeObj.initNewPosition();
 
 						synchronized (main) {
 							main.notify();
@@ -429,8 +431,8 @@ public class Main {
 						generateWorld();
 						main.populateWorld();
 						ArrowSelectionScreen.getInstance().init();
+						main.initTimeClock();
 					}
-
 				});
 			}
 		});
@@ -438,19 +440,27 @@ public class Main {
 	}
 
 	/**
-	 * Initialiert die Klassen
+	 * Initialiert die TimeClock
 	 */
-	private void initClasses() {
+	private void initTimeClock() {
+		Thread initTimeClock = new Thread (new Runnable() {
 
-		// Feldinitialisierung in einen separaten Thread verschoben...
-
-		/* Instanziert 'timeClock' */
-		timeObj = new TimeClock();
+			@Override
+			public void run() {
+				/* Instanziert 'timeClock' */
+				timeObj = new TimeClock();
+				
+				/* TimeClock wird zu Thread */
+				stopwatchThread = new Thread(timeObj);
+				stopwatchThread.setDaemon(true);
+				
+				timeObj.initNewPosition();
+			}
+		});
 		
-		/* TimeClock wird zu Thread */
-		stopwatchThread = new Thread(timeObj);
-		stopwatchThread.setDaemon(true);
-
+		initTimeClock.setPriority(Thread.MIN_PRIORITY);
+		initTimeClock.setDaemon(true);
+		initTimeClock.start();
 	}
 
 	/**
@@ -463,13 +473,13 @@ public class Main {
 			public void run() {
 				environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
 				graphicsDevice = environmentG.getDefaultScreenDevice();
+//				graphicsDevice.setDisplayMode(new DisplayMode(getWindowWidth(), getWindowHeight(), DisplayMode.BIT_DEPTH_MULTI, DisplayMode.REFRESH_RATE_UNKNOWN));
 
 				gameWindow = new GameWindow();
 				gameWindow.initializeScreens();
 				// TODO dieser Methodenaufruf müsste in einen anderen Thread, glaube ich
 				// so funktioniert es aber auch...
-				main.postInitScreens();
-				main.initClasses();
+//				main.postInitScreens();    // empty method
 
 				GameWindow.adjustWindow(Main.getWindowWidth(), Main.getWindowHeight(),
 						gameWindow);
@@ -478,7 +488,6 @@ public class Main {
 			}
 		});
 		thread.start();
-
 	}
 
 	/**
@@ -542,6 +551,7 @@ public class Main {
 		}
 	}
 
+	/** empty: aufruf in Main ist auskommentiert */
 	protected void postInitScreens() {
 
 	}

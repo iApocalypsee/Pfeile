@@ -45,7 +45,7 @@ public class TimeClock extends Component implements Runnable {
 	 */
 	public TimeClock () {
 		super(Main.getWindowWidth() / 2 - 72 / 2, 25, 72, 26, 
-				(GameScreen) Main.getGameWindow().getScreenManager().getScreens().get(GameScreen.SCREEN_INDEX));
+				GameScreen.getInstance());
 		stop();
 	}
 	

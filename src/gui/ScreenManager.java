@@ -101,5 +101,4 @@ public final class ScreenManager implements Drawable {
 	public void draw(Graphics2D g) {
 		getActiveScreen().draw(g);
 	}
-
 }

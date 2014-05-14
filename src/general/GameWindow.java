@@ -76,14 +76,15 @@ public class GameWindow extends JFrame {
 
 	/**
 	 * Initialisiert alle Screens. Hier kommen die Konstruktoraufrufe der einzelnen Screens
-	 * rein. <b>Darf nicht im Konstruktor von GameWindow selbst aufgerufen werden.</b>
+	 * rein. GameScreen und ArrowSelectionScreen wurden bereits vorher initialisiert.
+	 * <b>Darf nicht im Konstruktor von GameWindow selbst aufgerufen werden.</b>
 	 */
 	void initializeScreens() {
 		new MainMenuScreen();
-		GameScreen.getInstance();
 		new PauseScreen();
-		ArrowSelectionScreen.getInstance();
 		new AimSelectionScreen();
+		GameScreen.getInstance();
+		ArrowSelectionScreen.getInstance();
 		screenManager.setActiveScreen(GameScreen.SCREEN_INDEX);
 	}
 
@@ -103,9 +104,10 @@ public class GameWindow extends JFrame {
 		window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		window.setSize(width, heigth);
 		window.setUndecorated(true);
-		window.setAlwaysOnTop(false);
+		window.setAlwaysOnTop(true);
 		window.setResizable(true);
 		window.setLocationRelativeTo(null);
+		window.setExtendedState(Frame.MAXIMIZED_BOTH);
 	}
 
 	/**
