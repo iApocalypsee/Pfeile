@@ -26,26 +26,38 @@ public class AimSelectionScreen extends Screen {
 	 * * (wenn noch nie auf <code> AimSelectionScreen </code> gecklickt wurde, ist der Wert -1)*/
 	private int posX_selectedField;
 	
+	private static boolean isRunning;
+	
 	/** Y-Position des Ausgewählten Feldes 
 	 * (wenn noch nie auf <code> AimSelectionScreen </code> gecklickt wurde, ist der Wert -1) */
 	private int posY_selectedField;
 	
-	private Button confirm = new Button (Main.getWindowWidth() - 300, Main.getWindowHeight() - 200, this, "Confirm");
+	private Button confirm;
 	
 	private Thread selectFieldThread; 
 	
-	
+	/** Konstrucktor von AimSelectionScreen: ruft super(...) auf und setzt nur die Variabelnwerte nach der Initialisierung; */
 	public AimSelectionScreen() {
 		super (SCREEN_NAME, SCREEN_INDEX);
 		
 		posX_selectedField = -1;
 		posY_selectedField = -1;
 		
-		getLastClickPosition();
+		isRunning = false;
 		
-//		selectFieldThread = new Thread (x);
-//		selectFieldThread.setDaemon(true);;
-//		x.run();
+		confirm = new Button (Main.getWindowWidth() - 300, Main.getWindowHeight() - 200, this, "Confirm");
+		
+//		getLastClickPosition();
+		
+		System.out.println("MAX_PRIORITY: " + Thread.MAX_PRIORITY);
+		System.out.println("NORM_PRIORITY: " + Thread.NORM_PRIORITY);
+		System.out.println("MIN_PRIORITY: " + Thread.MIN_PRIORITY);
+		
+		FieldSelector x = new FieldSelector ();
+		selectFieldThread = new Thread (x);
+		selectFieldThread.setDaemon(true);
+		selectFieldThread.setPriority(Thread.NORM_PRIORITY - 1);
+		x.run();
 	}
 
 	@Override 
@@ -72,6 +84,9 @@ public class AimSelectionScreen extends Screen {
 			while (true) {
 				while (AimSelectionScreen.isRunningThread()) {
 					
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {e.printStackTrace();}
 				}
 				try {
 					Thread.sleep(500);
@@ -80,7 +95,7 @@ public class AimSelectionScreen extends Screen {
 		}
 	}
 	
-	private static boolean isRunningThread () {
-		return true;
+	public static boolean isRunningThread () {
+		return isRunning;
 	}
 }
