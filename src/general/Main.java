@@ -396,12 +396,12 @@ public class Main {
 			// Kein Randfeld fuer x oder y: zuerst durch 'getSize() - 2' Randfeld oben / unten verhindern; dann durch + 2 den Wert (0 und 1) verhindern
 			// FIXME: durch die Spawnmethode kommt das richtige raus, wenn e.setSpawnX(...) nicht 0-basierte Werte erhählt
 			do {
-				x = r.nextInt(s.getWorld().getSizeX() - 2) + 2;
+				x = r.nextInt(s.getWorld().getSizeX() - 2) + 1;
 				// x = r.nextInt(13 - 2); 
-				// --> x = 0 bis 10
+				// --> x = 0 bis 11
 				// x = x + 2;
-				// --> x = 2 bis 12
-				y = r.nextInt(s.getWorld().getSizeY() - 2) + 2;
+				// --> x = 2 bis 13
+				y = r.nextInt(s.getWorld().getSizeY() - 2) + 1;
 				
 			} while (!WorldFactory.isSpawnPossible(x, y));
 			e.setSpawnX(x);
@@ -415,8 +415,8 @@ public class Main {
 			SpawnEntityInstanceArgs bot_e = new SpawnEntityInstanceArgs();
 
 			do {
-				x = r.nextInt(s.getWorld().getSizeX() - 2) + 2;
-				y = r.nextInt(s.getWorld().getSizeY() - 2) + 2;
+				x = r.nextInt(s.getWorld().getSizeX() - 2) + 1;
+				y = r.nextInt(s.getWorld().getSizeY() - 2) + 1;
 			} while (!WorldFactory.isSpawnPossible(x, y));
 			bot_e.setSpawnX(x);
 			bot_e.setSpawnY(y);

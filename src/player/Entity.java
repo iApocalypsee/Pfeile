@@ -145,15 +145,15 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 		g.drawString(getName(), getX() + 10, getY() + getHeight() + 20);
 	}
 	
-	/**
+	/**TODO: make move by using a button 
 	 * Bewegt die Entity relativ zu ihrer aktuellen Position.
 	 * @param x Die relative x-Bewegungsrichtung.
 	 * @param y Die relative y-Bewegungsrichtung.
 	 */
 	public void move(int x, int y) {
 		// Entity braucht keinen Dekrement mit den neuen Field-Klassen mehr
-		x--;
-		y--;
+//		x--;
+//		y--;
 		Field field = world.getFieldAt(boardX, boardY);
 		field.removeEntity(this);
 
