@@ -154,7 +154,14 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 		// Entity braucht keinen Dekrement mit den neuen Field-Klassen mehr
 //		x--;
 //		y--;
+		
 		Field field = world.getFieldAt(boardX, boardY);
+		
+		if(!field.isAccessable()) {
+			System.out.println("Field (" + boardX + "|" + boardY + ") is not accessable.");
+			return;
+		}
+		
 		field.removeEntity(this);
 
 		if(boardX + x >= world.getSizeX()) {
@@ -174,6 +181,7 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 		}
 
 		field = world.getFieldAt(boardX, boardY);
+		
 		field.addEntity(this);
 		/*
 		Field f = GameScreen.getWorld().getFields()[boardX][boardY];
@@ -218,8 +226,12 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 //		world_x--;
 //		world_y--;
 		// check if the position is valid
-		if(!world.isPositionValid(world_x, world_y)) {
+		if(world.isPositionValid(world_x, world_y) == false) {
 			throw new IllegalArgumentException("Invalid coordinates: " + world_x + "; " + world_y);
+		}
+		if (world.getFieldAt(world_x, world_y).isAccessable() == false) {
+			System.out.println("Field (" + boardX + "|" + boardY + ") is not accessable.");
+			return;
 		}
 		// updates data
 		world.getFieldAt(boardX, boardY).removeEntity(this);
