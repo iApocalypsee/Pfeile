@@ -47,17 +47,12 @@ public class AimSelectionScreen extends Screen {
 		
 		confirm = new Button (Main.getWindowWidth() - 300, Main.getWindowHeight() - 200, this, "Confirm");
 		
-//		getLastClickPosition();
-		
-		System.out.println("MAX_PRIORITY: " + Thread.MAX_PRIORITY);
-		System.out.println("NORM_PRIORITY: " + Thread.NORM_PRIORITY);
-		System.out.println("MIN_PRIORITY: " + Thread.MIN_PRIORITY);
 		
 		FieldSelector x = new FieldSelector ();
 		selectFieldThread = new Thread (x);
 		selectFieldThread.setDaemon(true);
-		selectFieldThread.setPriority(Thread.NORM_PRIORITY - 1);
-		x.run();
+		selectFieldThread.setPriority(Thread.NORM_PRIORITY - 2);
+		x.start();
 	}
 
 	@Override 
@@ -77,7 +72,7 @@ public class AimSelectionScreen extends Screen {
 		GameScreen.getInstance().getWorld().drawReduced(g);
 	}
 	
-	private class FieldSelector implements Runnable {
+	private class FieldSelector extends Thread {
 
 		@Override
 		public void run() {

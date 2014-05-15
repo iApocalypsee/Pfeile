@@ -59,7 +59,7 @@ public final class ScreenManager implements Drawable {
 	 * @param index
 	 * @throws RuntimeException wenn kein Screen anhand des Index gefunden werden kann
 	 */
-	public void setActiveScreen(int index) {
+	public synchronized void setActiveScreen(int index) {
 		if(getScreens().containsKey(index)) {
 			setActiveScreen(screens.get(index));
 		} else throw new IllegalArgumentException("No screen could be found at position " + index + ". " + 

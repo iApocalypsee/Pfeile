@@ -431,24 +431,14 @@ public class Main {
 	 * Initialiert die TimeClock
 	 */
 	private void initTimeClock() {
-		Thread initTimeClock = new Thread (new Runnable() {
-
-			@Override
-			public void run() {
-				/* Instanziert 'timeClock' */
-				timeObj = new TimeClock();
-				
-				/* TimeClock wird zu Thread */
-				stopwatchThread = new Thread(timeObj);
-				stopwatchThread.setDaemon(true);
-				
-				timeObj.initNewPosition();
-			}
-		});
+		/* Instanziert 'timeClock' */
+		timeObj = new TimeClock();
 		
-		initTimeClock.setPriority(Thread.MIN_PRIORITY);
-		initTimeClock.setDaemon(true);
-		initTimeClock.start();
+		/* TimeClock wird zu Thread */
+		stopwatchThread = new Thread(timeObj);
+		stopwatchThread.setDaemon(true);
+		
+		timeObj.initNewPosition();
 	}
 	
 	/**

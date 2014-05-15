@@ -99,8 +99,7 @@ public class GameWindow extends JFrame {
 	/**
 	 * Einstellung, wenn 'GameWindow' in Main initialisiert wird.
 	 */
-	public synchronized static void adjustWindow(int width, int heigth,
-	                                             GameWindow window) {
+	public synchronized static void adjustWindow(int width, int heigth, GameWindow window) {
 		window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		window.setSize(width, heigth);
 		window.setUndecorated(true);
