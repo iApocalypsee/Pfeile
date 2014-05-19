@@ -66,7 +66,7 @@ public class PreWindow extends JFrame {
 			this.initSpinner.setPreferredSize(prefSizeForSpinner);
 			this.initSpinner.setVisible(false);
 			
-			this.confirmButton = new ConfirmButton("Confirm");
+			this.confirmButton = new ConfirmButton("Best‰tigen");
 			this.confirmButton
 					.addActionListener(new PreWindow.ListenToButton());
 			this.confirmButton.type = 0;
@@ -75,8 +75,8 @@ public class PreWindow extends JFrame {
 			this.standardButton = new JButton("Standard-Einstellungen");
 
 			this.label0 = new JLabel("Computerst‰rke: "); // "ComputerstÔøΩrke"
-			this.label1 = new JLabel("Pfeilanzahl [frei w√§hlbar]: "); // "Pfeilanzahl [frei wÔøΩhlbar]"
-			this.label2 = new JLabel("Pfeilanzahl [vorher w√§hlbar]: "); // "Pfeilanzahl [vorher wÔøΩhlbar]"
+			this.label1 = new JLabel("Pfeilanzahl [frei w‰hlbar]: "); // "Pfeilanzahl [frei wÔøΩhlbar]"
+			this.label2 = new JLabel("Pfeilanzahl [vorher w‰lbar]: "); // "Pfeilanzahl [vorher wÔøΩhlbar]"
 			this.label3 = new JLabel("Zuganzahl pro Runde: "); // "Zuganzahl pro Runde"
 			this.label4 = new JLabel("maximales Leben: "); // "maximales Leben"
 			this.label5 = new JLabel("Lebensregeneration: "); // "Lebensregeneration"
@@ -433,7 +433,7 @@ public class PreWindow extends JFrame {
 							// -
 							// 5=hoch;
 							// 1=niedrig
-							// --> Werte noch zuweisen
+							// TODO --> Werte nur vorzeitig
 
 							if (PreWindow.this.selectBox.getSelectedIndex() == 0) { // "hoch"
 								Mechanics.damageMulti = 1.8f;
@@ -622,7 +622,7 @@ public class PreWindow extends JFrame {
 				// Test, ob jede Zahl korrekt eingegeben wurde und gibt falls
 				// nÔøΩtig eine Warnung aus
 				if (Mechanics.KI == -1) {
-					PreWindow.this.warningMessage = ("Select unselected Selections: KI-St√§rke");
+					PreWindow.this.warningMessage = ("Select unselected Selections: Computerst‰rke");
 					JOptionPane.showMessageDialog(PreWindow.this,
 							PreWindow.this.warningMessage, "Warning", 1);
 					return;
@@ -670,7 +670,7 @@ public class PreWindow extends JFrame {
 					return;
 				}
 				if (Mechanics.worldSizeX == -1 || Mechanics.worldSizeY == -1) {
-					PreWindow.this.warningMessage = ("Select unselected Selections: WorldSize");
+					PreWindow.this.warningMessage = ("Select unselected Selections: Weltgrˆﬂe");
 					JOptionPane.showMessageDialog(PreWindow.this,
 							PreWindow.this.warningMessage, "Warning", 1);
 					return;
@@ -686,13 +686,6 @@ public class PreWindow extends JFrame {
 				setTotalArrowNumberCorrect();
 				
 				dispose();
-				
-//				isReady = true;
-				/* Multithreaded now.
-				synchronized (Main.getMain()) {
-					Main.getMain().notify();
-				}
-				*/
 			}
 			
 			// ~~~~~~~~~~~~~~~~~
@@ -706,12 +699,12 @@ public class PreWindow extends JFrame {
 				PreWindow.this.label0.setText("Computerst√§rke: " + "mittel");
 				
 				Mechanics.arrowNumberFreeSet = 5;
-				PreWindow.this.label1.setText("Pfeilanzahl [frei w√§hlbar]: "
+				PreWindow.this.label1.setText("Pfeilanzahl [frei w‰hlbar]: "
 						+ Mechanics.arrowNumberFreeSet);
 				
 				Mechanics.arrowNumberPreSet = 10;
 				
-				PreWindow.this.label2.setText("Pfeilanzahl [vorher w√§hlbar]: "
+				PreWindow.this.label2.setText("Pfeilanzahl [vorher w‰hlbar]: "
 						+ Mechanics.arrowNumberPreSet);
 				
 				Mechanics.turnsPerRound = 5;
@@ -896,5 +889,4 @@ public class PreWindow extends JFrame {
 				+ Mechanics.arrowNumberPreSet;
 		Mechanics.arrowNumberFreeSetUseable = Mechanics.arrowNumberFreeSet;
 	}
-
 }
