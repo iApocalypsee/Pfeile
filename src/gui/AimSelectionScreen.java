@@ -10,17 +10,12 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
-import sun.security.jgss.spi.MechanismFactory;
-
 
 public class AimSelectionScreen extends Screen {
 
 	public static final String SCREEN_NAME = "AimSelection";
 	
 	public static final int SCREEN_INDEX = 4;
-	
-	/** save the reference to world, for a faster access */
-	private static World world = GameScreen.getInstance().getWorld();
 	
 	/** Background Color, if it need to be Transparent: 185/255 is black */
 	private static final Color TRANSPARENT_BACKGROUND = new Color(0, 0, 0, 185);
@@ -143,14 +138,15 @@ public class AimSelectionScreen extends Screen {
 					}
 					
 					// only run, if the position of the new click is on the map
-					if (getLastClickPosition().x < world.getFieldAt(Mechanics.worldSizeX - 1, Mechanics.worldSizeY - 1).getAbsoluteX() + world.getFieldAt(Mechanics.worldSizeX - 1, Mechanics.worldSizeY - 1).getWidth() || 
-							getLastClickPosition().y < world.getFieldAt(Mechanics.worldSizeX - 1, Mechanics.worldSizeY - 1).getAbsoluteY() + world.getFieldAt(Mechanics.worldSizeX - 1, Mechanics.worldSizeY - 1).getHeight()) {
-						
-						
+					if (getLastClickPosition().x < GameScreen.getInstance().getWorld().getFieldAt(Mechanics.worldSizeX - 1, Mechanics.worldSizeY - 1).getAbsoluteX() +
+							GameScreen.getInstance().getWorld().getFieldAt(Mechanics.worldSizeX - 1, Mechanics.worldSizeY - 1).getWidth() 
+							&& getLastClickPosition().y < GameScreen.getInstance().getWorld().getFieldAt(Mechanics.worldSizeX - 1, Mechanics.worldSizeY - 1).getAbsoluteY() + 
+							GameScreen.getInstance().getWorld().getFieldAt(Mechanics.worldSizeX - 1, Mechanics.worldSizeY - 1).getHeight()) {
+					
 						// Let's find the selectedField
 						LOOPxPosition: for (int x = 0; x < Mechanics.worldSizeX; x++) {
 							for (int y = 0; y < Mechanics.worldSizeY; y++) {
-								if (world.getFieldAt(x, y).getSimplifiedBounds().contains(getLastClickPosition())) {
+								if (GameScreen.getInstance().getWorld().getFieldAt(x, y).getSimplifiedBounds().contains(getLastClickPosition())) {
 									setPosX_selectedField(x);
 									setPosY_selectedField(y);
 									lastSavedClickPosition = getLastClickPosition();
