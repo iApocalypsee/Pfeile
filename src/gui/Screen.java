@@ -116,10 +116,10 @@ public abstract class Screen implements Drawable, MouseListener,
 	}
 
 	/**
-	 * Returns the last position of a click on the screen.
+	 * Returns the last position of a click (using MouseReleased) on the screen.
 	 * @return The last click position.
 	 */
-	public static Point getLastClickPosition() {
+	public static synchronized Point getLastClickPosition() {
 		return lastClickPosition;
 	}
 

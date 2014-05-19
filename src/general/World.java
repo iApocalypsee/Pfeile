@@ -234,6 +234,8 @@ public class World implements Drawable, GUIUpdater {
 		return sizeY;
 	}
 
+	/** returns the field at (x|y), only if the position (x|y) is valid (if it isn't: return <code> null </code>)
+	 * @return fields [x][y] */
 	public Field getFieldAt(int x, int y) {
 		if (isPositionValid(x, y)) {
 			return fields[x][y];

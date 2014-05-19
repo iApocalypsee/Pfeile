@@ -23,7 +23,7 @@ public class ArrowSelectionScreen extends Screen {
 	
 	/**
 	 * Singleton-Methode.
-	 * @return The object.
+	 * @return The object of ArrowSelectionScreen
 	 */
 	public static ArrowSelectionScreen getInstance() {
 		if(instance == null) {
@@ -330,6 +330,7 @@ public class ArrowSelectionScreen extends Screen {
 									ArrowHelper.reformArrow(inventoryList.getSelectedIndex()))) {
 										
 						onLeavingScreen(this, AimSelectionScreen.SCREEN_INDEX);
+						AimSelectionScreen.setRunningThread(true);
 					} else {
 						warningMessage = "Kein " + selectedArrowBox.getEnteredText() + " im Inventar.";
 						transparencyWarningMessage = 1f;
