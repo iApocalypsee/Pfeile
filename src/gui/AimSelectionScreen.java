@@ -137,21 +137,26 @@ public class AimSelectionScreen extends Screen {
 						continue;
 					}
 					
-					// only run, if the position of the new click is on the map
+					// only run, if the position of the new click is on the map 
 					if (getLastClickPosition().x < GameScreen.getInstance().getWorld().getFieldAt(Mechanics.worldSizeX - 1, Mechanics.worldSizeY - 1).getAbsoluteX() +
 							GameScreen.getInstance().getWorld().getFieldAt(Mechanics.worldSizeX - 1, Mechanics.worldSizeY - 1).getWidth() 
 							&& getLastClickPosition().y < GameScreen.getInstance().getWorld().getFieldAt(Mechanics.worldSizeX - 1, Mechanics.worldSizeY - 1).getAbsoluteY() + 
 							GameScreen.getInstance().getWorld().getFieldAt(Mechanics.worldSizeX - 1, Mechanics.worldSizeY - 1).getHeight()) {
-					
-						// Let's find the selectedField
-						LOOPxPosition: for (int x = 0; x < Mechanics.worldSizeX; x++) {
-							for (int y = 0; y < Mechanics.worldSizeY; y++) {
-								if (GameScreen.getInstance().getWorld().getFieldAt(x, y).getSimplifiedBounds().contains(getLastClickPosition())) {
-									setPosX_selectedField(x);
-									setPosY_selectedField(y);
-									lastSavedClickPosition = getLastClickPosition();
-									
-									break LOOPxPosition;
+						
+						// only run, if the new click isn't on the insets of the map
+						if (getLastClickPosition().x > GameScreen.getInstance().getWorld().getFieldAt(0, 0).getAbsoluteX() 
+								&& getLastClickPosition().y > GameScreen.getInstance().getWorld().getFieldAt(0, 0).getAbsoluteY()) {
+							
+							// Let's find the selectedField
+							LOOPxPosition: for (int x = 0; x < Mechanics.worldSizeX; x++) {
+								for (int y = 0; y < Mechanics.worldSizeY; y++) {
+									if (GameScreen.getInstance().getWorld().getFieldAt(x, y).getSimplifiedBounds().contains(getLastClickPosition())) {
+										setPosX_selectedField(x);
+										setPosY_selectedField(y);
+										lastSavedClickPosition = getLastClickPosition();
+										
+										break LOOPxPosition;
+									}
 								}
 							}
 						}
