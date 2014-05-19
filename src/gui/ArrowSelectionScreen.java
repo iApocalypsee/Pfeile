@@ -78,7 +78,7 @@ public class ArrowSelectionScreen extends Screen {
 	
 	private float transparencyWarningMessage = 0;
 	
-	private Point pointWarningMessage = new Point(50, Main.getWindowHeight() - 210);
+	private Point pointWarningMessage = new Point(40, Main.getWindowHeight() - 105);
 	
 	private String warningMessage = "";
 	
@@ -248,7 +248,7 @@ public class ArrowSelectionScreen extends Screen {
 		g.setFont(new Font(Component.STD_FONT.getFontName(), Font.BOLD, 26));
 		g.drawString(warningMessage, pointWarningMessage.x, pointWarningMessage.y);
 		
-		transparencyWarningMessage = transparencyWarningMessage - 0.015f;
+		transparencyWarningMessage = transparencyWarningMessage - 0.013f;
 		
 		if (transparencyWarningMessage < 0) 
 			transparencyWarningMessage = 0;
@@ -325,7 +325,20 @@ public class ArrowSelectionScreen extends Screen {
 				onLeavingScreen(this, GameScreen.SCREEN_INDEX);
 			} 
 			if (confirmButton.getBounds().contains(e.getPoint())) {
-				onLeavingScreen(this, AimSelectionScreen.SCREEN_INDEX);
+				if (selectedArrowBox.getEnteredText().equals(selectedArrowBox.getStdText()) == false) {
+					if (GameScreen.getInstance().getWorld().getActivePlayer().getInventory().contains(
+									ArrowHelper.reformArrow(inventoryList.getSelectedIndex()))) {
+										
+						onLeavingScreen(this, AimSelectionScreen.SCREEN_INDEX);
+					} else {
+						warningMessage = "Kein " + selectedArrowBox.getEnteredText() + " im Inventar.";
+						transparencyWarningMessage = 1f;
+					}
+					
+				} else {
+					warningMessage = "Kein Pfeil ausgewählt";
+					transparencyWarningMessage = 1f;
+				}				
 			}
 			
 			if (confirmDialog.isVisible()) {
