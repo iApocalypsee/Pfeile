@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import player.weapon.AbstractArrow;
 import player.weapon.FireArrow;
@@ -45,6 +46,8 @@ public class ArrowSelection extends JFrame {
 
 	// Hauptpanel
 	private JPanel thisPanel;
+	
+	private JScrollPane scrollPane;
 
 	private JList<String> arrowList;
 	private JList<String> arrowListSelected;
@@ -54,7 +57,7 @@ public class ArrowSelection extends JFrame {
 
 	private JButton readyButton;
 
-	@SuppressWarnings("serial")
+	
 	public ArrowSelection(int heigth, int width) {
 
 		super("Pfeilauswahl");
@@ -81,20 +84,10 @@ public class ArrowSelection extends JFrame {
 		thisPanel.add(readyButton);
 
 		arrowList.setModel(new AbstractListModel<String>() {
-			private boolean sorted = false;
-
-			String[] values = new String[] { FireArrow.NAME, IceArrow.NAME,
-					LightArrow.NAME, LightningArrow.NAME, ShadowArrow.NAME,
-					StoneArrow.NAME, StormArrow.NAME, WaterArrow.NAME };
+			String[] values = new String[] {FireArrow.NAME, WaterArrow.NAME, StormArrow.NAME, StoneArrow.NAME, IceArrow.NAME, LightningArrow.NAME, LightArrow.NAME, ShadowArrow.NAME};
 
 			@Override
 			public String getElementAt(int arg0) {
-				// wenn das Array noch nicht sortiert ist, sortier es
-				if (sorted == false) {
-					Arrays.sort(values);
-					// verhindere, dass das Array noch einmal sortiert wird
-					sorted = true;
-				}
 				return values[arg0];
 			}
 
@@ -106,11 +99,6 @@ public class ArrowSelection extends JFrame {
 		selectedArrows.add("<keine Pfeile>");
 
 		arrowListSelected.setListData(convert(selectedArrows));
-		// TODO Scrolling through the arrows
-//		scrollPaneSelected = new JScrollPane();
-		// arrowListSelected.add(scrollPaneSelected);
-		// scrollPaneSelected = new JScrollPane (arrowListSelected);
-		// listsPanel.add(scrollPaneSelected);
 
 		// MouseListener fï¿½r 'arrowList'
 		arrowList.addMouseListener(new MouseListener() {
@@ -169,48 +157,32 @@ public class ArrowSelection extends JFrame {
 								+ (Mechanics.arrowNumberPreSet - selectedArrows
 										.size()));
 					}
-
 				}
 			}
 
 			@Override
-			public void mouseEntered(MouseEvent eEntered) {/*
-															 * TODO BEVELBORDER
-															 * WHEN ENTERING
-															 */
-			}
+			public void mouseEntered(MouseEvent eEntered) {}
 
 			@Override
-			public void mouseExited(MouseEvent eExited) {/*
-														 * TODO EMPTYBORDER WHEN
-														 * EXITING
-														 */
-			}
+			public void mouseExited(MouseEvent eExited) {}
 
 			@Override
-			public void mousePressed(MouseEvent ePressed) {
-			}
+			public void mousePressed(MouseEvent ePressed) {}
 
 			@Override
-			public void mouseReleased(MouseEvent eReleased) {
-			}
-
+			public void mouseReleased(MouseEvent eReleased) {}
 		});
 
 		arrowList.setFixedCellHeight(30);
 		arrowList.setFixedCellWidth(90);
+		
 		arrowListSelected.setFixedCellHeight(30);
 		arrowListSelected.setFixedCellWidth(90);
-
-		/* Threadingsystem. Ich kann keine Pfeile auswählen, wenn dieser Check true ergibt.
-		if (Mechanics.arrowNumberPreSet == -1) {
-			arrowList.setEnabled(false);
-			arrowListSelected.setEnabled(false);
-		}
-		*/
+		
+		scrollPane = new JScrollPane(arrowListSelected, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
 		listsPanel.add(arrowList);
-		listsPanel.add(arrowListSelected);
+		listsPanel.add(scrollPane);
 		thisPanel.add(listsPanel);
 		thisPanel.add(remainingArrows);
 	}
@@ -308,11 +280,6 @@ public class ArrowSelection extends JFrame {
 			}
 
 			if(couldBeReady == true) {
-				/* Multithreaded now.
-				synchronized(Main.getMain()) {
-					Main.getMain().notify();
-				}
-				*/
 				
 				// nach Fehlern kontrolieren (d.h. zum Beispiel Pfeil wie <Übrige Pfeile auswählen>)
 				for (int i = 0; i < selectedArrows.size(); i++) {
@@ -323,8 +290,6 @@ public class ArrowSelection extends JFrame {
 				
 				dispose();
 			}
-
 		}
-
 	}
 }

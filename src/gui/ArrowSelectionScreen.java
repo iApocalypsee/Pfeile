@@ -183,8 +183,8 @@ public class ArrowSelectionScreen extends Screen {
 					} else if (GameScreen.getInstance().getWorld().getActivePlayer().getInventory().maxStack(selectedIndex) >= 
 								GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getItemCount(selectedIndex)){
 						
-						warningMessage = "Das Inventar kann maximal + " + GameScreen.getInstance().getWorld().getActivePlayer().getInventory().maxStack(selectedIndex) + " " + 
-											selectedIndex + " Pfeile aufnehmen";
+						warningMessage = "Das Inventar kann maximal " + GameScreen.getInstance().getWorld().getActivePlayer().getInventory().maxStack(selectedIndex) + " " + 
+											selectedIndex.getSimpleName() + " Pfeile aufnehmen";
 						
 					}else {
 						System.err.println("Could not add arrow to inventory (with " + GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getRemainingSpace() + " remaining space) arrow index: " + selectedIndex);
@@ -327,7 +327,7 @@ public class ArrowSelectionScreen extends Screen {
 			if (confirmButton.getBounds().contains(e.getPoint())) {
 				if (selectedArrowBox.getEnteredText().equals(selectedArrowBox.getStdText()) == false) {
 					if (GameScreen.getInstance().getWorld().getActivePlayer().getInventory().contains(
-									ArrowHelper.reformArrow(inventoryList.getSelectedIndex()))) {
+									ArrowHelper.reformArrow(selectedArrowBox.getEnteredText()))) {
 										
 						onLeavingScreen(this, AimSelectionScreen.SCREEN_INDEX);
 						AimSelectionScreen.setRunningThread(true);
