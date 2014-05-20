@@ -146,85 +146,51 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 	}
 	
 	/**TODO: make move by using a button 
-	 * Bewegt die Entity relativ zu ihrer aktuellen Position.
+	 * Bewegt die Entity relativ zu ihrer aktuellen Position. Wenn das Zielfeld nicht unzugänglich ist, dann bewegt er sich nicht
 	 * @param x Die relative x-Bewegungsrichtung.
 	 * @param y Die relative y-Bewegungsrichtung.
 	 */
 	public void move(int x, int y) {
-		// Entity braucht keinen Dekrement mit den neuen Field-Klassen mehr
-//		x--;
-//		y--;
 		
 		Field field = world.getFieldAt(boardX, boardY);
 		
-		if(!field.isAccessable()) {
-			System.out.println("Field (" + boardX + "|" + boardY + ") is not accessable.");
-			return;
-		}
+		int posX = boardX, posY = boardY;
 		
-		field.removeEntity(this);
-
-		if(boardX + x >= world.getSizeX()) {
-			boardX = world.getSizeX() - 1;
-		} else if(boardX + x < 0) {
-			boardX = 0;
+		if(posX + x >= world.getSizeX()) {
+			posX = world.getSizeX() - 1;
+		} else if(posX + x < 0) {
+			posX = 0;
 		} else {
-			boardX += x;
+			posX += x;
 		}
 
-		if(boardY + y >= world.getSizeY()) {
-			boardY = world.getSizeY() - 1;
-		} else if(boardY + y < 0) {
-			boardY = 0;
+		if(posY + y >= world.getSizeY()) {
+			posY = world.getSizeY() - 1;
+		} else if(posY + y < 0) {
+			posY = 0;
 		} else {
-			boardY += y;
+			posY += y;
 		}
 
-		field = world.getFieldAt(boardX, boardY);
+		Field newField = world.getFieldAt(posX, posY);
 		
-		field.addEntity(this);
-		/*
-		Field f = GameScreen.getWorld().getFields()[boardX][boardY];
-		if(f.getStandingEntities().contains(this)) {
-			GameScreen.getWorld().getFields()[boardX][boardY].getStandingEntities().remove(this);
+		if (field.isAccessable()) {
+			field.removeEntity(this);
+			newField.addEntity(this);
+			boardX = posX;
+			boardY = posY;
+			updateGUI();
 		}
-		
-		// sicherstellen, dass die Entity sich nicht auÃŸerhalb der Kartengrenzen bewegt
-		if(boardX + x >= GameScreen.getWorld().getFields().length) {
-			boardX = GameScreen.getWorld().getFields().length - 1;
-		} else if(boardX + x < 0) {
-			boardX = 0;
-		} else {
-			boardX += x;
-		}
-		
-		if(boardY + y >= GameScreen.getWorld().getFields()[boardX].length) {
-			boardY = GameScreen.getWorld().getFields()[boardX].length - 1;
-		} else if(boardY + y < 0) {
-			boardY = 0;
-		} else {
-			boardY += y;
-		}
-
-		GameScreen.getWorld().getFields()[boardX][boardY].getStandingEntities().add(this);
-		standingOn = GameScreen.getWorld().getFields()[boardX][boardY];
-		*/
-		
-		System.out.println("Moved " + getName() + " to x=" + boardX + "; y=" + boardY);
-		
-		updateGUI();
 	}
 	
 	/**
-	 * Teleportiert die Entity zur absoluten Position auf der Welt.
-	 * @param world_x Die absolute x-Koordinate.
-	 * @param world_y Die absolute x-Koordinate.
-	 * @throws IllegalArgumentException wenn die Position nicht gÃ¼ltig ist
+	 * Teleportiert die Entity zur absoluten Position auf der Welt. Wenn das Zielfeld unzugäglich ist, dann bleibt die aktuelle Position erhalten.
+	 * @param world_x Die absolute x-Koordinate. (0 bis worldSizeX-1)
+	 * @param world_y Die absolute x-Koordinate. (0 bis worldSizeY-1)
+	 * @throws IllegalArgumentException wenn die Position nicht gültig ist
 	 */
 	public void teleport(int world_x, int world_y) {
-		// Entity braucht keinen Dekrement mit den neuen Field-Klassen mehr
-//		world_x--;
-//		world_y--;
+		
 		// check if the position is valid
 		if(world.isPositionValid(world_x, world_y) == false) {
 			throw new IllegalArgumentException("Invalid coordinates: " + world_x + "; " + world_y);
@@ -240,18 +206,6 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 		world.getFieldAt(boardX, boardY).addEntity(this);
 		// updates the screen
 		updateGUI();
-		/*
-		if(GameScreen.getWorld().getFields()[boardX][boardY].getStandingEntities().contains(this)) {
-			GameScreen.getWorld().getFields()[boardX][boardY].getStandingEntities().remove(this);
-		}
-		boardX = world_x;
-		boardY = world_y;
-
-		GameScreen.getWorld().getFields()[boardX][boardY].getStandingEntities().add(this);
-		standingOn = GameScreen.getWorld().getFields()[boardX][boardY];
-		*/
-		System.out.println("Teleported "  + getName() + " to x=" + boardX + "; y=" + boardY);
-
 	}
 	
 	/**
