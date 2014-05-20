@@ -14,3 +14,9 @@ hs_err_pid*
 # other folders that should not be included
 bin/
 doc/
+.idea/
+
+# files....
+javadocexport.xml
+.project
+.classpath
