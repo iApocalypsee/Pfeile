@@ -15,6 +15,7 @@ hs_err_pid*
 bin/
 doc/
 .idea/
+.idea/workspace.xml
 
 # files....
 javadocexport.xml
