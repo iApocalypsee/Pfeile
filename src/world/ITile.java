@@ -15,7 +15,8 @@ public interface ITile extends IMetadatable {
 	int getGridY();
 	int getHeight();
 	IField getField();
-	List<entity.Entity> getEntities();
+	IWorld getWorld();
+	List<? extends IEntity> getEntities();
 	Color getColor();
 
 }

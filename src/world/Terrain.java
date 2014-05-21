@@ -11,19 +11,44 @@ import java.util.LinkedList;
  */
 public class Terrain implements ITerrain {
 
+	private static final long serialVersionUID = -2440813561948973995L;
 	private OverrideMetaList metalist = new OverrideMetaList(this);
 
-	private ArrayList<ArrayList<Tile>> tiles = new ArrayList<ArrayList<Tile>>();
-	private LinkedList<Field> fields = new LinkedList<Field>();
+	ArrayList<ArrayList<Tile>> tiles = new ArrayList<ArrayList<Tile>>();
+	LinkedList<Field> fields = new LinkedList<Field>();
+
+	/**
+	 * Creates a new terrain with empty tiles.
+	 * @param sizeX The width of the world in tiles.
+	 * @param sizeY The height of the world in tiles.
+	 */
+	public Terrain(int sizeX, int sizeY) {
+		tiles.ensureCapacity(sizeX);
+		for(int i = 0; i < sizeX; i++) {
+			ArrayList<Tile> build = new ArrayList<Tile>();
+			build.ensureCapacity(sizeY);
+			for(int y = 0; y < sizeY; y++) {
+				Tile tile = new Tile();
+				tile.gridX = i;
+				tile.gridY = y;
+				build.add(tile);
+			}
+			tiles.add(build);
+		}
+	}
 
 	@Override
-	public ITile getTileAt(int x, int y) {
+	public Tile getTileAt(int x, int y) {
 		return tiles.get(x).get(y);
 	}
 
 	@Override
-	public IField getFieldAt(int x, int y) {
+	public Field getFieldAt(int x, int y) {
 		return tiles.get(x).get(y).getField();
+	}
+
+	public World getWorld() {
+		return tiles.get(0).get(0).getWorld();
 	}
 
 	/**

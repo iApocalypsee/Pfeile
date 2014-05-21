@@ -2,21 +2,22 @@ package world;
 
 import entity.IEntity;
 
-import java.util.Collection;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author Josip Palavra
  */
-public interface IWorld {
+public interface IWorld extends Serializable {
 
 	int getSizeX();
 	int getSizeY();
 	ITile getTileAt(int x, int y);
 	IField getFieldAt(int x, int y);
 	ITerrain getTerrain();
-	Collection<IField> getFields();
-	Collection<IField> getNeighborFields();
-	Collection<IEntity> collectEntities();
-	Collection<? extends IEntity> collectEntities(Class<? extends IEntity> clazz);
+	List<? extends IField> getFields();
+	List<? extends IField> getNeighborFields();
+	List<? extends IEntity> collectEntities();
+	List<? extends IEntity> collectEntities(Class<? extends IEntity> clazz);
 
 }

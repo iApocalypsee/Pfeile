@@ -1,11 +1,12 @@
 package world;
 
+import comp.Component;
 import entity.Entity;
-import gui.Drawable;
 import misc.metadata.OverrideMetaList;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
  * @author Josip
  * @version 20.05.2014
  */
-public class Tile implements ITile, Drawable {
+public class Tile extends Component implements ITile {
 
 	private static final long serialVersionUID = 1921867867258539893L;
 	/**
@@ -30,7 +31,9 @@ public class Tile implements ITile, Drawable {
 	/**
 	 * The field attached to the tile.
 	 */
-	IField field;
+	Field field;
+
+	World world;
 
 	/**
 	 * The list of all entities currently on the tile.
@@ -46,6 +49,10 @@ public class Tile implements ITile, Drawable {
 	 * The metalist, just like always.
 	 */
 	private OverrideMetaList metalist = new OverrideMetaList(this);
+
+	public Tile() {
+		color = Color.black;
+	}
 
 	/**
 	 * Adds an entity to the tile.
@@ -84,8 +91,13 @@ public class Tile implements ITile, Drawable {
 	}
 
 	@Override
-	public IField getField() {
+	public Field getField() {
 		return field;
+	}
+
+	@Override
+	public World getWorld() {
+		return world;
 	}
 
 	@Override
@@ -139,5 +151,50 @@ public class Tile implements ITile, Drawable {
 	@Override
 	public void draw(Graphics2D g) {
 		throw new NotImplementedException();
+	}
+
+	public Point2D gridCenter() {
+		Point2D p = new Point2D() {
+			double x, y;
+			/**
+			 * Returns the X coordinate of this <code>Point2D</code> in
+			 * <code>double</code> precision.
+			 *
+			 * @return the X coordinate of this <code>Point2D</code>.
+			 * @since 1.2
+			 */
+			@Override
+			public double getX() {
+				return x;
+			}
+
+			/**
+			 * Returns the Y coordinate of this <code>Point2D</code> in
+			 * <code>double</code> precision.
+			 *
+			 * @return the Y coordinate of this <code>Point2D</code>.
+			 * @since 1.2
+			 */
+			@Override
+			public double getY() {
+				return y;
+			}
+
+			/**
+			 * Sets the location of this <code>Point2D</code> to the
+			 * specified <code>double</code> coordinates.
+			 *
+			 * @param x the new X coordinate of this {@code Point2D}
+			 * @param y the new Y coordinate of this {@code Point2D}
+			 * @since 1.2
+			 */
+			@Override
+			public void setLocation(double x, double y) {
+				this.x = x;
+				this.y = y;
+			}
+		};
+		p.setLocation(gridX + 0.5, gridY + 0.5);
+		return p;
 	}
 }
