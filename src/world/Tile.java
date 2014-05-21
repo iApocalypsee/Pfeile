@@ -16,11 +16,58 @@ import java.util.List;
  */
 public class Tile implements ITile, Drawable {
 
-	private int gridX, gridY;
-	private IField field;
+	private static final long serialVersionUID = 1921867867258539893L;
+	/**
+	 * The grid coordinates.
+	 */
+	int gridX, gridY;
+
+	/**
+	 * The height of the tile
+	 */
+	int height;
+
+	/**
+	 * The field attached to the tile.
+	 */
+	IField field;
+
+	/**
+	 * The list of all entities currently on the tile.
+	 */
 	private LinkedList<Entity> entities = new LinkedList<Entity>();
-	private Color color;
+
+	/**
+	 * The display color of the tile.
+	 */
+	Color color;
+
+	/**
+	 * The metalist, just like always.
+	 */
 	private OverrideMetaList metalist = new OverrideMetaList(this);
+
+	/**
+	 * Adds an entity to the tile.
+	 * @param entity The entity to add.
+	 */
+	public void addEntity(Entity entity) {
+		entities.add(entity);
+	}
+
+	/**
+	 * Removes an entity. If the entity does not exist, a statement will be printed
+	 * out to <code>stderr</code>.
+	 * @param entity The entity.
+	 */
+	public void removeEntity(Entity entity) {
+		if(!entities.contains(entity)) {
+			System.err.println("Entity " + entity + " does not exist at (" + gridX + "|" + gridY + ").");
+			return;
+		}
+		entities.remove(entity);
+	}
+
 	@Override
 	public int getGridX() {
 		return gridX;
@@ -29,6 +76,11 @@ public class Tile implements ITile, Drawable {
 	@Override
 	public int getGridY() {
 		return gridY;
+	}
+
+	@Override
+	public int getHeight() {
+		return height;
 	}
 
 	@Override
