@@ -895,4 +895,14 @@ public abstract class Component implements Drawable {
 			listener.mouseReleased(event);
 		}
 	}
+
+	/**
+	 * Calculates the center point of the component's bounding box.
+	 * For now, the simplified bounds will be used for calculation.
+	 * @return The center point of the component's simplified bounding box.
+	 */
+	public Point center() {
+		Rectangle r = getSimplifiedBounds();
+		return new Point(r.x + r.width / 2, r.y + r.height / 2);
+	}
 }
