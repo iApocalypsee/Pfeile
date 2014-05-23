@@ -1,6 +1,8 @@
 package geom.interfaces;
 
-import java.util.Collection;
+import geom.PointRef;
+
+import java.util.List;
 
 /**
  * @author Josip
@@ -12,7 +14,7 @@ public interface VectorChain extends Vector {
 	 * Returns the collection of the vectors.
 	 * @return The vectors.
 	 */
-	Collection<Vector> getVectors();
+	List<Vector> getVectors();
 
 	/**
 	 * Gets the starting vector of the vector chain. The starting vector
@@ -34,6 +36,17 @@ public interface VectorChain extends Vector {
 	 */
 	int countBreaks();
 
+	/**
+	 * Appends the point to the vector chain and links a new vector from the ending
+	 * vector to it.
+	 * @param point The point to append to the vector chain.
+	 */
+	void append(PointRef point);
 
+	/**
+	 * Calculates and returns the total length of the vector chain.
+	 * @return The total length.
+	 */
+	double totalLength();
 
 }
