@@ -1,5 +1,7 @@
 package misc.metadata;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.io.*;
 import java.nio.file.Path;
 import java.util.*;
@@ -31,6 +33,10 @@ public class OverrideMetaList implements IMetaManagement {
 	public OverrideMetaList(IMetadatable metadatable) {
 		if(metadatable == null) throw new NullPointerException();
 		this.metadatable = metadatable;
+	}
+
+	public OverrideMetaList(Metadatable scalaMetadatable) {
+		throw new NotImplementedException();
 	}
 
 	@Override
