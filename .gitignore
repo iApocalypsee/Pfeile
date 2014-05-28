@@ -12,7 +12,6 @@
 hs_err_pid*
 
 # other folders that should not be included
-bin/
 doc/
 .idea/
 .idea/workspace.xml
