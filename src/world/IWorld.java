@@ -1,6 +1,6 @@
 package world;
 
-import entity.IEntity;
+import entity.Entity;
 
 import java.io.Serializable;
 import java.util.List;
@@ -12,12 +12,14 @@ public interface IWorld extends Serializable {
 
 	int getSizeX();
 	int getSizeY();
+	boolean isTileValid(int x, int y);
 	ITile getTileAt(int x, int y);
 	IField getFieldAt(int x, int y);
 	ITerrain getTerrain();
 	List<? extends IField> getFields();
 	List<? extends IField> getNeighborFields();
-	List<? extends IEntity> collectEntities();
-	List<? extends IEntity> collectEntities(Class<? extends IEntity> clazz);
+	List<? extends Entity> collectEntities();
+	List<? extends Entity> collectEntities(Class<? extends Entity> clazz);
+	WorldViewport getViewport();
 
 }

@@ -85,7 +85,9 @@ public class GameWindow extends JFrame {
 		new AimSelectionScreen();
 		GameScreen.getInstance();
 		ArrowSelectionScreen.getInstance();
-		screenManager.setActiveScreen(GameScreen.SCREEN_INDEX);
+		// NewWorldTestScreen$.MODULE$;
+		//screenManager.setActiveScreen(GameScreen.SCREEN_INDEX);
+		screenManager.setActiveScreen(NewWorldTestScreen$.MODULE$);
 	}
 
 	/**

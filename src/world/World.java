@@ -1,9 +1,10 @@
 package world;
 
 import entity.Entity;
-import entity.IEntity;
+import gui.Drawable;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -12,10 +13,11 @@ import java.util.List;
 /**
  * @author Josip
  */
-public class World implements IWorld {
+public class World implements IWorld, Drawable {
 
 	private static final long serialVersionUID = 8474968677356694778L;
 	Terrain terrain;
+	WorldViewport viewport = new WorldViewport(this);
 
 	public World(EditableTerrain terrain) {
 		this.terrain = terrain;
@@ -27,10 +29,11 @@ public class World implements IWorld {
 				tile.world = this;
 			}
 		}
+
 	}
 
 	public World(int sizeX, int sizeY) {
-		terrain = new Terrain(sizeX, sizeY);
+		terrain = new EditableTerrain(sizeX, sizeY);
 		ArrayList<ArrayList<Tile>> t = terrain.tiles;
 		for (ArrayList<Tile> tiles : t) {
 			for (Tile tile : tiles) {
@@ -41,12 +44,12 @@ public class World implements IWorld {
 
 	@Override
 	public int getSizeX() {
-		return terrain.tiles.size();
+		return terrain.getSizeX();
 	}
 
 	@Override
 	public int getSizeY() {
-		return terrain.tiles.get(0).size();
+		return terrain.getSizeY();
 	}
 
 	@Override
@@ -70,6 +73,11 @@ public class World implements IWorld {
 	}
 
 	@Override
+	public WorldViewport getViewport() {
+		return viewport;
+	}
+
+	@Override
 	public List<Field> getNeighborFields() {
 		throw new NotImplementedException();
 	}
@@ -87,7 +95,7 @@ public class World implements IWorld {
 	}
 
 	@Override
-	public List<? extends IEntity> collectEntities(Class<? extends IEntity> clazz) {
+	public List<? extends Entity> collectEntities(Class<? extends Entity> clazz) {
 		ArrayList<ArrayList<Tile>> tiles = terrain.tiles;
 		LinkedList<Entity> entities = new LinkedList<Entity>();
 		for (ArrayList<Tile> tile : tiles) {
@@ -100,5 +108,14 @@ public class World implements IWorld {
 			}
 		}
 		return Collections.unmodifiableList(entities);
+	}
+
+	public boolean isTileValid(int x, int y) {
+		return x >= 0 && x < terrain.tiles.size() && y >= 0 &&  y < terrain.tiles.get(x).size();
+	}
+
+	@Override
+	public void draw(Graphics2D g) {
+		terrain.draw(g);
 	}
 }

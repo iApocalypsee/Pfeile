@@ -10,5 +10,7 @@ public interface ITerrain extends IMetadatable {
 
 	ITile getTileAt(int x, int y);
 	IField getFieldAt(int x, int y);
+	int getSizeX();
+	int getSizeY();
 
 }

@@ -6,6 +6,7 @@ import world.World;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * @author Josip
@@ -18,7 +19,7 @@ public final class BrushHelper {
 	 * @param radius The radius to look for tiles.
 	 * @return The tiles determined.
 	 */
-	public static List<Tile> determineTiles(Tile tile, int radius) {
+	public static LinkedList<Tile> determineTiles(Tile tile, int radius) {
 		Circle rad = new Circle();
 		LinkedList<Tile> edits = new LinkedList<Tile>();
 		World w = tile.getWorld();

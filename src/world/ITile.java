@@ -1,6 +1,6 @@
 package world;
 
-import entity.IEntity;
+import entity.Entity;
 import misc.metadata.IMetadatable;
 
 import java.awt.*;
@@ -16,7 +16,7 @@ public interface ITile extends IMetadatable {
 	int getHeight();
 	IField getField();
 	IWorld getWorld();
-	List<? extends IEntity> getEntities();
+	List<? extends Entity> getEntities();
 	Color getColor();
 
 }

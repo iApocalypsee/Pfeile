@@ -29,6 +29,9 @@ public class EditableTerrain extends Terrain implements IEditableTerrain {
 	public EditableTerrain(int sizeX, int sizeY) {
 		super(sizeX, sizeY);
 
+		heightMap = new BufferedImage(sizeX, sizeY, BufferedImage.TYPE_INT_ARGB);
+		colorMap = new BufferedImage(sizeX, sizeY, BufferedImage.TYPE_INT_RGB);
+
 		/*
 		// draw the whole image maps black for now
 		Graphics2D hmg = heightMap.createGraphics(), cmg = colorMap.createGraphics();

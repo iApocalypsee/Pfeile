@@ -1,29 +1,30 @@
 package general;
 
-import gui.ArrowSelection;
-import gui.ArrowSelectionScreen;
-import gui.GameScreen;
-import gui.PreWindow;
+import gui.*;
 
-import java.awt.DisplayMode;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Random;
-import java.util.Set;
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.LinkedList;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Random;
 
 import player.Bot;
 import player.Player;
 import player.SpawnEntityInstanceArgs;
+import world.EditableTerrain;
+import world.brush.ColorBrush;
+
+import javax.imageio.ImageIO;
 
 /**
  * Hauptklasse mit der Main-Methode und den abstraktesten Objekten unseres Spiels.
@@ -47,7 +48,7 @@ public class Main {
 	 * Die erwünschte FPS-Rate. Wenn <code>setFPS == 0</code>, ist die Framerate unbegrenzt.
 	 * Unbegrenzte Framerate noch nicht implementiert!
 	 */
-	private volatile int setFPS = 35;
+	private volatile int setFPS = 50;
 
 	/**
 	 * Der Timeout, der in der <code>Thread.sleep()</code>-Methode als Argument verwendet wird.
@@ -323,6 +324,83 @@ public class Main {
 		ArrowSelectionScreen.getInstance().updateInventoryList();
 	}
 
+	class NewWorldFoo {
+
+		public Point p;
+		public Color c;
+
+	}
+
+	private Color decide(LinkedList<Color> objects) {
+		return objects.get(new Random().nextInt(objects.size()));
+	}
+
+	private void newWorldTest() {
+		world.World w = new world.World(45, 45);
+		NewWorldTestScreen.setWorld(w);
+		EditableTerrain terrain = (EditableTerrain) w.getTerrain();
+		Random r = new Random();
+		LinkedList<NewWorldFoo> points = new LinkedList<NewWorldFoo>();
+		ColorBrush cb = new ColorBrush();
+
+		LinkedList<Color> colors = new LinkedList<Color>();
+		colors.add(new Color(0x1C9618)); // GRÜN
+		//colors.add(new Color(0xD5F5EF)); // KEINE AHNUNG MEHR
+		//colors.add(new Color(0xEBEE31)); // GELB
+		colors.add(new Color(0x6D75E8)); // BLAU
+		colors.add(new Color(0x19D7E6));
+		//colors.add(new Color(0xD37D3C));
+
+
+		int amtOfPoints = r.nextInt(15000) + 3000;
+		for(int i = 0; i < amtOfPoints; i++) {
+			NewWorldFoo f = new NewWorldFoo();
+			f.p = new Point(r.nextInt(terrain.getSizeX()), r.nextInt(terrain.getSizeY()));
+			f.c = decide(colors);
+			points.add(f);
+			System.out.println("i = " + i);
+		}
+
+		int count = r.nextInt(8) + 3;
+		int i = 0;
+		cb.setColor(points.get(0).c);
+		cb.setThickness(r.nextInt(3) + 2);
+		LinkedList<Point> tempPoints = new LinkedList<Point>();
+		for(NewWorldFoo f : points) {
+			tempPoints.add(f.p);
+			if(i >= count) {
+				// reset the counter variables
+				i = 0;
+				count = r.nextInt(8) + 3;
+
+				// reset the brush and other stuff
+				cb.setColor(f.c);
+				cb.setThickness(r.nextInt(3) + 2);
+
+				terrain.edit(cb, tempPoints);
+				tempPoints.clear();
+			}
+
+			/*
+			LinkedList<Point> p = new LinkedList<Point>();
+			p.add(f.p);
+			terrain.edit(cb, p);
+			*/
+			i++;
+			System.out.print("i = " + i);
+			System.out.println(" Main.newWorldTest");
+		}
+		try {
+			ImageIO.write(terrain.colorMap, "png", new File("colormap.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("Runtime.getRuntime().freeMemory() / (1024 * 1024) = " + Runtime.getRuntime().freeMemory() / (1024 * 1024));
+		System.out.println("Runtime.getRuntime().totalMemory() / (1024 * 1024) = " + Runtime.getRuntime().totalMemory() / (1024 * 1024));
+		//System.exit(0);
+	}
+
 	/**
 	 * Initialisiert GameWindow
 	 */
@@ -340,6 +418,8 @@ public class Main {
 				// TODO dieser Methodenaufruf müsste in einen anderen Thread, glaube ich
 				// so funktioniert es aber auch...
 //				main.postInitScreens();    // empty method
+				// TODO Delete this call later!!!!!!!!!!!!!!!!!!!!!!!!
+				main.newWorldTest();
 
 				GameWindow.adjustWindow(Main.getWindowWidth(), Main.getWindowHeight(),
 						gameWindow);

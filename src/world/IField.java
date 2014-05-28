@@ -1,6 +1,6 @@
 package world;
 
-import entity.IEntity;
+import entity.Entity;
 
 import java.awt.*;
 import java.util.Collection;
@@ -13,7 +13,7 @@ public interface IField {
 
 	Polygon getFieldBorders();
 	int getEntityCount();
-	Collection<IEntity> getEntities();
+	Collection<Entity> getEntities();
 	Collection<ITile> getTiles();
 	ITile getCenterTile();
 

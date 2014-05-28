@@ -4,6 +4,7 @@ import comp.Component;
 import entity.Entity;
 import misc.metadata.OverrideMetaList;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import world.tile.TileCage;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -49,6 +50,8 @@ public class Tile extends Component implements ITile {
 	 * The metalist, just like always.
 	 */
 	private OverrideMetaList metalist = new OverrideMetaList(this);
+
+	TileCage cage = new TileCage(this);
 
 	public Tile() {
 		color = Color.black;
@@ -148,9 +151,19 @@ public class Tile extends Component implements ITile {
 		return o;
 	}
 
+	private int[] determine_xPoints() {
+		//return new int[]{((Double) cage.west()._1()).intValue(), ((Double) cage.south()._1()).intValue(), ((Double) cage.east()._1()).intValue(), ((Double) cage.north()._1()).intValue()};
+		return new int[]{(int) cage.west().getX(), (int) cage.south().getX(), (int) cage.east().getX(), (int) cage.north().getX()};
+	}
+
+	private int[] determine_yPoints() {
+		return new int[]{(int) cage.west().getY(), (int) cage.south().getY(), (int) cage.east().getY(), (int) cage.north().getY()};
+	}
+
 	@Override
 	public void draw(Graphics2D g) {
-		throw new NotImplementedException();
+		g.setColor(color);
+		g.fillPolygon(determine_xPoints(), determine_yPoints(), 4);
 	}
 
 	public Point2D gridCenter() {

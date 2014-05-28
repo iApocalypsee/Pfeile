@@ -1,6 +1,6 @@
 package world;
 
-import entity.IEntity;
+import entity.Entity;
 
 import java.awt.*;
 import java.util.Collection;
@@ -21,7 +21,7 @@ public class Field implements IField {
 	}
 
 	@Override
-	public Collection<IEntity> getEntities() {
+	public Collection<Entity> getEntities() {
 		return null;
 	}
 

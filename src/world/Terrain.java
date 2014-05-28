@@ -1,7 +1,9 @@
 package world;
 
+import gui.Drawable;
 import misc.metadata.OverrideMetaList;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -9,7 +11,7 @@ import java.util.LinkedList;
  * @author Josip
  * @version 20.05.2014
  */
-public class Terrain implements ITerrain {
+public class Terrain implements ITerrain, Drawable {
 
 	private static final long serialVersionUID = -2440813561948973995L;
 	private OverrideMetaList metalist = new OverrideMetaList(this);
@@ -51,6 +53,16 @@ public class Terrain implements ITerrain {
 		return tiles.get(0).get(0).getWorld();
 	}
 
+	@Override
+	public int getSizeX() {
+		return tiles.size();
+	}
+
+	@Override
+	public int getSizeY() {
+		return tiles.get(0).size();
+	}
+
 	/**
 	 * Returns the metadata associated with the key, or <code>null</code>
 	 * if none exists.
@@ -87,5 +99,14 @@ public class Terrain implements ITerrain {
 		Object o = metalist.get(key);
 		metalist.deleteMeta(key);
 		return o;
+	}
+
+	@Override
+	public void draw(Graphics2D g) {
+		for(int x = 0; x < tiles.size(); x++) {
+			for(int y = 0; y < tiles.get(x).size(); y++) {
+				tiles.get(x).get(y).draw(g);
+			}
+		}
 	}
 }

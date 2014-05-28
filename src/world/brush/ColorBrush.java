@@ -73,7 +73,7 @@ public class ColorBrush implements IBrush {
 		// outer for loop, iterating over every tile that has to be changed
 		for(Tile tile : tiles) {
 			// determine every tile that have to be changed
-			LinkedList<Tile> painted = determineTiles(tile);
+			LinkedList<Tile> painted = BrushHelper.determineTiles(tile, thickness);
 			// iterate over the selections
 			for(Tile paintTile : painted) {
 				// check whether the metadata key is already set
@@ -102,25 +102,5 @@ public class ColorBrush implements IBrush {
 		for(Tile tile : edits) {
 			tile.removeMetadata(color_check_meta_key);
 		}
-	}
-
-	private LinkedList<Tile> determineTiles(Tile t) {
-		Circle rad = new Circle();
-		LinkedList<Tile> edits = new LinkedList<Tile>();
-		World w = t.getWorld();
-		rad.setX(t.getGridX());
-		rad.setY(t.getGridY());
-		rad.setRadius(thickness);
-
-		// define a rectangular array of tiles
-		for(int x = t.getGridX() - thickness; x < t.getGridX() + thickness; x++) {
-			for(int y = t.getGridY() - thickness; y < t.getGridY() + thickness; y++) {
-				Tile checkTile = w.getTileAt(x, y);
-				if(rad.contains(checkTile.gridCenter())) {
-					edits.add(checkTile);
-				}
-			}
-		}
-		return edits;
 	}
 }
