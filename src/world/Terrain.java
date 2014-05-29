@@ -1,7 +1,9 @@
 package world;
 
+import comp.GUIUpdater;
 import gui.Drawable;
 import misc.metadata.OverrideMetaList;
+import world.brush.BrushHelper;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -11,12 +13,12 @@ import java.util.LinkedList;
  * @author Josip
  * @version 20.05.2014
  */
-public class Terrain implements ITerrain, Drawable {
+public class Terrain implements ITerrain, Drawable, GUIUpdater {
 
 	private static final long serialVersionUID = -2440813561948973995L;
 	private OverrideMetaList metalist = new OverrideMetaList(this);
 
-	ArrayList<ArrayList<Tile>> tiles = new ArrayList<ArrayList<Tile>>();
+	LinkedList<LinkedList<Tile>> tiles = new LinkedList<LinkedList<Tile>>();
 	LinkedList<Field> fields = new LinkedList<Field>();
 
 	/**
@@ -25,10 +27,10 @@ public class Terrain implements ITerrain, Drawable {
 	 * @param sizeY The height of the world in tiles.
 	 */
 	public Terrain(int sizeX, int sizeY) {
-		tiles.ensureCapacity(sizeX);
+		//tiles.ensureCapacity(sizeX);
 		for(int i = 0; i < sizeX; i++) {
-			ArrayList<Tile> build = new ArrayList<Tile>();
-			build.ensureCapacity(sizeY);
+			LinkedList<Tile> build = new LinkedList<Tile>();
+			//build.ensureCapacity(sizeY);
 			for(int y = 0; y < sizeY; y++) {
 				Tile tile = new Tile();
 				tile.gridX = i;
@@ -106,6 +108,15 @@ public class Terrain implements ITerrain, Drawable {
 		for(int x = 0; x < tiles.size(); x++) {
 			for(int y = 0; y < tiles.get(x).size(); y++) {
 				tiles.get(x).get(y).draw(g);
+			}
+		}
+	}
+
+	@Override
+	public void updateGUI() {
+		for(int x = 0; x < tiles.size(); x++) {
+			for(int y = 0; y < tiles.get(x).size(); y++) {
+				tiles.get(x).get(y).updateGUI();
 			}
 		}
 	}

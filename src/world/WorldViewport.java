@@ -28,7 +28,7 @@ public class WorldViewport {
 	private int shiftY = STD_SHIFT_Y;
 	private World world;
 
-	private float zoom = 1.0f;
+	private float zoom = 0.25f;
 
 	public WorldViewport(World world) {
 		this.world = world;
@@ -58,6 +58,7 @@ public class WorldViewport {
 	public void shiftRel(int dx, int dy) {
 		shiftX += dx;
 		shiftY += dy;
+		world.updateGUI();
 	}
 
 	/**
@@ -68,6 +69,7 @@ public class WorldViewport {
 	public void shiftAbs (int x, int y) {
 		shiftX = x;
 		shiftY = y;
+		world.updateGUI();
 	}
 	/**
 	 * Returns the zoom factor.
@@ -91,9 +93,11 @@ public class WorldViewport {
 	 */
 	public void zoomRel(float delta_zoom) {
 		zoom *= delta_zoom;
+		world.updateGUI();
 	}
 
 	public void zoomAbs(float zoom) {
 		this.zoom = zoom;
+		world.updateGUI();
 	}
 }

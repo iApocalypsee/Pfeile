@@ -2,11 +2,17 @@ package world;
 
 import comp.Component;
 import entity.Entity;
+import gui.NewWorldTestScreen;
+import gui.Screen;
 import misc.metadata.OverrideMetaList;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import world.tile.TileCage;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -46,10 +52,14 @@ public class Tile extends Component implements ITile {
 	 */
 	Color color;
 
+	static final Color SelectColor = new Color(50, 164, 200, 100);
+
 	/**
 	 * The metalist, just like always.
 	 */
 	private OverrideMetaList metalist = new OverrideMetaList(this);
+
+	private boolean hovered = false;
 
 	TileCage cage = new TileCage(this);
 
@@ -163,7 +173,20 @@ public class Tile extends Component implements ITile {
 	@Override
 	public void draw(Graphics2D g) {
 		g.setColor(color);
-		g.fillPolygon(determine_xPoints(), determine_yPoints(), 4);
+		g.fillPolygon(getBounds());
+
+		if(getBounds().contains(Screen.getMousePosition())) {
+			g.setColor(SelectColor);
+			g.fillPolygon(getBounds());
+		}
+	}
+
+	public void updateGUI() {
+		Polygon bounds = getBounds();
+		bounds.xpoints = determine_xPoints();
+		bounds.ypoints = determine_yPoints();
+		bounds.npoints = 4;
+		bounds.invalidate();
 	}
 
 	public Point2D gridCenter() {

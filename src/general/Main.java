@@ -48,7 +48,7 @@ public class Main {
 	 * Die erwünschte FPS-Rate. Wenn <code>setFPS == 0</code>, ist die Framerate unbegrenzt.
 	 * Unbegrenzte Framerate noch nicht implementiert!
 	 */
-	private volatile int setFPS = 50;
+	private volatile int setFPS = 35;
 
 	/**
 	 * Der Timeout, der in der <code>Thread.sleep()</code>-Methode als Argument verwendet wird.
@@ -331,12 +331,26 @@ public class Main {
 
 	}
 
+	/* DEFAULT IMPLEMENTATION WITH NO PROBABILITIES
 	private Color decide(LinkedList<Color> objects) {
 		return objects.get(new Random().nextInt(objects.size()));
 	}
+	*/
+
+	///*
+	private Color decide(LinkedList<Color> objects) {
+		Random r = new Random();
+		double val = r.nextDouble();
+		if(val < 0.4) {
+			return objects.get(0);
+		} else {
+			return objects.get(1);
+		}
+	}
+	//*/
 
 	private void newWorldTest() {
-		world.World w = new world.World(45, 45);
+		world.World w = new world.World(100, 100);
 		NewWorldTestScreen.setWorld(w);
 		EditableTerrain terrain = (EditableTerrain) w.getTerrain();
 		Random r = new Random();
@@ -345,20 +359,21 @@ public class Main {
 
 		LinkedList<Color> colors = new LinkedList<Color>();
 		colors.add(new Color(0x1C9618)); // GRÜN
-		//colors.add(new Color(0xD5F5EF)); // KEINE AHNUNG MEHR
+		//colors.add(new Color(0xD5F5EF)); // EISWEIß
 		//colors.add(new Color(0xEBEE31)); // GELB
 		colors.add(new Color(0x6D75E8)); // BLAU
-		colors.add(new Color(0x19D7E6));
+		//colors.add(new Color(0x646464)); // GRAU
+		//colors.add(new Color(0x19D7E6));
 		//colors.add(new Color(0xD37D3C));
 
 
-		int amtOfPoints = r.nextInt(15000) + 3000;
+		int amtOfPoints = r.nextInt(w.getSizeX() * w.getSizeY()) + w.getSizeX() + w.getSizeY();
 		for(int i = 0; i < amtOfPoints; i++) {
 			NewWorldFoo f = new NewWorldFoo();
 			f.p = new Point(r.nextInt(terrain.getSizeX()), r.nextInt(terrain.getSizeY()));
 			f.c = decide(colors);
 			points.add(f);
-			System.out.println("i = " + i);
+			//System.out.println("i = " + i);
 		}
 
 		int count = r.nextInt(8) + 3;
@@ -387,8 +402,8 @@ public class Main {
 			terrain.edit(cb, p);
 			*/
 			i++;
-			System.out.print("i = " + i);
-			System.out.println(" Main.newWorldTest");
+			//System.out.print("i = " + i);
+			//System.out.println(" Main.newWorldTest");
 		}
 		try {
 			ImageIO.write(terrain.colorMap, "png", new File("colormap.png"));
