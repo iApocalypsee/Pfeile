@@ -332,7 +332,7 @@ public abstract class Screen implements Drawable, MouseListener,
 		for (Component c : getComponents()) {
 			if(c.isAcceptingInput()) {
 				if(c.getBounds().contains(e.getPoint())) {
-					if(c.getStatus() != ComponentStatus.MOUSE) {
+					if(c.getStatus() == ComponentStatus.NO_MOUSE) {
 						for (MouseListener m : c.getMouseListeners()) {
 							m.mouseEntered(e);
 						}
