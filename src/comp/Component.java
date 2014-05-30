@@ -26,7 +26,6 @@ import java.util.List;
  * @author Josip
  * @version 24.2.2014
  * @see Button
- * @see com.github.pfeile.gui.Screen
  *
  */
 public abstract class Component implements Drawable {
@@ -184,6 +183,7 @@ public abstract class Component implements Drawable {
 				if(status != ComponentStatus.NOT_AVAILABLE && status != ComponentStatus.MOUSE) {
 					status = ComponentStatus.MOUSE;
 				}
+				mouseFocused = true;
 			}
 
 			@Override
@@ -191,6 +191,7 @@ public abstract class Component implements Drawable {
 				if(status != ComponentStatus.NOT_AVAILABLE && status != ComponentStatus.NO_MOUSE) {
 					status = ComponentStatus.NO_MOUSE;
 				}
+				mouseFocused = false;
 			}
 
 			@Override
@@ -676,7 +677,6 @@ public abstract class Component implements Drawable {
 	
 	/**
 	 * Veranlasst das Steuerelement, wieder Input zu akzeptieren.
-	 * @see Component.declineInput
 	 */
 	public void acceptInput() {
 		status = ComponentStatus.NO_MOUSE;
@@ -685,7 +685,6 @@ public abstract class Component implements Drawable {
 	
 	/**
 	 * Veranlasst das Steuerelement, keinen Input mehr zu akzeptieren.
-	 * @see Component.acceptInput
 	 */
 	public void declineInput() {
 		status = ComponentStatus.NOT_AVAILABLE;
@@ -880,10 +879,6 @@ public abstract class Component implements Drawable {
      */
     public boolean isMouseFocused() {
         return mouseFocused;
-    }
-
-    public void setMouseFocused(boolean mouseFocused) {
-        this.mouseFocused = mouseFocused;
     }
 
 	/**
