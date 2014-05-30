@@ -11,12 +11,11 @@ import world.{IBaseTile, WorldViewport}
  * The use of the functions could be time and processor-expensive,
  * this class is running on a mathematical basis.
  *
- * With the TileCage class, the method `updateGUI()` is obsolete.
  * @author Josip Palavra
  */
 // TODO Add height matrix translations
 // TODO I need more performance
-class TileCage(val tile: IBaseTile) {
+case class TileCage(tile: IBaseTile) {
 
   // a reference to the world viewport
   private lazy val _vp = tile.getWorld.getViewport
