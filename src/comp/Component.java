@@ -54,11 +54,6 @@ public abstract class Component implements Drawable {
 	private Polygon bounds = new Polygon();
 	
 	/**
-	 * Die vereinfachte BoundingBox, die anstelle des Polygons auftritt.
-	 */
-	private Rectangle simplifiedBounds = new Rectangle();
-	
-	/**
 	 * Der Name des Steuerelements. Wird hauptsächlich für {@link Component#children} benötigt.
 	 */
 	private String name;
@@ -468,7 +463,6 @@ public abstract class Component implements Drawable {
 				bounds.invalidate();
 			}
 			this.x = x;
-			refreshSimplifiedBounds();
 		}
 	}
 
@@ -491,7 +485,6 @@ public abstract class Component implements Drawable {
 				bounds.invalidate();
 			}
 			this.y = y;
-			refreshSimplifiedBounds();
 		}
 	}
 
@@ -515,7 +508,6 @@ public abstract class Component implements Drawable {
 			}
 		}
 		this.width = width;
-		refreshSimplifiedBounds();
 	}
 	
 	/**
@@ -538,7 +530,6 @@ public abstract class Component implements Drawable {
 			}
 		}
 		this.height = height;
-		refreshSimplifiedBounds();
 	}
 	
 	/**
@@ -644,17 +635,7 @@ public abstract class Component implements Drawable {
 	 * @return Ein neues Rechteck mit der vereinfachten BoundingBox.
 	 */
 	public Rectangle getSimplifiedBounds() {
-		return simplifiedBounds;
-	}
-	
-	/**
-	 * Aktualisiert die {@link #simplifiedBounds}.
-	 */
-	private void refreshSimplifiedBounds() {
-		simplifiedBounds.x = getAbsoluteX();
-		simplifiedBounds.y = getAbsoluteY();
-		simplifiedBounds.width = getWidth();
-		simplifiedBounds.height = getHeight();
+		return getBounds().getBounds();
 	}
 
 	/**
