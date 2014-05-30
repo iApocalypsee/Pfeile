@@ -1,8 +1,7 @@
 package world.tile
 
 import geom.PointDef
-import world.Tile
-import world.WorldViewport
+import world.{IBaseTile, WorldViewport}
 
 /**
  * Represents a tile "wireframe". Each tile will have
@@ -17,7 +16,7 @@ import world.WorldViewport
  */
 // TODO Add height matrix translations
 // TODO I need more performance
-class TileCage(val tile: Tile) {
+class TileCage(val tile: IBaseTile) {
 
   // a reference to the world viewport
   private lazy val _vp = tile.getWorld.getViewport

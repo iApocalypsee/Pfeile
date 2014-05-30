@@ -2,17 +2,14 @@ package world;
 
 import comp.Component;
 import entity.Entity;
+import gui.AdjustableDrawing;
 import gui.NewWorldTestScreen;
-import gui.Screen;
 import misc.metadata.OverrideMetaList;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import world.tile.TileCage;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -52,7 +49,7 @@ public class Tile extends Component implements ITile {
 	 */
 	Color color;
 
-	static final Color SelectColor = new Color(50, 164, 200, 100);
+	static final Color SelectColor = new Color(39, 38, 38, 161);
 
 	/**
 	 * The metalist, just like always.
@@ -63,8 +60,24 @@ public class Tile extends Component implements ITile {
 
 	TileCage cage = new TileCage(this);
 
+	private boolean entered = false;
+
 	public Tile() {
+		// standard color for tiles is black
 		color = Color.black;
+		// add a basic mouse listener which makes checking mouse coordinates obsolete
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				entered = true;
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				entered = false;
+			}
+		});
+		// don't forget to add the component to the screen, otherwise the listeners would not be triggered
+		NewWorldTestScreen.add(this);
 	}
 
 	/**
@@ -172,10 +185,13 @@ public class Tile extends Component implements ITile {
 
 	@Override
 	public void draw(Graphics2D g) {
+		// draw the base tile
 		g.setColor(color);
 		g.fillPolygon(getBounds());
 
-		if(getBounds().contains(Screen.getMousePosition())) {
+
+
+		if(entered) {
 			g.setColor(SelectColor);
 			g.fillPolygon(getBounds());
 		}

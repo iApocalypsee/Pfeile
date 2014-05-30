@@ -9,14 +9,8 @@ import java.util.List;
 /**
  * @author Josip
  */
-public interface ITile extends IMetadatable {
+public interface ITile extends IBaseTile {
 
-	int getGridX();
-	int getGridY();
-	int getHeight();
-	IField getField();
-	IWorld getWorld();
 	List<? extends Entity> getEntities();
-	Color getColor();
 
 }
