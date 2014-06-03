@@ -1,10 +1,11 @@
 package world;
 
 import world.brush.IBrush;
+import world.brush.IRawBrush;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Josip
@@ -12,7 +13,8 @@ import java.util.Collection;
  */
 public interface IEditableTerrain extends ITerrain {
 
-	void edit(IBrush brush, Collection<Point> points);
+	void edit(IRawBrush brush, List<Point> points);
+	void set(int x, int y, IBaseTile tile);
 	BufferedImage getHeightMap();
 	BufferedImage getColorMap();
 

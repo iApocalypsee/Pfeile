@@ -1,12 +1,15 @@
 package world.brush;
 
 import comp.Circle;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import world.IBaseTile;
 import world.ITile;
 import world.Tile;
 import world.World;
 
 import java.awt.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,22 +63,30 @@ public class ColorBrush implements IBrush {
 	}
 
 	/**
+	 * Assigns data to the specified coordinates.
+	 *
+	 * @param pointList The point list.
+	 */
+	@Override
+	public void assignPoints(List<Point> pointList) {
+		throw new NotImplementedException();
+	}
+
+	/**
 	 * Assigns data to given tiles and the surrounding tiles.
 	 *
 	 * @param tileArray The tiles to be edited.
 	 */
 	@Override
-	public void assign(List<? extends ITile> tileArray) {
-		// some helper vars
-		List<Tile> tiles = (List<Tile>) tileArray;
-		LinkedList<Tile> edits = new LinkedList<Tile>();
+	public void assign(List<IBaseTile> tileArray) {
+		LinkedList<IBaseTile> edits = new LinkedList<IBaseTile>();
 
 		// outer for loop, iterating over every tile that has to be changed
-		for(Tile tile : tiles) {
+		for(IBaseTile tile : tileArray) {
 			// determine every tile that have to be changed
-			LinkedList<Tile> painted = BrushHelper.determineTiles(tile, thickness);
+			LinkedList<IBaseTile> painted = BrushHelper.determineTiles(tile, thickness);
 			// iterate over the selections
-			for(Tile paintTile : painted) {
+			for(IBaseTile paintTile : painted) {
 				// check whether the metadata key is already set
 				// if no check would be there, a bug would rise up
 				// I don't want to edit the height multiple times in one
@@ -91,6 +102,18 @@ public class ColorBrush implements IBrush {
 						edits.add(paintTile);
 					} catch (NoSuchFieldException e) {
 						e.printStackTrace();
+
+						try {
+							Method method = paintTile.getClass().getMethod("height_$eq", Integer.class);
+							method.setAccessible(true);
+							//method.invoke()
+							paintTile.setMetadata(color_check_meta_key, true);
+							//colorField.setAccessible(false);
+							edits.add(paintTile);
+						} catch (NoSuchMethodException e1) {
+							e1.printStackTrace();
+						}
+
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();
 					}
@@ -99,7 +122,7 @@ public class ColorBrush implements IBrush {
 		}
 
 		// iterate now over all the edits to delete the temporary metadata objects
-		for(Tile tile : edits) {
+		for(IBaseTile tile : edits) {
 			tile.removeMetadata(color_check_meta_key);
 		}
 	}

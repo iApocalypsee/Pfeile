@@ -112,7 +112,7 @@ public class Tile extends Component implements ITile {
 	}
 
 	@Override
-	public int getHeight() {
+	public int getTileHeight() {
 		return height;
 	}
 
@@ -134,6 +134,62 @@ public class Tile extends Component implements ITile {
 	@Override
 	public Color getColor() {
 		return color;
+	}
+
+	@Override
+	public IBaseTile north() {
+		int x = gridX - 1, y = gridY + 1;
+		if(world.isTileValid(x, y)) return world.getTileAt(x, y);
+		else return null;
+	}
+
+	@Override
+	public IBaseTile northeast() {
+		int x = gridX, y = gridY + 1;
+		if(world.isTileValid(x, y)) return world.getTileAt(x, y);
+		else return null;
+	}
+
+	@Override
+	public IBaseTile east() {
+		int x = gridX + 1, y = gridY + 1;
+		if(world.isTileValid(x, y)) return world.getTileAt(x, y);
+		else return null;
+	}
+
+	@Override
+	public IBaseTile southeast() {
+		int x = gridX - 1, y = gridY;
+		if(world.isTileValid(x, y)) return world.getTileAt(x, y);
+		else return null;
+	}
+
+	@Override
+	public IBaseTile south() {
+		int x = gridX - 1, y = gridY - 1;
+		if(world.isTileValid(x, y)) return world.getTileAt(x, y);
+		else return null;
+	}
+
+	@Override
+	public IBaseTile southwest() {
+		int x = gridX, y = gridY - 1;
+		if(world.isTileValid(x, y)) return world.getTileAt(x, y);
+		else return null;
+	}
+
+	@Override
+	public IBaseTile west() {
+		int x = gridX - 1, y = gridY - 1;
+		if(world.isTileValid(x, y)) return world.getTileAt(x, y);
+		else return null;
+	}
+
+	@Override
+	public IBaseTile northwest() {
+		int x = gridX - 1, y = gridY;
+		if(world.isTileValid(x, y)) return world.getTileAt(x, y);
+		else return null;
 	}
 
 	/**
@@ -248,5 +304,10 @@ public class Tile extends Component implements ITile {
 		};
 		p.setLocation(gridX + 0.5, gridY + 0.5);
 		return p;
+	}
+
+	@Override
+	public TileCage getCage() {
+		return cage;
 	}
 }

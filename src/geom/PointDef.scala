@@ -18,23 +18,6 @@ class PointDef(tuple: (Double, Double)) extends Point2D {
    */
   def this(x: Double, y: Double) = this((x, y))
 
-  /**
-   * A reference class wrapping a double value.
-   * @param value The double value to wrap up.
-   */
-  class DoubleRef(var value: Double) {
-
-    def ==(other: DoubleRef) = this.value == other.value
-    def <(other: DoubleRef) = this.value < other.value
-    def >(other: DoubleRef) = this.value > other.value
-    def <=(other: DoubleRef) = this.value <= other.value
-    def >=(other: DoubleRef) = this.value >= other.value
-    def !=(other: DoubleRef) = this.value != other.value
-    def +(other: DoubleRef) = this.value + other.value
-    def -(other: DoubleRef) = this.value - other.value
-
-  }
-
   override def getX = _tuple._1.value
   override def getY = _tuple._2.value
   override def setLocation(x: Double, y: Double) = {
@@ -53,6 +36,7 @@ class PointDef(tuple: (Double, Double)) extends Point2D {
   }
 
   def ==(other: PointDef): Boolean = {
+    if(other eq null) return false
     (_tuple._1 == other.position._1) && (_tuple._2 == other.position._2)
   }
 
@@ -69,8 +53,29 @@ object PointDef {
    * @param oldPoint The point object to convert.
    * @return The converted point object.
    */
-  def toPointDef(oldPoint: Point) = {
+  implicit def toPointDef(oldPoint: Point) = {
     new PointDef((oldPoint.x, oldPoint.y))
   }
 
+}
+
+/**
+ * A reference class wrapping a double value.
+ * @param value The double value to wrap up.
+ */
+class DoubleRef(var value: Double) {
+
+  def ==(other: DoubleRef) = this.value == other.value
+  def <(other: DoubleRef) = this.value < other.value
+  def >(other: DoubleRef) = this.value > other.value
+  def <=(other: DoubleRef) = this.value <= other.value
+  def >=(other: DoubleRef) = this.value >= other.value
+  def !=(other: DoubleRef) = this.value != other.value
+  def +(other: DoubleRef) = this.value + other.value
+  def -(other: DoubleRef) = this.value - other.value
+
+}
+
+object DoubleRef {
+  implicit def DoubleRef2Int(x: DoubleRef): Int = x.value.asInstanceOf[Int]
 }

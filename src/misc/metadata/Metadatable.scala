@@ -4,7 +4,7 @@ package misc.metadata
  *
  * @author Josip
  */
-trait Metadatable {
+trait Metadatable extends IMetadatable {
   /**
    * Returns the metadata associated with the key, or <code>null</code>
    * if none exists.

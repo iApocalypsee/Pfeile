@@ -197,12 +197,16 @@ public class Circle implements Shape {
 	 */
 	@Override
 	public boolean contains(Point2D p) {
+		/*
 		// get the relative length to the middle point of the circle
-		double xlen = p.getX() - this.x, ylen = p.getY() - this.y;
+		//double xlen = p.getX() - this.x, ylen = p.getY() - this.y;
+		double xlen = this.x - p.getX(), ylen = this.y - p.getY();
 		// use the pythagorean theorem to calculate the triangle between xlen, ylen and the middle point
 		double res = Math.sqrt(Math.pow(xlen, 2) + Math.pow(ylen, 2));
 		// and return the check
 		return res < radius;
+		*/
+		return Point2D.distance(p.getX(), p.getY(), x, y) < radius;
 	}
 
 	/**

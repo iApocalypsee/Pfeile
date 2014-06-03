@@ -1,6 +1,8 @@
 package world;
 
+import comp.GUIUpdater;
 import entity.Entity;
+import gui.Drawable;
 
 import java.io.Serializable;
 import java.util.List;
@@ -8,12 +10,12 @@ import java.util.List;
 /**
  * @author Josip Palavra
  */
-public interface IWorld extends Serializable {
+public interface IWorld extends Serializable, GUIUpdater, Drawable {
 
 	int getSizeX();
 	int getSizeY();
 	boolean isTileValid(int x, int y);
-	ITile getTileAt(int x, int y);
+	IBaseTile getTileAt(int x, int y);
 	IField getFieldAt(int x, int y);
 	ITerrain getTerrain();
 	List<? extends IField> getFields();

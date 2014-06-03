@@ -40,7 +40,7 @@ public class World implements IWorld, Drawable, GUIUpdater {
 		for (LinkedList<Tile> tiles : t) {
 			for (Tile tile : tiles) {
 				tile.world = this;
-				tile.updateGUI();
+				//tile.updateGUI();
 			}
 		}
 		//testAffectedFields = BrushHelper.determineTiles(terrain.tiles.get(40).get(50), 15);

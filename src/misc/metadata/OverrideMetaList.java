@@ -35,9 +35,11 @@ public class OverrideMetaList implements IMetaManagement {
 		this.metadatable = metadatable;
 	}
 
+	/*
 	public OverrideMetaList(Metadatable scalaMetadatable) {
-		throw new NotImplementedException();
+
 	}
+	*/
 
 	@Override
 	public void addMeta(String str, Object val) {
@@ -113,7 +115,7 @@ public class OverrideMetaList implements IMetaManagement {
 
 	private OverrideMetaEntry getEntry(MetaKeyString key) {
 		for(OverrideMetaEntry entry : entries) {
-			if(entry.getKey() == key) {
+			if(entry.getKey().equals(key)) {
 				return entry;
 			}
 		}

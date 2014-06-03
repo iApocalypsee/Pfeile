@@ -1,15 +1,17 @@
 package world.tile
 
+import world.{GridElement, BaseTile}
 import java.awt.Color
 
 /**
- * Represents a grass tile.
+ *
  * @author Josip Palavra
+ * @version 01.06.2014
  */
-trait GrassTile extends BaseTile {
-  override def getColor: Color = GrassTile.defaultColor
+class GrassTile(gridElem: GridElement) extends BaseTile(gridElem) {
+  override def getColor = GrassTile.color
 }
 
 object GrassTile {
-  val defaultColor = new Color(0x1C9618)
+  val color = new Color(0x1C9618);
 }

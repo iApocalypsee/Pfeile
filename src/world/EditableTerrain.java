@@ -1,14 +1,16 @@
 package world;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import world.brush.ColorBrush;
 import world.brush.HeightBrush;
 import world.brush.IBrush;
+import world.brush.IRawBrush;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * @author Josip
@@ -37,14 +39,16 @@ public class EditableTerrain extends Terrain implements IEditableTerrain {
 		Graphics2D hmg = heightMap.createGraphics(), cmg = colorMap.createGraphics();
 		hmg.setColor(Color.black);
 		cmg.setColor(Color.black);
-		hmg.fillRect(0, 0, heightMap.getWidth(), heightMap.getHeight());
-		cmg.fillRect(0, 0, colorMap.getWidth(), colorMap.getHeight());
+		hmg.fillRect(0, 0, heightMap.getWidth(), heightMap.getTileHeight());
+		cmg.fillRect(0, 0, colorMap.getWidth(), colorMap.getTileHeight());
 		*/
 
 	}
 
 	@Override
-	public void edit(IBrush brush, Collection<Point> points) {
+	public void edit(IRawBrush brush, List<Point> points) {
+
+		IBrush ibrush = (IBrush) brush;
 
 		// here: handling of special types of brushes,
 		// which need specific handling
@@ -62,11 +66,26 @@ public class EditableTerrain extends Terrain implements IEditableTerrain {
 
 		} else if(brush instanceof HeightBrush) {
 			//HeightBrush hBrush = (HeightBrush) brush;
-			throw new NotImplementedException();
+			//throw new NotImplementedException();
+			System.err.println("Height brush not implemented yet!");
+		}
+
+		List<IBaseTile> t = new LinkedList<IBaseTile>();
+		LinkedList<Tile> oldt = collectSelectedTiles(points);
+
+		for(Tile tile : oldt) {
+			t.add((IBaseTile) tile);
 		}
 
 		// assign to the tiles
-		brush.assign(collectSelectedTiles(points));
+		ibrush.assign(t);
+	}
+
+	@Override
+	public void set(int x, int y, IBaseTile tile) {
+		if(!getWorld().isTileValid(x, y)) throw new NoSuchElementException();
+		LinkedList<LinkedList<Tile>> t = getTiles();
+		t.get(x).set(y, (Tile) tile);
 	}
 
 	private LinkedList<Tile> collectSelectedTiles(Collection<Point> points) {

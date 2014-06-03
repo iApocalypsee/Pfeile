@@ -1,7 +1,7 @@
 package gui
 
 import java.awt.Graphics2D
-import world.World
+import world.{IWorld, World}
 import scala.beans.BeanProperty
 import java.awt.event.KeyEvent
 
@@ -12,7 +12,7 @@ import java.awt.event.KeyEvent
 object NewWorldTestScreen extends Screen("New world test", 164) {
 
   @BeanProperty
-  var world: World = null
+  var world: IWorld = null
 
   var shootButtonPressed = false
 

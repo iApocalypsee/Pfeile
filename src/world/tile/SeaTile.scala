@@ -1,16 +1,17 @@
 package world.tile
 
+import world.{GridElement, BaseTile}
 import java.awt.Color
 
 /**
  *
  * @author Josip Palavra
- * @version 30.05.2014
+ * @version 01.06.2014
  */
-trait SeaTile extends BaseTile {
-  override def getColor = SeaTile.defaultColor
+class SeaTile(gridElem: GridElement) extends BaseTile(gridElem) {
+  override def getColor = SeaTile.color
 }
 
 object SeaTile {
-  val defaultColor = new Color(0x6D75E8)
+  val color = new Color(0x6D75E8)
 }

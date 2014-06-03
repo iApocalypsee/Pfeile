@@ -8,8 +8,9 @@ import misc.metadata.IMetadatable;
  */
 public interface ITerrain extends IMetadatable {
 
-	ITile getTileAt(int x, int y);
+	IBaseTile getTileAt(int x, int y);
 	IField getFieldAt(int x, int y);
+	IWorld getWorld();
 	int getSizeX();
 	int getSizeY();
 

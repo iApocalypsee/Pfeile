@@ -1,10 +1,13 @@
 package world.brush;
 
 import comp.Circle;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import world.IBaseTile;
 import world.ITile;
 import world.Tile;
 import world.World;
 
+import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -43,6 +46,16 @@ public class FieldBrush implements IBrush {
 		this.thickness = thickness;
 	}
 
+	/**
+	 * Assigns data to the specified coordinates.
+	 *
+	 * @param pointList The point list.
+	 */
+	@Override
+	public void assignPoints(List<Point> pointList) {
+		throw new NotImplementedException();
+	}
+
 	public world.Field getField() {
 		return wField;
 	}
@@ -57,20 +70,18 @@ public class FieldBrush implements IBrush {
 	 * @param tileArray The tiles to be edited.
 	 */
 	@Override
-	public void assign(List<? extends ITile> tileArray) {
+	public void assign(List<IBaseTile> tileArray) {
 		// some pre-asserts
 		if(wField == null) throw new NullPointerException();
 
-		// some helper vars
-		List<Tile> tiles = (List<Tile>) tileArray;
-		LinkedList<Tile> edits = new LinkedList<Tile>();
+		LinkedList<IBaseTile> edits = new LinkedList<IBaseTile>();
 
 		// outer for loop, iterating over every tile that has to be changed
-		for(Tile tile : tiles) {
+		for(IBaseTile tile : tileArray) {
 			// determine every tile that have to be changed
-			LinkedList<Tile> painted = determineTiles(tile);
+			LinkedList<IBaseTile> painted = BrushHelper.determineTiles(tile, thickness);
 			// iterate over the selections
-			for(Tile paintTile : painted) {
+			for(IBaseTile paintTile : painted) {
 				// check whether the metadata key is already set
 				// if no check would be there, a bug would rise up
 				// I don't want to edit the height multiple times in one
@@ -94,7 +105,7 @@ public class FieldBrush implements IBrush {
 		}
 
 		// iterate now over all the edits to delete the temporary metadata objects
-		for(Tile tile : edits) {
+		for(IBaseTile tile : edits) {
 			tile.removeMetadata(field_check_meta_key);
 		}
 	}

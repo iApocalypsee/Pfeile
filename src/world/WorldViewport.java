@@ -26,11 +26,11 @@ public class WorldViewport {
 
 	private int shiftX = STD_SHIFT_X;
 	private int shiftY = STD_SHIFT_Y;
-	private World world;
+	private IWorld world;
 
 	private float zoom = 0.25f;
 
-	public WorldViewport(World world) {
+	public WorldViewport(IWorld world) {
 		this.world = world;
 	}
 

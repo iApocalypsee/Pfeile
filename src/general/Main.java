@@ -21,8 +21,12 @@ import java.util.Random;
 import player.Bot;
 import player.Player;
 import player.SpawnEntityInstanceArgs;
-import world.EditableTerrain;
+import world.*;
 import world.brush.ColorBrush;
+import world.brush.HeightBrush;
+import world.brush.TileTypeBrush;
+import world.tile.GrassTile;
+import world.tile.SeaTile;
 
 import javax.imageio.ImageIO;
 
@@ -328,6 +332,8 @@ public class Main {
 
 		public Point p;
 		public Color c;
+		public int h;
+		public Class<? extends BaseTile> tileType;
 
 	}
 
@@ -349,13 +355,24 @@ public class Main {
 	}
 	//*/
 
+	private Class<? extends BaseTile> decide(java.util.List<Class<? extends BaseTile>> objs) {
+		return objs.get(new Random().nextInt(objs.size()));
+	}
+
 	private void newWorldTest() {
-		world.World w = new world.World(100, 100);
+		IWorld w = new ScaleWorld(45, 45);
+		/*
+		world.World w = new world.World(50, 50);
+		*/
+		//NewWorldTestScreen.setWorld(w);
 		NewWorldTestScreen.setWorld(w);
-		EditableTerrain terrain = (EditableTerrain) w.getTerrain();
+		//EditableTerrain terrain = (EditableTerrain) w.getTerrain();
+		EditableBaseTerrain terrain = (EditableBaseTerrain) w.getTerrain();
 		Random r = new Random();
 		LinkedList<NewWorldFoo> points = new LinkedList<NewWorldFoo>();
 		ColorBrush cb = new ColorBrush();
+		HeightBrush hb = new HeightBrush();
+		TileTypeBrush tb = new TileTypeBrush(w);
 
 		LinkedList<Color> colors = new LinkedList<Color>();
 		colors.add(new Color(0x1C9618)); // GRÜN
@@ -365,13 +382,18 @@ public class Main {
 		//colors.add(new Color(0x646464)); // GRAU
 		//colors.add(new Color(0x19D7E6));
 		//colors.add(new Color(0xD37D3C));
-
+		LinkedList<Class<? extends BaseTile>> baseTiles = new LinkedList<Class<? extends BaseTile>>();
+		baseTiles.add(GrassTile.class);
+		baseTiles.add(SeaTile.class);
 
 		int amtOfPoints = r.nextInt(w.getSizeX() * w.getSizeY()) + w.getSizeX() + w.getSizeY();
+		int maxHeight = 5;
 		for(int i = 0; i < amtOfPoints; i++) {
 			NewWorldFoo f = new NewWorldFoo();
-			f.p = new Point(r.nextInt(terrain.getSizeX()), r.nextInt(terrain.getSizeY()));
+			f.p = new Point(r.nextInt(w.getSizeX()), r.nextInt(w.getSizeY()));
 			f.c = decide(colors);
+			f.h = r.nextInt(maxHeight) + 3;
+			f.tileType = decide(baseTiles);
 			points.add(f);
 			//System.out.println("i = " + i);
 		}
@@ -392,7 +414,18 @@ public class Main {
 				cb.setColor(f.c);
 				cb.setThickness(r.nextInt(3) + 2);
 
+				hb.setThickness(r.nextInt(3) + 2);
+				hb.setHeightIncrement(f.h);
+
+				tb.setTileClass(f.tileType);
+				tb.setThickness(r.nextInt(4) + 2);
+
+				/*
 				terrain.edit(cb, tempPoints);
+				*/
+				terrain.edit(hb, tempPoints);
+
+				terrain.edit(tb, tempPoints);
 				tempPoints.clear();
 			}
 
@@ -405,11 +438,32 @@ public class Main {
 			//System.out.print("i = " + i);
 			//System.out.println(" Main.newWorldTest");
 		}
+		/*
 		try {
-			ImageIO.write(terrain.colorMap, "png", new File("colormap.png"));
+			ImageIO.write(terrain.getColorMap(), "png", new File("colormap.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		*/
+
+		/* OLD COMPUTATION
+		for(int x = 0; x < terrain.getSizeX(); x++) {
+			for(int y = 0; y < terrain.getSizeY(); y++) {
+				Tile t = terrain.getTileAt(x, y);
+				t.getCage().recomputeBase();
+				t.updateGUI();
+			}
+		}
+
+		// double recomputing is needed
+		for(int x = 0; x < terrain.getSizeX(); x++) {
+			for(int y = 0; y < terrain.getSizeY(); y++) {
+				Tile t = terrain.getTileAt(x, y);
+				t.getCage().recomputeBase();
+			}
+		}*/
+
+		terrain.adjustHeights();
 
 		System.out.println("Runtime.getRuntime().freeMemory() / (1024 * 1024) = " + Runtime.getRuntime().freeMemory() / (1024 * 1024));
 		System.out.println("Runtime.getRuntime().totalMemory() / (1024 * 1024) = " + Runtime.getRuntime().totalMemory() / (1024 * 1024));

@@ -1,10 +1,13 @@
 package world.brush;
 
 import comp.Circle;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import world.IBaseTile;
 import world.ITile;
 import world.Tile;
 import world.World;
 
+import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,6 +20,7 @@ import java.util.List;
 public class HeightBrush implements IBrush {
 
 	private static final String height_check_meta_key = "pfeile.gen.heightbrushcheck";
+	public static final String meta_key = "pfeile.tileheight";
 	private static final int DEFAULT_HEIGHT_INCR = 3;
 
 	int thickness;
@@ -45,27 +49,28 @@ public class HeightBrush implements IBrush {
 	 * @param tileArray The tiles to be edited.
 	 */
 	@Override
-	public void assign(List<? extends ITile> tileArray) {
-		// some helper vars
-		List<Tile> tiles = (List<Tile>) tileArray;
-		LinkedList<Tile> edits = new LinkedList<Tile>();
+	public void assign(List<IBaseTile> tileArray) {
+		LinkedList<IBaseTile> edits = new LinkedList<IBaseTile>();
 
 		// outer for loop, iterating over every tile that has to be changed
-		for(Tile tile : tiles) {
+		for(IBaseTile tile : tileArray) {
 			// determine every tile that have to be changed
-			LinkedList<Tile> painted = determineTiles(tile);
+			LinkedList<IBaseTile> painted = BrushHelper.determineTiles(tile, thickness);
 			// iterate over the selections
-			for(Tile paintTile : painted) {
+			for(IBaseTile paintTile : painted) {
 				// check whether the metadata key is already set
 				// if no check would be there, a bug would rise up
 				// I don't want to edit the height multiple times in one
 				// draw of the brush
-				if(paintTile.getMetadata(height_check_meta_key) == null) {
+				if(paintTile.getMetadata(height_check_meta_key) == null) {/*
 					try {
 						// access the 'height' field of the tile and increment/decrement it
 						Field heightField = paintTile.getClass().getDeclaredField("height");
 						heightField.setAccessible(true);
-						heightField.setInt(paintTile, paintTile.getHeight() + heightIncrement);
+						// RELATIVE
+						//heightField.setInt(paintTile, paintTile.getTileHeight() + heightIncrement);
+						// ABSOLUTE
+						heightField.setInt(paintTile, heightIncrement);
 						paintTile.setMetadata(height_check_meta_key, true);
 						heightField.setAccessible(false);
 						edits.add(paintTile);
@@ -74,34 +79,19 @@ public class HeightBrush implements IBrush {
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();
 					}
+					*/
+					Object meta = paintTile.getMetadata(meta_key);
+					if(meta == null) paintTile.setMetadata(meta_key, heightIncrement);
+					else paintTile.setMetadata(meta_key, (Integer) meta + heightIncrement);
+					paintTile.setMetadata(height_check_meta_key, true);
 				}
 			}
 		}
 
 		// iterate now over all the edits to delete the temporary metadata objects
-		for(Tile tile : edits) {
+		for(IBaseTile tile : edits) {
 			tile.removeMetadata(height_check_meta_key);
 		}
-	}
-
-	private LinkedList<Tile> determineTiles(Tile t) {
-		Circle rad = new Circle();
-		LinkedList<Tile> edits = new LinkedList<Tile>();
-		World w = t.getWorld();
-		rad.setX(t.getGridX());
-		rad.setY(t.getGridY());
-		rad.setRadius(thickness);
-
-		// define a rectangular array of tiles
-		for(int x = t.getGridX() - thickness; x < t.getGridX() + thickness; x++) {
-			for(int y = t.getGridY() - thickness; y < t.getGridY() + thickness; y++) {
-				Tile checkTile = w.getTileAt(x, y);
-				if(rad.contains(checkTile.gridCenter())) {
-					edits.add(checkTile);
-				}
-			}
-		}
-		return edits;
 	}
 
 	/*
@@ -119,6 +109,16 @@ public class HeightBrush implements IBrush {
 	public void setThickness(int thickness) {
 		if(thickness <= 0) throw new IllegalArgumentException("Negative values not permitted.");
 		this.thickness = thickness;
+	}
+
+	/**
+	 * Assigns data to the specified coordinates.
+	 *
+	 * @param pointList The point list.
+	 */
+	@Override
+	public void assignPoints(List<Point> pointList) {
+		throw new NotImplementedException();
 	}
 
 	/**
