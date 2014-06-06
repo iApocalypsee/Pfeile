@@ -8,6 +8,7 @@ import scala.collection.mutable
 import java.awt.image.BufferedImage
 import world.brush._
 import java.util
+import scala.util.Random
 
 /**
  *
@@ -81,18 +82,18 @@ class BaseTerrain(sizeX: Int, sizeY: Int, world: IWorld) extends ITerrain with D
     recomputeHeights()
 
     var gridelem: GridElement = null
-    val isMax = true
+    val isMax = false
 
     def westMinHeight(): Int = {
-      var n = (gridelem.northwest, 0)
+      var n = (gridelem.northwest, gridelem.tile.getTileHeight())
       if(n._1 ne null) {
         n = (n._1, n._1.tile.getTileHeight)
       }
-      var w = (gridelem.west, 0)
+      var w = (gridelem.west, gridelem.tile.getTileHeight())
       if(w._1 ne null) {
         w = (w._1, w._1.tile.getTileHeight)
       }
-      var s = (gridelem.southwest, 0)
+      var s = (gridelem.southwest, gridelem.tile.getTileHeight())
       if(s._1 ne null) {
         s = (s._1, s._1.tile.getTileHeight)
       }
@@ -103,15 +104,15 @@ class BaseTerrain(sizeX: Int, sizeY: Int, world: IWorld) extends ITerrain with D
     }
 
     def southMinHeight(): Int = {
-      var n = (gridelem.southwest, 0)
+      var n = (gridelem.southwest, gridelem.tile.getTileHeight())
       if(n._1 ne null) {
         n = (n._1, n._1.tile.getTileHeight)
       }
-      var w = (gridelem.south, 0)
+      var w = (gridelem.south, gridelem.tile.getTileHeight())
       if(w._1 ne null) {
         w = (w._1, w._1.tile.getTileHeight)
       }
-      var s = (gridelem.southeast, 0)
+      var s = (gridelem.southeast, gridelem.tile.getTileHeight())
       if(s._1 ne null) {
         s = (s._1, s._1.tile.getTileHeight)
       }
@@ -122,15 +123,15 @@ class BaseTerrain(sizeX: Int, sizeY: Int, world: IWorld) extends ITerrain with D
     }
 
     def eastMinHeight(): Int = {
-      var n = (gridelem.northeast, 0)
+      var n = (gridelem.northeast, gridelem.tile.getTileHeight())
       if(n._1 ne null) {
         n = (n._1, n._1.tile.getTileHeight)
       }
-      var w = (gridelem.east, 0)
+      var w = (gridelem.east, gridelem.tile.getTileHeight())
       if(w._1 ne null) {
         w = (w._1, w._1.tile.getTileHeight)
       }
-      var s = (gridelem.southeast, 0)
+      var s = (gridelem.southeast, gridelem.tile.getTileHeight())
       if(s._1 ne null) {
         s = (s._1, s._1.tile.getTileHeight)
       }
@@ -141,15 +142,15 @@ class BaseTerrain(sizeX: Int, sizeY: Int, world: IWorld) extends ITerrain with D
     }
 
     def northMinHeight(): Int = {
-      var n = (gridelem.northwest, 0)
+      var n = (gridelem.northwest, gridelem.tile.getTileHeight())
       if(n._1 ne null) {
         n = (n._1, n._1.tile.getTileHeight)
       }
-      var w = (gridelem.north, 0)
+      var w = (gridelem.north, gridelem.tile.getTileHeight())
       if(w._1 ne null) {
         w = (w._1, w._1.tile.getTileHeight)
       }
-      var s = (gridelem.northeast, 0)
+      var s = (gridelem.northeast, gridelem.tile.getTileHeight())
       if(s._1 ne null) {
         s = (s._1, s._1.tile.getTileHeight)
       }
@@ -159,18 +160,29 @@ class BaseTerrain(sizeX: Int, sizeY: Int, world: IWorld) extends ITerrain with D
       else Math.min(Math.min(n._2, w._2), Math.min(s._2, that._2))
     }
 
+    val rand = new Random()
+
     for(x <- 0 until sizeX) {
       for(y <- 0 until sizeY) {
         gridelem = _grid.apply(x).apply(y)
+
         val n = northMinHeight()
         val w = westMinHeight()
         val s = southMinHeight()
         val e = eastMinHeight()
 
+
         gridelem.northCorner.getRefY.value -= n
         gridelem.westCorner.getRefY.value -= w
         gridelem.southCorner.getRefY.value -= s
         gridelem.eastCorner.getRefY.value -= e
+
+        /*
+        gridelem.northCorner.getRefY.value -= rand.nextInt(20)
+        gridelem.westCorner.getRefY.value -= rand.nextInt(20)
+        gridelem.southCorner.getRefY.value -= rand.nextInt(20)
+        gridelem.eastCorner.getRefY.value -= rand.nextInt(20)
+        */
       }
     }
 

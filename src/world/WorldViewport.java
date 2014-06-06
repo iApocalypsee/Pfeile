@@ -7,7 +7,7 @@ package world;
 public class WorldViewport {
 
 	private static final int STD_SHIFT_X = 20;
-	private static final int STD_SHIFT_Y = 20;
+	private static final int STD_SHIFT_Y = 100;
 	public static final int STD_TILE_ISO_DIMENSION = 64;
 	/**
 	 * The dimension of half a tile in width in pixels.
@@ -28,7 +28,7 @@ public class WorldViewport {
 	private int shiftY = STD_SHIFT_Y;
 	private IWorld world;
 
-	private float zoom = 0.25f;
+	private float zoom = 1f;
 
 	public WorldViewport(IWorld world) {
 		this.world = world;

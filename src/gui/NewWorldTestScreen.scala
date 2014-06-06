@@ -1,7 +1,7 @@
 package gui
 
 import java.awt.Graphics2D
-import world.{IWorld, World}
+import world.{BaseTile, IWorld, World}
 import scala.beans.BeanProperty
 import java.awt.event.KeyEvent
 
@@ -23,6 +23,14 @@ object NewWorldTestScreen extends Screen("New world test", 164) {
     if(e.getKeyCode == KeyEvent.VK_UP) world.getViewport.shiftRel(0, 8)
     if(e.getKeyCode == KeyEvent.VK_PAGE_UP) world.getViewport.zoomRel(1.1f)
     if(e.getKeyCode == KeyEvent.VK_PAGE_DOWN) world.getViewport.zoomRel(0.9f)
+  }
+
+  def bindTileComponents {
+    for(x <- 0 until world.getSizeX) {
+      for(y <- 0 until world.getSizeY) {
+        add(world.getTileAt(x, y).asInstanceOf[BaseTile])
+      }
+    }
   }
 
   override def draw(g: Graphics2D): Unit = {

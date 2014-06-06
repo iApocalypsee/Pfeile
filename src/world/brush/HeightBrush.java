@@ -1,15 +1,10 @@
 package world.brush;
 
-import comp.Circle;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import world.IBaseTile;
-import world.ITile;
-import world.Tile;
-import world.World;
+import world.tile.SeaTile;
 
 import java.awt.*;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -62,7 +57,8 @@ public class HeightBrush implements IBrush {
 				// if no check would be there, a bug would rise up
 				// I don't want to edit the height multiple times in one
 				// draw of the brush
-				if(paintTile.getMetadata(height_check_meta_key) == null) {/*
+				if(paintTile.getMetadata(height_check_meta_key) == null) {
+					/*
 					try {
 						// access the 'height' field of the tile and increment/decrement it
 						Field heightField = paintTile.getClass().getDeclaredField("height");
@@ -80,10 +76,19 @@ public class HeightBrush implements IBrush {
 						e.printStackTrace();
 					}
 					*/
-					Object meta = paintTile.getMetadata(meta_key);
+
+					if(paintTile instanceof SeaTile) {
+						if((Integer) paintTile.getMetadata(meta_key) != 0) {
+							paintTile.setMetadata(meta_key, 0);
+						}
+						continue;
+					}
+
+					Object meta = paintTile.getTileHeight();
 					if(meta == null) paintTile.setMetadata(meta_key, heightIncrement);
 					else paintTile.setMetadata(meta_key, (Integer) meta + heightIncrement);
 					paintTile.setMetadata(height_check_meta_key, true);
+					edits.add(paintTile);
 				}
 			}
 		}

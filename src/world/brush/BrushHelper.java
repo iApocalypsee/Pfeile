@@ -24,12 +24,13 @@ public final class BrushHelper {
 		Circle rad = new Circle();
 		LinkedList<IBaseTile> edits = new LinkedList<IBaseTile>();
 		IWorld w = tile.getWorld();
-		rad.setX(tile.getGridX()/* + 0.5*/);
-		rad.setY(tile.getGridY()/* + 0.5*/);
+		rad.setX(tile.getGridX() + 0.5);
+		rad.setY(tile.getGridY() + 0.5);
 		rad.setRadius(radius);
 
 		// define a rectangular array of tiles
 		for(int x = tile.getGridX() - radius; x < tile.getGridX() + radius; x++) {
+			if(!w.isTileValid(x, 0)) continue;
 			for(int y = tile.getGridY() - radius; y < tile.getGridY() + radius; y++) {
 				if(!w.isTileValid(x, y)) continue;
 				IBaseTile checkTile = w.getTileAt(x, y);
@@ -50,9 +51,12 @@ public final class BrushHelper {
 		rad.setRadius(radius);
 
 		// define a rectangular array of tiles
-		for(int x = elem.gridX() - radius; x < elem.gridX() + radius; x++) {
-			for(int y = elem.gridY() - radius; y < elem.gridY() + radius; y++) {
-				if(!w.isTileValid(x, y)) continue;
+		for(int x = elem.gridX() - radius, xit = 0; x < elem.gridX() + radius; x++, xit++) {
+			if(x < 0) continue;
+			if(x >= w.getSizeX()) break;
+			for(int y = elem.gridY() - radius, yit = 0; y < elem.gridY() + radius; y++, yit++) {
+				if(y < 0) continue;
+				if(y >= w.getSizeY()) break;
 				GridElement checkTile = w.getGridElementAt(x, y);
 				if(rad.contains(checkTile.gridCenter())) {
 					matches.add(checkTile);

@@ -35,7 +35,7 @@ trait OverrideMetadatable extends Metadatable {
   private val metadata = new OverrideMetaList(this)
 
   override def getMetadata(key: String): AnyRef = {
-    metadata get(key)
+    metadata get key
   }
 
   override def setMetadata(key: String, value: AnyRef): Unit = {
@@ -43,7 +43,7 @@ trait OverrideMetadatable extends Metadatable {
   }
 
   override def removeMetadata(key: String): AnyRef = {
-    metadata get(key)
+    metadata deleteMeta key
   }
 }
 

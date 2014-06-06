@@ -94,6 +94,10 @@ class GridElement(x: Int, y: Int) {
   def eastCorner = _east
   def southCorner = _south
   def westCorner = _west
+  private[world] def northCorner_=(ncorner: PointDef) = _north = ncorner
+  private[world] def westCorner_=(wcorner: PointDef) = _west = wcorner
+  private[world] def southCorner_=(scorner: PointDef) = _south = scorner
+  private[world] def eastCorner_=(ecorner: PointDef) = _east = ecorner
 
   def world = _world
 
@@ -108,9 +112,9 @@ class GridElement(x: Int, y: Int) {
         this.y = y
       }
 
-      override def getY: Double = x
+      override def getY: Double = y
 
-      override def getX: Double = y
+      override def getX: Double = x
     }
     p.setLocation(_gridX + 0.5, _gridY + 0.5)
     p

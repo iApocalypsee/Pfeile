@@ -11,6 +11,7 @@ import geom.DoubleRef.DoubleRef2Int
 import geom.PointDef
 
 import world.brush.HeightBrush
+import java.awt.event.{MouseEvent, MouseAdapter}
 
 /**
  *
@@ -31,6 +32,7 @@ abstract class BaseTile protected[world](private[world] var _gridElem: GridEleme
   private val selectDrawHandle = handle(selectMethod, () => isMouseFocused)
 
   private[world] var tileHeight: Int = 0
+  private var lastZoomFactor = 1.0
 
   override def getGridX: Int = _gridElem.gridX
   override def getGridY: Int = _gridElem.gridY
@@ -40,16 +42,23 @@ abstract class BaseTile protected[world](private[world] var _gridElem: GridEleme
   override def getTileHeight: Int = getMetadata(HeightBrush.meta_key).asInstanceOf[Int]
   def setTileHeight(x: Int) = setMetadata(HeightBrush.meta_key, x.asInstanceOf[Integer])
 
-  override def draw(gl: Graphics2D): Unit = {
-    val g = gl.create().asInstanceOf[Graphics2D]
+  override def draw(g: Graphics2D): Unit = {
+    //val g = gl.create().asInstanceOf[Graphics2D]
     // translate the whole matrix context, just like OpenGL's "glPushMatrix()" and "glPopMatrix()"
-    g.translate(getWorld.getViewport.getShiftX, getWorld.getViewport.getShiftY)
+    //g.translate(getWorld.getViewport.getShiftX, getWorld.getViewport.getShiftY)
     // draw the base tile shape with the base color
     g setColor getColor
     g fillPolygon getBounds
     // draw all other individual stuff
     drawAll(g)
-    g.dispose()
+
+    /*
+    if(isMouseFocused) {
+      g.setColor(BaseTile.selectColor)
+      g.fillPolygon(getBounds())
+    }
+    */
+    //g.dispose()
   }
 
   def north: IBaseTile = {
@@ -117,23 +126,48 @@ abstract class BaseTile protected[world](private[world] var _gridElem: GridEleme
     val poly = getBounds
     val vp = getWorld.getViewport
 
-    val actn = new PointDef((n.getX * vp.getZoomFactor/* + vp.getShiftX */, n.getY * vp.getZoomFactor/* + vp.getShiftY*/))
-    val actw = new PointDef((w.getX * vp.getZoomFactor/* + vp.getShiftX */, w.getY * vp.getZoomFactor/* + vp.getShiftY*/))
-    val acts = new PointDef((s.getX * vp.getZoomFactor/* + vp.getShiftX */, s.getY * vp.getZoomFactor/* + vp.getShiftY*/))
-    val acte = new PointDef((e.getX * vp.getZoomFactor/* + vp.getShiftX */, e.getY * vp.getZoomFactor/* + vp.getShiftY*/))
+    val actn = {
+      if(lastZoomFactor == vp.getZoomFactor) new PointDef((n.getX/* + vp.getShiftX*/, n.getY/* + vp.getShiftY*/))
+      else new PointDef((n.getX * vp.getZoomFactor/* + vp.getShiftX*/, n.getY * vp.getZoomFactor/* + vp.getShiftY*/))
+    }
+    val actw = {
+      if(lastZoomFactor == vp.getZoomFactor) new PointDef((w.getX/* + vp.getShiftX*/, w.getY/* + vp.getShiftY*/))
+      else new PointDef((w.getX * vp.getZoomFactor/* + vp.getShiftX*/, w.getY * vp.getZoomFactor/* + vp.getShiftY*/))
+    }
+    val acts = {
+      if(lastZoomFactor == vp.getZoomFactor) new PointDef((s.getX/* + vp.getShiftX*/, s.getY/* + vp.getShiftY*/))
+      else new PointDef((s.getX * vp.getZoomFactor/* + vp.getShiftX*/, s.getY * vp.getZoomFactor/* + vp.getShiftY*/))
+    }
+    val acte = {
+      if(lastZoomFactor == vp.getZoomFactor) new PointDef((e.getX/* + vp.getShiftX*/, e.getY/* + vp.getShiftY*/))
+      else new PointDef((e.getX * vp.getZoomFactor/* + vp.getShiftX*/, e.getY * vp.getZoomFactor/* + vp.getShiftY*/))
+    }
 
-    poly.xpoints.update(0, actn.getRefX)
-    poly.xpoints.update(1, actw.getRefX)
-    poly.xpoints.update(2, acts.getRefX)
-    poly.xpoints.update(3, acte.getRefX)
+    _gridElem.northCorner = actn
+    _gridElem.westCorner = actw
+    _gridElem.southCorner = acts
+    _gridElem.eastCorner = acte
 
-    poly.ypoints.update(0, actn.getRefY)
-    poly.ypoints.update(1, actw.getRefY)
-    poly.ypoints.update(2, acts.getRefY)
-    poly.ypoints.update(3, acte.getRefY)
+    poly.xpoints = new Array[Int](4)
+    poly.ypoints = new Array[Int](4)
+
+    poly.xpoints.update(0, actn.getRefX + vp.getShiftX)
+    poly.xpoints.update(1, actw.getRefX + vp.getShiftX)
+    poly.xpoints.update(2, acts.getRefX + vp.getShiftX)
+    poly.xpoints.update(3, acte.getRefX + vp.getShiftX)
+
+    poly.ypoints.update(0, actn.getRefY + vp.getShiftY)
+    poly.ypoints.update(1, actw.getRefY + vp.getShiftY)
+    poly.ypoints.update(2, acts.getRefY + vp.getShiftY)
+    poly.ypoints.update(3, acte.getRefY + vp.getShiftY)
 
     poly.npoints = 4
     poly.invalidate()
+    updateLastZoomFactor()
+  }
+
+  private def updateLastZoomFactor() {
+    lastZoomFactor = getWorld.getViewport.getZoomFactor
   }
 
   override def gridCenter(): Point2D = {
