@@ -29,6 +29,8 @@ object NewWorldTestScreen extends Screen("New world test", 164) {
     for(x <- 0 until world.getSizeX) {
       for(y <- 0 until world.getSizeY) {
         add(world.getTileAt(x, y).asInstanceOf[BaseTile])
+        NewWorldTestScreen.add(world.getTileAt(x, y).asInstanceOf[BaseTile])
+        world.getTileAt(x, y).asInstanceOf[BaseTile].updateGUI
       }
     }
   }

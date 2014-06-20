@@ -9,6 +9,11 @@ import comp.Button;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.event.KeyEvent;
+
+import world.BaseTile;
+import world.IWorld;
 
 
 public class AimSelectionScreen extends Screen {
@@ -44,12 +49,17 @@ public class AimSelectionScreen extends Screen {
 		
 		confirm = new Button (Main.getWindowWidth() - 300, Main.getWindowHeight() - 200, this, "Confirm");
 		
-		
 		FieldSelector x = new FieldSelector ();
 		selectFieldThread = new Thread (x);
 		selectFieldThread.setDaemon(true);
-		selectFieldThread.setPriority(Thread.MIN_PRIORITY + 1);
+		selectFieldThread.setPriority(Thread.MIN_PRIORITY + 2);
 		selectFieldThread.start();
+	}
+	
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+		super.keyPressed(arg0);
+		NewWorldTestScreen.keyPressed(arg0);
 	}
 
 	@Override 
@@ -57,16 +67,17 @@ public class AimSelectionScreen extends Screen {
 		// Background will be drawn
 		super.draw(g);
 		
+		// TODO: auf die neue World-Klasse ändern
 		World.timeLifeBox.draw(g);
-		Field.infoBox.draw(g);
+		//Field.infoBox.draw(g);
 		Main.timeObj.draw(g);
-		GameScreen.getInstance().getWorld().getActivePlayer().drawLife(g);
+//		GameScreen.getInstance().getWorld().getActivePlayer().drawLife(g);
 		
 		g.setColor(TRANSPARENT_BACKGROUND);
 		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 		
 		// The World will be drawn 
-		GameScreen.getInstance().getWorld().drawReduced(g);
+		NewWorldTestScreen.getWorld().draw(g);
 	}
 	
 	
@@ -131,46 +142,66 @@ public class AimSelectionScreen extends Screen {
 					if (lastSavedClickPosition.x == getLastClickPosition().x && 
 							lastSavedClickPosition.y == getLastClickPosition().y) {
 						try {
-							Thread.sleep(80);
+							Thread.sleep(100);
 						} catch (InterruptedException e) {e.printStackTrace();}
 						
 						continue;
 					}
 					
+					IWorld w = NewWorldTestScreen.getWorld();
+					
+					// last Tile of the map
+					BaseTile endTile = (BaseTile) w.getTileAt(Mechanics.worldSizeX - 1, Mechanics.worldSizeY - 1);
+					w.updateGUI();
+					
+					// setup des Polygons, der die gesamte Welt umfasst
+					Polygon poly = new Polygon();
+					poly.xpoints = new int[4];
+					poly.ypoints = new int[4];
+					
+					poly.xpoints[0] = ((int) ((BaseTile) w.getTileAt(0, 0))._gridElem().westCorner().getX());
+					poly.xpoints[1] = ((int) ((BaseTile) w.getTileAt(0, w.getSizeY() - 1))._gridElem().northCorner().getX());
+					poly.xpoints[2] = ((int) ((BaseTile) w.getTileAt(w.getSizeX() - 1, w.getSizeY() - 1))._gridElem().eastCorner().getX());
+					poly.xpoints[3] = ((int) ((BaseTile) w.getTileAt(w.getSizeX() - 1, 0))._gridElem().southCorner().getX());
+					
+					poly.ypoints[0] = ((int) ((BaseTile) w.getTileAt(0, 0))._gridElem().westCorner().getY());
+					poly.ypoints[1] = ((int) ((BaseTile) w.getTileAt(0, w.getSizeY() - 1))._gridElem().northCorner().getY());
+					poly.ypoints[2] = ((int) ((BaseTile) w.getTileAt(w.getSizeX() - 1, w.getSizeY() - 1))._gridElem().eastCorner().getY());
+					poly.ypoints[3] = ((int) ((BaseTile) w.getTileAt(w.getSizeX() - 1, 0))._gridElem().southCorner().getY());
+					
+					poly.npoints = 4;
+					poly.invalidate();
+					
 					// only run, if the position of the new click is on the map 
-					if (getLastClickPosition().x < GameScreen.getInstance().getWorld().getFieldAt(Mechanics.worldSizeX - 1, Mechanics.worldSizeY - 1).getAbsoluteX() +
-							GameScreen.getInstance().getWorld().getFieldAt(Mechanics.worldSizeX - 1, Mechanics.worldSizeY - 1).getWidth() 
-							&& getLastClickPosition().y < GameScreen.getInstance().getWorld().getFieldAt(Mechanics.worldSizeX - 1, Mechanics.worldSizeY - 1).getAbsoluteY() + 
-							GameScreen.getInstance().getWorld().getFieldAt(Mechanics.worldSizeX - 1, Mechanics.worldSizeY - 1).getHeight()) {
+					if (poly.contains(getLastClickPosition())) {
 						
-						// only run, if the new click isn't on the insets of the map
-						if (getLastClickPosition().x > GameScreen.getInstance().getWorld().getFieldAt(0, 0).getAbsoluteX() 
-								&& getLastClickPosition().y > GameScreen.getInstance().getWorld().getFieldAt(0, 0).getAbsoluteY()) {
-							
-							// Let's find the selectedField
-							LOOPxPosition: for (int x = 0; x < Mechanics.worldSizeX; x++) {
-								for (int y = 0; y < Mechanics.worldSizeY; y++) {
-									if (GameScreen.getInstance().getWorld().getFieldAt(x, y).getSimplifiedBounds().contains(getLastClickPosition())) {
-										setPosX_selectedField(x);
-										setPosY_selectedField(y);
-										lastSavedClickPosition = getLastClickPosition();
-										
-										break LOOPxPosition;
-									}
+						// Let's find the selectedField
+						LOOPxPosition: for (int x = 0; x < w.getSizeX(); x++) {
+							for (int y = 0; y < w.getSizeY(); y++) {
+								BaseTile tile = (BaseTile) w.getTileAt(x, y);
+								if (tile.getBounds().contains(getLastClickPosition())) {
+									setPosX_selectedField(x);
+									setPosY_selectedField(y);
+									lastSavedClickPosition = getLastClickPosition();
+									
+									System.out.print(lastSavedClickPosition.x + " ");
+									System.out.println(lastSavedClickPosition.y);
+									
+									break LOOPxPosition;
 								}
 							}
-						}
+						} 
 					}
 					
 					// now, sleep a bit 
 					try {
-						Thread.sleep(80);
+						Thread.sleep(100);
 					} catch (InterruptedException e) {e.printStackTrace();}
 				}
 				
 				// if 'isRunning == false': sleep longer
 				try {
-					Thread.sleep(400);
+					Thread.sleep(480);
 				} catch (InterruptedException e) {e.printStackTrace();}
 			}
 		}

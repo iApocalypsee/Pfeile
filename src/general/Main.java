@@ -5,7 +5,6 @@ import gui.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -361,7 +360,7 @@ public class Main {
 	}
 
 	private void newWorldTest() {
-		IWorld w = new ScaleWorld(60, 60);
+		IWorld w = new ScaleWorld(70, 70);
 		/*
 		world.World w = new world.World(50, 50);
 		*/
@@ -375,8 +374,6 @@ public class Main {
 		HeightBrush hb = new HeightBrush();
 		TileTypeBrush tb = new TileTypeBrush(w);
 
-		hb.setThickness(3);
-
 		LinkedList<Color> colors = new LinkedList<Color>();
 		colors.add(new Color(0x1C9618)); // GRÜN
 		//colors.add(new Color(0xD5F5EF)); // EISWEIß
@@ -389,14 +386,13 @@ public class Main {
 		baseTiles.add(GrassTile.class);
 		baseTiles.add(SeaTile.class);
 
-		int amtOfPoints = r.nextInt(w.getSizeX() * w.getSizeY()) + w.getSizeX() * 2 + w.getSizeY() * 2;
-		int maxHeight = 2;
+		int amtOfPoints = r.nextInt(w.getSizeX() * w.getSizeY()) + w.getSizeX() + w.getSizeY();
+		int maxHeight = 1;
 		for(int i = 0; i < amtOfPoints; i++) {
 			NewWorldFoo f = new NewWorldFoo();
 			f.p = new Point(r.nextInt(w.getSizeX()), r.nextInt(w.getSizeY()));
 			f.c = decide(colors);
-			//f.h = r.nextInt(maxHeight) + 3;
-			f.h = r.nextInt(maxHeight) + 1;
+			f.h = r.nextInt(maxHeight) + 3;
 			f.tileType = decide(baseTiles);
 			points.add(f);
 			//System.out.println("i = " + i);
@@ -415,70 +411,21 @@ public class Main {
 				count = r.nextInt(8) + 3;
 
 				// reset the brush and other stuff
-				//cb.setColor(f.c);
-				//cb.setThickness(r.nextInt(6) + 3);
-
-
-				//hb.setThickness(r.nextInt(6) + 3);
-				//hb.setHeightIncrement(f.h);
-
-
-				tb.setTileClass(f.tileType);
-				tb.setThickness(r.nextInt(4) + 2);
-
-				/*
-				terrain.edit(cb, tempPoints);
-				*/
-
-				//terrain.edit(hb, tempPoints);
-
-
-				terrain.edit(tb, tempPoints);
-				tempPoints.clear();
-			}
-
-			/*
-			LinkedList<Point> p = new LinkedList<Point>();
-			p.add(f.p);
-			terrain.edit(cb, p);
-			*/
-			i++;
-			//System.out.print("i = " + i);
-			//System.out.println(" Main.newWorldTest");
-		}
-
-		tempPoints.clear();
-
-
-		for(NewWorldFoo f : points) {
-			tempPoints.add(f.p);
-			if(i >= count) {
-				// reset the counter variables
-				i = 0;
-				count = r.nextInt(5) + 3;
-
-				// reset the brush and other stuff
-				/*
 				cb.setColor(f.c);
-				cb.setThickness(r.nextInt(6) + 3);
-				*/
+				cb.setThickness(r.nextInt(3) + 2);
 
-				hb.setThickness(r.nextInt(3) + 1);
+				hb.setThickness(r.nextInt(3) + 2);
 				hb.setHeightIncrement(f.h);
 
-				/*
 				tb.setTileClass(f.tileType);
 				tb.setThickness(r.nextInt(4) + 2);
-				*/
 
 				/*
 				terrain.edit(cb, tempPoints);
 				*/
 				terrain.edit(hb, tempPoints);
 
-				/*
 				terrain.edit(tb, tempPoints);
-				*/
 				tempPoints.clear();
 			}
 
@@ -491,8 +438,6 @@ public class Main {
 			//System.out.print("i = " + i);
 			//System.out.println(" Main.newWorldTest");
 		}
-
-		//printHeights(terrain);
 		/*
 		try {
 			ImageIO.write(terrain.getColorMap(), "png", new File("colormap.png"));
@@ -520,23 +465,9 @@ public class Main {
 
 		terrain.adjustHeights();
 
-		NewWorldTestScreen.bindTileComponents();
-
 		System.out.println("Runtime.getRuntime().freeMemory() / (1024 * 1024) = " + Runtime.getRuntime().freeMemory() / (1024 * 1024));
 		System.out.println("Runtime.getRuntime().totalMemory() / (1024 * 1024) = " + Runtime.getRuntime().totalMemory() / (1024 * 1024));
 		//System.exit(0);
-	}
-
-	public void printHeights(ITerrain t) {
-		for(int i = 0; i < t.getSizeY(); i++) System.out.print('=');
-		System.out.println();
-		for(int x = 0; x < t.getSizeX(); x++) {
-			for(int y = 0; y < t.getSizeY(); y++) {
-				IBaseTile tile = t.getTileAt(x, y);
-				System.out.print("|" + tile.getTileHeight());
-			}
-			System.out.println();
-		}
 	}
 
 	/**
@@ -716,6 +647,7 @@ public class Main {
 	// ########################################################################
 	
 	/** empty: aufruf in Main ist auskommentiert */
+	@SuppressWarnings("unused")
 	protected void postInitScreens() {
 
 	}

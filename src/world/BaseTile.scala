@@ -12,6 +12,8 @@ import world.brush.HeightBrush
 import world.tile.TileCage
 
 import scala.collection.mutable
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 
 /**
  *
@@ -21,6 +23,15 @@ import scala.collection.mutable
 abstract class BaseTile protected[world](private[world] var _gridElem: GridElement) extends
   Component with IBaseTile with AdjustableDrawing with OverrideMetadatable with GUIUpdater {
 
+  
+  addMouseListener(new MouseAdapter {
+    override def mouseEntered(e: MouseEvent): Unit = {
+      println("Entered (" + getGridX + "|" + getGridY + ")")
+      println("At " + getAbsoluteX + "|" + getAbsoluteY + ")")
+      println("========================")
+    }
+  })
+  
   private def selectMethod(g: Graphics2D) {
     g setColor BaseTile.selectColor
     g fillPolygon getBounds
@@ -63,7 +74,7 @@ abstract class BaseTile protected[world](private[world] var _gridElem: GridEleme
   }
 
   private def drawLines(g: Graphics2D): Unit = {
-    g.setColor(Color.black)
+    g.setColor(Color.lightGray)
     g.drawPolygon(getBounds)
   }
 
@@ -156,6 +167,8 @@ abstract class BaseTile protected[world](private[world] var _gridElem: GridEleme
 
     poly.xpoints = new Array[Int](4)
     poly.ypoints = new Array[Int](4)
+    
+    
 
     poly.xpoints.update(0, actn.getRefX + vp.getShiftX)
     poly.xpoints.update(1, actw.getRefX + vp.getShiftX)
@@ -166,6 +179,20 @@ abstract class BaseTile protected[world](private[world] var _gridElem: GridEleme
     poly.ypoints.update(1, actw.getRefY + vp.getShiftY)
     poly.ypoints.update(2, acts.getRefY + vp.getShiftY)
     poly.ypoints.update(3, acte.getRefY + vp.getShiftY)
+    
+    
+    /*
+    poly.xpoints(0) = actn.getRefX
+    poly.xpoints(1) = actw.getRefX
+    poly.xpoints(2) = acts.getRefX
+    poly.xpoints(3) = acte.getRefX
+    
+    poly.ypoints(0) = actn.getRefY
+    poly.ypoints(1) = actw.getRefY
+    poly.ypoints(2) = acts.getRefY
+    poly.ypoints(3) = acte.getRefY
+    * 
+    */
 
     poly.npoints = 4
     poly.invalidate()

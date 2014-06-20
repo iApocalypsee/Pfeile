@@ -45,6 +45,13 @@ class ScaleWorld(x: Int, y: Int) extends IWorld with Drawable with GUIUpdater {
   }
 
   override def updateGUI(): Unit = {
-    _terrain.updateGUI()
+    val thread = new Thread(new Runnable {
+      override def run() = {
+         _terrain.updateGUI()
+      }
+    })
+   thread.setPriority(Thread.NORM_PRIORITY - 2)
+   thread.setDaemon(true)
+   thread.start()
   }
 }

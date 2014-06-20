@@ -18,6 +18,6 @@ doc/
 
 # files....
 javadocexport.xml
-Pfeile.iml
 .project
 .classpath
+/bin
