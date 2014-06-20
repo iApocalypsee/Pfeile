@@ -1,8 +1,7 @@
 package entity.path
 
-import world.{IBaseTile, TileHelper}
-
-import scala.collection.mutable
+import world.IBaseTile
+import world.tile._
 
 /**
  * The best syntax for using the path finder object is
@@ -19,46 +18,50 @@ import scala.collection.mutable
  */
 class PathFinder {
 
-  def find(tile: IBaseTile) = new PathDSLChunk1(tile)
+  def find(tile: IBaseTile) = {
+
+    val p = new PathFinder
+
+    /**
+     * The first chunk of the path DSL.
+     */
+    class PathDSLChunk1(to: IBaseTile) extends PathDSLChunk(to) {
+      def without(f: IBaseTile => Boolean): Unit = pathEval = f
+    }
+    new PathDSLChunk1(tile)
+
+  }
 
 }
 
-sealed class PathDSLChunk private[entity](to: IBaseTile) {
+sealed class PathDSLChunk private[path](to: IBaseTile) {
   val destination = to
-  protected val pathEval = new mutable.Queue[(IBaseTile) => Boolean]
+  protected var pathEval: (IBaseTile) => Boolean = (_) => true
 
   /**
    * Checks if the tile is reachable with the conditions given.
    */
-  def checkDestinationAvailability = {
-    var x = false
-    for(eval <- pathEval) x = TileHelper.neighborsOf(to).filter(eval).isEmpty
-    x
-  }
-}
+  def checkDestinationAvailability = neighborsOf(destination).filter(tuple => pathEval(tuple._2)).isEmpty
 
-/**
- * The first chunk of the path DSL.
- * @param to The base tile to which the entit should navigate.
- */
-private [entity] class PathDSLChunk1(to: IBaseTile) extends PathDSLChunk(to) {
-  private var ignoreCondition: IBaseTile => Boolean = null
-  def without(f: IBaseTile => Boolean): Unit = {
-    pathEval.dequeueFirst(_ eq ignoreCondition)
-    ignoreCondition = f
-    pathEval.enqueue(ignoreCondition)
+  private def foo(t: IBaseTile) = {
+    val p = new PathFinder
+    p find t without {_ => true}
   }
 }
 
 object PathFinder {
   implicit def toPath(langChunk: PathDSLChunk): Path = {
     println("Path algorithm missing!")
+
+    if(!langChunk.checkDestinationAvailability) {
+      println("There is no path to the tile.")
+    }
     ???
   }
 }
 
-sealed abstract class Path(lang: PathDSLChunk) {
+sealed class Path private[path](private var _tiles: List[IBaseTile]) {
 
-  private val vec: Nothing
+  def tiles = _tiles
 
 }

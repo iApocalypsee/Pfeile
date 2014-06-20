@@ -1,17 +1,17 @@
 package world
 
-import misc.metadata.OverrideMetadatable
-import gui.AdjustableDrawing
-import comp.{GUIUpdater, Component}
-import java.awt.{Color, Graphics2D}
-import world.tile.TileCage
 import java.awt.geom.Point2D
+import java.awt.{Color, Graphics2D}
 
+import comp.{Component, GUIUpdater}
 import geom.DoubleRef.DoubleRef2Int
 import geom.PointDef
-
+import gui.AdjustableDrawing
+import misc.metadata.OverrideMetadatable
 import world.brush.HeightBrush
-import java.awt.event.{MouseEvent, MouseAdapter}
+import world.tile.TileCage
+
+import scala.collection.mutable
 
 /**
  *
@@ -31,8 +31,14 @@ abstract class BaseTile protected[world](private[world] var _gridElem: GridEleme
   // this handle only executes when the mouse is hovering over the tile
   private val selectDrawHandle = handle(selectMethod, () => isMouseFocused)
 
-  private[world] var tileHeight: Int = 0
+  private[world] var tileHeight = 0
   private var lastZoomFactor = 1.0
+
+  private val movementCatalogue = new mutable.HashMap[Class[_ <: BaseTile], Int]
+
+  def movementTo(clazz: Class[_ <: BaseTile]) = movementCatalogue.get(clazz)
+
+  def setMovement(clazz: Class[_ <: BaseTile]) = ???
 
   override def getGridX: Int = _gridElem.gridX
   override def getGridY: Int = _gridElem.gridY
@@ -51,14 +57,14 @@ abstract class BaseTile protected[world](private[world] var _gridElem: GridEleme
     g fillPolygon getBounds
     // draw all other individual stuff
     drawAll(g)
+    drawLines(g)
 
-    /*
-    if(isMouseFocused) {
-      g.setColor(BaseTile.selectColor)
-      g.fillPolygon(getBounds())
-    }
-    */
     //g.dispose()
+  }
+
+  private def drawLines(g: Graphics2D): Unit = {
+    g.setColor(Color.black)
+    g.drawPolygon(getBounds)
   }
 
   def north: IBaseTile = {

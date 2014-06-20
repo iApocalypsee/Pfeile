@@ -2,6 +2,7 @@ package world.tile
 
 import world.{GridElement, BaseTile}
 import java.awt.Color
+import scala.collection.immutable.HashMap
 
 /**
  *
@@ -13,5 +14,7 @@ class GrassTile(gridElem: GridElement) extends BaseTile(gridElem) {
 }
 
 object GrassTile {
-  val color = new Color(0x1C9618);
+  val color = new Color(0x1C9618)
+  val movementCatalogue = HashMap((classOf[SeaTile], 2))
+
 }
