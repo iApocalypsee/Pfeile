@@ -38,6 +38,7 @@ public class AimSelectionScreen extends Screen {
 	private Button confirm;
 	
 	private Thread selectFieldThread; 
+	private static FieldSelector x;
 	
 	/** Konstrucktor von AimSelectionScreen: ruft super(...) auf und setzt die Variabelnwerte nach der Initialisierung; start den thread of <code> FieldSelector </code> */
 	public AimSelectionScreen() {
@@ -45,11 +46,11 @@ public class AimSelectionScreen extends Screen {
 		
 		setPosX_selectedField(-1);
 		setPosY_selectedField(-1);
-		setRunningThread(false);
+		isRunning = false;
 		
 		confirm = new Button (Main.getWindowWidth() - 300, Main.getWindowHeight() - 200, this, "Confirm");
 		
-		FieldSelector x = new FieldSelector ();
+		x = new FieldSelector ();
 		selectFieldThread = new Thread (x);
 		selectFieldThread.setDaemon(true);
 		selectFieldThread.setPriority(Thread.MIN_PRIORITY + 2);
@@ -67,6 +68,9 @@ public class AimSelectionScreen extends Screen {
 		// Background will be drawn
 		super.draw(g);
 		
+		// include the world
+		IWorld w = NewWorldTestScreen.getWorld();
+		
 		// TODO: auf die neue World-Klasse ändern
 		World.timeLifeBox.draw(g);
 		//Field.infoBox.draw(g);
@@ -77,7 +81,14 @@ public class AimSelectionScreen extends Screen {
 		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 		
 		// The World will be drawn 
-		NewWorldTestScreen.getWorld().draw(g);
+		w.draw(g);
+		
+		// draw the selectedField 
+		if (posX_selectedField >= 0 && posY_selectedField >= 0) {
+			// rötlich und zu 60% sichtbar
+			g.setColor(new Color (240, 37, 47, (int) (255 * 0.6)));
+			g.fillPolygon(((BaseTile) (NewWorldTestScreen.getWorld().getTileAt(posX_selectedField, posY_selectedField))).getBounds());
+		}
 	}
 	
 	
@@ -124,12 +135,18 @@ public class AimSelectionScreen extends Screen {
 	
 	/** Thread for testing, if there was a click and at which field it has been set */
 	private class FieldSelector implements Runnable {
-
+		
+		/** point, describing the last click */
+		private Point lastSavedClickPosition = getLastClickPosition();
+		
+		void setSavedClickPosition (Point lastSavedClickPosition) {
+			this.lastSavedClickPosition = lastSavedClickPosition;
+		}
+		
+		
+		// Finally: let's run the Thread 
 		@Override
 		public void run() {
-			
-			// point, describing the last click
-			Point lastSavedClickPosition = getLastClickPosition();
 			
 			// this, is instead of wait and notify 
 			// TODO use wait & notify
@@ -148,11 +165,8 @@ public class AimSelectionScreen extends Screen {
 						continue;
 					}
 					
+					// This is the world
 					IWorld w = NewWorldTestScreen.getWorld();
-					
-					// last Tile of the map
-					BaseTile endTile = (BaseTile) w.getTileAt(Mechanics.worldSizeX - 1, Mechanics.worldSizeY - 1);
-					w.updateGUI();
 					
 					// setup des Polygons, der die gesamte Welt umfasst
 					Polygon poly = new Polygon();
@@ -183,9 +197,6 @@ public class AimSelectionScreen extends Screen {
 									setPosX_selectedField(x);
 									setPosY_selectedField(y);
 									lastSavedClickPosition = getLastClickPosition();
-									
-									System.out.print(lastSavedClickPosition.x + " ");
-									System.out.println(lastSavedClickPosition.y);
 									
 									break LOOPxPosition;
 								}
@@ -221,8 +232,12 @@ public class AimSelectionScreen extends Screen {
 	 * set(true): if <code> AimSelectionScreen </code> is active;
 	 * 
 	 * @param isRunningFieldSelector
+	 * @return 
 	 */
 	public static void setRunningThread (boolean isRunningFieldSelector) {
 		isRunning = isRunningFieldSelector;
+		if (isRunning = true) {
+			x.setSavedClickPosition(getLastClickPosition());
+		}
 	}
 }

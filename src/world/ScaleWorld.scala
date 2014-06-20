@@ -50,7 +50,7 @@ class ScaleWorld(x: Int, y: Int) extends IWorld with Drawable with GUIUpdater {
          _terrain.updateGUI()
       }
     })
-   thread.setPriority(Thread.NORM_PRIORITY - 2)
+   thread.setPriority(Thread.NORM_PRIORITY - 1)
    thread.setDaemon(true)
    thread.start()
   }
