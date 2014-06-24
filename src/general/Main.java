@@ -523,7 +523,7 @@ public class Main {
 				BaseTile t = (BaseTile) w.getTileAt(x, y);
 				if(t instanceof SeaTile) continue;
 				world.tile.package$ tilehelper = package$.MODULE$;
-				List<Tuple2<Direction, IBaseTile>> dict = JavaConversions.asJavaList(tilehelper.neighborsOf(t).toList());
+				Iterable<Tuple2<Direction, IBaseTile>> dict = JavaConversions.asJavaIterable(tilehelper.neighborsOf(t).toList());
 				boolean has = false;
 				for(Tuple2<Direction, IBaseTile> tuple : dict) {
 					if(tuple._2() instanceof SeaTile) {
