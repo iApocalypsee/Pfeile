@@ -76,8 +76,8 @@ public class AttackQueue {
 	 * @param entity The entity to attack.
 	 */
 	public void varyTarget(Entity entity) {
-		event.setTargetX(entity.getBoardX());
-		event.setTargetY(entity.getBoardY());
+		event.setTargetX(entity.getGridX());
+		event.setTargetY(entity.getGridY());
 		target.unregisterAttack(this);
 		entity.registerAttack(this);
 		target = entity;
@@ -88,8 +88,8 @@ public class AttackQueue {
 	 * @param field The field to attack.
 	 */
 	public void varyTarget(Field field) {
-		event.setTargetX(field.getBoardX());
-		event.setTargetY(field.getBoardY());
+		event.setTargetX(field.getGridX());
+		event.setTargetY(field.getGridY());
 		target.unregisterAttack(this);
 		field.registerAttack(this);
 		target = field;
@@ -115,8 +115,8 @@ public class AttackQueue {
 		long finalx = Math.round(currentX);
 		long finaly = Math.round(currentY);
 
-		if(target.getBoardX() == finalx) {
-			if(target.getBoardY() == finaly) {
+		if(target.getGridX() == finalx) {
+			if(target.getGridY() == finaly) {
 				// if the coordinates match, just calculate the attack
 				// and jump out of the function
 				// I don't need additional calculations

@@ -14,7 +14,7 @@ hs_err_pid*
 # other folders that should not be included
 doc/
 .idea/
-.idea/workspace.xml
+.idea/*
 
 # files....
 javadocexport.xml

@@ -5,6 +5,7 @@ import entity.path.Direction._
 
 import scala.collection.immutable.HashMap
 
+// TODO When implementing any viewport rotations, rewrite the ´´angleX and ´´angleY functions.
 /**
  *
  * @author Josip Palavra
@@ -22,23 +23,22 @@ package object tile {
       (South, tile.south()), (Southeast, tile.southeast()), (East, tile.east()), (Northeast, tile.northeast()))
   }
 
+  def movementCosts(center: IBaseTile, neighbor: Direction): Option[Int] = ???
+
   /**
-   * Calculates the difference of the movement costs
-   * @param center
-   * @param neighbor
-   * @return
+   * Calculates the angle in the x space for the specified tile.
+   * Planned to be used as help for the movement system of Entity.
+   * @param tile The specified tile.
+   * @return Nothing yet.
    */
-  def movementCosts(center: IBaseTile, neighbor: Direction): Option[Int] = {
-    val neighborTiles = neighborsOf(center)
-    None
-  }
+  def angleX(tile: IBaseTile): Int = ???
 
-  def downhill(center: IBaseTile, neighbor: IBaseTile): Boolean = {
-    val neighborTiles = neighborsOf(center)
-    for(tile <- neighborTiles) {
-
-    }
-    ???
-  }
+  /**
+   * Calculates the angle in the y space for the specified tile.
+   * Planned to be used as help for the movement system of Entity.
+   * @param tile The specified tile.
+   * @return Nothing yet.
+   */
+  def angleY(tile: IBaseTile): Int = ???
 
 }

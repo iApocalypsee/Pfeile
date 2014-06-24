@@ -617,15 +617,15 @@ public abstract class Component implements Drawable {
 		return bounds;
 	}
 
-//	/**
-//	 * Setzt die Grenzen des Steuerelements neu. Methode sollte noch nicht verwendet werden, da sie
-//	 * den Mausinput durcheinander bringen kann.
-//	 * @param bounds
-//	 */
-//	@Deprecated
-//	protected void setBounds(Polygon bounds) {
-//		this.bounds = bounds; 
-//	}
+	/**
+	 * Setzt die Grenzen des Steuerelements neu. Methode sollte noch nicht verwendet werden, da sie
+	 * den Mausinput durcheinander bringen kann.
+	 * @param bounds Das neue Polygonobjekt.
+	 */
+	protected final void setBounds(Polygon bounds) {
+		this.bounds = bounds;
+		bounds.invalidate();
+	}
 
 	/**
 	 * Erstellt eine neue Instanz eines Rechtecks. In diesen werden Position,

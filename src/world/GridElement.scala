@@ -1,8 +1,10 @@
 package world
 
-import geom.PointDef
 import java.awt.geom.Point2D
+
+import geom.PointDef
 import world.tile.FakeTile
+import world.brush.HeightBrush
 
 /**
  *
@@ -46,7 +48,8 @@ class GridElement(x: Int, y: Int) {
     val oldHeight = _tile.getTileHeight
     _tile = tile
     _tile._gridElem = this
-    _tile.setTileHeight(oldHeight)
+    //_tile.setTileHeight(oldHeight)
+    _tile.setMetadata(HeightBrush.meta_key, oldHeight.asInstanceOf[java.lang.Integer])
   }
   def gridX = _gridX
   def gridY = _gridY

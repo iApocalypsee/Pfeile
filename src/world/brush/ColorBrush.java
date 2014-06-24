@@ -18,6 +18,7 @@ import java.util.List;
  * @author Josip
  * @version 21.05.2014
  */
+@Deprecated
 public class ColorBrush implements IBrush {
 
 	private static final String color_check_meta_key = "pfeile.gen.colorbrushcheck";

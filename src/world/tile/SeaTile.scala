@@ -9,6 +9,9 @@ import java.awt.Color
  * @version 01.06.2014
  */
 class SeaTile(gridElem: GridElement) extends BaseTile(gridElem) {
+
+  override val requiredMovementPoints = 1
+
   override def getColor = SeaTile.color
 }
 

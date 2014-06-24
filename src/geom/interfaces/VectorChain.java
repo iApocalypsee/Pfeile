@@ -44,6 +44,12 @@ public interface VectorChain extends Vector {
 	void append(PointRef point);
 
 	/**
+	 * Removes the vector at the specified index.
+	 * @param index The index.
+	 */
+	void remove(int index);
+
+	/**
 	 * Calculates and returns the total length of the vector chain.
 	 * @return The total length.
 	 */

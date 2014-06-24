@@ -2,12 +2,13 @@ package geom
 
 import java.awt.geom.Point2D
 import java.awt.Point
+import misc.metadata.OverrideMetadatable
 
 /**
  * A point default implementation for our program.
  * @param tuple The tuple.
  */
-class PointDef(tuple: (Double, Double)) extends Point2D {
+class PointDef(tuple: (Double, Double)) extends Point2D with OverrideMetadatable {
 
   private var _tuple = (new DoubleRef(tuple._1), new DoubleRef(tuple._2))
 

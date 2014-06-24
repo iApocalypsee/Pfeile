@@ -7,6 +7,10 @@ package entity
  */
 trait TurnAffected {
 
+  /**
+   * The method which executes when the turn of the player or an entity attached to that player
+   * ends.
+   */
   def turnover: Unit
 
 }

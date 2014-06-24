@@ -116,4 +116,16 @@ public class VectorChainDef extends VectorDef implements VectorChain {
 		for(Vector v : vectors) res += v.straightLength();
 		return res;
 	}
+
+	/**
+	 * Removes the vector at the specified index.
+	 *
+	 * @param index The index.
+	 */
+	@Override
+	public void remove(int index) {
+		vectors.remove(index);
+		if(index - 1 >= 0) vectors.get(index - 1).setEndX(vectors.get(index + 1).getStartX());
+		if(index + 1 < vectors.size()) vectors.get(index - 1).setEndY(vectors.get(index + 1).getStartY());
+	}
 }

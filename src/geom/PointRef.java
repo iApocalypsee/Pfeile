@@ -69,6 +69,8 @@ public class PointRef extends Point2D {
 	 * @param y The y position.
 	 */
 	public PointRef(double x, double y) {
+		this.x = new DoubleRef();
+		this.y = new DoubleRef();
 		this.x.setValue(x);
 		this.y.setValue(y);
 	}

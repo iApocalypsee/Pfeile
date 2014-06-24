@@ -1,9 +1,9 @@
 package entity
 
-import world.IWorld
-import player.Inventory
-import player.weapon.AttackContainer
+import gui.NewWorldTestScreen
 import misc.metadata.OverrideMetadatable
+import player.Inventory
+import world.IWorld
 
 /**
  *
@@ -14,21 +14,45 @@ trait Entity extends AttackContainer with OverrideMetadatable with TurnAffected 
 
   private var _gridX = 0
   private var _gridY = 0
-  val _world: IWorld
-  val Inventory = new Inventory(this)
+  lazy val world: IWorld = NewWorldTestScreen.world
+  val inventory = new Inventory(this)
 
-  def world = _world
-
+  /**
+   * Returns the x grid position of the entity.
+   * @return The x grid position of the entity.
+   */
   def gridX = _gridX
-  def gridX_=(x: Int) = {
+
+  /**
+   * Sets (teleports) the entity's x position to the specified one.
+   * If specified coordinate is out of bounds, an exception is thrown.
+   * @param x The x coordinate.
+   */
+  protected final def gridX_=(x: Int) = {
     if(!world.isTileValid(x, gridY)) throw new ArrayIndexOutOfBoundsException
     _gridX = x
   }
 
+  /**
+   * Returns the x grid position of the entity.
+   * @return The x grid position of the entity.
+   */
   def gridY = _gridY
-  def gridY_=(y: Int) = {
+
+  /**
+   * Sets (teleports) the entity's x position to the specified one.
+   * If specified coordinate is out of bounds, an exception is thrown.
+   * @param x The x coordinate.
+   */
+  protected final def gridY_=(y: Int) = {
     if(!world.isTileValid(gridX, y)) throw new ArrayIndexOutOfBoundsException
     _gridY = y
   }
+
+  def getGridX = gridX
+  def getGridY = gridY
+  protected final def setGridX(x: Int) = gridX = x
+  protected final def setGridY(y: Int) = gridY = y
+  def location = world.getTileAt(gridX, gridY)
 
 }

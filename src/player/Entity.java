@@ -403,11 +403,11 @@ public abstract class Entity extends Component implements AttackContainer, GUIUp
 		}
 	}
 
-	public int getBoardX() {
+	public int getGridX() {
 		return boardX;
 	}
 
-	public int getBoardY() {
+	public int getGridY() {
 		return boardY;
 	}
 

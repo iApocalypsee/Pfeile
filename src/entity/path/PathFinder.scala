@@ -60,8 +60,8 @@ object PathFinder {
   }
 }
 
-sealed class Path private[path](private var _tiles: List[IBaseTile]) {
+sealed class Path private[path](val tiles: List[IBaseTile]) {
 
-  def tiles = _tiles
+  def apply(x: Int) = tiles(x)
 
 }

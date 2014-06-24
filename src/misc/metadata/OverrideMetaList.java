@@ -57,7 +57,7 @@ public class OverrideMetaList implements IMetaManagement {
 	@Override
 	public IMetaEntry deleteMeta(String str) {
 		MetaKeyString key = new MetaKeyString(str);
-		if(!hasKey(str)) throw new NoSuchElementException();
+		if(!hasKey(str)) /*throw new NoSuchElementException();*/ return null;
 		IMetaEntry entry = getEntry(key);
 		entries.remove(entry);
 		return entry;

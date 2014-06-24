@@ -3,7 +3,7 @@ package world
 import comp.GUIUpdater
 import gui.Drawable
 import misc.metadata.OverrideMetadatable
-import java.awt.{Point, Graphics2D}
+import java.awt.{Color, Point, Graphics2D}
 import scala.collection.mutable
 import java.awt.image.BufferedImage
 import world.brush._
@@ -42,13 +42,39 @@ class BaseTerrain(sizeX: Int, sizeY: Int, world: IWorld) extends ITerrain with D
 
   protected[world] def grid = _grid
 
+  val color = new Color(121, 143, 180, 126)
+
+  def drawInfoBox(g: Graphics2D): Unit = {
+    g.setColor(color)
+    g.fillRect(0, 0, 150, 50)
+    g.setColor(Color.WHITE)
+    g.drawString("Tile height: " + BaseTile.infoHeight, 20, 10)
+  }
+
   override def draw(g: Graphics2D): Unit = {
     // draw every tile
     _grid foreach(i => i foreach(elem => elem.tile.draw(g)))
   }
 
   override def updateGUI(): Unit = {
+    /*
+    val t = new Thread(new Runnable {
+      override def run(): Unit = {
+
+      }
+    })
+
+    t.setDaemon(true)
+    t.start()
+    */
+
     _grid foreach(i => i foreach(elem => elem.tile.updateGUI()))
+    _grid foreach(i => i foreach(elem => {
+      elem.northCorner.removeMetadata(BaseTile.meta_link_check)
+      elem.westCorner.removeMetadata(BaseTile.meta_link_check)
+      elem.southCorner.removeMetadata(BaseTile.meta_link_check)
+      elem.eastCorner.removeMetadata(BaseTile.meta_link_check)
+    }))
   }
 
   def relink() {

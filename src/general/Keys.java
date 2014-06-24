@@ -1,9 +1,12 @@
 package general;
 
+import comp.Component;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class Keys implements KeyListener {
+
 	private static boolean [] keys = new boolean [512];
 	
 	public static boolean isKeyPressed (int keyCode) {
@@ -12,6 +15,9 @@ public class Keys implements KeyListener {
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
+		for(Component c : Main.getGameWindow().getScreenManager().getActiveScreen().getComponents()) {
+			c.updateGUI();
+		}
 		int keyCode = e.getKeyCode();
 		if (keyCode >= 0 && keyCode <= keys.length)
 			keys[keyCode] = true;
@@ -34,10 +40,9 @@ public class Keys implements KeyListener {
 	@Override
 	public void keyTyped(KeyEvent e) {}
 	
-	
 	static void updateKeys() {
 		if(Keys.isKeyPressed(KeyEvent.VK_ESCAPE) && Keys.isKeyPressed(KeyEvent.VK_SHIFT)) {
-			Main.getMain().setRunning(false);
+			GameLoop.setRunFlag(false);
 		}
 	}
 }

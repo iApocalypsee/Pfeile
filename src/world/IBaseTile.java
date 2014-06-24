@@ -1,6 +1,7 @@
 package world;
 
 import misc.metadata.IMetadatable;
+import player.BoardPositionable;
 import world.tile.TileCage;
 
 import java.awt.*;
@@ -10,11 +11,11 @@ import java.awt.geom.Point2D;
  * @author Josip
  * @version 30.05.2014
  */
-public interface IBaseTile extends IMetadatable {
+public interface IBaseTile extends IMetadatable, BoardPositionable {
 
-	int getGridX();
-	int getGridY();
 	int getTileHeight();
+	int getRequiredMovementPoints();
+
 	IField getField();
 	IWorld getWorld();
 	Color getColor();

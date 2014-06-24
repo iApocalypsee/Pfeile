@@ -6,7 +6,7 @@ package player;
  */
 public interface BoardPositionable {
 
-    int getBoardX();
-    int getBoardY();
+    int getGridX();
+    int getGridY();
 
 }

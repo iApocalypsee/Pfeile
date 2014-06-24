@@ -1,10 +1,11 @@
 package entity
 
-import world.Tile
-import geom.{PointRef, VectorChainDef}
+import entity.path.PathFinder
 import geom.interfaces.VectorChain
+import geom.{PointRef, VectorChainDef}
+import world.IBaseTile
 
-/*
+
 /**
  *
  * @author Josip
@@ -12,47 +13,66 @@ import geom.interfaces.VectorChain
  */
 trait MoveableEntity extends Entity {
 
-  private object VectorBeginEnd extends Enumeration {
-    type VectorBeginEnd = Value
-    val Begin, End = Value
-  }
-
-  private var _movement = 0
-  private var _currentpath: VectorChain = new VectorChainDef(new PointRef(gridX, gridY), new PointRef(gridX, gridY))
-  private val _pathfinder: PathFinder = null
+  private var _movement = 1
+  private val _crtpath: VectorChain = new VectorChainDef(new PointRef(gridX, gridY), new PointRef(gridX, gridY))
+  val pathfinder = new PathFinder
 
   override def turnover: Unit = {
-
-  }
-
-  private def walkpath: Unit = {
-
+    walkpath
   }
 
   /**
-   * Sets the path of the movable entity to the tile.
-   * If the tile is the tile on which the entity stands on currently,
-   * the method returns.
-   * @param tile The tile to move to.
+   * Moves the entity to a specified tile.
+   * @param tile The tile.
    */
-  def move(tile: Tile): Unit = {
-    if(!world.isTileValid(tile.getGridX, tile.getGridY)) throw new ArrayIndexOutOfBoundsException
-    val path = pathfinder.fastest(tile, Array[Tile]())
-    _currentpath = path
-  }
+  def move(tile: IBaseTile): Unit
 
   /**
-   * Sets the path of the movable entity to the coordinates.
-   * If the tile specified is the tile on which the entity stands on currently
-   * or the tile is not accessable, the method returns.
-   * @param coord The coordinates to move to.
+   * Moves the unit relatively to the specified coordinates.
+   * @param relx The relative x amount.
+   * @param rely The relative y amount.
    */
-  def move(coord: (Int, Int)): Unit = ???
+  def move(relx: Int, rely: Int): Unit
 
+  /**
+   * Returns the destination tile.
+   * @return The destination tile.
+   */
+  def destination() = currentPath.get.tiles.last
+
+  /**
+    * Returns the movement points left with the entity for this turn.
+   * @return The movement points left.
+   */
   def movementPoints = _movement
 
-  def pathfinder = _pathfinder
+  /**
+    * Returns the current walking path of the movable entity.
+   * @return The path on which the entity walks.
+   */
+  def currentPath = entity.path.vectorToPath(_crtpath)
+
+  /**
+   * Entity walks his path as much as he can.
+   */
+  private def walkpath(): Unit = {
+    def recur(): Unit = {
+      val tile = currentPath.get(0)
+      if(movementPoints < tile.getRequiredMovementPoints) {
+        // the entity has not enough movement points to enter the next tile, so exit the loop
+        resetMovement()
+        return
+      } else {
+        // if the entity has movement points left, then walk along the path as much as the entity can
+        gridX = tile.getGridX
+        gridY = tile.getGridY
+        _movement -= tile.getRequiredMovementPoints
+        _crtpath.remove(0)
+      }
+    }
+    recur()
+  }
+
+  private def resetMovement() = _movement = 1
 
 }
-
-*/

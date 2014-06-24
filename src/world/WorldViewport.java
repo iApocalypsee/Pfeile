@@ -26,6 +26,19 @@ public class WorldViewport {
 
 	private int shiftX = STD_SHIFT_X;
 	private int shiftY = STD_SHIFT_Y;
+
+	/**
+	 * The rotation of the map in degrees.
+	 */
+	private int rotation;
+
+	/**
+	 * The angle with which the camera is positioned above the map.
+	 * If 90, then map is flat.
+	 * Should not be anything greater than 90 or less than 0.
+	 */
+	private int povAngle;
+
 	private IWorld world;
 
 	private float zoom = 1f;
@@ -99,5 +112,31 @@ public class WorldViewport {
 	public void zoomAbs(float zoom) {
 		this.zoom = zoom;
 		world.updateGUI();
+	}
+
+	public int getPovAngle() {
+		return povAngle;
+	}
+
+	public int getRotation() {
+		return rotation;
+	}
+
+	public int tileIsoHeight() {
+		return TILE_PX_Y_DIMENSION * (getPovAngle() / 45);
+	}
+
+	public void setPovAngle(int povAngle) {
+		povAngle %= 90;
+		this.povAngle = povAngle;
+		world.updateGUI();
+	}
+
+	public void setRotation(int rotation) {
+		// convert the degree amount to a good value
+		// It is not good to calculate with angles of 1020 or something alike
+		while(rotation < 0) rotation += 360;
+		if(rotation >= 360) rotation %= 360;
+		this.rotation = rotation;
 	}
 }

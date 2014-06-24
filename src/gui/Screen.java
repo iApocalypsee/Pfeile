@@ -12,9 +12,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 
 import comp.Component;
 import comp.Component.ComponentStatus;
@@ -62,7 +60,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * Sagt aus, ob Components automatisch vom Screen gezeichnet werden oder nicht.
 	 * Auf <code>false</code> lassen, die Funktion ist buggy!
 	 */
-	private boolean preprocessedDrawingEnabled = false;
+	private boolean preprocessedDrawingEnabled = true;
 
 	protected static boolean isLeftMousePressed;
 	protected static boolean isRightMousePressed;
@@ -146,8 +144,8 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * components won't ge updated.
 	 */
 	@SuppressWarnings("unchecked")
-	synchronized LinkedList<Component> getComponents() {
-		return (LinkedList<Component>) components.clone();
+	public synchronized List<Component> getComponents() {
+		return (java.util.List<Component>) components.clone();
 	}
 
 	/**
@@ -206,16 +204,22 @@ public abstract class Screen implements Drawable, MouseListener,
 		for (Component c : getComponents()) {
             if(c.isVisible()) {
                 if(c.isAcceptingInput()) {
-                    if(c.getBounds().contains(e.getPoint())) {
-                        for (MouseListener m : c.getMouseListeners()) {
-                            // hier ist eigentlicher Aufruf des Listeners
-                            m.mousePressed(e);
-                        }
-                    } else {
-                        if(c.getStatus() != ComponentStatus.NO_MOUSE) {
-                            c.setStatus(ComponentStatus.NO_MOUSE);
-                        }
-                    }
+	                if(c.getSimplifiedBounds().contains(e.getPoint())) {
+		                if (c.getBounds().contains(e.getPoint())) {
+			                for (MouseListener m : c.getMouseListeners()) {
+				                // hier ist eigentlicher Aufruf des Listeners
+				                m.mousePressed(e);
+			                }
+		                } else {
+			                if (c.getStatus() != ComponentStatus.NO_MOUSE) {
+				                c.setStatus(ComponentStatus.NO_MOUSE);
+			                }
+		                }
+	                } else {
+		                if(c.getStatus() != ComponentStatus.NO_MOUSE) {
+			                c.setStatus(ComponentStatus.NO_MOUSE);
+		                }
+	                }
                 } else {
                     if(c.getStatus() != ComponentStatus.NOT_AVAILABLE) {
                         c.setStatus(ComponentStatus.NOT_AVAILABLE);
@@ -235,17 +239,21 @@ public abstract class Screen implements Drawable, MouseListener,
 
 		lastClickPosition = e.getPoint();
 
-		Iterator<Component> iterator = getComponents().iterator();
-		while(iterator.hasNext()) {
-			Component c = iterator.next();
+		for (Component c : getComponents()) {
 			if (c.isAcceptingInput()) {
-				if (c.getBounds().contains(e.getPoint())) {
-					for (MouseListener m : c.getMouseListeners()) {
-						// hier ist eigentlicher Aufruf des Listeners
-						m.mouseReleased(e);
+				if(c.getSimplifiedBounds().contains(e.getPoint())) {
+					if (c.getBounds().contains(e.getPoint())) {
+						for (MouseListener m : c.getMouseListeners()) {
+							// hier ist eigentlicher Aufruf des Listeners
+							m.mouseReleased(e);
+						}
+					} else {
+						if (c.getStatus() != ComponentStatus.NO_MOUSE) {
+							c.setStatus(ComponentStatus.NO_MOUSE);
+						}
 					}
 				} else {
-					if (c.getStatus() != ComponentStatus.NO_MOUSE) {
+					if(c.getStatus() != ComponentStatus.NO_MOUSE) {
 						c.setStatus(ComponentStatus.NO_MOUSE);
 					}
 				}
@@ -255,27 +263,6 @@ public abstract class Screen implements Drawable, MouseListener,
 				}
 			}
 		}
-		/*
-		for (Component c : components) {
-			if (c.isAcceptingInput()) {
-				if (c.getBounds().contains(e.getPoint())) {
-					for (MouseListener m : c.getMouseListeners()) {
-						// hier ist eigentlicher Aufruf des Listeners
-						m.mouseReleased(e);
-					}
-				} else {
-					if (c.getStatus() != ComponentStatus.NO_MOUSE) {
-						c.setStatus(ComponentStatus.NO_MOUSE);
-					}
-				}
-			} else {
-				if (c.getStatus() != ComponentStatus.NOT_AVAILABLE) {
-					c.setStatus(ComponentStatus.NOT_AVAILABLE);
-				}
-			}
-		}
-		*/
-		
 	}
 	
 	@Override
@@ -301,14 +288,16 @@ public abstract class Screen implements Drawable, MouseListener,
 		}
 		for (Component c : getComponents()) {
 			if(c.isAcceptingInput()) {
-				if(c.getBounds().contains(e.getPoint())) {
-					if(c.getStatus() != ComponentStatus.MOUSE) {
-						for (MouseListener m : c.getMouseListeners()) {
-							m.mouseEntered(e);
+				if(c.getSimplifiedBounds().contains(e.getPoint())) {
+					if(c.getBounds().contains(e.getPoint())) {
+						if (c.getStatus() != ComponentStatus.MOUSE) {
+							for (MouseListener m : c.getMouseListeners()) {
+								m.mouseEntered(e);
+							}
 						}
-					}
-					for (MouseMotionListener m : c.getMouseMotionListeners()) {
-						m.mouseDragged(e);
+						for (MouseMotionListener m : c.getMouseMotionListeners()) {
+							m.mouseDragged(e);
+						}
 					}
 				} else {
 					if(c.getStatus() != ComponentStatus.NO_MOUSE) {
@@ -331,14 +320,23 @@ public abstract class Screen implements Drawable, MouseListener,
 		mousePosition = e.getPoint();
 		for (Component c : getComponents()) {
 			if(c.isAcceptingInput()) {
-				if(c.getBounds().contains(e.getPoint())) {
-					if(c.getStatus() == ComponentStatus.NO_MOUSE) {
-						for (MouseListener m : c.getMouseListeners()) {
-							m.mouseEntered(e);
+				if(c.getSimplifiedBounds().contains(e.getPoint())) {
+					if(c.getBounds().contains(e.getPoint())) {
+						if (c.getStatus() == ComponentStatus.NO_MOUSE) {
+							for (MouseListener m : c.getMouseListeners()) {
+								m.mouseEntered(e);
+							}
 						}
-					}
-					for (MouseMotionListener m : c.getMouseMotionListeners()) {
-						m.mouseMoved(e);
+						for (MouseMotionListener m : c.getMouseMotionListeners()) {
+							m.mouseMoved(e);
+						}
+					} else {
+						if(c.getStatus() != ComponentStatus.NO_MOUSE) {
+							c.setStatus(ComponentStatus.NO_MOUSE);
+							for(MouseListener m : c.getMouseListeners()) {
+								m.mouseExited(e);
+							}
+						}
 					}
 				} else {
 					if(c.getStatus() != ComponentStatus.NO_MOUSE) {

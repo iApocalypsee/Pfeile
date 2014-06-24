@@ -126,8 +126,8 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 				if(Field.this.world.getActivePlayer().hasTurn()) {
 					if(e.getButton() == 3) {
 						Player player = Field.this.world.getTurnPlayer();
-						player.move(getBoardX() - player.getBoardPosition().x,
-								getBoardY() - player.getBoardPosition().y);
+						player.move(getGridX() - player.getBoardPosition().x,
+								getGridY() - player.getBoardPosition().y);
 					}
 				}
 			}
@@ -231,7 +231,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * Returns the x-position of the field on the world grid.
 	 * @return The x-position of the field on the world grid.
 	 */
-	public int getBoardX() {
+	public int getGridX() {
 		return gridX;
 	}
 
@@ -239,7 +239,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * Returns the y-position of the field on the world grid.
 	 * @return The y-position of the field on the world grid.
 	 */
-	public int getBoardY() {
+	public int getGridY() {
 		return gridY;
 	}
 
@@ -312,9 +312,9 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 						// die Positionen der Felder am Bildschirm werden gesetzt
 
 						f.setX((Math.round(world.getViewport().getShiftX()
-								+ f.getBoardX()
+								+ f.getGridX()
 								* WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor())));
-						f.setY(Math.round(world.getViewport().getShiftY() + f.getBoardY() * WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()));
+						f.setY(Math.round(world.getViewport().getShiftY() + f.getGridY() * WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()));
 
 
 						f.setWidth(Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
@@ -345,9 +345,9 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 										} else {
 											// die Positionen der Felder am Bildschirm werden neu (angelichen) gesetzt
 											f.setX(Math.round(world.getViewport().getShiftX()
-													+ f.getBoardX()
+													+ f.getGridX()
 													* WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()));
-											f.setY(Math.round(world.getViewport().getShiftY() + f.getBoardY() * WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()));
+											f.setY(Math.round(world.getViewport().getShiftY() + f.getGridY() * WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()));
 
 											f.setWidth(Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
 											f.setHeight(Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
@@ -503,16 +503,9 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * @return The field type name.
 	 */
 	public abstract String getFieldType();
-	
 
-	public int getGridX() {
-		return gridX;
-	}
 	public void setGridX(int gridX) {
 		this.gridX = gridX;
-	}
-	public int getGridY() {
-		return gridY;
 	}
 	public void setGridY(int gridY) {
 		this.gridY = gridY;

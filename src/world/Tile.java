@@ -88,6 +88,11 @@ public class Tile extends Component implements ITile {
 		entities.add(entity);
 	}
 
+	@Override
+	public int getRequiredMovementPoints() {
+		return Integer.MAX_VALUE;
+	}
+
 	/**
 	 * Removes an entity. If the entity does not exist, a statement will be printed
 	 * out to <code>stderr</code>.
