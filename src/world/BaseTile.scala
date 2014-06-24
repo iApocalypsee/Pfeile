@@ -1,19 +1,18 @@
 package world
 
+import java.awt.event.MouseEvent
 import java.awt.geom.Point2D
 import java.awt.{Color, Graphics2D}
 
 import comp.{Component, GUIUpdater}
+import entity.AttackContainer
 import geom.DoubleRef.DoubleRef2Int
 import geom.PointDef
 import gui.AdjustableDrawing
 import misc.metadata.OverrideMetadatable
+import player.weapon.{AttackEvent, AttackQueue}
 import world.brush.HeightBrush
 import world.tile.TileCage
-
-import scala.collection.mutable
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
 
 /**
  *
@@ -21,35 +20,38 @@ import java.awt.event.MouseEvent
  * @version 31.05.2014
  */
 abstract class BaseTile protected[world](private[world] var _gridElem: GridElement) extends
-  Component with IBaseTile with AdjustableDrawing with OverrideMetadatable with GUIUpdater {
+  Component with IBaseTile with AdjustableDrawing with OverrideMetadatable with GUIUpdater with
+  AttackContainer {
 
-  
-  addMouseListener(new MouseAdapter {
+  addMouseListener(new java.awt.event.MouseAdapter {
     override def mouseEntered(e: MouseEvent): Unit = {
-      println("Entered (" + getGridX + "|" + getGridY + ")")
-      println("At " + getAbsoluteX + "|" + getAbsoluteY + ")")
-      println("========================")
+      BaseTile.infoHeight = getTileHeight
     }
   })
-  
+
   private def selectMethod(g: Graphics2D) {
     g setColor BaseTile.selectColor
     g fillPolygon getBounds
-
   }
+
+  // ***** GEOMETRY RELEVANT VARIABLES AND VALUES ***** //
+
+  private var lastZoomFactor = 1.0
+  private var lastIsoHeight = WorldViewport.TILE_PX_Y_DIMENSION
+
+  // ***** MOVEMENT VARIABLES ***** //
+
+  /**
+   * Represents how much movement points it takes with basic circumstances to
+   * walk onto this type of field.
+   */
+  val requiredMovementPoints: Int
+
+  // ***** OTHER VARIABLES AND VALUES ***** //
 
   // append an adjustable drawing
   // this handle only executes when the mouse is hovering over the tile
   private val selectDrawHandle = handle(selectMethod, () => isMouseFocused)
-
-  private[world] var tileHeight = 0
-  private var lastZoomFactor = 1.0
-
-  private val movementCatalogue = new mutable.HashMap[Class[_ <: BaseTile], Int]
-
-  def movementTo(clazz: Class[_ <: BaseTile]) = movementCatalogue.get(clazz)
-
-  def setMovement(clazz: Class[_ <: BaseTile]) = ???
 
   override def getGridX: Int = _gridElem.gridX
   override def getGridY: Int = _gridElem.gridY
@@ -57,13 +59,16 @@ abstract class BaseTile protected[world](private[world] var _gridElem: GridEleme
   override def getWorld: IWorld = _gridElem._world
   override def getCage: TileCage = ???
   override def getTileHeight: Int = getMetadata(HeightBrush.meta_key).asInstanceOf[Int]
-  def setTileHeight(x: Int) = setMetadata(HeightBrush.meta_key, x.asInstanceOf[Integer])
+  override def getRequiredMovementPoints = requiredMovementPoints
+
+  // ***** DRAWING METHODS ***** //
 
   override def draw(g: Graphics2D): Unit = {
     //val g = gl.create().asInstanceOf[Graphics2D]
     // translate the whole matrix context, just like OpenGL's "glPushMatrix()" and "glPopMatrix()"
     //g.translate(getWorld.getViewport.getShiftX, getWorld.getViewport.getShiftY)
     // draw the base tile shape with the base color
+    //g.rotate(getWorld.getViewport.getRotation)
     g setColor getColor
     g fillPolygon getBounds
     // draw all other individual stuff
@@ -74,65 +79,25 @@ abstract class BaseTile protected[world](private[world] var _gridElem: GridEleme
   }
 
   private def drawLines(g: Graphics2D): Unit = {
-    g.setColor(Color.lightGray)
+    g.setColor(Color.black)
     g.drawPolygon(getBounds)
   }
 
-  def north: IBaseTile = {
-    val x: Int = getGridX - 1
-    val y: Int = getGridY + 1
-    if (getWorld.isTileValid(x, y)) getWorld.getTileAt(x, y)
-    else null
+  private def checkGetTile(x: Int, y: Int): IBaseTile = {
+    if(!getWorld.isTileValid(x, y)) null
+    else getWorld.getTileAt(x, y)
   }
 
-  def northeast: IBaseTile = {
-    val x: Int = getGridX
-    val y: Int = getGridY + 1
-    if (getWorld.isTileValid(x, y)) getWorld.getTileAt(x, y)
-    else null
-  }
+  // ***** DIRECTIONAL METHODS ***** //
 
-  def east: IBaseTile = {
-    val x: Int = getGridX + 1
-    val y: Int = getGridY + 1
-    if (getWorld.isTileValid(x, y)) getWorld.getTileAt(x, y)
-    else null
-  }
-
-  def southeast: IBaseTile = {
-    val x: Int = getGridX + 1
-    val y: Int = getGridY
-    if (getWorld.isTileValid(x, y)) getWorld.getTileAt(x, y)
-    else null
-  }
-
-  def south: IBaseTile = {
-    val x: Int = getGridX + 1
-    val y: Int = getGridY - 1
-    if (getWorld.isTileValid(x, y)) getWorld.getTileAt(x, y)
-    else null
-  }
-
-  def southwest: IBaseTile = {
-    val x: Int = getGridX
-    val y: Int = getGridY - 1
-    if (getWorld.isTileValid(x, y)) getWorld.getTileAt(x, y)
-    else null
-  }
-
-  def west: IBaseTile = {
-    val x: Int = getGridX - 1
-    val y: Int = getGridY - 1
-    if (getWorld.isTileValid(x, y)) getWorld.getTileAt(x, y)
-    else null
-  }
-
-  def northwest: IBaseTile = {
-    val x: Int = getGridX - 1
-    val y: Int = getGridY
-    if (getWorld.isTileValid(x, y)) getWorld.getTileAt(x, y)
-    else null
-  }
+  override def north: IBaseTile = checkGetTile(getGridX - 1, getGridY + 1)
+  override def northeast: IBaseTile = checkGetTile(getGridX, getGridY + 1)
+  override def east: IBaseTile = checkGetTile(getGridX + 1, getGridY + 1)
+  override def southeast: IBaseTile = checkGetTile(getGridX + 1, getGridY)
+  override def south: IBaseTile = checkGetTile(getGridX + 1, getGridY - 1)
+  override def southwest: IBaseTile = checkGetTile(getGridX, getGridY - 1)
+  override def west: IBaseTile = checkGetTile(getGridX - 1, getGridY - 1)
+  override def northwest: IBaseTile = checkGetTile(getGridX - 1, getGridY)
 
   override def updateGUI() {
     super.updateGUI()
@@ -143,22 +108,34 @@ abstract class BaseTile protected[world](private[world] var _gridElem: GridEleme
     val poly = getBounds
     val vp = getWorld.getViewport
 
-    val actn = {
-      if(lastZoomFactor == vp.getZoomFactor) new PointDef((n.getX/* + vp.getShiftX*/, n.getY/* + vp.getShiftY*/))
-      else new PointDef((n.getX * vp.getZoomFactor/* + vp.getShiftX*/, n.getY * vp.getZoomFactor/* + vp.getShiftY*/))
+    val zoom = {
+      if(vp.getZoomFactor == lastZoomFactor) 1
+      else if(vp.getZoomFactor < lastZoomFactor) 0.9
+      else 1.1
     }
-    val actw = {
-      if(lastZoomFactor == vp.getZoomFactor) new PointDef((w.getX/* + vp.getShiftX*/, w.getY/* + vp.getShiftY*/))
-      else new PointDef((w.getX * vp.getZoomFactor/* + vp.getShiftX*/, w.getY * vp.getZoomFactor/* + vp.getShiftY*/))
+
+    def calcActualRaster(p: PointDef): PointDef = {
+      if(p.getMetadata(BaseTile.meta_link_check).asInstanceOf[java.lang.Boolean] == true) return p
+      if(lastZoomFactor != vp.getZoomFactor) {
+        p.setLocation(p.getX * zoom, p.getY * zoom)
+      }
+      /*
+      if(lastIsoHeight != tih) {
+        // take the diff first
+        val diff = tih - lastIsoHeight
+        // then calculate the new height
+        p.setLocation(p.getX, p.getY + diff)
+      }
+      */
+
+      p.setMetadata(BaseTile.meta_link_check, true.asInstanceOf[java.lang.Boolean])
+      p
     }
-    val acts = {
-      if(lastZoomFactor == vp.getZoomFactor) new PointDef((s.getX/* + vp.getShiftX*/, s.getY/* + vp.getShiftY*/))
-      else new PointDef((s.getX * vp.getZoomFactor/* + vp.getShiftX*/, s.getY * vp.getZoomFactor/* + vp.getShiftY*/))
-    }
-    val acte = {
-      if(lastZoomFactor == vp.getZoomFactor) new PointDef((e.getX/* + vp.getShiftX*/, e.getY/* + vp.getShiftY*/))
-      else new PointDef((e.getX * vp.getZoomFactor/* + vp.getShiftX*/, e.getY * vp.getZoomFactor/* + vp.getShiftY*/))
-    }
+
+    val actn = calcActualRaster(n)
+    val actw = calcActualRaster(w)
+    val acts = calcActualRaster(s)
+    val acte = calcActualRaster(e)
 
     _gridElem.northCorner = actn
     _gridElem.westCorner = actw
@@ -167,8 +144,6 @@ abstract class BaseTile protected[world](private[world] var _gridElem: GridEleme
 
     poly.xpoints = new Array[Int](4)
     poly.ypoints = new Array[Int](4)
-    
-    
 
     poly.xpoints.update(0, actn.getRefX + vp.getShiftX)
     poly.xpoints.update(1, actw.getRefX + vp.getShiftX)
@@ -179,28 +154,20 @@ abstract class BaseTile protected[world](private[world] var _gridElem: GridEleme
     poly.ypoints.update(1, actw.getRefY + vp.getShiftY)
     poly.ypoints.update(2, acts.getRefY + vp.getShiftY)
     poly.ypoints.update(3, acte.getRefY + vp.getShiftY)
-    
-    
-    /*
-    poly.xpoints(0) = actn.getRefX
-    poly.xpoints(1) = actw.getRefX
-    poly.xpoints(2) = acts.getRefX
-    poly.xpoints(3) = acte.getRefX
-    
-    poly.ypoints(0) = actn.getRefY
-    poly.ypoints(1) = actw.getRefY
-    poly.ypoints(2) = acts.getRefY
-    poly.ypoints(3) = acte.getRefY
-    * 
-    */
 
     poly.npoints = 4
     poly.invalidate()
+
     updateLastZoomFactor()
+    updateLastIsoHeight()
   }
 
   private def updateLastZoomFactor() {
     lastZoomFactor = getWorld.getViewport.getZoomFactor
+  }
+
+  private[BaseTile] def updateLastIsoHeight() = {
+    lastIsoHeight = getWorld.getViewport.tileIsoHeight
   }
 
   override def gridCenter(): Point2D = {
@@ -209,9 +176,21 @@ abstract class BaseTile protected[world](private[world] var _gridElem: GridEleme
 }
 
 object BaseTile {
+
+  /**
+   * Related to the updateGUI() method and for unapplying some metadata.
+   * Irrelevant for you. <br>
+   * Yes, you.
+   */
+  val meta_link_check = "pfeile.tile.geometry.linkEdited"
   /**
    * The default selection color (the color being drawn over the
    * tile when the mouse is pointing at the tile).
    */
   val selectColor = new Color(39, 38, 38, 161)
+
+  // ***** INFOBOX VARIABLES ***** //
+  var infoHeight: Int = 0
+
+  implicit def attackEventtoAttackQueue(a: AttackEvent) = new AttackQueue(a)
 }

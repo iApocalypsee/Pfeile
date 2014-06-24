@@ -84,11 +84,10 @@ public class GameWindow extends JFrame {
 		new PauseScreen();
 		new AimSelectionScreen();
 		GameScreen.getInstance();
-		screenManager.setActiveScreen(NewWorldTestScreen$.MODULE$);
 		ArrowSelectionScreen.getInstance();
-		screenManager.setActiveScreen(GameScreen.SCREEN_INDEX);
-		//screenManager.setActiveScreen(NewWorldTestScreen$.MODULE$);
-		
+		// NewWorldTestScreen$.MODULE$;
+		//screenManager.setActiveScreen(GameScreen.SCREEN_INDEX);
+		screenManager.setActiveScreen(NewWorldTestScreen$.MODULE$);
 	}
 
 	/**
@@ -106,7 +105,6 @@ public class GameWindow extends JFrame {
 		window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		window.setSize(width, heigth);
 		window.setUndecorated(true);
-		window.setAlwaysOnTop(true);
 		window.setResizable(true);
 		window.setLocationRelativeTo(null);
 		window.setExtendedState(Frame.MAXIMIZED_BOTH);
@@ -117,6 +115,11 @@ public class GameWindow extends JFrame {
 	 * 'draw'-Methode auf
 	 */
 	public void update() {
+		Keys.updateKeys();
+		// TODO Very important, insert game code update calls here!
+	}
+
+	public void draw() {
 		Graphics2D g = (Graphics2D) strat.getDrawGraphics();
 
 		// set some properties for the graphics object

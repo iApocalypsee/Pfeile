@@ -1,32 +1,35 @@
 package general;
 
+import entity.path.Direction;
 import gui.*;
 
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Console;
 import java.io.File;
 import java.io.IOException;
+import java.util.*;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Random;
 
 import player.Bot;
 import player.Player;
 import player.SpawnEntityInstanceArgs;
+import scala.Tuple2;
+import scala.collection.JavaConversions;
 import world.*;
 import world.brush.ColorBrush;
 import world.brush.HeightBrush;
+import world.brush.SmoothHeightBrush;
 import world.brush.TileTypeBrush;
 import world.tile.GrassTile;
 import world.tile.SeaTile;
+import world.tile.package$;
 
 import javax.imageio.ImageIO;
 
@@ -40,6 +43,8 @@ import javax.imageio.ImageIO;
  * @version 1.3.2014
  */
 public class Main {
+
+	private static final double FRAME_CAP = 30;
 
 	// NUR INTIALISIERUNG - WIE WERTE UND VARIABLEN ###############
 
@@ -85,11 +90,15 @@ public class Main {
 	 *
 	 * @return The time in between two frames.
 	 */
-	public long getTimeSinceLastFrame() {
+	public int getTimeSinceLastFrame() {
 		return this.timeSinceLastFrame;
 	}
 
-	private long timeSinceLastFrame = 0;
+	public static int delta() {
+		return main.timeSinceLastFrame;
+	}
+
+	private int timeSinceLastFrame = 0;
 
 	private static PreWindow settingWindow;
 	private static ArrowSelection arrowSelectionWindow;
@@ -153,6 +162,8 @@ public class Main {
 			}
 		}
 
+		main.disposeInitialResources();
+
 		// Starten wir das Spiel
 		main.runGame();
 
@@ -167,21 +178,21 @@ public class Main {
 		// und dann trotzdem HARTES BEENDEN!!! :D
 		System.exit(0);
 	}
+
+	private void disposeInitialResources() {
+		settingWindow = null;
+		arrowSelectionWindow = null;
+	}
 	
 	// ############ RUN GAME 
 	/** Hier laeuft das Spiel nach allen Insizialisierungen */
 	private void runGame() {
-		
+
 		// start TimeClock
 		stopwatchThread.start();
 		timeObj.start();
-		
-		// assign the last frame time
-		lastFrame = System.currentTimeMillis();
-		
-		while (running) {
-			render();
-		}
+
+		GameLoop.run(1 / 60.0);
 		
 		/*
 		 * Mit einem Threadsystem ist es unmöglich, diese dreifache while(true)-Schleife
@@ -233,30 +244,6 @@ public class Main {
 			// TODO : Das kommplette Belohunungssystem
 		}
 		*/
-	}
-
-	// ############# RENDER 
-	/**
-	 * Hauptloop: hier läuft das eigentliche Spiel
-	 */
-	private void render() {
-
-		// calculate delta time
-		long thisFrame = System.currentTimeMillis();
-		timeSinceLastFrame = thisFrame - lastFrame;
-		lastFrame = thisFrame;
-
-		Keys.updateKeys();
-
-		// Zeichnet die Objekte auf den Fullscreen
-		gameWindow.update();
-
-		try {
-			Thread.sleep(framerateTimeout);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
 	}
 	
 	// #########################################################
@@ -359,8 +346,28 @@ public class Main {
 		return objs.get(new Random().nextInt(objs.size()));
 	}
 
+	public LinkedList<Integer> filterNotEvenNumbers(LinkedList<Integer> input) {
+		LinkedList<Integer> result = new LinkedList<Integer>();
+		for(Integer i : input) {
+			if(i % 2 == 0) result.add(i);
+		}
+		return result;
+	}
+
+	public LinkedList<Integer> filterEvenNumbers(LinkedList<Integer> input) {
+		LinkedList<Integer> result = new LinkedList<Integer>();
+		for(Integer i : input) {
+			if(i % 2 == 1) result.add(i);
+		}
+		return result;
+	}
+
+	private class SHBCoordinator {
+		public Point p = null;
+	}
+
 	private void newWorldTest() {
-		IWorld w = new ScaleWorld(70, 70);
+		IWorld w = new ScaleWorld(30, 30);
 		/*
 		world.World w = new world.World(50, 50);
 		*/
@@ -369,10 +376,18 @@ public class Main {
 		//EditableTerrain terrain = (EditableTerrain) w.getTerrain();
 		EditableBaseTerrain terrain = (EditableBaseTerrain) w.getTerrain();
 		Random r = new Random();
+
 		LinkedList<NewWorldFoo> points = new LinkedList<NewWorldFoo>();
-		ColorBrush cb = new ColorBrush();
+		LinkedList<SHBCoordinator> smoothCoordinators = new LinkedList<SHBCoordinator>();
+
 		HeightBrush hb = new HeightBrush();
 		TileTypeBrush tb = new TileTypeBrush(w);
+		SmoothHeightBrush shb = new SmoothHeightBrush();
+
+		entity.Player p = new entity.Player(r.nextInt(w.getSizeX() - 1), r.nextInt(w.getSizeY() - 1));
+
+
+		hb.setThickness(3);
 
 		LinkedList<Color> colors = new LinkedList<Color>();
 		colors.add(new Color(0x1C9618)); // GRÜN
@@ -386,22 +401,26 @@ public class Main {
 		baseTiles.add(GrassTile.class);
 		baseTiles.add(SeaTile.class);
 
-		int amtOfPoints = r.nextInt(w.getSizeX() * w.getSizeY()) + w.getSizeX() + w.getSizeY();
-		int maxHeight = 1;
+		int amtOfPoints = r.nextInt(w.getSizeX() * w.getSizeY()) + w.getSizeX() * w.getSizeY();
+		int maxHeightPerPaint = 1;
 		for(int i = 0; i < amtOfPoints; i++) {
 			NewWorldFoo f = new NewWorldFoo();
 			f.p = new Point(r.nextInt(w.getSizeX()), r.nextInt(w.getSizeY()));
 			f.c = decide(colors);
-			f.h = r.nextInt(maxHeight) + 3;
+			//f.h = r.nextInt(maxHeightPerPaint) + 3;
+			//f.h = r.nextInt(maxHeightPerPaint) + 2; // TODO Remember, if you want random heights, comment that in!!!!!!!!!!!!!
+			f.h = maxHeightPerPaint;
 			f.tileType = decide(baseTiles);
 			points.add(f);
 			//System.out.println("i = " + i);
+
+			SHBCoordinator c = new SHBCoordinator();
+			c.p = new Point(r.nextInt(w.getSizeX()), r.nextInt(w.getSizeY()));
+			smoothCoordinators.add(c);
 		}
 
 		int count = r.nextInt(8) + 3;
 		int i = 0;
-		cb.setColor(points.get(0).c);
-		cb.setThickness(r.nextInt(3) + 2);
 		LinkedList<Point> tempPoints = new LinkedList<Point>();
 		for(NewWorldFoo f : points) {
 			tempPoints.add(f.p);
@@ -411,11 +430,13 @@ public class Main {
 				count = r.nextInt(8) + 3;
 
 				// reset the brush and other stuff
-				cb.setColor(f.c);
-				cb.setThickness(r.nextInt(3) + 2);
+				//cb.setColor(f.c);
+				//cb.setThickness(r.nextInt(6) + 3);
 
-				hb.setThickness(r.nextInt(3) + 2);
-				hb.setHeightIncrement(f.h);
+
+				//hb.setThickness(r.nextInt(6) + 3);
+				//hb.setHeightIncrement(f.h);
+
 
 				tb.setTileClass(f.tileType);
 				tb.setThickness(r.nextInt(4) + 2);
@@ -423,7 +444,9 @@ public class Main {
 				/*
 				terrain.edit(cb, tempPoints);
 				*/
-				terrain.edit(hb, tempPoints);
+
+				//terrain.edit(hb, tempPoints);
+
 
 				terrain.edit(tb, tempPoints);
 				tempPoints.clear();
@@ -438,6 +461,93 @@ public class Main {
 			//System.out.print("i = " + i);
 			//System.out.println(" Main.newWorldTest");
 		}
+
+		tempPoints.clear();
+		i = 0;
+
+		for(NewWorldFoo f : points) {
+			if(r.nextDouble() < 0.4) {
+				tempPoints.add(f.p);
+			}
+			if(i >= count) {
+				// reset the counter variables
+				i = 0;
+				count = r.nextInt(15) + 3;
+
+				// reset the brush and other stuff
+				/*
+				cb.setColor(f.c);
+				cb.setThickness(r.nextInt(6) + 3);
+				*/
+
+				hb.setThickness(r.nextInt(3) + 1);
+				hb.setHeightIncrement(f.h);
+
+				/*
+				tb.setTileClass(f.tileType);
+				tb.setThickness(r.nextInt(4) + 2);
+				*/
+
+				/*
+				terrain.edit(cb, tempPoints);
+				*/
+				terrain.edit(hb, tempPoints);
+				//terrain.edit(shb, tempPoints); TODO WTF!!
+
+				/*
+				terrain.edit(tb, tempPoints);
+				*/
+				tempPoints.clear();
+			}
+
+			i++;
+		}
+
+		tempPoints.clear();
+		i = 0;
+
+		for(NewWorldFoo f : points) {
+			tempPoints.add(f.p);
+			if(i >= count) {
+				i = 0;
+				count = r.nextInt(3) + 1;
+				shb.setThickness(r.nextInt(5) + 1);
+				terrain.edit(shb, tempPoints);
+				tempPoints.clear();
+			}
+			i++;
+		}
+
+		for(int x = 0; x < w.getSizeX(); x++) {
+			for(int y = 0; y < w.getSizeY(); y++) {
+				BaseTile t = (BaseTile) w.getTileAt(x, y);
+				if(t instanceof SeaTile) continue;
+				world.tile.package$ tilehelper = package$.MODULE$;
+				List<Tuple2<Direction, IBaseTile>> dict = JavaConversions.asJavaList(tilehelper.neighborsOf(t).toList());
+				boolean has = false;
+				for(Tuple2<Direction, IBaseTile> tuple : dict) {
+					if(tuple._2() instanceof SeaTile) {
+						has = true;
+						break;
+					}
+				}
+
+				if(has) {
+					int avg = 0, sum = 0, ct = 1;
+					for(Tuple2<Direction, IBaseTile> tuple : dict) {
+						if(tuple._2() instanceof SeaTile) continue;
+						if(tuple._2() == null) continue;
+
+						sum += tuple._2().getTileHeight();
+						ct++;
+					}
+					avg = sum / ct;
+					t.setMetadata(HeightBrush.meta_key, avg);
+				}
+			}
+		}
+
+		//printHeights(terrain);
 		/*
 		try {
 			ImageIO.write(terrain.getColorMap(), "png", new File("colormap.png"));
@@ -464,6 +574,10 @@ public class Main {
 		}*/
 
 		terrain.adjustHeights();
+
+		NewWorldTestScreen.bindTileComponents();
+		NewWorldTestScreen.add(p);
+		NewWorldTestScreen.forcePullFront(p);
 
 		System.out.println("Runtime.getRuntime().freeMemory() / (1024 * 1024) = " + Runtime.getRuntime().freeMemory() / (1024 * 1024));
 		System.out.println("Runtime.getRuntime().totalMemory() / (1024 * 1024) = " + Runtime.getRuntime().totalMemory() / (1024 * 1024));
@@ -647,7 +761,6 @@ public class Main {
 	// ########################################################################
 	
 	/** empty: aufruf in Main ist auskommentiert */
-	@SuppressWarnings("unused")
 	protected void postInitScreens() {
 
 	}
