@@ -14,7 +14,10 @@ trait Entity extends AttackContainer with OverrideMetadatable with TurnAffected 
 
   private var _gridX = 0
   private var _gridY = 0
-  lazy val world: IWorld = NewWorldTestScreen.world
+  lazy val world: IWorld = {
+    NewWorldTestScreen.world.registerEntity(this)
+    NewWorldTestScreen.world
+  }
   val inventory = new Inventory(this)
 
   /**
@@ -28,7 +31,7 @@ trait Entity extends AttackContainer with OverrideMetadatable with TurnAffected 
    * If specified coordinate is out of bounds, an exception is thrown.
    * @param x The x coordinate.
    */
-  protected final def gridX_=(x: Int) = {
+  protected def gridX_=(x: Int) = {
     if(!world.isTileValid(x, gridY)) throw new ArrayIndexOutOfBoundsException
     _gridX = x
   }
@@ -44,7 +47,7 @@ trait Entity extends AttackContainer with OverrideMetadatable with TurnAffected 
    * If specified coordinate is out of bounds, an exception is thrown.
    * @param x The x coordinate.
    */
-  protected final def gridY_=(y: Int) = {
+  protected def gridY_=(y: Int) = {
     if(!world.isTileValid(gridX, y)) throw new ArrayIndexOutOfBoundsException
     _gridY = y
   }
@@ -54,5 +57,9 @@ trait Entity extends AttackContainer with OverrideMetadatable with TurnAffected 
   protected final def setGridX(x: Int) = gridX = x
   protected final def setGridY(y: Int) = gridY = y
   def location = world.getTileAt(gridX, gridY)
+  def teleport(loc: (Int, Int)) = {
+    gridX = loc._1
+    gridY = loc._2
+  }
 
 }

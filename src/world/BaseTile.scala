@@ -5,7 +5,7 @@ import java.awt.geom.Point2D
 import java.awt.{Color, Graphics2D}
 
 import comp.{Component, GUIUpdater}
-import entity.AttackContainer
+import entity.{VisionState, AttackContainer}
 import geom.DoubleRef.DoubleRef2Int
 import geom.PointDef
 import gui.AdjustableDrawing
@@ -26,6 +26,13 @@ abstract class BaseTile protected[world](private[world] var _gridElem: GridEleme
   addMouseListener(new java.awt.event.MouseAdapter {
     override def mouseEntered(e: MouseEvent): Unit = {
       BaseTile.infoHeight = getTileHeight
+    }
+    override def mouseReleased(e: MouseEvent): Unit = {
+      if(e.getButton == 3) {
+        val player = getWorld.asInstanceOf[ScaleWorld].getActivePlayer
+        player.teleport(getGridX, getGridY)
+        player.updateGUI()
+      }
     }
   })
 
@@ -64,16 +71,29 @@ abstract class BaseTile protected[world](private[world] var _gridElem: GridEleme
   // ***** DRAWING METHODS ***** //
 
   override def draw(g: Graphics2D): Unit = {
+    val p = getWorld.asInstanceOf[ScaleWorld].getActivePlayer
+    val visib = p.visibility(this)
+
+    if(!visib.equals(VisionState.Unrevealed)) {
+      g.setColor(getColor)
+      g.fillPolygon(getBounds)
+      if(visib.equals(VisionState.Nonvisible)) {
+        g.setColor(BaseTile.nonVisibleColor)
+        g.fillPolygon(getBounds)
+      }
+
+      drawLines(g)
+
+    }
     //val g = gl.create().asInstanceOf[Graphics2D]
     // translate the whole matrix context, just like OpenGL's "glPushMatrix()" and "glPopMatrix()"
     //g.translate(getWorld.getViewport.getShiftX, getWorld.getViewport.getShiftY)
     // draw the base tile shape with the base color
     //g.rotate(getWorld.getViewport.getRotation)
-    g setColor getColor
-    g fillPolygon getBounds
+
     // draw all other individual stuff
     drawAll(g)
-    drawLines(g)
+
 
     //g.dispose()
   }
@@ -188,6 +208,8 @@ object BaseTile {
    * tile when the mouse is pointing at the tile).
    */
   val selectColor = new Color(39, 38, 38, 161)
+
+  val nonVisibleColor = new Color(0, 0, 0, 155)
 
   // ***** INFOBOX VARIABLES ***** //
   var infoHeight: Int = 0

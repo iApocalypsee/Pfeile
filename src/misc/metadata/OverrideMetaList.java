@@ -26,6 +26,12 @@ public class OverrideMetaList implements IMetaManagement {
 	 */
 	private LinkedList<OverrideMetaEntry> entries = new LinkedList<OverrideMetaEntry>();
 
+	public LinkedList<OverrideMetaEntry> getEntries() {
+		Object x = entries.clone();
+		if(!(x instanceof LinkedList)) throw new RuntimeException();
+		return (LinkedList<OverrideMetaEntry>) x;
+	}
+
 	/**
 	 * Creates a new meta list.
 	 * @param metadatable The metadatable. May not be null.
@@ -70,7 +76,8 @@ public class OverrideMetaList implements IMetaManagement {
 			return null;
 		}
 
-		for(OverrideMetaEntry entry : entries) {
+		for(OverrideMetaEntry entry : getEntries()) {
+			if(entry == null) continue;
 			if(entry.getKey().equals(key)) {
 				return entry.getValue();
 			}
@@ -81,7 +88,8 @@ public class OverrideMetaList implements IMetaManagement {
 	@Override
 	public List<MetaKeyString> keys() {
 		LinkedList<MetaKeyString> keys = new LinkedList<MetaKeyString>();
-		for(OverrideMetaEntry entry : entries) {
+		for(OverrideMetaEntry entry : getEntries()) {
+			if(entry == null) continue;
 			keys.add(entry.getKey());
 		}
 		return Collections.unmodifiableList(keys);
@@ -90,7 +98,8 @@ public class OverrideMetaList implements IMetaManagement {
 	@Override
 	public boolean hasKey(String str) {
 		MetaKeyString key = new MetaKeyString(str);
-		for(OverrideMetaEntry entry : entries) {
+		for(OverrideMetaEntry entry : getEntries()) {
+			if(entry == null) continue;
 			if(entry.getKey().equals(key)) {
 				return true;
 			}
@@ -100,7 +109,7 @@ public class OverrideMetaList implements IMetaManagement {
 
 	@Override
 	public boolean hasValue(Object val) {
-		for(OverrideMetaEntry entry : entries) {
+		for(OverrideMetaEntry entry : getEntries()) {
 			if(entry.getValue() == val) {
 				return true;
 			}
@@ -114,7 +123,8 @@ public class OverrideMetaList implements IMetaManagement {
 	}
 
 	private OverrideMetaEntry getEntry(MetaKeyString key) {
-		for(OverrideMetaEntry entry : entries) {
+		for(OverrideMetaEntry entry : getEntries()) {
+			if(entry == null) continue;
 			if(entry.getKey().equals(key)) {
 				return entry;
 			}
@@ -125,7 +135,8 @@ public class OverrideMetaList implements IMetaManagement {
 	@Override
 	public List<Object> values() {
 		LinkedList<Object> values = new LinkedList<Object>();
-		for(OverrideMetaEntry entry : entries) {
+		for(OverrideMetaEntry entry : getEntries()) {
+			if(entry == null) continue;
 			values.add(entry.getValue());
 		}
 		return Collections.unmodifiableList(values);
@@ -134,7 +145,8 @@ public class OverrideMetaList implements IMetaManagement {
 	@Override
 	public List<IMetaEntry> pairs() {
 		LinkedList<IMetaEntry> pairs = new LinkedList<IMetaEntry>();
-		for(OverrideMetaEntry entry : entries) {
+		for(OverrideMetaEntry entry : getEntries()) {
+			if(entry == null) continue;
 			pairs.add(entry);
 		}
 		return Collections.unmodifiableList(pairs);
@@ -145,7 +157,7 @@ public class OverrideMetaList implements IMetaManagement {
 	 * @throws NotSerializableException if any object is not serializable.
 	 */
 	private void checkSerializability() throws NotSerializableException {
-		for(OverrideMetaEntry entry : entries) {
+		for(OverrideMetaEntry entry : getEntries()) {
 			if(!entry.isSerializable()) {
 				throw new NotSerializableException();
 			}

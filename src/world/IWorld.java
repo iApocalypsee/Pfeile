@@ -2,6 +2,7 @@ package world;
 
 import comp.GUIUpdater;
 import entity.Entity;
+import entity.Player;
 import gui.Drawable;
 
 import java.io.Serializable;
@@ -18,10 +19,16 @@ public interface IWorld extends Serializable, GUIUpdater, Drawable {
 	IBaseTile getTileAt(int x, int y);
 	IField getFieldAt(int x, int y);
 	ITerrain getTerrain();
-	List<? extends IField> getFields();
-	List<? extends IField> getNeighborFields();
-	List<? extends Entity> collectEntities();
-	List<? extends Entity> collectEntities(Class<? extends Entity> clazz);
+	Iterable<? extends IField> getFields();
+	Iterable<? extends IField> getNeighborFields();
+
+	Iterable<? extends Entity> collectEntities();
+	Iterable<? extends Entity> collectEntities(Class<? extends Entity> clazz);
+
+	Iterable<Player> getPlayers();
+
+	void registerEntity(Entity e);
+
 	WorldViewport getViewport();
 
 }

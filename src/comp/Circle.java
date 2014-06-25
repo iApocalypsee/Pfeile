@@ -180,7 +180,7 @@ public class Circle implements Shape {
 		// use the pythagorean theorem to calculate the triangle between xlen, ylen and the middle point
 		double res = Math.sqrt(Math.pow(xlen, 2) + Math.pow(ylen, 2));
 		// and return the check
-		return res <= radius;
+		return res < radius;
 	}
 
 	/**
@@ -206,7 +206,7 @@ public class Circle implements Shape {
 		// and return the check
 		return res < radius;
 		*/
-		return Point2D.distanceSq(p.getX(), p.getY(), x, y) <= radius * radius;
+		return Point2D.distanceSq(p.getX(), p.getY(), x, y) < radius * radius;
 	}
 
 	/**

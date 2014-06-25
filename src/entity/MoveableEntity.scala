@@ -11,11 +11,13 @@ import world.IBaseTile
  * @author Josip
  * @version 27.05.2014
  */
-trait MoveableEntity extends Entity {
+trait MoveableEntity extends Entity with Visioner {
 
   private var _movement = 1
   private val _crtpath: VectorChain = new VectorChainDef(new PointRef(gridX, gridY), new PointRef(gridX, gridY))
   val pathfinder = new PathFinder
+
+
 
   override def turnover: Unit = {
     walkpath
@@ -71,6 +73,26 @@ trait MoveableEntity extends Entity {
       }
     }
     recur()
+  }
+
+  /**
+   * Sets (teleports) the entity's x position to the specified one.
+   * If specified coordinate is out of bounds, an exception is thrown.
+   * @param x The x coordinate.
+   */
+  override protected def gridX_=(x: Int): Unit = {
+    super.gridX_=(x)
+    visionObject.updateVisionables()
+  }
+
+  /**
+   * Sets (teleports) the entity's x position to the specified one.
+   * If specified coordinate is out of bounds, an exception is thrown.
+   * @param x The x coordinate.
+   */
+  override protected def gridY_=(y: Int): Unit = {
+    super.gridY_=(y)
+    visionObject.updateVisionables()
   }
 
   private def resetMovement() = _movement = 1

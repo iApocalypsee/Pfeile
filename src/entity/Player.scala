@@ -11,10 +11,17 @@ import world.IBaseTile
  * @author Josip Palavra
  * @version 21.06.2014
  */
-class Player(spawnX: Int, spawnY: Int) extends Component with MoveableEntity with Combatant {
+class Player(spawnX: Int, spawnY: Int, name: String) extends Component with MoveableEntity with Combatant {
 
+  //super.gridX_=(spawnX)
+  //super.gridY_=(spawnY)
   gridX = spawnX
   gridY = spawnY
+
+  visionObject.put(this, 4)
+  visionObject.updateVisionables()
+
+  setName(name)
 
   /**
    * Moves the entity to a specified tile.

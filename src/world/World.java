@@ -2,6 +2,7 @@ package world;
 
 import comp.GUIUpdater;
 import entity.Entity;
+import entity.Player;
 import gui.Drawable;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -44,6 +45,16 @@ public class World implements IWorld, Drawable, GUIUpdater {
 			}
 		}
 		//testAffectedFields = BrushHelper.determineTiles(terrain.tiles.get(40).get(50), 15);
+	}
+
+	@Override
+	public Iterable<Player> getPlayers() {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	public void registerEntity(Entity e) {
+		throw new NotImplementedException();
 	}
 
 	@Override

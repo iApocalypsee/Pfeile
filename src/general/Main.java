@@ -384,7 +384,7 @@ public class Main {
 		TileTypeBrush tb = new TileTypeBrush(w);
 		SmoothHeightBrush shb = new SmoothHeightBrush();
 
-		entity.Player p = new entity.Player(r.nextInt(w.getSizeX() - 1), r.nextInt(w.getSizeY() - 1));
+		entity.Player p = new entity.Player(r.nextInt(w.getSizeX() - 1), r.nextInt(w.getSizeY() - 1), Mechanics.getUsername());
 
 
 		hb.setThickness(3);
@@ -578,6 +578,8 @@ public class Main {
 		NewWorldTestScreen.bindTileComponents();
 		NewWorldTestScreen.add(p);
 		NewWorldTestScreen.forcePullFront(p);
+
+		p.world();
 
 		System.out.println("Runtime.getRuntime().freeMemory() / (1024 * 1024) = " + Runtime.getRuntime().freeMemory() / (1024 * 1024));
 		System.out.println("Runtime.getRuntime().totalMemory() / (1024 * 1024) = " + Runtime.getRuntime().totalMemory() / (1024 * 1024));

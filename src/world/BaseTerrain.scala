@@ -222,18 +222,11 @@ class EditableBaseTerrain(x: Int, y: Int, world: IWorld) extends BaseTerrain(x, 
   private val colorMap = new BufferedImage(x, y, BufferedImage.TYPE_INT_RGB)
 
   override def edit(brush: IRawBrush, points: util.List[Point]): Unit = {
+    /*
     brush match {
-      case cbrush: ColorBrush =>
-        val g = colorMap createGraphics()
-        val it = points.iterator()
-        while(it.hasNext) {
-          val p = it.next()
-          g setColor cbrush.getColor
-          g fillOval(p.x - brush.getThickness, p.y - brush.getThickness, brush.getThickness * 2, brush.getThickness * 2)
-        }
-      case hbrush: HeightBrush => println("Height brush not implemented yet.")
       case _ =>
     }
+    */
 
     def collectSelectedTiles(points: util.Collection[Point]): util.LinkedList[IBaseTile] =
     {
