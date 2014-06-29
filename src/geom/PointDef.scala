@@ -21,7 +21,7 @@ class PointDef(tuple: (Double, Double)) extends Point2D with OverrideMetadatable
 
   override def getX = _tuple._1.value
   override def getY = _tuple._2.value
-  override def setLocation(x: Double, y: Double) = {
+  override def setLocation(x: Double = getX, y: Double = getY) = {
     _tuple = (new DoubleRef(x), new DoubleRef(y))
   }
   def getRefX = _tuple._1

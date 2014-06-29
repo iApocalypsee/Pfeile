@@ -402,7 +402,7 @@ public class Main {
 		baseTiles.add(SeaTile.class);
 
 		int amtOfPoints = r.nextInt(w.getSizeX() * w.getSizeY()) + w.getSizeX() * w.getSizeY();
-		int maxHeightPerPaint = 1;
+		int maxHeightPerPaint = 3;
 		for(int i = 0; i < amtOfPoints; i++) {
 			NewWorldFoo f = new NewWorldFoo();
 			f.p = new Point(r.nextInt(w.getSizeX()), r.nextInt(w.getSizeY()));

@@ -1,5 +1,6 @@
 package entity.path
 
+import entity.MoveableEntity
 import world.IBaseTile
 import world.tile._
 
@@ -16,25 +17,16 @@ import world.tile._
  * @author Josip
  * @version 27.05.2014
  */
-class PathFinder {
+class PathFinder(val ent: MoveableEntity) {
 
   def find(tile: IBaseTile) = {
-
-    val p = new PathFinder
-
-    /**
-     * The first chunk of the path DSL.
-     */
-    class PathDSLChunk1(to: IBaseTile) extends PathDSLChunk(to) {
-      def without(f: IBaseTile => Boolean): Unit = pathEval = f
-    }
-    new PathDSLChunk1(tile)
+    new PathDSLChunk1(tile, this)
 
   }
 
 }
 
-sealed class PathDSLChunk private[path](to: IBaseTile) {
+sealed class PathDSLChunk private[path](to: IBaseTile, val pf: PathFinder) {
   val destination = to
   protected var pathEval: (IBaseTile) => Boolean = (_) => true
 
@@ -43,20 +35,18 @@ sealed class PathDSLChunk private[path](to: IBaseTile) {
    */
   def checkDestinationAvailability = neighborsOf(destination).filter(tuple => pathEval(tuple._2)).isEmpty
 
-  private def foo(t: IBaseTile) = {
-    val p = new PathFinder
-    p find t without {_ => true}
-  }
+  def eval = pathEval
+
+  def toPath = a_star(pf.ent.location, destination, eval)
 }
 
-object PathFinder {
-  implicit def toPath(langChunk: PathDSLChunk): Path = {
-    println("Path algorithm missing!")
-
-    if(!langChunk.checkDestinationAvailability) {
-      println("There is no path to the tile.")
-    }
-    ???
+/**
+ * The first chunk of the path DSL.
+ */
+sealed class PathDSLChunk1(to: IBaseTile, pf: PathFinder) extends PathDSLChunk(to, pf) {
+  def without(f: IBaseTile => Boolean) = {
+    pathEval = (t) => !f(t)
+    this
   }
 }
 

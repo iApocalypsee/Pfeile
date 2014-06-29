@@ -30,8 +30,20 @@ abstract class BaseTile protected[world](private[world] var _gridElem: GridEleme
     override def mouseReleased(e: MouseEvent): Unit = {
       if(e.getButton == 3) {
         val player = getWorld.asInstanceOf[ScaleWorld].getActivePlayer
-        player.teleport(getGridX, getGridY)
-        player.updateGUI()
+        val t = new Thread(new Runnable {
+          override def run(): Unit = {
+            player.move(getGridX, getGridY)
+            player.updateGUI()
+          }
+        })
+        t.setDaemon(true)
+        t.setPriority(7)
+        t.start()
+      }
+      if(e.getButton == 1) {
+        val p = getWorld.asInstanceOf[ScaleWorld].getActivePlayer
+        p.teleport((getGridX, getGridY))
+        p.updateGUI()
       }
     }
   })

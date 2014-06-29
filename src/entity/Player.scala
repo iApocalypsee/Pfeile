@@ -4,7 +4,6 @@ import java.awt.{Color, Graphics2D}
 
 import comp.Component
 import player.weapon.AttackEvent
-import world.IBaseTile
 
 /**
  * Another Player class, but written in Scala.
@@ -22,19 +21,6 @@ class Player(spawnX: Int, spawnY: Int, name: String) extends Component with Move
   visionObject.updateVisionables()
 
   setName(name)
-
-  /**
-   * Moves the entity to a specified tile.
-   * @param tile The tile.
-   */
-  override def move(tile: IBaseTile): Unit = ???
-
-  /**
-   * Moves the unit relatively to the specified coordinates.
-   * @param relx The relative x amount.
-   * @param rely The relative y amount.
-   */
-  override def move(relx: Int, rely: Int): Unit = ???
 
   override def attack(event: AttackEvent): Unit = {
     require(inventory.contains(event.getWeapon.getClass))

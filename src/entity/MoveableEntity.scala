@@ -1,9 +1,10 @@
 package entity
 
 import entity.path.PathFinder
+import geom.VecChain
 import geom.interfaces.VectorChain
-import geom.{PointRef, VectorChainDef}
 import world.IBaseTile
+import world.tile.SeaTile
 
 
 /**
@@ -14,10 +15,8 @@ import world.IBaseTile
 trait MoveableEntity extends Entity with Visioner {
 
   private var _movement = 1
-  private val _crtpath: VectorChain = new VectorChainDef(new PointRef(gridX, gridY), new PointRef(gridX, gridY))
-  val pathfinder = new PathFinder
-
-
+  private var _crtpath: VectorChain = new VecChain()
+  val pathfinder = new PathFinder(this)
 
   override def turnover: Unit = {
     walkpath
@@ -27,14 +26,21 @@ trait MoveableEntity extends Entity with Visioner {
    * Moves the entity to a specified tile.
    * @param tile The tile.
    */
-  def move(tile: IBaseTile): Unit
+  def move(tile: IBaseTile): Unit = {
+    val p = pathfinder.find(tile).without(_.isInstanceOf[SeaTile]).toPath
+    if(p.isDefined) {
+      _crtpath = entity.path.pathToVector(p.get)
+    } else {
+      println("No path defined: (move(x: Int, y: Int))")
+    }
+  }
 
   /**
    * Moves the unit relatively to the specified coordinates.
-   * @param relx The relative x amount.
-   * @param rely The relative y amount.
+   * @param x The relative x amount.
+   * @param y The relative y amount.
    */
-  def move(relx: Int, rely: Int): Unit
+  def move(x: Int, y: Int): Unit = move(world.getTileAt(x, y))
 
   /**
    * Returns the destination tile.
@@ -86,9 +92,9 @@ trait MoveableEntity extends Entity with Visioner {
   }
 
   /**
-   * Sets (teleports) the entity's x position to the specified one.
+   * Sets (teleports) the entity's y position to the specified one.
    * If specified coordinate is out of bounds, an exception is thrown.
-   * @param x The x coordinate.
+   * @param y The y coordinate.
    */
   override protected def gridY_=(y: Int): Unit = {
     super.gridY_=(y)
