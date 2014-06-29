@@ -11,6 +11,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import world.BaseTile;
 import world.IWorld;
@@ -27,16 +29,19 @@ public class AimSelectionScreen extends Screen {
 
 	/** X-Position des Ausgewählten Feldes 
 	 * * (wenn noch nie auf <code> AimSelectionScreen </code> gecklickt wurde, ist der Wert -1)*/
-	private int posX_selectedField;
+	private volatile int posX_selectedField;
 	
-	private static boolean isRunning;
+	
 	
 	/** Y-Position des Ausgewählten Feldes 
 	 * (wenn noch nie auf <code> AimSelectionScreen </code> gecklickt wurde, ist der Wert -1) */
-	private int posY_selectedField;
+	private volatile int posY_selectedField;
 	
+	/** Bestätigen-Button */
 	private Button confirm;
 	
+	/** läuft der Thread noch */
+	private static boolean isRunning;
 	private Thread selectFieldThread; 
 	private static FieldSelector x;
 	
@@ -48,7 +53,20 @@ public class AimSelectionScreen extends Screen {
 		setPosY_selectedField(-1);
 		isRunning = false;
 		
-		confirm = new Button (Main.getWindowWidth() - 300, Main.getWindowHeight() - 200, this, "Confirm");
+		confirm = new Button (Main.getWindowWidth() - 100, Main.getWindowHeight() - 200, this, "Bestätigen");
+		confirm.declineInput();
+		
+		// MouseListener für confirm-Button
+		confirm.addMouseListener ( new MouseAdapter () {
+			@Override
+			public void mouseReleased (MouseEvent e) {
+				if (confirm.getSimplifiedBounds().contains(e.getPoint())) {
+					
+				}
+			}
+		});
+		confirm.setRoundBorder(true);
+		confirm.setVisible(true);
 		
 		x = new FieldSelector ();
 		selectFieldThread = new Thread (x);
@@ -71,15 +89,6 @@ public class AimSelectionScreen extends Screen {
 		// include the world
 		IWorld w = NewWorldTestScreen.getWorld();
 		
-		// TODO: auf die neue World-Klasse ändern
-		World.timeLifeBox.draw(g);
-		//Field.infoBox.draw(g);
-		Main.timeObj.draw(g);
-//		GameScreen.getInstance().getWorld().getActivePlayer().drawLife(g);
-		
-		g.setColor(TRANSPARENT_BACKGROUND);
-		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
-		
 		// The World will be drawn 
 		w.draw(g);
 		
@@ -89,6 +98,14 @@ public class AimSelectionScreen extends Screen {
 			g.setColor(new Color (240, 37, 47, (int) (255 * 0.6)));
 			g.fillPolygon(((BaseTile) (NewWorldTestScreen.getWorld().getTileAt(posX_selectedField, posY_selectedField))).getBounds());
 		}
+		
+		// TODO: auf die neue World-Klasse ändern
+		World.timeLifeBox.draw(g);
+		Field.infoBox.draw(g);
+		Main.timeObj.draw(g);
+		GameScreen.getInstance().getWorld().getActivePlayer().drawLife(g);
+		
+		confirm.draw(g);
 	}
 	
 	
