@@ -7,6 +7,7 @@ import general.field.Field;
 import comp.Button;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
@@ -19,7 +20,7 @@ import world.IWorld;
 
 
 public class AimSelectionScreen extends Screen {
-
+	
 	public static final String SCREEN_NAME = "AimSelection";
 	
 	public static final int SCREEN_INDEX = 4;
@@ -53,7 +54,7 @@ public class AimSelectionScreen extends Screen {
 		setPosY_selectedField(-1);
 		isRunning = false;
 		
-		confirm = new Button (Main.getWindowWidth() - 100, Main.getWindowHeight() - 200, this, "Bestätigen");
+		confirm = new Button (1178, 361, this, "Bestätigen");
 		confirm.declineInput();
 		
 		// MouseListener für confirm-Button
@@ -125,7 +126,7 @@ public class AimSelectionScreen extends Screen {
 	 * @param posX_selectedField: the posX_selectedField to set
 	 * @see setPosY_selectedField
 	 */
-	public void setPosX_selectedField(int posX) {
+	private void setPosX_selectedField(int posX) {
 		this.posX_selectedField = posX;
 	}
 
@@ -141,7 +142,7 @@ public class AimSelectionScreen extends Screen {
 	 * @param posY_selectedField: the posY_selectedField to set
 	 * @see setPosX_selectedField
 	 */
-	public void setPosY_selectedField(int posY) {
+	private void setPosY_selectedField(int posY) {
 		this.posY_selectedField = posY;
 	}
 

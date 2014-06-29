@@ -20,7 +20,7 @@ class ScaleWorld(x: Int, y: Int) extends IWorld with Drawable with GUIUpdater {
 
   private val _terrain = new EditableBaseTerrain(x, y, this)
   private val _view = new WorldViewport(this)
-  private val entityList = mutable.Queue[Entity]()
+  private val entityList: mutable.Queue[Entity] = mutable.Queue[Entity]()
 
   override def getSizeX = _terrain.getSizeX
 

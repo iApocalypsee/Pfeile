@@ -16,5 +16,5 @@ class SeaTile(gridElem: GridElement) extends BaseTile(gridElem) {
 }
 
 object SeaTile {
-  val color = new Color(0x6D75E8)
+  val color = new Color(0x3555DB)
 }

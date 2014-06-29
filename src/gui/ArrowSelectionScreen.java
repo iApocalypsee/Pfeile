@@ -60,7 +60,7 @@ public class ArrowSelectionScreen extends Screen {
 	/** X-Position des ersten Buttons (Screen) */
 	private int posXButton = 38; 
 	
-	Button fireArrowButton, waterArrowButton, iceArrowButton, stormArrowButton, lightningArrowButton, lightArrowButton, shadowArrowButton, stoneArrowButton;
+	private Button fireArrowButton, waterArrowButton, iceArrowButton, stormArrowButton, lightningArrowButton, lightArrowButton, shadowArrowButton, stoneArrowButton;
 	
 	private static final Color TRANSPARENT_BACKGROUND = new Color(0, 0, 0, 185);
 	

@@ -9,6 +9,8 @@ import java.awt.image.BufferedImage
 import world.brush._
 import java.util
 import scala.util.Random
+import comp.Component
+import java.awt.Font
 
 /**
  *
@@ -46,9 +48,10 @@ class BaseTerrain(sizeX: Int, sizeY: Int, world: IWorld) extends ITerrain with D
 
   def drawInfoBox(g: Graphics2D): Unit = {
     g.setColor(color)
-    g.fillRect(0, 0, 150, 50)
+    g.fillRect(0, 0, 138, 25)
     g.setColor(Color.WHITE)
-    g.drawString("Tile height: " + BaseTile.infoHeight, 20, 10)
+    g.setFont(new Font (Component.STD_FONT.getName(), Component.STD_FONT.getStyle(), Component.STD_FONT.getSize() + 2))
+    g.drawString("Tile height: " + BaseTile.infoHeight, 15, 15)
   }
 
   override def draw(g: Graphics2D): Unit = {

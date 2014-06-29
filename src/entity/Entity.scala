@@ -34,6 +34,7 @@ trait Entity extends AttackContainer with OverrideMetadatable with TurnAffected 
   protected def gridX_=(x: Int) = {
     if(!world.isTileValid(x, gridY)) throw new ArrayIndexOutOfBoundsException
     _gridX = x
+    
   }
 
   /**

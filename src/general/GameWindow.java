@@ -88,7 +88,6 @@ public class GameWindow extends JFrame {
 		// NewWorldTestScreen$.MODULE$;
 		//screenManager.setActiveScreen(GameScreen.SCREEN_INDEX);
 		screenManager.setActiveScreen(NewWorldTestScreen$.MODULE$);
-		screenManager.setActiveScreen(GameScreen.SCREEN_INDEX);
 	}
 
 	/**

@@ -1,9 +1,9 @@
 package entity
 
 import java.awt.{Color, Graphics2D}
-
 import comp.Component
 import player.weapon.AttackEvent
+import java.awt.Font
 
 /**
  * Another Player class, but written in Scala.
@@ -43,7 +43,12 @@ class Player(spawnX: Int, spawnY: Int, name: String) extends Component with Move
     val t = location.asInstanceOf[Component].getBounds
 
     g.setColor(Player.placeholderColor)
-    g.fillRect(t.getBounds.x, t.getBounds.y, t.getBounds.width, t.getBounds.height)
+    g.fillPolygon(t)
+    
+    g.setFont(new Font (Component.STD_FONT.getFontName(), Font.BOLD, 20))
+    g.setColor(new Color (0, 0, 0, Player.placeholderColor.getAlpha()))
+    g.drawString("P", (t.getBounds().x + 0.42 * t.getBounds().width).asInstanceOf[Int], (t.getBounds().y + 0.75 * t.getBounds().height).asInstanceOf[Int])
+    g.setFont(Component.STD_FONT)
 
   }
 }
