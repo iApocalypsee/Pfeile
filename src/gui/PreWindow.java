@@ -696,7 +696,7 @@ public class PreWindow extends JFrame {
 			// diese im Label an
 			else if (e.getSource() == PreWindow.this.standardButton) {
 				Mechanics.KI = 2;
-				PreWindow.this.label0.setText("Computerst√§rke: " + "mittel");
+				PreWindow.this.label0.setText("Computerst‰rke: " + "mittel");
 				
 				Mechanics.arrowNumberFreeSet = 5;
 				PreWindow.this.label1.setText("Pfeilanzahl [frei w‰hlbar]: "

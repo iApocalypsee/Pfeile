@@ -116,5 +116,4 @@ public class Button extends Component {
 	public boolean isRoundBorder () {
 		return getBorder().isRoundedBorder();
 	}
-
 }

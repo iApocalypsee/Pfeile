@@ -1,10 +1,12 @@
 package gui;
 
+import entity.Player;
 import general.Main;
 import general.Mechanics;
 import general.World;
 import general.field.Field;
 import comp.Button;
+import comp.Component;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -43,8 +45,15 @@ public class AimSelectionScreen extends Screen {
 	
 	/** läuft der Thread noch */
 	private static boolean isRunning;
+	/** this is the actual thread running from an instance of FieldSelector */
 	private Thread selectFieldThread; 
+	/** This is the static-Instance of FieldSelector, which is served by the Thread selectedFieldThread */
 	private static FieldSelector x;
+	
+	// These are only for the warning Message
+	private String warningMessage = "";
+	private float transparencyWarningMessage = 0;
+	private Point positionWarningMessage = new Point (40, Main.getWindowHeight() - 105);
 	
 	/** Konstrucktor von AimSelectionScreen: ruft super(...) auf und setzt die Variabelnwerte nach der Initialisierung; start den thread of <code> FieldSelector </code> */
 	public AimSelectionScreen() {
@@ -54,25 +63,36 @@ public class AimSelectionScreen extends Screen {
 		setPosY_selectedField(-1);
 		isRunning = false;
 		
-		confirm = new Button (1178, 361, this, "Bestätigen");
-		confirm.declineInput();
+		confirm = new Button (1178, 491, this, "Bestätigen");
+		
 		
 		// MouseListener für confirm-Button
 		confirm.addMouseListener ( new MouseAdapter () {
 			@Override
 			public void mouseReleased (MouseEvent e) {
 				if (confirm.getSimplifiedBounds().contains(e.getPoint())) {
-					
+					if (posX_selectedField == -1|| posY_selectedField == -1) {
+						warningMessage = "Kein Zielfeld ausgewählt";
+						transparencyWarningMessage = 1f;
+					} else {
+						//TODO: Den Screen richtig verlassen
+						//onLeavingScreen(this, NewWorldTestScreen$.MODULE$);
+						System.err.println("'onLeavingScreen' in 'AimSelectionScreen.confirm.mouseReleased' is not implemented yet.");
+						// remove, if the "TODO" is done
+						warningMessage = "NOT IMPLEMENTED";
+						transparencyWarningMessage = 1f;
+					}
 				}
 			}
 		});
 		confirm.setRoundBorder(true);
 		confirm.setVisible(true);
+		confirm.acceptInput();
 		
 		x = new FieldSelector ();
 		selectFieldThread = new Thread (x);
 		selectFieldThread.setDaemon(true);
-		selectFieldThread.setPriority(Thread.MIN_PRIORITY + 2);
+		selectFieldThread.setPriority(Thread.MIN_PRIORITY + 3);
 		selectFieldThread.start();
 	}
 	
@@ -93,10 +113,15 @@ public class AimSelectionScreen extends Screen {
 		// The World will be drawn 
 		w.draw(g);
 		
+		for (entity.Player player: w.getPlayers()) {
+			player.draw(g);
+		}
+		
 		// draw the selectedField 
 		if (posX_selectedField >= 0 && posY_selectedField >= 0) {
-			// rötlich und zu 60% sichtbar
-			g.setColor(new Color (240, 37, 47, (int) (255 * 0.6)));
+			g.setColor(new Color (255, 227, 227, 250));
+			g.drawPolygon(((BaseTile) (NewWorldTestScreen.getWorld().getTileAt(posX_selectedField, posY_selectedField))).getBounds());
+			g.setColor(new Color (240, 37, 47, (int) (255 * 0.7)));
 			g.fillPolygon(((BaseTile) (NewWorldTestScreen.getWorld().getTileAt(posX_selectedField, posY_selectedField))).getBounds());
 		}
 		
@@ -107,6 +132,16 @@ public class AimSelectionScreen extends Screen {
 		GameScreen.getInstance().getWorld().getActivePlayer().drawLife(g);
 		
 		confirm.draw(g);
+		
+		// Finally, draw the waringMessage
+		g.setColor(new Color(1f, 0f, 0f, transparencyWarningMessage));
+		g.setFont(new Font(Component.STD_FONT.getFontName(), Font.BOLD, 26));
+		g.drawString(warningMessage, positionWarningMessage.x, positionWarningMessage.y);
+		
+		transparencyWarningMessage = transparencyWarningMessage - 0.013f;
+		
+		if (transparencyWarningMessage < 0) 
+			transparencyWarningMessage = 0;
 	}
 	
 	
@@ -186,6 +221,8 @@ public class AimSelectionScreen extends Screen {
 					// This is the world
 					IWorld w = NewWorldTestScreen.getWorld();
 					
+					// TODO: This should just contain the visible World, nothing more
+					// no invisible tiles should be selected
 					// setup des Polygons, der die gesamte Welt umfasst
 					Polygon poly = new Polygon();
 					poly.xpoints = new int[4];

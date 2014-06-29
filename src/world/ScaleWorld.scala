@@ -57,7 +57,7 @@ class ScaleWorld(x: Int, y: Int) extends IWorld with Drawable with GUIUpdater {
     }
     ll
   }
-
+  
   override def collectEntities(clazz: Class[_ <: Entity]): java.lang.Iterable[_ <: Entity] = entityList.filter(p => p.getClass.equals(clazz))
 
   override def getTerrain = _terrain

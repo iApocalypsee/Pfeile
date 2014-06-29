@@ -18,7 +18,13 @@ trait Entity extends AttackContainer with OverrideMetadatable with TurnAffected 
     NewWorldTestScreen.world.registerEntity(this)
     NewWorldTestScreen.world
   }
-  val inventory = new Inventory(this)
+  private val _inventory = new Inventory(this)
+  
+  _inventory.setSize(Inventory.DEFAULT_INVENTORY_SIZE)
+  
+  def inventory = _inventory
+  
+  def getInventory = _inventory
 
   /**
    * Returns the x grid position of the entity.

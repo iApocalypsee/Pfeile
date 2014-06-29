@@ -14,6 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import world.ScaleWorld;
 
 public class ArrowSelectionScreen extends Screen {
 
@@ -124,7 +125,7 @@ public class ArrowSelectionScreen extends Screen {
 		}
 		
 		arrowList = new ArrayList <String> (); 
-		Inventory inventory = GameScreen.getInstance().getWorld().getActivePlayer().getInventory();
+		final Inventory inventory = ((ScaleWorld) NewWorldTestScreen.getWorld()).getActivePlayer().getInventory();
 		
 		arrowList.add("Feuerpfeil " + "[" + inventory.getItemCount(FireArrow.class) + "]");
 		arrowList.add("Wasserpfeil " + "[" + inventory.getItemCount(WaterArrow.class) + "]");
@@ -175,20 +176,20 @@ public class ArrowSelectionScreen extends Screen {
 			 */
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if (!GameScreen.getInstance().getWorld().getActivePlayer().getInventory().addItem(selectedIndex)) {
-					if (GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getRemainingSpace() == 0) {
-						warningMessage = "Das Inventar ist voll: Maximale Inventargröße " + GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getSize();	
+				if (!inventory.addItem(selectedIndex)) {
+					if (inventory.getRemainingSpace() == 0) {
+						warningMessage = "Das Inventar ist voll: Maximale Inventargröße " + inventory.getSize();	
 					} else if (Mechanics.arrowNumberFreeSetUseable <= 0){
 						warningMessage = "Es wurden bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + Mechanics.arrowNumberFreeSet + "";
-					} else if (GameScreen.getInstance().getWorld().getActivePlayer().getInventory().maxStack(selectedIndex) >= 
-								GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getItemCount(selectedIndex)){
+					} else if (inventory.maxStack(selectedIndex) >= 
+								inventory.getItemCount(selectedIndex)){
 						
-						warningMessage = "Das Inventar kann maximal " + GameScreen.getInstance().getWorld().getActivePlayer().getInventory().maxStack(selectedIndex) + " " + 
+						warningMessage = "Das Inventar kann maximal " + inventory.maxStack(selectedIndex) + " " + 
 											selectedIndex.getSimpleName() + " Pfeile aufnehmen";
 						
 					}else {
-						System.err.println("Could not add arrow to inventory (with " + GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getRemainingSpace() + " remaining space) arrow index: " + selectedIndex);
-						warningMessage = "Could not add arrow to inventory (with " + GameScreen.getInstance().getWorld().getActivePlayer().getInventory().getRemainingSpace() + " remaining space) arrow index: " + selectedIndex;
+						System.err.println("Could not add arrow to inventory (with " + inventory.getRemainingSpace() + " remaining space) arrow index: " + selectedIndex);
+						warningMessage = "Could not add arrow to inventory (with " + inventory.getRemainingSpace() + " remaining space) arrow index: " + selectedIndex;
 					}
 					transparencyWarningMessage = 1f;
 				} else
@@ -290,6 +291,8 @@ public class ArrowSelectionScreen extends Screen {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			
+			final Inventory inventory = ((ScaleWorld) NewWorldTestScreen.getWorld()).getActivePlayer().getInventory();
+			
 			if (fireArrowButton.getBounds().contains(e.getPoint())) {
 				openConfirmQuestion ("Wollen Sie einen Feuerpfeil hinzufügen?"); 
 				selectedIndex = FireArrow.class;
@@ -326,7 +329,7 @@ public class ArrowSelectionScreen extends Screen {
 			} 
 			if (confirmButton.getBounds().contains(e.getPoint())) {
 				if (selectedArrowBox.getEnteredText().equals(selectedArrowBox.getStdText()) == false) {
-					if (GameScreen.getInstance().getWorld().getActivePlayer().getInventory().contains(
+					if (inventory.contains(
 									ArrowHelper.reformArrow(selectedArrowBox.getEnteredText()))) {
 										
 						onLeavingScreen(this, AimSelectionScreen.SCREEN_INDEX);
@@ -387,7 +390,7 @@ public class ArrowSelectionScreen extends Screen {
 	 * Is already used by Inventory. So there might be no need in using <code> updateInventoryList </code>
 	 */
 	public void updateInventoryList () {
-		Inventory inventory = GameScreen.getInstance().getWorld().getActivePlayer().getInventory();
+		final Inventory inventory = ((ScaleWorld) NewWorldTestScreen.getWorld()).getActivePlayer().getInventory();
 		
 		arrowList.clear();
 		

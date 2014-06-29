@@ -109,15 +109,6 @@ public class Terrain implements ITerrain, Drawable, GUIUpdater {
 
 	@Override
 	public void draw(Graphics2D g) {
-		// I need to draw backwards
-		/*
-		for(int x = tiles.size() - 1; x >= 0; x--) {
-			for(int y = tiles.get(x).size() - 1; y >= 0; y--) {
-				tiles.get(x).get(y).draw(g);
-			}
-		}
-		*/
-
 		for(int x = 0; x < tiles.size(); x++) {
 			for(int y = 0; y < tiles.get(x).size(); y++) {
 				tiles.get(x).get(y).draw(g);

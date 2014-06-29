@@ -1,16 +1,24 @@
 package general;
 
 import entity.path.Direction;
-import gui.*;
+import gui.ArrowSelection;
+import gui.ArrowSelectionScreen;
+import gui.GameScreen;
+import gui.NewWorldTestScreen;
+import gui.PreWindow;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.Console;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.List;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Properties;
+import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -22,16 +30,17 @@ import player.Player;
 import player.SpawnEntityInstanceArgs;
 import scala.Tuple2;
 import scala.collection.JavaConversions;
-import world.*;
-import world.brush.ColorBrush;
+import world.BaseTile;
+import world.EditableBaseTerrain;
+import world.IBaseTile;
+import world.IWorld;
+import world.ScaleWorld;
 import world.brush.HeightBrush;
 import world.brush.SmoothHeightBrush;
 import world.brush.TileTypeBrush;
 import world.tile.GrassTile;
 import world.tile.SeaTile;
 import world.tile.package$;
-
-import javax.imageio.ImageIO;
 
 /**
  * Hauptklasse mit der Main-Methode und den abstraktesten Objekten unseres Spiels.
@@ -43,8 +52,6 @@ import javax.imageio.ImageIO;
  * @version 1.3.2014
  */
 public class Main {
-
-	private static final double FRAME_CAP = 30;
 
 	// NUR INTIALISIERUNG - WIE WERTE UND VARIABLEN ###############
 
@@ -266,8 +273,9 @@ public class Main {
 						arrowSelectionWindow.setVisible(true);
 						generateWorld();
 						main.populateWorld();
-						ArrowSelectionScreen.getInstance().init();
 						main.initTimeClock();
+						main.newWorldTest();
+						ArrowSelectionScreen.getInstance().init();
 					}
 				});
 			}
@@ -306,7 +314,7 @@ public class Main {
 	private void doArrowSelectionAddingArrows() {
 		
 		for (String selectedArrow : arrowSelectionWindow.selectedArrows) {
-			if (GameScreen.getInstance().getWorld().getActivePlayer().getInventory().addItem (
+			if (((ScaleWorld) NewWorldTestScreen.getWorld()).getActivePlayer().getInventory().addItem (
 					getArrowSelection().checkString(selectedArrow)) == false) {
 				System.err.println("in Main: doArrowSelectionAddingArrows\n\t"
 						+ "Der Pfeil + " + selectedArrow + " konnte nicht hinzugefügt werden."); 
@@ -603,8 +611,7 @@ public class Main {
 				// TODO dieser Methodenaufruf müsste in einen anderen Thread, glaube ich
 				// so funktioniert es aber auch...
 //				main.postInitScreens();    // empty method
-				// TODO Delete this call later!!!!!!!!!!!!!!!!!!!!!!!!
-				main.newWorldTest();
+				
 
 				GameWindow.adjustWindow(Main.getWindowWidth(), Main.getWindowHeight(),
 						gameWindow);
