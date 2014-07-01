@@ -15,9 +15,13 @@ object NewWorldTestScreen extends Screen("New world test", 164) {
 
   @BeanProperty
   var world: IWorld = null
-
+  
   var shootButtonPressed = false
 
+  def getScreenIndex () : Int = {
+    return 164
+  }
+  
   override def keyPressed(e: KeyEvent) {
     if(e.getKeyCode == KeyEvent.VK_RIGHT) world.getViewport.shiftRel(-8, 0)
     if(e.getKeyCode == KeyEvent.VK_LEFT) world.getViewport.shiftRel(8, 0)

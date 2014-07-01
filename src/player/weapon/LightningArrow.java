@@ -39,8 +39,10 @@ public class LightningArrow extends AbstractArrow {
 
 	}
 
-	/** Gibt das Bild vom Blitzpfeils zur�ck */
-	public static BufferedImage getImage() {
+	/** Gibt das Bild vom Blitzpfeils zur�ck
+	 * @see <code> ArrowHelper.getArrowImage(int selectedIndex) </code>  */
+	@Override
+	public BufferedImage getImage() {
 		return img_Lightning;
 	}
 }

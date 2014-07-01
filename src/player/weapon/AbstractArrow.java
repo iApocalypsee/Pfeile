@@ -1,5 +1,8 @@
 package player.weapon;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
 import general.Mechanics;
 import gui.GameScreen;
 
@@ -13,12 +16,7 @@ import gui.GameScreen;
  * 
  * @version 25.11.2013
  */
-public abstract class AbstractArrow extends RangedWeapon {
-
-	// TODO
-	// alle Werte die auf 25m gerechnet werden m√ºssen, m√ºssen noch von 100m auf
-	// 25m gerechnet werden
-	// alle
+public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable {
 
 	/**
 	 * Wert des Schadens (nach Abnahme durch Entfernung)
@@ -49,9 +47,6 @@ public abstract class AbstractArrow extends RangedWeapon {
 	/** aktuelle Treffunsicherheitsquote */
 	protected float aimMissingCurrent;
 
-	/** Grundreichweite des Pfeils : in Metern angegeben [25m genau] */
-	protected int rangeValue;
-
 	/**
 	 * Reichweite des Pfeils : in Metern angegeben [25m genau] Verwenden, falls
 	 * andere Pfeile [d.h. Sturmpfeil] oder Felder / andere Eigenschaften die
@@ -65,14 +60,14 @@ public abstract class AbstractArrow extends RangedWeapon {
 	 */
 	protected int distanceReached;
 
-	// /** Wie Schnel sich der Pfeil bewegt */
-	// protected int arrowSpeed;
+	 /** Wie Schnel sich der Pfeil bewegt */
+	protected int arrowSpeed;
 	//
 	// /** Wie groﬂ seine Beschleunigung ist */
 	// protected int acceleration;
-	//
-	// /** Wie weit der Schaden des Pfeils nach dem Auftreffen reicht */
-	// protected int damageRadius;
+	
+	/** Wie weit der Schaden des Pfeils nach dem Auftreffen reicht */
+	protected int damageRadius;
 
 	/** Positon im Koordinatensystem des Pfeils: Die X-Position */
 	protected int fieldX;
@@ -116,13 +111,13 @@ public abstract class AbstractArrow extends RangedWeapon {
 		// Reichweite des Pfeils wird minimal (+/- 1 Feld) an die Entfernung
 		// angepasst
 		if (Mechanics.worldSizeX <= 7) {
-			this.setRangeValue(rangeVal - 100);
+			this.setRange(rangeVal - 100);
 			this.setRangeValueCurrent(rangeVal - 100);
 		} else if (Mechanics.worldSizeX > 7 && Mechanics.worldSizeX <= 17) {
-			this.setRangeValue(rangeVal);
+			this.setRange(rangeVal);
 			this.setRangeValueCurrent(rangeVal);
 		} else {
-			this.setRangeValue(rangeVal + 100);
+			this.setRange(rangeVal + 100);
 			this.setRangeValueCurrent(rangeVal + 100);
 		}
 		this.setSelfHittingRate(selfHittingRate);
@@ -140,9 +135,8 @@ public abstract class AbstractArrow extends RangedWeapon {
 		// TODO this.setFieldXAim( X-Wert von Player oder ArrowQueue);
 		// TODO this.setFieldYAim( Y-Wert von Player oder ArrowQueue);
 
-		// arrowSpeed
-		// acceleration
-		// damageRadius
+		// TODO: arrowSpeed
+		// TODO: damageRadius
 
 	}
 
@@ -210,21 +204,6 @@ public abstract class AbstractArrow extends RangedWeapon {
 	 */
 	public void setAimMissingCurrent(float newAimMissingCurrent) {
 		this.aimMissingRate = newAimMissingCurrent;
-	}
-
-	/** Grund-Reichweite (vom Start zum Ziel) des Pfeils in 25m */
-	public int getRangeValue() {
-		return this.rangeValue;
-	}
-
-	/**
-	 * Setzt die Grund-Reichweite (vom Start zum Ziel) des Pfeils neu.
-	 * 
-	 * @param rangeValue
-	 *            Der neue Reichweite des Pfeils.
-	 */
-	private void setRangeValue(int rangeValue) {
-		this.rangeValue = rangeValue;
 	}
 
 	/**
@@ -338,11 +317,19 @@ public abstract class AbstractArrow extends RangedWeapon {
 	public void setPosY(int posY) {
 		this.posY = posY;
 	}
-
+	
+	/** gibt die BufferedImage des Pfeils zur¸ck
+	 * @see <code> ArrowHelper.getArrowImage(int selectedIndex) </code> */
+	public abstract BufferedImage getImage();
 
 	@Override
 	public int getMaximumStackCount() {
 		return Mechanics.arrowNumberPreSet;
+	}
+	
+	@Override
+	public void draw(Graphics2D g) {
+		g.drawImage(getImage(), getPosX(), getPosY(), (int) (getImage().getWidth() * gui.NewWorldTestScreen.getWorld().getViewport().getZoom()), (int) (getImage().getHeight() * gui.NewWorldTestScreen.getWorld().getViewport().getZoom()), null);
 	}
 }
 

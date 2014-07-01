@@ -108,14 +108,14 @@ public class ArrowSelectionScreen extends Screen {
 		buttonListArrows.add(lightArrowButton);
 		buttonListArrows.add(shadowArrowButton);
 		
-		fireArrowButton.iconify(FireArrow.getImage());
-		waterArrowButton.iconify(WaterArrow.getImage());
-		stoneArrowButton.iconify(StoneArrow.getImage());
-		iceArrowButton.iconify(IceArrow.getImage());
-		stormArrowButton.iconify(StormArrow.getImage());
-		lightningArrowButton.iconify(LightningArrow.getImage());
-		lightArrowButton.iconify(LightArrow.getImage());
-		shadowArrowButton.iconify(ShadowArrow.getImage());
+		fireArrowButton.iconify(ArrowHelper.getArrowImage(FireArrow.INDEX));
+		waterArrowButton.iconify(ArrowHelper.getArrowImage(WaterArrow.INDEX));
+		stoneArrowButton.iconify(ArrowHelper.getArrowImage(StoneArrow.INDEX));
+		iceArrowButton.iconify(ArrowHelper.getArrowImage(IceArrow.INDEX));
+		stormArrowButton.iconify(ArrowHelper.getArrowImage(StormArrow.INDEX));
+		lightningArrowButton.iconify(ArrowHelper.getArrowImage(LightningArrow.INDEX));
+		lightArrowButton.iconify(ArrowHelper.getArrowImage(LightArrow.INDEX));
+		shadowArrowButton.iconify(ArrowHelper.getArrowImage(ShadowArrow.INDEX));
 		
 		MouseHandler mListner = new MouseHandler();
 		

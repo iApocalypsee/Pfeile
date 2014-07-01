@@ -38,8 +38,10 @@ public class IceArrow extends AbstractArrow {
 		
 	}
 	
-	/** Gibt das Bild des Eispfeiles zur�ck */
-	public static BufferedImage getImage () {
+	/** Gibt das Bild des Eispfeiles zur�ck 
+	 * @see <code> ArrowHelper.getArrowImage(int selectedIndex) </code> */
+	@Override
+	public BufferedImage getImage () {
 		return img_Ice;
 	}
 }

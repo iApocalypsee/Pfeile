@@ -71,8 +71,6 @@ public class Main {
 	 */
 	private int framerateTimeout = 1000 / setFPS;
 
-	private long lastFrame;
-
 	// Zeichenvariablen.
 	private boolean running = true;
 
@@ -275,6 +273,7 @@ public class Main {
 						main.populateWorld();
 						main.initTimeClock();
 						main.newWorldTest();
+						new player.weapon.ArrowHelper();
 						ArrowSelectionScreen.getInstance().init();
 					}
 				});
@@ -370,6 +369,7 @@ public class Main {
 		return result;
 	}
 
+	/** FIXME: hier kann man eigentlich auch gleich den Punkt verwenden: LinkedList<Point> */
 	private class SHBCoordinator {
 		public Point p = null;
 	}

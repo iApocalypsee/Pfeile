@@ -37,8 +37,10 @@ public class ShadowArrow extends AbstractArrow {
 		
 	}
 	
-	/** Gibt das Bild des Schattenpfeils zur�ck */
-	public static BufferedImage getImage () {
+	/** Gibt das Bild des Schattenpfeils zur�ck 
+	 * @see <code> ArrowHelper.getArrowImage(int selectedIndex) </code> */
+	@Override
+	public BufferedImage getImage () {
 		return img_Shadow;
 	}
 }

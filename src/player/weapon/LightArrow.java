@@ -36,8 +36,10 @@ public class LightArrow extends AbstractArrow {
 		
 	}
 	
-	/** Gibt das Bild vom Lichtpfeil zur�ck */
-	public static BufferedImage getImage () {
+	/** Gibt das Bild vom Lichtpfeil zur�ck
+	 * @see <code> ArrowHelper.getArrowImage(int selectedIndex) </code>  */
+	@Override
+	public BufferedImage getImage () {
 		return img_Light;
 	}
 }

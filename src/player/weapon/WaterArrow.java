@@ -38,8 +38,10 @@ public class WaterArrow extends AbstractArrow {
 		
 	}
 	
-	/** Gibt das Bild des Wasserpfeiles zur�ck */
-	public static BufferedImage getImage () {
+	/** Gibt das Bild des Wasserpfeiles zur�ck 
+	 * @see <code> ArrowHelper.getArrowImage(int selectedIndex) </code> */
+	@Override
+	public BufferedImage getImage () {
 		return img_Water;
 	}
 }

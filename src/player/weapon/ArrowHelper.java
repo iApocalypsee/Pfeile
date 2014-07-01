@@ -1,10 +1,27 @@
 package player.weapon;
 
+import java.awt.image.BufferedImage;
+
 /**
- * @author Josip
+ * @author Daniel
  * @version 11.05.2014
  */
 public final class ArrowHelper {
+	
+	private static BufferedImage [] arrowImages;
+	
+	public ArrowHelper() {
+		arrowImages = new BufferedImage[8];
+		arrowImages[FireArrow.INDEX] = new FireArrow().getImage();
+		arrowImages[WaterArrow.INDEX] = new WaterArrow().getImage();
+		arrowImages[StormArrow.INDEX] = new StormArrow().getImage();
+		arrowImages[StoneArrow.INDEX] = new StoneArrow().getImage();
+		arrowImages[IceArrow.INDEX] = new IceArrow().getImage();
+		arrowImages[LightningArrow.INDEX] = new LightningArrow().getImage();
+		arrowImages[LightArrow.INDEX] = new LightArrow().getImage();
+		arrowImages[ShadowArrow.INDEX] = new ShadowArrow().getImage();
+	}
+	
 	/**
 	 * Compares the given string with all known arrow classes and passes corresponding
 	 * class object back.
@@ -64,7 +81,6 @@ public final class ArrowHelper {
 	 *   '...Arrow.INDEX' und gibt den jeweiligen Namen des Pfeils: '...Arrow.NAME' zurück
 	 *  @see <code> reformArrow(String selectedArrow) </code>*/
 	public static String arrowIndexToName(int selectedArrowIndex) {
-
 		switch (selectedArrowIndex) {
 		case FireArrow.INDEX:
 			return FireArrow.NAME;
@@ -111,5 +127,10 @@ public final class ArrowHelper {
 		} else {
 			return -1;
 		}
+	}
+	
+	/** gibt ein Bild des Pfeils des Indexes <code> selectedArrow </code> zurück; */
+	public static BufferedImage getArrowImage (int selectedArrow) {
+		return arrowImages[selectedArrow];
 	}
 }

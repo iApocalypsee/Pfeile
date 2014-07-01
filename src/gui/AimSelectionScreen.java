@@ -1,8 +1,6 @@
 package gui;
 
-import entity.Player;
 import general.Main;
-import general.Mechanics;
 import general.World;
 import general.field.Field;
 import comp.Button;
@@ -26,9 +24,6 @@ public class AimSelectionScreen extends Screen {
 	public static final String SCREEN_NAME = "AimSelection";
 	
 	public static final int SCREEN_INDEX = 4;
-	
-	/** Background Color, if it need to be Transparent: 185/255 is black */
-	private static final Color TRANSPARENT_BACKGROUND = new Color(0, 0, 0, 185);
 
 	/** X-Position des Ausgewählten Feldes 
 	 * * (wenn noch nie auf <code> AimSelectionScreen </code> gecklickt wurde, ist der Wert -1)*/
@@ -75,11 +70,7 @@ public class AimSelectionScreen extends Screen {
 						warningMessage = "Kein Zielfeld ausgewählt";
 						transparencyWarningMessage = 1f;
 					} else {
-						//TODO: Den Screen richtig verlassen
-						//onLeavingScreen(this, NewWorldTestScreen$.MODULE$);
-						System.err.println("'onLeavingScreen' in 'AimSelectionScreen.confirm.mouseReleased' is not implemented yet.");
-						// remove, if the "TODO" is done
-						warningMessage = "NOT IMPLEMENTED";
+						onLeavingScreen(AimSelectionScreen.this, NewWorldTestScreen.getScreenIndex());
 						transparencyWarningMessage = 1f;
 					}
 				}
