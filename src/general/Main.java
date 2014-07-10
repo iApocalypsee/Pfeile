@@ -613,8 +613,7 @@ public class Main {
 //				main.postInitScreens();    // empty method
 				
 
-				GameWindow.adjustWindow(Main.getWindowWidth(), Main.getWindowHeight(),
-						gameWindow);
+				GameWindow.adjustWindow(gameWindow);
 				toggleFullscreen(true);
 				gameWindow.setVisible(false);
 			}

@@ -1,5 +1,6 @@
 package gui;
 
+import entity.VisionState;
 import general.Main;
 import general.World;
 import general.field.Field;
@@ -10,13 +11,15 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import scala.Tuple2;
+import scala.collection.mutable.HashMap;
 import world.BaseTile;
 import world.IWorld;
+import world.ScaleWorld;
 
 
 public class AimSelectionScreen extends Screen {
@@ -83,7 +86,7 @@ public class AimSelectionScreen extends Screen {
 		x = new FieldSelector ();
 		selectFieldThread = new Thread (x);
 		selectFieldThread.setDaemon(true);
-		selectFieldThread.setPriority(Thread.MIN_PRIORITY + 3);
+		selectFieldThread.setPriority(Thread.NORM_PRIORITY - 1);
 		selectFieldThread.start();
 	}
 	
@@ -212,43 +215,31 @@ public class AimSelectionScreen extends Screen {
 					// This is the world
 					IWorld w = NewWorldTestScreen.getWorld();
 					
-					// TODO: This should just contain the visible World, nothing more
-					// no invisible tiles should be selected
-					// setup des Polygons, der die gesamte Welt umfasst
-					Polygon poly = new Polygon();
-					poly.xpoints = new int[4];
-					poly.ypoints = new int[4];
+					HashMap<Tuple2<Object, Object>, VisionState> map = ((ScaleWorld) (w)).getActivePlayer().visionMap();
 					
-					poly.xpoints[0] = ((int) ((BaseTile) w.getTileAt(0, 0))._gridElem().westCorner().getX());
-					poly.xpoints[1] = ((int) ((BaseTile) w.getTileAt(0, w.getSizeY() - 1))._gridElem().northCorner().getX());
-					poly.xpoints[2] = ((int) ((BaseTile) w.getTileAt(w.getSizeX() - 1, w.getSizeY() - 1))._gridElem().eastCorner().getX());
-					poly.xpoints[3] = ((int) ((BaseTile) w.getTileAt(w.getSizeX() - 1, 0))._gridElem().southCorner().getX());
-					
-					poly.ypoints[0] = ((int) ((BaseTile) w.getTileAt(0, 0))._gridElem().westCorner().getY());
-					poly.ypoints[1] = ((int) ((BaseTile) w.getTileAt(0, w.getSizeY() - 1))._gridElem().northCorner().getY());
-					poly.ypoints[2] = ((int) ((BaseTile) w.getTileAt(w.getSizeX() - 1, w.getSizeY() - 1))._gridElem().eastCorner().getY());
-					poly.ypoints[3] = ((int) ((BaseTile) w.getTileAt(w.getSizeX() - 1, 0))._gridElem().southCorner().getY());
-					
-					poly.npoints = 4;
-					poly.invalidate();
-					
-					// only run, if the position of the new click is on the map 
-					if (poly.contains(getLastClickPosition())) {
-						
-						// Let's find the selectedField
-						LOOPxPosition: for (int x = 0; x < w.getSizeX(); x++) {
-							for (int y = 0; y < w.getSizeY(); y++) {
-								BaseTile tile = (BaseTile) w.getTileAt(x, y);
-								if (tile.getBounds().contains(getLastClickPosition())) {
-									setPosX_selectedField(x);
-									setPosY_selectedField(y);
-									lastSavedClickPosition = getLastClickPosition();
-									
-									break LOOPxPosition;
+					// Let's find the selectedField
+					LOOPxPosition: for (int x = 0; x < w.getSizeX(); x++) {
+						for (int y = 0; y < w.getSizeY(); y++) {
+							// Is the click on the tile?
+							BaseTile tile = (BaseTile) w.getTileAt(x, y);
+							if (tile.getBounds().contains(getLastClickPosition())) {
+								// Is the field visible?
+								if (map.apply(new Tuple2 <Object, Object> (x,y)).equals(VisionState.Unrevealed) == false) {
+									// is the player attacking the field of the himself
+									if(((ScaleWorld) w).getActivePlayer().getGridX() == x && ((ScaleWorld) w).getActivePlayer().getGridY() == y) {
+										warningMessage = "Selbstangriff ist nicht möglich";
+										transparencyWarningMessage = 1f;
+									} else {
+										setPosX_selectedField(x);
+										setPosY_selectedField(y);
+										lastSavedClickPosition = getLastClickPosition();
+									}
 								}
+								
+								break LOOPxPosition;
 							}
-						} 
-					}
+						}
+					} 
 					
 					// now, sleep a bit 
 					try {

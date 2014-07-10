@@ -59,6 +59,7 @@ trait Entity extends AttackContainer with OverrideMetadatable with TurnAffected 
     _gridY = y
   }
 
+  // FIXME: gridX and gridY are already in Component
   def getGridX = gridX
   def getGridY = gridY
   protected final def setGridX(x: Int) = gridX = x

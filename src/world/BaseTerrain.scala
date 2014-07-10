@@ -48,10 +48,13 @@ class BaseTerrain(sizeX: Int, sizeY: Int, world: IWorld) extends ITerrain with D
 
   def drawInfoBox(g: Graphics2D): Unit = {
     g.setColor(color)
-    g.fillRect(0, 0, 138, 25)
+    g.fillRect(10, 10, 82, 25)
     g.setColor(Color.WHITE)
     g.setFont(new Font (Component.STD_FONT.getName(), Component.STD_FONT.getStyle(), Component.STD_FONT.getSize() + 2))
-    g.drawString("Tile height: " + BaseTile.infoHeight, 15, 15)
+    // Nur beim ausgewählten Feld zeichnen
+    g.drawString("Höhe: " + BaseTile.infoHeight, 24, 28)
+    g.setColor(Color.LIGHT_GRAY)
+    g.drawRect(10, 10, 82, 25)
   }
 
   override def draw(g: Graphics2D): Unit = {

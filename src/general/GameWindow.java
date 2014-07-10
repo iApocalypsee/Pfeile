@@ -101,13 +101,18 @@ public class GameWindow extends JFrame {
 	/**
 	 * Einstellung, wenn 'GameWindow' in Main initialisiert wird.
 	 */
-	public synchronized static void adjustWindow(int width, int heigth, GameWindow window) {
+	public synchronized static void adjustWindow(GameWindow window) {
 		window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		window.setSize(width, heigth);
-		window.setUndecorated(true);
-		window.setResizable(true);
-		window.setLocationRelativeTo(null);
+		Toolkit tk = Toolkit.getDefaultToolkit();  
+	    int xSize = ((int) tk.getScreenSize().getWidth());  
+	    int ySize = ((int) tk.getScreenSize().getHeight());  
+		window.setSize(xSize, ySize);
+		//window.setExtendedState(window.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		window.setExtendedState(Frame.MAXIMIZED_BOTH);
+		window.setUndecorated(true);
+		window.setResizable(false);
+		window.setAlwaysOnTop(true);
+		window.setLocationRelativeTo(null);
 	}
 
 	/**
