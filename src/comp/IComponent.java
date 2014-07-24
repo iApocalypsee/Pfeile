@@ -55,6 +55,7 @@ public interface IComponent extends Drawable {
 
 	void acceptInput();
 	void declineInput();
+	boolean isAcceptingInput();
 
 	boolean isVisible();
 	void setVisible(boolean visible);
@@ -63,6 +64,8 @@ public interface IComponent extends Drawable {
 
 	boolean isMouseFocused();
 	void triggerListeners(MouseEvent event);
+
+	String getName();
 
 }
 

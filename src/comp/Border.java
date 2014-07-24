@@ -59,7 +59,7 @@ public class Border implements Drawable {
 	/**
 	 * Das vom Border umgebende Component. Lesegeschütztes Feld.
 	 */
-	private Component surr;
+	private IComponent surr;
 	
 	private BasicStroke stroke;
 
@@ -131,7 +131,7 @@ public class Border implements Drawable {
 	 * Setzt die Component, um die herum die Border gezeichnet werden soll.
 	 * @param surrounding Die neue Component.
 	 */
-	public final void setComponent(Component surrounding) {
+	public final void setComponent(IComponent surrounding) {
 		this.surr = surrounding;
 	}
 	
@@ -154,9 +154,9 @@ public class Border implements Drawable {
 	public void draw(Graphics2D g) {
 		g.setColor(inner);
 		if(roundedBorder) {
-			g.fillRoundRect(surr.getAbsoluteX(), surr.getAbsoluteY(), surr.getWidth(), surr.getHeight(), arcWidth, arcHeight);
+			g.fillRoundRect(surr.getX(), surr.getY(), surr.getWidth(), surr.getHeight(), arcWidth, arcHeight);
 		} else {
-			g.fillRect(surr.getAbsoluteX(), surr.getAbsoluteY(), surr.getWidth(), surr.getHeight());
+			g.fillRect(surr.getX(), surr.getY(), surr.getWidth(), surr.getHeight());
 		}
 		
 		switch(surr.getStatus()) {
@@ -180,9 +180,9 @@ public class Border implements Drawable {
 		g.setStroke(stroke);
 		
 		if(roundedBorder) {
-			g.drawRoundRect(surr.getAbsoluteX(), surr.getAbsoluteY(), surr.getWidth(), surr.getHeight(), arcWidth, arcHeight);
+			g.drawRoundRect(surr.getX(), surr.getY(), surr.getWidth(), surr.getHeight(), arcWidth, arcHeight);
 		} else {
-			g.drawRect(surr.getAbsoluteX(), surr.getAbsoluteY(), surr.getWidth(), surr.getHeight());
+			g.drawRect(surr.getX(), surr.getY(), surr.getWidth(), surr.getHeight());
 		}
 	}
 	

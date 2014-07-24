@@ -21,14 +21,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Übergeordnete Basisklasse von allen klickbaren Steuerelementen.
- * 
- * @author Josip
- * @version 24.2.2014
- * @see Button
- *
+ * A standard implementation of a component.
  */
-public abstract class Component implements Drawable {
+public abstract class Component implements IComponent {
 
 	/**
 	 * Zeigt den Status an, in welchem das Steuerelement sich befindet.
@@ -880,5 +875,15 @@ public abstract class Component implements Drawable {
 	public Point center() {
 		Rectangle r = getSimplifiedBounds();
 		return new Point(r.x + r.width / 2, r.y + r.height / 2);
+	}
+
+	@Override
+	public void removeMouseWheelListener(MouseWheelListener mouseWheelListener) {
+		mouseWheelListeners.remove(mouseWheelListener);
+	}
+
+	@Override
+	public void addMouseWheelListener(MouseWheelListener mouseWheelListener) {
+		mouseWheelListeners.add(mouseWheelListener);
 	}
 }

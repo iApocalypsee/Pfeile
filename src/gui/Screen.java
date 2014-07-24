@@ -1,5 +1,6 @@
 package gui;
 
+import comp.IComponent;
 import general.Main;
 
 import java.awt.Color;
@@ -53,7 +54,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	/**
 	 * Die Components, die der Screen hält.
 	 */
-	private LinkedList<Component> components = new LinkedList<Component>();
+	private LinkedList<IComponent> components = new LinkedList<IComponent>();
 	public final int SCREEN_INDEX;
 	
 	/**
@@ -144,8 +145,8 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * components won't ge updated.
 	 */
 	@SuppressWarnings("unchecked")
-	public synchronized List<Component> getComponents() {
-		return (java.util.List<Component>) components.clone();
+	public synchronized List<IComponent> getComponents() {
+		return (java.util.List<IComponent>) components.clone();
 	}
 
 	/**
@@ -158,7 +159,7 @@ public abstract class Screen implements Drawable, MouseListener,
 		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 		
 		if(preprocessedDrawingEnabled) {
-			for (Component c : getComponents()) {
+			for (IComponent c : getComponents()) {
 				if(c != null) {
 					if(c.isVisible()) {
 	                    if(c.getBounds().intersects(0, 0, Main.getWindowWidth(), Main.getWindowHeight())) {
@@ -201,7 +202,7 @@ public abstract class Screen implements Drawable, MouseListener,
 		if(e.getButton() == 3) {
 			isRightMousePressed = true;
 		}
-		for (Component c : getComponents()) {
+		for (IComponent c : getComponents()) {
             if(c.isVisible()) {
                 if(c.isAcceptingInput()) {
 	                if(c.getSimplifiedBounds().contains(e.getPoint())) {
@@ -239,7 +240,7 @@ public abstract class Screen implements Drawable, MouseListener,
 
 		lastClickPosition = e.getPoint();
 
-		for (Component c : getComponents()) {
+		for (IComponent c : getComponents()) {
 			if (c.isAcceptingInput()) {
 				if(c.getSimplifiedBounds().contains(e.getPoint())) {
 					if (c.getBounds().contains(e.getPoint())) {
@@ -286,7 +287,7 @@ public abstract class Screen implements Drawable, MouseListener,
 		if(!isLeftMousePressed) {
 			isLeftMousePressed = true;
 		}
-		for (Component c : getComponents()) {
+		for (IComponent c : getComponents()) {
 			if(c.isAcceptingInput()) {
 				if(c.getSimplifiedBounds().contains(e.getPoint())) {
 					if(c.getBounds().contains(e.getPoint())) {
@@ -318,7 +319,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		mousePosition = e.getPoint();
-		for (Component c : getComponents()) {
+		for (IComponent c : getComponents()) {
 			if(c.isAcceptingInput()) {
 				if(c.getSimplifiedBounds().contains(e.getPoint())) {
 					if(c.getBounds().contains(e.getPoint())) {
@@ -356,7 +357,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		for (Component c : getComponents()) {
+		for (IComponent c : getComponents()) {
 			if(c.isAcceptingInput()) {
 				if(c.getBounds().contains(e.getPoint())) {
 					for (MouseWheelListener m : c.getMouseWheelListeners()) {
@@ -397,7 +398,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * Fügt ein Steuerelement der Auflistung hinzu.
 	 * @param c Das Steuerelement, das hinzugefügt werden soll.
 	 */
-	public final void add(Component c) {
+	public final void add(IComponent c) {
 		components.add(c);
 	}
 	
@@ -405,7 +406,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * Entfernt ein Steuerelement aus der Auflistung.
 	 * @param c Das Steuerelement, das entfernt werden soll.
 	 */
-	public final void remove(Component c) {
+	public final void remove(IComponent c) {
 		if(components.contains(c)) {
 			components.remove(c);
 		}
@@ -416,7 +417,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * @param c The component.
 	 * @return The layer number of the component.
 	 */
-	public int getLayerNumber(Component c) {
+	public int getLayerNumber(IComponent c) {
 		return getComponents().indexOf(c);
 	}
 
@@ -424,7 +425,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * Pushes the specified component one layer into the background.
 	 * @param component The component to push into the background.
 	 */
-	public void pushBack(Component component) {
+	public void pushBack(IComponent component) {
 		if(!getComponents().contains(component)) {
 			System.out.println("Component " + component.getName() + " could not be found.");
 			System.out.println("Message from Screen.pushBack(Component)");
