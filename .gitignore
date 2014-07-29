@@ -25,3 +25,4 @@ javadocexport.xml
 .cache
 .project
 .classpath
+/bin

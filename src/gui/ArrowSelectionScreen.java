@@ -333,7 +333,6 @@ public class ArrowSelectionScreen extends Screen {
 									ArrowHelper.reformArrow(selectedArrowBox.getEnteredText()))) {
 										
 						onLeavingScreen(this, AimSelectionScreen.SCREEN_INDEX);
-						AimSelectionScreen.setRunningThread(true);
 					} else {
 						warningMessage = "Kein " + selectedArrowBox.getEnteredText() + " im Inventar.";
 						transparencyWarningMessage = 1f;

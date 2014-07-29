@@ -36,7 +36,6 @@ object NewWorldTestScreen extends Screen("New world test", 164) {
           updater.updateGUI()
         case _ =>
       }
-
     }
   }
 

@@ -38,9 +38,6 @@ public class AimSelectionScreen extends Screen {
 	
 	/** Bestätigen-Button */
 	private Button confirm;
-	
-	/** läuft der Thread noch */
-	private static boolean isRunning;
 	/** this is the actual thread running from an instance of FieldSelector */
 	private Thread selectFieldThread; 
 	/** This is the static-Instance of FieldSelector, which is served by the Thread selectedFieldThread */
@@ -57,7 +54,6 @@ public class AimSelectionScreen extends Screen {
 		
 		setPosX_selectedField(-1);
 		setPosY_selectedField(-1);
-		isRunning = false;
 		
 		confirm = new Button (1178, 491, this, "Bestätigen");
 		
@@ -184,21 +180,14 @@ public class AimSelectionScreen extends Screen {
 		/** point, describing the last click */
 		private Point lastSavedClickPosition = getLastClickPosition();
 		
-		void setSavedClickPosition (Point lastSavedClickPosition) {
-			this.lastSavedClickPosition = lastSavedClickPosition;
-		}
-		
 		
 		// Finally: let's run the Thread 
 		@Override
 		public void run() {
-			
-			// this, is instead of wait and notify 
-			// TODO use wait & notify
 			while (true) {
 				
 				// Let's start the testing loop
-				while (AimSelectionScreen.isRunningThread()) {
+				while (getManager().getActiveScreenIndex() == AimSelectionScreen.SCREEN_INDEX) {
 					
 					// only run, if there was another click
 					if (lastSavedClickPosition.x == getLastClickPosition().x && 
@@ -250,29 +239,6 @@ public class AimSelectionScreen extends Screen {
 					Thread.sleep(480);
 				} catch (InterruptedException e) {e.printStackTrace();}
 			}
-		}
-	}
-	
-	/** is the Thread of <code> FieldSelector </code> still running?
-	 * @return isRunning - 
-	 * 			should be true, as long as <code> AimSelectionScreen </code> is active. (If it isn't: use <code> AimSelectionScreen.setRunningThread(true)</code>)
-	 * @see AimSelectionScreen.setRunningThread */
-	public static boolean isRunningThread () {
-		return isRunning;
-	}
-	
-	/** should the Thread of <code> FieldSelector </code> run? ||
-	 * 
-	 * set(false): if <code> AimSelectionScreen </code> isn't active;
-	 * set(true): if <code> AimSelectionScreen </code> is active;
-	 * 
-	 * @param isRunningFieldSelector
-	 * @return 
-	 */
-	public static void setRunningThread (boolean isRunningFieldSelector) {
-		isRunning = isRunningFieldSelector;
-		if (isRunning) {
-			x.setSavedClickPosition(getLastClickPosition());
 		}
 	}
 }
