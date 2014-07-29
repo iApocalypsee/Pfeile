@@ -32,8 +32,6 @@ public class AimSelectionScreen extends Screen {
 	 * * (wenn noch nie auf <code> AimSelectionScreen </code> gecklickt wurde, ist der Wert -1)*/
 	private volatile int posX_selectedField;
 	
-	
-	
 	/** Y-Position des Ausgewählten Feldes 
 	 * (wenn noch nie auf <code> AimSelectionScreen </code> gecklickt wurde, ist der Wert -1) */
 	private volatile int posY_selectedField;
@@ -73,7 +71,7 @@ public class AimSelectionScreen extends Screen {
 						warningMessage = "Kein Zielfeld ausgewählt";
 						transparencyWarningMessage = 1f;
 					} else {
-						onLeavingScreen(AimSelectionScreen.this, NewWorldTestScreen.getScreenIndex());
+						onLeavingScreen(AimSelectionScreen.this, NewWorldTestScreen$.MODULE$.SCREEN_INDEX);
 						transparencyWarningMessage = 1f;
 					}
 				}
@@ -273,7 +271,7 @@ public class AimSelectionScreen extends Screen {
 	 */
 	public static void setRunningThread (boolean isRunningFieldSelector) {
 		isRunning = isRunningFieldSelector;
-		if (isRunning = true) {
+		if (isRunning) {
 			x.setSavedClickPosition(getLastClickPosition());
 		}
 	}
