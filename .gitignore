@@ -15,9 +15,14 @@ hs_err_pid*
 doc/
 .idea/
 .idea/*
+.settings/
+.settings/*
+
+Pfeile.iml
 
 # files....
 javadocexport.xml
+.cache
 .project
 .classpath
 /bin
