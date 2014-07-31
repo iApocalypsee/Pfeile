@@ -15,6 +15,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import player.weapon.AbstractArrow;
+import player.weapon.AttackEvent;
 import scala.Tuple2;
 import scala.collection.mutable.HashMap;
 import world.BaseTile;
@@ -209,18 +211,36 @@ public class AimSelectionScreen extends Screen {
 		}
 	}
 
+	/**
+	 * Sends a message to specified tile that it is being attacked.
+	 * It retrieves the data from ArrowSelectionScreen and constructor params.
+	 */
 	private class DeliverShootThread extends Thread {
 
-		/**
-		 * The attacked tile.
-		 */
-		private BaseTile at;
+		private int x, y;
 
 		public DeliverShootThread(int x, int y) {
-			at = (BaseTile) NewWorldTestScreen.getWorld().getTileAt(x, y);
-
+			this.x = x;
+			this.y = y;
 		}
 
+		@Override
+		public void run() {
+			super.run();
+			BaseTile at = (BaseTile) NewWorldTestScreen.getWorld().getTileAt(x, y);
+			ArrowSelectionScreen s = ArrowSelectionScreen.getInstance();
+			Class<? extends AbstractArrow> a = s.getSelectedIndex();
+			AttackEvent evt = null;
+			try {
+				evt = new AttackEvent(x, y, a.newInstance(), ((ScaleWorld) at.getWorld()).getActivePlayer());
+			} catch (Exception e) {
+				throw new ClassCastException("Casting of arrow failed.");
+			}
+
+			if(evt != null) {
+				at.registerAttack(evt);
+			}
+		}
 	}
 	
 	/** Thread for testing, if there was a click and at which field it has been set */

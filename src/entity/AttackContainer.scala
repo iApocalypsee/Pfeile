@@ -39,7 +39,9 @@ trait AttackContainer extends player.weapon.AttackContainer {
   override def unregisterAttack(queue: AttackQueue): Unit = attackQueues.dequeueFirst((q) => q eq queue)
   override def unregisterAttack(w: Class[_ <: Weapon]): Unit = attackQueues.dequeueFirst((q) => q.getWeapon.getClass.eq(w))
   override def registerAttack(queue: AttackQueue): Unit = attackQueues.enqueue(queue)
-  override def registerAttack(event: AttackEvent): Unit = registerAttack(event)
+  override def registerAttack(event: AttackEvent): Unit = registerAttack(evt2Queue(event))
+
+  implicit def evt2Queue(evt: AttackEvent) = new AttackQueue(evt)
 }
 
 trait Combatant extends AttackContainer with player.Combatant {

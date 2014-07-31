@@ -46,7 +46,7 @@ public class AttackQueue {
 	public AttackQueue(AttackEvent e) {
 		aggressor = e.getAggressor();
 		event = e;
-		target.registerAttack(this);
+		//target.registerAttack(this);
 	}
 
 	/**

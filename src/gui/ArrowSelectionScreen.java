@@ -266,7 +266,11 @@ public class ArrowSelectionScreen extends Screen {
 			onLeavingScreen(this, GameScreen.SCREEN_INDEX);
 		}
 	}
-	
+
+	public Class<? extends AbstractArrow> getSelectedIndex() {
+		return selectedIndex;
+	}
+
 	/** Listener für die Liste */
 	private class MouseListHandler extends MouseAdapter {
 
