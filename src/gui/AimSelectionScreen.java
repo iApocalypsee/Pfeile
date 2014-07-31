@@ -65,6 +65,13 @@ public class AimSelectionScreen extends Screen {
 						transparencyWarningMessage = 1f;
 					} else {
 						onLeavingScreen(AimSelectionScreen.this, NewWorldTestScreen$.MODULE$.SCREEN_INDEX);
+
+						// deliver the attack message to the specified tile
+						// assuming that the thread is done updating the values
+						DeliverShootThread msg = new DeliverShootThread(getPosX_selectedField(), getPosY_selectedField());
+						msg.setDaemon(true);
+						msg.start();
+
 						transparencyWarningMessage = 1f;
 					}
 				}
@@ -138,39 +145,21 @@ public class AimSelectionScreen extends Screen {
 	// GETTER & SETTER
 	// ###############
 	
-	/** Getter
-	 * @return posX_selectedField: It's the X-Position of the selected Field 
-	 * @see getPosY_selectedField
-	 */
 	public int getPosX_selectedField() {
 		return posX_selectedField;
 	}
 
-	/** Setter
-	 * @param posX_selectedField: the posX_selectedField to set
-	 * @see setPosY_selectedField
-	 */
 	private void setPosX_selectedField(int posX) {
 		this.posX_selectedField = posX;
 	}
 
-	/** Getter
-	 * @return posY_selectedField: The Y-Position of the selected Field 
-	 * @see getPosX_selectedField
-	 */
 	public int getPosY_selectedField() {
 		return posY_selectedField;
 	}
 
-	/** Setter
-	 * @param posY_selectedField: the posY_selectedField to set
-	 * @see setPosX_selectedField
-	 */
 	private void setPosY_selectedField(int posY) {
 		this.posY_selectedField = posY;
 	}
-
-
 
 	// #######
 	// THREADS
@@ -198,27 +187,40 @@ public class AimSelectionScreen extends Screen {
 			for(int x = 0; x < w.getSizeX(); x++) {
 				for(int y = 0; y < w.getSizeY(); y++) {
 					if(!stopFlag) {
-						IBaseTile tile = w.getTileAt(x, y);
-						// sanity check
-						if(tile instanceof BaseTile) {
-							BaseTile comp = (BaseTile) tile;
-							if(!map.apply(new Tuple2<Object, Object>(x, y)).equals(VisionState.Unrevealed)) {
-								if(((ScaleWorld) w).getActivePlayer().getGridX() != x && ((ScaleWorld) w).getActivePlayer().getGridY() != y) {
-									setPosX_selectedField(x);
-									setPosY_selectedField(y);
-									stopFlag = true;
-								} else {
-									// TODO Make warning messages async (transparency included)
-									warningMessage = "Selbstangriff ist nicht möglich";
-									transparencyWarningMessage = 1f;
-								}
-							}
+						BaseTile comp = (BaseTile) w.getTileAt(x, y);
 
+						if(!comp.getBounds().contains(evt.getPoint())) continue;
+
+						if(!map.apply(new Tuple2<Object, Object>(x, y)).equals(VisionState.Unrevealed)) {
+							if (((ScaleWorld) w).getActivePlayer().getGridX() == x && ((ScaleWorld) w).getActivePlayer().getGridY() == y) {
+								// TODO Make warning messages async (transparency included)
+								warningMessage = "Selbstangriff ist nicht möglich";
+								transparencyWarningMessage = 1f;
+							} else {
+								setPosX_selectedField(x);
+								setPosY_selectedField(y);
+								stopFlag = true;
+							}
 						}
+
 					}
 				}
 			}
 		}
+	}
+
+	private class DeliverShootThread extends Thread {
+
+		/**
+		 * The attacked tile.
+		 */
+		private BaseTile at;
+
+		public DeliverShootThread(int x, int y) {
+			at = (BaseTile) NewWorldTestScreen.getWorld().getTileAt(x, y);
+
+		}
+
 	}
 	
 	/** Thread for testing, if there was a click and at which field it has been set */
