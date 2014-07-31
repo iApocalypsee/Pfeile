@@ -18,6 +18,7 @@ import java.awt.event.MouseEvent;
 import scala.Tuple2;
 import scala.collection.mutable.HashMap;
 import world.BaseTile;
+import world.IBaseTile;
 import world.IWorld;
 import world.ScaleWorld;
 
@@ -38,10 +39,6 @@ public class AimSelectionScreen extends Screen {
 	
 	/** Bestätigen-Button */
 	private Button confirm;
-	/** this is the actual thread running from an instance of FieldSelector */
-	private Thread selectFieldThread; 
-	/** This is the static-Instance of FieldSelector, which is served by the Thread selectedFieldThread */
-	private static FieldSelector x;
 	
 	// These are only for the warning Message
 	private String warningMessage = "";
@@ -76,12 +73,6 @@ public class AimSelectionScreen extends Screen {
 		confirm.setRoundBorder(true);
 		confirm.setVisible(true);
 		confirm.acceptInput();
-		
-		x = new FieldSelector ();
-		selectFieldThread = new Thread (x);
-		selectFieldThread.setDaemon(true);
-		selectFieldThread.setPriority(Thread.NORM_PRIORITY - 1);
-		selectFieldThread.start();
 	}
 	
 	@Override
@@ -90,7 +81,17 @@ public class AimSelectionScreen extends Screen {
 		NewWorldTestScreen.keyPressed(arg0);
 	}
 
-	@Override 
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		super.mouseReleased(e);
+		// Send async message to compute new target position
+		// and let the thread save the computation in the variables
+		FieldSelectActor actor = new FieldSelectActor(e);
+		actor.setDaemon(true);
+		actor.start();
+	}
+
+	@Override
 	public void draw (Graphics2D g) {
 		// Background will be drawn
 		super.draw(g);
@@ -169,12 +170,59 @@ public class AimSelectionScreen extends Screen {
 		this.posY_selectedField = posY;
 	}
 
-	
+
+
 	// #######
 	// THREADS
 	// #######
+
+	/**
+	 * Only performs the computation once, no need for an infinite loop.
+	 * This thread is restarted every time when the screen receives
+	 * a mouseReleased event.
+	 */
+	private class FieldSelectActor extends Thread {
+
+		private MouseEvent evt;
+		private boolean stopFlag = false;
+
+		public FieldSelectActor(MouseEvent evt) {
+			this.evt = evt;
+		}
+
+		@Override
+		public void run() {
+			super.run();
+			IWorld w = NewWorldTestScreen.getWorld();
+			HashMap<Tuple2<Object, Object>, VisionState> map = ((ScaleWorld) (w)).getActivePlayer().visionMap();
+			for(int x = 0; x < w.getSizeX(); x++) {
+				for(int y = 0; y < w.getSizeY(); y++) {
+					if(!stopFlag) {
+						IBaseTile tile = w.getTileAt(x, y);
+						// sanity check
+						if(tile instanceof BaseTile) {
+							BaseTile comp = (BaseTile) tile;
+							if(!map.apply(new Tuple2<Object, Object>(x, y)).equals(VisionState.Unrevealed)) {
+								if(((ScaleWorld) w).getActivePlayer().getGridX() != x && ((ScaleWorld) w).getActivePlayer().getGridY() != y) {
+									setPosX_selectedField(x);
+									setPosY_selectedField(y);
+									stopFlag = true;
+								} else {
+									// TODO Make warning messages async (transparency included)
+									warningMessage = "Selbstangriff ist nicht möglich";
+									transparencyWarningMessage = 1f;
+								}
+							}
+
+						}
+					}
+				}
+			}
+		}
+	}
 	
 	/** Thread for testing, if there was a click and at which field it has been set */
+	@Deprecated
 	private class FieldSelector implements Runnable {
 		
 		/** point, describing the last click */
