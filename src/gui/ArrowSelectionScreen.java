@@ -35,22 +35,22 @@ public class ArrowSelectionScreen extends Screen {
 	
 	public static final String SCREEN_NAME = "ArrowSelection";
 	
-	/** Die TextBox, die Anzeigt, welcher Pfeil ausgewählt worden ist */
+	/** Die TextBox, die Anzeigt, welcher Pfeil ausgewï¿½hlt worden ist */
 	private TextBox selectedArrowBox; 
 	
-	/** Ausgewählter Pfeil zum Hinzufügen */
+	/** Ausgewï¿½hlter Pfeil zum Hinzufï¿½gen */
 	private Class<? extends AbstractArrow> selectedIndex;
 	
-	/** Button zur Benutzung des Ausgewählten Pfeils */
+	/** Button zur Benutzung des Ausgewï¿½hlten Pfeils */
 	private Button confirmButton; 
 	
 	/** Button, um Schussvorgang abzubrechen */
 	private Button cancelButton; 
 	
-	/** Liste der Button mit den möglichen Pfeilen */
+	/** Liste der Button mit den mï¿½glichen Pfeilen */
 	List<Button> buttonListArrows = new ArrayList<Button>(); 
 	
-	/** Liste der Button für andere Aufgaben */
+	/** Liste der Button fï¿½r andere Aufgaben */
 	List<Button> buttonList = new ArrayList<Button>();
 	
 	/** confirmOpenDialog */
@@ -144,8 +144,8 @@ public class ArrowSelectionScreen extends Screen {
 		inventoryList.addMouseListener(new MouseListHandler());
 		inventoryList.acceptInput();	
 		
-		selectedArrowBox = new TextBox(Main.getWindowWidth() - (Component.getTextBounds("<Pfeil auswählen>", Component.STD_FONT).width + 30) - 37, 
-				300, "<Pfeil auswählen>", this);
+		selectedArrowBox = new TextBox(Main.getWindowWidth() - (Component.getTextBounds("<Pfeil auswÃ¤hlen>", Component.STD_FONT).width + 30) - 37,
+				300, "<Pfeil auswÃ¤hlen>", this);
 		selectedArrowBox.setVisible(true);
 		selectedArrowBox.setRoundBorder(true);
 		selectedArrowBox.setHeight(selectedArrowBox.getHeight() + 1);
@@ -178,9 +178,9 @@ public class ArrowSelectionScreen extends Screen {
 			public void mouseReleased(MouseEvent e) {
 				if (!inventory.addItem(selectedIndex)) {
 					if (inventory.getRemainingSpace() == 0) {
-						warningMessage = "Das Inventar ist voll: Maximale Inventargröße " + inventory.getSize();	
+						warningMessage = "Das Inventar ist voll: Maximale InventargrÃ¶ÃŸe " + inventory.getSize();
 					} else if (Mechanics.arrowNumberFreeSetUseable <= 0){
-						warningMessage = "Es wurden bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + Mechanics.arrowNumberFreeSet + "";
+						warningMessage = "Es wurden bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefÃ¼gt. Sie betrÃ¤gt: " + Mechanics.arrowNumberFreeSet + "";
 					} else if (inventory.maxStack(selectedIndex) >= 
 								inventory.getItemCount(selectedIndex)){
 						
@@ -271,7 +271,7 @@ public class ArrowSelectionScreen extends Screen {
 		return selectedIndex;
 	}
 
-	/** Listener für die Liste */
+	/** Listener fï¿½r die Liste */
 	private class MouseListHandler extends MouseAdapter {
 
 		@Override
@@ -280,7 +280,7 @@ public class ArrowSelectionScreen extends Screen {
 			// TODO: Man muss zweimal klicken, um hierher zu kommen. --> Auf einmal reduzieren
 			if (inventoryList.getBounds().contains(e.getPoint())) {
 				
-				// Übernimmt ausgewählten Pfeil und schreibt ihn in den ausgewählten Pfeil für 'commit'
+				// ï¿½bernimmt ausgewï¿½hlten Pfeil und schreibt ihn in den ausgewï¿½hlten Pfeil fï¿½r 'commit'
 				selectedArrowBox.setEnteredText(ArrowHelper.arrowIndexToName(inventoryList.getSelectedIndex()));
 //					System.err.println("Not possible ArrowIndex!: " + inventoryList.getSelectedIndex() + "   in <ArrowSelectionScreen.MouseListHandler.mouseReleased()>");
 //					warningMessage = "Not possible ArrowIndex!: " + inventoryList.getSelectedIndex();
@@ -289,7 +289,7 @@ public class ArrowSelectionScreen extends Screen {
 		}
 	}
 	
-	/** Listener für die Buttons */
+	/** Listener fï¿½r die Buttons */
 	private class MouseHandler extends MouseAdapter {
 
 		@Override
@@ -298,34 +298,34 @@ public class ArrowSelectionScreen extends Screen {
 			final Inventory inventory = ((ScaleWorld) NewWorldTestScreen.getWorld()).getActivePlayer().getInventory();
 			
 			if (fireArrowButton.getBounds().contains(e.getPoint())) {
-				openConfirmQuestion ("Wollen Sie einen Feuerpfeil hinzufügen?"); 
+				openConfirmQuestion ("Wollen Sie einen Feuerpfeil hinzufÃ¼gen?");
 				selectedIndex = FireArrow.class;
 			}
 			if (iceArrowButton.getBounds().contains(e.getPoint())) {
-				openConfirmQuestion ("Wollen Sie einen Eispfeil hinzufügen?"); 
+				openConfirmQuestion ("Wollen Sie einen Eispfeil hinzufÃ¼gen?");
 				selectedIndex = IceArrow.class;
 			}
 			if (waterArrowButton.getBounds().contains(e.getPoint())) {
-				openConfirmQuestion ("Wollen Sie einen Wasserpfeil hinzufügen?"); 
+				openConfirmQuestion ("Wollen Sie einen Wasserpfeil hinzufÃ¼gen?");
 				selectedIndex = WaterArrow.class;
 			}
 			if (stormArrowButton.getBounds().contains(e.getPoint())) {
-				openConfirmQuestion ("Wollen Sie einen Sturmpfeil hinzufügen?"); 
+				openConfirmQuestion ("Wollen Sie einen Sturmpfeil hinzufÃ¼gen?");
 				selectedIndex = StormArrow.class;
 			}
 			if (stoneArrowButton.getBounds().contains(e.getPoint())) {
-				openConfirmQuestion ("Wollen Sie einen Steinpfeil hinzufügen?"); 
+				openConfirmQuestion ("Wollen Sie einen Steinpfeil hinzufÃ¼gen?");
 				selectedIndex = StoneArrow.class;			}
 			if (lightningArrowButton.getBounds().contains(e.getPoint())) {
-				openConfirmQuestion ("Wollen Sie einen Blitzpfeil hinzufügen?"); 
+				openConfirmQuestion ("Wollen Sie einen Blitzpfeil hinzufÃ¼gen?");
 				selectedIndex = LightningArrow.class;
 			}
 			if (lightArrowButton.getBounds().contains(e.getPoint())) {
-				openConfirmQuestion ("Wollen Sie einen Lichtpfeil hinzufügen?"); 
+				openConfirmQuestion ("Wollen Sie einen Lichtpfeil hinzufÃ¼gen?");
 				selectedIndex = LightArrow.class;
 			}
 			if (shadowArrowButton.getBounds().contains(e.getPoint())) {
-				openConfirmQuestion ("Wollen Sie einen Schattenpfeil hinzufügen?"); 
+				openConfirmQuestion ("Wollen Sie einen Schattenpfeil hinzufÃ¼gen?");
 				selectedIndex = ShadowArrow.class;
 			}
 			if (cancelButton.getBounds().contains(e.getPoint())) {
@@ -343,7 +343,7 @@ public class ArrowSelectionScreen extends Screen {
 					}
 					
 				} else {
-					warningMessage = "Kein Pfeil ausgewählt";
+					warningMessage = "Kein Pfeil ausgewÃ¤hlt";
 					transparencyWarningMessage = 1f;
 				}				
 			}

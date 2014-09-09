@@ -20,35 +20,23 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import player.weapon.AbstractArrow;
-import player.weapon.FireArrow;
-import player.weapon.IceArrow;
-import player.weapon.LightArrow;
-import player.weapon.LightningArrow;
-import player.weapon.ShadowArrow;
-import player.weapon.StoneArrow;
-import player.weapon.StormArrow;
-import player.weapon.WaterArrow;
+import player.weapon.*;
 
 /**
- * Wir wären bald soweit, diese Klasse hier aus unserem System herauszunehmen, da
+ * Wir wï¿½ren bald soweit, diese Klasse hier aus unserem System herauszunehmen, da
  * du ja ArrowSelectionScreen entwickelt hast.
  */
 public class ArrowSelection extends JFrame {
 
 	private static final long serialVersionUID = -6246665378267488656L;
 
-	private static final String REMAINING_ARROW = new String("Übrige Pfeile: ");
+	private static final String REMAINING_ARROW = new String("Ãœbrige Pfeile: ");
 
 	private JLabel remainingArrows;
-
 	private JPanel listsPanel;
-
 	// Hauptpanel
 	private JPanel thisPanel;
-	
 	private JScrollPane scrollPane;
-
 	private JList<String> arrowList;
 	private JList<String> arrowListSelected;
 	public LinkedList<String> selectedArrows;
@@ -77,7 +65,7 @@ public class ArrowSelection extends JFrame {
 		listsPanel.setLayout(new GridLayout(1, 2, 5, 5));
 
 		remainingArrows = new JLabel();
-		remainingArrows.setText("Verfügbare Pfeil(e) definieren!");
+		remainingArrows.setText("Verfï¿½gbare Pfeil(e) definieren!");
 
 		readyButton = new JButton("Ready");
 		readyButton.addActionListener(new ReadyButtonHandler());
@@ -205,12 +193,15 @@ public class ArrowSelection extends JFrame {
 	}
 	
 	/**
-	 * Überprüft einen String und gibt daraufhin den korrespondierenden
-	 * Pfeil zurück.
+	 * ï¿½berprï¿½ft einen String und gibt daraufhin den korrespondierenden
+	 * Pfeil zurï¿½ck.
+     *
+     * TODO: USE <code> ArrowHelper.instanceArrow(String selectedArrowName)</code>
 	 * 
 	 * @param s
 	 * @return
 	 */
+    @Deprecated
 	public AbstractArrow checkString(String s) {
 		// ï¿½berprï¿½ft den String
 		if (s.equals(FireArrow.NAME)) {
@@ -236,7 +227,7 @@ public class ArrowSelection extends JFrame {
 
 	/**
 	 * KONTROLLE, OB READYBUTTON GEKLICKED WURDE Kontrolle, ob alle Pfeile
-	 * ausgewählt wurden
+	 * ausgewï¿½hlt wurden
 	 */
 	protected class ReadyButtonHandler implements ActionListener {
 
@@ -252,7 +243,7 @@ public class ArrowSelection extends JFrame {
 						|| Mechanics.arrowNumberFreeSet == -1) {
 					couldBeReady = false;
 
-					warningMessage = "Unmögliche Pfeilanzahl!";
+					warningMessage = "Unmï¿½gliche Pfeilanzahl!";
 
 					JOptionPane.showMessageDialog(ArrowSelection.this,
 							warningMessage, "Warning", 1);
@@ -262,14 +253,14 @@ public class ArrowSelection extends JFrame {
 				if (selectedArrows.size() > Mechanics.arrowNumberPreSet) {
 					couldBeReady = false;
 
-					warningMessage = "Fehler im System: zu viele Pfeile ausgewählt";
+					warningMessage = "Fehler im System: zu viele Pfeile ausgewï¿½hlt";
 
 					JOptionPane.showMessageDialog(ArrowSelection.this,
 							warningMessage, "Warning", 1);
 				}
 
 				if (selectedArrows.size() < Mechanics.arrowNumberPreSet) {
-					warningMessage = "Fortfahren, obwohl nicht alle Pfeile ausgewählt wurden?";
+					warningMessage = "Fortfahren, obwohl nicht alle Pfeile ausgewï¿½hlt wurden?";
 
 					if (JOptionPane.showConfirmDialog(ArrowSelection.this,
 							warningMessage, "Warning",
@@ -281,7 +272,7 @@ public class ArrowSelection extends JFrame {
 
 			if(couldBeReady == true) {
 				
-				// nach Fehlern kontrolieren (d.h. zum Beispiel Pfeil wie <Übrige Pfeile auswählen>)
+				// nach Fehlern kontrolieren (d.h. zum Beispiel Pfeil wie <ï¿½brige Pfeile auswï¿½hlen>)
 				for (int i = 0; i < selectedArrows.size(); i++) {
 					if (checkString(selectedArrows.get(i)) == null) {
 						selectedArrows.remove(i);
