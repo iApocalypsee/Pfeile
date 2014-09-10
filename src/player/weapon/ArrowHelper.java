@@ -50,8 +50,8 @@ public final class ArrowHelper {
 		}
 	}
 
-	/** Methode vergleicht den Übergebenen int - Wert (der PfeilIndex)
-	 *   '...Arrow.INDEX' und gibt das jeweilige class-Object zurück '...Arrow.class' *
+	/** Methode vergleicht den ï¿½bergebenen int - Wert (der PfeilIndex)
+	 *   '...Arrow.INDEX' und gibt das jeweilige class-Object zurï¿½ck '...Arrow.class' *
 	 *  @see <code> reformArrow(String selectedArrow) </code>*/
 	public static Class<? extends AbstractArrow> reformArrow(int selectedArrowIndex) {
 
@@ -77,8 +77,8 @@ public final class ArrowHelper {
 		}
 	}
 
-	/** Methode vergleicht den Übergebenen int - Wert (der PfeilIndex)
-	 *   '...Arrow.INDEX' und gibt den jeweiligen Namen des Pfeils: '...Arrow.NAME' zurück
+	/** Methode vergleicht den ï¿½bergebenen int - Wert (der PfeilIndex)
+	 *   '...Arrow.INDEX' und gibt den jeweiligen Namen des Pfeils: '...Arrow.NAME' zurï¿½ck
 	 *  @see <code> reformArrow(String selectedArrow) </code>*/
 	public static String arrowIndexToName(int selectedArrowIndex) {
 		switch (selectedArrowIndex) {
@@ -103,8 +103,66 @@ public final class ArrowHelper {
 		}
 	}
 
-	/** Methode vergleicht den Übergebenen Pfeilnamen
-	 *   '...Arrow.NAME' und gibt den jeweiligen Index des Pfeils: '...Arrow.INDEX' zurück;
+    /** Methode vergleicht den Ã¼bergebenen int - Wert (der PfeilIndex)
+     *   '...Arrow.INDEX' und erzeugt eine neue Instanz der Klasse
+     *   Bei keiner Ãœbereinstimmung wird <code> null </code> zurÃ¼ckgeben.
+     *
+     *  @see <code> reformArrow(String selectedArrow).newInstance() </code>
+     *  @see <code> instanceArrow(String selectedArrow) </code>*/
+    public static AbstractArrow instanceArrow (int selectedArrowIndex) {
+
+        switch (selectedArrowIndex) {
+            case FireArrow.INDEX:
+                return new FireArrow();
+            case WaterArrow.INDEX:
+                return new WaterArrow();
+            case StormArrow.INDEX:
+                return new StormArrow();
+            case StoneArrow.INDEX:
+                return new StoneArrow();
+            case IceArrow.INDEX:
+                return new IceArrow();
+            case LightningArrow.INDEX:
+                return new LightningArrow();
+            case LightArrow.INDEX:
+                return new LightArrow();
+            case ShadowArrow.INDEX:
+                return new ShadowArrow();
+            default:
+                return null;
+        }
+    }
+
+    /** Methode vergleicht den Ã¼bergebenen String - Wert (der Pfeilname: Arrow.NAME)
+     *   und erzeugt eine neue Instanz der Klasse dieser Klasse.
+     *   Bei keiner Ãœbereinstimmung wird <code> null </code> zurÃ¼ckgeben.
+     *
+     *  @see <code> reformArrow(String selectedArrow).newInstance() </code>
+     *  @see <code> instanceArrow(String selectedArrow) </code>*/
+    public static AbstractArrow instanceArrow (String selectedArrowName) {
+        if (selectedArrowName.equals(FireArrow.NAME)) {
+            return new FireArrow();
+        } else if (selectedArrowName.equals(WaterArrow.NAME)) {
+            return new WaterArrow();
+        } else if (selectedArrowName.equals(StormArrow.NAME)) {
+            return new StormArrow();
+        } else if (selectedArrowName.equals(StoneArrow.NAME)) {
+            return new StoneArrow();
+        } else if (selectedArrowName.equals(IceArrow.NAME)) {
+            return new IceArrow();
+        } else if (selectedArrowName.equals(LightningArrow.NAME)) {
+            return new LightningArrow();
+        } else if (selectedArrowName.equals(LightArrow.NAME)) {
+            return new LightArrow();
+        } else if (selectedArrowName.equals(ShadowArrow.NAME)) {
+            return new ShadowArrow();
+        } else {
+            return null;
+        }
+    }
+
+	/** Methode vergleicht den ï¿½bergebenen Pfeilnamen
+	 *   '...Arrow.NAME' und gibt den jeweiligen Index des Pfeils: '...Arrow.INDEX' zurï¿½ck;
 	 *   wenn der Pfeilname nicht existiert: -1
 	 *  @see <code> arrowIndexToName (String selectedArrowIndex) </code>*/
 	public static int arrowNameToIndex(String selectedArrow) {
@@ -129,7 +187,7 @@ public final class ArrowHelper {
 		}
 	}
 	
-	/** gibt ein Bild des Pfeils des Indexes <code> selectedArrow </code> zurück; */
+	/** gibt ein Bild des Pfeils des Indexes <code> selectedArrow </code> zurï¿½ck; */
 	public static BufferedImage getArrowImage (int selectedArrow) {
 		return arrowImages[selectedArrow];
 	}

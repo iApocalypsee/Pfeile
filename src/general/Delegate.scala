@@ -144,7 +144,7 @@ object Delegate {
       }
     }
 
-    def check(arg: In): Boolean
+    def check(arg: In): Boolean = true
   }
 
   /** Checks specifically if the argument is null. If true, a [[NullPointerException]] is thrown.

@@ -31,15 +31,15 @@ public class AimSelectionScreen extends Screen {
 	
 	public static final int SCREEN_INDEX = 4;
 
-	/** X-Position des Ausgewählten Feldes 
+	/** X-Position des Ausgewï¿½hlten Feldes 
 	 * * (wenn noch nie auf <code> AimSelectionScreen </code> gecklickt wurde, ist der Wert -1)*/
 	private volatile int posX_selectedField;
 	
-	/** Y-Position des Ausgewählten Feldes 
+	/** Y-Position des Ausgewï¿½hlten Feldes 
 	 * (wenn noch nie auf <code> AimSelectionScreen </code> gecklickt wurde, ist der Wert -1) */
 	private volatile int posY_selectedField;
 	
-	/** Bestätigen-Button */
+	/** Bestï¿½tigen-Button */
 	private Button confirm;
 	
 	// These are only for the warning Message
@@ -54,16 +54,16 @@ public class AimSelectionScreen extends Screen {
 		setPosX_selectedField(-1);
 		setPosY_selectedField(-1);
 		
-		confirm = new Button (1178, 491, this, "Bestätigen");
+		confirm = new Button (1178, 491, this, "BestÃ¤tigen");
 		
 		
-		// MouseListener für confirm-Button
+		// MouseListener fï¿½r confirm-Button
 		confirm.addMouseListener ( new MouseAdapter () {
 			@Override
 			public void mouseReleased (MouseEvent e) {
 				if (confirm.getSimplifiedBounds().contains(e.getPoint())) {
 					if (posX_selectedField == -1|| posY_selectedField == -1) {
-						warningMessage = "Kein Zielfeld ausgewählt";
+						warningMessage = "Kein Zielfeld ausgewÃ¤hlt";
 						transparencyWarningMessage = 1f;
 					} else {
 						onLeavingScreen(AimSelectionScreen.this, NewWorldTestScreen$.MODULE$.SCREEN_INDEX);
@@ -123,7 +123,7 @@ public class AimSelectionScreen extends Screen {
 			g.fillPolygon(((BaseTile) (NewWorldTestScreen.getWorld().getTileAt(posX_selectedField, posY_selectedField))).getBounds());
 		}
 		
-		// TODO: auf die neue World-Klasse ändern
+		// TODO: auf die neue World-Klasse ï¿½ndern
 		World.timeLifeBox.draw(g);
 		Field.infoBox.draw(g);
 		Main.timeObj.draw(g);
@@ -196,7 +196,7 @@ public class AimSelectionScreen extends Screen {
 						if(!map.apply(new Tuple2<Object, Object>(x, y)).equals(VisionState.Unrevealed)) {
 							if (((ScaleWorld) w).getActivePlayer().getGridX() == x && ((ScaleWorld) w).getActivePlayer().getGridY() == y) {
 								// TODO Make warning messages async (transparency included)
-								warningMessage = "Selbstangriff ist nicht möglich";
+								warningMessage = "Selbstangriff ist nicht mï¿½glich";
 								transparencyWarningMessage = 1f;
 							} else {
 								setPosX_selectedField(x);
@@ -284,7 +284,7 @@ public class AimSelectionScreen extends Screen {
 								if (map.apply(new Tuple2 <Object, Object> (x,y)).equals(VisionState.Unrevealed) == false) {
 									// is the player attacking the field of the himself
 									if(((ScaleWorld) w).getActivePlayer().getGridX() == x && ((ScaleWorld) w).getActivePlayer().getGridY() == y) {
-										warningMessage = "Selbstangriff ist nicht möglich";
+										warningMessage = "Selbstangriff ist nicht mï¿½glich";
 										transparencyWarningMessage = 1f;
 									} else {
 										setPosX_selectedField(x);

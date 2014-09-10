@@ -15,7 +15,7 @@ public class Label extends Component {
 	 */
 	private String text;
 	
-	/** Abstand nach oben, damit die Schrift nicht den oberen Rad berührt */
+	/** Abstand nach oben, damit die Schrift nicht den oberen Rad berï¿½hrt */
 	private final int STD_INSET_Y = 15; 
 	
 	/** Abstand links, damit die Schrift nicht am Rand steht */
@@ -117,4 +117,14 @@ public class Label extends Component {
 			g.drawString(text, getAbsoluteX() + STD_INSET_X, getAbsoluteY() + STD_INSET_Y);
 		}
 	}
+
+    public void setText(String text) {
+        this.text = text;
+        setWidth(Component.getTextBounds(text, STD_FONT).width);
+        setHeight(Component.getTextBounds(text, STD_FONT).height);
+    }
+
+    public String getText() {
+        return text;
+    }
 }
