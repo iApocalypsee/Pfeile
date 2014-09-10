@@ -101,6 +101,9 @@ object Delegate {
       case reg_f: ((In) => Unit) => reg_f( arg )
     }
 
+      /** Code in java zum ausführen der gethreaden Version:
+        *
+         <code> delegate.callAsync(<In>, scala.concurrent.ExecutionContext.Implicits$.MODULE$.global()); </code>*/
     def callAsync(arg: In)(implicit ec: ExecutionContext): Future[Unit] = Future {
       call( arg )
     }

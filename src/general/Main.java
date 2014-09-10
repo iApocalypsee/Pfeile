@@ -12,6 +12,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashSet;
@@ -30,6 +31,9 @@ import player.Player;
 import player.SpawnEntityInstanceArgs;
 import scala.Tuple2;
 import scala.collection.JavaConversions;
+import scala.concurrent.ExecutionContext;
+import scala.runtime.AbstractFunction1;
+import scala.runtime.BoxedUnit;
 import world.BaseTile;
 import world.EditableBaseTerrain;
 import world.IBaseTile;
@@ -46,7 +50,7 @@ import world.tile.package$;
  * Hauptklasse mit der Main-Methode und den abstraktesten Objekten unseres Spiels.
  * <p>27.02.2014</p>
  * <ul>
- * <li>Updater hinzugefügt. Der Updater stellt sicher, dass die Daten von Objekten geupdated werden.</li>
+ * <li>Updater hinzugefï¿½gt. Der Updater stellt sicher, dass die Daten von Objekten geupdated werden.</li>
  * </ul>
  *
  * @version 1.3.2014
@@ -61,7 +65,7 @@ public class Main {
 	private volatile int fps;
 
 	/**
-	 * Die erwünschte FPS-Rate. Wenn <code>setFPS == 0</code>, ist die Framerate unbegrenzt.
+	 * Die erwï¿½nschte FPS-Rate. Wenn <code>setFPS == 0</code>, ist die Framerate unbegrenzt.
 	 * Unbegrenzte Framerate noch nicht implementiert!
 	 */
 	private volatile int setFPS = 35;
@@ -75,7 +79,7 @@ public class Main {
 	private boolean running = true;
 
 	/**
-	 * GETTER: Fenstergröße
+	 * GETTER: Fenstergrï¿½ï¿½e
 	 */
 	public static int getWindowWidth() {
 		// Fensterbreite: HDready - Einstellung
@@ -83,10 +87,10 @@ public class Main {
 	}
 
 	/**
-	 * GETTER: Fensterhöhe
+	 * GETTER: Fensterhï¿½he
 	 */
 	public static int getWindowHeight() {
-		// Fensterhöhe: HDready - Einstellung
+		// Fensterhï¿½he: HDready - Einstellung
 		return 768;
 	}
 
@@ -124,8 +128,8 @@ public class Main {
 	// DONE WITH ALL VARIABELS;
 	// MOST IMPORTANT METHODS ####################################
 	/**
-	 * Führt nicht die main-Funktion aus, sondern gibt eine Referenz auf das
-	 * Main-Objekt zurück.
+	 * Fï¿½hrt nicht die main-Funktion aus, sondern gibt eine Referenz auf das
+	 * Main-Objekt zurï¿½ck.
 	 *
 	 * @return Referenz auf das Main-Objekt. Von hier aus kann auf fast alles
 	 * zugegriffen werden.
@@ -137,7 +141,7 @@ public class Main {
 	// KONSTRUKTOR ###############################################
 	/**
 	 * Der Konstruktor. Hier stehen keine Hauptaufrufe. Die Hauptaufrufe werden
-	 * in <code>foo()</code> getätigt.
+	 * in <code>foo()</code> getï¿½tigt.
 	 */
 	private Main() {}
 	
@@ -146,7 +150,7 @@ public class Main {
 	// ###########################################################
 	
 	/**
-	 * Main-Method öffnet eine neue Instanz von Main: main
+	 * Main-Method ï¿½ffnet eine neue Instanz von Main: main
 	 */
 	public static void main(String[] arguments) {
 
@@ -173,12 +177,12 @@ public class Main {
 		main.runGame();
 
 		/*
-		 * TODO Hier kommt cleanup-code, z.B. noch offene Dateien schließen.
-		 * Ich weis, noch nichts zum Aufräumen hinterher, aber wir werden es später
+		 * TODO Hier kommt cleanup-code, z.B. noch offene Dateien schlieï¿½en.
+		 * Ich weis, noch nichts zum Aufrï¿½umen hinterher, aber wir werden es spï¿½ter
 		 * 100% brauchen.
 		 */
 
-		// sanftes Schließen des GameWindows anstelle des harten System.exit(0)
+		// sanftes Schlieï¿½en des GameWindows anstelle des harten System.exit(0)
 		gameWindow.dispose();
 		// und dann trotzdem HARTES BEENDEN!!! :D
 		System.exit(0);
@@ -200,7 +204,7 @@ public class Main {
 		GameLoop.run(1 / 60.0);
 		
 		/*
-		 * Mit einem Threadsystem ist es unmöglich, diese dreifache while(true)-Schleife
+		 * Mit einem Threadsystem ist es unmï¿½glich, diese dreifache while(true)-Schleife
 		 * aufrechtzuerhalten!!
 		while (true) {
 			// ++++++++++++++++++++++++++++++++++
@@ -226,7 +230,7 @@ public class Main {
 				timeObj.reset();
 				
 				// ++++SCHADENSBERECHNUNGEN++++
-				// TODO: alle Schadensberechungen, nach Endwe eines Zuges müssen hier rein
+				// TODO: alle Schadensberechungen, nach Endwe eines Zuges mï¿½ssen hier rein
 				lifePlayer.updateLife();
 				
 				// alle Bedingungen, mit denen eine Runde enden kann
@@ -316,7 +320,7 @@ public class Main {
 			if (((ScaleWorld) NewWorldTestScreen.getWorld()).getActivePlayer().getInventory().addItem (
 					getArrowSelection().checkString(selectedArrow)) == false) {
 				System.err.println("in Main: doArrowSelectionAddingArrows\n\t"
-						+ "Der Pfeil + " + selectedArrow + " konnte nicht hinzugefügt werden."); 
+						+ "Der Pfeil + " + selectedArrow + " konnte nicht hinzugefï¿½gt werden."); 
 			}
 		}
 		ArrowSelectionScreen.getInstance().updateInventoryList();
@@ -398,8 +402,8 @@ public class Main {
 		hb.setThickness(3);
 
 		LinkedList<Color> colors = new LinkedList<Color>();
-		colors.add(new Color(0x1C9618)); // GRÜN
-		//colors.add(new Color(0xD5F5EF)); // EISWEIß
+		colors.add(new Color(0x1C9618)); // GRï¿½N
+		//colors.add(new Color(0xD5F5EF)); // EISWEIï¿½
 		//colors.add(new Color(0xEBEE31)); // GELB
 		colors.add(new Color(0x6D75E8)); // BLAU
 		//colors.add(new Color(0x646464)); // GRAU
@@ -608,7 +612,7 @@ public class Main {
 
 				gameWindow = new GameWindow();
 				gameWindow.initializeScreens();
-				// TODO dieser Methodenaufruf müsste in einen anderen Thread, glaube ich
+				// TODO dieser Methodenaufruf mï¿½sste in einen anderen Thread, glaube ich
 				// so funktioniert es aber auch...
 //				main.postInitScreens();    // empty method
 				
@@ -640,7 +644,7 @@ public class Main {
 	};
 	
 	/**
-	 * Neueste Änderungen an der Erstellung von Spielern unten bei den r.nextInt() Aufrufen.
+	 * Neueste ï¿½nderungen an der Erstellung von Spielern unten bei den r.nextInt() Aufrufen.
 	 */
 	private void populateWorld() {
 		Future<?>[] threads = futures.toArray(new Future<?>[]{});
@@ -665,7 +669,7 @@ public class Main {
 
 			int x = 0, y = 0;
 			// Kein Randfeld fuer x oder y: zuerst durch 'getSize() - 2' Randfeld oben / unten verhindern; dann durch + 2 den Wert (0 und 1) verhindern
-			// FIXME: durch die Spawnmethode kommt das richtige raus, wenn e.setSpawnX(...) nicht 0-basierte Werte erhählt
+			// FIXME: durch die Spawnmethode kommt das richtige raus, wenn e.setSpawnX(...) nicht 0-basierte Werte erhï¿½hlt
 			do {
 				x = r.nextInt(s.getWorld().getSizeX() - 2) + 1;
 				// x = r.nextInt(13 - 2); 
@@ -833,7 +837,7 @@ public class Main {
 	/**
 	 * Setzt die neue FPS-Rate.
 	 *
-	 * @param fps Die neu erwünschte FPS-Anzahl.
+	 * @param fps Die neu erwï¿½nschte FPS-Anzahl.
 	 * @throws IllegalArgumentException wenn die angegebene Rate unter 0 liegt.
 	 */
 	public void setFPS(int fps) {
@@ -845,7 +849,7 @@ public class Main {
 	}
 
 	/**
-	 * Gibt die vom Spiel gerade erzielten FPS zurück.
+	 * Gibt die vom Spiel gerade erzielten FPS zurï¿½ck.
 	 *
 	 * @return Die vom Spiel gerade erzielten FPS.
 	 */
