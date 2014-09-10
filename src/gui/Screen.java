@@ -1,6 +1,7 @@
 package gui;
 
 import comp.IComponent;
+import general.Delegate;
 import general.Main;
 
 import java.awt.Color;
@@ -17,6 +18,9 @@ import java.util.*;
 
 import comp.Component;
 import comp.Component.ComponentStatus;
+import scala.concurrent.ExecutionContext;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.BoxedUnit;
 
 /**
  * Hauptklasse für Screens.
@@ -50,8 +54,11 @@ public abstract class Screen implements Drawable, MouseListener,
 	 */
 	protected String name;
 	protected ScreenManager manager = Main.getGameWindow().getScreenManager();
-	
-	/**
+
+    public final Delegate.Function0Delegate onScreenEnter = new Delegate.Function0Delegate();
+    public final Delegate.Delegate<ScreenChangedEvent> onScreenLeft = new Delegate.Delegate<ScreenChangedEvent>();
+
+    /**
 	 * Die Components, die der Screen hält.
 	 */
 	private LinkedList<IComponent> components = new LinkedList<IComponent>();
@@ -175,7 +182,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * Wird aufgerufen, wenn der Screen betreten wird.
 	 */
 	public void onEnteringScreen(Object sender) {
-
+        onScreenEnter.callAsync(ExecutionContext.Implicits$.MODULE$.global());
 	}
 
 	/**
@@ -189,10 +196,8 @@ public abstract class Screen implements Drawable, MouseListener,
 	public void onLeavingScreen(Object sender, int toScreen) {
 		manager.setActiveScreen(toScreen);
 		manager.setLastScreenChange(new Date());
+        onScreenLeft.callAsync(new ScreenChangedEvent(toScreen), ExecutionContext.Implicits$.MODULE$.global());
 	}
-	
-	
-	
 
 	public void mousePressed(MouseEvent e) {
 		mousePosition = e.getPoint();
@@ -490,4 +495,11 @@ public abstract class Screen implements Drawable, MouseListener,
 	public void setPreprocessedDrawingEnabled(boolean preprocessedDrawingEnabled) {
 		this.preprocessedDrawingEnabled = preprocessedDrawingEnabled;
 	}
+
+    public final class ScreenChangedEvent {
+        public final int toIndex;
+        public ScreenChangedEvent(int toIndex) {
+            this.toIndex = toIndex;
+        }
+    }
 }
