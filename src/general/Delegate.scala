@@ -136,9 +136,13 @@ object Delegate {
     */
   trait Check[In <: AnyRef] extends Delegate[In] {
 
-    override def call(arg: In): Unit = if (check( arg )) super.call( arg )
-    else println( s"$arg has not been accepted" +
-      s" by ${check _}" )
+    override def call(arg: In): Unit = {
+      if (check( arg )) super.call( arg )
+      else {
+        println( s"$arg has not been accepted" +
+          s" by ${check _}" )
+      }
+    }
 
     def check(arg: In): Boolean
   }
@@ -148,7 +152,7 @@ object Delegate {
     * @tparam In The input type of the function. For multiple values, use tuples.
     */
   trait NullCheck[In <: AnyRef] extends Check[In] {
-    override def check(arg: In): Boolean = if (arg eq null) throw new NullPointerException else true
+    override def check(arg: In): Boolean = if (arg eq null) throw new NullPointerException else super.check( arg )
   }
 
   /** A delegate that does not receive any input parameters. <p>
