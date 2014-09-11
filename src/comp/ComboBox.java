@@ -51,18 +51,34 @@ public class ComboBox extends Component {
     public ComboBox (int x, int y, int width, int height, Screen screenBacking, String[] values) {
         super(x, y, width,  height, screenBacking);
 
+        init(values, screenBacking);
+    }
+
+    public ComboBox (int x, int y, Screen screenBacking, String [] values) {
+        super (x, y, 100, 100, screenBacking);
+
+        init(values, screenBacking);
+
+        setWidth(containerLabel.getWidth() + clickButton.getWidth());
+        selectionList.setHeight(selectionList.tfits().height);
+        setHeight(containerLabel.getHeight() + selectionList.getHeight());
+
+    }
+
+    private void init (String [] values, Screen screenBacking) {
         this.values = values;
-        containerLabel = new Label(x, y, screenBacking, "Computerstärke");
+        containerLabel = new Label(getX(), getY(), screenBacking, "Computerstärke");
         containerLabel.declineInput();
         containerLabel.setVisible(true);
 
-        clickButton = new Button(x + containerLabel.getWidth(), y, screenBacking, "Click");
+        clickButton = new Button(getX() + containerLabel.getWidth(), getY(), screenBacking, "");
         clickButton.setVisible(true);
         clickButton.setRoundBorder(false);
         clickButton.iconify(icon);
         clickButton.recalculateDimension();
 
-        selectionList = new comp.List(x, y + containerLabel.getHeight(), getWidth(), getHeight() - containerLabel.getHeight(), screenBacking, Converter.convertToList(values));
+        selectionList = new comp.List(getX(), getY() + containerLabel.getHeight(), clickButton.getWidth() + containerLabel.getWidth(),
+                getHeight() - containerLabel.getHeight(), screenBacking, Converter.convertToList(values));
         selectionList.declineInput();
         selectionList.setVisible(false);
 
@@ -95,8 +111,6 @@ public class ComboBox extends Component {
                 }
             }
         });
-
-
     }
 
     @Override
