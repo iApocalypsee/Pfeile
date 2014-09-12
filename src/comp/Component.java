@@ -4,12 +4,7 @@ import general.Main;
 import gui.Drawable;
 import gui.Screen;
 
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -650,6 +645,16 @@ public abstract class Component implements IComponent {
 		return new Dimension((int) (f.getStringBounds(text, frc)).getWidth(),
 				(int) (f.getStringBounds(text, frc).getHeight()));
 	}
+
+    /** Vergleicht, ob die gewählte Schriftart im System installiert ist
+     * @param f - Die Schriftart die verglichen werden soll*/
+    public static boolean isFontInstalled(Font f) {
+        for(Font font: GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts()) {
+            if(font.getFontName().equals(f.getFontName()))
+                return true;
+        }
+        return false;
+    }
 	
 	/**
 	 * Veranlasst das Steuerelement, wieder Input zu akzeptieren.
