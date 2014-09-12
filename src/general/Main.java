@@ -1,11 +1,8 @@
 package general;
 
+import com.sun.glass.ui.Screen;
 import entity.path.Direction;
-import gui.ArrowSelection;
-import gui.ArrowSelectionScreen;
-import gui.GameScreen;
-import gui.NewWorldTestScreen;
-import gui.PreWindow;
+import gui.*;
 
 import java.awt.Color;
 import java.awt.GraphicsDevice;
@@ -57,151 +54,148 @@ import world.tile.package$;
  */
 public class Main {
 
-	// NUR INTIALISIERUNG - WIE WERTE UND VARIABLEN ###############
+    // NUR INTIALISIERUNG - WIE WERTE UND VARIABLEN ###############
 
-	/**
-	 * Die derzeitige Anzahl an FPS, die das Spiel gerade erzielt.
-	 */
-	private volatile int fps;
+    /**
+     * Die derzeitige Anzahl an FPS, die das Spiel gerade erzielt.
+     */
+    private volatile int fps;
+    /**
+     * Die erw�nschte FPS-Rate. Wenn <code>setFPS == 0</code>, ist die Framerate unbegrenzt.
+     * Unbegrenzte Framerate noch nicht implementiert!
+     */
+    private volatile int setFPS = 35;
+    /**
+     * Der Timeout, der in der <code>Thread.sleep()</code>-Methode als Argument verwendet wird.
+     */
+    private int framerateTimeout = 1000 / setFPS;
+    // Zeichenvariablen.
+    private boolean running = true;
+    /**
+     * GETTER: Fenstergr��e
+     */
+    public static int getWindowWidth() {
+        // Fensterbreite: HDready - Einstellung
+        return 1366;
+    }
+    /**
+     * GETTER: Fensterh�he
+     */
+    public static int getWindowHeight() {
+        // Fensterh�he: HDready - Einstellung
+        return 768;
+    }
+    /**
+     * Returns the time in between two frames. The timeout is recalculated in every drawing process.
+     *
+     * @return The time in between two frames.
+     */
+    public int getTimeSinceLastFrame() {
+        return this.timeSinceLastFrame;
+    }
+    public static int delta() {
+        return main.timeSinceLastFrame;
+    }
+    private int timeSinceLastFrame = 0;
+    private static PreWindow settingWindow;
+    private static GameWindow gameWindow;
+    private GraphicsEnvironment environmentG;
+    private GraphicsDevice graphicsDevice;
+    public static TimeClock timeObj;
+    private static Thread stopwatchThread;
+    private static Main main;
+    // threading vars
+    private static ExecutorService exec = Executors.newCachedThreadPool();
+    private static Set<Future<?>> futures = new HashSet<Future<?>>(5);
 
-	/**
-	 * Die erw�nschte FPS-Rate. Wenn <code>setFPS == 0</code>, ist die Framerate unbegrenzt.
-	 * Unbegrenzte Framerate noch nicht implementiert!
-	 */
-	private volatile int setFPS = 35;
 
-	/**
-	 * Der Timeout, der in der <code>Thread.sleep()</code>-Methode als Argument verwendet wird.
-	 */
-	private int framerateTimeout = 1000 / setFPS;
 
-	// Zeichenvariablen.
-	private boolean running = true;
+    // DONE WITH ALL VARIABELS;
+    // MOST IMPORTANT METHODS ####################################
+    // ###########################################################
 
-	/**
-	 * GETTER: Fenstergr��e
-	 */
-	public static int getWindowWidth() {
-		// Fensterbreite: HDready - Einstellung
-		return 1366;
-	}
+    /**
+     * F�hrt nicht die main-Funktion aus, sondern gibt eine Referenz auf das
+     * Main-Objekt zur�ck.
+     *
+     * @return Referenz auf das Main-Objekt. Von hier aus kann auf fast alles
+     * zugegriffen werden.
+     */
+    public static Main getMain() {
+        return main;
+    }
+    // KONSTRUKTOR ###############################################
+    /**
+     * Der Konstruktor. Hier stehen keine Hauptaufrufe. Die Hauptaufrufe werden
+     * in <code>foo()</code> get�tigt.
+     */
+    private Main() {}
 
-	/**
-	 * GETTER: Fensterh�he
-	 */
-	public static int getWindowHeight() {
-		// Fensterh�he: HDready - Einstellung
-		return 768;
-	}
+    // ###########################################################
+    // HIER STEHEN DIE HAUPTAUFRUFE ##############################
+    // ################### IMPORTANT #############################
+    // ###########################################################
 
-	/**
-	 * Returns the time in between two frames. The timeout is recalculated in every drawing process.
-	 *
-	 * @return The time in between two frames.
-	 */
-	public int getTimeSinceLastFrame() {
-		return this.timeSinceLastFrame;
-	}
+    /**
+     * Main-Method �ffnet eine neue Instanz von Main: main
+     */
+    public static void main(String[] arguments) {
+        Mechanics.setUsername("Just a user");
+        main = new Main();
+        main.printSystemProperties();
 
-	public static int delta() {
-		return main.timeSinceLastFrame;
-	}
+        main.initPreWindow();
+        synchronized (main) {
+            try {
+                main.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        main.initGameWindow();
 
-	private int timeSinceLastFrame = 0;
+        main.initArrowSelectionWindow();
+        synchronized (main) {
+            try {
+                main.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
-	private static PreWindow settingWindow;
-	private static ArrowSelection arrowSelectionWindow;
-	private static GameWindow gameWindow;
-	private GraphicsEnvironment environmentG;
-	private GraphicsDevice graphicsDevice;
+        main.disposeInitialResources();
 
-	public static TimeClock timeObj;
-
-	private static Thread stopwatchThread;
-	private static Main main;
-
-	// threading vars
-	private static ExecutorService exec = Executors.newCachedThreadPool();
-	private static Set<Future<?>> futures = new HashSet<Future<?>>(5);
-
-	
-	// DONE WITH ALL VARIABELS;
-	// MOST IMPORTANT METHODS ####################################
-	/**
-	 * F�hrt nicht die main-Funktion aus, sondern gibt eine Referenz auf das
-	 * Main-Objekt zur�ck.
-	 *
-	 * @return Referenz auf das Main-Objekt. Von hier aus kann auf fast alles
-	 * zugegriffen werden.
-	 */
-	public static Main getMain() {
-		return main;
-	}
-
-	// KONSTRUKTOR ###############################################
-	/**
-	 * Der Konstruktor. Hier stehen keine Hauptaufrufe. Die Hauptaufrufe werden
-	 * in <code>foo()</code> get�tigt.
-	 */
-	private Main() {}
-	
-	// ###########################################################
-	// HIER STEHEN DIE HAUPTAUFRUFE ##############################
-	// ###########################################################
-	
-	/**
-	 * Main-Method �ffnet eine neue Instanz von Main: main
-	 */
-	public static void main(String[] arguments) {
-
-		Mechanics.setUsername("Just a user");
-
-		main = new Main();
-		main.printSystemProperties();
-		
-		main.initPreWindow();
-		main.initArrowSelectionWindow();
-		main.initGameWindow();
-		
-		synchronized (main) {
-			try {
-				main.wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-
-		main.disposeInitialResources();
-
-		// Starten wir das Spiel
-		main.runGame();
+        // Starten wir das Spiel
+        main.runGame();
 
 		/*
-		 * TODO Hier kommt cleanup-code, z.B. noch offene Dateien schlie�en.
+         * TODO Hier kommt cleanup-code, z.B. noch offene Dateien schlie�en.
 		 * Ich weis, noch nichts zum Aufr�umen hinterher, aber wir werden es sp�ter
 		 * 100% brauchen.
 		 */
 
-		// sanftes Schlie�en des GameWindows anstelle des harten System.exit(0)
-		gameWindow.dispose();
-		// und dann trotzdem HARTES BEENDEN!!! :D
-		System.exit(0);
-	}
+        // sanftes Schlie�en des GameWindows anstelle des harten System.exit(0)
+        gameWindow.dispose();
+        // und dann trotzdem HARTES BEENDEN!!! :D
+        System.exit(0);
+    }
 
-	private void disposeInitialResources() {
-		settingWindow = null;
-		arrowSelectionWindow = null;
-	}
-	
-	// ############ RUN GAME 
-	/** Hier laeuft das Spiel nach allen Insizialisierungen */
-	private void runGame() {
+    private void disposeInitialResources() {
+        settingWindow = null;
+    }
 
-		// start TimeClock
-		stopwatchThread.start();
-		timeObj.start();
+    // ############ RUN GAME
 
-		GameLoop.run(1 / 60.0);
+    /**
+     * Hier laeuft das Spiel nach allen Insizialisierungen
+     */
+    private void runGame() {
+
+        // start TimeClock
+        stopwatchThread.start();
+        timeObj.start();
+
+        GameLoop.run(1 / 60.0);
 		
 		/*
 		 * Mit einem Threadsystem ist es unm�glich, diese dreifache while(true)-Schleife
@@ -253,87 +247,91 @@ public class Main {
 			// TODO : Das kommplette Belohunungssystem
 		}
 		*/
-	}
-	
-	// #########################################################
-	// METHODEN: v. a. alle Threads ############################
-	// #########################################################
-	
-	/**
-	 * Initializes PreWindow.
-	 */
-	private void initPreWindow() {
-		Thread thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				int width = 620, height = 370;
-				settingWindow = new PreWindow(width, height, 0, "Einstellungen");
-				settingWindow.addWindowListener(new WindowAdapter() {
+    }
 
-					@Override
-					public void windowClosed(WindowEvent e) {
-						arrowSelectionWindow.setVisible(true);
-						generateWorld();
-						main.populateWorld();
-						main.initTimeClock();
-						main.newWorldTest();
-						new player.weapon.ArrowHelper();
-						ArrowSelectionScreen.getInstance().init();
-					}
-				});
-			}
-		});
-		thread.start();
-	}
+    // #########################################################
+    // METHODEN: v. a. alle Threads ############################
+    // #########################################################
 
-	private void initArrowSelectionWindow() {
-		Thread thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				int width = 620, height = 370;
-				arrowSelectionWindow = new ArrowSelection(width, height);
-				arrowSelectionWindow.addWindowListener(new WindowAdapter() {
-					@Override
-					public void windowClosed(WindowEvent e) {
+    /**
+     * Initializes PreWindow.
+     */
+    private void initPreWindow() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int width = 620, height = 370;
+                settingWindow = new PreWindow(width, height, 0, "Einstellungen");
+                settingWindow.addWindowListener(new WindowAdapter() {
 
-						// add the arrows actually to the inventory
-						doArrowSelectionAddingArrows();
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        generateWorld();
+                        main.populateWorld();
+                        synchronized (this) {
+                            main.notify();
+                        }
+                    }
+                });
+            }
+        });
+        thread.start();
+        thread.setPriority(7);
+    }
 
-						// window showing process
-						gameWindow.setVisible(true);
-						gameWindow.createBufferStrategy();
+    private void initArrowSelectionWindow() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-						synchronized (main) {
-							main.notify();
-						}
-					}
-				});
-			}
-		});
-		thread.start();
-	}
-	
-	/** Fuegt die Pfeile in das Inventar des Spielers ein */
-	private void doArrowSelectionAddingArrows() {
-		
-		for (String selectedArrow : arrowSelectionWindow.selectedArrows) {
-			if (((ScaleWorld) NewWorldTestScreen.getWorld()).getActivePlayer().getInventory().addItem (
-					getArrowSelection().checkString(selectedArrow)) == false) {
-				System.err.println("in Main: doArrowSelectionAddingArrows\n\t"
-						+ "Der Pfeil + " + selectedArrow + " konnte nicht hinzugef�gt werden."); 
-			}
-		}
-		ArrowSelectionScreen.getInstance().updateInventoryList();
-	}
+                final ArrowSelectionScreenPreSet arrowSelection = new ArrowSelectionScreenPreSet();
+                ArrowSelectionScreen.getInstance().getManager().setActiveScreen(arrowSelection);
 
-	class NewWorldFoo {
+                arrowSelection.onScreenLeft.register(new AbstractFunction1<gui.Screen.ScreenChangedEvent, BoxedUnit>() {
+                    @Override
+                    public BoxedUnit apply(gui.Screen.ScreenChangedEvent v1) {
+                        // add the arrows actually to the inventory
+                        doArrowSelectionAddingArrows(arrowSelection);
 
-		public Point p;
-		public Color c;
-		public int h;
-		public Class<? extends BaseTile> tileType;
+                        main.postInitScreens();    // empty method
 
-	}
+                        synchronized (main) {
+                            main.notify();
+                        }
+
+                        return null;
+                    }
+                });
+            }
+        });
+        thread.start();
+    }
+
+    /**
+     * Fuegt die Pfeile in das Inventar des Spielers ein
+     */
+    private void doArrowSelectionAddingArrows(ArrowSelectionScreenPreSet arrowSelection) {
+
+        for (String selectedArrow : arrowSelection.selectedArrows) {
+            if (!((ScaleWorld) NewWorldTestScreen.getWorld()).getActivePlayer().getInventory().addItem(
+                    player.weapon.ArrowHelper.instanceArrow(selectedArrow))) {
+
+                System.err.println("in Main: doArrowSelectionAddingArrows\n\t"
+                        + "Der Pfeil + " + selectedArrow + " konnte nicht hinzugefügt werden.");
+            }
+        }
+
+        ArrowSelectionScreen.getInstance().updateInventoryList();
+    }
+
+    class NewWorldFoo {
+
+        public Point p;
+        public Color c;
+        public int h;
+        public Class<? extends BaseTile> tileType;
+
+    }
 
 	/* DEFAULT IMPLEMENTATION WITH NO PROBABILITIES
 	private Color decide(LinkedList<Color> objects) {
@@ -341,159 +339,161 @@ public class Main {
 	}
 	*/
 
-	///*
-	private Color decide(LinkedList<Color> objects) {
-		Random r = new Random();
-		double val = r.nextDouble();
-		if(val < 0.4) {
-			return objects.get(0);
-		} else {
-			return objects.get(1);
-		}
-	}
-	//*/
+    ///*
+    private Color decide(LinkedList<Color> objects) {
+        Random r = new Random();
+        double val = r.nextDouble();
+        if (val < 0.4) {
+            return objects.get(0);
+        } else {
+            return objects.get(1);
+        }
+    }
+    //*/
 
-	private Class<? extends BaseTile> decide(java.util.List<Class<? extends BaseTile>> objs) {
-		return objs.get(new Random().nextInt(objs.size()));
-	}
+    private Class<? extends BaseTile> decide(java.util.List<Class<? extends BaseTile>> objs) {
+        return objs.get(new Random().nextInt(objs.size()));
+    }
 
-	public LinkedList<Integer> filterNotEvenNumbers(LinkedList<Integer> input) {
-		LinkedList<Integer> result = new LinkedList<Integer>();
-		for(Integer i : input) {
-			if(i % 2 == 0) result.add(i);
-		}
-		return result;
-	}
+    public LinkedList<Integer> filterNotEvenNumbers(LinkedList<Integer> input) {
+        LinkedList<Integer> result = new LinkedList<Integer>();
+        for (Integer i : input) {
+            if (i % 2 == 0) result.add(i);
+        }
+        return result;
+    }
 
-	public LinkedList<Integer> filterEvenNumbers(LinkedList<Integer> input) {
-		LinkedList<Integer> result = new LinkedList<Integer>();
-		for(Integer i : input) {
-			if(i % 2 == 1) result.add(i);
-		}
-		return result;
-	}
+    public LinkedList<Integer> filterEvenNumbers(LinkedList<Integer> input) {
+        LinkedList<Integer> result = new LinkedList<Integer>();
+        for (Integer i : input) {
+            if (i % 2 == 1) result.add(i);
+        }
+        return result;
+    }
 
-	/** FIXME: hier kann man eigentlich auch gleich den Punkt verwenden: LinkedList<Point> */
-	private class SHBCoordinator {
-		public Point p = null;
-	}
+    /**
+     * FIXME: hier kann man eigentlich auch gleich den Punkt verwenden: LinkedList<Point>
+     */
+    private class SHBCoordinator {
+        public Point p = null;
+    }
 
-	private void newWorldTest() {
-		IWorld w = new ScaleWorld(30, 30);
+    private void newWorldTest() {
+        IWorld w = new ScaleWorld(30, 30);
 		/*
 		world.World w = new world.World(50, 50);
 		*/
-		//NewWorldTestScreen.setWorld(w);
-		NewWorldTestScreen.setWorld(w);
-		//EditableTerrain terrain = (EditableTerrain) w.getTerrain();
-		EditableBaseTerrain terrain = (EditableBaseTerrain) w.getTerrain();
-		Random r = new Random();
+        //NewWorldTestScreen.setWorld(w);
+        NewWorldTestScreen.setWorld(w);
+        //EditableTerrain terrain = (EditableTerrain) w.getTerrain();
+        EditableBaseTerrain terrain = (EditableBaseTerrain) w.getTerrain();
+        Random r = new Random();
 
-		LinkedList<NewWorldFoo> points = new LinkedList<NewWorldFoo>();
-		LinkedList<SHBCoordinator> smoothCoordinators = new LinkedList<SHBCoordinator>();
+        LinkedList<NewWorldFoo> points = new LinkedList<NewWorldFoo>();
+        LinkedList<SHBCoordinator> smoothCoordinators = new LinkedList<SHBCoordinator>();
 
-		HeightBrush hb = new HeightBrush();
-		TileTypeBrush tb = new TileTypeBrush(w);
-		SmoothHeightBrush shb = new SmoothHeightBrush();
+        HeightBrush hb = new HeightBrush();
+        TileTypeBrush tb = new TileTypeBrush(w);
+        SmoothHeightBrush shb = new SmoothHeightBrush();
 
-		entity.Player p = new entity.Player(r.nextInt(w.getSizeX() - 1), r.nextInt(w.getSizeY() - 1), Mechanics.getUsername());
-
-
-		hb.setThickness(3);
-
-		LinkedList<Color> colors = new LinkedList<Color>();
-		colors.add(new Color(0x1C9618)); // GR�N
-		//colors.add(new Color(0xD5F5EF)); // EISWEI�
-		//colors.add(new Color(0xEBEE31)); // GELB
-		colors.add(new Color(0x6D75E8)); // BLAU
-		//colors.add(new Color(0x646464)); // GRAU
-		//colors.add(new Color(0x19D7E6));
-		//colors.add(new Color(0xD37D3C));
-		LinkedList<Class<? extends BaseTile>> baseTiles = new LinkedList<Class<? extends BaseTile>>();
-		baseTiles.add(GrassTile.class);
-		baseTiles.add(SeaTile.class);
-
-		int amtOfPoints = r.nextInt(w.getSizeX() * w.getSizeY()) + w.getSizeX() * w.getSizeY();
-		int maxHeightPerPaint = 3;
-		for(int i = 0; i < amtOfPoints; i++) {
-			NewWorldFoo f = new NewWorldFoo();
-			f.p = new Point(r.nextInt(w.getSizeX()), r.nextInt(w.getSizeY()));
-			f.c = decide(colors);
-			//f.h = r.nextInt(maxHeightPerPaint) + 3;
-			//f.h = r.nextInt(maxHeightPerPaint) + 2; // TODO Remember, if you want random heights, comment that in!!!!!!!!!!!!!
-			f.h = maxHeightPerPaint;
-			f.tileType = decide(baseTiles);
-			points.add(f);
-			//System.out.println("i = " + i);
-
-			SHBCoordinator c = new SHBCoordinator();
-			c.p = new Point(r.nextInt(w.getSizeX()), r.nextInt(w.getSizeY()));
-			smoothCoordinators.add(c);
-		}
-
-		int count = r.nextInt(8) + 3;
-		int i = 0;
-		LinkedList<Point> tempPoints = new LinkedList<Point>();
-		for(NewWorldFoo f : points) {
-			tempPoints.add(f.p);
-			if(i >= count) {
-				// reset the counter variables
-				i = 0;
-				count = r.nextInt(8) + 3;
-
-				// reset the brush and other stuff
-				//cb.setColor(f.c);
-				//cb.setThickness(r.nextInt(6) + 3);
+        entity.Player p = new entity.Player(r.nextInt(w.getSizeX() - 1), r.nextInt(w.getSizeY() - 1), Mechanics.getUsername());
 
 
-				//hb.setThickness(r.nextInt(6) + 3);
-				//hb.setHeightIncrement(f.h);
+        hb.setThickness(3);
+
+        LinkedList<Color> colors = new LinkedList<Color>();
+        colors.add(new Color(0x1C9618)); // GR�N
+        //colors.add(new Color(0xD5F5EF)); // EISWEI�
+        //colors.add(new Color(0xEBEE31)); // GELB
+        colors.add(new Color(0x6D75E8)); // BLAU
+        //colors.add(new Color(0x646464)); // GRAU
+        //colors.add(new Color(0x19D7E6));
+        //colors.add(new Color(0xD37D3C));
+        LinkedList<Class<? extends BaseTile>> baseTiles = new LinkedList<Class<? extends BaseTile>>();
+        baseTiles.add(GrassTile.class);
+        baseTiles.add(SeaTile.class);
+
+        int amtOfPoints = r.nextInt(w.getSizeX() * w.getSizeY()) + w.getSizeX() * w.getSizeY();
+        int maxHeightPerPaint = 3;
+        for (int i = 0; i < amtOfPoints; i++) {
+            NewWorldFoo f = new NewWorldFoo();
+            f.p = new Point(r.nextInt(w.getSizeX()), r.nextInt(w.getSizeY()));
+            f.c = decide(colors);
+            //f.h = r.nextInt(maxHeightPerPaint) + 3;
+            //f.h = r.nextInt(maxHeightPerPaint) + 2; // TODO Remember, if you want random heights, comment that in!!!!!!!!!!!!!
+            f.h = maxHeightPerPaint;
+            f.tileType = decide(baseTiles);
+            points.add(f);
+            //System.out.println("i = " + i);
+
+            SHBCoordinator c = new SHBCoordinator();
+            c.p = new Point(r.nextInt(w.getSizeX()), r.nextInt(w.getSizeY()));
+            smoothCoordinators.add(c);
+        }
+
+        int count = r.nextInt(8) + 3;
+        int i = 0;
+        LinkedList<Point> tempPoints = new LinkedList<Point>();
+        for (NewWorldFoo f : points) {
+            tempPoints.add(f.p);
+            if (i >= count) {
+                // reset the counter variables
+                i = 0;
+                count = r.nextInt(8) + 3;
+
+                // reset the brush and other stuff
+                //cb.setColor(f.c);
+                //cb.setThickness(r.nextInt(6) + 3);
 
 
-				tb.setTileClass(f.tileType);
-				tb.setThickness(r.nextInt(4) + 2);
+                //hb.setThickness(r.nextInt(6) + 3);
+                //hb.setHeightIncrement(f.h);
+
+
+                tb.setTileClass(f.tileType);
+                tb.setThickness(r.nextInt(4) + 2);
 
 				/*
 				terrain.edit(cb, tempPoints);
 				*/
 
-				//terrain.edit(hb, tempPoints);
+                //terrain.edit(hb, tempPoints);
 
 
-				terrain.edit(tb, tempPoints);
-				tempPoints.clear();
-			}
+                terrain.edit(tb, tempPoints);
+                tempPoints.clear();
+            }
 
 			/*
 			LinkedList<Point> p = new LinkedList<Point>();
 			p.add(f.p);
 			terrain.edit(cb, p);
 			*/
-			i++;
-			//System.out.print("i = " + i);
-			//System.out.println(" Main.newWorldTest");
-		}
+            i++;
+            //System.out.print("i = " + i);
+            //System.out.println(" Main.newWorldTest");
+        }
 
-		tempPoints.clear();
-		i = 0;
+        tempPoints.clear();
+        i = 0;
 
-		for(NewWorldFoo f : points) {
-			if(r.nextDouble() < 0.4) {
-				tempPoints.add(f.p);
-			}
-			if(i >= count) {
-				// reset the counter variables
-				i = 0;
-				count = r.nextInt(15) + 3;
+        for (NewWorldFoo f : points) {
+            if (r.nextDouble() < 0.4) {
+                tempPoints.add(f.p);
+            }
+            if (i >= count) {
+                // reset the counter variables
+                i = 0;
+                count = r.nextInt(15) + 3;
 
-				// reset the brush and other stuff
+                // reset the brush and other stuff
 				/*
 				cb.setColor(f.c);
 				cb.setThickness(r.nextInt(6) + 3);
 				*/
 
-				hb.setThickness(r.nextInt(3) + 1);
-				hb.setHeightIncrement(f.h);
+                hb.setThickness(r.nextInt(3) + 1);
+                hb.setHeightIncrement(f.h);
 
 				/*
 				tb.setTileClass(f.tileType);
@@ -503,63 +503,63 @@ public class Main {
 				/*
 				terrain.edit(cb, tempPoints);
 				*/
-				terrain.edit(hb, tempPoints);
-				//terrain.edit(shb, tempPoints); TODO WTF!!
+                terrain.edit(hb, tempPoints);
+                //terrain.edit(shb, tempPoints); TODO WTF!!
 
 				/*
 				terrain.edit(tb, tempPoints);
 				*/
-				tempPoints.clear();
-			}
+                tempPoints.clear();
+            }
 
-			i++;
-		}
+            i++;
+        }
 
-		tempPoints.clear();
-		i = 0;
+        tempPoints.clear();
+        i = 0;
 
-		for(NewWorldFoo f : points) {
-			tempPoints.add(f.p);
-			if(i >= count) {
-				i = 0;
-				count = r.nextInt(3) + 1;
-				shb.setThickness(r.nextInt(5) + 1);
-				terrain.edit(shb, tempPoints);
-				tempPoints.clear();
-			}
-			i++;
-		}
+        for (NewWorldFoo f : points) {
+            tempPoints.add(f.p);
+            if (i >= count) {
+                i = 0;
+                count = r.nextInt(3) + 1;
+                shb.setThickness(r.nextInt(5) + 1);
+                terrain.edit(shb, tempPoints);
+                tempPoints.clear();
+            }
+            i++;
+        }
 
-		for(int x = 0; x < w.getSizeX(); x++) {
-			for(int y = 0; y < w.getSizeY(); y++) {
-				BaseTile t = (BaseTile) w.getTileAt(x, y);
-				if(t instanceof SeaTile) continue;
-				world.tile.package$ tilehelper = package$.MODULE$;
-				Iterable<Tuple2<Direction, IBaseTile>> dict = JavaConversions.asJavaIterable(tilehelper.neighborsOf(t).toList());
-				boolean has = false;
-				for(Tuple2<Direction, IBaseTile> tuple : dict) {
-					if(tuple._2() instanceof SeaTile) {
-						has = true;
-						break;
-					}
-				}
+        for (int x = 0; x < w.getSizeX(); x++) {
+            for (int y = 0; y < w.getSizeY(); y++) {
+                BaseTile t = (BaseTile) w.getTileAt(x, y);
+                if (t instanceof SeaTile) continue;
+                world.tile.package$ tilehelper = package$.MODULE$;
+                Iterable<Tuple2<Direction, IBaseTile>> dict = JavaConversions.asJavaIterable(tilehelper.neighborsOf(t).toList());
+                boolean has = false;
+                for (Tuple2<Direction, IBaseTile> tuple : dict) {
+                    if (tuple._2() instanceof SeaTile) {
+                        has = true;
+                        break;
+                    }
+                }
 
-				if(has) {
-					int avg = 0, sum = 0, ct = 1;
-					for(Tuple2<Direction, IBaseTile> tuple : dict) {
-						if(tuple._2() instanceof SeaTile) continue;
-						if(tuple._2() == null) continue;
+                if (has) {
+                    int avg = 0, sum = 0, ct = 1;
+                    for (Tuple2<Direction, IBaseTile> tuple : dict) {
+                        if (tuple._2() instanceof SeaTile) continue;
+                        if (tuple._2() == null) continue;
 
-						sum += tuple._2().getTileHeight();
-						ct++;
-					}
-					avg = sum / ct;
-					t.setMetadata(HeightBrush.meta_key, avg);
-				}
-			}
-		}
+                        sum += tuple._2().getTileHeight();
+                        ct++;
+                    }
+                    avg = sum / ct;
+                    t.setMetadata(HeightBrush.meta_key, avg);
+                }
+            }
+        }
 
-		//printHeights(terrain);
+        //printHeights(terrain);
 		/*
 		try {
 			ImageIO.write(terrain.getColorMap(), "png", new File("colormap.png"));
@@ -585,205 +585,196 @@ public class Main {
 			}
 		}*/
 
-		terrain.adjustHeights();
+        terrain.adjustHeights();
 
-		NewWorldTestScreen.bindTileComponents();
-		NewWorldTestScreen.add(p);
-		NewWorldTestScreen.forcePullFront(p);
+        NewWorldTestScreen.bindTileComponents();
+        NewWorldTestScreen.add(p);
+        NewWorldTestScreen.forcePullFront(p);
 
-		p.world();
+        p.world();
 
-		System.out.println("Runtime.getRuntime().freeMemory() / (1024 * 1024) = " + Runtime.getRuntime().freeMemory() / (1024 * 1024));
-		System.out.println("Runtime.getRuntime().totalMemory() / (1024 * 1024) = " + Runtime.getRuntime().totalMemory() / (1024 * 1024));
-		//System.exit(0);
-	}
+        // Writes the Memory in the console after the world was created
+        SystemProperties.printMemory();
+    }
 
-	/**
-	 * Initialisiert GameWindow
-	 */
-	private void initGameWindow() {
+    /**
+     * Initialisiert GameWindow
+     */
+    private void initGameWindow() {
 
-		Thread thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
-				graphicsDevice = environmentG.getDefaultScreenDevice();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
+                graphicsDevice = environmentG.getDefaultScreenDevice();
 //				graphicsDevice.setDisplayMode(new DisplayMode(getWindowWidth(), getWindowHeight(), DisplayMode.BIT_DEPTH_MULTI, DisplayMode.REFRESH_RATE_UNKNOWN));
 
-				gameWindow = new GameWindow();
-				gameWindow.initializeScreens();
-				// TODO dieser Methodenaufruf m�sste in einen anderen Thread, glaube ich
-				// so funktioniert es aber auch...
-//				main.postInitScreens();    // empty method
-				
+                gameWindow = new GameWindow();
 
-				GameWindow.adjustWindow(gameWindow);
-				toggleFullscreen(true);
-				gameWindow.setVisible(false);
-			}
-		});
-		thread.start();
-	}
+                new player.weapon.ArrowHelper();
 
-	// ###### GENERATE WORLD 
-	// ###### SPAWN-SYSTEM
-	/**
-	 * Generates the world.
-	 */
-	private void generateWorld() {
-		// a callable object has to be used, as the world cannot be saved instantly to
-		// a GameScreen object
-		futures.add(exec.submit(worldGen));
-	}
-	
-	private Callable<World> worldGen = new Callable<World>() {
-		@Override
-		public World call() throws Exception {
-			return WorldFactory.generateDefault(Mechanics.worldSizeX, Mechanics.worldSizeY);
-		}
-	};
-	
-	/**
-	 * Neueste �nderungen an der Erstellung von Spielern unten bei den r.nextInt() Aufrufen.
-	 */
-	private void populateWorld() {
-		Future<?>[] threads = futures.toArray(new Future<?>[]{});
-		World w = null;
-		try {
-			synchronized (this) {
-				wait(1000);
-			}
-			w = (World) threads[0].get();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
+                gameWindow.initializeScreens();
+                main.initTimeClock();
+                main.newWorldTest();
 
-		if (w != null) {
+                GameWindow.adjustWindow(gameWindow);
+                toggleFullscreen(true);
 
-			Random r = new Random();
-			SpawnEntityInstanceArgs e = new SpawnEntityInstanceArgs();
-			GameScreen s = GameScreen.getInstance();
-			s.setWorld(w);
+                // window showing process
+                gameWindow.setVisible(true);
+                gameWindow.createBufferStrategy();
+            }
+        });
 
-			int x = 0, y = 0;
-			// Kein Randfeld fuer x oder y: zuerst durch 'getSize() - 2' Randfeld oben / unten verhindern; dann durch + 2 den Wert (0 und 1) verhindern
-			// FIXME: durch die Spawnmethode kommt das richtige raus, wenn e.setSpawnX(...) nicht 0-basierte Werte erh�hlt
-			do {
-				x = r.nextInt(s.getWorld().getSizeX() - 2) + 1;
-				// x = r.nextInt(13 - 2); 
-				// --> x = 0 bis 11
-				// x = x + 2;
-				// --> x = 2 bis 13
-				y = r.nextInt(s.getWorld().getSizeY() - 2) + 1;
-				
-			} while (!WorldFactory.isSpawnPossible(x, y));
-			e.setSpawnX(x);
-			e.setSpawnY(y);
-			e.setWorld(s.getWorld());
-			Player p = new Player(Mechanics.getUsername(), e);
-			s.getWorld().addPlayer(p);
-			s.getWorld().setActivePlayer(p);
-			s.getWorld().setTurnPlayer(p);
+        thread.setPriority(7);
+        thread.start();
 
-			SpawnEntityInstanceArgs bot_e = new SpawnEntityInstanceArgs();
+        synchronized(this) {
+            main.notify();
+        }
+    }
 
-			do {
-				x = r.nextInt(s.getWorld().getSizeX() - 2) + 1;
-				y = r.nextInt(s.getWorld().getSizeY() - 2) + 1;
-			} while (!WorldFactory.isSpawnPossible(x, y));
-			bot_e.setSpawnX(x);
-			bot_e.setSpawnY(y);
-			bot_e.setWorld(s.getWorld());
-			s.getWorld().addPlayer(new Bot("Dummie", bot_e));
-			
-			GameScreen.getInstance().getWorld().updateWorldSizeAtBeginning();
-		}
-	}
-	
-	/**
-	 * Initialiert die TimeClock
-	 */
-	private void initTimeClock() {
+    // ###### GENERATE WORLD
+    // ###### SPAWN-SYSTEM
+
+    /**
+     * Generates the world.
+     */
+    private void generateWorld() {
+        // a callable object has to be used, as the world cannot be saved instantly to
+        // a GameScreen object
+        futures.add(exec.submit(worldGen));
+    }
+
+    private Callable<World> worldGen = new Callable<World>() {
+        @Override
+        public World call() throws Exception {
+            return WorldFactory.generateDefault(Mechanics.worldSizeX, Mechanics.worldSizeY);
+        }
+    };
+
+    /**
+     * Neueste �nderungen an der Erstellung von Spielern unten bei den r.nextInt() Aufrufen.
+     */
+    private void populateWorld() {
+        Future<?>[] threads = futures.toArray(new Future<?>[]{});
+        World w = null;
+        try {
+            synchronized (this) {
+                wait(100);
+            }
+            w = (World) threads[0].get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        if (w != null) {
+
+            Random r = new Random();
+            SpawnEntityInstanceArgs e = new SpawnEntityInstanceArgs();
+            GameScreen s = GameScreen.getInstance();
+            s.setWorld(w);
+
+            int x = 0, y = 0;
+            // Kein Randfeld fuer x oder y: zuerst durch 'getSize() - 2' Randfeld oben / unten verhindern; dann durch + 2 den Wert (0 und 1) verhindern
+            // FIXME: durch die Spawnmethode kommt das richtige raus, wenn e.setSpawnX(...) nicht 0-basierte Werte erh�hlt
+            do {
+                x = r.nextInt(s.getWorld().getSizeX() - 2) + 1;
+                // x = r.nextInt(13 - 2);
+                // --> x = 0 bis 11
+                // x = x + 2;
+                // --> x = 2 bis 13
+                y = r.nextInt(s.getWorld().getSizeY() - 2) + 1;
+
+            } while (!WorldFactory.isSpawnPossible(x, y));
+            e.setSpawnX(x);
+            e.setSpawnY(y);
+            e.setWorld(s.getWorld());
+            Player p = new Player(Mechanics.getUsername(), e);
+            s.getWorld().addPlayer(p);
+            s.getWorld().setActivePlayer(p);
+            s.getWorld().setTurnPlayer(p);
+
+            SpawnEntityInstanceArgs bot_e = new SpawnEntityInstanceArgs();
+
+            do {
+                x = r.nextInt(s.getWorld().getSizeX() - 2) + 1;
+                y = r.nextInt(s.getWorld().getSizeY() - 2) + 1;
+            } while (!WorldFactory.isSpawnPossible(x, y));
+            bot_e.setSpawnX(x);
+            bot_e.setSpawnY(y);
+            bot_e.setWorld(s.getWorld());
+            s.getWorld().addPlayer(new Bot("Dummie", bot_e));
+
+            GameScreen.getInstance().getWorld().updateWorldSizeAtBeginning();
+        }
+    }
+
+    /**
+     * Initialiert die TimeClock
+     */
+    private void initTimeClock() {
 		/* Instanziert 'timeClock' */
-		timeObj = new TimeClock();
+        timeObj = new TimeClock();
 		
 		/* TimeClock wird zu Thread */
-		stopwatchThread = new Thread(timeObj);
-		stopwatchThread.setDaemon(true);
-		
-		timeObj.initNewPosition();
-	}
-	
-	/**
-	 * Prints all system properties to console.
-	 */
-	private void printSystemProperties() {
+        stopwatchThread = new Thread(timeObj);
+        stopwatchThread.setDaemon(true);
 
-		if (System.getProperty("os.name").equalsIgnoreCase("Linux")) {
-			System.setProperty("java.awt.headless", "false");
-		}
+        timeObj.initNewPosition();
+    }
 
-		Thread sys_props_out_thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				System.out.println("SYSTEM PROPERTIES");
+    /**
+     * Prints all system properties to console.
+     */
+    private void printSystemProperties() {
+        SystemProperties sys_props_out_thread = new SystemProperties();
+        sys_props_out_thread.setPriority(Thread.MIN_PRIORITY);
+        sys_props_out_thread.start();
+    }
 
-				System.out.println("AWT headless? " + System.getProperty("java.awt.headless"));
 
-				Properties sys_props = System.getProperties();
+    /**
+     * Toggles between fullscreen mode and windowed mode.
+     *
+     * @param fullscreen The fullscreen flag.
+     */
+    protected void toggleFullscreen(boolean fullscreen) {
+        if (fullscreen) {
+            if (graphicsDevice.getFullScreenWindow() == gameWindow) {
+                System.out.println("Already fullscreen.");
+                return;
+            }
+            graphicsDevice.setFullScreenWindow(gameWindow);
+        } else {
+            if (graphicsDevice.getFullScreenWindow() != gameWindow) {
+                System.out.println("Already windowed.");
+                return;
+            }
+            graphicsDevice.setFullScreenWindow(null);
+        }
+    }
 
-				System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
-				System.out.println("Total memory in JVM: " + (int) (Runtime.getRuntime().totalMemory() / (1024 * 1024)) + " MB");
-				System.out.println("Free memory  in JVM: " + (int) (Runtime.getRuntime().freeMemory() / (1024 * 1024)) + " MB");
-				System.out.println("Java version: " + sys_props.getProperty("java.version"));
-				System.out.println("OS: " + sys_props.getProperty("os.name") + "; version " + sys_props.getProperty("os.version"));
-				System.out.println("----------------------------------\n");
-			}
-		});
-		sys_props_out_thread.setPriority(Thread.MIN_PRIORITY);
-		sys_props_out_thread.start();
-	}
-	
-	
-	/**
-	 * Toggles between fullscreen mode and windowed mode.
-	 *
-	 * @param fullscreen The fullscreen flag.
-	 */
-	protected void toggleFullscreen(boolean fullscreen) {
-		if (fullscreen) {
-			if (graphicsDevice.getFullScreenWindow() == gameWindow) {
-				System.out.println("Already fullscreen.");
-				return;
-			}
-			graphicsDevice.setFullScreenWindow(gameWindow);
-		} else {
-			if (graphicsDevice.getFullScreenWindow() != gameWindow) {
-				System.out.println("Already windowed.");
-				return;
-			}
-			graphicsDevice.setFullScreenWindow(null);
-		}
-	}
+    // ########################################################################
+    // UNIMPORTANT METHODS -- NOT USED METHODS -- DEPRECATED METHODS ##########
+    // ########################################################################
 
-	// ########################################################################
-	// UNIMPORTANT METHODS -- NOT USED METHODS -- DEPRECATED METHODS ##########
-	// ########################################################################
-	
-	/** empty: aufruf in Main ist auskommentiert */
-	protected void postInitScreens() {
+    /**
+     * empty: aufruf in Main ist auskommentiert
+     */
+    protected void postInitScreens() {
 
-	}
-	
-	/**
-	 * ruft die eigentlichen Schleifen auf, je nachdem ob man gewonnen /
-	 * Gewonnen: doEndSequenceWonLoop (Aktuell 1000 MilliSekunden lang);
-	 * Verloren: doEndSequenceDiedLoop (Aktuell 1000 MilliSekunden lang)
-	 */
-	@SuppressWarnings("unused")
-	private void endSequenceLoop() {
+    }
+
+    /**
+     * ruft die eigentlichen Schleifen auf, je nachdem ob man gewonnen /
+     * Gewonnen: doEndSequenceWonLoop (Aktuell 1000 MilliSekunden lang);
+     * Verloren: doEndSequenceDiedLoop (Aktuell 1000 MilliSekunden lang)
+     */
+    @SuppressWarnings("unused")
+    private void endSequenceLoop() {
 //		if (lifePlayer.getLife() <= 0 || timeObj.getMilliDeath() < 0) {
 //			// Hier einstellen, wie lange Die End-Sequenz Schleife laufen soll
 //			doEndSequenceDiedLoop(1000);
@@ -791,124 +782,126 @@ public class Main {
 //			// Hier einstellen, wie lange die End-Sequenz Schleife laufen soll
 //			doEndSequenceWonLoop(1000);
 //		}
-	}
+    }
 
-	/**
-	 * Berechnung der Endsequence: Gewonnen Aufruf durch: endSequenceLoop()
-	 * milliSec: Die Zeit in Millisekunden, bis er automaisch terminiert
-	 */
-	@SuppressWarnings("unused")
-	private void doEndSequenceWonLoop(long milliSec) {
-		long endSequenceWonStartTime = System.currentTimeMillis();
-		do {
-			gameWindow.endSequenceWon();
-				Keys.updateKeys();
+    /**
+     * Berechnung der Endsequence: Gewonnen Aufruf durch: endSequenceLoop()
+     * milliSec: Die Zeit in Millisekunden, bis er automaisch terminiert
+     */
+    @SuppressWarnings("unused")
+    private void doEndSequenceWonLoop(long milliSec) {
+        long endSequenceWonStartTime = System.currentTimeMillis();
+        do {
+            gameWindow.endSequenceWon();
+            Keys.updateKeys();
 
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		} while (endSequenceWonStartTime <= System.currentTimeMillis() + milliSec);
-	}
-	
-	/**
-	 * Berechnung der Endsequence: Verloren Aufruf durch: endSequenceLoop()
-	 */
-	@SuppressWarnings({ "deprecation", "unused" })
-	private void doEndSequenceDiedLoop(long milliSecDied) {
-		long startTimeEndSequence = System.currentTimeMillis();
-		do {
-			gameWindow.endSequenceDied();
-				Keys.updateKeys();
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-					e.printStackTrace();
-			}
-		} while (startTimeEndSequence <= milliSecDied + System.currentTimeMillis());
-	}
-	
-	// ########################################
-	// GETTERS ################################
-	// SETTERS ################################
-	// ########################################
-	
-	/**
-	 * Setzt die neue FPS-Rate.
-	 *
-	 * @param fps Die neu erw�nschte FPS-Anzahl.
-	 * @throws IllegalArgumentException wenn die angegebene Rate unter 0 liegt.
-	 */
-	public void setFPS(int fps) {
-		if (fps <= 0) {
-			throw new IllegalArgumentException("Negative FPS not permitted.");
-		}
-		this.setFPS = fps;
-		recalculateTimeout();
-	}
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } while (endSequenceWonStartTime <= System.currentTimeMillis() + milliSec);
+    }
 
-	/**
-	 * Gibt die vom Spiel gerade erzielten FPS zur�ck.
-	 *
-	 * @return Die vom Spiel gerade erzielten FPS.
-	 */
-	public int getFPS() {
-		return fps;
-	}
+    /**
+     * Berechnung der Endsequence: Verloren Aufruf durch: endSequenceLoop()
+     */
+    @SuppressWarnings({"deprecation", "unused"})
+    private void doEndSequenceDiedLoop(long milliSecDied) {
+        long startTimeEndSequence = System.currentTimeMillis();
+        do {
+            gameWindow.endSequenceDied();
+            Keys.updateKeys();
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } while (startTimeEndSequence <= milliSecDied + System.currentTimeMillis());
+    }
 
-	/**
-	 * Berechnet den {@link #framerateTimeout} neu.
-	 */
-	private void recalculateTimeout() {
-		framerateTimeout = 1000 / setFPS;
-	}
-	
-	/** Abmessungen des Fensters: <code> new Rectangle (0, 0, Main.getWindowWidth(), Main.getWindowHeight()); </code> */
-	public static Rectangle getWindowDimensions() {
-		return new Rectangle(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
-	}
+    // ########################################
+    // GETTERS ################################
+    // SETTERS ################################
+    // ########################################
 
-	/** <code> while (isRunning() == true) main.render(); </code> */
-	public boolean isRunning() {
-		return running;
-	}
+    /**
+     * Setzt die neue FPS-Rate.
+     *
+     * @param fps Die neu erw�nschte FPS-Anzahl.
+     * @throws IllegalArgumentException wenn die angegebene Rate unter 0 liegt.
+     */
+    public void setFPS(int fps) {
+        if (fps <= 0) {
+            throw new IllegalArgumentException("Negative FPS not permitted.");
+        }
+        this.setFPS = fps;
+        recalculateTimeout();
+    }
 
-	/** <code> while (isRunning() == true) main.render(); </code> */
-	void setRunning(boolean running) {
-		this.running = running;
-	}
-	
-	/**
-	 * GETTER: PreWindow
-	 */
-	public PreWindow getPreWindow() {
-		return Main.settingWindow;
-	}
+    /**
+     * Gibt die vom Spiel gerade erzielten FPS zur�ck.
+     *
+     * @return Die vom Spiel gerade erzielten FPS.
+     */
+    public int getFPS() {
+        return fps;
+    }
 
-	/**
-	 * GETTER: GameWindow
-	 */
-	public static GameWindow getGameWindow() {
-		return gameWindow;
-	}
+    /**
+     * Berechnet den {@link #framerateTimeout} neu.
+     */
+    private void recalculateTimeout() {
+        framerateTimeout = 1000 / setFPS;
+    }
 
-	public static ArrowSelection getArrowSelection() {
-		return arrowSelectionWindow;
-	}
+    /**
+     * Abmessungen des Fensters: <code> new Rectangle (0, 0, Main.getWindowWidth(), Main.getWindowHeight()); </code>
+     */
+    public static Rectangle getWindowDimensions() {
+        return new Rectangle(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
+    }
 
-	/**
-	 * GETTER: GraphicsEnviroment
-	 */
-	public GraphicsEnvironment getGraphicsEnvironment() {
-		return this.environmentG;
-	}
+    /**
+     * <code> while (isRunning() == true) main.render(); </code>
+     */
+    public boolean isRunning() {
+        return running;
+    }
 
-	/**
-	 * GETTER: GraphicsDevice
-	 */
-	public GraphicsDevice getGraphicsDevice() {
-		return this.graphicsDevice;
-	}
+    /**
+     * <code> while (isRunning() == true) main.render(); </code>
+     */
+    void setRunning(boolean running) {
+        this.running = running;
+    }
+
+    /**
+     * GETTER: PreWindow
+     */
+    public PreWindow getPreWindow() {
+        return Main.settingWindow;
+    }
+
+    /**
+     * GETTER: GameWindow
+     */
+    public static GameWindow getGameWindow() {
+        return gameWindow;
+    }
+
+    /**
+     * GETTER: GraphicsEnviroment
+     */
+    public GraphicsEnvironment getGraphicsEnvironment() {
+        return this.environmentG;
+    }
+
+    /**
+     * GETTER: GraphicsDevice
+     */
+    public GraphicsDevice getGraphicsDevice() {
+        return this.graphicsDevice;
+    }
 
 }

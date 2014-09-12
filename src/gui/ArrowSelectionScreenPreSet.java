@@ -214,24 +214,6 @@ public class ArrowSelectionScreenPreSet extends Screen {
         this.arrowListSelected.getBackingScreen().add(this.arrowListSelected);
     }
 
-//
-//    /**
-//     * Convert-Methode: Wandelt die LinkedList 'selectedArrows2' in ein
-//     * Sting-Array um
-//     *
-//     * @param selectedArrows2
-//     * @return String[] mit Inhalt aus der LinkedList 'selectedArrows2'
-//     */
-//    public static String[] convert(LinkedList<String> selectedArrows2) {
-//        String[] values = new String[selectedArrows2.size()];
-//
-//        for (int i = 0; i < selectedArrows2.size(); i++) {
-//            values[i] = selectedArrows2.get(i);
-//        }
-//
-//        return values;
-//    }
-
     /**
     * KONTROLLE, OB READYBUTTON GEKLICKED WURDE Kontrolle, ob alle Pfeile
     * ausgew�hlt wurden
@@ -295,16 +277,11 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
     @Override
     public void draw(Graphics2D g) {
-        super.draw(g);
-        GameScreen.getInstance().getWorld().draw(g);
-
         g.setColor(TRANSPARENT_BACKGROUND);
         g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
-
         for(Button arrowButton : buttonListArrows) {
             arrowButton.draw(g);
         }
-
         arrowListSelected.draw(g);
         readyButton.draw(g);
         remainingArrows.draw(g);

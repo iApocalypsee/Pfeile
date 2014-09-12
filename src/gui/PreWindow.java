@@ -1,5 +1,6 @@
 package gui;
 
+import comp.ConfirmButton;
 import general.Mechanics;
 
 import java.awt.Dimension;
@@ -19,7 +20,6 @@ import javax.swing.*;
 public class PreWindow extends JFrame {
 	
 	protected JPanel thisPanel;
-	public static final int FIRST_SETTING = 0;
 	private static boolean isReady = false; 
 
 	private JPanel containPanel, containPanelEnd; 
@@ -66,7 +66,7 @@ public class PreWindow extends JFrame {
 			this.initSpinner.setPreferredSize(prefSizeForSpinner);
 			this.initSpinner.setVisible(false);
 			
-			this.confirmButton = new ConfirmButton("Bestätigen");
+			this.confirmButton = new ConfirmButton("Bestï¿½tigen");
 			this.confirmButton
 					.addActionListener(new PreWindow.ListenToButton());
 			this.confirmButton.type = 0;
@@ -74,26 +74,26 @@ public class PreWindow extends JFrame {
 			this.readyButton = new JButton("Ready");
 			this.standardButton = new JButton("Standard-Einstellungen");
 
-			this.label0 = new JLabel("Computerstärke: "); // "Computerstï¿½rke"
-			this.label1 = new JLabel("Pfeilanzahl [frei wählbar]: "); // "Pfeilanzahl [frei wï¿½hlbar]"
-			this.label2 = new JLabel("Pfeilanzahl [vorher wälbar]: "); // "Pfeilanzahl [vorher wï¿½hlbar]"
+			this.label0 = new JLabel("Computerstï¿½rke: "); // "Computerstï¿½rke"
+			this.label1 = new JLabel("Pfeilanzahl [frei wï¿½hlbar]: "); // "Pfeilanzahl [frei wï¿½hlbar]"
+			this.label2 = new JLabel("Pfeilanzahl [vorher wï¿½lbar]: "); // "Pfeilanzahl [vorher wï¿½hlbar]"
 			this.label3 = new JLabel("Zuganzahl pro Runde: "); // "Zuganzahl pro Runde"
 			this.label4 = new JLabel("maximales Leben: "); // "maximales Leben"
 			this.label5 = new JLabel("Lebensregeneration: "); // "Lebensregeneration"
 			this.label6 = new JLabel("Schaden: "); // "Schaden"
 			this.label7 = new JLabel("Zeit pro Runde: "); // "Zeit pro Runde"
-			this.label8 = new JLabel("Weltgröße: "); // "Weltgrï¿½ï¿½e"
+			this.label8 = new JLabel("Weltgrï¿½ï¿½e: "); // "Weltgrï¿½ï¿½e"
 			this.label9 = new JLabel("Handicap [Player]: "); // "Handicap [Player]"
 			this.label10 = new JLabel("Handicap [KI]: "); // "Handicap [KI]"
 
 			// Hauptauswahlfeld: initBox
 			this.initBox = new JComboBox<String>();
 
-			String[] stringArray = {"Computerstärke",
-					"Pfeilanzahl [frei wählbar]",
-					"Pfeilanzahl [vorher wählbar]", "Zuganzahl pro Runde",
+			String[] stringArray = {"Computerstï¿½rke",
+					"Pfeilanzahl [frei wï¿½hlbar]",
+					"Pfeilanzahl [vorher wï¿½hlbar]", "Zuganzahl pro Runde",
 					"maximales Leben", "Lebensregeneration", "Schaden",
-					"Zeit pro Zug", "Weltgröße", "Handicap"};
+					"Zeit pro Zug", "Weltgrï¿½ï¿½e", "Handicap"};
 
 			for (int i = 0; i < stringArray.length; i++) {
 				this.initBox.addItem(stringArray[i]);
@@ -115,7 +115,7 @@ public class PreWindow extends JFrame {
 
 			// selectBoxGr: Auswahlfeld
 			this.selectBoxGr = new JComboBox<String>();
-			String[] stringArray5 = {"gigantisch", "groß", "normal", "klein",
+			String[] stringArray5 = {"gigantisch", "groï¿½", "normal", "klein",
 					"winzig"};
 
 			for (int i = 0; i < stringArray5.length; i++) {
@@ -140,7 +140,7 @@ public class PreWindow extends JFrame {
 			this.selectBoxKI = new JComboBox<String>();
 
 			String[] stringArray4 = {"brutal", "stark", "mittel", "schwach",
-					"erbärmlich"};
+					"erbï¿½rmlich"};
 
 			for (int i = 0; i < stringArray4.length; i++) {
 				this.selectBoxKI.addItem(stringArray4[i]);
@@ -267,7 +267,7 @@ public class PreWindow extends JFrame {
 							Mechanics.worldSizeY = 21;
 							isEnteredRight = true;
 						} else if (PreWindow.this.selectBoxGr
-								.getSelectedIndex() == 1) { // "groß"
+								.getSelectedIndex() == 1) { // "groï¿½"
 							Mechanics.worldSizeX = 17;
 							Mechanics.worldSizeY = 15;
 							isEnteredRight = true;
@@ -622,7 +622,7 @@ public class PreWindow extends JFrame {
 				// Test, ob jede Zahl korrekt eingegeben wurde und gibt falls
 				// nï¿½tig eine Warnung aus
 				if (Mechanics.KI == -1) {
-					PreWindow.this.warningMessage = ("Select unselected Selections: Computerstärke");
+					PreWindow.this.warningMessage = ("Select unselected Selections: Computerstï¿½rke");
 					JOptionPane.showMessageDialog(PreWindow.this,
 							PreWindow.this.warningMessage, "Warning", 1);
 					return;
@@ -670,7 +670,7 @@ public class PreWindow extends JFrame {
 					return;
 				}
 				if (Mechanics.worldSizeX == -1 || Mechanics.worldSizeY == -1) {
-					PreWindow.this.warningMessage = ("Select unselected Selections: Weltgröße");
+					PreWindow.this.warningMessage = ("Select unselected Selections: Weltgrï¿½ï¿½e");
 					JOptionPane.showMessageDialog(PreWindow.this,
 							PreWindow.this.warningMessage, "Warning", 1);
 					return;
@@ -696,15 +696,15 @@ public class PreWindow extends JFrame {
 			// diese im Label an
 			else if (e.getSource() == PreWindow.this.standardButton) {
 				Mechanics.KI = 2;
-				PreWindow.this.label0.setText("Computerstärke: " + "mittel");
+				PreWindow.this.label0.setText("Computerstï¿½rke: " + "mittel");
 				
 				Mechanics.arrowNumberFreeSet = 5;
-				PreWindow.this.label1.setText("Pfeilanzahl [frei wählbar]: "
+				PreWindow.this.label1.setText("Pfeilanzahl [frei wï¿½hlbar]: "
 						+ Mechanics.arrowNumberFreeSet);
 				
 				Mechanics.arrowNumberPreSet = 10;
 				
-				PreWindow.this.label2.setText("Pfeilanzahl [vorher wählbar]: "
+				PreWindow.this.label2.setText("Pfeilanzahl [vorher wï¿½hlbar]: "
 						+ Mechanics.arrowNumberPreSet);
 				
 				Mechanics.turnsPerRound = 5;
@@ -726,7 +726,7 @@ public class PreWindow extends JFrame {
 				
 				Mechanics.worldSizeX = 13;
 				Mechanics.worldSizeY = 11;
-				PreWindow.this.label8.setText("Weltgröße: " + "normal");
+				PreWindow.this.label8.setText("Weltgrï¿½ï¿½e: " + "normal");
 				
 				Mechanics.handicapPlayer = 0;
 				PreWindow.this.label9.setText("Handicap [Player]: " + "0%");

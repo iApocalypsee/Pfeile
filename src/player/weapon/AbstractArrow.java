@@ -63,7 +63,7 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 	 /** Wie Schnel sich der Pfeil bewegt */
 	protected int arrowSpeed;
 	//
-	// /** Wie groß seine Beschleunigung ist */
+	// /** Wie groï¿½ seine Beschleunigung ist */
 	// protected int acceleration;
 	
 	/** Wie weit der Schaden des Pfeils nach dem Auftreffen reicht */
@@ -75,9 +75,9 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 	protected int fieldY;
 	/** Nummer des Feldes Ã¼ber das sich der Pfeil befindet */
 	protected int fieldNr;
-	/** X-Position des Pfeils - für GUI */
+	/** X-Position des Pfeils - fï¿½r GUI */
 	protected int posX;
-	/** Y-Position des Pfeils - für GUI */
+	/** Y-Position des Pfeils - fï¿½r GUI */
 	protected int posY;
 	/**
 	 * X-Positon im Koordinatensystem der Felder: Hier ist die Position X des
@@ -126,14 +126,16 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 		this.setAimMissingCurrent(aimMissing);
 		this.setDamageLosingRate(damageLosingRate);
 		this.setDistanceReached(0);
-		this.setFieldX(GameScreen.getInstance().getWorld().getPlayerByIndex(GameScreen.getInstance().getWorld().getTurnPlayer().getIndex()).getX());
-		this.setFieldY(GameScreen.getInstance().getWorld().getPlayerByIndex(GameScreen.getInstance().getWorld().getTurnPlayer().getIndex()).getY());
-		// this.reFreshFieldNr();
-		this.setPosX(gui.GameScreen.getInstance().getWorld().getPlayerByIndex(GameScreen.getInstance().getWorld().getTurnPlayer().getIndex()).getX());
-		this.setPosY(gui.GameScreen.getInstance().getWorld().getPlayerByIndex(GameScreen.getInstance().getWorld().getTurnPlayer().getIndex()).getY());
+        if (GameScreen.getInstance().getWorld() != null) {
+            this.setFieldX(GameScreen.getInstance().getWorld().getPlayerByIndex(GameScreen.getInstance().getWorld().getTurnPlayer().getIndex()).getX());
+            this.setFieldY(GameScreen.getInstance().getWorld().getPlayerByIndex(GameScreen.getInstance().getWorld().getTurnPlayer().getIndex()).getY());
+            // this.reFreshFieldNr();
+            this.setPosX(gui.GameScreen.getInstance().getWorld().getPlayerByIndex(GameScreen.getInstance().getWorld().getTurnPlayer().getIndex()).getX());
+            this.setPosY(gui.GameScreen.getInstance().getWorld().getPlayerByIndex(GameScreen.getInstance().getWorld().getTurnPlayer().getIndex()).getY());
 
-		// TODO this.setFieldXAim( X-Wert von Player oder ArrowQueue);
-		// TODO this.setFieldYAim( Y-Wert von Player oder ArrowQueue);
+            // TODO this.setFieldXAim( X-Wert von Player oder ArrowQueue);
+            // TODO this.setFieldYAim( Y-Wert von Player oder ArrowQueue);
+        }
 
 		// TODO: arrowSpeed
 		// TODO: damageRadius
@@ -224,7 +226,7 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 	}
 
 	/**
-	 * Setzt: Zurückgelgete Distanz des Pfeils [in 25m genau]
+	 * Setzt: Zurï¿½ckgelgete Distanz des Pfeils [in 25m genau]
 	 * 
 	 * @param newDistanceReached
 	 *            (int-Wert)
@@ -318,7 +320,7 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 		this.posY = posY;
 	}
 	
-	/** gibt die BufferedImage des Pfeils zurück
+	/** gibt die BufferedImage des Pfeils zurï¿½ck
 	 * @see <code> ArrowHelper.getArrowImage(int selectedIndex) </code> */
 	public abstract BufferedImage getImage();
 

@@ -47,7 +47,6 @@ public class ComboBox extends Component {
         }
     }
 
-
     public ComboBox (int x, int y, int width, int height, Screen screenBacking, String[] values) {
         super(x, y, width,  height, screenBacking);
 
@@ -113,11 +112,21 @@ public class ComboBox extends Component {
         });
     }
 
+    /** sets the selectedIndex of the <code> selectionList</code> to index. It also selects at <code> containerLabel </code>.
+     * @param index - The selected Index
+     */
+    public void setSelectedIndex (int index) {
+        selectionList.setSelectedIndex(index);
+        containerLabel.setText(getValues()[selectionList.getSelectedIndex()]);
+    }
+
     @Override
     public void draw(Graphics2D g) {
-        selectionList.draw(g);
-        containerLabel.draw(g);
-        clickButton.draw(g);
-        getBorder().draw(g);
+        if (isVisible()) {
+            selectionList.draw(g);
+            containerLabel.draw(g);
+            clickButton.draw(g);
+            getBorder().draw(g);
+        }
     }
 }

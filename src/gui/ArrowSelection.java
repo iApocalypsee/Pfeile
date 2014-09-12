@@ -1,5 +1,6 @@
 package gui;
 
+import general.Converter;
 import general.Mechanics;
 
 import java.awt.FlowLayout;
@@ -86,7 +87,7 @@ public class ArrowSelection extends JFrame {
 		});
 		selectedArrows.add("<keine Pfeile>");
 
-		arrowListSelected.setListData(convert(selectedArrows));
+		arrowListSelected.setListData(Converter.convert(selectedArrows));
 
 		// MouseListener f�r 'arrowList'
 		arrowList.addMouseListener(new MouseListener() {
@@ -101,7 +102,7 @@ public class ArrowSelection extends JFrame {
 						selectedArrows.clear();
 					}
 					selectedArrows.add(arrowList.getSelectedValue());
-					arrowListSelected.setListData(convert(selectedArrows));
+					arrowListSelected.setListData(Converter.convert(selectedArrows));
 					remainingArrows.setText(REMAINING_ARROW
 							+ (Mechanics.arrowNumberPreSet - selectedArrows
 									.size()));
@@ -136,11 +137,11 @@ public class ArrowSelection extends JFrame {
 					selectedArrows.remove(arrowListSelected.getSelectedIndex());
 					if (selectedArrows.isEmpty()) {
 						selectedArrows.add("<keine Pfeile>");
-						arrowListSelected.setListData(convert(selectedArrows));
+						arrowListSelected.setListData(Converter.convert(selectedArrows));
 						remainingArrows.setText(REMAINING_ARROW
 								+ Mechanics.arrowNumberPreSet);
 					} else {
-						arrowListSelected.setListData(convert(selectedArrows));
+						arrowListSelected.setListData(Converter.convert(selectedArrows));
 						remainingArrows.setText(REMAINING_ARROW
 								+ (Mechanics.arrowNumberPreSet - selectedArrows
 										.size()));
@@ -173,23 +174,6 @@ public class ArrowSelection extends JFrame {
 		listsPanel.add(scrollPane);
 		thisPanel.add(listsPanel);
 		thisPanel.add(remainingArrows);
-	}
-
-	/**
-	 * Convert-Methode: Wandelt die LinkedList 'selectedArrows2' in ein
-	 * Sting-Array um
-	 * 
-	 * @param selectedArrows2
-	 * @return String[] mit Inhalt aus der LinkedList 'selectedArrows2'
-	 */
-	public static String[] convert(LinkedList<String> selectedArrows2) {
-		String[] values = new String[selectedArrows2.size()];
-
-		for (int i = 0; i < selectedArrows2.size(); i++) {
-			values[i] = selectedArrows2.get(i);
-		}
-
-		return values;
 	}
 	
 	/**

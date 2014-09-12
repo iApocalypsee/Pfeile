@@ -19,8 +19,6 @@ import java.util.*;
 import comp.Component;
 import comp.Component.ComponentStatus;
 import scala.concurrent.ExecutionContext;
-import scala.runtime.AbstractFunction0;
-import scala.runtime.BoxedUnit;
 
 /**
  * Hauptklasse für Screens.
@@ -147,7 +145,7 @@ public abstract class Screen implements Drawable, MouseListener,
 
 	/**
 	 * Returns a <b>copy</b> of the component list. This copied list is not to be used
-	 * for adding components. This should be done with the method {@link Screen#add(com.github.pfeile.comp.Component)}
+	 * for adding components. This should be done with the method {@link Screen#add(comp.Component)}
 	 * @return A copy of all components that screen currently holds. Notice that the
 	 * components won't ge updated.
 	 */

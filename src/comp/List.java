@@ -41,9 +41,9 @@ public class List extends Component {
 	private int topIndex = 0;
 	
 	/**
-	 * Der (nullbasierte!) Index des Items, das ausgewählt wurde.
+	 * Der (nullbasierte!) Index des Items, das ausgewählt wurde. Standardmäßig auf 0.
 	 */
-	private int selectedIndex;
+	private int selectedIndex = 0;
 	
 	static final Insets STD_INSETS = new Insets(20, 10, 20, 10);
 
@@ -231,4 +231,9 @@ public class List extends Component {
 		
 		super.declineInput(); 
 	}
+
+    /** setzt den ausgewählten Wert auf index */
+    public void setSelectedIndex (int index) {
+        selectedIndex = index;
+    }
 }

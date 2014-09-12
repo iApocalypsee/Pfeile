@@ -2,6 +2,7 @@ package gui;
 
 import comp.Button;
 import comp.Component;
+import comp.ConfirmDialog;
 import comp.TextBox;
 import general.Main;
 import general.Mechanics;
@@ -273,7 +274,6 @@ public class ArrowSelectionScreen extends Screen {
 
 	/** Listener f�r die Liste */
 	private class MouseListHandler extends MouseAdapter {
-
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			

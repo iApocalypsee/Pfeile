@@ -13,7 +13,7 @@ import java.awt.image.BufferStrategy;
 /**
  * <b>4.1.2014 (Josip):</b> Einfachere Initialisierung der Screens. <br>
  * <b>10.1.2014 (Josip):</b> Verschiebung von GameWindow ins Package "com.github.pfeile.general"
- * <b>24.1.2014 (Josip):</b> Entfernung von <code>readyToShow</code>, unnötige Variable
+ * <b>24.1.2014 (Josip):</b> Entfernung von <code>readyToShow</code>, unnï¿½tige Variable
  *
  * @version 10.1.2014
  *
@@ -38,12 +38,10 @@ public class GameWindow extends JFrame {
 		screenManager = new ScreenManager();
 
 		addMouseListener(new MouseAdapter() {
-
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				screenManager.getActiveScreen().mouseReleased(arg0);
 			}
-
 			@Override
 			public void mousePressed(MouseEvent arg0) {
 				screenManager.getActiveScreen().mousePressed(arg0);
@@ -55,7 +53,6 @@ public class GameWindow extends JFrame {
 			public void mouseMoved(MouseEvent e) {
 				screenManager.getActiveScreen().mouseMoved(e);
 			}
-
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				screenManager.getActiveScreen().mouseDragged(e);
@@ -84,9 +81,9 @@ public class GameWindow extends JFrame {
 		new PauseScreen();
 		new AimSelectionScreen();
 		GameScreen.getInstance();
-		ArrowSelectionScreen.getInstance();
-		// NewWorldTestScreen$.MODULE$;
-		screenManager.setActiveScreen(GameScreen.SCREEN_INDEX);
+        ArrowSelectionScreen.getInstance().init();
+        new ArrowSelectionScreenPreSet();
+        screenManager.setActiveScreen(ArrowSelectionScreenPreSet.SCREEN_INDEX);
 		//screenManager.setActiveScreen(NewWorldTestScreen$.MODULE$);
 	}
 
