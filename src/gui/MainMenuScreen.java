@@ -4,6 +4,7 @@ import general.Main;
 
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -30,35 +31,14 @@ public class MainMenuScreen extends Screen {
 	
 	public MainMenuScreen() {
 		super(MainMenuScreen.SCREEN_NAME, MainMenuScreen.SCREEN_INDEX);
-		sp.addMouseListener(new MouseListener() {
-			
+		sp.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				onLeavingScreen(this, ArrowSelectionScreen.SCREEN_INDEX);
 			}
-			
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				
-			}
 		});
 		
-		// TODO zusätzlicher init-code für das hauptmenü, falls nötig
+		// TODO zusÃ¤tzlicher init-code fÃ¼r das HauptmenÃ¼, falls nÃ¶tig
 	}
 
 	@Override

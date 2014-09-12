@@ -69,7 +69,7 @@ public class PreWindowScreen extends Screen {
     private SpinnerModel spinnerModelTurnsPerRound;
 
     /** backgroundColor */
-    private static final Color TRANSPARENT_BACKGROUND = new Color(0, 0, 0, 185);
+    private static final Color TRANSPARENT_BACKGROUND = new Color(39, 47, 69, 204);
 
     /** Font for "Pfeile", printed in the upper right corner */
     private Font fontBig;
@@ -132,15 +132,15 @@ public class PreWindowScreen extends Screen {
         int labelPosY = 500;
         labels[0] = new Label(labelPosX, labelPosY, this, "Computerstärke: ");
         labels[1] = new Label(labelPosX, labelPosY + labels[0].getHeight(), this, "Pfeilanzahl [frei wählbar]: ");
-        labels[2] = new Label(labelPosX, labelPosY + labels[1].getHeight(), this, "Pfeilanzahl [vorher wählbar]: ");
-        labels[3] = new Label(labelPosX, labelPosY + labels[2].getHeight(), this, "maximales Leben: ");
-        labels[4] = new Label(labelPosX, labelPosY + labels[3].getHeight(), this, "Lebensregeneration: ");
-        labels[5] = new Label(labelPosX, labelPosY + labels[4].getHeight(), this, "Schadensmultiplikator: ");
-        labels[6] = new Label(labelPosX, labelPosY + labels[5].getHeight(), this, "Zuganzahl pro Runde: ");
-        labels[7] = new Label(labelPosX, labelPosY + labels[6].getHeight(), this, "Zeit pro Runde: ");
-        labels[8] = new Label(labelPosX, labelPosY + labels[7].getHeight(), this, "Handicap [Spieler]: ");
-        labels[9] = new Label(labelPosX, labelPosY + labels[8].getHeight(), this, "Handicap [Computer]: ");
-        labels[10] = new Label(labelPosX, labelPosY + labels[9].getHeight(), this, "Weltgröße: ");
+        labels[2] = new Label(labelPosX, labels[1].getY() + labels[1].getHeight(), this, "Pfeilanzahl [vorher wählbar]: ");
+        labels[3] = new Label(labelPosX, labels[2].getY() + labels[2].getHeight(), this, "maximales Leben: ");
+        labels[4] = new Label(labelPosX, labels[3].getY() + labels[3].getHeight(), this, "Lebensregeneration: ");
+        labels[5] = new Label(labelPosX, labels[4].getY() + labels[4].getHeight(), this, "Schadensmultiplikator: ");
+        labels[6] = new Label(labelPosX, labels[5].getY() + labels[5].getHeight(), this, "Züge pro Runde: ");
+        labels[7] = new Label(labelPosX, labels[6].getY() + labels[6].getHeight(), this, "Zeit pro Zug: ");
+        labels[8] = new Label(labelPosX, labels[7].getY() + labels[7].getHeight(), this, "Handicap [Spieler]: ");
+        labels[9] = new Label(labelPosX, labels[8].getY() + labels[8].getHeight(), this, "Handicap [Computer]: ");
+        labels[10] = new Label(labelPosX, labels[9].getY() + labels[9].getHeight(), this, "Weltgröße: ");
         for (Label label : labels) {
             label.declineInput();
         }
@@ -149,7 +149,7 @@ public class PreWindowScreen extends Screen {
                 "maximales Leben", "Lebensregeneration", "Schadensmultiplikator", "Züge pro Runde", "Zeit pro Zug",
                 "Handicap", "Weltgröße"};
 
-        selectorComboBox = new ComboBox (labelPosX, 80, this, comboBoxValuesSelector);
+        selectorComboBox = new ComboBox (labelPosX, 80,this, comboBoxValuesSelector);
 
         String[] comboBoxValuesHigh = { "hoch", "hoch-mittel", "mittel", "mittel-niedrig", "niedrig" };
         boxSelectHigh = new ComboBox (confirmButton.getX(), selectorComboBox.getY(), this, comboBoxValuesHigh);
@@ -174,7 +174,7 @@ public class PreWindowScreen extends Screen {
         boxSelectHandicapPlayer.declineInput();
         boxSelectHandicapKI.declineInput();
 
-        String[] comboBoxValuesKI = { "Brutal", "Stark", "Normal", "Schwach", "Erbärmlich" };
+        String[] comboBoxValuesKI = { "brutal", "stark", "normal", "schwach", "erbärmlich" };
         boxSelectKI = new ComboBox(confirmButton.getX(), selectorComboBox.getY(), this, comboBoxValuesKI);
         boxSelectKI.setSelectedIndex(2);
 
@@ -214,9 +214,9 @@ public class PreWindowScreen extends Screen {
 
         standardButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked (MouseEvent e) {
+            public void mouseReleased (MouseEvent e) {
                 Mechanics.KI = 2;
-                labels[0].setText("Computerstärke: " + "mittel");
+                labels[0].setText("Computerstärke: " + "normal");
 
                 Mechanics.arrowNumberFreeSet = 5;
                 labels[1].setText("Pfeilanzahl [frei wählbar]: " + Mechanics.arrowNumberFreeSet);
@@ -240,7 +240,7 @@ public class PreWindowScreen extends Screen {
                 labels[7].setText("Zeit pro Zug: " + "1 min");
 
                 Mechanics.handicapPlayer = 0;
-                labels[8].setText("Handicap [Player]: " + "0%");
+                labels[8].setText("Handicap [Spieler]: " + "0%");
 
                 Mechanics.handicapKI = 0;
                 labels[9].setText("Handicap [Computer]: " + "0%");
@@ -253,7 +253,7 @@ public class PreWindowScreen extends Screen {
 
         readyButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked (MouseEvent e) {
+            public void mouseReleased (MouseEvent e) {
                 // tests, if every value was correctly added (i.e. not not-added)
                 // and if necessary he opens the confirmDialog
                 if (Mechanics.KI == -1) {
@@ -269,11 +269,11 @@ public class PreWindowScreen extends Screen {
                     return;
                 }
                 if (Mechanics.turnsPerRound == -1) {
-                    openConfirmDialog("Select unselected Selections: Zeit pro Zug");
+                    openConfirmDialog("Select unselected Selections: Züge pro Runde");
                     return;
                 }
                 if (Mechanics.lifeMax == -1) {
-                    openConfirmDialog("Select unselected Selections: Leben");
+                    openConfirmDialog("Select unselected Selections: maximales Leben");
                     return;
                 }
                 if (Mechanics.lifeRegeneration == -1) {
@@ -298,13 +298,14 @@ public class PreWindowScreen extends Screen {
                 }
 
                 correctInits();
+                new ArrowSelectionScreenPreSet();
                 onLeavingScreen(this, ArrowSelectionScreenPreSet.SCREEN_INDEX);
             }
         });
 
         confirmButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked (MouseEvent e) {
+            public void mouseReleased (MouseEvent e) {
                 if (confirmButton.getSimplifiedBounds().contains(e.getPoint())) {
                     switch (selectorComboBox.getSelectedIndex()) {
                         case 0 : {

@@ -28,7 +28,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
     public LinkedList<String> selectedArrows;
 
     /** Hintergrund Farbe */
-    private static final Color TRANSPARENT_BACKGROUND = new Color(0, 0, 0, 185);
+    private static final Color TRANSPARENT_BACKGROUND = new Color(0, 0, 0, 201);
 
 
     /**
@@ -172,7 +172,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
         // Mouselistener f�r 'arrowListSelected'
         arrowListSelected.addMouseListener(new MouseListener() {
-            private final String REMAINING_ARROW = new String("Übrige Pfeile: ");
+            private final String REMAINING_ARROW = "Übrige Pfeile: ";
 
             @Override
             public void mouseClicked(MouseEvent eClicked) {
@@ -209,9 +209,9 @@ public class ArrowSelectionScreenPreSet extends Screen {
     }
 
     private void setArrowListSelected(LinkedList<String> selectedArrows) {
-        this.arrowListSelected.getBackingScreen().remove(this.arrowListSelected);
+        this.remove(this.arrowListSelected);
         this.arrowListSelected = new List (arrowListSelected.getX(), arrowListSelected.getY(), arrowListSelected.getWidth(), arrowListSelected.getHeight(), this, selectedArrows);
-        this.arrowListSelected.getBackingScreen().add(this.arrowListSelected);
+        this.add(this.arrowListSelected);
     }
 
     /**
@@ -271,7 +271,11 @@ public class ArrowSelectionScreenPreSet extends Screen {
               dispose();
              }
         }*/
-            onLeavingScreen(this, GameScreen.SCREEN_INDEX);
+           // onLeavingScreen(this, GameScreen.SCREEN_INDEX);
+            System.err.println("onLeavingScreen(ArrowSelectionScreenPreSet.this, GameScreen.SCREEN_INDEX");
+            System.out.println("Not right now...");
+            Main.getGameWindow().dispose();
+            System.exit(0);
         }
     }
 

@@ -123,7 +123,7 @@ public class AimSelectionScreen extends Screen {
 			g.fillPolygon(((BaseTile) (NewWorldTestScreen.getWorld().getTileAt(posX_selectedField, posY_selectedField))).getBounds());
 		}
 		
-		// TODO: auf die neue World-Klasse �ndern
+		// TODO: auf die neue World-Klasse ändern
 		World.timeLifeBox.draw(g);
 		Field.infoBox.draw(g);
 		Main.timeObj.draw(g);

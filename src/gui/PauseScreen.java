@@ -5,6 +5,7 @@ import general.Main;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.LinkedList;
@@ -57,63 +58,23 @@ public class PauseScreen extends Screen {
 		items.add("good bye");
 		list = new List(Main.getWindowWidth() - 200, 50, 150, 200, this, items);
 		
-//		try {
-//			toGame.iconify(ImageIO.read(new FileInputStream("/home/josip/Documents/Test.png")));
-//		} catch (IOException e1) {
-//			e1.printStackTrace();
-//		}
-		
 		box.makeChildrenOf(toGame);
 		
-		toGame.addMouseListener(new MouseListener() {
-
+		toGame.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 //				if(toGame.getBounds().contains(e.getPoint())) {
 					onLeavingScreen(this, GameScreen.SCREEN_INDEX);
 //				}
 			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
 		});
 		
-		toMainMenu.addMouseListener(new MouseListener() {
-
+		toMainMenu.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 //				if(toMainMenu.getBounds().contains(e.getPoint())) {
 					onLeavingScreen(this, MainMenuScreen.SCREEN_INDEX);
 //				}
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
 			}
 		});
 		
@@ -134,22 +95,11 @@ public class PauseScreen extends Screen {
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent e) {
-		super.mouseMoved(e);
-		
-	}
-
+	public void mouseMoved(MouseEvent e) {super.mouseMoved(e);}
 	@Override
-	public void mousePressed(MouseEvent e) {
-		super.mousePressed(e);
-		
-	}
-
+	public void mousePressed(MouseEvent e) {super.mousePressed(e);}
 	@Override
-	public void mouseReleased(MouseEvent e) {
-		super.mouseReleased(e);
-		
-	}
+	public void mouseReleased(MouseEvent e) {super.mouseReleased(e);}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
@@ -162,5 +112,4 @@ public class PauseScreen extends Screen {
 			}
 		}
 	}
-
 }

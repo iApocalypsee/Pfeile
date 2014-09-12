@@ -4,11 +4,7 @@ import com.sun.glass.ui.Screen;
 import entity.path.Direction;
 import gui.*;
 
-import java.awt.Color;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -56,40 +52,19 @@ public class Main {
 
     // NUR INTIALISIERUNG - WIE WERTE UND VARIABLEN ###############
 
-    /**
-     * Die derzeitige Anzahl an FPS, die das Spiel gerade erzielt.
-     */
+    /** Die derzeitige Anzahl an FPS, die das Spiel gerade erzielt. */
     private volatile int fps;
-    /**
-     * Die erw�nschte FPS-Rate. Wenn <code>setFPS == 0</code>, ist die Framerate unbegrenzt.
-     * Unbegrenzte Framerate noch nicht implementiert!
-     */
+    /** Die erw�nschte FPS-Rate. Wenn <code>setFPS == 0</code>, ist die Framerate unbegrenzt.
+     * Unbegrenzte Framerate noch nicht implementiert! */
     private volatile int setFPS = 35;
-    /**
-     * Der Timeout, der in der <code>Thread.sleep()</code>-Methode als Argument verwendet wird.
-     */
+    /** Der Timeout, der in der <code>Thread.sleep()</code>-Methode als Argument verwendet wird. */
     private int framerateTimeout = 1000 / setFPS;
     // Zeichenvariablen.
     private boolean running = true;
-    /**
-     * GETTER: Fenstergr��e
-     */
-    public static int getWindowWidth() {
-        // Fensterbreite: HDready - Einstellung
-        return 1366;
-    }
-    /**
-     * GETTER: Fensterh�he
-     */
-    public static int getWindowHeight() {
-        // Fensterh�he: HDready - Einstellung
-        return 768;
-    }
-    /**
-     * Returns the time in between two frames. The timeout is recalculated in every drawing process.
-     *
-     * @return The time in between two frames.
-     */
+    public static int getWindowWidth() { return 1366;}
+    public static int getWindowHeight() { return 768; }
+    /** Returns the time in between two frames. The timeout is recalculated in every drawing process.
+     * @return The time in between two frames. */
     public int getTimeSinceLastFrame() {
         return this.timeSinceLastFrame;
     }
@@ -97,10 +72,9 @@ public class Main {
         return main.timeSinceLastFrame;
     }
     private int timeSinceLastFrame = 0;
-    private static PreWindow settingWindow;
     private static GameWindow gameWindow;
-    private GraphicsEnvironment environmentG;
-    private GraphicsDevice graphicsDevice;
+    private static GraphicsEnvironment environmentG;
+    private static GraphicsDevice graphicsDevice;
     public static TimeClock timeObj;
     private static Thread stopwatchThread;
     private static Main main;
@@ -144,25 +118,37 @@ public class Main {
         main = new Main();
         main.printSystemProperties();
 
-        main.initPreWindow();
-        synchronized (main) {
-            try {
-                main.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        graphicsDevice = environmentG.getDefaultScreenDevice();
+        gameWindow = new GameWindow();
+
+        new player.weapon.ArrowHelper();
+
+        gameWindow.initializeScreens();
+        GameWindow.adjustWindow(gameWindow);
+        toggleFullscreen(true);
+
+
+        // window showing process
+        gameWindow.createBufferStrategy();
+        gameWindow.setVisible(true);
+
+        while(Keys.isKeyPressed(KeyEvent.VK_SPACE) == false) {
+            Main.getGameWindow().draw();
         }
-        main.initGameWindow();
+
+        try {
+            Thread.sleep(100000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        main.newWorldTest();
+        main.generateWorld();
+        main.populateWorld();
+        main.initTimeClock();
 
         main.initArrowSelectionWindow();
-        synchronized (main) {
-            try {
-                main.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
         main.disposeInitialResources();
 
         // Starten wir das Spiel
@@ -180,8 +166,10 @@ public class Main {
         System.exit(0);
     }
 
+    /** EMPTY */
+    @Deprecated
     private void disposeInitialResources() {
-        settingWindow = null;
+
     }
 
     // ############ RUN GAME
@@ -252,32 +240,6 @@ public class Main {
     // #########################################################
     // METHODEN: v. a. alle Threads ############################
     // #########################################################
-
-    /**
-     * Initializes PreWindow.
-     */
-    private void initPreWindow() {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int width = 620, height = 370;
-                settingWindow = new PreWindow(width, height, 0, "Einstellungen");
-                settingWindow.addWindowListener(new WindowAdapter() {
-
-                    @Override
-                    public void windowClosed(WindowEvent e) {
-                        generateWorld();
-                        main.populateWorld();
-                        synchronized (this) {
-                            main.notify();
-                        }
-                    }
-                });
-            }
-        });
-        thread.start();
-        thread.setPriority(7);
-    }
 
     private void initArrowSelectionWindow() {
         Thread thread = new Thread(new Runnable() {
@@ -741,7 +703,7 @@ public class Main {
      *
      * @param fullscreen The fullscreen flag.
      */
-    protected void toggleFullscreen(boolean fullscreen) {
+    protected static void toggleFullscreen(boolean fullscreen) {
         if (fullscreen) {
             if (graphicsDevice.getFullScreenWindow() == gameWindow) {
                 System.out.println("Already fullscreen.");
@@ -880,7 +842,7 @@ public class Main {
      * GETTER: PreWindow
      */
     public PreWindow getPreWindow() {
-        return Main.settingWindow;
+        return null;
     }
 
     /**

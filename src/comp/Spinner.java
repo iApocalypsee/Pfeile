@@ -24,9 +24,9 @@ public class Spinner extends Component {
     static {
         try {
             img_downButton = ImageIO.read(Spinner.class.getClassLoader().
-                    getResourceAsStream("resources/gfx/comp/Spinner_downButton"));
+                    getResourceAsStream("resources/gfx/comp/Spinner_downButton.png"));
             img_upButton = ImageIO.read(Spinner.class.getClassLoader().
-                    getResourceAsStream("resources/gfx/comp/Spinner_upButton"));
+                    getResourceAsStream("resources/gfx/comp/Spinner_upButton.png"));
         } catch (IOException e) { e.printStackTrace(); }
     }
 

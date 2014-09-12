@@ -58,8 +58,6 @@ public class List extends Component {
 		
 		this.items = items;
 		
-		tfits();
-		
 		for (int i = 0; i < items.size(); i++) {
 			final Label l = new Label(0, 0, items.get(i), this);
 			if (items.size() == 0) 
@@ -207,7 +205,7 @@ public class List extends Component {
 	
 	/**
 	 * Veranlasst die komplette Liste, wieder Input zu akzeptieren.
-	 * @see declineInput
+	 * @see #declineInput
 	 */
 	@Override
 	public void acceptInput() {
@@ -221,7 +219,7 @@ public class List extends Component {
 	
 	/**
 	 * Veranlasst das die Liste, keinen Input mehr zu akzeptieren.
-	 * @see acceptInput
+	 * @see #acceptInput
 	 */
 	@Override
 	public void declineInput() {

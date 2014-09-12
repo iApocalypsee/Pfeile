@@ -10,7 +10,7 @@ import comp.Component;
 
 
 /**
- * Klasse für Zeitbeschränkung und Anzeige.
+ * Klasse fï¿½r Zeitbeschrï¿½nkung und Anzeige.
  * <br><br>
  * <b>4.1.2014:</b> TimeClock erbt jetzt von Component. TimeClock ist jetzt in besserer
  * Handhabung.
@@ -23,12 +23,12 @@ public class TimeClock extends Component implements Runnable {
 	
 	// VARIABLEN - INITIALISIERUNG
 	
-	/** Variable, ob die Zeit abläuft: 
-	 * true: Zeit läuft ab
+	/** Variable, ob die Zeit ablï¿½uft: 
+	 * true: Zeit lï¿½uft ab
 	 * false: TimeClock ist gestoppt */
 	private boolean isRunning;
 	
-	/** übrige Zeit (in Millisekunden) bis der Timmer abläuft */
+	/** ï¿½brige Zeit (in Millisekunden) bis der Timmer ablï¿½uft */
 	private long timeLeft = Mechanics.timePerPlay; 
 	
 	/** letzter Zeitpunkt der Berechnungen */
@@ -49,8 +49,8 @@ public class TimeClock extends Component implements Runnable {
 		stop();
 	}
 	
-	/** Übernimmt timeSinceLastFrame + Aufruf durch 'Main'
-	 *  .... updated die aktuelle Zeit; übernimmt Thread */
+	/** ï¿½bernimmt timeSinceLastFrame + Aufruf durch 'Main'
+	 *  .... updated die aktuelle Zeit; ï¿½bernimmt Thread */
 	@Override
 	public void run() {
 		lastTime = System.currentTimeMillis(); 
@@ -63,13 +63,13 @@ public class TimeClock extends Component implements Runnable {
 				lastTime = timeCurrent;
 			} else {
 				try {
-					Thread.sleep(10);
+					Thread.sleep(15);
 				} catch (InterruptedException e) {e.printStackTrace();}
 			}
 		}
 	}
 
-	/** stoppt die Ausführung von TimeClock */
+	/** stoppt die Ausfï¿½hrung von TimeClock */
 	public void stop () {
 		isRunning = false;
 	}
@@ -79,8 +79,8 @@ public class TimeClock extends Component implements Runnable {
 		isRunning = true;
 	}
 	
-	/** setzt TimeClock auf maximale Zeit zurück
-	 * HINWEIS: an Start/Stop wird nicht geändert, also ggf. stop / start aufrufen */
+	/** setzt TimeClock auf maximale Zeit zurï¿½ck
+	 * HINWEIS: an Start/Stop wird nicht geï¿½ndert, also ggf. stop / start aufrufen */
 	public synchronized void reset() {
 		timeCurrent = 0;
 	}
@@ -89,10 +89,10 @@ public class TimeClock extends Component implements Runnable {
 	/** Umwandlung einer long-Variable in einem String min:sec:ms */
 	public static String timeFormatter(long millisecTime) {
         String time = null;
-        if(millisecTime < 0){  //überprüft ob die Zeit negativ ist
+        if(millisecTime < 0){  //ï¿½berprï¿½ft ob die Zeit negativ ist
             //throw new RuntimeException("Negativ time value provided");
         	time = "00:00:000";
-//        } else if (millisecTime > 357539999){   //überprüft ob das Limit des Formates nicht überschreitet
+//        } else if (millisecTime > 357539999){   //ï¿½berprï¿½ft ob das Limit des Formates nicht ï¿½berschreitet
 //            throw new RuntimeException("Time value exceeds allowed format");
         } else {
           long min = millisecTime / (60 * 1000);
@@ -132,11 +132,11 @@ public class TimeClock extends Component implements Runnable {
 	/** Umwandlung einer Zeitangabe in Millisekunden in einen String [min:sec] */
 	public static String timeFormatterShort(long millisecTime) {
         String time = null;
-        if(millisecTime<0){                        //überprüft ob zeit negativ ist
+        if(millisecTime<0){                        //ï¿½berprï¿½ft ob zeit negativ ist
             //throw new RuntimeException("Negativ time value provided");
         	
         	time = "00:00:000";
-        }else if (millisecTime>357539999){                 //überprüft ob das limit von format nicht überschreitet
+        }else if (millisecTime>357539999){                 //ï¿½berprï¿½ft ob das limit von format nicht ï¿½berschreitet
             throw new RuntimeException("Time value exceeds allowed format"); 
         }else {
           millisecTime = millisecTime/1000000;
@@ -164,7 +164,7 @@ public class TimeClock extends Component implements Runnable {
 	/**
 	 * UNUSED
 	 * 
-	 * gibt zurück ob der Zug enden muss oder nicht
+	 * gibt zurï¿½ck ob der Zug enden muss oder nicht
 	 * 
 	 * @return true - wenn die maximale Zeit pro Zug ('timeMax') ohne die Vergangene Zeit ('timeCurrent') kleiner als 0
 	 * @return false - wenn die 'true'-Bedingung nicht zutrifft
@@ -184,7 +184,7 @@ public class TimeClock extends Component implements Runnable {
 	}
 	
 	/** 
-	 * @return timeLeft - die übrige Zeit für diesen Zug
+	 * @return timeLeft - die ï¿½brige Zeit fï¿½r diesen Zug
 	 */
 	public synchronized long getMilliDeath() {
 		return Mechanics.timePerPlay - timeCurrent;
@@ -217,7 +217,7 @@ public class TimeClock extends Component implements Runnable {
 			System.err.println("String 'getTimePrintString()' == null; caused by 'TimeClock.draw(Graphics2D g)'");
 	}
 	
-	/** Iniziert Position abhängig von der Position der Lebensleiste */
+	/** Iniziert Position abhï¿½ngig von der Position der Lebensleiste */
 	public void initNewPosition () {
 		setX((int) (GameScreen.getInstance().getWorld().getActivePlayer().getLife().getBoundingLife().x + 
 				Math.round(GameScreen.getInstance().getWorld().getActivePlayer().getLife().getBoundingLife().width / 2.0 - getWidth() / 2.0)) - 2);

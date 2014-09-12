@@ -37,36 +37,19 @@ public class Label extends Component {
 		declineInput();
 		
 		addMouseListener(new MouseListener() {
-
 			@Override
-			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
+			public void mouseClicked(MouseEvent e) {}
 			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
+			public void mousePressed(MouseEvent e) {}
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				System.out.println("Executing label " + getName());
+				if (isAcceptingInput())
+                    System.out.println("Executing label " + getName());
 			}
-
 			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
+			public void mouseEntered(MouseEvent e) {}
 			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
+			public void mouseExited(MouseEvent e) {}
 		});
 		
 	}
@@ -100,7 +83,6 @@ public class Label extends Component {
 				break;
 			case NOT_AVAILABLE:
 				g.setColor(Color.gray);
-				System.out.println("Setting color to gray");
 				break;
 			default:
 				System.out.println("Status not defined.");

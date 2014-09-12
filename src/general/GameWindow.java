@@ -81,17 +81,17 @@ public class GameWindow extends JFrame {
 		new PauseScreen();
 		new AimSelectionScreen();
 		GameScreen.getInstance();
-        ArrowSelectionScreen.getInstance().init();
+        ArrowSelectionScreen.getInstance();
         new ArrowSelectionScreenPreSet();
-        screenManager.setActiveScreen(ArrowSelectionScreenPreSet.SCREEN_INDEX);
-		//screenManager.setActiveScreen(NewWorldTestScreen$.MODULE$);
+		// NewWorldTestScreen$.MODULE$;
+        screenManager.setActiveScreen(new PreWindowScreen());
 	}
 
 	/**
 	 * Buffering
 	 */
 	public void createBufferStrategy() {
-		createBufferStrategy(3);
+		createBufferStrategy(2);
 		strat = getBufferStrategy();
 	}
 

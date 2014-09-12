@@ -139,8 +139,8 @@ public abstract class Component implements IComponent {
 		border = new Border();
 		border.setComponent(this);
 
-        setX(0);
-        setY(0);
+        x = 0;
+        y = 0;
         assumeRect(0, 0);
 		
 		addMouseMotionListener(new MouseMotionListener() {

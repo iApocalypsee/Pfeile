@@ -9,7 +9,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * ComboBox is just for String
@@ -54,39 +53,46 @@ public class ComboBox extends Component {
     }
 
     public ComboBox (int x, int y, Screen screenBacking, String [] values) {
-        super (x, y, 100, 100, screenBacking);
+        super (x, y, 100, 250, screenBacking);
 
         init(values, screenBacking);
 
+       // System.out.println("..............:(" + getX() + "|" + getY() + ") + (" + getWidth() + "|" + getHeight() + ")");
+       // System.out.println("ContainerLabel:(" + containerLabel.getX() + "|" + containerLabel.getY() + ") + (" + containerLabel.getWidth() + "|" + containerLabel.getHeight() + ")" );
+       // System.out.println("ClickButton:   (" + clickButton.getX() + "|" + clickButton.getY() + ") + (" + clickButton.getWidth() + "|" + clickButton.getHeight() + ")" );
+       // System.out.println("selectionList: (" + selectionList.getX() + "|" + selectionList.getY() + ") + (" + selectionList.getWidth() + "|" + selectionList.getHeight() + ")");
+
         setWidth(containerLabel.getWidth() + clickButton.getWidth());
-        selectionList.setHeight(selectionList.tfits().height);
         setHeight(containerLabel.getHeight() + selectionList.getHeight());
 
+       // System.err.println(selectionList.tfits().height);
+
+       // System.out.println("..............:(" + getX() + "|" + getY() + ") + (" + getWidth() + "|" + getHeight() + ")");
+       // System.out.println("ContainerLabel:(" + containerLabel.getX() + "|" + containerLabel.getY() + ") + (" + containerLabel.getWidth() + "|" + containerLabel.getHeight() + ")" );
+       // System.out.println("ClickButton:   (" + clickButton.getX() + "|" + clickButton.getY() + ") + (" + clickButton.getWidth() + "|" + clickButton.getHeight() + ")" );
+       // System.out.println("selectionList: (" + selectionList.getX() + "|" + selectionList.getY() + ") + (" + selectionList.getWidth() + "|" + selectionList.getHeight() + ")");
+       // System.out.println();
     }
 
     private void init (String [] values, Screen screenBacking) {
         this.values = values;
         containerLabel = new Label(getX(), getY(), screenBacking, "Computerstärke");
-        containerLabel.declineInput();
         containerLabel.setVisible(true);
+        containerLabel.declineInput();
 
         clickButton = new Button(getX() + containerLabel.getWidth(), getY(), screenBacking, "");
         clickButton.setVisible(true);
         clickButton.setRoundBorder(false);
         clickButton.iconify(icon);
-        clickButton.recalculateDimension();
 
         selectionList = new comp.List(getX(), getY() + containerLabel.getHeight(), clickButton.getWidth() + containerLabel.getWidth(),
                 getHeight() - containerLabel.getHeight(), screenBacking, Converter.convertToList(values));
-        selectionList.declineInput();
         selectionList.setVisible(false);
-
-        getBorder().setInnerColor(Color.DARK_GRAY);
-        getBorder().setOuterColor(Color.LIGHT_GRAY);
+        selectionList.declineInput();
 
         clickButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseReleased(MouseEvent e) {
                 // only if click button was surly clicked
                 if (clickButton.getSimplifiedBounds().contains(e.getPoint())) {
                     if (selectionList.isVisible()) {
@@ -102,10 +108,9 @@ public class ComboBox extends Component {
 
         selectionList.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseReleased(MouseEvent e) {
                 if (selectionList.getSimplifiedBounds().contains(e.getPoint()) && selectionList.isAcceptingInput()) {
                     containerLabel.setText(getValues()[selectionList.getSelectedIndex()]);
-                    selectionList.declineInput();
                     selectionList.setVisible(false);
                 }
             }
@@ -167,8 +172,8 @@ public class ComboBox extends Component {
     @Override
     public void acceptInput () {
         super.acceptInput();
-        clickButton.declineInput();
-        selectionList.declineInput();
+        clickButton.acceptInput();
+        selectionList.acceptInput();
     }
 
     @Override
@@ -176,7 +181,6 @@ public class ComboBox extends Component {
         super.setVisible(vvvvvv);
         if (vvvvvv == true) {
             clickButton.acceptInput();
-            selectionList.declineInput();
         } else {
             clickButton.declineInput();
             selectionList.declineInput();
@@ -186,10 +190,13 @@ public class ComboBox extends Component {
     @Override
     public void draw(Graphics2D g) {
         if (isVisible()) {
+            g.setColor(Color.LIGHT_GRAY);
+            g.fillRect(containerLabel.getX() + 1, containerLabel.getY() + 1, getWidth() - 2, clickButton.getHeight() - 2);
+            g.setColor(Color.BLACK);
+            g.drawRect (containerLabel.getX(), containerLabel.getY(), getWidth(), clickButton.getHeight());
             selectionList.draw(g);
             containerLabel.draw(g);
             clickButton.draw(g);
-            getBorder().draw(g);
         }
     }
 }

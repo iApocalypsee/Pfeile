@@ -26,8 +26,7 @@ public final class ScreenManager implements Drawable {
 	/**
 	 * Erstellt eine neue Instanz des ScreenManagers.
 	 */
-	public ScreenManager() {
-	}
+	public ScreenManager() {}
 
 	/**
 	 * @return the activeScreen
