@@ -157,6 +157,33 @@ public class ComboBox extends Component {
     }
 
     @Override
+    public void declineInput () {
+        super.declineInput();
+        clickButton.declineInput();
+        selectionList.declineInput();
+
+    }
+
+    @Override
+    public void acceptInput () {
+        super.acceptInput();
+        clickButton.declineInput();
+        selectionList.declineInput();
+    }
+
+    @Override
+    public void setVisible (boolean vvvvvv) {
+        super.setVisible(vvvvvv);
+        if (vvvvvv == true) {
+            clickButton.acceptInput();
+            selectionList.declineInput();
+        } else {
+            clickButton.declineInput();
+            selectionList.declineInput();
+        }
+    }
+
+    @Override
     public void draw(Graphics2D g) {
         if (isVisible()) {
             selectionList.draw(g);

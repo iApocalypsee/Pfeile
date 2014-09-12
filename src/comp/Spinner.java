@@ -4,6 +4,8 @@ import gui.Screen;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -59,6 +61,10 @@ public class Spinner extends Component {
                 }
             }
         });
+
+        // TODO: add Listener for valueBox
+        // the listener needs to recognize the entered number,
+        // and set spinnerModel.setValue(String.valueOf(valueBox.getEnteredText());
     }
 
     @Override

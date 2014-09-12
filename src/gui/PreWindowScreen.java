@@ -56,9 +56,17 @@ public class PreWindowScreen extends Screen {
     /** ConfirmDialog to show questions and warnings */
     private ConfirmDialog confirmDialog;
 
-    // TODO: Spinner is not implemented yet!
     /** The Spinner for selecting the amount of arrows. */
-    //private comp.Spinner spinner;
+    private Spinner spinner;
+
+    /** SpinnerModel for choosing <code>Mechanics.arrowNumberPreSet</code> - "Pfeilanzahl [frei wählbar]" */
+    private SpinnerModel spinnerModelPreSet;
+
+    /** SpinnerModel for choosing <code>Mechanics.arrowNumberFreeSet</code> - "Pfeilanzahl [vorher wählbar]" */
+    private SpinnerModel spinnerModelFreeSet;
+
+    /** SpinnerModel for choosing <code>Mechanics.turnsPerRound</code> - "Züge pro Runde" */
+    private SpinnerModel spinnerModelTurnsPerRound;
 
     /** backgroundColor */
     private static final Color TRANSPARENT_BACKGROUND = new Color(0, 0, 0, 185);
@@ -183,7 +191,11 @@ public class PreWindowScreen extends Screen {
         confirmDialog.addMouseListener(new MouseAdapterConfirmDialog());
         confirmDialog.setVisible(false);
 
-        // TODO: inizialsieren der Spinner
+        spinnerModelPreSet = new SpinnerModel(10, 0, 50, 1);
+        spinnerModelFreeSet = new SpinnerModel(5, 0, 30, 1);
+        spinnerModelTurnsPerRound = new SpinnerModel(7, 1, 40, 1);
+        spinner = new Spinner(confirmButton.getX(), selectorComboBox.getY(), this, spinnerModelPreSet);
+        spinner.setVisible(false);
 
         fontBig = new Font("Blade 2", Font.BOLD, 210);
         fontMiddle = new Font("Calligraphic", Font.PLAIN, 48);
@@ -221,7 +233,7 @@ public class PreWindowScreen extends Screen {
                 Mechanics.damageMulti = 3;
                 labels[5].setText("Schadensmultiplikator: " + "mittel");
 
-                Mechanics.turnsPerRound = 8;
+                Mechanics.turnsPerRound = 7;
                 labels[6].setText("Züge pro Runde: " + Mechanics.turnsPerRound);
 
                 Mechanics.timePerPlay = 60000;
@@ -310,14 +322,14 @@ public class PreWindowScreen extends Screen {
                         }
                         case 1 : {
                             // Pfeilanzahl [frei wählbar]
-                            // TODO Spinnerauswertung
-                            // labels[1].setText("Pfeilanzahl [frei wählbar]: " + 5);
+                            Mechanics.arrowNumberFreeSet = spinnerModelFreeSet.getValue();
+                            labels[1].setText("Pfeilanzahl [frei wählbar]: " + Mechanics.arrowNumberFreeSet);
                             return;
                         }
                         case 2 : {
                             // Pfeilanzahl [vorher wählbar]
-                            // TODO Spinnerauswertung
-                            // labels[2].setText("Pfeilanzahl [vorherwählbar]: " + 10);
+                            Mechanics.arrowNumberPreSet = spinnerModelPreSet.getValue();
+                            labels[2].setText("Pfeilanzahl [vorher wählbar]: " + spinnerModelPreSet.getValue());
                             return;
                         }
                         case 3 : {
@@ -358,8 +370,8 @@ public class PreWindowScreen extends Screen {
                         }
                         case 6 : {
                             // Züge pro Runde
-                            // TODO Spinnerauswertung
-                            // labels[6].setText("Züge pro Runde: " + 8);
+                            Mechanics.turnsPerRound = spinnerModelTurnsPerRound.getValue();
+                            labels[6].setText("Züge pro Runde: " + spinnerModelTurnsPerRound.getValue());
                             return;
                         }
                         case 7 : {
@@ -433,7 +445,6 @@ public class PreWindowScreen extends Screen {
             private int selectedIndex = selectorComboBox.getSelectedIndex();
             @Override
             public void mouseReleased (MouseEvent e) {
-                // TODO: setVisible(...) of Spinner
                 // if this check is true, it is like an itemChancedEvent
                 if (selectorComboBox.getSelectedIndex() != selectedIndex) {
                     switch (selectorComboBox.getSelectedIndex()) {
@@ -444,9 +455,12 @@ public class PreWindowScreen extends Screen {
                             boxSelectHigh.setVisible(false);
                             boxSelectSize.setVisible(false);
                             boxSelectTime.setVisible(false);
+                            spinner.setVisible(false);
                             break;
                         }
                         case 1: { // Pfeilanzahl [frei wählbar]
+                            spinner.setVisible(true);
+                            spinner.setSpinnerModel(spinnerModelFreeSet);
                             boxSelectHandicapKI.setVisible(false);
                             boxSelectHandicapPlayer.setVisible(false);
                             boxSelectHigh.setVisible(false);
@@ -456,6 +470,8 @@ public class PreWindowScreen extends Screen {
                             break;
                         }
                         case 2: { // Pfeilanzahl [vorher wählbar]
+                            spinner.setVisible(true);
+                            spinner.setSpinnerModel(spinnerModelPreSet);
                             boxSelectHandicapKI.setVisible(false);
                             boxSelectHandicapPlayer.setVisible(false);
                             boxSelectHigh.setVisible(false);
@@ -492,6 +508,8 @@ public class PreWindowScreen extends Screen {
                             break;
                         }
                         case 6: { // Züge pro Runde
+                            spinner.setVisible(true);
+                            spinner.setSpinnerModel(spinnerModelTurnsPerRound);
                             boxSelectHandicapKI.setVisible(false);
                             boxSelectHandicapPlayer.setVisible(false);
                             boxSelectHigh.setVisible(false);
@@ -558,6 +576,7 @@ public class PreWindowScreen extends Screen {
         boxSelectKI.declineInput();
         boxSelectSize.declineInput();
         boxSelectTime.declineInput();
+        spinner.declineInput();
     }
 
     /**
@@ -574,6 +593,7 @@ public class PreWindowScreen extends Screen {
         if (boxSelectHandicapKI.isVisible()) {
             boxSelectHandicapKI.acceptInput();
             boxSelectHandicapPlayer.acceptInput();
+            return;
         }
         if (boxSelectHigh.isVisible())
             boxSelectHigh.acceptInput();
@@ -583,6 +603,8 @@ public class PreWindowScreen extends Screen {
             boxSelectSize.acceptInput();
         if (boxSelectTime.isVisible())
             boxSelectTime.acceptInput();
+        if (spinner.isVisible())
+            spinner.acceptInput();
     }
 
     /** private class to close an open ConfirmDialog.
@@ -670,6 +692,7 @@ public class PreWindowScreen extends Screen {
         boxSelectHandicapPlayer.draw(g);
         boxSelectSize.draw(g);
         boxSelectTime.draw(g);
+        spinner.draw(g);
         for (Label label : labels)
             label.draw(g);
         selectorComboBox.draw(g);
