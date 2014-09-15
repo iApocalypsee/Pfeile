@@ -74,16 +74,19 @@ public class PreWindowScreen extends Screen {
     /** Font for "Pfeile", printed in the upper right corner */
     private Font fontBig;
 
+    /** position of <code>g.drawString("Pfeile", fontBigPosition.x, fontBigPosition.y); </code> */
+    private Point fontBigPosition;
+
     /** Font for "Ein Strategiespiel" */
     private Font fontMiddle;
 
-    /** position of g.drawString("ein Strategiespiel", fontMiddlePosition.x, fontMiddlePosition.y) */
+    /** position of <code>g.drawString("ein Strategiespiel", fontMiddlePosition.x, fontMiddlePosition.y); </code>*/
     private Point fontMiddlePosition;
 
     /** Font for "Josip Palavra und Daniel Schmaus" */
     private Font fontSmall;
 
-    /** position of g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y") */
+    /** position of <code>g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y")</code> */
     private Point fontSmallPosition;
 
     /** a Clip for playing the title melodie */
@@ -106,14 +109,13 @@ public class PreWindowScreen extends Screen {
      * It will always start at the beginning after calling <code> playLoop() </code>.
      * To stop it again use <code> stopLoop </code>
      * The song should play until entering GameScreen / NewWorldTestScreen. */
-    public void playLoop () {
-        backgroundSound.setLoopPoints(0, 1);
-        backgroundSound.loop(Integer.MAX_VALUE);
+    public static void playLoop () {
+        backgroundSound.loop(Clip.LOOP_CONTINUOUSLY);
     }
     /** Stops the playing of the endless loop started with <code> playLoop </code>.
      * To Start again use <code> playLoop()</code>.
      */
-    public void stopLoop () {
+    public static void stopLoop () {
         backgroundSound.stop();
     }
 
@@ -149,7 +151,7 @@ public class PreWindowScreen extends Screen {
                 "maximales Leben", "Lebensregeneration", "Schadensmultiplikator", "Züge pro Runde", "Zeit pro Zug",
                 "Handicap", "Weltgröße"};
 
-        selectorComboBox = new ComboBox (labelPosX, 80,this, comboBoxValuesSelector);
+        selectorComboBox = new ComboBox (labelPosX, 80, 250, 500, this, comboBoxValuesSelector);
 
         String[] comboBoxValuesHigh = { "hoch", "hoch-mittel", "mittel", "mittel-niedrig", "niedrig" };
         boxSelectHigh = new ComboBox (confirmButton.getX(), selectorComboBox.getY(), this, comboBoxValuesHigh);
@@ -197,20 +199,21 @@ public class PreWindowScreen extends Screen {
         spinner = new Spinner(confirmButton.getX(), selectorComboBox.getY(), this, spinnerModelPreSet);
         spinner.setVisible(false);
 
-        fontBig = new Font("Blade 2", Font.BOLD, 210);
+        fontBig = new Font("Blade 2", Font.BOLD, 220);
         fontMiddle = new Font("Calligraphic", Font.PLAIN, 48);
         fontSmall = new Font ("Aladdin", Font.ITALIC, 21);
 
         if (comp.Component.isFontInstalled(fontBig) == false)
-            fontBig = new Font("Viking", Font.BOLD, 100);
+            fontBig = new Font("Viking", Font.BOLD, 105);
         if (comp.Component.isFontInstalled(fontMiddle) == false)
             fontMiddle = new Font("ShadowedGermanica", Font.PLAIN, 45);
         if (comp.Component.isFontInstalled(fontSmall) == false)
             fontSmall = new Font("Berylium", Font.ITALIC, 15);
 
-        fontMiddlePosition = new Point(confirmButton.getX() + 5, 55 + Component.getTextBounds("Pfeile", fontBig).height);
+        fontBigPosition = new Point(confirmButton.getX() + 240, Component.getTextBounds("Pfeile", fontBig).height + 5);
+        fontMiddlePosition = new Point(fontBigPosition.x + 43, fontBigPosition.y + Component.getTextBounds("ein Strategiespiel", fontMiddle).height);
         fontSmallPosition = new Point(fontMiddlePosition.x,
-                   fontMiddlePosition.y + Component.getTextBounds("ein Strategiespiel", fontMiddle).height + 5);
+                   fontMiddlePosition.y + Component.getTextBounds("von Josip Palavra und Daniel Schmaus", fontSmall).height + 5);
 
         standardButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -675,10 +678,13 @@ public class PreWindowScreen extends Screen {
 
     @Override
     public void draw (Graphics2D g) {
+        // Backgound
         g.setColor(TRANSPARENT_BACKGROUND);
+        g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
+
         g.setColor(new Color (159, 30, 29));
         g.setFont(fontBig);
-        g.drawString("Pfeile", 50, confirmButton.getX() + confirmButton.getWidth() + 20);
+        g.drawString("Pfeile", fontBigPosition.x, fontBigPosition.y);
         g.setColor(new Color (213, 191, 131));
         g.setFont(fontMiddle);
         g.drawString("ein Strategiespiel", fontMiddlePosition.x, fontMiddlePosition.y);
@@ -686,7 +692,7 @@ public class PreWindowScreen extends Screen {
         g.setFont(fontSmall);
         g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y );
 
-        g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
+        // Components
         boxSelectKI.draw(g);
         boxSelectHigh.draw(g);
         boxSelectHandicapKI.draw(g);

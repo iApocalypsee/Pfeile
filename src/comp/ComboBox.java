@@ -48,14 +48,18 @@ public class ComboBox extends Component {
 
     public ComboBox (int x, int y, int width, int height, Screen screenBacking, String[] values) {
         super(x, y, width,  height, screenBacking);
+        this.values = values;
 
-        init(values, screenBacking);
+        init(screenBacking);
+
+        clickButton.setX(getX() + getWidth() - clickButton.getWidth());
     }
 
     public ComboBox (int x, int y, Screen screenBacking, String [] values) {
         super (x, y, 100, 250, screenBacking);
+        this.values = values;
 
-        init(values, screenBacking);
+        init(screenBacking);
 
        // System.out.println("..............:(" + getX() + "|" + getY() + ") + (" + getWidth() + "|" + getHeight() + ")");
        // System.out.println("ContainerLabel:(" + containerLabel.getX() + "|" + containerLabel.getY() + ") + (" + containerLabel.getWidth() + "|" + containerLabel.getHeight() + ")" );
@@ -74,8 +78,7 @@ public class ComboBox extends Component {
        // System.out.println();
     }
 
-    private void init (String [] values, Screen screenBacking) {
-        this.values = values;
+    private void init (Screen screenBacking) {
         containerLabel = new Label(getX(), getY(), screenBacking, "Computerstärke");
         containerLabel.setVisible(true);
         containerLabel.declineInput();

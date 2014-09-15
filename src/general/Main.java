@@ -125,6 +125,9 @@ public class Main {
         new player.weapon.ArrowHelper();
 
         gameWindow.initializeScreens();
+        // Let's begin playing the title song
+        PreWindowScreen.playLoop();
+
         GameWindow.adjustWindow(gameWindow);
         toggleFullscreen(true);
 
@@ -133,14 +136,9 @@ public class Main {
         gameWindow.createBufferStrategy();
         gameWindow.setVisible(true);
 
+        // nur vorübergehend, hier später runGame() aufrufen und unterbrechen
         while(Keys.isKeyPressed(KeyEvent.VK_SPACE) == false) {
             Main.getGameWindow().draw();
-        }
-
-        try {
-            Thread.sleep(100000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
 
         main.newWorldTest();
@@ -151,7 +149,9 @@ public class Main {
         main.initArrowSelectionWindow();
         main.disposeInitialResources();
 
-        // Starten wir das Spiel
+        PreWindowScreen.stopLoop();
+
+        // Starten wir das Spiel wieder evtl. über Warte-Screen wechseln
         main.runGame();
 
 		/*
