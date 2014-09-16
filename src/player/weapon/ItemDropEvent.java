@@ -4,6 +4,7 @@ import java.awt.Point;
 
 import player.Combatant;
 
+@Deprecated
 public class ItemDropEvent {
 	
 	/**

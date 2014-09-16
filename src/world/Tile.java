@@ -18,7 +18,9 @@ import java.util.List;
 /**
  * @author Josip
  * @version 20.05.2014
+ * @deprecated Old tile class, use the new Scala class.
  */
+@Deprecated
 public class Tile extends Component implements ITile {
 
 	private static final long serialVersionUID = 1921867867258539893L;
@@ -311,7 +313,6 @@ public class Tile extends Component implements ITile {
 		return p;
 	}
 
-	@Override
 	public TileCage getCage() {
 		return cage;
 	}

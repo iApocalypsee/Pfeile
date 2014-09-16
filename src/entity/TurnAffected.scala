@@ -5,6 +5,7 @@ package entity
  * the turn in the game.
  * @author Josip
  */
+@deprecated
 trait TurnAffected {
 
   /**

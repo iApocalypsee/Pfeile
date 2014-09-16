@@ -9,7 +9,9 @@ import com.sun.istack.internal.Nullable;
  * RegisterAttackEvent und {@link wepeon.github.pfeile.player.AttackEvent} sind dasselbe...
  * @author Josip
  * @version 16.2.2014
+ * @deprecated Not so easy to use, and not compatible with the new world classes.
  */
+@Deprecated
 public interface AttackContainer extends BoardPositionable {
 
     /**

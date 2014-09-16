@@ -5,7 +5,9 @@ import general.World;
 /**
  * @author Josip
  * @version 2/10/14
+ * @deprecated What is this??
  */
+@Deprecated
 public class SpawnEntityInstanceArgs {
 
     private World world;

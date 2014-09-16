@@ -1,6 +1,6 @@
 package player;
 
-
+@Deprecated
 public class Bot extends Player {
 
 	public Bot(String name, SpawnEntityInstanceArgs instanceArgs) {

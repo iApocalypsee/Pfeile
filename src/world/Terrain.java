@@ -12,7 +12,9 @@ import java.util.LinkedList;
 /**
  * @author Josip
  * @version 20.05.2014
+ * @deprecated Use {@link world.BaseTerrain} instead.
  */
+@Deprecated
 public class Terrain implements ITerrain, Drawable, GUIUpdater {
 
 	private static final long serialVersionUID = -2440813561948973995L;

@@ -10,6 +10,7 @@ import java.awt.Font
  * @author Josip Palavra
  * @version 21.06.2014
  */
+@deprecated
 class Player(spawnX: Int, spawnY: Int, name: String) extends Component with MoveableEntity with Combatant {
 
   //super.gridX_=(spawnX)
@@ -53,6 +54,7 @@ class Player(spawnX: Int, spawnY: Int, name: String) extends Component with Move
   }
 }
 
+@deprecated
 object Player {
   private val placeholderColor = new Color(155, 25, 25, 200)
 }

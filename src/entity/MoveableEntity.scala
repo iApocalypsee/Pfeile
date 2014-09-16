@@ -12,6 +12,7 @@ import world.tile.SeaTile
  * @author Josip
  * @version 27.05.2014
  */
+@deprecated
 trait MoveableEntity extends Entity with Visioner {
 
   private var _movement = 1

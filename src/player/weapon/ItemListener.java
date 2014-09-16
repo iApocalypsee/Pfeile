@@ -6,6 +6,7 @@ package player.weapon;
  * @version 8.2.2014
  *
  */
+@Deprecated
 public interface ItemListener {
 	
 	void itemUsed(ItemUseEvent e);

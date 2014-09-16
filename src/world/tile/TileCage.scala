@@ -15,6 +15,7 @@ import world.{IBaseTile, WorldViewport}
  */
 // TODO Add height matrix translations
 // TODO I need more performance
+@deprecated("Old computation class, don't use this.")
 class TileCage(private val tile: IBaseTile) {
 
   // a reference to the world viewport

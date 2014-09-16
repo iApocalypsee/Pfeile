@@ -76,7 +76,6 @@ abstract class BaseTile protected[world](private[world] var _gridElem: GridEleme
   override def getGridY: Int = _gridElem.gridY
   override def getField: IField = ???
   override def getWorld: IWorld = _gridElem._world
-  override def getCage: TileCage = ???
   override def getTileHeight: Int = getMetadata(HeightBrush.meta_key).asInstanceOf[Int]
   override def getRequiredMovementPoints = requiredMovementPoints
 

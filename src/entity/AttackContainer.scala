@@ -10,6 +10,7 @@ import scala.collection.mutable
  * @author Josip Palavra
  * @version 22.06.2014
  */
+@deprecated("Uses the old AttackContainer interface.")
 trait AttackContainer extends player.weapon.AttackContainer {
 
   val attackQueues = new mutable.Queue[AttackQueue]
@@ -44,6 +45,7 @@ trait AttackContainer extends player.weapon.AttackContainer {
   implicit def evt2Queue(evt: AttackEvent) = new AttackQueue(evt)
 }
 
+@deprecated("Uses the old interfaces.")
 trait Combatant extends AttackContainer with player.Combatant {
   override def attack(event: AttackEvent): Unit
 }

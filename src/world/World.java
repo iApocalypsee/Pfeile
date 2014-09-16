@@ -13,7 +13,9 @@ import java.util.List;
 
 /**
  * @author Josip
+ * @deprecated Use the new ScaleWorld instead.
  */
+@Deprecated
 public class World implements IWorld, Drawable, GUIUpdater {
 
 	private static final long serialVersionUID = 8474968677356694778L;

@@ -29,8 +29,6 @@ public interface IBaseTile extends IMetadatable, BoardPositionable {
 	IBaseTile west();
 	IBaseTile northwest();
 
-	TileCage getCage();
-
 	Point2D gridCenter();
 
 }

@@ -21,7 +21,9 @@ import player.weapon.AttackEvent;
  * Kleine Änderungen.
  * 
  * @version 16.2.2014
+ * @deprecated Stone-aged player class.
  */
+@Deprecated
 public class Player extends Entity implements Combatant {
 
 	/**

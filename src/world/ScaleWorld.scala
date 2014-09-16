@@ -9,7 +9,7 @@ import gui.Drawable
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
-import general.Mechanics
+import general.{Delegate, Mechanics}
 
 /**
  *
@@ -84,4 +84,25 @@ class ScaleWorld(x: Int, y: Int) extends IWorld with Drawable with GUIUpdater {
    thread.setDaemon(true)
    thread.start()
   }
+
+
+
+
+
+
+
+
+
+  val turnEnded = Delegate.create[TurnEndedEvent]
+
+  turnEnded += { e => /*
+  this.move(1, 1)
+
+  */ }
+
+  case class TurnEndedEvent()
+
+
+
+
 }

@@ -15,7 +15,9 @@ import java.util.NoSuchElementException;
 /**
  * @author Josip
  * @version 21.05.2014
+ * @deprecated Use {@link world.EditableBaseTerrain} instead.
  */
+@Deprecated
 public class EditableTerrain extends Terrain implements IEditableTerrain {
 	private static final long serialVersionUID = -2179754351564297519L;
 

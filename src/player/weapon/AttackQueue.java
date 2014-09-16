@@ -10,7 +10,9 @@ import general.field.Field;
  * 
  * @author Josip
  * @version 9.2.2014
+ * @deprecated Uses the old AttackContainer and Combatant classes.
  */
+@Deprecated
 public class AttackQueue {
 
 	/**

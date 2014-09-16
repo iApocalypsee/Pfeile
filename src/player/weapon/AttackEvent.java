@@ -6,6 +6,7 @@ import player.Combatant;
  * @author Josip
  * @version 16.2.2014
  */
+@Deprecated
 public class AttackEvent {
 
 	private int targetX;

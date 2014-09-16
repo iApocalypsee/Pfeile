@@ -34,8 +34,9 @@ import player.weapon.Weapon;
  *     <li>Entity now relies on new abstract field classes instead of old one.</li>
  * </ul>
  * @version 10.2.2014
- *
+ * @deprecated Stone-aged entity class.
  */
+@Deprecated
 public abstract class Entity extends Component implements AttackContainer, GUIUpdater {
 
 	/**

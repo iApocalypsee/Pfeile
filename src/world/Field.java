@@ -8,7 +8,9 @@ import java.util.Collection;
 /**
  * @author Josip
  * @version 20.05.2014
+ * @deprecated No concrete Field implementation yet.
  */
+@Deprecated
 public class Field implements IField {
 	@Override
 	public Polygon getFieldBorders() {

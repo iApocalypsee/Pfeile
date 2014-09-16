@@ -10,6 +10,7 @@ import world.IWorld
  * @author Josip
  * @version 27.05.2014
  */
+@deprecated
 trait Entity extends AttackContainer with OverrideMetadatable with TurnAffected {
 
   private var _gridX = 0

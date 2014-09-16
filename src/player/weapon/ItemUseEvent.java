@@ -2,6 +2,7 @@ package player.weapon;
 
 import player.Combatant;
 
+@Deprecated
 public class ItemUseEvent {
 	
 	private Item usedItem;
