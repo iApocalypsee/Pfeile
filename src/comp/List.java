@@ -16,8 +16,6 @@ import java.util.LinkedList;
  * <b>17.1.2014:</b> Die List ist jetzt funktionsfähig, die Elemente von Listen können jetzt
  * eigene Strings enthalten. Das Scrolling ist aber noch nicht implementiert, deswegen mit
  * Version 17.1.2014 keine langen Listen machen.
- * <p><b>Hello</b></p>
- * hello
  * 
  * @version 17.1.2014
  * @tag.requires Component: 17.1.2014 oder höher; 
@@ -47,8 +45,52 @@ public class List extends Component {
 	
 	static final Insets STD_INSETS = new Insets(20, 10, 20, 10);
 
-	public List() {
+	public List(java.util.List<String> items) {
 		super();
+
+        this.items = items;
+        setWidth(tfits().width);
+        setHeight(tfits().height);
+
+        for (int i = 0; i < items.size(); i++) {
+            final Label l = new Label(0, 0, items.get(i), this);
+            if (items.size() == 0)
+                l.setY(l.getHeight() * i);
+            else
+                l.setY(l.getHeight() * i + 1);
+            if(l.getAbsoluteY() >= this.getAbsoluteY()) {
+                if(l.getAbsoluteY() + l.getHeight() > this.getAbsoluteY() + this.getHeight()) {
+                    l.setVisible(false);
+                } else {
+                    l.setVisible(true);
+                }
+            } else {
+                l.setVisible(false);
+            }
+
+            l.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseReleased(MouseEvent arg0) {
+                    if(l.getBounds().contains(arg0.getPoint())) {
+                        selectedIndex = listItems.indexOf(l);
+                    }
+                }
+            });
+//
+//			l.addMouseMotionListener(new MouseMotionListener() {
+//
+//				@Override
+//				public void mouseMoved(MouseEvent e) {
+//					if(l.getBounds().contains(e.getPoint())) {
+//					}
+//				}
+//
+//				@Override
+//				public void mouseDragged(MouseEvent e) {
+//				}
+//			});
+            listItems.add(l);
+        }
 	}
 	
 	
@@ -77,9 +119,9 @@ public class List extends Component {
 			l.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseReleased(MouseEvent arg0) {
-					if(l.getBounds().contains(arg0.getPoint())) {
-						selectedIndex = listItems.indexOf(l);
-					}
+			         if(l.getSimplifiedBounds().contains(arg0.getPoint())) {
+				           selectedIndex = listItems.indexOf(l);
+                     }
 				}
 			});
 //			
@@ -168,6 +210,8 @@ public class List extends Component {
 	/**
 	 * Gibt den derzeit ausgew�hlten Listenindex zur�ck. Der ausgew�hlte Listenindex
 	 * wird mit Mausklick bestimmt.
+     * <p>
+     * <b> TODO isn't working correctly! always returns 0 on the first click </b>
 	 * @return Den Index des ausgew�hlten Listeneintrags.
 	 */
 	public int getSelectedIndex() {

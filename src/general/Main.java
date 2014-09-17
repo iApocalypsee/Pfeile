@@ -554,9 +554,6 @@ public class Main {
         NewWorldTestScreen.forcePullFront(p);
 
         p.world();
-
-        // Writes the Memory in the console after the world was created
-        SystemProperties.printMemory();
     }
 
     /**

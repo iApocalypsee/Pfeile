@@ -35,23 +35,6 @@ public class Label extends Component {
 		
 		this.text = text;
 		declineInput();
-		
-		addMouseListener(new MouseListener() {
-			@Override
-			public void mouseClicked(MouseEvent e) {}
-			@Override
-			public void mousePressed(MouseEvent e) {}
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				if (isAcceptingInput())
-                    System.out.println("Executing label " + getName());
-			}
-			@Override
-			public void mouseEntered(MouseEvent e) {}
-			@Override
-			public void mouseExited(MouseEvent e) {}
-		});
-		
 	}
 	
 	public Label(int x, int y, String text, Component parent) {

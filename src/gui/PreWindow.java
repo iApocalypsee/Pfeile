@@ -17,6 +17,7 @@ import javax.swing.*;
  * Klasse, um Einstellungsmen� aufzurufen
  */
 @SuppressWarnings("serial")
+@Deprecated
 public class PreWindow extends JFrame {
 	
 	protected JPanel thisPanel;

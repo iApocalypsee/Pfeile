@@ -27,6 +27,7 @@ import player.weapon.*;
  * Wir w�ren bald soweit, diese Klasse hier aus unserem System herauszunehmen, da
  * du ja ArrowSelectionScreen entwickelt hast.
  */
+@Deprecated
 public class ArrowSelection extends JFrame {
 
 	private static final long serialVersionUID = -6246665378267488656L;

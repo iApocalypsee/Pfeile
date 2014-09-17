@@ -61,25 +61,12 @@ public class ComboBox extends Component {
 
         init(screenBacking);
 
-       // System.out.println("..............:(" + getX() + "|" + getY() + ") + (" + getWidth() + "|" + getHeight() + ")");
-       // System.out.println("ContainerLabel:(" + containerLabel.getX() + "|" + containerLabel.getY() + ") + (" + containerLabel.getWidth() + "|" + containerLabel.getHeight() + ")" );
-       // System.out.println("ClickButton:   (" + clickButton.getX() + "|" + clickButton.getY() + ") + (" + clickButton.getWidth() + "|" + clickButton.getHeight() + ")" );
-       // System.out.println("selectionList: (" + selectionList.getX() + "|" + selectionList.getY() + ") + (" + selectionList.getWidth() + "|" + selectionList.getHeight() + ")");
-
         setWidth(containerLabel.getWidth() + clickButton.getWidth());
         setHeight(containerLabel.getHeight() + selectionList.getHeight());
-
-       // System.err.println(selectionList.tfits().height);
-
-       // System.out.println("..............:(" + getX() + "|" + getY() + ") + (" + getWidth() + "|" + getHeight() + ")");
-       // System.out.println("ContainerLabel:(" + containerLabel.getX() + "|" + containerLabel.getY() + ") + (" + containerLabel.getWidth() + "|" + containerLabel.getHeight() + ")" );
-       // System.out.println("ClickButton:   (" + clickButton.getX() + "|" + clickButton.getY() + ") + (" + clickButton.getWidth() + "|" + clickButton.getHeight() + ")" );
-       // System.out.println("selectionList: (" + selectionList.getX() + "|" + selectionList.getY() + ") + (" + selectionList.getWidth() + "|" + selectionList.getHeight() + ")");
-       // System.out.println();
     }
 
     private void init (Screen screenBacking) {
-        containerLabel = new Label(getX(), getY(), screenBacking, "Computerstärke");
+        containerLabel = new Label(getX(), getY(), screenBacking, values[getSelectedIndex()]);
         containerLabel.setVisible(true);
         containerLabel.declineInput();
 

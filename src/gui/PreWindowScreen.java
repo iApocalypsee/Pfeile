@@ -93,8 +93,8 @@ public class PreWindowScreen extends Screen {
     private static Clip backgroundSound;
     static {
         try{
-            AudioInputStream audioInputStream =
-                    AudioSystem.getAudioInputStream(PreWindowScreen.class.getClassLoader().getResourceAsStream("resources/sfx/introBackground.WAV"));
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
+                    PreWindowScreen.class.getClassLoader().getResourceAsStream("resources/sfx/darkMusic00.wav"));
             AudioFormat audioFormat = audioInputStream.getFormat();
             int size = (int) (audioFormat.getFrameSize() * audioInputStream.getFrameLength());
             byte[] audio = new byte[size];
@@ -302,7 +302,11 @@ public class PreWindowScreen extends Screen {
 
                 correctInits();
                 new ArrowSelectionScreenPreSet();
-                onLeavingScreen(this, ArrowSelectionScreenPreSet.SCREEN_INDEX);
+
+                if (Mechanics.arrowNumberPreSet > 0)
+                    onLeavingScreen(this, ArrowSelectionScreenPreSet.SCREEN_INDEX);
+                else
+                    onLeavingScreen(this, GameScreen.SCREEN_INDEX);
             }
         });
 

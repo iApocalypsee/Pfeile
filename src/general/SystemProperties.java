@@ -18,10 +18,6 @@ public class SystemProperties extends Thread {
         System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
         System.out.println("Java version: " + sys_props.getProperty("java.version"));
         System.out.println("OS: " + sys_props.getProperty("os.name") + "; (Version " + sys_props.getProperty("os.version") + ")");
-    }
-
-    /** Writes the Total and Free Memory */
-    static void printMemory () {
         System.out.println("Maximum memory in JVM: " + Math.round(Runtime.getRuntime().maxMemory() / (1024 * 1024)) + " MB");
         System.out.println("Total memory in JVM: " + Math.round(Runtime.getRuntime().totalMemory() / (1024 * 1024)) + " MB");
         System.out.println("Free memory  in JVM: " + Math.round(Runtime.getRuntime().freeMemory() / (1024 * 1024)) + " MB");
