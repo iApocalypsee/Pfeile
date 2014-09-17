@@ -1,9 +1,6 @@
 package general;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public final class Converter {
     /**
@@ -23,22 +20,16 @@ public final class Converter {
 
     /** Wandelt ein String[] in eine List<String> um */
     public static java.util.List<String> convertToList (String[] values) {
-        List<String> items = new LinkedList<String>();
-        Collections.addAll(items, values);
-        return items;
+        return Arrays.asList(values);
     }
 
     /** Wandelt ein String[] in ein ArrayList<String> um */
     public static ArrayList<String> convertToArrayList (String[] values) {
-        ArrayList<String> items = new ArrayList<String>();
-        Collections.addAll(items, values);
-        return items;
+        return (ArrayList<String>) Arrays.asList(values);
     }
 
     /** Wandelt ein String[] in eine LinkedList<String> um */
     public static LinkedList<String> convertToLinkedList (String[] values) {
-        LinkedList<String> items = new LinkedList<String>();
-        Collections.addAll(items, values);
-        return items;
+        return (LinkedList<String>) Arrays.asList(values);
     }
 }

@@ -12,6 +12,7 @@ import java.io.IOException;
  * @author Josip
  * @version 2/9/14
  */
+@Deprecated
 public class WastelandField extends Field {
 
     private static BufferedImage image = null;
@@ -25,6 +26,7 @@ public class WastelandField extends Field {
         }
     }
 
+    @Deprecated
     public WastelandField(int x, int y, World w) {
         super(x, y, w);
     }
@@ -41,7 +43,7 @@ public class WastelandField extends Field {
 	 */
 	@Override
 	public String getFieldType() {
-		return "Ödland";
+		return "ï¿½dland";
 	}
 
 	/**

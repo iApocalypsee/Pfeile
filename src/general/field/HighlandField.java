@@ -12,6 +12,7 @@ import java.io.IOException;
  * @author Josip
  * @version 2/9/14
  */
+@Deprecated
 public class HighlandField extends Field {
 
     private static BufferedImage image = null;
@@ -25,6 +26,7 @@ public class HighlandField extends Field {
         }
     }
 
+    @Deprecated
     public HighlandField(int x, int y, World w) {
         super(x, y, w);
     }
@@ -39,9 +41,10 @@ public class HighlandField extends Field {
 	 *
 	 * @return The field type name.
 	 */
+    @Deprecated
 	@Override
 	public String getFieldType() {
-		return "Hügel";
+		return "Hï¿½gel";
 	}
 
 	/**

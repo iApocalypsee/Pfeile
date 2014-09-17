@@ -32,6 +32,7 @@ import java.util.LinkedList;
  * @author Josip
  * @version 16.2.2014
  */
+@Deprecated
 public abstract class Field extends Component implements AttackContainer, GUIUpdater {
 
 	/**
@@ -100,6 +101,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * @param x The x position on the grid.
 	 * @param y The y position on the grid.
 	 */
+    @Deprecated
 	public Field(int x, int y, World world) {
 		//TODO has to be fixed in component
 		//super(x * WorldViewport.STD_FIELD_DIMENSION, y * WorldViewport.STD_FIELD_DIMENSION, WorldViewport.STD_FIELD_DIMENSION, WorldViewport.STD_FIELD_DIMENSION, GameScreen.getInstance());
@@ -108,7 +110,6 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 		gridY = y;
 		this.world = world;
 		//updateGUI();
-		setBackingScreen(GameScreen.getInstance());
 
 		addMouseListener(new MouseListener() {
 			@Override
@@ -149,6 +150,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * as long as they have a picture to represent themselves.
 	 * @param g The graphics object.
 	 */
+    @Deprecated
 	@Override
 	public void draw(Graphics2D g) {
 		drawHelper(g, DEFAULT_IMAGE);
@@ -161,6 +163,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * @return The entity mapped to the name, or <code>null</code>, if no entity
 	 * with this name is currently on this field.
 	 */
+    @Deprecated
 	public Entity getEntityByName(String name) {
 		if(entities.containsKey(name)) {
 			return entities.get(name);
@@ -173,6 +176,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * Returns an unmodifiable collection set of the entities standing on the field.
 	 * @return A collection with all of the entities standing on this field currently.
 	 */
+    @Deprecated
 	public Collection<Entity> getEntities() {
 		@SuppressWarnings("unchecked")
 		Collection<Entity> collection = ((HashMap<String, Entity>) (entities.clone())).values();
@@ -184,6 +188,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * @param clazz The type.
 	 * @return The entities of the specified type standing on the field.
 	 */
+    @Deprecated
 	public Collection<Entity> getEntities(Class<? extends Entity> clazz) {
 		@SuppressWarnings("unchecked")
 		Collection<Entity> collection = ((HashMap<String, Entity>) (entities.clone())).values();
@@ -200,6 +205,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * Adds a new entity to the field. With this call, the entity is set on the field.
 	 * @param entity The entity to register.
 	 */
+    @Deprecated
 	public void addEntity(Entity entity) {
 		entities.put(entity.getName(), entity);
 	}
@@ -209,6 +215,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * stand anymore on the field.
 	 * @param entity The entity to unregister.
 	 */
+    @Deprecated
 	public void removeEntity(Entity entity) {
 		if(entities.containsValue(entity)) {
 			entities.remove(entity.getName());
@@ -219,10 +226,12 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * Returns the world in which the field is generated in.
 	 * @return The world in which the field is generated in.
 	 */
+    @Deprecated
 	public World getWorld() {
 		return world;
 	}
 
+    @Deprecated
 	void setWorld(World world) {
 		this.world = world;
 	}
@@ -231,6 +240,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * Returns the x-position of the field on the world grid.
 	 * @return The x-position of the field on the world grid.
 	 */
+    @Deprecated
 	public int getGridX() {
 		return gridX;
 	}
@@ -239,6 +249,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * Returns the y-position of the field on the world grid.
 	 * @return The y-position of the field on the world grid.
 	 */
+    @Deprecated
 	public int getGridY() {
 		return gridY;
 	}
@@ -251,6 +262,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * Lil' helper function.
 	 * @param img The image to draw according to the field constraints.
 	 */
+    @Deprecated
 	protected final void drawHelper(Graphics2D g, BufferedImage img) {
 //		if(!inFogOfWar) {
 			g.drawImage(img, getX(), getY(), getWidth(), getHeight(), null);
@@ -288,14 +300,15 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 
 	/**
 	 * updated die neue GUI-Position, wenn an '<code> Mechanics.heightStreching </code>' oder
-	 * '<code> Mechanics.widthStreching </code> ' etwas geändert. 
+	 * '<code> Mechanics.widthStreching </code> ' etwas geï¿½ndert. 
 	 * 
-	 * <code> updateFields </code> entspricht updateGUI, bloß für alle Felder. 
-	 *  <code> updateFields </code> muss nur einmal für alle Felder aufgerufen werden.
-	 *  <code> updateFields </code> ist als Thread mit Priorität 3 geschrieben.
+	 * <code> updateFields </code> entspricht updateGUI, bloï¿½ fï¿½r alle Felder. 
+	 *  <code> updateFields </code> muss nur einmal fï¿½r alle Felder aufgerufen werden.
+	 *  <code> updateFields </code> ist als Thread mit Prioritï¿½t 3 geschrieben.
 	 *  
 	 *  TODO: updateFields wirft eine Exeption, wenn zu stark herausgezoomt wurde
 	 */
+    @Deprecated
 	public static void updateFields() {
 		// den Thread starten
 		Thread threadUpdateGUI = new Thread (new Runnable () {
@@ -320,7 +333,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 						f.setWidth(Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
 						f.setHeight(Math.round(WorldViewport.STD_FIELD_DIMENSION * world.getViewport().getZoomFactor()) - 1);
 						
-						// wenn die Karte insegsammt zu groß ist, muss sie  verkleinert werden: 
+						// wenn die Karte insegsammt zu groï¿½ ist, muss sie  verkleinert werden: 
 						// zuerst der Randeinschub
 						if(world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getX() + WorldViewport.STD_FIELD_DIMENSION > Main.getWindowWidth() - 1 || 
 							world.getFieldAt(world.getSizeX() - 1, world.getSizeY() - 1).getY() + WorldViewport.STD_FIELD_DIMENSION > Main.getWindowHeight() - 1) {
@@ -331,8 +344,8 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 //							System.out.println(world.getViewport().getShiftX() + " " + world.getViewport().getShiftY());
 							System.err.println("Map doesn't fit into the size of the screen. It gets smaller.");
 						}
-						// wenn der Randeinschub zu klein (unter 0 --> außerhalb des Bildschirms ist) ist, 
-						// wird er wieder reingeschoben inset... = 0 und dann die Vergrößerungsfakorern angeglichen 
+						// wenn der Randeinschub zu klein (unter 0 --> auï¿½erhalb des Bildschirms ist) ist, 
+						// wird er wieder reingeschoben inset... = 0 und dann die Vergrï¿½ï¿½erungsfakorern angeglichen 
 							
 						if (world.getViewport().getShiftX() < 1 || world.getViewport().getShiftY() < 1) {
 							loop_inset: while (true) {
@@ -379,6 +392,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * Registers a new attack on the field.
 	 * @param attackQueue The attack queue to register.
 	 */
+    @Deprecated
 	public void registerAttack(AttackQueue attackQueue) {
 		attackQueues.add(attackQueue);
 	}
@@ -388,6 +402,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 *
 	 * @param event The attack to register.
 	 */
+    @Deprecated
 	@Override
 	public void registerAttack(AttackEvent event) {
         AttackQueue queue = new AttackQueue(event);
@@ -398,6 +413,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * Unregisters an attack. Maybe it has bugs! TODO
 	 * @param aWeapon The weapon.
 	 */
+    @Deprecated
 	public void unregisterAttack(Class<? extends Weapon> aWeapon) {
 		for (AttackQueue q : attackQueues) {
 			if (q.getWeapon().getClass() == aWeapon) {
@@ -407,6 +423,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 		}
 	}
 
+    @Deprecated
 	public void unregisterAttack(AttackQueue queue) {
 		if(attackQueues.contains(queue)) {
 			attackQueues.remove(queue);
@@ -418,6 +435,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 *
 	 * @return <code>true</code> if the combatant is being attacked.
 	 */
+    @Deprecated
 	@Override
 	public boolean isAttacked() {
 		return false;
@@ -430,6 +448,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * @return <code>true</code> if the combatant is being attacked with.
 	 */
 	@Override
+    @Deprecated
 	public boolean isAttackedBy(Class<? extends Weapon> w) {
 		return false;
 	}
@@ -443,6 +462,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * by the combatant.
 	 */
 	@Override
+    @Deprecated
 	public boolean isAttackedBy(Combatant combatant) {
 		return false;
 	}
@@ -457,6 +477,7 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * if nothing matches.
 	 */
 	@Override
+    @Deprecated
 	public AttackQueue[] getAttackQueuesBy(Class<? extends Weapon> aWeapon) {
 		return new AttackQueue[0];
 	}
@@ -471,15 +492,17 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * if nothing matches.
 	 */
 	@Override
+    @Deprecated
 	public AttackQueue[] getAttackQueuesBy(Combatant aggressor) {
 		return new AttackQueue[0];
 	}
 
-
+    @Deprecated
 	public boolean isInFogOfWar() {
 		return inFogOfWar;
 	}
 
+    @Deprecated
 	public void setInFogOfWar(boolean inFogOfWar) {
 		this.inFogOfWar = inFogOfWar;
 	}
@@ -490,10 +513,12 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * something else than isVisible().
 	 * @return <code>true</code>, if the active com.github.pfeile.player can watch currently this field.
 	 */
+    @Deprecated
 	public boolean isFieldVisible() {
 		return fieldVisible;
 	}
 
+    @Deprecated
 	public void setFieldVisible(boolean fieldVisible) {
 		this.fieldVisible = fieldVisible;
 	}
@@ -502,12 +527,15 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * Returns the field type name.
 	 * @return The field type name.
 	 */
+    @Deprecated
 	public abstract String getFieldType();
 
+    @Deprecated
 	public void setGridX(int gridX) {
 		this.gridX = gridX;
 	}
-	public void setGridY(int gridY) {
+    @Deprecated
+    public void setGridY(int gridY) {
 		this.gridY = gridY;
 	}
 
@@ -517,5 +545,6 @@ public abstract class Field extends Component implements AttackContainer, GUIUpd
 	 * where it is not needed (only occasionally).
 	 * @return A boolean value.
 	 */
+    @Deprecated
 	public abstract boolean isAccessable();
 }

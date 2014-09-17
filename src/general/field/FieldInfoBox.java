@@ -9,7 +9,10 @@ import java.awt.*;
 /**
  * @author Josip
  * @version 24.02.14
+ *
+ * TODO: create a new FieldInfoBox for Tiles, that shows the relevant information
  */
+@Deprecated
 public class FieldInfoBox extends Component {
 
 	private static final Color BACKGROUND = new Color(0.1f, 0.1f, 0.1f, 0.3f);
@@ -25,7 +28,7 @@ public class FieldInfoBox extends Component {
 	private String queriedIsAccessible = "";
 
 	public FieldInfoBox() {
-		// standardmäßig ist der GameScreen für diese Component zuständig
+		// standardmï¿½ï¿½ig ist der GameScreen fï¿½r diese Component zustï¿½ndig
 		setBackingScreen(GameScreen.getInstance());
 		// verhindere sofort, dass die InfoBox Input akzeptiert; sie soll ja auch keinen Input akzeptieren
 		declineInput();
@@ -35,8 +38,8 @@ public class FieldInfoBox extends Component {
 		// positioniere die InfoBox so, dass sie am unteren rechten Bildschirmrand ist
 		setX(Main.getWindowWidth() - insetX);
 		setY(Main.getWindowHeight() - insetY);
-		setWidth(Component.getTextBounds("Feldtyp: Hügelebene", Component.STD_FONT).width + 10);
-		setHeight(Component.getTextBounds("Feldtyp: Hügelebene", Component.STD_FONT).height * 2 + 15);
+		setWidth(Component.getTextBounds("Feldtyp: Hï¿½gelebene", Component.STD_FONT).width + 10);
+		setHeight(Component.getTextBounds("Feldtyp: Hï¿½gelebene", Component.STD_FONT).height * 2 + 15);
 	}
 
 	/**
@@ -47,7 +50,7 @@ public class FieldInfoBox extends Component {
 		queriedFieldType = field.getFieldType();
 		queriedIsAccessible = field.isAccessable() ? YES : NO;
 
-		// TODO wenn noch weitere Informationen bezogen werden können, diese auch hineinschreiben
+		// TODO wenn noch weitere Informationen bezogen werden kï¿½nnen, diese auch hineinschreiben
 	}
 
 	@Override
@@ -61,7 +64,7 @@ public class FieldInfoBox extends Component {
 		g.setColor(Color.WHITE);
 		g.drawString("Feldtyp: " + queriedFieldType,
 				Main.getWindowWidth() - insetX + 10, Main.getWindowHeight() - insetY + 18);
-		g.drawString("Zugänglich: " + queriedIsAccessible, Main.getWindowWidth() - insetX + 10, Main.getWindowHeight() - insetY + 18 + 18);
+		g.drawString("Zugï¿½nglich: " + queriedIsAccessible, Main.getWindowWidth() - insetX + 10, Main.getWindowHeight() - insetY + 18 + 18);
 	}
 	
 	/** init Position */

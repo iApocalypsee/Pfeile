@@ -12,6 +12,7 @@ import java.io.IOException;
  * @author Josip
  * @version 2/9/14
  */
+@Deprecated
 public class ForestField extends Field {
 
     private static BufferedImage image = null;
@@ -25,6 +26,7 @@ public class ForestField extends Field {
         }
     }
 
+    @Deprecated
     public ForestField(int x, int y, World w) {
         super(x, y, w);
     }

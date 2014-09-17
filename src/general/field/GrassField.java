@@ -12,6 +12,7 @@ import java.io.IOException;
  * @author Josip
  * @version 2/9/14
  */
+@Deprecated
 public class GrassField extends Field {
 
     private static BufferedImage image = null;
@@ -25,6 +26,7 @@ public class GrassField extends Field {
         }
     }
 
+    @Deprecated
     public GrassField(int x, int y, World w) {
         super(x, y, w);
     }
@@ -39,6 +41,7 @@ public class GrassField extends Field {
 	 *
 	 * @return The field type name.
 	 */
+    @Deprecated
 	@Override
 	public String getFieldType() {
 		return "Wiese";

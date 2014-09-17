@@ -12,6 +12,7 @@ import java.io.IOException;
  * @author Josip
  * @version 2/9/14
  */
+@Deprecated
 public class DesertField extends Field {
 
     private static BufferedImage image = null;
@@ -41,7 +42,7 @@ public class DesertField extends Field {
 	 */
 	@Override
 	public String getFieldType() {
-		return "Wüste";
+		return "Wï¿½ste";
 	}
 
 	/**
