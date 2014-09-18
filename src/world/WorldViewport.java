@@ -1,9 +1,11 @@
 package world;
 
+import java.io.Serializable;
+
 /**
  * @author Josip Palavra
  */
-public class WorldViewport {
+public class WorldViewport implements Serializable {
 
     private float shiftX = 0;
     private float shiftY = 0;
