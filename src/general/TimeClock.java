@@ -1,6 +1,5 @@
 package general;
 
-import general.field.Field;
 import gui.GameScreen;
 
 import java.awt.Color;
@@ -215,15 +214,5 @@ public class TimeClock extends Component implements Runnable {
 					getY() + 16);
 		} else
 			System.err.println("String 'getTimePrintString()' == null; caused by 'TimeClock.draw(Graphics2D g)'");
-	}
-	
-	/** Iniziert Position abh�ngig von der Position der Lebensleiste */
-	public void initNewPosition () {
-		setX((int) (GameScreen.getInstance().getWorld().getActivePlayer().getLife().getBoundingLife().x + 
-				Math.round(GameScreen.getInstance().getWorld().getActivePlayer().getLife().getBoundingLife().width / 2.0 - getWidth() / 2.0)) - 2);
-		setY(GameScreen.getInstance().getWorld().getActivePlayer().getLife().getBoundingLife().y - 40);
-		
-		World.timeLifeBox.initNewPosition();
-		Field.infoBox.init();
 	}
 }

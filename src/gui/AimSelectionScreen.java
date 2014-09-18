@@ -1,28 +1,12 @@
 package gui;
 
-import entity.VisionState;
-import general.Main;
-import general.World;
-import general.field.Field;
 import comp.Button;
-import comp.Component;
+import general.Main;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import player.weapon.AbstractArrow;
-import player.weapon.AttackEvent;
-import scala.Tuple2;
-import scala.collection.mutable.HashMap;
-import world.BaseTile;
-import world.IBaseTile;
-import world.IWorld;
-import world.ScaleWorld;
 
 
 public class AimSelectionScreen extends Screen {
@@ -104,11 +88,12 @@ public class AimSelectionScreen extends Screen {
 	public void draw (Graphics2D g) {
 		// Background will be drawn
 		super.draw(g);
-		
+        /*
+
 		// include the world
 		IWorld w = NewWorldTestScreen.getWorld();
-		
-		// The World will be drawn 
+
+		// The World will be drawn
 		w.draw(g);
 		
 		for (entity.Player player: w.getPlayers()) {
@@ -140,6 +125,7 @@ public class AimSelectionScreen extends Screen {
 		
 		if (transparencyWarningMessage < 0) 
 			transparencyWarningMessage = 0;
+			*/
 	}
 	
 	
@@ -184,6 +170,7 @@ public class AimSelectionScreen extends Screen {
 		@Override
 		public void run() {
 			super.run();
+            /*
 			IWorld w = NewWorldTestScreen.getWorld();
 			HashMap<Tuple2<Object, Object>, VisionState> map = ((ScaleWorld) (w)).getActivePlayer().visionMap();
 			for(int x = 0; x < w.getSizeX(); x++) {
@@ -208,6 +195,7 @@ public class AimSelectionScreen extends Screen {
 					}
 				}
 			}
+			*/
 		}
 	}
 
@@ -226,6 +214,7 @@ public class AimSelectionScreen extends Screen {
 
 		@Override
 		public void run() {
+            /*
 			super.run();
 			BaseTile at = (BaseTile) NewWorldTestScreen.getWorld().getTileAt(x, y);
 			ArrowSelectionScreen s = ArrowSelectionScreen.getInstance();
@@ -240,6 +229,7 @@ public class AimSelectionScreen extends Screen {
 			if(evt != null) {
 				at.registerAttack(evt);
 			}
+			*/
 		}
 	}
 	
@@ -254,7 +244,9 @@ public class AimSelectionScreen extends Screen {
 		// Finally: let's run the Thread 
 		@Override
 		public void run() {
+            /*
 			while (true) {
+
 				
 				// Let's start the testing loop
 				while (getManager().getActiveScreenIndex() == AimSelectionScreen.SCREEN_INDEX) {
@@ -309,6 +301,7 @@ public class AimSelectionScreen extends Screen {
 					Thread.sleep(480);
 				} catch (InterruptedException e) {e.printStackTrace();}
 			}
+			*/
 		}
 	}
 }

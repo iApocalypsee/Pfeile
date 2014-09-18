@@ -1,23 +1,43 @@
 package gui
 
 import java.awt.Graphics2D
-import java.awt.event.KeyEvent
+import java.awt.event.{KeyEvent, MouseAdapter, MouseEvent}
 
-import comp.GUIUpdater
-import world.{BaseTerrain, BaseTile, IWorld}
+import comp.{Button, GUIUpdater}
+import general.Main
 
 import scala.beans.BeanProperty
-import general.Main
 /**
  *
  * @author Josip
  */
 object NewWorldTestScreen extends Screen("New world test", 164) {
 
-  @BeanProperty
-  var world: IWorld = null
-
   var shootButtonPressed = false
+
+  val endTurnButton = {
+
+    val b = new Button(20, 20, this, "End turn")
+    b.addMouseListener(new MouseAdapter {
+      override def mouseReleased(e: MouseEvent): Unit = {
+      }
+    })
+    b
+
+  }
+
+  /*
+
+  val shootButton = {
+    val b = new Button(100, 20, this, "Shoot")
+    b.addMouseListener(new MouseAdapter {
+      override def mouseReleased(e: MouseEvent): Unit = {
+        val w = NewWorldTestScreen.world.asInstanceOf[ScaleWorld]
+        val ac = w.getActivePlayer
+        onLeavingScreen(this, ArrowSelectionScreen.SCREEN_INDEX)
+      }
+    })
+  }
 
   override def keyPressed(e: KeyEvent) {
     if(e.getKeyCode == KeyEvent.VK_RIGHT) world.getViewport.shiftRel(-8, 0)
@@ -47,9 +67,11 @@ object NewWorldTestScreen extends Screen("New world test", 164) {
     }
   }
 
+  */
+
   override def draw(g: Graphics2D): Unit = {
     super.draw(g)
     //world.draw(g)
-    world.getTerrain.asInstanceOf[BaseTerrain].drawInfoBox(g)
+    //world.getTerrain.asInstanceOf[BaseTerrain].drawInfoBox(g)
   }
 }

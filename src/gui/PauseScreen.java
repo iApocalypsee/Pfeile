@@ -84,7 +84,6 @@ public class PauseScreen extends Screen {
 	@Override
 	public void draw(Graphics2D g) {
 		super.draw(g);
-		GameScreen.getInstance().getWorld().draw(g);
 		g.setColor(backgroundColor);
 		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 		

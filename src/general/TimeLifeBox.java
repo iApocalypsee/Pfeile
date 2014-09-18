@@ -21,15 +21,8 @@ public class TimeLifeBox {
 		line = 6;
 		isVisible = true; 
 	}
-	
-	void initNewPosition () {
-		width = GameScreen.getInstance().getWorld().getActivePlayer().getLife().getBoundingLife().width + 50;
-		height = GameScreen.getInstance().getWorld().getActivePlayer().getLife().getBoundingLife().height + 105;
-		posX = GameScreen.getInstance().getWorld().getActivePlayer().getLife().getBoundingLife().x - 20; 
-		posY = Main.timeObj.getY() - 15;
-	}
-	
-	public void draw(Graphics2D g) {
+
+    public void draw(Graphics2D g) {
 		if (isVisible == true) {
 			g.setColor(borderColor);
 			g.fillRect(posX, posY, width, height);

@@ -5,9 +5,8 @@ import comp.Component;
 import comp.ConfirmDialog;
 import comp.TextBox;
 import general.Main;
-import general.Mechanics;
-import player.*;
-import player.weapon.*;
+import player.weapon.AbstractArrow;
+import player.weapon.ArrowHelper;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -15,7 +14,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-import world.ScaleWorld;
 
 public class ArrowSelectionScreen extends Screen {
 
@@ -91,6 +89,7 @@ public class ArrowSelectionScreen extends Screen {
 	}
 	
 	public void init () {
+        /*
 		fireArrowButton = new Button(posXButton, posYButtons, this, "Feuerpfeil");
 		waterArrowButton = new Button(posXButton + fireArrowButton.getWidth() + 43, posYButtons, this, "Wasserpfeil");
 		stormArrowButton = new Button(posXButton + (fireArrowButton.getWidth() + 43) * 2, posYButtons, this, "Sturmpfeil");
@@ -170,11 +169,6 @@ public class ArrowSelectionScreen extends Screen {
 		confirmDialog = new ConfirmDialog(stoneArrowButton.getX(), stoneArrowButton.getY() + 260, this, "");
 		confirmDialog.setVisible(false);
 		confirmDialog.getOk().addMouseListener(new MouseAdapter() {
-			/**
-			 * {@inheritDoc}
-			 *
-			 * @param e
-			 */
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (!inventory.addItem(selectedIndex)) {
@@ -199,22 +193,17 @@ public class ArrowSelectionScreen extends Screen {
 			}
 		});
 		confirmDialog.getCancel().addMouseListener(new MouseAdapter() {
-			/**
-			 * {@inheritDoc}
-			 *
-			 * @param e
-			 */
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				closeConfirmDialogQuestion();
 			}
 		});
+		*/
 	}
 	
 	@Override
 	public void draw(Graphics2D g) {
 		super.draw(g);
-		GameScreen.getInstance().getWorld().draw(g); 
 		
 		g.setColor(TRANSPARENT_BACKGROUND);
 		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
@@ -294,6 +283,8 @@ public class ArrowSelectionScreen extends Screen {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
+
+            /*
 			
 			final Inventory inventory = ((ScaleWorld) NewWorldTestScreen.getWorld()).getActivePlayer().getInventory();
 			
@@ -354,6 +345,7 @@ public class ArrowSelectionScreen extends Screen {
 				if (confirmDialog.getOk().getSimplifiedBounds().contains(e.getPoint())) 
 					closeConfirmDialogQuestion();
 			}
+			*/
 		}
 	}
 	
@@ -393,6 +385,7 @@ public class ArrowSelectionScreen extends Screen {
 	 * Is already used by Inventory. So there might be no need in using <code> updateInventoryList </code>
 	 */
 	public void updateInventoryList () {
+        /*
 		final Inventory inventory = ((ScaleWorld) NewWorldTestScreen.getWorld()).getActivePlayer().getInventory();
 		
 		arrowList.clear();
@@ -419,5 +412,6 @@ public class ArrowSelectionScreen extends Screen {
 			inventoryList.addMouseListener(new MouseListHandler());
 			inventoryList.declineInput();
 		}
+		*/
 	}
 }

@@ -126,6 +126,7 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 		this.setAimMissingCurrent(aimMissing);
 		this.setDamageLosingRate(damageLosingRate);
 		this.setDistanceReached(0);
+        /*
         if (GameScreen.getInstance().getWorld() != null) {
             this.setFieldX(GameScreen.getInstance().getWorld().getPlayerByIndex(GameScreen.getInstance().getWorld().getTurnPlayer().getIndex()).getX());
             this.setFieldY(GameScreen.getInstance().getWorld().getPlayerByIndex(GameScreen.getInstance().getWorld().getTurnPlayer().getIndex()).getY());
@@ -136,6 +137,7 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
             // TODO this.setFieldXAim( X-Wert von Player oder ArrowQueue);
             // TODO this.setFieldYAim( Y-Wert von Player oder ArrowQueue);
         }
+        */
 
 		// TODO: arrowSpeed
 		// TODO: damageRadius
@@ -324,14 +326,13 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 	 * @see <code> ArrowHelper.getArrowImage(int selectedIndex) </code> */
 	public abstract BufferedImage getImage();
 
-	@Override
 	public int getMaximumStackCount() {
 		return Mechanics.arrowNumberPreSet;
 	}
 	
 	@Override
 	public void draw(Graphics2D g) {
-		g.drawImage(getImage(), getPosX(), getPosY(), (int) (getImage().getWidth() * gui.NewWorldTestScreen.getWorld().getViewport().getZoom()), (int) (getImage().getHeight() * gui.NewWorldTestScreen.getWorld().getViewport().getZoom()), null);
+		//g.drawImage(getImage(), getPosX(), getPosY(), (int) (getImage().getWidth() * gui.NewWorldTestScreen.getWorld().getViewport().getZoom()), (int) (getImage().getHeight() * gui.NewWorldTestScreen.getWorld().getViewport().getZoom()), null);
 	}
 }
 

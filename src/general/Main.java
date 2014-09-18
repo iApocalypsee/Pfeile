@@ -1,43 +1,20 @@
 package general;
 
-import com.sun.glass.ui.Screen;
-import entity.path.Direction;
-import gui.*;
+import gui.ArrowSelectionScreen;
+import gui.ArrowSelectionScreenPreSet;
+import gui.PreWindowScreen;
+import scala.runtime.AbstractFunction1;
+import scala.runtime.BoxedUnit;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import player.Bot;
-import player.Player;
-import player.SpawnEntityInstanceArgs;
-import scala.Tuple2;
-import scala.collection.JavaConversions;
-import scala.concurrent.ExecutionContext;
-import scala.runtime.AbstractFunction1;
-import scala.runtime.BoxedUnit;
-import world.BaseTile;
-import world.EditableBaseTerrain;
-import world.IBaseTile;
-import world.IWorld;
-import world.ScaleWorld;
-import world.brush.HeightBrush;
-import world.brush.SmoothHeightBrush;
-import world.brush.TileTypeBrush;
-import world.tile.GrassTile;
-import world.tile.SeaTile;
-import world.tile.package$;
 
 /**
  * Hauptklasse mit der Main-Methode und den abstraktesten Objekten unseres Spiels.
@@ -273,6 +250,7 @@ public class Main {
      * Fuegt die Pfeile in das Inventar des Spielers ein
      */
     private void doArrowSelectionAddingArrows(ArrowSelectionScreenPreSet arrowSelection) {
+        /*
 
         for (String selectedArrow : arrowSelection.selectedArrows) {
             if (!((ScaleWorld) NewWorldTestScreen.getWorld()).getActivePlayer().getInventory().addItem(
@@ -284,15 +262,7 @@ public class Main {
         }
 
         ArrowSelectionScreen.getInstance().updateInventoryList();
-    }
-
-    class NewWorldFoo {
-
-        public Point p;
-        public Color c;
-        public int h;
-        public Class<? extends BaseTile> tileType;
-
+        */
     }
 
 	/* DEFAULT IMPLEMENTATION WITH NO PROBABILITIES
@@ -312,10 +282,6 @@ public class Main {
         }
     }
     //*/
-
-    private Class<? extends BaseTile> decide(java.util.List<Class<? extends BaseTile>> objs) {
-        return objs.get(new Random().nextInt(objs.size()));
-    }
 
     public LinkedList<Integer> filterNotEvenNumbers(LinkedList<Integer> input) {
         LinkedList<Integer> result = new LinkedList<Integer>();
@@ -341,219 +307,6 @@ public class Main {
     }
 
     private void newWorldTest() {
-        IWorld w = new ScaleWorld(30, 30);
-		/*
-		world.World w = new world.World(50, 50);
-		*/
-        //NewWorldTestScreen.setWorld(w);
-        NewWorldTestScreen.setWorld(w);
-        //EditableTerrain terrain = (EditableTerrain) w.getTerrain();
-        EditableBaseTerrain terrain = (EditableBaseTerrain) w.getTerrain();
-        Random r = new Random();
-
-        LinkedList<NewWorldFoo> points = new LinkedList<NewWorldFoo>();
-        LinkedList<SHBCoordinator> smoothCoordinators = new LinkedList<SHBCoordinator>();
-
-        HeightBrush hb = new HeightBrush();
-        TileTypeBrush tb = new TileTypeBrush(w);
-        SmoothHeightBrush shb = new SmoothHeightBrush();
-
-        entity.Player p = new entity.Player(r.nextInt(w.getSizeX() - 1), r.nextInt(w.getSizeY() - 1), Mechanics.getUsername());
-
-
-        hb.setThickness(3);
-
-        LinkedList<Color> colors = new LinkedList<Color>();
-        colors.add(new Color(0x1C9618)); // GR�N
-        //colors.add(new Color(0xD5F5EF)); // EISWEI�
-        //colors.add(new Color(0xEBEE31)); // GELB
-        colors.add(new Color(0x6D75E8)); // BLAU
-        //colors.add(new Color(0x646464)); // GRAU
-        //colors.add(new Color(0x19D7E6));
-        //colors.add(new Color(0xD37D3C));
-        LinkedList<Class<? extends BaseTile>> baseTiles = new LinkedList<Class<? extends BaseTile>>();
-        baseTiles.add(GrassTile.class);
-        baseTiles.add(SeaTile.class);
-
-        int amtOfPoints = r.nextInt(w.getSizeX() * w.getSizeY()) + w.getSizeX() * w.getSizeY();
-        int maxHeightPerPaint = 3;
-        for (int i = 0; i < amtOfPoints; i++) {
-            NewWorldFoo f = new NewWorldFoo();
-            f.p = new Point(r.nextInt(w.getSizeX()), r.nextInt(w.getSizeY()));
-            f.c = decide(colors);
-            //f.h = r.nextInt(maxHeightPerPaint) + 3;
-            //f.h = r.nextInt(maxHeightPerPaint) + 2; // TODO Remember, if you want random heights, comment that in!!!!!!!!!!!!!
-            f.h = maxHeightPerPaint;
-            f.tileType = decide(baseTiles);
-            points.add(f);
-            //System.out.println("i = " + i);
-
-            SHBCoordinator c = new SHBCoordinator();
-            c.p = new Point(r.nextInt(w.getSizeX()), r.nextInt(w.getSizeY()));
-            smoothCoordinators.add(c);
-        }
-
-        int count = r.nextInt(8) + 3;
-        int i = 0;
-        LinkedList<Point> tempPoints = new LinkedList<Point>();
-        for (NewWorldFoo f : points) {
-            tempPoints.add(f.p);
-            if (i >= count) {
-                // reset the counter variables
-                i = 0;
-                count = r.nextInt(8) + 3;
-
-                // reset the brush and other stuff
-                //cb.setColor(f.c);
-                //cb.setThickness(r.nextInt(6) + 3);
-
-
-                //hb.setThickness(r.nextInt(6) + 3);
-                //hb.setHeightIncrement(f.h);
-
-
-                tb.setTileClass(f.tileType);
-                tb.setThickness(r.nextInt(4) + 2);
-
-				/*
-				terrain.edit(cb, tempPoints);
-				*/
-
-                //terrain.edit(hb, tempPoints);
-
-
-                terrain.edit(tb, tempPoints);
-                tempPoints.clear();
-            }
-
-			/*
-			LinkedList<Point> p = new LinkedList<Point>();
-			p.add(f.p);
-			terrain.edit(cb, p);
-			*/
-            i++;
-            //System.out.print("i = " + i);
-            //System.out.println(" Main.newWorldTest");
-        }
-
-        tempPoints.clear();
-        i = 0;
-
-        for (NewWorldFoo f : points) {
-            if (r.nextDouble() < 0.4) {
-                tempPoints.add(f.p);
-            }
-            if (i >= count) {
-                // reset the counter variables
-                i = 0;
-                count = r.nextInt(15) + 3;
-
-                // reset the brush and other stuff
-				/*
-				cb.setColor(f.c);
-				cb.setThickness(r.nextInt(6) + 3);
-				*/
-
-                hb.setThickness(r.nextInt(3) + 1);
-                hb.setHeightIncrement(f.h);
-
-				/*
-				tb.setTileClass(f.tileType);
-				tb.setThickness(r.nextInt(4) + 2);
-				*/
-
-				/*
-				terrain.edit(cb, tempPoints);
-				*/
-                terrain.edit(hb, tempPoints);
-                //terrain.edit(shb, tempPoints); TODO WTF!!
-
-				/*
-				terrain.edit(tb, tempPoints);
-				*/
-                tempPoints.clear();
-            }
-
-            i++;
-        }
-
-        tempPoints.clear();
-        i = 0;
-
-        for (NewWorldFoo f : points) {
-            tempPoints.add(f.p);
-            if (i >= count) {
-                i = 0;
-                count = r.nextInt(3) + 1;
-                shb.setThickness(r.nextInt(5) + 1);
-                terrain.edit(shb, tempPoints);
-                tempPoints.clear();
-            }
-            i++;
-        }
-
-        for (int x = 0; x < w.getSizeX(); x++) {
-            for (int y = 0; y < w.getSizeY(); y++) {
-                BaseTile t = (BaseTile) w.getTileAt(x, y);
-                if (t instanceof SeaTile) continue;
-                world.tile.package$ tilehelper = package$.MODULE$;
-                Iterable<Tuple2<Direction, IBaseTile>> dict = JavaConversions.asJavaIterable(tilehelper.neighborsOf(t).toList());
-                boolean has = false;
-                for (Tuple2<Direction, IBaseTile> tuple : dict) {
-                    if (tuple._2() instanceof SeaTile) {
-                        has = true;
-                        break;
-                    }
-                }
-
-                if (has) {
-                    int avg = 0, sum = 0, ct = 1;
-                    for (Tuple2<Direction, IBaseTile> tuple : dict) {
-                        if (tuple._2() instanceof SeaTile) continue;
-                        if (tuple._2() == null) continue;
-
-                        sum += tuple._2().getTileHeight();
-                        ct++;
-                    }
-                    avg = sum / ct;
-                    t.setMetadata(HeightBrush.meta_key, avg);
-                }
-            }
-        }
-
-        //printHeights(terrain);
-		/*
-		try {
-			ImageIO.write(terrain.getColorMap(), "png", new File("colormap.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		*/
-
-		/* OLD COMPUTATION
-		for(int x = 0; x < terrain.getSizeX(); x++) {
-			for(int y = 0; y < terrain.getSizeY(); y++) {
-				Tile t = terrain.getTileAt(x, y);
-				t.getCage().recomputeBase();
-				t.updateGUI();
-			}
-		}
-
-		// double recomputing is needed
-		for(int x = 0; x < terrain.getSizeX(); x++) {
-			for(int y = 0; y < terrain.getSizeY(); y++) {
-				Tile t = terrain.getTileAt(x, y);
-				t.getCage().recomputeBase();
-			}
-		}*/
-
-        terrain.adjustHeights();
-
-        NewWorldTestScreen.bindTileComponents();
-        NewWorldTestScreen.add(p);
-        NewWorldTestScreen.forcePullFront(p);
-
-        p.world();
     }
 
     /**
@@ -602,73 +355,13 @@ public class Main {
     private void generateWorld() {
         // a callable object has to be used, as the world cannot be saved instantly to
         // a GameScreen object
-        futures.add(exec.submit(worldGen));
+        //futures.add(exec.submit(worldGen));
     }
-
-    private Callable<World> worldGen = new Callable<World>() {
-        @Override
-        public World call() throws Exception {
-            return WorldFactory.generateDefault(Mechanics.worldSizeX, Mechanics.worldSizeY);
-        }
-    };
 
     /**
      * Neueste �nderungen an der Erstellung von Spielern unten bei den r.nextInt() Aufrufen.
      */
     private void populateWorld() {
-        Future<?>[] threads = futures.toArray(new Future<?>[]{});
-        World w = null;
-        try {
-            synchronized (this) {
-                wait(100);
-            }
-            w = (World) threads[0].get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        if (w != null) {
-
-            Random r = new Random();
-            SpawnEntityInstanceArgs e = new SpawnEntityInstanceArgs();
-            GameScreen s = GameScreen.getInstance();
-            s.setWorld(w);
-
-            int x = 0, y = 0;
-            // Kein Randfeld fuer x oder y: zuerst durch 'getSize() - 2' Randfeld oben / unten verhindern; dann durch + 2 den Wert (0 und 1) verhindern
-            // FIXME: durch die Spawnmethode kommt das richtige raus, wenn e.setSpawnX(...) nicht 0-basierte Werte erh�hlt
-            do {
-                x = r.nextInt(s.getWorld().getSizeX() - 2) + 1;
-                // x = r.nextInt(13 - 2);
-                // --> x = 0 bis 11
-                // x = x + 2;
-                // --> x = 2 bis 13
-                y = r.nextInt(s.getWorld().getSizeY() - 2) + 1;
-
-            } while (!WorldFactory.isSpawnPossible(x, y));
-            e.setSpawnX(x);
-            e.setSpawnY(y);
-            e.setWorld(s.getWorld());
-            Player p = new Player(Mechanics.getUsername(), e);
-            s.getWorld().addPlayer(p);
-            s.getWorld().setActivePlayer(p);
-            s.getWorld().setTurnPlayer(p);
-
-            SpawnEntityInstanceArgs bot_e = new SpawnEntityInstanceArgs();
-
-            do {
-                x = r.nextInt(s.getWorld().getSizeX() - 2) + 1;
-                y = r.nextInt(s.getWorld().getSizeY() - 2) + 1;
-            } while (!WorldFactory.isSpawnPossible(x, y));
-            bot_e.setSpawnX(x);
-            bot_e.setSpawnY(y);
-            bot_e.setWorld(s.getWorld());
-            s.getWorld().addPlayer(new Bot("Dummie", bot_e));
-
-            GameScreen.getInstance().getWorld().updateWorldSizeAtBeginning();
-        }
     }
 
     /**
@@ -681,8 +374,6 @@ public class Main {
 		/* TimeClock wird zu Thread */
         stopwatchThread = new Thread(timeObj);
         stopwatchThread.setDaemon(true);
-
-        timeObj.initNewPosition();
     }
 
     /**
@@ -833,13 +524,6 @@ public class Main {
      */
     void setRunning(boolean running) {
         this.running = running;
-    }
-
-    /**
-     * GETTER: PreWindow
-     */
-    public PreWindow getPreWindow() {
-        return null;
     }
 
     /**

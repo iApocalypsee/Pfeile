@@ -3,7 +3,6 @@ package gui;
 import comp.Button;
 import general.Keys;
 import general.Main;
-import general.World;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -47,7 +46,6 @@ public class GameScreen extends Screen {
 	/**
 	 * Die Welt, die vom GameScreen gezeichnet wird.
 	 */
-	private general.World loadedWorld = null;
 
 	private GameScreen() {
 		super(GameScreen.SCREEN_NAME, GameScreen.SCREEN_INDEX);
@@ -74,10 +72,6 @@ public class GameScreen extends Screen {
 			
 			@Override
 			public void mouseReleased(MouseEvent e) {
-                World w = GameScreen.getInstance().getWorld();
-				if(w.getTurnPlayer() == w.getActivePlayer()) {
-					w.getActivePlayer().endTurn();
-				}
 			}
 			
 			@Override
@@ -101,12 +95,6 @@ public class GameScreen extends Screen {
 			
 			@Override
 			public void mouseReleased(MouseEvent e) {
-                World w = GameScreen.getInstance().getWorld();
-				if(w.getTurnPlayer() == w.getActivePlayer()) {
-					// negiert den wert
-					w.getTurnPlayer().setAttemptingShoot(!w.getTurnPlayer().isAttemptingShoot());
-				}
-				
 				onLeavingScreen(this, ArrowSelectionScreen.SCREEN_INDEX);
 			}
 			
@@ -165,7 +153,6 @@ public class GameScreen extends Screen {
 	public void draw(Graphics2D g) {
 		super.draw(g);
 		// Zeichnet die Welt und den UserInterface, der den Player darstellt
-		loadedWorld.draw(g);
 		endTurnButton.draw(g);
 		shootButton.draw(g);
 		toggleStopwatch.draw(g);
@@ -206,8 +193,6 @@ public class GameScreen extends Screen {
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         super.mouseWheelMoved(e);
-        // getWheelRotation(): negative, if away; positive, if towards
-        loadedWorld.getViewport().zoomRel((float) (1.0f * Math.pow(1.2f, -e.getPreciseWheelRotation())));
     }
 
     public void lockUI() {
@@ -221,12 +206,4 @@ public class GameScreen extends Screen {
 		shootButton.acceptInput();
 		toggleStopwatch.acceptInput();
 	}
-
-    public World getWorld() {
-        return loadedWorld;
-    }
-
-    public void setWorld(World world) {
-        this.loadedWorld = world;
-    }
 }
