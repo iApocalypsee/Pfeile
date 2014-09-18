@@ -125,7 +125,21 @@ public class ConfirmDialog extends comp.Component {
 		cancel.setVisible(vvvvvv);
 	}
 
-	@Override
+    @Override
+    public void setX (int x) {
+        super.setX(x);
+        ok.setX(Component.getTextBounds(question, STD_FONT).width + getX() + 10);
+        cancel.setX(ok.getX() + ok.getWidth() + 10);
+    }
+
+    @Override
+    public void setY (int y) {
+        super.setY(y);
+        ok.setY(comp.Component.getTextBounds("Ok", STD_FONT).height + getY() + 20);
+        cancel.setY(ok.getY());
+    }
+
+    @Override
 	public void draw(Graphics2D g) {
         if (isVisible()) {
             getBorder().draw(g);

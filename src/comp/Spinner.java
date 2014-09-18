@@ -38,15 +38,18 @@ public class Spinner extends Component {
      * @param spinnerNumberModel the spinnerModel this Spinner will work with
      */
     public Spinner (int x, int y, Screen backingScreen, SpinnerModel spinnerNumberModel) {
-        super(x, y, 50, 50, backingScreen);
+        super(x, y, 90, 50, backingScreen);
 
         spinnerModel = spinnerNumberModel;
         valueBox = new TextBox(x, y, String.valueOf(spinnerModel.getValue()), backingScreen);
-        upButton = new Rectangle(x + valueBox.getWidth(), y, img_upButton.getWidth(), img_upButton.getHeight());
-        downButton = new Rectangle(upButton.x, y + upButton.height, img_downButton.getWidth(), img_downButton.getHeight());
-        valueBox.setHeight(upButton.height + downButton.height);
+        valueBox.setHeight(img_downButton.getHeight() + img_upButton.getHeight());
 
-        setWidth(valueBox.getWidth() + upButton.width);
+        upButton = new Rectangle(x + valueBox.getWidth(), y,
+                img_upButton.getWidth(), img_upButton.getHeight());
+        downButton = new Rectangle(upButton.x, y + upButton.height,
+                img_downButton.getWidth(), img_downButton.getHeight());
+
+        setWidth(valueBox.getWidth() + img_downButton.getWidth());
         setHeight(valueBox.getHeight());
 
         addMouseListener(new MouseAdapter() {
@@ -71,16 +74,16 @@ public class Spinner extends Component {
     public void setX (int x) {
         super.setX(x);
         valueBox.setX(x);
-        upButton.x = x;
-        downButton.x = x;
+        upButton.x = x + valueBox.getWidth();
+        downButton.x = upButton.x;
     }
 
     @Override
     public void setAbsoluteX (int x) {
         super.setAbsoluteX(x);
         valueBox.setX(x);
-        upButton.x = x;
-        downButton.x = x;
+        upButton.x = x + valueBox.getWidth();
+        downButton.x = upButton.x;
     }
 
     @Override
@@ -88,7 +91,7 @@ public class Spinner extends Component {
         super.setAbsoluteY(y);
         valueBox.setY(y);
         upButton.y = y;
-        downButton.y = y;
+        downButton.y = y + upButton.height;
     }
 
     @Override
@@ -96,7 +99,7 @@ public class Spinner extends Component {
         super.setY(y);
         valueBox.setY(y);
         upButton.y = y;
-        downButton.y = y;
+        downButton.y = y + upButton.height;
     }
 
     @Override

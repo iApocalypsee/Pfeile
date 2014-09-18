@@ -75,7 +75,14 @@ public class List extends Component {
                         selectedIndex = listItems.indexOf(l);
                     }
                 }
+
+                @Override
+                public void mouseEntered (MouseEvent e) {
+                    System.out.println("Entered list label...");
+                }
             });
+
+            System.out.println(l.getSimplifiedBounds());
 //
 //			l.addMouseMotionListener(new MouseMotionListener() {
 //
@@ -118,7 +125,7 @@ public class List extends Component {
 			
 			l.addMouseListener(new MouseAdapter() {
 				@Override
-				public void mouseReleased(MouseEvent arg0) {
+				public void mousePressed(MouseEvent arg0) {
 			         if(l.getSimplifiedBounds().contains(arg0.getPoint())) {
 				           selectedIndex = listItems.indexOf(l);
                      }

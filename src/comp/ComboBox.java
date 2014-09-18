@@ -66,7 +66,10 @@ public class ComboBox extends Component {
     }
 
     private void init (Screen screenBacking) {
-        containerLabel = new Label(getX(), getY(), screenBacking, values[getSelectedIndex()]);
+        if (values.length > 0)
+            containerLabel = new Label(getX(), getY(), screenBacking, values[0]);
+        else
+            containerLabel = new Label(getX(), getY(), screenBacking, "              ");
         containerLabel.setVisible(true);
         containerLabel.declineInput();
 
@@ -169,6 +172,10 @@ public class ComboBox extends Component {
     @Override
     public void setVisible (boolean vvvvvv) {
         super.setVisible(vvvvvv);
+        clickButton.setVisible(vvvvvv);
+        selectionList.setVisible(vvvvvv);
+        containerLabel.setVisible(vvvvvv);
+
         if (vvvvvv == true) {
             clickButton.acceptInput();
         } else {

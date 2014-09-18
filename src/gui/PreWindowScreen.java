@@ -166,7 +166,7 @@ public class PreWindowScreen extends Screen {
         boxSelectSize.declineInput();
 
         final String[] comboBoxValuesHandicap =
-                    {"+ 25%", "+ 20%", "+ 15%", "+ 10%", "+ 5%", "0%", "- 5%", "- 10%", "- 15%", "- 20 %", "- 25"};
+                    {"+ 25%", "+ 20%", "+ 15%", "+ 10%", "+ 5%", "0%", "- 5%", "- 10%", "- 15%", "- 20%", "- 25%"};
         boxSelectHandicapPlayer = new ComboBox (confirmButton.getX(), selectorComboBox.getY(), this, comboBoxValuesHandicap);
         boxSelectHandicapKI = new ComboBox (confirmButton.getX(), selectorComboBox.getY() + boxSelectHandicapPlayer.getWidth() + 15, this, comboBoxValuesHandicap);
         boxSelectHandicapPlayer.setSelectedIndex(5);
@@ -425,7 +425,7 @@ public class PreWindowScreen extends Screen {
                                 case 10: Mechanics.handicapKI= -25; break;
                                 default: Mechanics.handicapKI=   0;
                             }
-                            labels[9].setText("Handicap [Computer]: " + boxSelectHandicapPlayer.getSelectedValue());
+                            labels[9].setText("Handicap [Computer]: " + boxSelectHandicapKI.getSelectedValue());
                             return;
                         }
                         case 9: {
@@ -435,14 +435,16 @@ public class PreWindowScreen extends Screen {
                                 case 1: Mechanics.worldSizeX = 17; Mechanics.worldSizeY = 15; break;
                                 case 3: Mechanics.worldSizeX =  9; Mechanics.worldSizeY =  7; break;
                                 case 4: Mechanics.worldSizeX =  6; Mechanics.worldSizeY =  4; break;
-                                default:Mechanics.worldSizeX = 13; Mechanics.worldSizeY = 11; break;
+                                default:Mechanics.worldSizeX = 13; Mechanics.worldSizeY = 11;
                             }
                             labels[10].setText("Weltgröße: " + boxSelectSize.getSelectedValue());
+                            return;
                         }
                         default: {
                             openConfirmDialog("Der ausgewählte Index von der <code> selectorComboBox </code> konnte nicht gefunden werden.");
-                            System.err.println("The selected Index of selectorComboBox it couldn't be found. " +
-                                    "This error is in PreWindowScreen at: confirmButton.addMouseListener(...).");
+                            System.err.println("The selected Index of selectorComboBox couldn't be found. " +
+                                    selectorComboBox.getSelectedValue() + " at " + selectorComboBox.getSelectedIndex() +
+                                    " This error is in PreWindowScreen at: confirmButton.addMouseListener(...).");
                         }
                     }
                 }
@@ -458,6 +460,7 @@ public class PreWindowScreen extends Screen {
                     switch (selectorComboBox.getSelectedIndex()) {
                         case 0: { // Computerstärke
                             boxSelectKI.setVisible(true);
+                            spinner.setVisible(false);
                             boxSelectHandicapKI.setVisible(false);
                             boxSelectHandicapPlayer.setVisible(false);
                             boxSelectHigh.setVisible(false);
@@ -499,6 +502,7 @@ public class PreWindowScreen extends Screen {
                         }
                         case 4: { // Lebensregeneration
                             boxSelectHigh.setVisible(true);
+                            spinner.setVisible(false);
                             boxSelectHandicapKI.setVisible(false);
                             boxSelectHandicapPlayer.setVisible(false);
                             boxSelectKI.setVisible(false);
@@ -508,6 +512,7 @@ public class PreWindowScreen extends Screen {
                         }
                         case 5: { // Schadensmultiplikator
                             boxSelectHigh.setVisible(true);
+                            spinner.setVisible(false);
                             boxSelectHandicapKI.setVisible(false);
                             boxSelectHandicapPlayer.setVisible(false);
                             boxSelectKI.setVisible(false);
@@ -528,6 +533,7 @@ public class PreWindowScreen extends Screen {
                         }
                         case 7: { // Zeit pro Zug
                             boxSelectTime.setVisible(true);
+                            spinner.setVisible(false);
                             boxSelectHandicapKI.setVisible(false);
                             boxSelectHandicapPlayer.setVisible(false);
                             boxSelectHigh.setVisible(false);
@@ -537,6 +543,7 @@ public class PreWindowScreen extends Screen {
                         }
                         case 8: { // Handicap
                             boxSelectHandicapKI.setVisible(true);
+                            spinner.setVisible(false);
                             boxSelectHandicapPlayer.setVisible(true);
                             boxSelectHigh.setVisible(false);
                             boxSelectKI.setVisible(false);
@@ -546,11 +553,11 @@ public class PreWindowScreen extends Screen {
                         }
                         case 9: { // Weltgröße
                             boxSelectSize.setVisible(true);
+                            spinner.setVisible(false);
                             boxSelectHandicapKI.setVisible(false);
                             boxSelectHandicapPlayer.setVisible(false);
                             boxSelectHigh.setVisible(false);
                             boxSelectKI.setVisible(false);
-                            boxSelectSize.setVisible(false);
                             boxSelectTime.setVisible(false);
                             break;
                         }
@@ -560,6 +567,7 @@ public class PreWindowScreen extends Screen {
                                     "in PreWindowScreen at confirmButton.addMouseListner(...), " +
                                     "however there is not such an index.");
                         }
+                        selectedIndex = selectorComboBox.getSelectedIndex();
                     }
                 }
             }
