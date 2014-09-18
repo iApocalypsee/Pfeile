@@ -53,7 +53,7 @@ public class TextBox extends Component {
 	 *            Der Screen, der die TextBox h�lt.
 	 */
 	public TextBox(int x, int y, String stdText, Screen backing) {
-		super(x, y, Component.getTextBounds(stdText, STD_FONT).width, 30,
+		super(x, y, Component.getTextBounds(stdText, STD_FONT).width + STD_INSETS.left + STD_INSETS.right, 30,
 				backing);
 		this.stdText = stdText;
 		this.toggled = false;
@@ -106,9 +106,9 @@ public class TextBox extends Component {
 		}
 		
 		if (enteredText.isEmpty()) {
-			g.drawString(stdText, getAbsoluteX() + 10, getAbsoluteY() + 20);
+			g.drawString(stdText, getAbsoluteX() + STD_INSETS.right + 2, getAbsoluteY() + 18);
 		} else {
-			g.drawString(enteredText, getAbsoluteX() + 10, getAbsoluteY() + 20);
+			g.drawString(enteredText, getAbsoluteX() + STD_INSETS.right + 2, getAbsoluteY() + 18);
 		}
 
 	}

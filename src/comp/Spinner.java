@@ -41,21 +41,27 @@ public class Spinner extends Component {
         super(x, y, 90, 50, backingScreen);
 
         spinnerModel = spinnerNumberModel;
-        valueBox = new TextBox(x, y, String.valueOf(spinnerModel.getValue()), backingScreen);
-        valueBox.setHeight(img_downButton.getHeight() + img_upButton.getHeight());
+        if (Math.abs(spinnerModel.getMinimum()) < Math.abs(spinnerModel.getMaximum()))
+            valueBox = new TextBox(x + 1, y + 1, String.valueOf(spinnerModel.getMaximum()), backingScreen);
+        else
+            valueBox = new TextBox(x + 1, y + 1, String.valueOf(spinnerModel.getMinimum()), backingScreen);
+        valueBox.setHeight(img_downButton.getHeight() + img_upButton.getHeight() + 1);
 
-        upButton = new Rectangle(x + valueBox.getWidth(), y,
-                img_upButton.getWidth(), img_upButton.getHeight());
-        downButton = new Rectangle(upButton.x, y + upButton.height,
-                img_downButton.getWidth(), img_downButton.getHeight());
+        upButton = new Rectangle(valueBox.getX() + valueBox.getWidth() + 1, y + 2,
+                img_upButton.getWidth() - 1, img_upButton.getHeight() - 1);
+        downButton = new Rectangle(upButton.x, valueBox.getY() + upButton.height,
+                img_downButton.getWidth() - 1, img_downButton.getHeight() - 1);
 
-        setWidth(valueBox.getWidth() + img_downButton.getWidth());
-        setHeight(valueBox.getHeight());
+        setWidth(valueBox.getWidth() + img_downButton.getWidth() + 6);
+        setHeight(valueBox.getHeight() + 2);
+
+        upButton.x = valueBox.getX() + valueBox.getWidth() + 1;
+        downButton.x = upButton.x;
 
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased (MouseEvent e) {
-                if (isVisible() == true && isAcceptingInput() == true) {
+                if (isAcceptingInput()) {
                     if (downButton.contains(e.getPoint())) {
                         spinnerModel.setValue(spinnerModel.getPreviousValue());
                     } else if (upButton.contains(e.getPoint()))
@@ -149,6 +155,8 @@ public class Spinner extends Component {
     @Override
     public void draw (Graphics2D g) {
         if (isVisible()) {
+            getBorder().draw(g);
+            g.setFont(STD_FONT);
             valueBox.draw(g);
             g.drawImage(img_downButton, downButton.x, downButton.y, downButton.width, downButton.height, null);
             g.drawImage(img_upButton, upButton.x, upButton.y, upButton.width, upButton.height, null);
