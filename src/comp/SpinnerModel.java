@@ -144,7 +144,7 @@ public class SpinnerModel {
      * @see #getMaximum()
      */
     public int getNextValue () {
-        if (value + stepSize < maximum)
+        if (value + stepSize >= maximum)
             return maximum;
         else return (value + stepSize);
     }
