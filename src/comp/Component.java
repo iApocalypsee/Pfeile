@@ -1,7 +1,5 @@
 package comp;
 
-import general.Main;
-import gui.Drawable;
 import gui.Screen;
 
 import java.awt.*;
@@ -29,10 +27,6 @@ public abstract class Component implements IComponent {
 	public enum ComponentStatus {
 		NO_MOUSE, MOUSE, CLICK, NOT_AVAILABLE
 	}
-
-	private int x, y;
-
-	private int width, height;
 
 	private ComponentStatus status = ComponentStatus.NO_MOUSE;
 
@@ -90,13 +84,6 @@ public abstract class Component implements IComponent {
 	private Hashtable<String, Component> children = new Hashtable<String, Component>();
 	
 	/**
-	 * Das Steuerelement, auf das sich dieses Element bezieht. Wenn nicht null, sind die
-	 * Koordinatenangaben dieses Steuerelements relativ auf das des {@link Component#parent}
-	 * bezogen.
-	 */
-	private Component parent;
-	
-	/**
 	 * Die Farbgebung innen und außen.
 	 */
 	private Border border;
@@ -139,8 +126,6 @@ public abstract class Component implements IComponent {
 		border = new Border();
 		border.setComponent(this);
 
-        x = 0;
-        y = 0;
         assumeRect(0, 0);
 		
 		addMouseMotionListener(new MouseMotionListener() {
@@ -203,7 +188,7 @@ public abstract class Component implements IComponent {
 	 * Nur zu Debug-Zwecken. Gibt den Status einer Component auf die Konsole aus.
 	 * @param c The component of which status to print.
 	 */
-	protected static final void printStatus(final Component c) {
+	protected static void printStatus(final Component c) {
 		switch (c.getStatus()) {
 		case NO_MOUSE:
 			System.out.println(c.name + ": NO_MOUSE");
@@ -225,11 +210,11 @@ public abstract class Component implements IComponent {
 	/**
 	 * Eine Component. Fügt diese Component auch sofort zu der Auflistung von 
 	 * Komponenten des angegebenen Screens hinzu.
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 * @param backing
+	 * @param x Die x position.
+	 * @param y Die y position.
+	 * @param width Die Breite.
+	 * @param height Die Höhe.
+	 * @param backing Der dahinter liegende Screen, der die Component verwaltet.
 	 * 
 	 */
 	public Component(int x, int y, int width, int height, Screen backing) {
@@ -253,11 +238,6 @@ public abstract class Component implements IComponent {
 //		bounds.ypoints[3] = y + height;
 //		bounds.invalidate();
 		
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-		
 		bounds.addPoint(x, y);
 		bounds.addPoint(x + width, y);
 		bounds.addPoint(x + width, y + height);
@@ -265,80 +245,6 @@ public abstract class Component implements IComponent {
 		
 		setBackingScreen(backing);
 		
-	}
-	
-	/**
-	 * Erstellt eine Component. Der Screen wird vom parent bezogen.
-	 * @param x Die x position.
-	 * @param y Die y position.
-	 * @param width Die Breite.
-	 * @param height Die Höhe.
-	 * @param parent Das übergeordnete Steuerelement.
-	 */
-	public Component(int x, int y, int width, int height, Component parent) {		
-		
-		this(x + parent.x, y + parent.y, width, height, parent.backingScreen);
-//		bounds.translate(parent.x, parent.y);
-		
-		makeChildrenOf(parent);
-	}
-	
-	/**
-	 * Reiht dieses Steuerelement unter das angegebene ein und macht alle Koordinatenangaben
-	 * relativ zur parent. Wenn das übergebene Steuerelement <code> == null</code>, ist
-	 * das Steuerelement an kein anderes mehr gebunden, seine Koordinaten sind dann wieder
-	 * absolut anzugeben.
-	 * @param p Das neue Eltern-Steuerelement, oder null.
-	 */
-	public void makeChildrenOf(Component p) {
-		if(hasParent()) {
-			if(parent.children.contains(this)) {
-				parent.children.remove(name);
-			}
-			
-			// normalisiert die Koordinaten erst
-			
-			x += parent.x;
-			y += parent.y;
-		}
-		
-		parent = p;
-		
-		if(hasParent()) {
-			
-			p.children.put(name, this);
-
-			// relativiert die Koordinaten wieder
-			x -= parent.x;
-			y -= parent.y;
-
-		}
-	}
-	
-	/**
-	 * Macht genau dasselbe wie {@link #makeChildrenOf(Component)}, führt aber keine
-	 * Änderungen an den Koordinaten durch.
-	 * <br><br>
-	 * <code>
-	 * relative_x = absolute_x;
-	 * <br>
-	 * relative_y = absolute_y;
-	 * </code>
-	 * @param p Die Component zu der diese Component relativ gemacht werden soll.
-	 * @see #makeChildrenOf(Component)
-	 */
-	void defaultMakeChildrenOf(Component p) {
-		if(parent != null) {
-			if(parent.children.contains(this)) {
-				parent.children.remove(name);
-			}
-		}
-		
-		parent = p;
-		
-		if(p != null) {
-			p.children.put(name, this);
-		}
 	}
 	
 	/**
@@ -438,7 +344,7 @@ public abstract class Component implements IComponent {
 	 * @return the x
 	 */
 	public int getX() {
-		return x;
+		return getSimplifiedBounds().x;
 	}
 
 	/**
@@ -449,10 +355,9 @@ public abstract class Component implements IComponent {
 	public void setX(int x) {
 		if(!chained) {
 			if(USING_POLYGON) {
-				bounds.translate(x - this.x, 0);
+				bounds.translate(x - getX(), 0);
 				bounds.invalidate();
 			}
-			this.x = x;
 		}
 	}
 
@@ -460,7 +365,7 @@ public abstract class Component implements IComponent {
 	 * @return the y
 	 */
 	public int getY() {
-		return y;
+		return getSimplifiedBounds().y;
 	}
 
 	/**
@@ -471,10 +376,9 @@ public abstract class Component implements IComponent {
 	public void setY(int y) {
 		if(!chained) {
 			if(USING_POLYGON) {
-				bounds.translate(0, y - this.y);
+				bounds.translate(0, y - getY());
 				bounds.invalidate();
 			}
-			this.y = y;
 		}
 	}
 
@@ -482,7 +386,7 @@ public abstract class Component implements IComponent {
 	 * @return the width
 	 */
 	public int getWidth() {
-		return width;
+		return getSimplifiedBounds().width;
 	}
 
 	/**
@@ -491,20 +395,19 @@ public abstract class Component implements IComponent {
 	 */
 	public void setWidth(int width) {
 		if(USING_POLYGON) {
-			if(this.width != 0) {
-				scale((double) width / this.width, 0);
+			if(getWidth() != 0) {
+				scale((double) width / getWidth(), 0);
 			} else {
 				assumeRect(width, 0);
 			}
 		}
-		this.width = width;
 	}
 	
 	/**
 	 * @return the height
 	 */
 	public int getHeight() {
-		return height;
+		return getSimplifiedBounds().height;
 	}
 	
 	/**
@@ -513,13 +416,12 @@ public abstract class Component implements IComponent {
 	 */
 	public void setHeight(int height) {
 		if(USING_POLYGON) {
-			if(this.height != 0) {
-				scale(0, (double) height / this.height);
+			if(getHeight() != 0) {
+				scale(0, (double) height / getHeight());
 			} else {
 				assumeRect(0, height);
 			}
 		}
-		this.height = height;
 	}
 	
 	/**
@@ -584,18 +486,18 @@ public abstract class Component implements IComponent {
 	void assumeRect(int x, int y) {
 		if(x != 0) {
 			bounds.xpoints = new int[POLYGON_BUFFER_CAPACITY];
-			bounds.xpoints[0] = getAbsoluteX();
-			bounds.xpoints[1] = getAbsoluteX() + x;
-			bounds.xpoints[2] = getAbsoluteX() + x;
-			bounds.xpoints[3] = getAbsoluteX();
+			bounds.xpoints[0] = getX();
+			bounds.xpoints[1] = getX() + x;
+			bounds.xpoints[2] = getX() + x;
+			bounds.xpoints[3] = getX();
 		}
 		
 		if(y != 0) {
 			bounds.ypoints = new int[POLYGON_BUFFER_CAPACITY];
-			bounds.ypoints[0] = getAbsoluteY();
-			bounds.ypoints[1] = getAbsoluteY();
-			bounds.ypoints[2] = getAbsoluteY() + y;
-			bounds.ypoints[3] = getAbsoluteY() + y;
+			bounds.ypoints[0] = getY();
+			bounds.ypoints[1] = getY();
+			bounds.ypoints[2] = getY() + y;
+			bounds.ypoints[3] = getY() + y;
 		}
 		bounds.invalidate();
 	}
@@ -647,7 +549,11 @@ public abstract class Component implements IComponent {
 	}
 
     /** Vergleicht, ob die gewählte Schriftart im System installiert ist
-     * @param f - Die Schriftart die verglichen werden soll*/
+     *
+     * Comment (Josip): This method is working fine, however, it does not look for fonts in custom
+     * directories. I don't know how to fix that problem.
+     * @param f - Die Schriftart die verglichen werden soll
+     */
     public static boolean isFontInstalled(Font f) {
         for(Font font: GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts()) {
             if(font.getFontName().equals(f.getFontName()))
@@ -672,26 +578,24 @@ public abstract class Component implements IComponent {
 		acceptingInput = false;
 	}
 	
-	/**
-	 * Funktioniert diese Funktion überhaupt?
-	 */
-	public void virtualClick() {
-		for (MouseListener m : mouseListeners) {
-			m.mouseReleased(new MouseEvent(Main.getGameWindow(), 
-					MouseEvent.MOUSE_RELEASED, System.currentTimeMillis(), 
-					0, x + 1, y + y, x + 1, y + 1, 1, false, MouseEvent.BUTTON1));
-		}
-	}
-	
 	public void remove(Component c) {
 		if(children.containsKey(c.getName()) && children.containsValue(c)) {
 			children.remove(c.getName());
 		}
 	}
+
+	@Deprecated
+	public int getAbsoluteX() {
+		return getX();
+	}
+	@Deprecated
+	public int getAbsoluteY() {
+		return getY();
+	}
 	
 	/**
 	 * Passt den Sichtbarkeitswert zurück.
-	 * @return
+	 * @return Den Sichtbarkeitswert.
 	 */
 	public boolean isVisible() {
 		return visible;
@@ -723,124 +627,24 @@ public abstract class Component implements IComponent {
 		return chained;
 	}
 	
-	/**
-	 * Sagt aus, ob die Component ein {@link #parent} besitzt.
-	 * @return
-	 */
-	public boolean hasParent() {
-		return parent != null;
-	}
-	
 	public String getName() {
 		return name;
 	}
 	
 	/**
-	 * Setzt den Namen sowohl in der Hashtable der {@link #parent}-Component (sofern vorhanden),
-	 * als auch in diesem Objekt neu.
+	 * Setzt den Namen neu.
 	 * @param name Der neue Name der Component.
 	 */
 	public void setName(String name) {
-		Component ancestor = parent;
-		makeChildrenOf(null);
 		this.name = name;
-		makeChildrenOf(ancestor);
 	}
 	
 	/**
 	 * Gibt den Wert zurück, ob das Steuerelement Input akzeptiert.
-	 * @return
+	 * @return Ob die Component Input akzeptiert.
 	 */
 	public boolean isAcceptingInput() {
 		return acceptingInput;
-	}
-	
-	/**
-	 * Gibt das übergeordnete Steuerelement zurück, sonst null.
-	 * @return Das übergeordnete Steuerelement, oder null, sofern keines vorhanden.
-	 */
-	public Component getParent() {
-		return parent;
-	}
-	
-	/**
-	 * Passt die absolute x Position der Component zurück.
-	 * @return
-	 */
-	public int getAbsoluteX() {
-		if(hasParent()) {
-			return x + parent.getAbsoluteX();
-		} else {
-			return x;
-		}
-	}
-	
-	/**
-	 * Passt die absolute y-Position der Component zurück.
-	 * @return
-	 */
-	public int getAbsoluteY() {
-		if(hasParent()) {
-			return y + parent.getAbsoluteY();
-		} else {
-			return y;
-		}
-	}
-	
-	/**
-	 * Setzt die absolute Position der Component. Macht genau das selbe wie {@link #setX(int)},
-	 * wenn die Component kein übergeordnetes Steuerelement besitzt.
-	 * @param x Die neue absolute x Koordinate der Component.
-	 */
-	public void setAbsoluteX(int x) {
-		if(hasParent()) {
-			setX(relativeCoordinates(x, 0).x);
-		} else {
-			setX(x);
-		}
-	}
-	
-	/**
-	 * Setzt die absolute Position der Component. Macht genau das selbe wie {@link #setY(int)},
-	 * wenn die Component kein übergeordnetes Steuerelement besitzt.
-	 * @param y Die neue absolute y Koordinate der Component.
-	 */
-	public void setAbsoluteY(int y) {
-		if(hasParent()) {
-			setY(relativeCoordinates(0, y).y);
-		} else {
-			setY(y);
-		}
-	}
-	
-	/**
-	 * Relativiert angegebene absolute Koordinaten zu der {@link #parent}-Component.
-	 * Wenn {@link #hasParent()} <code>== false</code>, dann gibt es die angegebenen
-	 * Koordinaten ohne Änderungen direkt zurück.
-	 * @param abs_x
-	 * @param abs_y
-	 * @return
-	 */
-	public Point relativeCoordinates(int abs_x, int abs_y) {
-		if(hasParent()) {
-			return new Point(abs_x - parent.getAbsoluteX(), abs_y - parent.getAbsoluteY());
-		} else {
-			return new Point(abs_x, abs_y);
-		}
-	}
-	
-	/**
-	 * Macht angegebene relative Koordinaten absolut.
-	 * Wenn {@link #hasParent()} <code>== false</code>, dann gibt es die angegebenen
-	 * Koordinaten ohne Änderungen direkt zurück.
-	 * @return
-	 */
-	public Point absoluteCoordinates(int rel_x, int rel_y) {
-		if(hasParent()) {
-			return new Point(rel_x + parent.getAbsoluteX(), rel_y + parent.getAbsoluteY());
-		} else {
-			return new Point(rel_x, rel_y);
-		}
 	}
 	
 	public Border getBorder() {

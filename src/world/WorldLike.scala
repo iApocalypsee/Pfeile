@@ -10,7 +10,7 @@ import newent.EntityManagerLike
   */
 trait WorldLike {
 
-  def terrain: TerrainLike
+  def terrain: TerrainLike[_]
   def entities: EntityManagerLike
 
 }

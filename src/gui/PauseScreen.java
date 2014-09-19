@@ -58,8 +58,6 @@ public class PauseScreen extends Screen {
 		items.add("good bye");
 		list = new List(Main.getWindowWidth() - 200, 50, 150, 200, this, items);
 		
-		box.makeChildrenOf(toGame);
-		
 		toGame.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {

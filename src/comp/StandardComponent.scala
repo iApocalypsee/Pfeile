@@ -19,8 +19,6 @@ trait StandardComponent extends IComponent {
     override def draw(g: Graphics2D): Unit = StandardComponent.this.draw(g)
   }
 
-  def makeChildrenOf(p: Component) = c.makeChildrenOf(p)
-  def defaultMakeChildrenOf(p: Component) = c.defaultMakeChildrenOf(p)
   def chain() = c.chain()
   def unchain() = c.unchain()
   override def getStatus = c.getStatus
@@ -49,22 +47,13 @@ trait StandardComponent extends IComponent {
   override def getSimplifiedBounds = c.getSimplifiedBounds
   override def acceptInput() = c.acceptInput()
   override def declineInput() = c.declineInput()
-  def virtualClick() = c.virtualClick()
   def remove(c: Component) = c.remove(c)
   override def isVisible = c.isVisible
   override def setVisible(vvvvvv: Boolean) = c.setVisible(vvvvvv)
   def isChained = c.isChained
-  def hasParent = c.hasParent
   override def getName = c.getName
   def setName(name: String) = c.setName(name)
   override def isAcceptingInput = c.isAcceptingInput
-  def getParent = c.getParent
-  def getAbsoluteX = c.getAbsoluteX
-  def getAbsoluteY = c.getAbsoluteY
-  def setAbsoluteX(x: Int) = c.setAbsoluteX(x)
-  def setAbsoluteY(y: Int) = c.setAbsoluteY(y)
-  def relativeCoordinates(abs_x: Int, abs_y: Int) = c.relativeCoordinates(abs_x, abs_y)
-  def absoluteCoordinates(rel_x: Int, rel_y: Int) = c.absoluteCoordinates(rel_x, rel_y)
   override def getBorder = c.getBorder
   def setBorder(border: Border) = c.setBorder(border)
   def updateGUI() = c.updateGUI()

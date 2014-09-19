@@ -45,106 +45,32 @@ public class List extends Component {
 	
 	static final Insets STD_INSETS = new Insets(20, 10, 20, 10);
 
-	public List(java.util.List<String> items) {
-		super();
-
-        this.items = items;
-        setWidth(tfits().width);
-        setHeight(tfits().height);
-
-        for (int i = 0; i < items.size(); i++) {
-            final Label l = new Label(0, 0, items.get(i), this);
-            if (items.size() == 0)
-                l.setY(l.getHeight() * i);
-            else
-                l.setY(l.getHeight() * i + 1);
-            if(l.getAbsoluteY() >= this.getAbsoluteY()) {
-                if(l.getAbsoluteY() + l.getHeight() > this.getAbsoluteY() + this.getHeight()) {
-                    l.setVisible(false);
-                } else {
-                    l.setVisible(true);
-                }
-            } else {
-                l.setVisible(false);
-            }
-
-            l.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseReleased(MouseEvent arg0) {
-                    if(l.getBounds().contains(arg0.getPoint())) {
-                        selectedIndex = listItems.indexOf(l);
-                    }
-                }
-
-                @Override
-                public void mouseEntered (MouseEvent e) {
-                    System.out.println("Entered list label...");
-                }
-            });
-
-            System.out.println(l.getSimplifiedBounds());
-//
-//			l.addMouseMotionListener(new MouseMotionListener() {
-//
-//				@Override
-//				public void mouseMoved(MouseEvent e) {
-//					if(l.getBounds().contains(e.getPoint())) {
-//					}
-//				}
-//
-//				@Override
-//				public void mouseDragged(MouseEvent e) {
-//				}
-//			});
-            listItems.add(l);
-        }
-	}
-	
-	
-
 	public List(int x, int y, int width, int height, Screen backing, java.util.List<String> items) {
 		super(x, y, width, height, backing);
 		
 		this.items = items;
-		
+
 		for (int i = 0; i < items.size(); i++) {
-			final Label l = new Label(0, 0, items.get(i), this);
-			if (items.size() == 0) 
-				l.setY(l.getHeight() * i);
-			else 
-				l.setY(l.getHeight() * i + 1);
-			if(l.getAbsoluteY() >= this.getAbsoluteY()) {
-				if(l.getAbsoluteY() + l.getHeight() > this.getAbsoluteY() + this.getHeight()) {
-					l.setVisible(false);
-				} else {
-					l.setVisible(true);
-				}
-			} else {
-				l.setVisible(false);
-			}
-			
-			l.addMouseListener(new MouseAdapter() {
+			final Label build = new Label(x, y, backing, items.get(i));
+
+			// I need to set the position in the correct order.
+			// The loop wants that.
+			build.setY(build.getY() + build.getHeight() * i);
+
+			// If the label is inside the boundaries of the list, then it should be visible...
+			build.setVisible((build.getY() + build.getHeight()) < (this.getY() + this.getHeight()));
+
+			// Every appended label should have a listener attached to it so that I know
+			// when a list element has been pressed.
+			build.addMouseListener(new MouseAdapter() {
 				@Override
-				public void mousePressed(MouseEvent arg0) {
-			         if(l.getSimplifiedBounds().contains(arg0.getPoint())) {
-				           selectedIndex = listItems.indexOf(l);
-                     }
+				public void mouseReleased(MouseEvent e) {
+					if(build.getSimplifiedBounds().contains(e.getPoint())) {
+						selectedIndex = listItems.indexOf(build);
+					}
 				}
 			});
-//			
-//			l.addMouseMotionListener(new MouseMotionListener() {
-//				
-//				@Override
-//				public void mouseMoved(MouseEvent e) {
-//					if(l.getBounds().contains(e.getPoint())) {
-//					}
-//				}
-//				
-//				@Override
-//				public void mouseDragged(MouseEvent e) {
-//				}
-//			});
-			listItems.add(l);
+			listItems.add(build);
 		}
 	}
 

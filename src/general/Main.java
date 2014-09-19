@@ -59,8 +59,7 @@ public class Main {
     private static ExecutorService exec = Executors.newCachedThreadPool();
     private static Set<Future<?>> futures = new HashSet<Future<?>>(5);
 
-
-
+    private static User user;
     // DONE WITH ALL VARIABELS;
     // MOST IMPORTANT METHODS ####################################
     // ###########################################################
@@ -91,7 +90,10 @@ public class Main {
      * Main-Method �ffnet eine neue Instanz von Main: main
      */
     public static void main(String[] arguments) {
+
         Mechanics.setUsername("Just a user");
+        user = new User("Just a user");
+
         main = new Main();
         main.printSystemProperties();
 
@@ -547,4 +549,7 @@ public class Main {
         return this.graphicsDevice;
     }
 
+    public static User getUser() {
+        return user;
+    }
 }

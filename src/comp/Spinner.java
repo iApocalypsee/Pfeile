@@ -85,22 +85,6 @@ public class Spinner extends Component {
     }
 
     @Override
-    public void setAbsoluteX (int x) {
-        super.setAbsoluteX(x);
-        valueBox.setX(x);
-        upButton.x = x + valueBox.getWidth();
-        downButton.x = upButton.x;
-    }
-
-    @Override
-    public void setAbsoluteY (int y) {
-        super.setAbsoluteY(y);
-        valueBox.setY(y);
-        upButton.y = y;
-        downButton.y = y + upButton.height;
-    }
-
-    @Override
     public void setY (int y) {
         super.setY(y);
         valueBox.setY(y);

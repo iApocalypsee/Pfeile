@@ -5,8 +5,6 @@ import gui.Screen;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 public class Label extends Component {
 	
@@ -35,16 +33,6 @@ public class Label extends Component {
 		
 		this.text = text;
 		declineInput();
-	}
-	
-	public Label(int x, int y, String text, Component parent) {
-//		super(x, y, Component.getTextBounds(text, STD_FONT).width, 
-//				Component.getTextBounds(text, STD_FONT).height, parent);
-		super(x, y, 0, 0, parent);
-		this.text = text;
-		setWidth(Component.getTextBounds(text, STD_FONT).width);
-		setHeight(Component.getTextBounds(text, STD_FONT).height);
-		
 	}
 
 	@Override

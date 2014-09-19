@@ -3,12 +3,15 @@ package gui;
 import comp.Button;
 import general.Keys;
 import general.Main;
+import world.*;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * <b>4.1.2014 (Josip):</b> Konstruktor braucht keine ScreenManager-Instanz mehr. <br><br>
@@ -43,12 +46,28 @@ public class GameScreen extends Screen {
 	private Button shootButton;
 	private Button toggleStopwatch;
 
+	// There are sure better solutions than this one, but I'll figure one out...
+    private TerrainLike<IsometricPolygonTile> terrain = new DefaultTerrain();
+	private VisualMap map;
+
 	/**
 	 * Die Welt, die vom GameScreen gezeichnet wird.
 	 */
 
 	private GameScreen() {
 		super(GameScreen.SCREEN_NAME, GameScreen.SCREEN_INDEX);
+
+		// Comment that out later.
+		// This translation is just so that I can see the tiles.
+		List<TileComponentWrapper> compWrappers = new ArrayList<TileComponentWrapper>(terrain.width() * terrain.height());
+		for (int x = 0; x < terrain.width(); x++) {
+			for (int y = 0; y < terrain.height(); y++) {
+				compWrappers.add(TileComponentWrapper.tile2ComponentTile(terrain.tileAt(x, y)));
+			}
+		}
+
+		map = new VisualMap(compWrappers);
+		map.moveMap(100, 300);
 		
 		// später DAS HIER auskommentieren
 		ScreenManager.ref_gameScreen = this;
@@ -152,6 +171,7 @@ public class GameScreen extends Screen {
 	@Override
 	public void draw(Graphics2D g) {
 		super.draw(g);
+		map.draw(g);
 		// Zeichnet die Welt und den UserInterface, der den Player darstellt
 		endTurnButton.draw(g);
 		shootButton.draw(g);

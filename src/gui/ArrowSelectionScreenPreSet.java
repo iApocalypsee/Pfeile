@@ -141,11 +141,11 @@ public class ArrowSelectionScreenPreSet extends Screen {
                 }
 
                 if (couldBeReady == true && isConfirmDialogOpen == false ) {
-                    // onLeavingScreen(this, GameScreen.SCREEN_INDEX);
+                    onLeavingScreen(this, GameScreen.SCREEN_INDEX);
                     System.err.println("onLeavingScreen(ArrowSelectionScreenPreSet.this, GameScreen.SCREEN_INDEX)");
-                    System.out.println("Not right now...");
-                    Main.getGameWindow().dispose();
-                    System.exit(0);
+                    //System.out.println("Not right now...");
+                    //Main.getGameWindow().dispose();
+                    //System.exit(0);
                 }
             }
         });

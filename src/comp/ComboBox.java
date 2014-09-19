@@ -128,24 +128,6 @@ public class ComboBox extends Component {
     }
 
     @Override
-    public void setAbsoluteX (int x) {
-        int diff = x - getX();
-        super.setX(x);
-        containerLabel.setX(getX() + diff);
-        clickButton.setX(getX() + diff);
-        selectionList.setX(getX() + diff);
-    }
-
-    @Override
-    public void setAbsoluteY (int y) {
-        int diff = y - getY();
-        super.setY(y);
-        containerLabel.setY(getY() + diff);
-        clickButton.setY(getY() + diff);
-        selectionList.setY(getY() + diff);
-    }
-
-    @Override
     public void setY (int y) {
         int diff = y - getY();
         super.setY(y);
