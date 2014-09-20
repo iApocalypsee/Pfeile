@@ -10,7 +10,9 @@ import newent.EntityManagerLike
   */
 trait WorldLike {
 
-  def terrain: TerrainLike[_]
+  /** The terrain that describes the geography of the world. */
+  def terrain: TerrainLike
+  /** The entities that describe the population of the world. */
   def entities: EntityManagerLike
 
 }

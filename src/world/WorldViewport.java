@@ -7,7 +7,9 @@ import java.io.Serializable;
  */
 public class WorldViewport implements Serializable {
 
-    private float shiftX = 0;
+	// For serialization process. Don't delete this field.
+	private static final long serialVersionUID = -6179718027934810706L;
+	private float shiftX = 0;
     private float shiftY = 0;
 
     public WorldViewport() {

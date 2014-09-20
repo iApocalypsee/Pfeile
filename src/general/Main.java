@@ -267,23 +267,10 @@ public class Main {
         */
     }
 
-	/* DEFAULT IMPLEMENTATION WITH NO PROBABILITIES
-	private Color decide(LinkedList<Color> objects) {
+	// DEFAULT IMPLEMENTATION WITH NO PROBABILITIES
+	private <T> T decide(LinkedList<T> objects) {
 		return objects.get(new Random().nextInt(objects.size()));
 	}
-	*/
-
-    ///*
-    private Color decide(LinkedList<Color> objects) {
-        Random r = new Random();
-        double val = r.nextDouble();
-        if (val < 0.4) {
-            return objects.get(0);
-        } else {
-            return objects.get(1);
-        }
-    }
-    //*/
 
     public LinkedList<Integer> filterNotEvenNumbers(LinkedList<Integer> input) {
         LinkedList<Integer> result = new LinkedList<Integer>();

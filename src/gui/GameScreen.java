@@ -47,7 +47,7 @@ public class GameScreen extends Screen {
 	private Button toggleStopwatch;
 
 	// There are sure better solutions than this one, but I'll figure one out...
-    private TerrainLike<IsometricPolygonTile> terrain = new DefaultTerrain();
+    private TerrainLike terrain = new DefaultTerrain();
 	private VisualMap map;
 
 	/**
@@ -58,11 +58,11 @@ public class GameScreen extends Screen {
 		super(GameScreen.SCREEN_NAME, GameScreen.SCREEN_INDEX);
 
 		// Comment that out later.
-		// This translation is just so that I can see the tiles.
+		// Generating Component objects for every tile...
 		List<TileComponentWrapper> compWrappers = new ArrayList<TileComponentWrapper>(terrain.width() * terrain.height());
 		for (int x = 0; x < terrain.width(); x++) {
 			for (int y = 0; y < terrain.height(); y++) {
-				compWrappers.add(TileComponentWrapper.tile2ComponentTile(terrain.tileAt(x, y)));
+				compWrappers.add(TileComponentWrapper.tile2ComponentTile((TileLike) terrain.tileAt(x, y)));
 			}
 		}
 

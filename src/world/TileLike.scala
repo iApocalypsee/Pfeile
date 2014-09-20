@@ -18,8 +18,9 @@ trait TileLike {
   /** The y position in the grid of the world. */
   val latticeY: Int
   /** The terrain to which the tile belongs to. */
-  val terrain: TerrainLike[_]
+  val terrain: TerrainLike
 
+  /** The (geographic) height of the tile. */
   var tileHeight: Int
 
   /** The polygon that represents the GUI boundaries of the tile. */
@@ -27,15 +28,24 @@ trait TileLike {
   /** The draw function with which the tile is visualized on the display. */
   def drawFunction: (Graphics2D) => Unit
 
+  /** The movement points that are required to get on this tile. */
   def requiredMovementPoints: Int
 
+  /** The tile located north of this tile. */
   def north: TileLike
+  /** The tile located northeast of this tile. */
   def northEast: TileLike
+  /** The tile located east of this tile. */
   def east: TileLike
+  /** The tile located southeast of this tile. */
   def southEast: TileLike
+  /** The tile located south of this tile. */
   def south: TileLike
+  /** The tile located southwest of this tile. */
   def southWest: TileLike
+  /** The tile located west of this tile. */
   def west: TileLike
+  /** The tile located northwest of this tile. */
   def northWest: TileLike
 
 }
@@ -44,12 +54,13 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
                                               override val latticeY: Int,
                                               override val terrain: DefaultTerrain) extends TileLike {
 
-
-
   require( terrain ne null )
 
   override var tileHeight: Int = 0
 
+  // Points that describe the corner points of the polygon.
+  // It is easier to have 4 point objects instead of one polygon instance
+  // from which I have to pull the data every time.
   private val _originalWest = new PointDef( 0, 0 )
   private val _originalSouth = new PointDef( 0, 0 )
   private val _originalEast = new PointDef( 0, 0 )
@@ -62,6 +73,11 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
   // has to finish before they get set to another value...
   recalculateOriginalPoints()
 
+  /** Recalculates the original points for the isometric tile.
+    *
+    * The original points can change by moving the geometry of the map, so every time the map geometry
+    * changes, this method should be called in order to keep visuals.
+    */
   def recalculateOriginalPoints(): Unit = {
     import world.IsometricPolygonTile._
 
