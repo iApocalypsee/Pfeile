@@ -1,5 +1,7 @@
 package newent
 
+import general.Delegate
+
 import scala.collection.{mutable, JavaConversions}
 
 /** Base trait for all entity managers.
@@ -10,43 +12,52 @@ import scala.collection.{mutable, JavaConversions}
   */
 sealed trait EntityManagerLike {
 
+  /** Called when an entity has been registered. */
+  val onEntityRegistered = Delegate.create[EntityLike]
+  val onEntityUnlogged = Delegate.create[EntityLike]
+
   /** Registers an entity to the manager.
     *
     * @param e The entity to add.
     */
-  def +=(e: Entity): Unit
+  def +=(e: EntityLike): Unit
 
   // Ditto.
-  def register(e: Entity) = +=(e)
+  def register(e: EntityLike) = +=(e)
 
   /** Unregisters the specified entity from the manager.
     *
     * @param e The entity to remove.
     */
-  def -=(e: Entity): Unit
+  def -=(e: EntityLike): Unit = {
+    import scala.concurrent.ExecutionContext.Implicits.global
+    val prev = entityList
+    sortOut { _ ne e }
+    if(prev.diff(entityList).nonEmpty) onEntityUnlogged callAsync e
+  }
 
   // Ditto.
-  def unlog(e: Entity) = -=(e)
+  def unlog(e: EntityLike) = -=(e)
 
   /** The listing of all entities that are currently registered to the manager. */
-  def entityList: scala.collection.Seq[Entity]
+  def entityList: scala.collection.Seq[EntityLike]
   /** Java interop method to entityList(). */
   def javaEntityList = JavaConversions.seqAsJavaList(entityList)
 
-  /** Filters all entities out that do not satisfy a predicate.
+  /** Filters all entities out that do not satisfy a predicate, and saves the changes!!!
     *
     * @param f The filter function. If the function returns <code>false</code> for
     *          a given entity, that entity is going to be removed.
     */
-  def filter(f: (Entity) => Boolean): Unit
+  def sortOut(f: (EntityLike) => Boolean): Unit
 
-  /** Filters all entities out that satisfy a predicate.
+  /** Filters all entities out that satisfy a predicate, and saves the changes!!!
     *
-    * In contrast to the [[filter()]] method, this one removes the entity if it <b>satisfies</b> a predicate,
+    * In contrast to the [[sortOut()]] method, this one removes the entity if it <b>satisfies</b> a predicate,
     * in other words, if the entity returns <code>false</code>, it is being kept in the manager.
     * @param f The filter function.
     */
-  def filterNot(f: (Entity) => Boolean): Unit = filter(f andThen { b => !b })
+  def sortOutNot(f: (EntityLike) => Boolean): Unit = sortOut(f andThen { b => !b })
 
 }
 
@@ -57,13 +68,21 @@ sealed trait EntityManagerLike {
   */
 class DefaultEntityManager extends EntityManagerLike {
 
-  private var _entityList = mutable.MutableList[Entity]()
+  private var _entityList = mutable.MutableList[EntityLike]()
 
-  override def +=(e: Entity): Unit = _entityList += e
+  override def +=(e: EntityLike): Unit = {
+    import scala.concurrent.ExecutionContext.Implicits.global
+    _entityList += e
+    onEntityRegistered callAsync e
+  }
 
-  override def -=(e: Entity): Unit = _entityList = _entityList filter { e eq _ }
+  override def sortOut(f: (EntityLike) => Boolean): Unit = _entityList = _entityList filter f
 
-  override def filter(f: (Entity) => Boolean): Unit = _entityList filter f
-
-  override def entityList: Seq[Entity] = _entityList.toList
+  override def entityList: Seq[EntityLike] = _entityList.toList
 }
+
+/** An exception indicating that given name is not unique to the manager.
+  *
+  * @param name The ambiguous name.
+  */
+class NotUniqueNameException(name: String) extends Exception

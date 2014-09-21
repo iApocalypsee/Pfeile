@@ -13,6 +13,9 @@ trait TerrainLike {
   /** The type of tile that the terrain is managing. */
   type TileType <: TileLike
 
+  /** The world to which the terrain is linked. */
+  val world: WorldLike
+
   /** The width dimension of the terrain. */
   def width: Int
   /** The height dimension of the terrain. */
@@ -48,7 +51,7 @@ trait TerrainLike {
   * or whatsoever GUI class we have.
   *
   */
-class DefaultTerrain extends TerrainLike {
+class DefaultTerrain(override val world: DefaultWorld) extends TerrainLike {
 
   override type TileType = IsometricPolygonTile
 

@@ -695,4 +695,23 @@ public abstract class Component implements IComponent {
 	public void addMouseWheelListener(MouseWheelListener mouseWheelListener) {
 		mouseWheelListeners.add(mouseWheelListener);
 	}
+
+	// Some static helper methods...
+
+	/** Creates a rectangular polygon.
+	 *
+	 * @param x The x position of the polygon.
+	 * @param y The y position of the polygon.
+	 * @param width The width of the rectangle.
+	 * @param height Ditto.
+	 * @return A polygon with a rectangular shape.
+	 */
+	public static Polygon createRectPolygon(int x, int y, int width, int height) {
+		Polygon ret = new Polygon();
+		ret.addPoint(x, y);
+		ret.addPoint(x, y + height);
+		ret.addPoint(x + width, y + height);
+		ret.addPoint(x + width, y);
+		return ret;
+	}
 }

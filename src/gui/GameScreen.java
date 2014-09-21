@@ -3,6 +3,11 @@ package gui;
 import comp.Button;
 import general.Keys;
 import general.Main;
+import newent.ActivePlayer;
+import newent.EntityComponentWrapper;
+import newent.Player;
+import newent.VisualEntity;
+import scala.collection.Seq$;
 import world.*;
 
 import java.awt.*;
@@ -10,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -35,6 +41,7 @@ public class GameScreen extends Screen {
 	public static GameScreen getInstance() {
 		if(instance == null) {
 			instance = new GameScreen();
+			instance.postInit();
 		}
 		return instance;
 	}
@@ -47,8 +54,10 @@ public class GameScreen extends Screen {
 	private Button toggleStopwatch;
 
 	// There are sure better solutions than this one, but I'll figure one out...
-    private TerrainLike terrain = new DefaultTerrain();
+    private WorldLike world = new DefaultWorld();
 	private VisualMap map;
+	private VisualEntity visualEntity;
+	private Player activePlayer;
 
 	/**
 	 * Die Welt, die vom GameScreen gezeichnet wird.
@@ -56,6 +65,17 @@ public class GameScreen extends Screen {
 
 	private GameScreen() {
 		super(GameScreen.SCREEN_NAME, GameScreen.SCREEN_INDEX);
+	}
+
+	/** This method must be called just once!
+	 *
+	 * With postInit() I am avoiding problems that the GameScreen.getInstance() reference is still null.
+	 * I know, complicated to explain, but every time I call GameScreen.getInstance() in the GameScreen constructor,
+	 * getInstance() returns null. Why? Because the GameScreen instance has not been fully constructed yet.
+	 * So construct it first, then do all the initialization afterwards.
+	 */
+	private void postInit() {
+		TerrainLike terrain = world.terrain();
 
 		// Comment that out later.
 		// Generating Component objects for every tile...
@@ -66,12 +86,19 @@ public class GameScreen extends Screen {
 			}
 		}
 
+		visualEntity = new VisualEntity(new LinkedList<EntityComponentWrapper>());
+
+		activePlayer = new ActivePlayer(world, new Point(3, 3), Main.getUser().getUsername());
+
+		// The population of the world has to be performed AFTER the generation/loading of the world.
+		world.entities().register(activePlayer);
+
 		map = new VisualMap(compWrappers);
 		map.moveMap(100, 300);
-		
+
 		// später DAS HIER auskommentieren
 		ScreenManager.ref_gameScreen = this;
-		
+
 		// Initialisierung der Buttons
 		endTurnButton = new Button(30, Main.getWindowHeight() - 50, this,
 				"End turn");
@@ -81,70 +108,70 @@ public class GameScreen extends Screen {
 		toggleStopwatch = new Button(endTurnButton.getX() + endTurnButton.getWidth()
 				+ shootButton.getX() + shootButton.getWidth() + 20,
 				Main.getWindowHeight() - 50, this, "Stopwatch");
-		
+
 		endTurnButton.setName("End turn button");
 		shootButton.setName("Shoot button");
 		toggleStopwatch.setName("Stopwatch button");
-		
-		
+
+
 		endTurnButton.addMouseListener(new MouseListener() {
-			
+
 			@Override
 			public void mouseReleased(MouseEvent e) {
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent e) {
 			}
-			
+
 			@Override
 			public void mouseExited(MouseEvent e) {
 			}
-			
+
 			@Override
 			public void mouseEntered(MouseEvent e) {
 			}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 			}
 		});
-		
+
 		shootButton.addMouseListener(new MouseListener() {
-			
+
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				onLeavingScreen(this, ArrowSelectionScreen.SCREEN_INDEX);
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent e) {
 			}
-			
+
 			@Override
 			public void mouseExited(MouseEvent e) {
 			}
-			
+
 			@Override
 			public void mouseEntered(MouseEvent e) {
 			}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 			}
 		});
-		
+
 		toggleStopwatch.addMouseListener(new MouseListener() {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
 //				if(toggleStopwatch.getBounds().contains(e.getPoint())) {
-					if(Main.timeObj.isRunning()) {
-						Main.timeObj.stop();
-					} else {
-						Main.timeObj.start();
-					}
-					System.out.println("Toggled stopwatch to " + Main.timeObj.isRunning());
+				if(Main.timeObj.isRunning()) {
+					Main.timeObj.stop();
+				} else {
+					Main.timeObj.start();
+				}
+				System.out.println("Toggled stopwatch to " + Main.timeObj.isRunning());
 //				}
 			}
 
@@ -164,14 +191,13 @@ public class GameScreen extends Screen {
 			public void mouseClicked(MouseEvent e) {
 			}
 		});
-		
-		
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
 		super.draw(g);
 		map.draw(g);
+		visualEntity.draw(g);
 		// Zeichnet die Welt und den UserInterface, der den Player darstellt
 		endTurnButton.draw(g);
 		shootButton.draw(g);
@@ -225,5 +251,17 @@ public class GameScreen extends Screen {
 		endTurnButton.acceptInput();
 		shootButton.acceptInput();
 		toggleStopwatch.acceptInput();
+	}
+
+	public VisualMap getMap() {
+		return map;
+	}
+
+	public WorldLike getWorld() {
+		return world;
+	}
+
+	public Player getActivePlayer() {
+		return activePlayer;
 	}
 }

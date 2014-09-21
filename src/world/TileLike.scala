@@ -2,7 +2,11 @@ package world
 
 import java.awt.{Color, Graphics2D, Polygon}
 
+import comp.RawComponent
 import geom.PointDef
+import newent.EntityLike
+
+import scala.collection.JavaConversions
 
 /** Base trait for all tiles.
   *
@@ -11,7 +15,7 @@ import geom.PointDef
   * that has not implemented any Component interface.
   * @author Josip Palavra
   */
-trait TileLike {
+trait TileLike extends RawComponent {
 
   /** The x position in the grid of the world. */
   val latticeX: Int
@@ -22,11 +26,6 @@ trait TileLike {
 
   /** The (geographic) height of the tile. */
   var tileHeight: Int
-
-  /** The polygon that represents the GUI boundaries of the tile. */
-  def polygon: Polygon
-  /** The draw function with which the tile is visualized on the display. */
-  def drawFunction: (Graphics2D) => Unit
 
   /** The movement points that are required to get on this tile. */
   def requiredMovementPoints: Int
@@ -48,8 +47,22 @@ trait TileLike {
   /** The tile located northwest of this tile. */
   def northWest: TileLike
 
+  /** The entities that are currently on this tile. */
+  def entities: Seq[EntityLike]
+  /** Java interop method for the entity list. */
+  def javaEntities = JavaConversions.seqAsJavaList(entities)
+
 }
 
+/** A tile implementation that displays itself isometrically.
+  *
+  * The entities are not stored locally on the tile, instead they are retrieved from the EntityManager
+  * instance. Why? Because I don't want to reference a tile from the entity.
+  *
+  * @param latticeX The x grid coordinate.
+  * @param latticeY The y grid coordinate.
+  * @param terrain The terrain to which the tile is linked.
+  */
 abstract class IsometricPolygonTile protected(override val latticeX: Int,
                                               override val latticeY: Int,
                                               override val terrain: DefaultTerrain) extends TileLike {
@@ -67,7 +80,7 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
   private val _originalNorth = new PointDef( 0, 0 )
 
   private var _polygon: Polygon = null
-  override def polygon = _polygon
+  override def bounds = _polygon
 
   // Make the call to the method here, because the initialization of the attributes above
   // has to finish before they get set to another value...
@@ -102,7 +115,7 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
   /** The draw function with which the tile is visualized on the display. */
   override def drawFunction = { g =>
     g.setColor(color)
-    g.fillPolygon(polygon)
+    g.fillPolygon(bounds)
   }
 
   override def north: TileLike = terrain.tileAt( latticeX - 1, latticeY + 1 )
@@ -114,25 +127,9 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
   override def west: TileLike = terrain.tileAt( latticeX - 1, latticeY - 1 )
   override def northWest: TileLike = terrain.tileAt( latticeX - 1, latticeY )
 
+  override def entities = terrain.world.entities.entityList.filter { e => e.getGridX == latticeX && e.getGridY == latticeY }
+
   def color: Color
-}
-
-class GrassTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends IsometricPolygonTile(latticeX, latticeY, terrain) {
-
-  override def color = GrassTile.TileColor
-
-  override def requiredMovementPoints = 1
-}
-
-object GrassTile {
-  val TileColor = Color.GREEN
-}
-
-class SeaTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends IsometricPolygonTile(latticeX, latticeY, terrain) {
-
-  override def color = Color.BLUE
-
-  override def requiredMovementPoints: Int = 2
 }
 
 object IsometricPolygonTile {
@@ -145,4 +142,26 @@ object IsometricPolygonTile {
   lazy val TileHeight = TileHalfHeight * 2
   lazy val TileDiagonalLength = sqrt( pow( TileHalfWidth, 2 ) + pow( TileHalfHeight, 2 ) )
 
+}
+
+class GrassTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends IsometricPolygonTile(latticeX, latticeY, terrain) {
+
+  override def color = GrassTile.TileColor
+
+  override def requiredMovementPoints = 1
+}
+
+object GrassTile {
+  lazy val TileColor = new Color(0x1C9618)
+}
+
+class SeaTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends IsometricPolygonTile(latticeX, latticeY, terrain) {
+
+  override def color = SeaTile.TileColor
+
+  override def requiredMovementPoints: Int = 2
+}
+
+object SeaTile {
+  lazy val TileColor = new Color(0x3555DB)
 }
