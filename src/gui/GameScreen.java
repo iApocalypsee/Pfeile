@@ -3,18 +3,12 @@ package gui;
 import comp.Button;
 import general.Keys;
 import general.Main;
-import newent.ActivePlayer;
-import newent.EntityComponentWrapper;
-import newent.Player;
-import newent.VisualEntity;
+import newent.*;
 import scala.collection.Seq$;
 import world.*;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseWheelEvent;
+import java.awt.event.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
@@ -114,27 +108,15 @@ public class GameScreen extends Screen {
 		toggleStopwatch.setName("Stopwatch button");
 
 
-		endTurnButton.addMouseListener(new MouseListener() {
+		endTurnButton.addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
+				for(EntityComponentWrapper componentWrapper : visualEntity.javaEntityComponents()) {
+					componentWrapper.entity().turnover();
+				}
 			}
 
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
 		});
 
 		shootButton.addMouseListener(new MouseListener() {

@@ -56,7 +56,7 @@ class TileComponentWrapper(val tile: TileLike) extends ComponentWrapper(tile) {
 
     addMouseListener(new MouseAdapter {
       override def mouseReleased(e: MouseEvent): Unit = {
-        GameScreen.getInstance().getActivePlayer.teleport(tile.latticeX, tile.latticeY)
+        GameScreen.getInstance().getActivePlayer.moveTowards(tile.latticeX, tile.latticeY)
       }
     })
 

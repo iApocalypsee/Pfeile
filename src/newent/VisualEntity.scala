@@ -14,6 +14,7 @@ class VisualEntity(ec: Seq[EntityComponentWrapper] = Seq.empty[EntityComponentWr
 
   private var _entityComps = mutable.MutableList[EntityComponentWrapper]()
   def entityComponents = _entityComps.toList
+  def javaEntityComponents = JavaConversions.seqAsJavaList(entityComponents)
 
   def this(javaEntityList: java.util.List[EntityComponentWrapper]) = this(JavaConversions.asScalaBuffer(javaEntityList))
 

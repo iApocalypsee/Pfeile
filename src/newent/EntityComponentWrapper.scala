@@ -4,6 +4,7 @@ import java.awt.Graphics2D
 
 import comp.{Component, ComponentWrapper}
 import gui.GameScreen
+import newent.event.LocationChangedEvent
 
 /**
  *
@@ -33,9 +34,12 @@ class EntityComponentWrapper(val entity: EntityLike) extends ComponentWrapper(en
         val tileRect = w.tile.bounds.getBounds
         setX(tileRect.x)
         setY(tileRect.y)
+        1
       }
 
       if(opt_guiChange.isDefined) opt_guiChange.get
     }
+
+    entity.onLocationChanged.call(LocationChangedEvent(entity.getGridX, entity.getGridY, entity.getGridX, entity.getGridY, entity))
   }
 }
