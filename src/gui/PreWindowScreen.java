@@ -10,6 +10,7 @@ import general.Mechanics;
 import javax.sound.sampled.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 
 /**
  * This is the Screen in which all (Mechanics) values like worldSize are set. It replaces the old PreWindow.
@@ -92,8 +93,9 @@ public class PreWindowScreen extends Screen {
     /** a Clip for playing the title melodie */
     private static Clip backgroundSound;
     static {
+	    AudioInputStream audioInputStream = null;
         try{
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
+            audioInputStream = AudioSystem.getAudioInputStream(
                     PreWindowScreen.class.getClassLoader().getResourceAsStream("resources/sfx/darkMusic00.wav"));
             AudioFormat audioFormat = audioInputStream.getFormat();
             int size = (int) (audioFormat.getFrameSize() * audioInputStream.getFrameLength());
@@ -103,6 +105,13 @@ public class PreWindowScreen extends Screen {
             backgroundSound = (Clip) AudioSystem.getLine(info);
             backgroundSound.open(audioFormat, audio, 0, size);
         } catch (Exception e) { e.printStackTrace(); }
+	    finally {
+	        try {
+		        audioInputStream.close();
+	        } catch (IOException e) {
+		        e.printStackTrace();
+	        }
+        }
     }
 
     /** This plays the background title melodie of pfeile in an endless loop.
