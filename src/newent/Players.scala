@@ -1,9 +1,9 @@
 package newent
 
-import java.awt.{Color, Graphics2D, Polygon, Point}
+import java.awt.{Color, Point}
 
 import comp.Component
-import newent.pathfinding.{AStarPathfinder, Pathfinder}
+import newent.pathfinding.AStarPathfinder
 import world.{GrassTile, WorldLike}
 
 /** Represents a player in the world.
@@ -14,14 +14,14 @@ import world.{GrassTile, WorldLike}
   */
 class Player(world: WorldLike,
              spawnpoint: Point,
-             name: String) extends Entity(world, spawnpoint, name) with MoveableEntity with TeleportableEntity {
+             name: String) extends Entity(world, spawnpoint, name) with MoveableEntity with TeleportableEntity with InventoryEntity {
 
   // Game section.
 
   /** The default movement points that the entity has. */
   override def defaultMovementPoints: Int = 2
 
-  override val pathfinderLogic = new AStarPathfinder(3, { _ => true })
+  override val pathfinderLogic = new AStarPathfinder(20, { t => t.isInstanceOf[GrassTile] })
 
   // GUI section.
 

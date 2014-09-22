@@ -159,7 +159,7 @@ class SeaTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends Iso
 
   override def color = SeaTile.TileColor
 
-  override def requiredMovementPoints: Int = 2
+  override def requiredMovementPoints: Int = 10
 }
 
 object SeaTile {

@@ -160,3 +160,9 @@ trait TeleportableEntity extends Entity {
   }
 
 }
+
+trait InventoryEntity extends Entity {
+
+  val inventory: InventoryLike = new DefaultInventory
+
+}
