@@ -1,8 +1,5 @@
 package comp;
 
-import comp.Button;
-import comp.Component;
-
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -82,26 +79,6 @@ public class ConfirmDialog extends comp.Component {
 	}
 
 	/**
-	 * Returns the bounding box of the "OK" button.
-	 * @return The bounding box of the "OK" button.
-	 * @deprecated Use getOkButton().getSimplifiedBounds() instead.
-	 */
-	@Deprecated
-	Rectangle getBoundingBoxOkButton () {
-		return ok.getSimplifiedBounds();
-	}
-
-	/**
-	 * Returns the bounding box of the "Cancel" button.
-	 * @return The bounding box of the "Cancel" button.
-	 * @deprecated Use getCancelButton().getSimplifiedBounds() instead.
-	 */
-	@Deprecated
-	Rectangle getBoundingBoxCancelButton () {
-		return cancel.getSimplifiedBounds();
-	}
-
-	/**
 	 * Returns the "OK" button object itself.
 	 * @return The "OK" button.
 	 */
@@ -145,7 +122,7 @@ public class ConfirmDialog extends comp.Component {
             getBorder().draw(g);
             g.setFont(comp.Component.STD_FONT);
             g.setColor(Color.white);
-            g.drawString(question, getAbsoluteX() + 10, getAbsoluteY() + 20);
+            g.drawString(question, getX() + 10, getY() + 20);
             ok.draw(g);
             cancel.draw(g);
         }

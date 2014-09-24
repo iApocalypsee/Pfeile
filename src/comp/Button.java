@@ -98,12 +98,12 @@ public class Button extends Component {
             g.setColor(Color.white);
 
             if(optImage == null) {
-                g.drawString(text, getAbsoluteX() + 10, getAbsoluteY() + 20);
+                g.drawString(text, getX() + 10, getY() + 20);
             } else {
-                g.drawImage(optImage, getAbsoluteX() + STD_INSETS.left, getAbsoluteY() + STD_INSETS.top,
+                g.drawImage(optImage, getX() + STD_INSETS.left, getY() + STD_INSETS.top,
                         optImage.getWidth(), optImage.getHeight(), null);
-                g.drawString(text, getAbsoluteX() + STD_INSETS.left + optImage.getWidth() + STD_INSETS.left,
-                        getAbsoluteY() + STD_INSETS.top + 20);
+                g.drawString(text, getX() + STD_INSETS.left + optImage.getWidth() + STD_INSETS.left,
+                        getY() + STD_INSETS.top + 20);
             }
         }
     }

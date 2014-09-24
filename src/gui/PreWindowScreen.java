@@ -90,44 +90,6 @@ public class PreWindowScreen extends Screen {
     /** position of <code>g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y")</code> */
     private Point fontSmallPosition;
 
-    /** a Clip for playing the title melodie */
-    private static Clip backgroundSound;
-    static {
-	    AudioInputStream audioInputStream = null;
-        try{
-            audioInputStream = AudioSystem.getAudioInputStream(
-                    PreWindowScreen.class.getClassLoader().getResourceAsStream("resources/sfx/darkMusic00.wav"));
-            AudioFormat audioFormat = audioInputStream.getFormat();
-            int size = (int) (audioFormat.getFrameSize() * audioInputStream.getFrameLength());
-            byte[] audio = new byte[size];
-            DataLine.Info info = new DataLine.Info(Clip.class, audioFormat, size);
-            audioInputStream.read(audio, 0, size);
-            backgroundSound = (Clip) AudioSystem.getLine(info);
-            backgroundSound.open(audioFormat, audio, 0, size);
-        } catch (Exception e) { e.printStackTrace(); }
-	    finally {
-	        try {
-		        audioInputStream.close();
-	        } catch (IOException e) {
-		        e.printStackTrace();
-	        }
-        }
-    }
-
-    /** This plays the background title melodie of pfeile in an endless loop.
-     * It will always start at the beginning after calling <code> playLoop() </code>.
-     * To stop it again use <code> stopLoop </code>
-     * The song should play until entering GameScreen / NewWorldTestScreen. */
-    public static void playLoop () {
-        backgroundSound.loop(Clip.LOOP_CONTINUOUSLY);
-    }
-    /** Stops the playing of the endless loop started with <code> playLoop </code>.
-     * To Start again use <code> playLoop()</code>.
-     */
-    public static void stopLoop () {
-        backgroundSound.stop();
-    }
-
     public PreWindowScreen() {
         super(SCREEN_NAME, SCREEN_INDEX);
 

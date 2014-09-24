@@ -583,15 +583,6 @@ public abstract class Component implements IComponent {
 			children.remove(c.getName());
 		}
 	}
-
-	@Deprecated
-	public int getAbsoluteX() {
-		return getX();
-	}
-	@Deprecated
-	public int getAbsoluteY() {
-		return getY();
-	}
 	
 	/**
 	 * Passt den Sichtbarkeitswert zurück.

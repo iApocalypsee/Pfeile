@@ -160,7 +160,7 @@ public class List extends Component {
 		int fdi = 0;
 		
 		for(; fdi < listItems.size(); fdi++) {
-			if(listItems.get(fdi).getAbsoluteY() >= this.getAbsoluteY()) {
+			if(listItems.get(fdi).getY() >= this.getY()) {
 				break;
 			}
 		}
@@ -170,7 +170,6 @@ public class List extends Component {
 	
 	/**
 	 * Gibt den derzeit ausgew�hlten Listenindex zur�ck. Der ausgew�hlte Listenindex
-	 * wird mit Mausklick bestimmt.
 	 * @return Den Index des ausgew�hlten Listeneintrags.
 	 */
 	public int getSelectedIndex() {

@@ -106,11 +106,10 @@ public class TextBox extends Component {
 		}
 		
 		if (enteredText.isEmpty()) {
-			g.drawString(stdText, getAbsoluteX() + STD_INSETS.right + 2, getAbsoluteY() + 18);
-		} else {
-			g.drawString(enteredText, getAbsoluteX() + STD_INSETS.right + 2, getAbsoluteY() + 18);
+			g.drawString(stdText, getX() + STD_INSETS.right + 2, getY() + 18);
+        } else {
+			g.drawString(enteredText, getX() + STD_INSETS.right + 2, getY() + 18);
 		}
-
 	}
 
 	/**

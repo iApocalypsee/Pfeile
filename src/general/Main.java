@@ -1,5 +1,6 @@
 package general;
 
+import animation.SoundPool;
 import gui.ArrowSelectionScreen;
 import gui.ArrowSelectionScreenPreSet;
 import gui.PreWindowScreen;
@@ -105,11 +106,10 @@ public class Main {
 
         gameWindow.initializeScreens();
         // Let's begin playing the title song
-        PreWindowScreen.playLoop();
+        SoundPool.play_titleMelodie();
 
         GameWindow.adjustWindow(gameWindow);
         toggleFullscreen(true);
-
 
         // window showing process
         gameWindow.createBufferStrategy();
@@ -128,7 +128,7 @@ public class Main {
         main.initArrowSelectionWindow();
         main.disposeInitialResources();
 
-        PreWindowScreen.stopLoop();
+        SoundPool.stop_titleMelodie();
 
         // Starten wir das Spiel wieder evtl. über Warte-Screen wechseln
         main.runGame();
@@ -520,20 +520,6 @@ public class Main {
      */
     public static GameWindow getGameWindow() {
         return gameWindow;
-    }
-
-    /**
-     * GETTER: GraphicsEnviroment
-     */
-    public GraphicsEnvironment getGraphicsEnvironment() {
-        return this.environmentG;
-    }
-
-    /**
-     * GETTER: GraphicsDevice
-     */
-    public GraphicsDevice getGraphicsDevice() {
-        return this.graphicsDevice;
     }
 
     public static User getUser() {
