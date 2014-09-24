@@ -43,7 +43,7 @@ public class List extends Component {
 	 */
 	private int selectedIndex = 0;
 
-	static final Insets STD_INSETS = new Insets(20, 10, 20, 10);
+	static final Insets STD_INSETS = new Insets(5, 8, 6, 8);
 
 	public List(int x, int y, int width, int height, Screen backing, java.util.List<String> items) {
 		super(x, y, width, height, backing);
@@ -54,7 +54,7 @@ public class List extends Component {
 			final Label build = new Label(x, y, backing, items.get(i));
 
 			// I need to set the position in the correct order.
-			build.setY(build.getY() + build.getHeight() * i);
+			build.setY(build.getY() + (build.getHeight() + 1) * i);
             // The loop wants that.
 
 			// If the label is inside the boundaries of the list, then it should be visible...
@@ -79,14 +79,17 @@ public class List extends Component {
 
         this.items = items;
 
-        setWidth(tfits().width);
-        setHeight(tfits().height);
+        setWidth(tfits().width + STD_INSETS.left + STD_INSETS.right);
+        setHeight(tfits().height + STD_INSETS.bottom + STD_INSETS.top);
+
+        y++;
 
         for (int i = 0; i < items.size(); i++) {
             final Label build = new Label(x, y, backing, items.get(i));
 
             // I need to set the position in the correct order.
-            build.setY(build.getY() + build.getHeight() * i);
+            if (i != 0)
+                build.setY(build.getY() + (build.getHeight() + 1) * i);
             // The loop wants that.
 
             // If the label is inside the boundaries of the list, then it should be visible...

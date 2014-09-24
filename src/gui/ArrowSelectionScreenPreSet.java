@@ -4,6 +4,7 @@ import comp.*;
 import comp.Button;
 import comp.Label;
 import comp.List;
+import general.GameLoop;
 import general.Main;
 import general.Mechanics;
 import player.weapon.*;
@@ -66,6 +67,8 @@ public class ArrowSelectionScreenPreSet extends Screen {
             remainingArrows = new Label (Main.getWindowWidth() - 232, Main.getWindowHeight() - 200, this, "Verfügbaren Pfeil definieren!");
         }
 
+        remainingArrows.setDeclineInputColor(new Color(202, 199, 246));
+
         fontBig = new Font("Blade 2", Font.BOLD, 220);
         fontMiddle = new Font("Calligraphic", Font.PLAIN, 48);
 
@@ -125,28 +128,19 @@ public class ArrowSelectionScreenPreSet extends Screen {
         readyButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-
-                boolean couldBeReady = true;
-
-                if (e.getSource() == readyButton) {
-                    if (selectedArrows.size() > Mechanics.arrowNumberPreSet) {
-                        couldBeReady = false;
-                        openConfirmQuestion("Fehler im System: zu viele Pfeile ausgewählt");
-                    }
-
-                    if (selectedArrows.size() < Mechanics.arrowNumberPreSet) {
-                        openConfirmQuestion("Forfahren, obwohl nicht alle Pfeile ausgewählt wurden?");
-                        couldBeReady = false;
-                    }
+            if (readyButton.getSimplifiedBounds().contains(e.getPoint())) {
+                if (selectedArrows.size() > Mechanics.arrowNumberPreSet) {
+                    openConfirmQuestion("Fehler im System: zu viele Pfeile ausgewählt");
                 }
 
-                if (couldBeReady == true && isConfirmDialogOpen == false ) {
-                    onLeavingScreen(this, GameScreen.SCREEN_INDEX);
-                    System.err.println("onLeavingScreen(ArrowSelectionScreenPreSet.this, GameScreen.SCREEN_INDEX)");
-                    //System.out.println("Not right now...");
-                    //Main.getGameWindow().dispose();
-                    //System.exit(0);
+                if (selectedArrows.size() < Mechanics.arrowNumberPreSet) {
+                    openConfirmQuestion("Forfahren, obwohl nicht alle Pfeile ausgewählt wurden?");
                 }
+            }
+
+            if (isConfirmDialogOpen == false ) {
+                GameLoop.setRunFlag(false);
+            }
             }
         });
 
@@ -156,9 +150,10 @@ public class ArrowSelectionScreenPreSet extends Screen {
         // Mouselistener f�r 'arrowListSelected'
         arrowListSelected.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased (MouseEvent eClicked) {
+            public void mousePressed (MouseEvent eClicked) {
                 if (arrowListSelected.getSimplifiedBounds().contains(eClicked.getPoint())
                             && arrowListSelected.isAcceptingInput()) {
+                    arrowListSelected.triggerListeners(eClicked);
                     selectedArrows.remove(arrowListSelected.getSelectedIndex());
                     if (selectedArrows.isEmpty()) {
                         selectedArrows.add("<keine Pfeile>");
@@ -195,6 +190,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
         isConfirmDialogOpen = true;
         for (Button button : buttonListArrows)
             button.declineInput();
+        readyButton.declineInput();
         arrowListSelected.declineInput();
     }
 
@@ -207,6 +203,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
         isConfirmDialogOpen = false;
         for (Button button : buttonListArrows)
             button.acceptInput();
+        readyButton.declineInput();
         arrowListSelected.acceptInput();
     }
 

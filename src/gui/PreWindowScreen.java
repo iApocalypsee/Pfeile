@@ -102,44 +102,45 @@ public class PreWindowScreen extends Screen {
         readyButton.setWidth(standardButton.getWidth());
 
         int labelPosX = 100;
-        int labelPosY = 500;
+        int labelPosY = 480;
         labels[0] = new Label(labelPosX, labelPosY, this, "Computerstärke: ");
-        labels[1] = new Label(labelPosX, labelPosY + labels[0].getHeight(), this, "Pfeilanzahl [frei wählbar]: ");
-        labels[2] = new Label(labelPosX, labels[1].getY() + labels[1].getHeight(), this, "Pfeilanzahl [vorher wählbar]: ");
-        labels[3] = new Label(labelPosX, labels[2].getY() + labels[2].getHeight(), this, "maximales Leben: ");
-        labels[4] = new Label(labelPosX, labels[3].getY() + labels[3].getHeight(), this, "Lebensregeneration: ");
-        labels[5] = new Label(labelPosX, labels[4].getY() + labels[4].getHeight(), this, "Schadensmultiplikator: ");
-        labels[6] = new Label(labelPosX, labels[5].getY() + labels[5].getHeight(), this, "Züge pro Runde: ");
-        labels[7] = new Label(labelPosX, labels[6].getY() + labels[6].getHeight(), this, "Zeit pro Zug: ");
-        labels[8] = new Label(labelPosX, labels[7].getY() + labels[7].getHeight(), this, "Handicap [Spieler]: ");
-        labels[9] = new Label(labelPosX, labels[8].getY() + labels[8].getHeight(), this, "Handicap [Computer]: ");
-        labels[10] = new Label(labelPosX, labels[9].getY() + labels[9].getHeight(), this, "Weltgröße: ");
+        labels[1] = new Label(labelPosX, labelPosY + labels[0].getHeight() + 3, this, "Pfeilanzahl [frei wählbar]: ");
+        labels[2] = new Label(labelPosX, labels[1].getY() + labels[1].getHeight() + 3, this, "Pfeilanzahl [vorher wählbar]: ");
+        labels[3] = new Label(labelPosX, labels[2].getY() + labels[2].getHeight() + 3, this, "maximales Leben: ");
+        labels[4] = new Label(labelPosX, labels[3].getY() + labels[3].getHeight() + 3, this, "Lebensregeneration: ");
+        labels[5] = new Label(labelPosX, labels[4].getY() + labels[4].getHeight() + 3, this, "Schadensmultiplikator: ");
+        labels[6] = new Label(labelPosX, labels[5].getY() + labels[5].getHeight() + 3, this, "Züge pro Runde: ");
+        labels[7] = new Label(labelPosX, labels[6].getY() + labels[6].getHeight() + 3, this, "Zeit pro Zug: ");
+        labels[8] = new Label(labelPosX, labels[7].getY() + labels[7].getHeight() + 3, this, "Handicap [Spieler]: ");
+        labels[9] = new Label(labelPosX, labels[8].getY() + labels[8].getHeight() + 3, this, "Handicap [Computer]: ");
+        labels[10] = new Label(labelPosX, labels[9].getY() + labels[9].getHeight() + 3, this, "Weltgröße: ");
         for (Label label : labels) {
             label.declineInput();
+            label.setDeclineInputColor(new Color(202, 199, 246));
         }
 
-        String[] comboBoxValuesSelector = { "Computerstärke", "Pfeilanzahl [frei wählbar]", "Pfeilanzahl [vorher wählbar]",
+        final String[] comboBoxValuesSelector = { "Computerstärke", "Pfeilanzahl [frei wählbar]", "Pfeilanzahl [vorher wählbar]",
                 "maximales Leben", "Lebensregeneration", "Schadensmultiplikator", "Züge pro Runde", "Zeit pro Zug",
                 "Handicap", "Weltgröße"};
 
         selectorComboBox = new ComboBox (labelPosX, 80, 250, 500, this, comboBoxValuesSelector);
 
-        String[] comboBoxValuesHigh = { "hoch", "hoch-mittel", "mittel", "mittel-niedrig", "niedrig" };
-        boxSelectHigh = new ComboBox (confirmButton.getX(), selectorComboBox.getY(), this, comboBoxValuesHigh);
+        final String[] comboBoxValuesHigh = { "hoch", "hoch-mittel", "mittel", "mittel-niedrig", "niedrig" };
+        boxSelectHigh = new ComboBox (confirmButton.getX() - 10, selectorComboBox.getY(), this, comboBoxValuesHigh);
         boxSelectHigh.setSelectedIndex(2);
         boxSelectHigh.setVisible(false);
         boxSelectHigh.declineInput();
 
-        String[] comboBoxValuesSize = { "gigantisch", "groß", "normal", "klein", "winzig" };
-        boxSelectSize = new ComboBox (confirmButton.getX(), selectorComboBox.getY(), this, comboBoxValuesSize);
+        final String[] comboBoxValuesSize = { "gigantisch", "groß", "normal", "klein", "winzig" };
+        boxSelectSize = new ComboBox (boxSelectHigh.getX(), selectorComboBox.getY(), this, comboBoxValuesSize);
         boxSelectSize.setSelectedIndex(2);
         boxSelectSize.setVisible(false);
         boxSelectSize.declineInput();
 
         final String[] comboBoxValuesHandicap =
                     {"+ 25%", "+ 20%", "+ 15%", "+ 10%", "+ 5%", "0%", "- 5%", "- 10%", "- 15%", "- 20%", "- 25%"};
-        boxSelectHandicapPlayer = new ComboBox (confirmButton.getX(), selectorComboBox.getY(), this, comboBoxValuesHandicap);
-        boxSelectHandicapKI = new ComboBox (confirmButton.getX() - selectorComboBox.getY() - 30, selectorComboBox.getY(), this, comboBoxValuesHandicap);
+        boxSelectHandicapPlayer = new ComboBox (boxSelectHigh.getX(), selectorComboBox.getY(), this, comboBoxValuesHandicap);
+        boxSelectHandicapKI = new ComboBox (boxSelectHigh.getX() - selectorComboBox.getY() - 30, selectorComboBox.getY(), this, comboBoxValuesHandicap);
         boxSelectHandicapPlayer.setSelectedIndex(5);
         boxSelectHandicapKI.setSelectedIndex(5);
         boxSelectHandicapPlayer.setVisible(false);
@@ -147,13 +148,13 @@ public class PreWindowScreen extends Screen {
         boxSelectHandicapPlayer.declineInput();
         boxSelectHandicapKI.declineInput();
 
-        String[] comboBoxValuesKI = { "brutal", "stark", "normal", "schwach", "erbärmlich" };
-        boxSelectKI = new ComboBox(confirmButton.getX(), selectorComboBox.getY(), this, comboBoxValuesKI);
+        final String[] comboBoxValuesKI = { "brutal", "stark", "normal", "schwach", "erbärmlich" };
+        boxSelectKI = new ComboBox(boxSelectHigh.getX(), selectorComboBox.getY(), this, comboBoxValuesKI);
         boxSelectKI.setSelectedIndex(2);
 
-        String[] comboBoxValuesTime = {"5min", "2 min", "1 min", "40sec",
+        final String[] comboBoxValuesTime = {"5min", "2 min", "1 min", "40sec",
                 "30sec", "20sec"};
-        boxSelectTime = new ComboBox(confirmButton.getX(), selectorComboBox.getY(), this, comboBoxValuesTime);
+        boxSelectTime = new ComboBox(boxSelectHigh.getX(), selectorComboBox.getY(), this, comboBoxValuesTime);
         boxSelectTime.setSelectedIndex(2);
         boxSelectTime.setVisible(false);
         boxSelectTime.declineInput();
@@ -167,7 +168,7 @@ public class PreWindowScreen extends Screen {
         spinnerModelPreSet = new SpinnerModel(10, 0, 50, 1);
         spinnerModelFreeSet = new SpinnerModel(5, 0, 30, 1);
         spinnerModelTurnsPerRound = new SpinnerModel(7, 1, 40, 1);
-        spinner = new Spinner(confirmButton.getX(), selectorComboBox.getY(), this, spinnerModelPreSet);
+        spinner = new Spinner(boxSelectHigh.getX(), selectorComboBox.getY(), this, spinnerModelPreSet);
         spinner.setVisible(false);
 
         fontBig = new Font("Blade 2", Font.BOLD, 220);
@@ -431,123 +432,118 @@ public class PreWindowScreen extends Screen {
         });
 
         selectorComboBox.addMouseListener(new MouseAdapter() {
-            private int oldSelectedIndex = selectorComboBox.getSelectedIndex();
             @Override
             public void mouseReleased (MouseEvent e) {
-                // if this check is true, it is like an itemChancedEvent
-                if (selectorComboBox.getSelectedIndex() != oldSelectedIndex) {
-                    switch (selectorComboBox.getSelectedIndex()) {
-                        case 0: { // Computerstärke
-                            boxSelectKI.setVisible(true);
-                            spinner.setVisible(false);
-                            boxSelectHandicapKI.setVisible(false);
-                            boxSelectHandicapPlayer.setVisible(false);
-                            boxSelectHigh.setVisible(false);
-                            boxSelectSize.setVisible(false);
-                            boxSelectTime.setVisible(false);
-                            break;
-                        }
-                        case 1: { // Pfeilanzahl [frei wählbar]
-                            spinner.setVisible(true);
-                            spinner.setSpinnerModel(spinnerModelFreeSet);
-                            boxSelectHandicapKI.setVisible(false);
-                            boxSelectHandicapPlayer.setVisible(false);
-                            boxSelectHigh.setVisible(false);
-                            boxSelectKI.setVisible(false);
-                            boxSelectSize.setVisible(false);
-                            boxSelectTime.setVisible(false);
-                            break;
-                        }
-                        case 2: { // Pfeilanzahl [vorher wählbar]
-                            spinner.setVisible(true);
-                            spinner.setSpinnerModel(spinnerModelPreSet);
-                            boxSelectHandicapKI.setVisible(false);
-                            boxSelectHandicapPlayer.setVisible(false);
-                            boxSelectHigh.setVisible(false);
-                            boxSelectKI.setVisible(false);
-                            boxSelectSize.setVisible(false);
-                            boxSelectTime.setVisible(false);
-                            break;
-                        }
-                        case 3: { // maximales Leben
-                            boxSelectHigh.setVisible(true);
-                            spinner.setVisible(false);
-                            boxSelectHandicapKI.setVisible(false);
-                            boxSelectHandicapPlayer.setVisible(false);
-                            boxSelectKI.setVisible(false);
-                            boxSelectSize.setVisible(false);
-                            boxSelectTime.setVisible(false);
-                            break;
-                        }
-                        case 4: { // Lebensregeneration
-                            boxSelectHigh.setVisible(true);
-                            spinner.setVisible(false);
-                            boxSelectHandicapKI.setVisible(false);
-                            boxSelectHandicapPlayer.setVisible(false);
-                            boxSelectKI.setVisible(false);
-                            boxSelectSize.setVisible(false);
-                            boxSelectTime.setVisible(false);
-                            break;
-                        }
-                        case 5: { // Schadensmultiplikator
-                            boxSelectHigh.setVisible(true);
-                            spinner.setVisible(false);
-                            boxSelectHandicapKI.setVisible(false);
-                            boxSelectHandicapPlayer.setVisible(false);
-                            boxSelectKI.setVisible(false);
-                            boxSelectSize.setVisible(false);
-                            boxSelectTime.setVisible(false);
-                            break;
-                        }
-                        case 6: { // Züge pro Runde
-                            spinner.setVisible(true);
-                            spinner.setSpinnerModel(spinnerModelTurnsPerRound);
-                            boxSelectHandicapKI.setVisible(false);
-                            boxSelectHandicapPlayer.setVisible(false);
-                            boxSelectHigh.setVisible(false);
-                            boxSelectKI.setVisible(false);
-                            boxSelectSize.setVisible(false);
-                            boxSelectTime.setVisible(false);
-                            break;
-                        }
-                        case 7: { // Zeit pro Zug
-                            boxSelectTime.setVisible(true);
-                            spinner.setVisible(false);
-                            boxSelectHandicapKI.setVisible(false);
-                            boxSelectHandicapPlayer.setVisible(false);
-                            boxSelectHigh.setVisible(false);
-                            boxSelectKI.setVisible(false);
-                            boxSelectSize.setVisible(false);
-                            break;
-                        }
-                        case 8: { // Handicap
-                            boxSelectHandicapKI.setVisible(true);
-                            spinner.setVisible(false);
-                            boxSelectHandicapPlayer.setVisible(true);
-                            boxSelectHigh.setVisible(false);
-                            boxSelectKI.setVisible(false);
-                            boxSelectSize.setVisible(false);
-                            boxSelectTime.setVisible(false);
-                            break;
-                        }
-                        case 9: { // Weltgröße
-                            boxSelectSize.setVisible(true);
-                            spinner.setVisible(false);
-                            boxSelectHandicapKI.setVisible(false);
-                            boxSelectHandicapPlayer.setVisible(false);
-                            boxSelectHigh.setVisible(false);
-                            boxSelectKI.setVisible(false);
-                            boxSelectTime.setVisible(false);
-                            break;
-                        }
-                        default: {
-                            openConfirmDialog("Fehler bei der Auswahl von der ComboBox <code> selectorComboBox </code>");
-                            System.err.println("Error: trying to reach " + selectorComboBox.getSelectedIndex() + " " +
-                                    "in PreWindowScreen at confirmButton.addMouseListner(...), " +
-                                    "however there is not such an index.");
-                            selectorComboBox.setSelectedIndex(0);
-                        }
-                        oldSelectedIndex = selectorComboBox.getSelectedIndex();
+                switch (selectorComboBox.getSelectedIndex()) {
+                    case 0: { // Computerstärke
+                        boxSelectKI.setVisible(true);
+                        spinner.setVisible(false);
+                        boxSelectHandicapKI.setVisible(false);
+                        boxSelectHandicapPlayer.setVisible(false);
+                        boxSelectHigh.setVisible(false);
+                        boxSelectSize.setVisible(false);
+                        boxSelectTime.setVisible(false);
+                        break;
+                    }
+                    case 1: { // Pfeilanzahl [frei wählbar]
+                        spinner.setVisible(true);
+                        spinner.setSpinnerModel(spinnerModelFreeSet);
+                        boxSelectHandicapKI.setVisible(false);
+                        boxSelectHandicapPlayer.setVisible(false);
+                        boxSelectHigh.setVisible(false);
+                        boxSelectKI.setVisible(false);
+                        boxSelectSize.setVisible(false);
+                        boxSelectTime.setVisible(false);
+                        break;
+                    }
+                    case 2: { // Pfeilanzahl [vorher wählbar]
+                        spinner.setVisible(true);
+                        spinner.setSpinnerModel(spinnerModelPreSet);
+                        boxSelectHandicapKI.setVisible(false);
+                        boxSelectHandicapPlayer.setVisible(false);
+                        boxSelectHigh.setVisible(false);
+                        boxSelectKI.setVisible(false);
+                        boxSelectSize.setVisible(false);
+                        boxSelectTime.setVisible(false);
+                        break;
+                    }
+                    case 3: { // maximales Leben
+                        boxSelectHigh.setVisible(true);
+                        spinner.setVisible(false);
+                        boxSelectHandicapKI.setVisible(false);
+                        boxSelectHandicapPlayer.setVisible(false);
+                        boxSelectKI.setVisible(false);
+                        boxSelectSize.setVisible(false);
+                        boxSelectTime.setVisible(false);
+                        break;
+                    }
+                    case 4: { // Lebensregeneration
+                        boxSelectHigh.setVisible(true);
+                        spinner.setVisible(false);
+                        boxSelectHandicapKI.setVisible(false);
+                        boxSelectHandicapPlayer.setVisible(false);
+                        boxSelectKI.setVisible(false);
+                        boxSelectSize.setVisible(false);
+                        boxSelectTime.setVisible(false);
+                        break;
+                    }
+                    case 5: { // Schadensmultiplikator
+                        boxSelectHigh.setVisible(true);
+                        spinner.setVisible(false);
+                        boxSelectHandicapKI.setVisible(false);
+                        boxSelectHandicapPlayer.setVisible(false);
+                        boxSelectKI.setVisible(false);
+                        boxSelectSize.setVisible(false);
+                        boxSelectTime.setVisible(false);
+                        break;
+                    }
+                    case 6: { // Züge pro Runde
+                        spinner.setVisible(true);
+                        spinner.setSpinnerModel(spinnerModelTurnsPerRound);
+                        boxSelectHandicapKI.setVisible(false);
+                        boxSelectHandicapPlayer.setVisible(false);
+                        boxSelectHigh.setVisible(false);
+                        boxSelectKI.setVisible(false);
+                        boxSelectSize.setVisible(false);
+                        boxSelectTime.setVisible(false);
+                        break;
+                    }
+                    case 7: { // Zeit pro Zug
+                        boxSelectTime.setVisible(true);
+                        spinner.setVisible(false);
+                        boxSelectHandicapKI.setVisible(false);
+                        boxSelectHandicapPlayer.setVisible(false);
+                        boxSelectHigh.setVisible(false);
+                        boxSelectKI.setVisible(false);
+                        boxSelectSize.setVisible(false);
+                        break;
+                    }
+                    case 8: { // Handicap
+                        boxSelectHandicapKI.setVisible(true);
+                        spinner.setVisible(false);
+                        boxSelectHandicapPlayer.setVisible(true);
+                        boxSelectHigh.setVisible(false);
+                        boxSelectKI.setVisible(false);
+                        boxSelectSize.setVisible(false);
+                        boxSelectTime.setVisible(false);
+                        break;
+                    }
+                    case 9: { // Weltgröße
+                        boxSelectSize.setVisible(true);
+                        spinner.setVisible(false);
+                        boxSelectHandicapKI.setVisible(false);
+                        boxSelectHandicapPlayer.setVisible(false);
+                        boxSelectHigh.setVisible(false);
+                        boxSelectKI.setVisible(false);
+                        boxSelectTime.setVisible(false);
+                        break;
+                    }
+                    default: {
+                        openConfirmDialog("Fehler bei der Auswahl von der ComboBox <code> selectorComboBox </code>");
+                        System.err.println("Error: trying to reach " + selectorComboBox.getSelectedIndex() + " " +
+                                "in PreWindowScreen at confirmButton.addMouseListner(...), " +
+                                "however there is not such an index.");
+                        selectorComboBox.setSelectedIndex(0);
                     }
                 }
             }

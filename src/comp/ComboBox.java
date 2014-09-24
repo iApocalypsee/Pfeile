@@ -56,8 +56,8 @@ public class ComboBox extends Component {
 
         if (getWidth() < containerLabel.getWidth() + clickButton.getWidth() + STD_INSETS.left + STD_INSETS.right)
             setWidth(containerLabel.getWidth() + clickButton.getWidth() + STD_INSETS.left + STD_INSETS.right);
-        if (getHeight() < containerLabel.getHeight() + selectionList.getHeight())
-            setHeight(containerLabel.getHeight() + selectionList.getHeight());
+        if (getHeight() < containerLabel.getHeight() + selectionList.getHeight() + STD_INSETS.bottom + STD_INSETS.top)
+            setHeight(containerLabel.getHeight() + selectionList.getHeight() + STD_INSETS.bottom + STD_INSETS.top);
 
         selectionList.setWidth(getWidth());
     }
@@ -68,10 +68,10 @@ public class ComboBox extends Component {
 
         init(screenBacking);
 
+
         setWidth(containerLabel.getWidth() + clickButton.getWidth() + STD_INSETS.left + STD_INSETS.right);
         setHeight(containerLabel.getHeight() + selectionList.getHeight());
         selectionList.setWidth(getWidth());
-
     }
 
     private void init (Screen screenBacking) {
@@ -114,7 +114,7 @@ public class ComboBox extends Component {
             @Override
             public void mousePressed (MouseEvent e) {
                 // only if "clickButton" has been pressed for sure
-                if (clickButton.getSimplifiedBounds().contains(e.getPoint())) {
+                if (clickButton.getSimplifiedBounds().contains(e.getPoint()) && isAcceptingInput()) {
                     if (selectionList.isVisible()) {
                         selectionList.setVisible(false);
                         selectionList.declineInput();
@@ -122,12 +122,15 @@ public class ComboBox extends Component {
                         selectionList.setVisible(true);
                         selectionList.acceptInput();
                     }
-                } // only if "selectionList" has been pressed for sure
-                else if (selectionList.getSimplifiedBounds().contains(e.getPoint()) && selectionList.isAcceptingInput()) {
-                    selectionList.setVisible(false);
-                    selectionList.triggerListeners(e);
-                    containerLabel.setText(getValues()[selectionList.getSelectedIndex()]);
                 }
+            }
+        });
+        selectionList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed (MouseEvent e) {
+                selectionList.setVisible(false);
+                selectionList.triggerListeners(e);
+                containerLabel.setText(values[getSelectedIndex()]);
             }
         });
     }
@@ -137,7 +140,7 @@ public class ComboBox extends Component {
      */
     public void setSelectedIndex (int index) {
         selectionList.setSelectedIndex(index);
-        containerLabel.setText(getValues()[selectionList.getSelectedIndex()]);
+        containerLabel.setText(getValues()[index]);
     }
 
     @Override

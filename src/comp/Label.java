@@ -21,6 +21,8 @@ public class Label extends Component {
 
     private Color noMouseColor = Color.lightGray;
 
+    private Color declineInputColor = Color.darkGray;
+
 	public Label() {
 		declineInput();
 		setName("Label " + hashCode());
@@ -63,7 +65,7 @@ public class Label extends Component {
 			}
 			
 			} else {
-				g.setColor(Color.darkGray);
+				g.setColor(declineInputColor);
 			}
 
 			g.setFont(STD_FONT);
@@ -82,11 +84,21 @@ public class Label extends Component {
         return text;
     }
 
+    /** automatically: Color.lightGray */
     public Color getNoMouseColor () {
         return noMouseColor;
     }
 
     public void setNoMouseColor (Color noMouseColor) {
         this.noMouseColor = noMouseColor;
+    }
+
+    /** automatically: Color.darkGray */
+    public Color getDeclineInputColor () {
+        return declineInputColor;
+    }
+
+    public void setDeclineInputColor (Color declineInputColor) {
+        this.declineInputColor = declineInputColor;
     }
 }

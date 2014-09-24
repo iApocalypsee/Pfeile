@@ -1,11 +1,10 @@
 package general;
 
 import animation.SoundPool;
-import gui.ArrowSelectionScreen;
-import gui.ArrowSelectionScreenPreSet;
-import gui.PreWindowScreen;
+import gui.*;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
+import world.WorldLike;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -91,8 +90,6 @@ public class Main {
      * Main-Method �ffnet eine neue Instanz von Main: main
      */
     public static void main(String[] arguments) {
-
-        Mechanics.setUsername("Just a user");
         user = new User("Just a user");
 
         main = new Main();
@@ -115,26 +112,37 @@ public class Main {
         gameWindow.createBufferStrategy();
         gameWindow.setVisible(true);
 
-        // nur vorübergehend, hier später runGame() aufrufen und unterbrechen
-        while(Keys.isKeyPressed(KeyEvent.VK_SPACE) == false) {
-            Main.getGameWindow().draw();
-        }
+        // run the game until GameWindow
+        GameLoop.run(1 / 60.0);
 
+        // TODO: all gerate world methods need to be here or if they can be declared as a thread before GameLoop.run(1 / 60.0);
+        // empty method
         main.newWorldTest();
+        // empty method
         main.generateWorld();
+        // empty method
         main.populateWorld();
+        // add the arrows to the inventory
+        main.doArrowSelectionAddingArrows();
+        // and TimeClock with stopWatchThread
         main.initTimeClock();
-
-        main.initArrowSelectionWindow();
+        // empty method
+        main.postInitScreens();
+        // empty method
         main.disposeInitialResources();
 
+        // play the sound
         SoundPool.stop_titleMelodie();
+        SoundPool.playLoop_mainThemeMelodie(SoundPool.LOOP_COUNTINOUSLY);
 
-        // Starten wir das Spiel wieder evtl. über Warte-Screen wechseln
+        // Schalten wir auf den GameScreen evtl. über Warte-Screen wechseln
+        getGameWindow().getScreenManager().setActiveScreen(GameScreen.SCREEN_INDEX);
+
+        // starten wir das Spiel
         main.runGame();
 
 		/*
-         * TODO Hier kommt cleanup-code, z.B. noch offene Dateien schlie�en.
+         * TODO Hier kommt cleanup-code, z.B. noch offene Dateien schließen.
 		 * Ich weis, noch nichts zum Aufr�umen hinterher, aber wir werden es sp�ter
 		 * 100% brauchen.
 		 */
@@ -146,7 +154,6 @@ public class Main {
     }
 
     /** EMPTY */
-    @Deprecated
     private void disposeInitialResources() {
 
     }
@@ -163,108 +170,27 @@ public class Main {
         timeObj.start();
 
         GameLoop.run(1 / 60.0);
-		
-		/*
-		 * Mit einem Threadsystem ist es unm�glich, diese dreifache while(true)-Schleife
-		 * aufrechtzuerhalten!!
-		while (true) {
-			// ++++++++++++++++++++++++++++++++++
-			// AUFRUF DER PFEILAUSWAHL
-			// TODO
-				// +++++++++++++++++++++++++++++++++++
-			// RUNDE
-			while (true) {
-				timeObj.start();
-				
-				// +++++++++++++++++++++++++++++++
-				// ZUG
-				while(true){
-					render();
-					
-					// alle Bedingunen, bei denen ein Zug enden kann
-					if (timeObj.getMilliDeath() < 0) 
-						break;
-					if (isTurnEnd == true) 
-						break;
-				}
-				timeObj.stop();
-				timeObj.reset();
-				
-				// ++++SCHADENSBERECHNUNGEN++++
-				// TODO: alle Schadensberechungen, nach Endwe eines Zuges m�ssen hier rein
-				lifePlayer.updateLife();
-				
-				// alle Bedingungen, mit denen eine Runde enden kann
-				if (lifePlayer.getLife() <= 0 || lifeKI.getLife() <= 0) 
-					break;
-				if (timeObj.getMilliDeath() < 0) 
-					break;
-				if ((turnsPerRound - currentTurn) <= 0) 
-					break;
-			}
-			// TODO Player und Leben richtig aufrufen
-			
-			// alle Bedingen, bei denen das Spiel endet
-			if (lifePlayer.getLife() <= 0 || lifeKI.getLife() <= 0) 
-				break;
-			if (timeObj.getMilliDeath() < 0) 
-				break;
-				// ++++++++++++++++++++++++++++++++
-			// BELEOHNUNGSYSTEM
-			// TODO : Das kommplette Belohunungssystem
-		}
-		*/
+
+        // TODO: System, bei der nach jeder Runde der Bonusauswahlbildschirm und ArrowSelectionPreSet kommt
+        // TODO: System muss auch auf Niederlage überprüfen
     }
 
     // #########################################################
     // METHODEN: v. a. alle Threads ############################
     // #########################################################
 
-    private void initArrowSelectionWindow() {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                final ArrowSelectionScreenPreSet arrowSelection = new ArrowSelectionScreenPreSet();
-                ArrowSelectionScreen.getInstance().getManager().setActiveScreen(arrowSelection);
-
-                arrowSelection.onScreenLeft.register(new AbstractFunction1<gui.Screen.ScreenChangedEvent, BoxedUnit>() {
-                    @Override
-                    public BoxedUnit apply(gui.Screen.ScreenChangedEvent v1) {
-                        // add the arrows actually to the inventory
-                        doArrowSelectionAddingArrows(arrowSelection);
-
-                        main.postInitScreens();    // empty method
-
-                        synchronized (main) {
-                            main.notify();
-                        }
-
-                        return null;
-                    }
-                });
-            }
-        });
-        thread.start();
-    }
-
     /**
      * Fuegt die Pfeile in das Inventar des Spielers ein
      */
-    private void doArrowSelectionAddingArrows(ArrowSelectionScreenPreSet arrowSelection) {
-        /*
+    private void doArrowSelectionAddingArrows() {
+        final ArrowSelectionScreenPreSet arrowSelection = (ArrowSelectionScreenPreSet) (getGameWindow().getScreenManager().getScreens().get(ArrowSelectionScreenPreSet.SCREEN_INDEX));
 
         for (String selectedArrow : arrowSelection.selectedArrows) {
-            if (!((ScaleWorld) NewWorldTestScreen.getWorld()).getActivePlayer().getInventory().addItem(
-                    player.weapon.ArrowHelper.instanceArrow(selectedArrow))) {
-
-                System.err.println("in Main: doArrowSelectionAddingArrows\n\t"
-                        + "Der Pfeil + " + selectedArrow + " konnte nicht hinzugefügt werden.");
-            }
+            GameScreen.getInstance().getActivePlayer().inventory().put(
+                    player.weapon.ArrowHelper.instanceArrow(selectedArrow));
         }
 
         ArrowSelectionScreen.getInstance().updateInventoryList();
-        */
     }
 
 	// DEFAULT IMPLEMENTATION WITH NO PROBABILITIES

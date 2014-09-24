@@ -1,5 +1,6 @@
 package newent
 
+import general.Mechanics
 import player.weapon.Item
 
 import scala.collection.{JavaConversions, mutable}
@@ -50,7 +51,10 @@ class DefaultInventory extends InventoryLike {
 
   private var _list = mutable.ArrayBuffer[Item]()
 
-  override def put(i: Item): Unit = _list += i
+  override def put(i: Item): Unit = {
+      // TODO: only put in the inventory, if there is space left.
+      _list += i
+  }
 
   override def remove(f: (Item) => Boolean): Option[Item] = {
     val opt_find = find(f)

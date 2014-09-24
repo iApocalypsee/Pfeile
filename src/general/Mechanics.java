@@ -90,33 +90,6 @@ public final class Mechanics {
 	/** Streckung der Welt in die Höhe */
 	public static float heightStretching = 1.0f;
 	
-	/**
-	 * Der Username. 
-	 */
-	private static String username = null;
-	
-	/**
-	 * @return Den Usernamen. Wird in PreWindow gesetzt.
-	 */
-	public static String getUsername() {
-		return username;
-	}
-	
-	/**
-	 * Setzt den Username. Kann nur einmal gesetzt werden.
-	 * @param s Der neue Username.
-	 * @throws IllegalArgumentException wenn der neue Username null ist
-	 */
-	protected static void setUsername(String s) {
-		if(s == null) {
-			throw new IllegalArgumentException("Username == null!");
-		} else if(getUsername() == null) {
-			username = s;
-		} else {
-			System.out.println("Username already set to \"" + username + "\"!");
-		}
-	}
-	
 	/** Rundet Auf 25 (Meter) genau */
 	public static int roundTo25 (int number) {
 		
