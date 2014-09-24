@@ -33,7 +33,6 @@ public class ArrowSelectionScreenPreSet extends Screen {
     Button [] buttonListArrows = new Button[8];
     private List arrowListSelected;
     private ConfirmDialog confirmDialog;
-    private boolean isConfirmDialogOpen = false;
     public LinkedList<String> selectedArrows;
 
     /** Hintergrund Farbe */
@@ -108,7 +107,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
         for (Button button : buttonListArrows)
             button.addMouseListener(new ButtonHelper());
 
-        confirmDialog = new ConfirmDialog(500, 500, this, "");
+        confirmDialog = new ConfirmDialog(500, 300, this, "");
         confirmDialog.setVisible(false);
         confirmDialog.getOk().addMouseListener(new MouseAdapter() {
             @Override
@@ -128,19 +127,17 @@ public class ArrowSelectionScreenPreSet extends Screen {
         readyButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-            if (readyButton.getSimplifiedBounds().contains(e.getPoint())) {
-                if (selectedArrows.size() > Mechanics.arrowNumberPreSet) {
-                    openConfirmQuestion("Fehler im System: zu viele Pfeile ausgewählt");
-                }
+                if (readyButton.getSimplifiedBounds().contains(e.getPoint())) {
+                    if (selectedArrows.size() > Mechanics.arrowNumberPreSet) {
+                        throw new IllegalStateException("To many arrows added: They can't be more than " + Mechanics.arrowNumberPreSet);
+                    }
 
-                if (selectedArrows.size() < Mechanics.arrowNumberPreSet) {
-                    openConfirmQuestion("Forfahren, obwohl nicht alle Pfeile ausgewählt wurden?");
+                    if (selectedArrows.size() < Mechanics.arrowNumberPreSet) {
+                        openConfirmQuestion("Bitten wählen sie alle Pfeile aus!");
+                    } else {
+                        GameLoop.setRunFlag(false);
+                    }
                 }
-            }
-
-            if (isConfirmDialogOpen == false ) {
-                GameLoop.setRunFlag(false);
-            }
             }
         });
 
@@ -187,7 +184,6 @@ public class ArrowSelectionScreenPreSet extends Screen {
     private void openConfirmQuestion (String question) {
         confirmDialog.setQuestionText(question);
         confirmDialog.setVisible(true);
-        isConfirmDialogOpen = true;
         for (Button button : buttonListArrows)
             button.declineInput();
         readyButton.declineInput();
@@ -200,10 +196,9 @@ public class ArrowSelectionScreenPreSet extends Screen {
     private void closeConfirmDialogQuestion () {
         confirmDialog.setQuestionText("");
         confirmDialog.setVisible(false);
-        isConfirmDialogOpen = false;
         for (Button button : buttonListArrows)
             button.acceptInput();
-        readyButton.declineInput();
+        readyButton.acceptInput();
         arrowListSelected.acceptInput();
     }
 
@@ -245,5 +240,6 @@ public class ArrowSelectionScreenPreSet extends Screen {
         arrowListSelected.draw(g);
         readyButton.draw(g);
         remainingArrows.draw(g);
+        confirmDialog.draw(g);
     }
 }
