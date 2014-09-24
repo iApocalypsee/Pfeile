@@ -7,6 +7,8 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -52,7 +54,12 @@ public class ComboBox extends Component {
 
         init(screenBacking);
 
-        clickButton.setX(getX() + getWidth() - clickButton.getWidth());
+        if (getWidth() < containerLabel.getWidth() + clickButton.getWidth() + STD_INSETS.left + STD_INSETS.right)
+            setWidth(containerLabel.getWidth() + clickButton.getWidth() + STD_INSETS.left + STD_INSETS.right);
+        if (getHeight() < containerLabel.getHeight() + selectionList.getHeight())
+            setHeight(containerLabel.getHeight() + selectionList.getHeight());
+
+        selectionList.setWidth(getWidth());
     }
 
     public ComboBox (int x, int y, Screen screenBacking, String [] values) {
@@ -61,32 +68,52 @@ public class ComboBox extends Component {
 
         init(screenBacking);
 
-        setWidth(containerLabel.getWidth() + clickButton.getWidth());
+        setWidth(containerLabel.getWidth() + clickButton.getWidth() + STD_INSETS.left + STD_INSETS.right);
         setHeight(containerLabel.getHeight() + selectionList.getHeight());
+        selectionList.setWidth(getWidth());
+
     }
 
     private void init (Screen screenBacking) {
-        if (values.length > 0)
-            containerLabel = new Label(getX(), getY(), screenBacking, values[0]);
-        else
+        if (values.length > 0) {
+            // längsten Eintrag herausfinden und diese Länge verwenden
+            FontRenderContext frc = new FontRenderContext(new AffineTransform(), true, true);
+            double width = 0;
+            int index = 0;
+            for (int i = 0; i < values.length; i++) {
+                if (STD_FONT.getStringBounds(values[i], frc).getWidth() > width) {
+                    width = STD_FONT.getStringBounds(values[i], frc).getWidth();
+                    index = i;
+                }
+            }
+            containerLabel = new Label(getX(), getY(), screenBacking, values[index]);
+        } else
             containerLabel = new Label(getX(), getY(), screenBacking, "              ");
+        containerLabel.setNoMouseColor(Color.black);
         containerLabel.setVisible(true);
         containerLabel.declineInput();
 
-        clickButton = new Button(getX() + containerLabel.getWidth(), getY(), screenBacking, "");
+        clickButton = new Button(getX() + containerLabel.getWidth() + STD_INSETS.left + STD_INSETS.right, getY(), screenBacking, "");
         clickButton.setVisible(true);
         clickButton.setRoundBorder(false);
         clickButton.iconify(icon);
 
-        selectionList = new comp.List(getX(), getY() + containerLabel.getHeight(), clickButton.getWidth() + containerLabel.getWidth(),
-                getHeight() - containerLabel.getHeight(), screenBacking, Converter.convertToList(values));
+        selectionList = new comp.List(getX(), getY() + clickButton.getHeight(), screenBacking, Converter.convertToList(values));
         selectionList.setVisible(false);
         selectionList.declineInput();
 
-        clickButton.addMouseListener(new MouseAdapter() {
+        if(values.length > 0) {
+            int width = containerLabel.getWidth();
+            int height = containerLabel.getHeight();
+            containerLabel.setText(values[0]);
+            containerLabel.setWidth(width);
+            containerLabel.setHeight(height);
+        }
+
+        addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(MouseEvent e) {
-                // only if click button was surly clicked
+            public void mousePressed (MouseEvent e) {
+                // only if "clickButton" has been pressed for sure
                 if (clickButton.getSimplifiedBounds().contains(e.getPoint())) {
                     if (selectionList.isVisible()) {
                         selectionList.setVisible(false);
@@ -95,16 +122,11 @@ public class ComboBox extends Component {
                         selectionList.setVisible(true);
                         selectionList.acceptInput();
                     }
-                }
-            }
-        });
-
-        selectionList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                if (selectionList.getSimplifiedBounds().contains(e.getPoint()) && selectionList.isAcceptingInput()) {
-                    containerLabel.setText(getValues()[selectionList.getSelectedIndex()]);
+                } // only if "selectionList" has been pressed for sure
+                else if (selectionList.getSimplifiedBounds().contains(e.getPoint()) && selectionList.isAcceptingInput()) {
                     selectionList.setVisible(false);
+                    selectionList.triggerListeners(e);
+                    containerLabel.setText(getValues()[selectionList.getSelectedIndex()]);
                 }
             }
         });
@@ -169,10 +191,10 @@ public class ComboBox extends Component {
     @Override
     public void draw(Graphics2D g) {
         if (isVisible()) {
-            g.setColor(Color.LIGHT_GRAY);
-            g.fillRect(containerLabel.getX() + 1, containerLabel.getY() + 1, getWidth() - 2, clickButton.getHeight() - 2);
             g.setColor(Color.BLACK);
-            g.drawRect (containerLabel.getX(), containerLabel.getY(), getWidth(), clickButton.getHeight());
+            g.fillRect(containerLabel.getX() - 3, containerLabel.getY() - 3, getWidth() + 7, clickButton.getHeight() + 7);
+            g.setColor(Color.lightGray);
+            g.fillRect(containerLabel.getX(), containerLabel.getY(), getWidth(), clickButton.getHeight() + 1);
             selectionList.draw(g);
             containerLabel.draw(g);
             clickButton.draw(g);

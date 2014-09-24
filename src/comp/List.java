@@ -42,7 +42,7 @@ public class List extends Component {
 	 * Der (nullbasierte!) Index des Items, das ausgewählt wurde. Standardmäßig auf 0.
 	 */
 	private int selectedIndex = 0;
-	
+
 	static final Insets STD_INSETS = new Insets(20, 10, 20, 10);
 
 	public List(int x, int y, int width, int height, Screen backing, java.util.List<String> items) {
@@ -54,8 +54,8 @@ public class List extends Component {
 			final Label build = new Label(x, y, backing, items.get(i));
 
 			// I need to set the position in the correct order.
-			// The loop wants that.
 			build.setY(build.getY() + build.getHeight() * i);
+            // The loop wants that.
 
 			// If the label is inside the boundaries of the list, then it should be visible...
 			build.setVisible((build.getY() + build.getHeight()) < (this.getY() + this.getHeight()));
@@ -74,6 +74,38 @@ public class List extends Component {
 		}
 	}
 
+    public List(int x, int y, Screen backing, java.util.List<String> items) {
+        super(x, y, 200, 200, backing);
+
+        this.items = items;
+
+        setWidth(tfits().width);
+        setHeight(tfits().height);
+
+        for (int i = 0; i < items.size(); i++) {
+            final Label build = new Label(x, y, backing, items.get(i));
+
+            // I need to set the position in the correct order.
+            build.setY(build.getY() + build.getHeight() * i);
+            // The loop wants that.
+
+            // If the label is inside the boundaries of the list, then it should be visible...
+            build.setVisible((build.getY() + build.getHeight()) < (this.getY() + this.getHeight()));
+
+            // Every appended label should have a listener attached to it so that I know
+            // when a list element has been pressed.
+            build.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    if(build.getSimplifiedBounds().contains(e.getPoint())) {
+                        selectedIndex = listItems.indexOf(build);
+                    }
+                }
+            });
+            listItems.add(build);
+        }
+    }
+
 	@Override
 	public void draw(Graphics2D g) {
 		
@@ -88,19 +120,15 @@ public class List extends Component {
 	}
 	
 	/**
-	 * Berechnet die Bounding Box von jedem Text in der Liste und gibt die größte Bounding Box zurück.
-	 * @return
+	 * Berechnet die Höhe und Breite der Liste.
 	 */
-	Dimension tfits() {
+    protected Dimension tfits() {
 		int width = 0, height = 0;
 		for (String s : items) {
 			Dimension bounds = new Dimension(getTextBounds(s, STD_FONT).width + 1, getTextBounds(s, STD_FONT).height + 1);
-			if(bounds.width > width) {
-				width = bounds.width;
-			}
-			if(bounds.height > height) {
-				height = bounds.height;
-			}
+			if (width < bounds.width)
+                width = bounds.width;
+            height = height + bounds.height;
 		}
 		return new Dimension(width, height);
 	}
@@ -114,7 +142,7 @@ public class List extends Component {
 		int ldi = 0;
 		
 		for(; ldi < listItems.size(); ldi++) {
-			if(listItems.get(ldi).getAbsoluteY() > this.getAbsoluteY() + this.getHeight()) {
+			if(listItems.get(ldi).getY() > this.getY() + this.getHeight()) {
 				ldi--;
 				break;
 			}
@@ -143,8 +171,6 @@ public class List extends Component {
 	/**
 	 * Gibt den derzeit ausgew�hlten Listenindex zur�ck. Der ausgew�hlte Listenindex
 	 * wird mit Mausklick bestimmt.
-     * <p>
-     * <b> TODO isn't working correctly! always returns 0 on the first click </b>
 	 * @return Den Index des ausgew�hlten Listeneintrags.
 	 */
 	public int getSelectedIndex() {
@@ -210,5 +236,12 @@ public class List extends Component {
     /** setzt den ausgewählten Wert auf index */
     public void setSelectedIndex (int index) {
         selectedIndex = index;
+    }
+
+    @Override
+    public void triggerListeners (MouseEvent e) {
+        super.triggerListeners(e);
+        for (Label label : listItems)
+            label.triggerListeners(e);
     }
 }

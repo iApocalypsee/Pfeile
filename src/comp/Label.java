@@ -17,7 +17,9 @@ public class Label extends Component {
 	private final int STD_INSET_Y = 15; 
 	
 	/** Abstand links, damit die Schrift nicht am Rand steht */
-	private final int STD_INSET_X = 5; 
+	private final int STD_INSET_X = 5;
+
+    private Color noMouseColor = Color.lightGray;
 
 	public Label() {
 		declineInput();
@@ -44,7 +46,7 @@ public class Label extends Component {
 			
 			switch(getStatus()) {
 			case NO_MOUSE:
-				g.setColor(Color.lightGray);
+				g.setColor(noMouseColor);
 				break;
 			case MOUSE:
 				g.setColor(Color.orange);
@@ -66,8 +68,7 @@ public class Label extends Component {
 
 			g.setFont(STD_FONT);
 			
-			// FIXME Einfachere Zeichnung: anstatt getParent().getX() + this.getX() jetzt this.getAbsoluteX()
-			g.drawString(text, getAbsoluteX() + STD_INSET_X, getAbsoluteY() + STD_INSET_Y);
+			g.drawString(text, getX() + STD_INSET_X, getY() + STD_INSET_Y);
 		}
 	}
 
@@ -79,5 +80,13 @@ public class Label extends Component {
 
     public String getText() {
         return text;
+    }
+
+    public Color getNoMouseColor () {
+        return noMouseColor;
+    }
+
+    public void setNoMouseColor (Color noMouseColor) {
+        this.noMouseColor = noMouseColor;
     }
 }

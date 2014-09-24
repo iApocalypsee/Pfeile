@@ -177,7 +177,7 @@ public class PreWindowScreen extends Screen {
         final String[] comboBoxValuesHandicap =
                     {"+ 25%", "+ 20%", "+ 15%", "+ 10%", "+ 5%", "0%", "- 5%", "- 10%", "- 15%", "- 20%", "- 25%"};
         boxSelectHandicapPlayer = new ComboBox (confirmButton.getX(), selectorComboBox.getY(), this, comboBoxValuesHandicap);
-        boxSelectHandicapKI = new ComboBox (confirmButton.getX(), selectorComboBox.getY() + boxSelectHandicapPlayer.getWidth() + 15, this, comboBoxValuesHandicap);
+        boxSelectHandicapKI = new ComboBox (confirmButton.getX() - selectorComboBox.getY() - 30, selectorComboBox.getY(), this, comboBoxValuesHandicap);
         boxSelectHandicapPlayer.setSelectedIndex(5);
         boxSelectHandicapKI.setSelectedIndex(5);
         boxSelectHandicapPlayer.setVisible(false);
@@ -323,10 +323,11 @@ public class PreWindowScreen extends Screen {
             @Override
             public void mouseReleased (MouseEvent e) {
                 if (confirmButton.getSimplifiedBounds().contains(e.getPoint())) {
+                    //selectorComboBox.triggerListeners(e);
                     switch (selectorComboBox.getSelectedIndex()) {
                         case 0 : {
                             // Computerstärke: erbärmlich = 0 --> brutal = 4
-
+                            boxSelectKI.triggerListeners(e);
                             switch (boxSelectKI.getSelectedIndex()) {
                                 case 0: Mechanics.KI = 4; break;
                                 case 1: Mechanics.KI = 3; break;
@@ -351,6 +352,7 @@ public class PreWindowScreen extends Screen {
                         }
                         case 3 : {
                             // maximales Leben
+                            boxSelectHigh.triggerListeners(e);
                             switch (boxSelectHigh.getSelectedIndex()) {
                                 case 0: Mechanics.lifeMax = 600; break;
                                 case 1: Mechanics.lifeMax = 480; break;
@@ -363,6 +365,7 @@ public class PreWindowScreen extends Screen {
                         }
                         case 4 : {
                             // Lebensregeneration
+                            boxSelectHigh.triggerListeners(e);
                             switch (boxSelectHigh.getSelectedIndex()) {
                                 case 0: Mechanics.lifeRegeneration = 5; break; // hoch
                                 case 1: Mechanics.lifeRegeneration = 4; break;
@@ -375,6 +378,7 @@ public class PreWindowScreen extends Screen {
                         }
                         case 5 : {
                             // Schadensmuliplikator
+                            boxSelectHigh.triggerListeners(e);
                             switch (boxSelectHigh.getSelectedIndex()) {
                                 case 0: Mechanics.damageMulti = 1.8f; break; // hoch
                                 case 1: Mechanics.damageMulti = 1.3f; break;
@@ -393,6 +397,7 @@ public class PreWindowScreen extends Screen {
                         }
                         case 7 : {
                             // Zeit pro Zug
+                            boxSelectTime.triggerListeners(e);
                             switch (boxSelectTime.getSelectedIndex()) {
                                 case 0: Mechanics.timePerPlay = 5 * 60000; break;
                                 case 1: Mechanics.timePerPlay = 2 * 60000; break;
@@ -406,6 +411,7 @@ public class PreWindowScreen extends Screen {
                         }
                         case 8 : {
                             // Handicap
+                            boxSelectHandicapPlayer.triggerListeners(e);
                             switch (boxSelectHandicapPlayer.getSelectedIndex()) {
                                 case 0: Mechanics.handicapPlayer = +25; break;
                                 case 1: Mechanics.handicapPlayer = +20; break;
@@ -421,6 +427,7 @@ public class PreWindowScreen extends Screen {
                             }
                             labels[8].setText("Handicap [Spieler]: " + boxSelectHandicapPlayer.getSelectedValue());
 
+                            boxSelectHandicapKI.triggerListeners(e);
                             switch (boxSelectHandicapKI.getSelectedIndex()) {
                                 case 0: Mechanics.handicapKI = +25; break;
                                 case 1: Mechanics.handicapKI = +20; break;
@@ -439,6 +446,7 @@ public class PreWindowScreen extends Screen {
                         }
                         case 9: {
                             // Weltgröße
+                            boxSelectSize.triggerListeners(e);
                             switch (boxSelectSize.getSelectedIndex()) {
                                 case 0: Mechanics.worldSizeX = 23; Mechanics.worldSizeY = 21; break;
                                 case 1: Mechanics.worldSizeX = 17; Mechanics.worldSizeY = 15; break;
@@ -461,11 +469,11 @@ public class PreWindowScreen extends Screen {
         });
 
         selectorComboBox.addMouseListener(new MouseAdapter() {
-            private int selectedIndex = selectorComboBox.getSelectedIndex();
+            private int oldSelectedIndex = selectorComboBox.getSelectedIndex();
             @Override
             public void mouseReleased (MouseEvent e) {
                 // if this check is true, it is like an itemChancedEvent
-                if (selectorComboBox.getSelectedIndex() != selectedIndex) {
+                if (selectorComboBox.getSelectedIndex() != oldSelectedIndex) {
                     switch (selectorComboBox.getSelectedIndex()) {
                         case 0: { // Computerstärke
                             boxSelectKI.setVisible(true);
@@ -475,7 +483,6 @@ public class PreWindowScreen extends Screen {
                             boxSelectHigh.setVisible(false);
                             boxSelectSize.setVisible(false);
                             boxSelectTime.setVisible(false);
-                            spinner.setVisible(false);
                             break;
                         }
                         case 1: { // Pfeilanzahl [frei wählbar]
@@ -502,6 +509,7 @@ public class PreWindowScreen extends Screen {
                         }
                         case 3: { // maximales Leben
                             boxSelectHigh.setVisible(true);
+                            spinner.setVisible(false);
                             boxSelectHandicapKI.setVisible(false);
                             boxSelectHandicapPlayer.setVisible(false);
                             boxSelectKI.setVisible(false);
@@ -575,8 +583,9 @@ public class PreWindowScreen extends Screen {
                             System.err.println("Error: trying to reach " + selectorComboBox.getSelectedIndex() + " " +
                                     "in PreWindowScreen at confirmButton.addMouseListner(...), " +
                                     "however there is not such an index.");
+                            selectorComboBox.setSelectedIndex(0);
                         }
-                        selectedIndex = selectorComboBox.getSelectedIndex();
+                        oldSelectedIndex = selectorComboBox.getSelectedIndex();
                     }
                 }
             }
@@ -636,7 +645,7 @@ public class PreWindowScreen extends Screen {
      *  It is registering, if there was a click at confirmDialog.okButton or confirmDialog.cancelButton */
     private class MouseAdapterConfirmDialog extends MouseAdapter {
         @Override
-        public void mouseClicked (MouseEvent e) {
+        public void mousePressed (MouseEvent e) {
             if (confirmDialog.isVisible()) {
                 if (confirmDialog.getOk().getSimplifiedBounds().contains(e.getPoint()))
                     closeConfirmDialog();

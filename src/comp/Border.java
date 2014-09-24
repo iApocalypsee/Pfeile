@@ -93,7 +93,9 @@ public class Border implements Drawable {
 	public Color getInnerColor() {
 		return inner;
 	}
-	
+
+    public Color getHoverColor() { return hover; }
+
 	public void setOuterColor(Color borderColor) {
 		this.outer = borderColor;
 	}

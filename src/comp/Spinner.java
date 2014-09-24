@@ -1,13 +1,11 @@
 package comp;
 
+import general.Keys;
 import gui.Screen;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -19,6 +17,7 @@ public class Spinner extends Component {
     private SpinnerModel spinnerModel;
     private Rectangle downButton, upButton;
     private TextBox valueBox;
+    private KeyListener keyListener;
 
     private static BufferedImage img_downButton, img_upButton;
     static {
@@ -45,22 +44,24 @@ public class Spinner extends Component {
             valueBox = new TextBox(x + 1, y + 1, String.valueOf(spinnerModel.getMaximum()), backingScreen);
         else
             valueBox = new TextBox(x + 1, y + 1, String.valueOf(spinnerModel.getMinimum()), backingScreen);
-        valueBox.setHeight(img_downButton.getHeight() + img_upButton.getHeight() + 1);
+        valueBox.setHeight(img_downButton.getHeight() + img_upButton.getHeight());
 
-        upButton = new Rectangle(valueBox.getX() + valueBox.getWidth() + 1, y + 2,
-                img_upButton.getWidth() - 1, img_upButton.getHeight() - 1);
+        upButton = new Rectangle(valueBox.getX() + valueBox.getWidth(), y + 1,
+                img_upButton.getWidth(), img_upButton.getHeight());
         downButton = new Rectangle(upButton.x, valueBox.getY() + upButton.height,
-                img_downButton.getWidth() - 1, img_downButton.getHeight() - 1);
+                upButton.width, upButton.height);
 
-        setWidth(valueBox.getWidth() + img_downButton.getWidth() + 6);
-        setHeight(valueBox.getHeight() + 2);
+        setWidth(valueBox.getWidth() + img_downButton.getWidth() + 1);
+        setHeight(valueBox.getHeight() + 1);
 
-        upButton.x = valueBox.getX() + valueBox.getWidth() + 1;
+        upButton.x = valueBox.getX() + valueBox.getWidth();
         downButton.x = upButton.x;
+        upButton.y = upButton.y++;
+        downButton.y = downButton.y++;
 
         addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased (MouseEvent e) {
+            public void mousePressed (MouseEvent e) {
                 if (isAcceptingInput()) {
                     if (downButton.contains(e.getPoint())) {
                         spinnerModel.setValue(spinnerModel.getPreviousValue());
@@ -74,6 +75,16 @@ public class Spinner extends Component {
         // TODO: add Listener for valueBox
         // the listener needs to recognize the entered number,
         // and set spinnerModel.setValue(String.valueOf(valueBox.getEnteredText());
+
+        keyListener = new KeyAdapter() {
+            @Override
+            public void keyTyped (KeyEvent e) {
+                if (isAcceptingInput() == true) {
+                    if (Character.isDigit(e.getKeyCode()))
+                        valueBox.enterText(e);
+                }
+            }
+        };
     }
 
     @Override
@@ -142,8 +153,30 @@ public class Spinner extends Component {
             getBorder().draw(g);
             g.setFont(STD_FONT);
             valueBox.draw(g);
+
+            switch(getStatus()) {
+                case NO_MOUSE:
+                    g.setColor(getBorder().getOuterColor());
+                    break;
+                case MOUSE:
+                    g.setColor(getBorder().getHoverColor());
+                    break;
+                case CLICK:
+                    g.setColor(getBorder().getClickColor());
+                    break;
+                case NOT_AVAILABLE:
+                    g.setColor(getBorder().getNotAvailableColor());
+                    break;
+                default:
+                    System.err.println("Status not defined.");
+                    System.exit(1);
+            }
+            g.drawRect(upButton.x - 1, upButton.y - 1, upButton.width + 1, getHeight() + 1);
+
             g.drawImage(img_downButton, downButton.x, downButton.y, downButton.width, downButton.height, null);
             g.drawImage(img_upButton, upButton.x, upButton.y, upButton.width, upButton.height, null);
+
+            g.drawLine(downButton.x, downButton.y, downButton.x + downButton.width, downButton.y);
         }
     }
 }

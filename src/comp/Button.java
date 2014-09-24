@@ -47,7 +47,7 @@ public class Button extends Component {
 	
 	/**
 	 * Setzt den neuen Text und verändert die Größe des Buttons, wenn nötig.
-	 * @param text Der neue Text
+	 * @param t Der neue Text
 	 */
 	public void setText(String t) {
 		text = t;
