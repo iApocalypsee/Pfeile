@@ -11,6 +11,7 @@ import scala.beans.BeanProperty
  *
  * @author Josip
  */
+@Deprecated
 object NewWorldTestScreen extends Screen("New world test", 164) {
 
   var shootButtonPressed = false

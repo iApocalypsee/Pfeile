@@ -1,5 +1,9 @@
 package player.weapon;
 
+import gui.GameScreen;
+import newent.InventoryLike;
+import sun.security.provider.SHA;
+
 import java.awt.image.BufferedImage;
 
 /**
@@ -9,9 +13,14 @@ import java.awt.image.BufferedImage;
 public final class ArrowHelper {
 	
 	private static BufferedImage [] arrowImages;
-	
-	public ArrowHelper() {
-		arrowImages = new BufferedImage[8];
+
+    /**
+     * the number of diffrent typs of arrows. It's equal 8.
+     */
+    public static final int NUMBER_OF_ARROW_TYPES = 8;
+
+    public ArrowHelper() {
+		arrowImages = new BufferedImage[NUMBER_OF_ARROW_TYPES];
 		arrowImages[FireArrow.INDEX] = new FireArrow().getImage();
 		arrowImages[WaterArrow.INDEX] = new WaterArrow().getImage();
 		arrowImages[StormArrow.INDEX] = new StormArrow().getImage();
@@ -161,6 +170,22 @@ public final class ArrowHelper {
         }
     }
 
+    /** Gleicht <code>arrow.newInstance()</code> hat aber den Exeption Block hier drin, sodass es bei Bedingungen verwendet
+     * werden kann.
+     * @param arrow the class of the Arrow, which is extends AbstractArrow
+     * @return the instanced Arrow
+     */
+    public static AbstractArrow instanceArrow (Class<? extends AbstractArrow> arrow) {
+        try {
+            return arrow.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 	/** Methode vergleicht den �bergebenen Pfeilnamen
 	 *   '...Arrow.NAME' und gibt den jeweiligen Index des Pfeils: '...Arrow.INDEX' zur�ck;
 	 *   wenn der Pfeilname nicht existiert: -1
@@ -186,6 +211,41 @@ public final class ArrowHelper {
 			return -1;
 		}
 	}
+
+    /** If you want to know how much arrows per category are in the inventory of the ActivePlayer, use this method.
+     * use it like <code>arrowCountInventory()[FireArrow.INDEX]</code> or any other Arrow.INDEX.
+     * <p>
+     * If you're thinking of using this method frequently without chaning the number of arrows, you should save the
+     * value in an tempory <code>final int[] temp = arrowCountInventory();</code> (for example if you want to use it for
+     * each arrow once).
+     *
+     * @return int[] - an array of the size <code>ArrowHelper.NUMBER_OF_ARROW_TYPES</code>
+     * (it's 8 like the number of kinds of arrows).
+     */
+    public static int[] arrowCountInventory () {
+        final InventoryLike inventory = GameScreen.getInstance().getActivePlayer().inventory();
+
+        int [] arrowsCount = new int[NUMBER_OF_ARROW_TYPES];
+        for (Item item : inventory.javaItems()) {
+            if (item instanceof FireArrow)
+                arrowsCount[FireArrow.INDEX]++;
+            else if (item instanceof WaterArrow)
+                arrowsCount[WaterArrow.INDEX]++;
+            else if (item instanceof StormArrow)
+                arrowsCount[StormArrow.INDEX]++;
+            else if (item instanceof StoneArrow)
+                arrowsCount[StoneArrow.INDEX]++;
+            else if (item instanceof IceArrow)
+                arrowsCount[IceArrow.INDEX]++;
+            else if (item instanceof LightningArrow)
+                arrowsCount[LightningArrow.INDEX]++;
+            else if (item instanceof LightArrow)
+                arrowsCount[LightArrow.INDEX]++;
+            else if (item instanceof ShadowArrow)
+                arrowsCount[ShadowArrow.INDEX]++;
+        }
+        return arrowsCount;
+    }
 	
 	/** gibt ein Bild des Pfeils des Indexes <code> selectedArrow </code> zur�ck; */
 	public static BufferedImage getArrowImage (int selectedArrow) {

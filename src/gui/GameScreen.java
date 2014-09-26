@@ -246,4 +246,8 @@ public class GameScreen extends Screen {
 	public Player getActivePlayer() {
 		return activePlayer;
 	}
+
+    public VisualEntity getVisualEntity() {
+        return visualEntity;
+    }
 }

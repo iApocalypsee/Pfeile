@@ -5,8 +5,9 @@ import comp.Component;
 import comp.ConfirmDialog;
 import comp.TextBox;
 import general.Main;
-import player.weapon.AbstractArrow;
-import player.weapon.ArrowHelper;
+import general.Mechanics;
+import newent.*;
+import player.weapon.*;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -18,7 +19,7 @@ import java.util.List;
 public class ArrowSelectionScreen extends Screen {
 
 	public static final int SCREEN_INDEX = 3;
-	
+
 	private static ArrowSelectionScreen instance;
 	
 	/**
@@ -54,13 +55,8 @@ public class ArrowSelectionScreen extends Screen {
 	
 	/** confirmOpenDialog */
 	private boolean isConfirmDialogOpen = false;
-	
-	/** Y-Position des ersten Buttons (Bildschirm) */
-	private int posYButtons = 85;
-	/** X-Position des ersten Buttons (Screen) */
-	private int posXButton = 38; 
-	
-	private Button fireArrowButton, waterArrowButton, iceArrowButton, stormArrowButton, lightningArrowButton, lightArrowButton, shadowArrowButton, stoneArrowButton;
+
+    private Button fireArrowButton, waterArrowButton, iceArrowButton, stormArrowButton, lightningArrowButton, lightArrowButton, shadowArrowButton, stoneArrowButton;
 	
 	private static final Color TRANSPARENT_BACKGROUND = new Color(0, 0, 0, 185);
 	
@@ -89,8 +85,12 @@ public class ArrowSelectionScreen extends Screen {
 	}
 	
 	public void init () {
-        /*
-		fireArrowButton = new Button(posXButton, posYButtons, this, "Feuerpfeil");
+		/* X-Position des ersten Buttons (Screen) */
+        int posXButton = 38;
+        /* Y-Position des ersten Buttons (Bildschirm) */
+        int posYButtons = 85;
+
+        fireArrowButton = new Button(posXButton, posYButtons, this, "Feuerpfeil");
 		waterArrowButton = new Button(posXButton + fireArrowButton.getWidth() + 43, posYButtons, this, "Wasserpfeil");
 		stormArrowButton = new Button(posXButton + (fireArrowButton.getWidth() + 43) * 2, posYButtons, this, "Sturmpfeil");
 		stoneArrowButton = new Button(posXButton + (fireArrowButton.getWidth() + 43) * 3, posYButtons, this, "Steinpfeil"); 
@@ -119,22 +119,22 @@ public class ArrowSelectionScreen extends Screen {
 		
 		MouseHandler mListner = new MouseHandler();
 		
-		for (int i = 0; i < buttonListArrows.size(); i++) {
+		for (int i = 0; i < ArrowHelper.NUMBER_OF_ARROW_TYPES; i++) {
 			buttonListArrows.get(i).setWidth(shadowArrowButton.getWidth() + 12);
 			buttonListArrows.get(i).addMouseListener (mListner); 
 		}
 		
-		arrowList = new ArrayList <String> (); 
-		final Inventory inventory = ((ScaleWorld) NewWorldTestScreen.getWorld()).getActivePlayer().getInventory();
-		
-		arrowList.add("Feuerpfeil " + "[" + inventory.getItemCount(FireArrow.class) + "]");
-		arrowList.add("Wasserpfeil " + "[" + inventory.getItemCount(WaterArrow.class) + "]");
-		arrowList.add("Sturmpfeil " + "[" + inventory.getItemCount(StormArrow.class)+ "]");
-		arrowList.add("Steinpfeil " + "[" + inventory.getItemCount(StoneArrow.class) + "]");
-		arrowList.add("Eispfeil " + "[" + inventory.getItemCount(IceArrow.class) + "]");
-		arrowList.add("Blitzpfeil " + "[" + inventory.getItemCount(LightningArrow.class) + "]");
-		arrowList.add("Lichtpfeil " + "[" + inventory.getItemCount(LightArrow.class) + "]");
-		arrowList.add("Schattenpfeil " + "[" + inventory.getItemCount(ShadowArrow.class) + "]");
+		arrowList = new ArrayList <String> ();
+
+        final int[] arrowsCount = ArrowHelper.arrowCountInventory();
+		arrowList.add("Feuerpfeil " + "[" + arrowsCount[FireArrow.INDEX] + "]");
+		arrowList.add("Wasserpfeil " + "[" + arrowsCount[WaterArrow.INDEX] + "]");
+		arrowList.add("Sturmpfeil " + "[" + arrowsCount[StormArrow.INDEX] + "]");
+		arrowList.add("Steinpfeil " + "[" + arrowsCount[StoneArrow.INDEX] + "]");
+		arrowList.add("Eispfeil " + "[" + arrowsCount[IceArrow.INDEX] + "]");
+		arrowList.add("Blitzpfeil " + "[" + arrowsCount[LightningArrow.INDEX] + "]");
+		arrowList.add("Lichtpfeil " + "[" + arrowsCount[LightArrow.INDEX] + "]");
+		arrowList.add("Schattenpfeil " + "[" + arrowsCount[ShadowArrow.INDEX] + "]");
 		
 		inventoryList_Width = fireArrowButton.getWidth() + 30; 
 		
@@ -171,25 +171,35 @@ public class ArrowSelectionScreen extends Screen {
 		confirmDialog.getOk().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if (!inventory.addItem(selectedIndex)) {
-					if (inventory.getRemainingSpace() == 0) {
-						warningMessage = "Das Inventar ist voll: Maximale Inventargröße " + inventory.getSize();
-					} else if (Mechanics.arrowNumberFreeSetUseable <= 0){
-						warningMessage = "Es wurden bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + Mechanics.arrowNumberFreeSet + "";
-					} else if (inventory.maxStack(selectedIndex) >= 
-								inventory.getItemCount(selectedIndex)){
-						
-						warningMessage = "Das Inventar kann maximal " + inventory.maxStack(selectedIndex) + " " + 
-											selectedIndex.getSimpleName() + " Pfeile aufnehmen";
-						
-					}else {
-						System.err.println("Could not add arrow to inventory (with " + inventory.getRemainingSpace() + " remaining space) arrow index: " + selectedIndex);
-						warningMessage = "Could not add arrow to inventory (with " + inventory.getRemainingSpace() + " remaining space) arrow index: " + selectedIndex;
-					}
-					transparencyWarningMessage = 1f;
-				} else
-					Mechanics.arrowNumberFreeSetUseable--;
-				closeConfirmDialogQuestion();
+                if (Mechanics.arrowNumberFreeSetUseable > 0) {
+                    final InventoryLike inventory = GameScreen.getInstance().getActivePlayer().inventory();
+                    if (inventory.put(ArrowHelper.instanceArrow(selectedIndex)) == false) {
+                        if (inventory.maximumSize() - inventory.currentSize() <= 0) {
+                            warningMessage = "Das Inventar ist voll: Maximale Inventargröße " + inventory.maximumSize();
+                        } else if (Mechanics.arrowNumberFreeSetUseable <= 0){
+                            warningMessage = "Es wurde bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + Mechanics.arrowNumberFreeSet + "";
+
+                            // Es können jetzt beliebig viele Pfeile eines Types ausgewählt werden
+                            // } else if (inventory.maxStack(selectedIndex) >= inventory.getItemCount(selecteddIndex)) {
+                            //    warningMessage = "Das Inventar kann maximal " + inventory.maxStack(selectedIndex) + " " +
+                            //                        selectedIndex.getSimpleName() + " Pfeile aufnehmen";
+
+                        } else {
+                            System.err.println("Could not add arrow to inventory (with " +
+                                    (inventory.maximumSize() - inventory.currentSize()) + " remaining space) arrow index: " + selectedIndex);
+                            warningMessage = "Could not add arrow to inventory (with " +
+                                    (inventory.maximumSize() - inventory.currentSize()) + " remaining space) arrow index: " + selectedIndex;
+                        }
+                        transparencyWarningMessage = 1f;
+                    } else {
+                        Mechanics.arrowNumberFreeSetUseable--;
+                        updateInventoryList();
+                    }
+                } else {
+                    warningMessage = "Es wurde bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + Mechanics.arrowNumberFreeSet;
+                    transparencyWarningMessage = 1f;
+                }
+                closeConfirmDialogQuestion();
 			}
 		});
 		confirmDialog.getCancel().addMouseListener(new MouseAdapter() {
@@ -198,7 +208,6 @@ public class ArrowSelectionScreen extends Screen {
 				closeConfirmDialogQuestion();
 			}
 		});
-		*/
 	}
 	
 	@Override
@@ -207,6 +216,10 @@ public class ArrowSelectionScreen extends Screen {
 		
 		g.setColor(TRANSPARENT_BACKGROUND);
 		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
+
+        GameScreen.getInstance().getMap().draw(g);
+        GameScreen.getInstance().getVisualEntity().draw(g);
+
 		
 		// Zeichnen der Pfeilauswahl-Buttons
 		for (Button buttonListArrow : buttonListArrows) {
@@ -264,16 +277,10 @@ public class ArrowSelectionScreen extends Screen {
 	/** Listener f�r die Liste */
 	private class MouseListHandler extends MouseAdapter {
 		@Override
-		public void mouseReleased(MouseEvent e) {
-			
-			// TODO: Man muss zweimal klicken, um hierher zu kommen. --> Auf einmal reduzieren
+		public void mousePressed(MouseEvent e) {
 			if (inventoryList.getBounds().contains(e.getPoint())) {
-				
 				// �bernimmt ausgew�hlten Pfeil und schreibt ihn in den ausgew�hlten Pfeil f�r 'commit'
 				selectedArrowBox.setEnteredText(ArrowHelper.arrowIndexToName(inventoryList.getSelectedIndex()));
-//					System.err.println("Not possible ArrowIndex!: " + inventoryList.getSelectedIndex() + "   in <ArrowSelectionScreen.MouseListHandler.mouseReleased()>");
-//					warningMessage = "Not possible ArrowIndex!: " + inventoryList.getSelectedIndex();
-//					transparencyWarningMessage = 1.0f;
 			}
 		}
 	}
@@ -283,10 +290,7 @@ public class ArrowSelectionScreen extends Screen {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-
-            /*
-			
-			final Inventory inventory = ((ScaleWorld) NewWorldTestScreen.getWorld()).getActivePlayer().getInventory();
+            final InventoryLike inventory = GameScreen.getInstance().getActivePlayer().inventory();
 			
 			if (fireArrowButton.getBounds().contains(e.getPoint())) {
 				openConfirmQuestion ("Wollen Sie einen Feuerpfeil hinzufügen?");
@@ -306,7 +310,8 @@ public class ArrowSelectionScreen extends Screen {
 			}
 			if (stoneArrowButton.getBounds().contains(e.getPoint())) {
 				openConfirmQuestion ("Wollen Sie einen Steinpfeil hinzufügen?");
-				selectedIndex = StoneArrow.class;			}
+				selectedIndex = StoneArrow.class;
+            }
 			if (lightningArrowButton.getBounds().contains(e.getPoint())) {
 				openConfirmQuestion ("Wollen Sie einen Blitzpfeil hinzufügen?");
 				selectedIndex = LightningArrow.class;
@@ -324,15 +329,16 @@ public class ArrowSelectionScreen extends Screen {
 			} 
 			if (confirmButton.getBounds().contains(e.getPoint())) {
 				if (selectedArrowBox.getEnteredText().equals(selectedArrowBox.getStdText()) == false) {
-					if (inventory.contains(
-									ArrowHelper.reformArrow(selectedArrowBox.getEnteredText()))) {
-										
-						onLeavingScreen(this, AimSelectionScreen.SCREEN_INDEX);
-					} else {
+                    for (int i = 0; i < inventory.currentSize(); i++) {
+                        if (inventory.javaItems().get(i).getClass() == ArrowHelper.reformArrow(selectedArrowBox.getEnteredText())) {
+                            onLeavingScreen(this, AimSelectionScreen.SCREEN_INDEX);
+                        }
+                    }
+					if (getManager().getActiveScreen() == ArrowSelectionScreen.getInstance()) {
 						warningMessage = "Kein " + selectedArrowBox.getEnteredText() + " im Inventar.";
 						transparencyWarningMessage = 1f;
-					}
-					
+					} else
+                        return;
 				} else {
 					warningMessage = "Kein Pfeil ausgewählt";
 					transparencyWarningMessage = 1f;
@@ -345,7 +351,6 @@ public class ArrowSelectionScreen extends Screen {
 				if (confirmDialog.getOk().getSimplifiedBounds().contains(e.getPoint())) 
 					closeConfirmDialogQuestion();
 			}
-			*/
 		}
 	}
 	
@@ -382,22 +387,19 @@ public class ArrowSelectionScreen extends Screen {
 
 	/**
 	 * Updates the inventory list of the player registered in the client as the "active" player.
-	 * Is already used by Inventory. So there might be no need in using <code> updateInventoryList </code>
 	 */
 	public void updateInventoryList () {
-        /*
-		final Inventory inventory = ((ScaleWorld) NewWorldTestScreen.getWorld()).getActivePlayer().getInventory();
-		
 		arrowList.clear();
-		
-		arrowList.add("Feuerpfeil " + "[" + inventory.getItemCount(FireArrow.class) + "]");
-		arrowList.add("Wasserpfeil " + "[" + inventory.getItemCount(WaterArrow.class) + "]");
-		arrowList.add("Sturmpfeil " + "[" + inventory.getItemCount(StormArrow.class)+ "]");
-		arrowList.add("Steinpfeil " + "[" + inventory.getItemCount(StoneArrow.class) + "]");
-		arrowList.add("Eispfeil " + "[" + inventory.getItemCount(IceArrow.class) + "]");
-		arrowList.add("Blitzpfeil " + "[" + inventory.getItemCount(LightningArrow.class) + "]");
-		arrowList.add("Lichtpfeil " + "[" + inventory.getItemCount(LightArrow.class) + "]");
-		arrowList.add("Schattenpfeil " + "[" + inventory.getItemCount(ShadowArrow.class) + "]");
+
+        final int[] arrowsCount = ArrowHelper.arrowCountInventory();
+        arrowList.add("Feuerpfeil " + "[" + arrowsCount[FireArrow.INDEX] + "]");
+        arrowList.add("Wasserpfeil " + "[" + arrowsCount[WaterArrow.INDEX] + "]");
+        arrowList.add("Sturmpfeil " + "[" + arrowsCount[StormArrow.INDEX] + "]");
+        arrowList.add("Steinpfeil " + "[" + arrowsCount[StoneArrow.INDEX] + "]");
+        arrowList.add("Eispfeil " + "[" + arrowsCount[IceArrow.INDEX] + "]");
+        arrowList.add("Blitzpfeil " + "[" + arrowsCount[LightningArrow.INDEX] + "]");
+        arrowList.add("Lichtpfeil " + "[" + arrowsCount[LightArrow.INDEX] + "]");
+        arrowList.add("Schattenpfeil " + "[" + arrowsCount[ShadowArrow.INDEX] + "]");
 		
 		if (inventoryList.isAcceptingInput()) {
 			inventoryList = new comp.List(inventoryList_PosX, inventoryList_PosY, inventoryList_Width, inventoryList_Height, this, arrowList);
@@ -412,6 +414,5 @@ public class ArrowSelectionScreen extends Screen {
 			inventoryList.addMouseListener(new MouseListHandler());
 			inventoryList.declineInput();
 		}
-		*/
 	}
 }

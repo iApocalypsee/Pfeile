@@ -2,6 +2,7 @@ package general;
 
 import animation.SoundPool;
 import gui.*;
+import player.weapon.ArrowHelper;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
 import world.WorldLike;
@@ -117,6 +118,8 @@ public class Main {
 
         // TODO: all gerate world methods need to be here or if they can be declared as a thread before GameLoop.run(1 / 60.0);
         // empty method
+        main.postInitScreens();
+        // empty method
         main.newWorldTest();
         // empty method
         main.generateWorld();
@@ -126,8 +129,6 @@ public class Main {
         main.doArrowSelectionAddingArrows();
         // and TimeClock with stopWatchThread
         main.initTimeClock();
-        // empty method
-        main.postInitScreens();
         // empty method
         main.disposeInitialResources();
 
@@ -186,8 +187,9 @@ public class Main {
         final ArrowSelectionScreenPreSet arrowSelection = (ArrowSelectionScreenPreSet) (getGameWindow().getScreenManager().getScreens().get(ArrowSelectionScreenPreSet.SCREEN_INDEX));
 
         for (String selectedArrow : arrowSelection.selectedArrows) {
-            GameScreen.getInstance().getActivePlayer().inventory().put(
-                    player.weapon.ArrowHelper.instanceArrow(selectedArrow));
+            if (GameScreen.getInstance().getActivePlayer().inventory().put(
+                    ArrowHelper.instanceArrow(selectedArrow)) == false)
+                System.err.println("Cannot add " + selectedArrow + " at Main.doArrowSelectionAddingArrows() - adding the arrowNumberPreSet");
         }
 
         ArrowSelectionScreen.getInstance().updateInventoryList();
@@ -222,43 +224,6 @@ public class Main {
     }
 
     private void newWorldTest() {
-    }
-
-    /**
-     * Initialisiert GameWindow
-     */
-    private void initGameWindow() {
-
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                graphicsDevice = environmentG.getDefaultScreenDevice();
-//				graphicsDevice.setDisplayMode(new DisplayMode(getWindowWidth(), getWindowHeight(), DisplayMode.BIT_DEPTH_MULTI, DisplayMode.REFRESH_RATE_UNKNOWN));
-
-                gameWindow = new GameWindow();
-
-                new player.weapon.ArrowHelper();
-
-                gameWindow.initializeScreens();
-                main.initTimeClock();
-                main.newWorldTest();
-
-                GameWindow.adjustWindow(gameWindow);
-                toggleFullscreen(true);
-
-                // window showing process
-                gameWindow.setVisible(true);
-                gameWindow.createBufferStrategy();
-            }
-        });
-
-        thread.setPriority(7);
-        thread.start();
-
-        synchronized(this) {
-            main.notify();
-        }
     }
 
     // ###### GENERATE WORLD
@@ -330,7 +295,7 @@ public class Main {
      * empty: aufruf in Main ist auskommentiert
      */
     protected void postInitScreens() {
-
+        ArrowSelectionScreen.getInstance().init();
     }
 
     /**

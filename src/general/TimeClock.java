@@ -37,7 +37,7 @@ public class TimeClock extends Component implements Runnable {
 	private long timeCurrent = 0;
 	
 	/** String, der am Bildschirm die Zeit angeben soll */
-	private String timePrintString = null;
+	private String timePrintString = timeFormatter(Mechanics.timePerPlay);
 	
 	// KONSTURCKTOR
 	/** KONSTRUCKTOR der Klasse 
@@ -209,10 +209,6 @@ public class TimeClock extends Component implements Runnable {
 		
 		g.setColor(Color.BLACK);
 		g.setFont(STD_FONT);
-		if (this.getTimePrintString() != null) {
-			g.drawString(this.getTimePrintString(), getX() + 4,
-					getY() + 16);
-		} else
-			System.err.println("String 'getTimePrintString()' == null; caused by 'TimeClock.draw(Graphics2D g)'");
+        g.drawString(this.getTimePrintString(), getX() + 4, getY() + 16);
 	}
 }

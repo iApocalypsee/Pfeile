@@ -11,7 +11,7 @@ import scala.collection.{JavaConversions, mutable}
   */
 trait InventoryLike {
 
-  def put(i: Item): Unit
+  def put(i: Item): Boolean
 
   /** Removes one item that satisfies given predicate, if any.
     *
@@ -51,9 +51,14 @@ class DefaultInventory extends InventoryLike {
 
   private var _list = mutable.ArrayBuffer[Item]()
 
-  override def put(i: Item): Unit = {
-      // TODO: only put in the inventory, if there is space left.
-      _list += i
+  override def put(i: Item): Boolean = {
+    if (maximumSize > currentSize) {
+       _list += i
+       true
+    } else {
+       System.err.println("Inventory.maximumSize reached. Cannot put Item " + i.getClass.getTypeName)
+       false
+    }
   }
 
   override def remove(f: (Item) => Boolean): Option[Item] = {

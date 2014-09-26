@@ -19,8 +19,6 @@ public class PreWindowScreen extends Screen {
     public static final int SCREEN_INDEX = 21;
     public static final String SCREEN_NAME = "PreWindow";
 
-    private static boolean isReady = false;
-
     /** The Big ComboBox on the right side to select the value i.e. Computerstärke, Weltgröße,... */
     private ComboBox selectorComboBox;
 
@@ -620,39 +618,22 @@ public class PreWindowScreen extends Screen {
      * i.e.<code> Mechanics.lifeRegeneration </code>
      */
     public static void correctInits() {
-        if (Mechanics.lifeRegeneration != -1 && Mechanics.lifeMax != -1) {
-
-            if (Mechanics.lifeRegeneration == 1) { // 5 = hoch; 1 == niedrig
-                Mechanics.lifeRegeneration = (int) Math
-                        .round(0.5 * (Mechanics.lifeMax * 0.008 + 2));
-                return;
-
-            } else if (Mechanics.lifeRegeneration == 2) {
-                Mechanics.lifeRegeneration = (int) Math
-                        .round(0.5 * (Mechanics.lifeMax * 0.001 + 3));
-                return;
-
-            } else if (Mechanics.lifeRegeneration == 3) {
-                Mechanics.lifeRegeneration = (int) Math
-                        .round(0.5 * (Mechanics.lifeMax * 0.015 + 3.5));
-                return;
-
-            } else if (Mechanics.lifeRegeneration == 4) {
-                Mechanics.lifeRegeneration = (int) Math
-                        .round(0.5 * (Mechanics.lifeMax * 0.02 + 4.5));
-                return;
-
-            } else if (Mechanics.lifeRegeneration == 5) {
-                Mechanics.lifeRegeneration = (int) Math
-                        .round(0.5 * (Mechanics.lifeMax * 0.025 + 7));
-                return;
-            }
+        if (Mechanics.lifeRegeneration == 1) { // 5 = hoch; 1 == niedrig
+            Mechanics.lifeRegeneration = (int) Math
+                    .round(0.5 * (Mechanics.lifeMax * 0.008 + 2));
+        } else if (Mechanics.lifeRegeneration == 2) {
+            Mechanics.lifeRegeneration = (int) Math
+                    .round(0.5 * (Mechanics.lifeMax * 0.001 + 3));
+        } else if (Mechanics.lifeRegeneration == 4) {
+            Mechanics.lifeRegeneration = (int) Math
+                    .round(0.5 * (Mechanics.lifeMax * 0.02 + 4.5));
+        } else if (Mechanics.lifeRegeneration == 5) {
+            Mechanics.lifeRegeneration = (int) Math
+                    .round(0.5 * (Mechanics.lifeMax * 0.025 + 7));
+        } else { // Standard: lifeRegeneration: normal
+            Mechanics.lifeRegeneration = (int) Math
+                    .round(0.5 * (Mechanics.lifeMax * 0.015 + 3.5));
         }
-
-        Mechanics.lifeMax = 400;
-        Mechanics.lifeRegeneration = (int) Math
-                .round(0.5 * (Mechanics.lifeMax * 0.015 + 3.5));
-
         setTotalArrowNumberCorrect();
     }
 
