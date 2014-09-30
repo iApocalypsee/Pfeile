@@ -3,9 +3,8 @@ package misc
 import akka.actor.Cancellable
 import general.{Delegate, Main}
 
-import scala.concurrent.duration._
-
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 
 /** Holds an object that is deallocated after a certain amount of time.
   *
@@ -25,13 +24,23 @@ class VolatileResource[A <: AnyRef](x: A, deallocTime: FiniteDuration = 5.second
   // The thread that is executed after the deallocation countdown.
   private var _deallocThread: Cancellable = deallocCancellableObject
 
+  /** The function that reallocates the resource again. */
+  private var _reallocFunction: Option[() => A] = None
+
   /** Delegate which gets called when the underlying object is being set to null. */
   val onDispose = Delegate.create[A]
 
   def deallocCountdown = _deallocCountdown
   def deallocCountdown(x: FiniteDuration) = _deallocCountdown = x
 
+  def reallocFunction = _reallocFunction
+  def reallocFunction_=(x: () => A) = _reallocFunction = Some(x)
+
   def get(): Option[A] = {
+
+    if(_x.isEmpty) {
+      if(_reallocFunction.isDefined) _x = Some(_reallocFunction.get.apply())
+    }
 
     // If a dealloc thread is still active, cancel it. I don't need it anymore.
     if(_deallocThread ne null) {
@@ -73,5 +82,15 @@ class VolatileResource[A <: AnyRef](x: A, deallocTime: FiniteDuration = 5.second
     _deallocThread = deallocCancellableObject
   }
 
+
+}
+
+object VolatileResource {
+
+  def withReallocation[A](x: A) = {
+    val ret = new VolatileResource(x)
+    ret.reallocFunction = { () => x }
+    ret
+  }
 
 }
