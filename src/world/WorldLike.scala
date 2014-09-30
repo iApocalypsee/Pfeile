@@ -21,6 +21,7 @@ class DefaultWorld extends WorldLike {
 
   /** The terrain that describes the geography of the world. */
   override val terrain = new DefaultTerrain(this)
+  terrain.generate()()
 
   /** The entities that describe the population of the world. */
   override val entities = new DefaultEntityManager

@@ -56,7 +56,6 @@ public class GameScreen extends Screen {
 	/**
 	 * Die Welt, die vom GameScreen gezeichnet wird.
 	 */
-
 	private GameScreen() {
 		super(GameScreen.SCREEN_NAME, GameScreen.SCREEN_INDEX);
 	}
@@ -82,7 +81,7 @@ public class GameScreen extends Screen {
 
 		visualEntity = new VisualEntity(new LinkedList<EntityComponentWrapper>());
 
-		activePlayer = new ActivePlayer(world, new Point(3, 3), Main.getUser().getUsername());
+		activePlayer = new Player(world, new Point(0, 0), Main.getUser().getUsername());
 
 		// The population of the world has to be performed AFTER the generation/loading of the world.
 		world.entities().register(activePlayer);

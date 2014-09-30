@@ -26,8 +26,7 @@ public class MainMenuScreen extends Screen {
 	 * Der Singleplayer-Button. (Ach du Schande, Components werden jetzt vollautomatisch
 	 * gezeichnet (so stolz auf das Component-System! =D ))
 	 */
-	private Button sp = new Button
-			(Main.getWindowWidth() - 250, Main.getWindowHeight() - 175, this, "Singleplayer");
+	private Button sp = new Button(Main.getWindowWidth() - 250, Main.getWindowHeight() - 175, this, "Singleplayer");
 	
 	public MainMenuScreen() {
 		super(MainMenuScreen.SCREEN_NAME, MainMenuScreen.SCREEN_INDEX);

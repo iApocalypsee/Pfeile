@@ -66,7 +66,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * Sagt aus, ob Components automatisch vom Screen gezeichnet werden oder nicht.
 	 * Auf <code>false</code> lassen, die Funktion ist buggy!
 	 */
-	private boolean preprocessedDrawingEnabled = true;
+	private boolean preprocessedDrawingEnabled = false;
 
 	protected static boolean isLeftMousePressed;
 	protected static boolean isRightMousePressed;

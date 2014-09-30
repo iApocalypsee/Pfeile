@@ -56,7 +56,7 @@ class DefaultInventory extends InventoryLike {
        _list += i
        true
     } else {
-       System.err.println("Inventory.maximumSize reached. Cannot put Item " + i.getClass.getTypeName)
+       System.err.println("Inventory.maximumSize reached. Cannot put Item " + i.getClass.getName)
        false
     }
   }

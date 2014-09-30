@@ -1,21 +1,21 @@
 package general;
 
+import akka.actor.ActorSystem;
 import animation.SoundPool;
 import gui.*;
+import misc.VolatileResource;
 import player.weapon.ArrowHelper;
+import scala.concurrent.duration.FiniteDuration;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
-import world.WorldLike;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Hauptklasse mit der Main-Methode und den abstraktesten Objekten unseres Spiels.
@@ -60,7 +60,17 @@ public class Main {
     private static ExecutorService exec = Executors.newCachedThreadPool();
     private static Set<Future<?>> futures = new HashSet<Future<?>>(5);
 
+	// Just user data. User data is not intertwined with game data.
+	// The game data uses data from user, but the user does not use any data from world.
     private static User user;
+
+	// The game context in which the game currently is.
+	// Every time a game is started, the context variable should be non-null.
+	private static PfeileContext context = null;
+
+	// The actor system taking care of threaded actors.
+	private static ActorSystem actorSystem = ActorSystem.create("system");
+
     // DONE WITH ALL VARIABELS;
     // MOST IMPORTANT METHODS ####################################
     // ###########################################################
@@ -193,27 +203,6 @@ public class Main {
         }
 
         ArrowSelectionScreen.getInstance().updateInventoryList();
-    }
-
-	// DEFAULT IMPLEMENTATION WITH NO PROBABILITIES
-	private <T> T decide(LinkedList<T> objects) {
-		return objects.get(new Random().nextInt(objects.size()));
-	}
-
-    public LinkedList<Integer> filterNotEvenNumbers(LinkedList<Integer> input) {
-        LinkedList<Integer> result = new LinkedList<Integer>();
-        for (Integer i : input) {
-            if (i % 2 == 0) result.add(i);
-        }
-        return result;
-    }
-
-    public LinkedList<Integer> filterEvenNumbers(LinkedList<Integer> input) {
-        LinkedList<Integer> result = new LinkedList<Integer>();
-        for (Integer i : input) {
-            if (i % 2 == 1) result.add(i);
-        }
-        return result;
     }
 
     /**
@@ -413,7 +402,34 @@ public class Main {
         return gameWindow;
     }
 
+    /**
+     * GETTER: GraphicsEnviroment
+     */
+    public static GraphicsEnvironment getGraphicsEnvironment() {
+        return environmentG;
+    }
+
+    /**
+     * GETTER: GraphicsDevice
+     */
+    public static GraphicsDevice getGraphicsDevice() {
+        return graphicsDevice;
+    }
+
     public static User getUser() {
         return user;
     }
+
+	public static PfeileContext getContext() {
+		return context;
+	}
+
+	public static ActorSystem getActorSystem() {
+		return actorSystem;
+	}
+
+	public static void setContext(PfeileContext context) {
+		scala.Predef.require(context != null);
+		Main.context = context;
+	}
 }

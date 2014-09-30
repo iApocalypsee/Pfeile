@@ -4,6 +4,7 @@ import general.Keys;
 import gui.Screen;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -14,7 +15,7 @@ import java.io.IOException;
  */
 public class Spinner extends Component {
 
-    private SpinnerModel spinnerModel;
+    private RangeSpinnerModel spinnerModel;
     private Rectangle downButton, upButton;
     private TextBox valueBox;
     private KeyListener keyListener;
@@ -39,7 +40,7 @@ public class Spinner extends Component {
     public Spinner (int x, int y, Screen backingScreen, SpinnerModel spinnerNumberModel) {
         super(x, y, 90, 50, backingScreen);
 
-        spinnerModel = spinnerNumberModel;
+        spinnerModel = new RangeSpinnerModel(spinnerNumberModel);
         if (Math.abs(spinnerModel.getMinimum()) < Math.abs(spinnerModel.getMaximum()))
             valueBox = new TextBox(x + 1, y + 1, String.valueOf(spinnerModel.getMaximum()), backingScreen);
         else
@@ -64,10 +65,10 @@ public class Spinner extends Component {
             public void mousePressed (MouseEvent e) {
                 if (isAcceptingInput()) {
                     if (downButton.contains(e.getPoint())) {
-                        spinnerModel.setValue(spinnerModel.getPreviousValue());
+	                    spinnerModel.previous();
                     } else if (upButton.contains(e.getPoint()))
-                        spinnerModel.setValue(spinnerModel.getNextValue());
-                    valueBox.setEnteredText(String.valueOf(spinnerModel.getValue()));
+	                    spinnerModel.next();
+                    valueBox.setEnteredText(spinnerModel.getCurrent().toString());
                 }
             }
         });
@@ -79,7 +80,7 @@ public class Spinner extends Component {
         keyListener = new KeyAdapter() {
             @Override
             public void keyTyped (KeyEvent e) {
-                if (isAcceptingInput() == true) {
+                if (isAcceptingInput()) {
                     if (Character.isDigit(e.getKeyCode()))
                         valueBox.enterText(e);
                 }
@@ -134,18 +135,23 @@ public class Spinner extends Component {
 
 
     /** returns the SpinnerModel */
-    public SpinnerModel getSpinnerModel () {
+    public ISpinnerModel<Integer> getSpinnerModel () {
         return spinnerModel;
     }
 
     /** the old spinnerModel will be replaced by the new <code>spinnerModel</code>.
      *  the value, which could be seen in the textBox changes to the currentValue of the <code>spinnerModel</code>*/
     public void setSpinnerModel (SpinnerModel spinnerModel) {
-        this.spinnerModel = spinnerModel;
-        valueBox.setEnteredText(String.valueOf(spinnerModel.getValue()));
-        valueBox.setStdText(String.valueOf(spinnerModel.getValue()));
+        this.spinnerModel = new RangeSpinnerModel(spinnerModel);
+        valueBox.setEnteredText(String.valueOf(this.spinnerModel.getCurrent()));
+        valueBox.setStdText(String.valueOf(this.spinnerModel.getCurrent()));
     }
 
+	public void setSpinnerModel(RangeSpinnerModel model) {
+		this.spinnerModel = model;
+		valueBox.setEnteredText(String.valueOf(spinnerModel.getCurrent()));
+		valueBox.setStdText(String.valueOf(spinnerModel.getCurrent()));
+	}
 
     @Override
     public void draw (Graphics2D g) {

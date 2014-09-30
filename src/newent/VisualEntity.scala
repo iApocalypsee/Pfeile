@@ -13,6 +13,7 @@ import scala.collection.{JavaConversions, mutable}
 class VisualEntity(ec: Seq[EntityComponentWrapper] = Seq.empty[EntityComponentWrapper]) extends Drawable {
 
   private var _entityComps = mutable.MutableList[EntityComponentWrapper]()
+
   def entityComponents = _entityComps.toList
   def javaEntityComponents = JavaConversions.seqAsJavaList(entityComponents)
 

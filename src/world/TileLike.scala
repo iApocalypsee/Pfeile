@@ -4,9 +4,11 @@ import java.awt.{Color, Graphics2D, Polygon}
 
 import comp.RawComponent
 import geom.PointDef
+import misc.metadata.OverrideMetadatable
 import newent.EntityLike
 
 import scala.collection.JavaConversions
+import scala.collection.mutable
 
 /** Base trait for all tiles.
   *
@@ -15,7 +17,7 @@ import scala.collection.JavaConversions
   * that has not implemented any Component interface.
   * @author Josip Palavra
   */
-trait TileLike extends RawComponent {
+trait TileLike extends RawComponent with OverrideMetadatable {
 
   /** The x position in the grid of the world. */
   val latticeX: Int
@@ -68,6 +70,8 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
                                               override val terrain: DefaultTerrain) extends TileLike {
 
   require( terrain ne null )
+
+  IsometricPolygonTile.appendToTileTypeList(this.getClass)
 
   override var tileHeight: Int = 0
 
@@ -135,6 +139,14 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
 object IsometricPolygonTile {
 
   import scala.math._
+
+  private[this] val _tileTypeList = mutable.MutableList[Class[_ <: IsometricPolygonTile]]()
+
+  private def appendToTileTypeList(t: Class[_ <: IsometricPolygonTile]): Unit = {
+    if(!_tileTypeList.contains(t)) _tileTypeList += t
+  }
+
+  def tileTypeList = _tileTypeList.toList
 
   lazy val TileHalfWidth = 18
   lazy val TileWidth = TileHalfWidth * 2

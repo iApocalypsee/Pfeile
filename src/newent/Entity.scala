@@ -55,6 +55,8 @@ abstract class Entity(override val world: WorldLike, spawnPosition: (Int, Int), 
     else throw new NotUniqueNameException(n)
   }
 
+
+
   /// Ditto.
   def this(world: WorldLike, spawnPoint: Point, n: String) = this(world, (spawnPoint.x, spawnPoint.y), n)
 
