@@ -1,5 +1,6 @@
 package general;
 
+import gui.Drawable;
 import gui.GameScreen;
 
 import java.awt.Color;
@@ -7,7 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 /** Box um Leben und Uhr */
-public class TimeLifeBox {
+public class TimeLifeBox implements Drawable {
 	private final Color fillColor = new Color (150, 145, 145, 255); 
 	private final Color borderColor = new Color(20, 20, 40, 255);
 	private int width; 
@@ -17,25 +18,26 @@ public class TimeLifeBox {
 	private int line;
 	private boolean isVisible; 
 	
-	TimeLifeBox () {
+	TimeLifeBox (int x, int y, int width, int height) {
+        posX = x;
+        posY = y;
+        this.width = width;
+        this.height = height;
+
 		line = 6;
 		isVisible = true; 
 	}
 
+    @Override
     public void draw(Graphics2D g) {
-		if (isVisible == true) {
-			g.setColor(borderColor);
-			g.fillRect(posX, posY, width, height);
-			g.setColor(fillColor);
-			g.fillRect(posX + line, posY + line, width -  2* line, height - 2* line);
-		}
-	}
-	
-	/** Gibt ein Rectangle_Object zurück, dass alle wichtigen Information über Position und Größe enthählt */
-	public Rectangle getBoundingBox () {
-		return new Rectangle (posX, posY, width, height); 
-	}
-	
+        if (isVisible == true) {
+            g.setColor(borderColor);
+            g.fillRect(posX, posY, width, height);
+            g.setColor(fillColor);
+            g.fillRect(posX + line, posY + line, width - 2 * line, height - 2 * line);
+        }
+    }
+
 	public boolean isVisible () {
 		return isVisible; 
 	}

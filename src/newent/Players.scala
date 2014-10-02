@@ -5,6 +5,7 @@ import java.awt.{Color, Point}
 import comp.Component
 import newent.pathfinding.AStarPathfinder
 import world.{GrassTile, WorldLike}
+import player.Life
 
 /** Represents a player in the world.
   *
@@ -26,7 +27,13 @@ class Player(world: WorldLike,
   // GUI section.
 
   // The draw function just draws a rectangle for now, I can add images later. Later!
-  override def drawFunction = { g => g.setColor(Color.red); g.fillPolygon(bounds) }
+  override def drawFunction = { g => g.setColor(Color.red); g.fillPolygon(bounds); life.draw(g) }
 
-  override val bounds = Component.createRectPolygon(0, 0, 20, 30)
+  override val bounds = Component.createRectPolygon(0, 0, 18, 25)
+
+  private val life = new Life
+
+  def getLife : Life = {
+     life
+  }
 }

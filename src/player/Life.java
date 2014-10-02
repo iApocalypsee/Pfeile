@@ -2,14 +2,15 @@ package player;
 
 import general.Main;
 import general.Mechanics;
+import gui.Drawable;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 /**
  * <b>1.1.2014:</b> Lebensklasse entschlackt.
  * @version 1.1.2014
  */
-public class Life {
+public class Life implements Drawable {
 	private int lifemax;
 	private int liferegen;
 	private int life;
@@ -24,25 +25,13 @@ public class Life {
 	 * @version 1.2 */
 	public Life () {
 		
-		this.lifemax = Mechanics.lifeMax;
-		this.liferegen = Mechanics.lifeRegeneration; 
+		lifemax = Mechanics.lifeMax;
+		liferegen = Mechanics.lifeRegeneration;
 		life = lifemax;
-		
-		/* Konstrucktoraufruf für den Player */
-//		if(!com.github.pfeile.player.isBot()) {
-//			// INITIALISIERUNG
-//
-//			PosX = Main.getWindowWidth() - (55 + 125);
-//			PosY = Main.getWindowHeight() - 80;
-//
-//			boundingLife = new Rectangle(PosX, PosY, Math.round(relativeLife * 1.25f), 14);
-//		}
-		
+        
 		PosX = Main.getWindowWidth() - (55 + 125);
 		PosY = Main.getWindowHeight() - 80;
-		
 		boundingLife = new Rectangle(PosX, PosY, Math.round(relativeLife * 1.25f), 14);
-		
 	}
 	
 	
@@ -76,5 +65,63 @@ public class Life {
 		this.life = newLife; 
 		this.relativeLife = (this.life / this.lifemax) * 100;
 		this.boundingLife.width = Math.round(relativeLife * 1.25f);
-	} 
+	}
+
+
+    @Override
+    public void draw (Graphics2D g) {
+        // Lebensleiste
+        // Rechteck + Hintergrund für Lebensleiste
+        g.setColor(Color.RED);
+        g.drawRect(boundingLife.x - 1, boundingLife.y - 1,
+                125 + 1, boundingLife.height + 1);
+        g.setColor(Color.DARK_GRAY);
+        g.fillRect(boundingLife.x, boundingLife.y, 125,
+                boundingLife.height);
+        // eigentliche Lebensleiste
+        if (life > 0) {
+            Color currentLifeColor = new Color(250 - getRelativeLife(),
+                    Math.round(getRelativeLife() * 2.5f), 0);
+            g.setColor(currentLifeColor);
+            g.fillRect(boundingLife.x, boundingLife.y,
+                    boundingLife.width, boundingLife.height);
+            g.draw(boundingLife);
+        }
+        // Prozentanzeige für das Leben
+        int percentPosX = boundingLife.x + 127 - 36;
+        int percentPosY = boundingLife.y + 40;
+        // Hintergrund
+        g.setColor(Color.BLACK);
+        g.drawRect(percentPosX - 6, percentPosY - 15, 44, 19);
+        g.setColor(Color.DARK_GRAY);
+        g.fillRect(percentPosX - 5, percentPosY - 14, 43, 18);
+        // Prozent
+        g.setColor(Color.WHITE);
+        g.setFont(comp.Component.STD_FONT);
+        if (getRelativeLife() >= 10)
+            g.drawString(getRelativeLife() + "%", percentPosX, percentPosY);
+        else
+            g.drawString(getRelativeLife() + " %", percentPosX,
+                    percentPosY);
+        // Leben / LebenMax - Anzeige
+        // Variablen
+        int lifePosX = getBoundingLife().x + 4;
+        int lifePosY = getBoundingLife().y + 40;
+        // Hintergrund
+        g.setColor(Color.BLACK);
+        g.drawRect(lifePosX - 4, lifePosY - 15, 81, 19);
+        g.setColor(Color.DARK_GRAY);
+        g.fillRect(lifePosX - 3, lifePosY - 14, 80, 18);
+        // Prozent
+        g.setColor(Color.WHITE);
+        if (getLife() >= 100)
+            g.drawString(getLife() + " / " + getMaxLife(), lifePosX,
+                    lifePosY);
+        else if (getLife() >= 10)
+            g.drawString(" " + getLife() + " / " + getMaxLife(),
+                    lifePosX, lifePosY);
+        else
+            g.drawString(" " + getLife() + " / " + getMaxLife(),
+                    lifePosX, lifePosY);
+    }
 }

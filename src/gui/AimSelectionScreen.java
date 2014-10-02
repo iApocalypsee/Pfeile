@@ -2,6 +2,8 @@ package gui;
 
 import comp.Button;
 import general.Main;
+import world.TileComponentWrapper;
+import world.TileLike;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -50,11 +52,11 @@ public class AimSelectionScreen extends Screen {
 						warningMessage = "Kein Zielfeld ausgewählt";
 						transparencyWarningMessage = 1f;
 					} else {
-						onLeavingScreen(AimSelectionScreen.this, NewWorldTestScreen$.MODULE$.SCREEN_INDEX);
+						onLeavingScreen(AimSelectionScreen.this, GameScreen.SCREEN_INDEX);
 
 						// deliver the attack message to the specified tile
 						// assuming that the thread is done updating the values
-						DeliverShootThread msg = new DeliverShootThread(getPosX_selectedField(), getPosY_selectedField());
+						DeliverShootThread msg = new DeliverShootThread();
 						msg.setDaemon(true);
 						msg.start();
 
@@ -71,7 +73,6 @@ public class AimSelectionScreen extends Screen {
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		super.keyPressed(arg0);
-		NewWorldTestScreen.keyPressed(arg0);
 	}
 
 	@Override
@@ -88,44 +89,37 @@ public class AimSelectionScreen extends Screen {
 	public void draw (Graphics2D g) {
 		// Background will be drawn
 		super.draw(g);
-        /*
 
-		// include the world
-		IWorld w = NewWorldTestScreen.getWorld();
-
-		// The World will be drawn
-		w.draw(g);
-		
-		for (entity.Player player: w.getPlayers()) {
-			player.draw(g);
-		}
+        // Draw the world and the player
+        GameScreen.getInstance().getMap().draw(g);
+        GameScreen.getInstance().getVisualEntity().draw(g);
 		
 		// draw the selectedField 
 		if (posX_selectedField >= 0 && posY_selectedField >= 0) {
-			g.setColor(new Color (255, 227, 227, 250));
-			g.drawPolygon(((BaseTile) (NewWorldTestScreen.getWorld().getTileAt(posX_selectedField, posY_selectedField))).getBounds());
-			g.setColor(new Color (240, 37, 47, (int) (255 * 0.7)));
-			g.fillPolygon(((BaseTile) (NewWorldTestScreen.getWorld().getTileAt(posX_selectedField, posY_selectedField))).getBounds());
+            TileLike selectedTile = (TileLike) (GameScreen.getInstance().getWorld().terrain().tileAt(posX_selectedField, posY_selectedField));
+			g.setColor(new Color(255, 4, 3, 161));
+			g.fillPolygon(selectedTile.bounds());
+            g.setColor(new Color (255, 34, 0, 255));
+            g.drawPolygon(selectedTile.bounds());
 		}
-		
-		// TODO: auf die neue World-Klasse ändern
-		World.timeLifeBox.draw(g);
-		Field.infoBox.draw(g);
+
+        // TODO: inizalizise and create TimeLifeBox
+		// TimeLifeBox.draw(g);
+        // TODO: create a new Field infoBox
+		// Field.infoBox.draw(g);
 		Main.timeObj.draw(g);
-		GameScreen.getInstance().getWorld().getActivePlayer().drawLife(g);
 		
 		confirm.draw(g);
 		
 		// Finally, draw the waringMessage
 		g.setColor(new Color(1f, 0f, 0f, transparencyWarningMessage));
-		g.setFont(new Font(Component.STD_FONT.getFontName(), Font.BOLD, 26));
+		g.setFont(new Font(comp.Component.STD_FONT.getFontName(), Font.BOLD, 26));
 		g.drawString(warningMessage, positionWarningMessage.x, positionWarningMessage.y);
 		
 		transparencyWarningMessage = transparencyWarningMessage - 0.013f;
 		
 		if (transparencyWarningMessage < 0) 
 			transparencyWarningMessage = 0;
-			*/
 	}
 	
 	
@@ -170,138 +164,49 @@ public class AimSelectionScreen extends Screen {
 		@Override
 		public void run() {
 			super.run();
-            /*
-			IWorld w = NewWorldTestScreen.getWorld();
-			HashMap<Tuple2<Object, Object>, VisionState> map = ((ScaleWorld) (w)).getActivePlayer().visionMap();
-			for(int x = 0; x < w.getSizeX(); x++) {
-				for(int y = 0; y < w.getSizeY(); y++) {
-					if(!stopFlag) {
-						BaseTile comp = (BaseTile) w.getTileAt(x, y);
+            if(!stopFlag) {
+                for (TileComponentWrapper tileWrapper : GameScreen.getInstance().getMap().javaTiles()) {
+                    if(!tileWrapper.tile().bounds().contains(evt.getPoint()))
+                        continue;
 
-						if(!comp.getBounds().contains(evt.getPoint())) continue;
-
-						if(!map.apply(new Tuple2<Object, Object>(x, y)).equals(VisionState.Unrevealed)) {
-							if (((ScaleWorld) w).getActivePlayer().getGridX() == x && ((ScaleWorld) w).getActivePlayer().getGridY() == y) {
-								// TODO Make warning messages async (transparency included)
-								warningMessage = "Selbstangriff ist nicht m�glich";
-								transparencyWarningMessage = 1f;
-							} else {
-								setPosX_selectedField(x);
-								setPosY_selectedField(y);
-								stopFlag = true;
-							}
-						}
-
-					}
-				}
-			}
-			*/
+                    if(tileWrapper.component().isVisible()) {
+                        if (tileWrapper.tile().bounds().contains(
+                                GameScreen.getInstance().getActivePlayer().getGridX(),
+                                GameScreen.getInstance().getActivePlayer().getGridY())) {
+                            warningMessage = "Selbstangriff ist nicht möglich!";
+                            transparencyWarningMessage = 1f;
+                        } else {
+                            setPosX_selectedField(tileWrapper.tile().latticeX());
+                            setPosY_selectedField(tileWrapper.tile().latticeY());
+                            stopFlag = true;
+                        }
+                    }
+                }
+            }
 		}
 	}
 
 	/**
 	 * Sends a message to specified tile that it is being attacked.
-	 * It retrieves the data from ArrowSelectionScreen and constructor params.
+	 * It retrieves the data from ArrowSelectionScreen.
 	 */
 	private class DeliverShootThread extends Thread {
-
-		private int x, y;
-
-		public DeliverShootThread(int x, int y) {
-			this.x = x;
-			this.y = y;
-		}
-
 		@Override
 		public void run() {
-            /*
 			super.run();
-			BaseTile at = (BaseTile) NewWorldTestScreen.getWorld().getTileAt(x, y);
-			ArrowSelectionScreen s = ArrowSelectionScreen.getInstance();
-			Class<? extends AbstractArrow> a = s.getSelectedIndex();
-			AttackEvent evt = null;
-			try {
-				evt = new AttackEvent(x, y, a.newInstance(), ((ScaleWorld) at.getWorld()).getActivePlayer());
-			} catch (Exception e) {
-				throw new ClassCastException("Casting of arrow failed.");
-			}
 
-			if(evt != null) {
-				at.registerAttack(evt);
-			}
-			*/
-		}
-	}
-	
-	/** Thread for testing, if there was a click and at which field it has been set */
-	@Deprecated
-	private class FieldSelector implements Runnable {
-		
-		/** point, describing the last click */
-		private Point lastSavedClickPosition = getLastClickPosition();
-		
-		
-		// Finally: let's run the Thread 
-		@Override
-		public void run() {
-            /*
-			while (true) {
+			// Class<? extends player.weapon.AbstractArrow> attackingArrow = ArrowSelectionScreen.getInstance().getSelectedIndex();
 
-				
-				// Let's start the testing loop
-				while (getManager().getActiveScreenIndex() == AimSelectionScreen.SCREEN_INDEX) {
-					
-					// only run, if there was another click
-					if (lastSavedClickPosition.x == getLastClickPosition().x && 
-							lastSavedClickPosition.y == getLastClickPosition().y) {
-						try {
-							Thread.sleep(100);
-						} catch (InterruptedException e) {e.printStackTrace();}
-						
-						continue;
-					}
-					
-					// This is the world
-					IWorld w = NewWorldTestScreen.getWorld();
-					
-					HashMap<Tuple2<Object, Object>, VisionState> map = ((ScaleWorld) (w)).getActivePlayer().visionMap();
-					
-					// Let's find the selectedField
-					LOOPxPosition: for (int x = 0; x < w.getSizeX(); x++) {
-						for (int y = 0; y < w.getSizeY(); y++) {
-							// Is the click on the tile?
-							BaseTile tile = (BaseTile) w.getTileAt(x, y);
-							if (tile.getBounds().contains(getLastClickPosition())) {
-								// Is the field visible?
-								if (map.apply(new Tuple2 <Object, Object> (x,y)).equals(VisionState.Unrevealed) == false) {
-									// is the player attacking the field of the himself
-									if(((ScaleWorld) w).getActivePlayer().getGridX() == x && ((ScaleWorld) w).getActivePlayer().getGridY() == y) {
-										warningMessage = "Selbstangriff ist nicht m�glich";
-										transparencyWarningMessage = 1f;
-									} else {
-										setPosX_selectedField(x);
-										setPosY_selectedField(y);
-										lastSavedClickPosition = getLastClickPosition();
-									}
-								}
-								
-								break LOOPxPosition;
-							}
-						}
-					} 
-					
-					// now, sleep a bit 
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {e.printStackTrace();}
-				}
-				
-				// if 'isRunning == false': sleep longer
-				try {
-					Thread.sleep(480);
-				} catch (InterruptedException e) {e.printStackTrace();}
-			}
-			*/
-		}
+            // TODO: Make an attackEvent or whatever, because the attack isn't delived yet.
+
+			// AttackEvent evt = null;
+			// try {
+			//    evt = new AttackEvent(posX_selectedField, posY_selectedField, a.newInstance(), (GameScreen.getInstance().getActivePlayer()));
+			// } catch (Exception e) {
+			//    throw new ClassCastException("Casting of arrow failed.");
+			// }
+            // TileLike attackedTile = (TileLike) GameScreen.getInstance().getWorld().terrain().tileAt(posX_selectedField, posY_selectedField);
+            // attackedTile.registerAttack(evt);
+        }
 	}
 }
