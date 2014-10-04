@@ -172,8 +172,8 @@ public class ArrowSelectionScreen extends Screen {
 			@Override
 			public void mouseReleased(MouseEvent e) {
                 if (Mechanics.arrowNumberFreeSetUseable > 0) {
-                    final InventoryLike inventory = GameScreen.getInstance().getActivePlayer().inventory();
-                    if (inventory.put(ArrowHelper.instanceArrow(selectedIndex)) == false) {
+                    final InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
+                    if (!inventory.put(ArrowHelper.instanceArrow(selectedIndex))) {
                         if (inventory.maximumSize() - inventory.currentSize() <= 0) {
                             warningMessage = "Das Inventar ist voll: Maximale Inventargröße " + inventory.maximumSize();
                         } else if (Mechanics.arrowNumberFreeSetUseable <= 0){
@@ -290,7 +290,7 @@ public class ArrowSelectionScreen extends Screen {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-            final InventoryLike inventory = GameScreen.getInstance().getActivePlayer().inventory();
+            final InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
 			
 			if (fireArrowButton.getBounds().contains(e.getPoint())) {
 				openConfirmQuestion ("Wollen Sie einen Feuerpfeil hinzufügen?");

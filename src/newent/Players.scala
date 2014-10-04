@@ -15,25 +15,20 @@ import player.Life
   */
 class Player(world: WorldLike,
              spawnpoint: Point,
-             name: String) extends Entity(world, spawnpoint, name) with MoveableEntity with TeleportableEntity with InventoryEntity {
+             name: String) extends Entity(world, spawnpoint, name) with MoveableEntity with TeleportableEntity with
+                                   InventoryEntity with LivingEntity {
 
   // Game section.
 
   /** The default movement points that the entity has. */
-  override def defaultMovementPoints: Int = 2
-
-  override val pathfinderLogic = new AStarPathfinder(20, { t => t.isInstanceOf[GrassTile] })
+  override def defaultMovementPoints = 2
+  override val pathfinderLogic       = new AStarPathfinder(20, { t => true })
+  override val life                  = new Life(100.0, 1.0, 100.0)
 
   // GUI section.
 
   // The draw function just draws a rectangle for now, I can add images later. Later!
-  override def drawFunction = { g => g.setColor(Color.red); g.fillPolygon(bounds); life.draw(g) }
+  override def drawFunction = { g => g.setColor(Color.red); g.fillPolygon(bounds) }
+  override val bounds       = Component.createRectPolygon(0, 0, 18, 25)
 
-  override val bounds = Component.createRectPolygon(0, 0, 18, 25)
-
-  private val life = new Life
-
-  def getLife : Life = {
-     life
-  }
 }

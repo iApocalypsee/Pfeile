@@ -9,6 +9,4 @@ import general.Main
  */
 object SettingsScreen extends Screen("Settings", 222) {
 
-
-
 }

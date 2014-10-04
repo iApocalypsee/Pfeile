@@ -90,7 +90,10 @@ public class Main {
      * Der Konstruktor. Hier stehen keine Hauptaufrufe. Die Hauptaufrufe werden
      * in <code>foo()</code> get�tigt.
      */
-    private Main() {}
+    private Main() {
+	    FiniteDuration turnTime = new FiniteDuration(30, TimeUnit.SECONDS);
+	    setContext(new PfeileContext(new PfeileContext.Values(turnTime)));
+    }
 
     // ###########################################################
     // HIER STEHEN DIE HAUPTAUFRUFE ##############################
@@ -197,22 +200,15 @@ public class Main {
         final ArrowSelectionScreenPreSet arrowSelection = (ArrowSelectionScreenPreSet) (getGameWindow().getScreenManager().getScreens().get(ArrowSelectionScreenPreSet.SCREEN_INDEX));
 
         for (String selectedArrow : arrowSelection.selectedArrows) {
-            if (GameScreen.getInstance().getActivePlayer().inventory().put(
-                    ArrowHelper.instanceArrow(selectedArrow)) == false)
+            if (!Main.getContext().getActivePlayer().inventory().put(
+		            ArrowHelper.instanceArrow(selectedArrow)))
                 System.err.println("Cannot add " + selectedArrow + " at Main.doArrowSelectionAddingArrows() - adding the arrowNumberPreSet");
         }
 
         ArrowSelectionScreen.getInstance().updateInventoryList();
     }
 
-    /**
-     * FIXME: hier kann man eigentlich auch gleich den Punkt verwenden: LinkedList<Point>
-     */
-    private class SHBCoordinator {
-        public Point p = null;
-    }
-
-    private void newWorldTest() {
+	private void newWorldTest() {
     }
 
     // ###### GENERATE WORLD

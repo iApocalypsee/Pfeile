@@ -23,6 +23,8 @@ public class Label extends Component {
 
     private Color declineInputColor = Color.darkGray;
 
+	private Color backgroundColor = null;
+
 	public Label() {
 		declineInput();
 		setName("Label " + hashCode());
@@ -44,20 +46,26 @@ public class Label extends Component {
 		
 		if(isVisible()) {
 
+			// Only draw a background if it is desired.
+			if(backgroundColor != null) {
+				g.setColor(backgroundColor);
+				g.fillPolygon(getBounds());
+			}
+
 			if(isAcceptingInput()) {
 			
 			switch(getStatus()) {
 			case NO_MOUSE:
-				g.setColor(noMouseColor);
+				g.setColor(getBorder().getOuterColor());
 				break;
 			case MOUSE:
-				g.setColor(Color.orange);
+				g.setColor(getBorder().getHoverColor());
 				break;
 			case CLICK:
-				g.setColor(Color.yellow);
+				g.setColor(getBorder().getClickColor());
 				break;
 			case NOT_AVAILABLE:
-				g.setColor(Color.gray);
+				g.setColor(getBorder().getNotAvailableColor());
 				break;
 			default:
 				System.out.println("Status not defined.");
@@ -101,4 +109,12 @@ public class Label extends Component {
     public void setDeclineInputColor (Color declineInputColor) {
         this.declineInputColor = declineInputColor;
     }
+
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	public void setBackgroundColor(Color backgroundColor) {
+		this.backgroundColor = backgroundColor;
+	}
 }

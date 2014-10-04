@@ -3,67 +3,83 @@ package general
 import newent.Player
 import world.WorldLike
 
+import scala.concurrent.duration._
+
 /** The game mechanics of "Pfeile" in its own class. <p>
   *
   * The best place to keep all data is in a central class which is not polluting any other classes.
   */
-class PfeileContext extends Serializable {
+class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
-  private var _activePlayer : Option[Player]    = None
-  private var _world        : Option[WorldLike] = None
+  import PfeileContext._
 
-  /** The object in which all at least half-way important values are stored. */
-  val values = new Values
+  private var _activePlayer : Player    = null
+  private var _turnPlayer   : Player    = null
+  private var _world        : WorldLike = null
 
-  /** The active player. */
   def activePlayer = _activePlayer
+  def activePlayerOption = optReturn(activePlayer _)
+  def activePlayer_=(p: Player): Unit = _activePlayer = p
 
-  /** Sets the active player to a new instance. <p>
-    *
-    * Very useful in co-op or hot-seat games to change the active player. <p>
-    *
-    * If the option itself or the underlying opt.get is null, the method assumes that the caller wants to set
-    * the active player to [[scala.None]] instead of null.
-    *
-    * @param opt The active player to set to. May be null, but not recommended.
-    */
-  def activePlayer_=(opt: Option[Player]): Unit = {
-    if(opt eq null) _activePlayer = None
-    val null_opt = opt map { a => a eq null }
-    if(null_opt.isDefined && null_opt.get) _activePlayer = None
-    else _activePlayer = opt
-  }
-
-  /** Sets the active player to a new player. <p>
-    *
-    * If the active player is null, it assumes that the new active player option should be set to [[scala.None]]
-    *
-    * @param p The new player to set to. May be null, but not recommended.
-    */
-  def activePlayer_=(p: Player): Unit = activePlayer_=(Some(p))
-
-  // Ditto.
   def getActivePlayer = _activePlayer
-  // Ditto.
-  def setActivePlayer(p: Player) = activePlayer_=(p)
+  def setActivePlayer(p: Player) = activePlayer = p
+
+  def turnPlayer = _turnPlayer
+  def turnPlayerOption = optReturn(turnPlayer _)
+  def turnPlayer_=(a: Player) = _turnPlayer = a
+
+  def getTurnPlayer = turnPlayer
+  def setTurnPlayer(a: Player) = turnPlayer = a
 
   def world = _world
-
-  def world_=(opt: Option[WorldLike]): Unit = {
-    if(opt eq null) _world = None
-    val null_opt = opt map { a => a eq null }
-    if(null_opt.isDefined && null_opt.get) _world = None
-    else _world = opt
-  }
-
-  def world_=(w: WorldLike): Unit = world_=(Some(w))
+  def worldOption = optReturn(world _)
+  def world_=(w: WorldLike): Unit = _world = w
 
   def getWorld = world
-  def setWorld(w: WorldLike) = world_=(w)
+  def setWorld(w: WorldLike) = world = w
+}
 
-  /** Values that have to be saved in the game. */
-  // TODO Move only relevant values from mechanics to here. Don't move junk in here.
-  class Values private[PfeileContext] extends Serializable {
+object PfeileContext {
+
+  /** Class holding all value information about the game. <p>
+    * These values exclude e.g. the world, the active player, the turn player,... such things.
+    *
+    * @param _turnTime The amount of time that the turn player has to make his moves.
+    *                  No time per move, time per turn.
+    */
+  // TODO Add XML document for default/recommended values.
+  class Values(private var _turnTime: FiniteDuration) extends Serializable {
+
+    /** Returns the time in which a player is allowed to make moves. <p>
+      *
+      * If the underlying turn time variable is null, this method returns Duration.Inf,
+      * otherwise it returns the underlying turn time variable directly. <p>
+      *
+      * For direct time calculation, use time conversion methods provided with the Duration object:
+      * <code>toMillis, toNanos, toMinutes, toSeconds</code>
+      */
+    def turnTime: Duration = {
+      if(_turnTime eq null) Duration.Inf
+      else _turnTime
+    }
+
+    /** Sets the new turn time.
+      *
+      * The new value may be <code>null</code>. In case of <code>null</code> the turn time
+      * defaults to infinite time.
+      */
+    def turnTime_=(a: FiniteDuration) = _turnTime = a
+
+    /** Returns true if the turn time is infinite. */
+    def isTurnTimeInfinite = _turnTime eq null
+
+  }
+
+  // Returns an option instead of the direct reference value: None instead of null, Some(obj) instead of obj
+  private def optReturn[A <: AnyRef](f: () => A): Option[A] = {
+    val f_result = f()
+    if(f_result eq null) None
+    else Some(f_result)
   }
 
 }

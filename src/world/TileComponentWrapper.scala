@@ -4,6 +4,7 @@ import java.awt.event.{MouseEvent, MouseAdapter}
 import java.awt.{Color, Graphics2D}
 
 import comp.{ComponentWrapper, Component}
+import general.Main
 import gui.{AdjustableDrawing, GameScreen, Drawable}
 
 import scala.collection.JavaConversions
@@ -56,7 +57,7 @@ class TileComponentWrapper(val tile: TileLike) extends ComponentWrapper(tile) {
 
     addMouseListener(new MouseAdapter {
       override def mouseReleased(e: MouseEvent): Unit = {
-        GameScreen.getInstance().getActivePlayer.moveTowards(tile.latticeX, tile.latticeY)
+        Main.getContext.activePlayer.moveTowards(tile.latticeX, tile.latticeY)
       }
     })
 

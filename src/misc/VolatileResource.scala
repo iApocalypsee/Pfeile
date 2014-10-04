@@ -87,7 +87,7 @@ class VolatileResource[A <: AnyRef](x: A, deallocTime: FiniteDuration = 5.second
 
 object VolatileResource {
 
-  def withReallocation[A](x: A) = {
+  def withReallocation[A <: AnyRef](x: A) = {
     val ret = new VolatileResource(x)
     ret.reallocFunction = { () => x }
     ret

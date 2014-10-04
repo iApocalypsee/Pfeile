@@ -1,5 +1,6 @@
 package player.weapon;
 
+import general.Main;
 import gui.GameScreen;
 import newent.InventoryLike;
 import sun.security.provider.SHA;
@@ -223,7 +224,7 @@ public final class ArrowHelper {
      * (it's 8 like the number of kinds of arrows).
      */
     public static int[] arrowCountInventory () {
-        final InventoryLike inventory = GameScreen.getInstance().getActivePlayer().inventory();
+        final InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
 
         int [] arrowsCount = new int[NUMBER_OF_ARROW_TYPES];
         for (Item item : inventory.javaItems()) {

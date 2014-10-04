@@ -2,6 +2,7 @@ package newent
 
 import java.awt.Graphics2D
 
+import general.Main
 import gui.{Drawable, GameScreen}
 
 import scala.collection.{JavaConversions, mutable}
@@ -24,9 +25,9 @@ class VisualEntity(ec: Seq[EntityComponentWrapper] = Seq.empty[EntityComponentWr
   entityComponents foreach { _entityComps += _ }
 
   // Every time an entity has been registered it has to be registered here as well...
-  GameScreen.getInstance().getWorld.entities.onEntityRegistered += {  _entityComps += new EntityComponentWrapper(_) }
+  Main.getContext.world.entities.onEntityRegistered += {  _entityComps += new EntityComponentWrapper(_) }
   // And every time an entity has been unlogged it has to be deleted here as well...
-  GameScreen.getInstance().getWorld.entities.onEntityUnlogged += { ent =>
+  Main.getContext.world.entities.onEntityUnlogged += { ent =>
     _entityComps = _entityComps filter { _.entity ne ent }
   }
 

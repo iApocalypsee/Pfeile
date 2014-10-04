@@ -16,7 +16,7 @@ public class TimeLifeBox implements Drawable {
 	private int posY; 
 	private int height; 
 	private int line;
-	private boolean isVisible; 
+	private boolean isVisible;
 	
 	TimeLifeBox (int x, int y, int width, int height) {
         posX = x;
@@ -30,11 +30,12 @@ public class TimeLifeBox implements Drawable {
 
     @Override
     public void draw(Graphics2D g) {
-        if (isVisible == true) {
+        if (isVisible) {
             g.setColor(borderColor);
             g.fillRect(posX, posY, width, height);
             g.setColor(fillColor);
-            g.fillRect(posX + line, posY + line, width - 2 * line, height - 2 * line);
+	        // Way faster to use a bitwise operation.
+            g.fillRect(posX + line, posY + line, width - (line << 1), height - (line << 1));
         }
     }
 

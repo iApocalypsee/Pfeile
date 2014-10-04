@@ -4,7 +4,6 @@ import comp.Button;
 import general.Keys;
 import general.Main;
 import newent.*;
-import scala.collection.Seq$;
 import world.*;
 
 import java.awt.*;
@@ -47,11 +46,21 @@ public class GameScreen extends Screen {
 	private Button shootButton;
 	private Button toggleStopwatch;
 
-	// There are sure better solutions than this one, but I'll figure one out...
-    private WorldLike world = new DefaultWorld();
 	private VisualMap map;
 	private VisualEntity visualEntity;
-	private Player activePlayer;
+
+	private LifeUI lifeUI = null;
+	// I need lazy initialization of lifeUI, else it will throw a null pointer exception.
+	private LifeUI getLifeUI() {
+		if(lifeUI == null) {
+			synchronized(this) {
+				if(lifeUI == null) {
+					lifeUI = new LifeUI(Main.getWindowWidth() - 200, Main.getWindowHeight() - 150, Main.getContext().getActivePlayer().life());
+				}
+			}
+		}
+		return lifeUI;
+	}
 
 	/**
 	 * Die Welt, die vom GameScreen gezeichnet wird.
@@ -68,7 +77,8 @@ public class GameScreen extends Screen {
 	 * So construct it first, then do all the initialization afterwards.
 	 */
 	private void postInit() {
-		TerrainLike terrain = world.terrain();
+		Main.getContext().setWorld(new DefaultWorld());
+		TerrainLike terrain = Main.getContext().getWorld().terrain();
 
 		// Comment that out later.
 		// Generating Component objects for every tile...
@@ -81,10 +91,10 @@ public class GameScreen extends Screen {
 
 		visualEntity = new VisualEntity(new LinkedList<EntityComponentWrapper>());
 
-		activePlayer = new Player(world, new Point(0, 0), Main.getUser().getUsername());
+		Main.getContext().setActivePlayer(new Player(Main.getContext().getWorld(), new Point(0, 0), Main.getUser().getUsername()));
 
 		// The population of the world has to be performed AFTER the generation/loading of the world.
-		world.entities().register(activePlayer);
+		Main.getContext().world().entities().register(Main.getContext().getActivePlayer());
 
 		map = new VisualMap(compWrappers);
 		map.moveMap(100, 300);
@@ -183,6 +193,8 @@ public class GameScreen extends Screen {
 		endTurnButton.draw(g);
 		shootButton.draw(g);
 		toggleStopwatch.draw(g);
+
+		getLifeUI().draw(g);
 	}
 
 	@Override
@@ -236,14 +248,6 @@ public class GameScreen extends Screen {
 
 	public VisualMap getMap() {
 		return map;
-	}
-
-	public WorldLike getWorld() {
-		return world;
-	}
-
-	public Player getActivePlayer() {
-		return activePlayer;
 	}
 
     public VisualEntity getVisualEntity() {

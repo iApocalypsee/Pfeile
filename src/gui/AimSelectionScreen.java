@@ -96,7 +96,7 @@ public class AimSelectionScreen extends Screen {
 		
 		// draw the selectedField 
 		if (posX_selectedField >= 0 && posY_selectedField >= 0) {
-            TileLike selectedTile = (TileLike) (GameScreen.getInstance().getWorld().terrain().tileAt(posX_selectedField, posY_selectedField));
+            TileLike selectedTile = (TileLike) (Main.getContext().getWorld().terrain().tileAt(posX_selectedField, posY_selectedField));
 			g.setColor(new Color(255, 4, 3, 161));
 			g.fillPolygon(selectedTile.bounds());
             g.setColor(new Color (255, 34, 0, 255));
@@ -171,8 +171,8 @@ public class AimSelectionScreen extends Screen {
 
                     if(tileWrapper.component().isVisible()) {
                         if (tileWrapper.tile().bounds().contains(
-                                GameScreen.getInstance().getActivePlayer().getGridX(),
-                                GameScreen.getInstance().getActivePlayer().getGridY())) {
+                                Main.getContext().getActivePlayer().getGridX(),
+                                Main.getContext().getActivePlayer().getGridY())) {
                             warningMessage = "Selbstangriff ist nicht möglich!";
                             transparencyWarningMessage = 1f;
                         } else {

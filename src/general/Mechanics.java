@@ -70,7 +70,7 @@ public final class Mechanics {
 	public static boolean isTurnEnd;
 	
 	/** Handicap-Wert des Spielers */
-	public static byte HandicapPlayer = 0; 
+	public static byte HandicapPlayer = 0;
 	/** Handicap-Wert des KI */
 	public static byte HandicapKI = 0; 
 	
@@ -83,13 +83,7 @@ public final class Mechanics {
 	 * Je höher, desto höher die Unterstützung für den Computer
 	 */
 	public static int handicapKI;
-	
-	/** Streckung der Welt in die Breite */
-	public static float widthStretching = 1.0f;
-	
-	/** Streckung der Welt in die Höhe */
-	public static float heightStretching = 1.0f;
-	
+
 	/** Rundet Auf 25 (Meter) genau */
 	public static int roundTo25 (int number) {
 		
