@@ -81,8 +81,18 @@ class AStarPathfinder(val maxSearchDepth: Int, val excludes: (TileLike) => Boole
                   // If the neighbor is on the closed list already, continue...
                   if(closed.contains(neighbor)) return
 
+                  val isDiagonal = {
+                    val x_abs = abs(x)
+                    val y_abs = abs(y)
+                    x_abs == 1 && x_abs == y_abs
+                  }
+
                   // Then calculate the cost for the next step, save some overhead at the closed-list-check
-                  val nextStepCost = current.totalMovementCost + neighbor.stepMovementCost
+                  val nextStepCost = {
+                    var ret = current.totalMovementCost + neighbor.stepMovementCost
+                    if(isDiagonal) ret += 0.0001
+                    ret
+                  }
 
                   val openListContainsNeighbor = open.list.contains(neighbor)
 
@@ -183,7 +193,7 @@ class AStarPathfinder(val maxSearchDepth: Int, val excludes: (TileLike) => Boole
     }
 
     /** The total movement costs to get to this tile. */
-    def totalMovementCost: Int = {
+    def totalMovementCost: Double = {
 
       @tailrec
       def rec(count: Int = tile.requiredMovementPoints, parentReference: Node = parent): Int = {
@@ -197,7 +207,7 @@ class AStarPathfinder(val maxSearchDepth: Int, val excludes: (TileLike) => Boole
       rec()
     }
 
-    def stepMovementCost: Int = tile.requiredMovementPoints
+    def stepMovementCost: Double = tile.requiredMovementPoints
 
     def approximateToTargetSq: Double = pow(Node.target.x - x, 2) + pow(Node.target.y - y, 2)
     def approximateToTarget: Double = sqrt(approximateToTargetSq)

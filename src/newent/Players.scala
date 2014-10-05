@@ -27,8 +27,13 @@ class Player(world: WorldLike,
 
   // GUI section.
 
+  private val drawColor = new Color(255, 0, 0)
+
   // The draw function just draws a rectangle for now, I can add images later. Later!
-  override def drawFunction = { g => g.setColor(Color.red); g.fillPolygon(bounds) }
+  override def drawFunction = { g =>
+    g.setColor(drawColor)
+    g.fillPolygon(tileLocation.bounds)
+  }
   override val bounds       = Component.createRectPolygon(0, 0, 18, 25)
 
 }
