@@ -5,7 +5,7 @@ import java.awt.{Color, Graphics2D, Polygon}
 import comp.RawComponent
 import geom.PointDef
 import misc.metadata.OverrideMetadatable
-import newent.EntityLike
+import newent.{AttackContainer, EntityLike}
 
 import scala.collection.JavaConversions
 import scala.collection.mutable
@@ -17,7 +17,7 @@ import scala.collection.mutable
   * that has not implemented any Component interface.
   * @author Josip Palavra
   */
-trait TileLike extends RawComponent with OverrideMetadatable {
+trait TileLike extends RawComponent with OverrideMetadatable with AttackContainer {
 
   /** The x position in the grid of the world. */
   val latticeX: Int
@@ -132,6 +132,9 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
   override def northWest: TileLike = terrain.tileAt( latticeX - 1, latticeY )
 
   override def entities = terrain.world.entities.entityList.filter { e => e.getGridX == latticeX && e.getGridY == latticeY }
+
+  override val getGridY = latticeX
+  override val getGridX = latticeY
 
   def color: Color
 }

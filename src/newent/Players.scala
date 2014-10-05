@@ -3,7 +3,10 @@ package newent
 import java.awt.{Color, Point}
 
 import comp.Component
+import general.Main
+import newent.event.AttackEvent
 import newent.pathfinding.AStarPathfinder
+import player.weapon.{Weapon, AbstractArrow}
 import world.{GrassTile, WorldLike}
 import player.Life
 
@@ -16,7 +19,7 @@ import player.Life
 class Player(world: WorldLike,
              spawnpoint: Point,
              name: String) extends Entity(world, spawnpoint, name) with MoveableEntity with TeleportableEntity with
-                                   InventoryEntity with LivingEntity {
+                                   InventoryEntity with LivingEntity with Combatant {
 
   // Game section.
 
@@ -28,6 +31,18 @@ class Player(world: WorldLike,
   // GUI section.
 
   private val drawColor = new Color(255, 0, 0)
+
+  /******* TEST CODE FOR ATTACK MECHANISM *********
+  Main.getContext.onTurnEnd += { () => world.terrain.tileAt(5, 5).take(AttackEvent(
+    inventory.remove({ _.isInstanceOf[AbstractArrow] }).get.asInstanceOf[Weapon],
+    tileLocation, world.terrain.tileAt(5, 5), this, 1.5))
+    println("An arrow has been shot.")
+  }
+
+  world.terrain.tileAt(5, 5).onImpact += { e =>
+    println(s"${e.weapon} has arrived at its destination!")
+  }
+  */
 
   // The draw function just draws a rectangle for now, I can add images later. Later!
   override def drawFunction = { g =>
