@@ -17,6 +17,14 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   private var _turnPlayer   : Player    = null
   private var _world        : WorldLike = null
 
+  /** Called when the turn has been ended. */
+  val onTurnEnd = Delegate.createZeroArity
+
+  // Notifies the entities in the world that a turn has been ended
+  onTurnEnd += { () =>
+    _world.entities.entityList.foreach { _.turnover() }
+  }
+
   def activePlayer = _activePlayer
   def activePlayerOption = optReturn(activePlayer _)
   def activePlayer_=(p: Player): Unit = _activePlayer = p

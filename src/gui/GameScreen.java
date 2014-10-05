@@ -121,9 +121,7 @@ public class GameScreen extends Screen {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				for(EntityComponentWrapper componentWrapper : visualEntity.javaEntityComponents()) {
-					componentWrapper.entity().turnover();
-				}
+				Main.getContext().onTurnEnd().call();
 			}
 
 		});

@@ -34,6 +34,6 @@ class Player(world: WorldLike,
     g.setColor(drawColor)
     g.fillPolygon(tileLocation.bounds)
   }
-  override val bounds       = Component.createRectPolygon(0, 0, 18, 25)
+  override def bounds       = tileLocation.bounds
 
 }
