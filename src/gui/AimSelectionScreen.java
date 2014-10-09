@@ -2,6 +2,16 @@ package gui;
 
 import comp.Button;
 import general.Main;
+import newent.Player;
+import newent.event.AttackEvent;
+import player.weapon.AbstractArrow;
+import player.weapon.ArrowHelper;
+import player.weapon.Item;
+import player.weapon.Weapon;
+import scala.Option;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.AbstractFunction1;
+import scala.runtime.BoxedUnit;
 import world.TileComponentWrapper;
 import world.TileLike;
 
@@ -207,6 +217,36 @@ public class AimSelectionScreen extends Screen {
 			// }
             // TileLike attackedTile = (TileLike) GameScreen.getInstance().getWorld().terrain().tileAt(posX_selectedField, posY_selectedField);
             // attackedTile.registerAttack(evt);
+
+			Player active = Main.getContext().activePlayer();
+
+
+			TileLike target = (TileLike) active.world().terrain().tileAt(getPosX_selectedField(), getPosY_selectedField());
+
+			final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
+
+			Option<Item> opt = active.inventory().remove(new AbstractFunction1<Item, Object>() {
+				@Override
+				public Object apply(Item v1) {
+					return v1.getName().equals(arrow.getName());
+				}
+			});
+
+			if(opt.isDefined()) {
+				target.take(new AttackEvent((Weapon) opt.get(), (TileLike) active.tileLocation(), target, active, arrow.getSpeed()));
+				ArrowSelectionScreen.getInstance().updateInventoryList();
+			} else {
+				// Hier gibt es den Pfeil nicht. Fehlerbehandlung.
+			}
+
+			/*
+			Main.getContext.onTurnEnd += { () =>
+					world.terrain.tileAt(5, 5).take(AttackEvent(
+							inventory.remove({ _.isInstanceOf[AbstractArrow] }).get.asInstanceOf[Weapon],
+							tileLocation, world.terrain.tileAt(5, 5), this, 1.5))
+			println("An arrow has been shot.")
+			}
+			*/
         }
 	}
 }

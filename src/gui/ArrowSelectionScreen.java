@@ -331,7 +331,9 @@ public class ArrowSelectionScreen extends Screen {
 				if (selectedArrowBox.getEnteredText().equals(selectedArrowBox.getStdText()) == false) {
                     for (int i = 0; i < inventory.currentSize(); i++) {
                         if (inventory.javaItems().get(i).getClass() == ArrowHelper.reformArrow(selectedArrowBox.getEnteredText())) {
-                            onLeavingScreen(this, AimSelectionScreen.SCREEN_INDEX);
+                            selectedIndex = ArrowHelper.reformArrow(selectedArrowBox.getEnteredText());
+	                        onLeavingScreen(this, AimSelectionScreen.SCREEN_INDEX);
+	                        break;
                         }
                     }
 					if (getManager().getActiveScreen() == ArrowSelectionScreen.getInstance()) {

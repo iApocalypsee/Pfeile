@@ -22,12 +22,32 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
   // Notifies the entities in the world that a turn has been ended
   onTurnEnd += { () =>
+    import scala.concurrent.ExecutionContext.Implicits.global
+
+    _turnPlayer.onTurnEnd.call()
+
     _world.entities.entityList.foreach { _.turnover() }
+
+    // Notifying the next player about that it is his turn now.
+    val playerList = players
+    val indexOfCurrent = playerList.indexOf(_activePlayer)
+    val nextIndex = if(indexOfCurrent + 1 >= playerList.size) 0 else indexOfCurrent + 1
+    _turnPlayer = playerList(nextIndex)
+    _turnPlayer.onTurnGet.callAsync()
   }
 
   def activePlayer = _activePlayer
   def activePlayerOption = optReturn(activePlayer _)
-  def activePlayer_=(p: Player): Unit = _activePlayer = p
+  def activePlayer_=(p: Player): Unit = {
+    _activePlayer = p
+    _activePlayer.onTurnGet += { () =>
+      Main.timeObj.reset()
+      Main.timeObj.start()
+    }
+    _activePlayer.onTurnEnd += { () =>
+      Main.timeObj.stop()
+    }
+  }
 
   def getActivePlayer = _activePlayer
   def setActivePlayer(p: Player) = activePlayer = p
@@ -45,6 +65,8 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
   def getWorld = world
   def setWorld(w: WorldLike) = world = w
+
+  private def players = world.entities.entityList.filter({ _.isInstanceOf[Player] }).asInstanceOf[Seq[Player]]
 }
 
 object PfeileContext {

@@ -91,7 +91,10 @@ public class GameScreen extends Screen {
 
 		visualEntity = new VisualEntity(new LinkedList<EntityComponentWrapper>());
 
-		Main.getContext().setActivePlayer(new Player(Main.getContext().getWorld(), new Point(0, 0), Main.getUser().getUsername()));
+		Player act = new Player(Main.getContext().getWorld(), new Point(0, 0), Main.getUser().getUsername());
+
+		Main.getContext().setActivePlayer(act);
+		Main.getContext().setTurnPlayer(act);
 
 		// The population of the world has to be performed AFTER the generation/loading of the world.
 		Main.getContext().world().entities().register(Main.getContext().getActivePlayer());
@@ -193,6 +196,7 @@ public class GameScreen extends Screen {
 		toggleStopwatch.draw(g);
 
 		getLifeUI().draw(g);
+		Main.timeObj.draw(g);
 	}
 
 	@Override

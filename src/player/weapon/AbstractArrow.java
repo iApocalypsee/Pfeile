@@ -23,6 +23,8 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 	 */
 	protected float attackValueCurrent;
 
+	protected double speed;
+
 	/**
 	 * Wert in 'float', wie stark der Pfeil an Schaden verliert : <b> jeweils
 	 * nach 25m <b>
@@ -103,7 +105,7 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 	 */
 	public AbstractArrow(float attackVal, float defenseVal, int rangeVal,
 			float selfHittingRate, float aimMissing, float aimMissingRate,
-			float damageLosingRate, String name) {
+			float damageLosingRate, double speed, String name) {
 		super(name);
 		this.setAttackValue(attackVal);
 		this.setAttackValCurrent(attackVal);
@@ -126,6 +128,7 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 		this.setAimMissingCurrent(aimMissing);
 		this.setDamageLosingRate(damageLosingRate);
 		this.setDistanceReached(0);
+		this.setSpeed(speed);
         /*
         if (GameScreen.getInstance().getWorld() != null) {
             this.setFieldX(GameScreen.getInstance().getWorld().getPlayerByIndex(GameScreen.getInstance().getWorld().getTurnPlayer().getIndex()).getX());
@@ -321,7 +324,15 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 	public void setPosY(int posY) {
 		this.posY = posY;
 	}
-	
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	protected void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
 	/** gibt die BufferedImage des Pfeils zur�ck
 	 * @see <code> ArrowHelper.getArrowImage(int selectedIndex) </code> */
 	public abstract BufferedImage getImage();
@@ -349,7 +360,6 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 // this.posX = com.github.pfeile.gui.Field.getPosXFromFieldNr (fieldNr);
 // this.posY = com.github.pfeile.gui.Field.getPosYFromFieldNr (fieldNr);
 // }
-// --> arrowSpeed
 // --> acceleration
 // --> damageRadius
 

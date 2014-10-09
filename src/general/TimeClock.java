@@ -33,11 +33,13 @@ public class TimeClock extends Component implements Runnable {
 	/** letzter Zeitpunkt der Berechnungen */
 	private long lastTime;
 	
-	/** aktuelle Zeit */ 
+	/** aktuelle Zeit */
 	private long timeCurrent = 0;
 	
 	/** String, der am Bildschirm die Zeit angeben soll */
 	private String timePrintString = timeFormatter(Mechanics.timePerPlay);
+
+	public final Delegate.Function0Delegate onTimeOver = new Delegate.Function0Delegate();
 	
 	// KONSTURCKTOR
 	/** KONSTRUCKTOR der Klasse 
@@ -58,8 +60,13 @@ public class TimeClock extends Component implements Runnable {
 			if (isRunning()) {
 				timeCurrent = System.currentTimeMillis(); 
 				sumTime = sumTime + (timeCurrent - lastTime);
-				timePrintString = timeFormatter (Mechanics.timePerPlay - sumTime);
-				lastTime = timeCurrent;
+				if (Mechanics.timePerPlay - sumTime <= 0) {
+					isRunning = false;
+					onTimeOver.call();
+				} else {
+					timePrintString = timeFormatter (Mechanics.timePerPlay - sumTime);
+					lastTime = timeCurrent;
+				}
 			} else {
 				try {
 					Thread.sleep(15);

@@ -34,7 +34,7 @@ public class StormArrow extends AbstractArrow {
 	/** ruft den Konstrucktor von 'AbstractArrow' auf */
 	public StormArrow() {
 		
-		super(36f, 36f, 1000, 0.0575f, 0.01f, 0.6f, 0.08f, "Sturmpfeil");
+		super(36f, 36f, 1000, 0.0575f, 0.01f, 0.6f, 0.08f, 5, "Sturmpfeil");
 		
 	}
 	

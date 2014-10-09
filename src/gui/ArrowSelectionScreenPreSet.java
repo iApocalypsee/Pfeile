@@ -97,9 +97,9 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
         buttonListArrows [0].iconify(ArrowHelper.getArrowImage(FireArrow.INDEX));
         buttonListArrows [1].iconify(ArrowHelper.getArrowImage(WaterArrow.INDEX));
-        buttonListArrows [2].iconify(ArrowHelper.getArrowImage(StoneArrow.INDEX));
-        buttonListArrows [3].iconify(ArrowHelper.getArrowImage(IceArrow.INDEX));
-        buttonListArrows [4].iconify(ArrowHelper.getArrowImage(StormArrow.INDEX));
+        buttonListArrows [2].iconify(ArrowHelper.getArrowImage(StormArrow.INDEX));
+        buttonListArrows [3].iconify(ArrowHelper.getArrowImage(StoneArrow.INDEX));
+        buttonListArrows [4].iconify(ArrowHelper.getArrowImage(IceArrow.INDEX));
         buttonListArrows [5].iconify(ArrowHelper.getArrowImage(LightningArrow.INDEX));
         buttonListArrows [6].iconify(ArrowHelper.getArrowImage(LightArrow.INDEX));
         buttonListArrows [7].iconify(ArrowHelper.getArrowImage(ShadowArrow.INDEX));

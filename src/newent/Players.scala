@@ -3,7 +3,7 @@ package newent
 import java.awt.{Color, Point}
 
 import comp.Component
-import general.Main
+import general.{Delegate, Main}
 import newent.event.AttackEvent
 import newent.pathfinding.AStarPathfinder
 import player.weapon.{Weapon, AbstractArrow}
@@ -28,12 +28,16 @@ class Player(world: WorldLike,
   override val pathfinderLogic       = new AStarPathfinder(20, { t => true })
   override val life                  = new Life(100.0, 1.0, 100.0)
 
+  val onTurnGet = Delegate.createZeroArity
+  val onTurnEnd = Delegate.createZeroArity
+
   // GUI section.
 
   private val drawColor = new Color(255, 0, 0)
 
   /******* TEST CODE FOR ATTACK MECHANISM *********
-  Main.getContext.onTurnEnd += { () => world.terrain.tileAt(5, 5).take(AttackEvent(
+  Main.getContext.onTurnEnd += { () =>
+    world.terrain.tileAt(5, 5).take(AttackEvent(
     inventory.remove({ _.isInstanceOf[AbstractArrow] }).get.asInstanceOf[Weapon],
     tileLocation, world.terrain.tileAt(5, 5), this, 1.5))
     println("An arrow has been shot.")

@@ -34,7 +34,7 @@ public class FireArrow extends AbstractArrow {
 	/** ruft den Konstruktor von 'AbstractArrow' auf */
 	public FireArrow() {
 		
-		super(57f, 23f, 800, 0.045f, 0.02f, 0.095f, 0.10f, "Feuerpfeil");
+		super(57f, 23f, 800, 0.045f, 0.02f, 0.095f, 0.10f, 5.0, "Feuerpfeil");
 		
 	}
 	
