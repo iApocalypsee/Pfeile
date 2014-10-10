@@ -17,7 +17,6 @@ import comp.Component;
  * @version 4.1.2014
  * 
  */
-@SuppressWarnings("unused")
 public class TimeClock extends Component implements Runnable {
 	
 	// VARIABLEN - INITIALISIERUNG
@@ -28,13 +27,12 @@ public class TimeClock extends Component implements Runnable {
 	private boolean isRunning;
 	
 	/** �brige Zeit (in Millisekunden) bis der Timmer abl�uft */
-	private long timeLeft = Mechanics.timePerPlay; 
-	
-	/** letzter Zeitpunkt der Berechnungen */
-	private long lastTime;
-	
+	private long timeLeft = Mechanics.timePerPlay;
+
 	/** aktuelle Zeit */
 	private long timeCurrent = 0;
+
+    private long sumTime = 0;
 	
 	/** String, der am Bildschirm die Zeit angeben soll */
 	private String timePrintString = timeFormatter(Mechanics.timePerPlay);
@@ -54,8 +52,7 @@ public class TimeClock extends Component implements Runnable {
 	 *  .... updated die aktuelle Zeit; �bernimmt Thread */
 	@Override
 	public void run() {
-		lastTime = System.currentTimeMillis(); 
-		long sumTime = 0;
+		long lastTime = System.currentTimeMillis();
 		while (true) {
 			if (isRunning()) {
 				timeCurrent = System.currentTimeMillis(); 
@@ -88,7 +85,7 @@ public class TimeClock extends Component implements Runnable {
 	/** setzt TimeClock auf maximale Zeit zur�ck
 	 * HINWEIS: an Start/Stop wird nicht ge�ndert, also ggf. stop / start aufrufen */
 	public synchronized void reset() {
-		timeCurrent = 0;
+		sumTime = 0;
 	}
 	
 	
@@ -173,14 +170,9 @@ public class TimeClock extends Component implements Runnable {
 	 * gibt zur�ck ob der Zug enden muss oder nicht
 	 * 
 	 * @return true - wenn die maximale Zeit pro Zug ('timeMax') ohne die Vergangene Zeit ('timeCurrent') kleiner als 0
-	 * @return false - wenn die 'true'-Bedingung nicht zutrifft
 	 */
 	public synchronized boolean isEnd () {
-		
-		if (Mechanics.timePerPlay - this.timeCurrent < 0) {
-			return true;
-		} else 
-			return false;
+        return Mechanics.timePerPlay - timeCurrent < 0;
 	}
 	
 	/** GETTER 
