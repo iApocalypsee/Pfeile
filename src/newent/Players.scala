@@ -19,9 +19,28 @@ import player.Life
 class Player(world: WorldLike,
              spawnpoint: Point,
              name: String) extends Entity(world, spawnpoint, name) with MoveableEntity with TeleportableEntity with
-                                   InventoryEntity with LivingEntity with Combatant {
+                                   InventoryEntity with LivingEntity with VisionEntity with Combatant {
 
   // Game section.
+
+  private var _localVisionPoint = visionMap.grantVision(getGridX, getGridY, 4)
+
+  private def updateLocalVisionPoint(): Unit = {
+    if(_localVisionPoint ne null) {
+      _localVisionPoint.releaseVision()
+    }
+    _localVisionPoint = visionMap.grantVision(getGridX, getGridY, 4)
+  }
+
+  override protected def setGridX(x: Int): Unit = {
+    super.setGridX( x )
+    updateLocalVisionPoint()
+  }
+
+  override protected def setGridY(y: Int): Unit = {
+    super.setGridY( y )
+    updateLocalVisionPoint()
+  }
 
   /** The default movement points that the entity has. */
   override def defaultMovementPoints = 2

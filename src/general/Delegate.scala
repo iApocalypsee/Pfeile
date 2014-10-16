@@ -27,6 +27,7 @@ object Delegate {
 
   /** The base trait of all delegate types. */
   sealed trait DelegateLike {
+
     /** The type of function that the delegate expects. */
     type FunType
 
@@ -62,6 +63,9 @@ object Delegate {
       */
     def unlog(f: FunType): Unit = -=( f )
 
+    /** Clears all callbacks from the delegate, meaning that there will not remain any callbacks after. */
+    def clear(): Unit = _callbacks.clear( )
+
     /** Returns the callbacks of the delegate as an immutable list. */
     def callbacks = _callbacks.toList
   }
@@ -86,6 +90,7 @@ object Delegate {
     * @tparam In The input type of the function. For multiple values, use tuples.
     */
   class Delegate[In <: AnyRef](callbackList: List[(In) => Unit]) extends DelegateLike {
+
     override type FunType = (In) => Unit
 
     // Auxiliary constructor for instantiating a clean delegate with no registered callbacks.
@@ -101,9 +106,9 @@ object Delegate {
       case reg_f: ((In) => Unit) => reg_f( arg )
     }
 
-      /** Code in java zum ausführen der gethreaden Version:
-        *
-         <code> delegate.callAsync(<In>, scala.concurrent.ExecutionContext.Implicits$.MODULE$.global()); </code>*/
+    /** Code in java zum ausführen der gethreaden Version:
+      *
+    <code> delegate.callAsync(<In>, scala.concurrent.ExecutionContext.Implicits$.MODULE$.global()); </code> */
     def callAsync(arg: In)(implicit ec: ExecutionContext): Future[Unit] = Future {
       call( arg )
     }
@@ -121,6 +126,7 @@ object Delegate {
     * Using mutating methods of [[DelegateLike]] will cause a [[UnsupportedOperationException]] to be thrown.
     */
   trait ImmutableDelegate extends DelegateLike {
+
     private def except = throw new UnsupportedOperationException( "Delegate is immutable." )
 
     override def +=(f: FunType): Unit = except
@@ -155,6 +161,7 @@ object Delegate {
     * @tparam In The input type of the function. For multiple values, use tuples.
     */
   trait NullCheck[In <: AnyRef] extends Check[In] {
+
     override def check(arg: In): Boolean = if (arg eq null) throw new NullPointerException else super.check( arg )
   }
 
@@ -175,6 +182,7 @@ object Delegate {
     * }}}
     */
   class Function0Delegate(callbackList: List[() => Unit]) extends DelegateLike {
+
     override type FunType = () => Unit
 
     def this() = this( List[() => Unit]( ) )

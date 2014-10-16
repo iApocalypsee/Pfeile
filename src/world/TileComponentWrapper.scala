@@ -6,12 +6,15 @@ import java.awt.{Color, Graphics2D}
 import comp.{ComponentWrapper, Component}
 import general.Main
 import gui.{AdjustableDrawing, GameScreen, Drawable}
+import newent.VisionStatus
 
 import scala.collection.JavaConversions
 
 class VisualMap(val tiles: List[TileComponentWrapper]) extends Drawable {
 
   private val _vp = new WorldViewport
+
+  private val _revealedTileColor = new java.awt.Color(0.0f, 0.0f, 0.0f, 0.2f)
 
   /** Constructs a visual map from a Java list. Interop method. */
   def this(t: java.util.List[TileComponentWrapper]) = this(JavaConversions.asScalaBuffer(t).toList)
@@ -38,7 +41,18 @@ class VisualMap(val tiles: List[TileComponentWrapper]) extends Drawable {
 
 
   /** Draws the whole map. */
-  override def draw(g: Graphics2D): Unit = tiles foreach { c => c.component.draw(g) }
+  override def draw(g: Graphics2D): Unit = tiles foreach { c =>
+    // Only draw the tile if the active player has actually revealed the tile.
+    val status = Main.getContext.activePlayer.visionMap.visionStatusOf(c.tile.latticeX, c.tile.latticeY)
+
+    if(status != VisionStatus.Hidden) {
+      c.component.draw(g)
+      if(status == VisionStatus.Revealed) {
+        g.setColor(_revealedTileColor)
+        g.fillPolygon(c.component.getBounds)
+      }
+    }
+  }
 }
 
 /** The tile trait should not know that it is surrounded by a component wrapper class.
