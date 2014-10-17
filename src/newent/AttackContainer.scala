@@ -1,11 +1,11 @@
 package newent
 
-import general.{Main, Delegate}
+import general.{Delegate, Main}
 import newent.event.AttackEvent
 import player.BoardPositionable
 
+import scala.collection.JavaConverters._
 import scala.collection.mutable
-
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /** An object that can take attacks. <p>
@@ -45,7 +45,28 @@ trait AttackContainer extends BoardPositionable {
     }
   }
 
+}
 
+object AttackContainer {
+
+  /** Returns all entities in the current world (in PfeileContext) that are AttackContainer objects. */
+  def allACEntities(): Seq[AttackContainer] = {
+    val entityList = Main.getContext.getWorld.entities.entityList
+    val checkFun = { e: EntityLike => e.isInstanceOf[AttackContainer] }
+    entityList.filter(checkFun).asInstanceOf[Seq[AttackContainer]]
+  }
+
+  /** Ditto. */
+  def javaAllACEntities() = allACEntities().asJava
+
+  /** Returns all attack containers in the game.
+    *
+    * Right now, the list of attack containers includes the entities as well as the tiles.
+    */
+  def allAttackContainers(): Seq[AttackContainer] = Main.getContext.getWorld.terrain.tiles ++ allACEntities()
+
+  /** Ditto. */
+  def javaAllAttackContainers() = allAttackContainers.asJava
 
 }
 
