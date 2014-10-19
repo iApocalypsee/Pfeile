@@ -205,22 +205,7 @@ public class AimSelectionScreen extends Screen {
 		public void run() {
 			super.run();
 
-			// Class<? extends player.weapon.AbstractArrow> attackingArrow = ArrowSelectionScreen.getInstance().getSelectedIndex();
-
-            // TODO: Make an attackEvent or whatever, because the attack isn't delived yet.
-
-			// AttackEvent evt = null;
-			// try {
-			//    evt = new AttackEvent(posX_selectedField, posY_selectedField, a.newInstance(), (GameScreen.getInstance().getActivePlayer()));
-			// } catch (Exception e) {
-			//    throw new ClassCastException("Casting of arrow failed.");
-			// }
-            // TileLike attackedTile = (TileLike) GameScreen.getInstance().getWorld().terrain().tileAt(posX_selectedField, posY_selectedField);
-            // attackedTile.registerAttack(evt);
-
 			Player active = Main.getContext().activePlayer();
-
-
 			TileLike target = (TileLike) active.world().terrain().tileAt(getPosX_selectedField(), getPosY_selectedField());
 
 			final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
@@ -233,20 +218,35 @@ public class AimSelectionScreen extends Screen {
 			});
 
 			if(opt.isDefined()) {
-				target.take(new AttackEvent((Weapon) opt.get(), (TileLike) active.tileLocation(), target, active, arrow.getSpeed()));
+
+                java.util.List<TileComponentWrapper> tileComponents = GameScreen.getInstance().getMap().javaTiles();
+                TileComponentWrapper targetTileComponent = null;
+                for(TileComponentWrapper t : tileComponents) {
+                    if(t.tile() == target) {
+                        targetTileComponent = t;
+                        break;
+                    }
+                }
+
+
+                assert targetTileComponent != null;
+                arrow.setPosXAim(targetTileComponent.component().getX());
+                arrow.setPosYAim(targetTileComponent.component().getY());
+
+                arrow.setFieldXAim(getPosX_selectedField());
+                arrow.setFieldYAim(getPosY_selectedField());
+
+                arrow.setFieldX(active.getGridX());
+                arrow.setFieldY(active.getGridY());
+
+                arrow.setPosX(active.bounds().getBounds().x);
+                arrow.setPosY(active.bounds().getBounds().y);
+
+				target.take(new AttackEvent(arrow, (TileLike) active.tileLocation(), target, active, arrow.getSpeed()));
 				ArrowSelectionScreen.getInstance().updateInventoryList();
 			} else {
 				// Hier gibt es den Pfeil nicht. Fehlerbehandlung.
 			}
-
-			/*
-			Main.getContext.onTurnEnd += { () =>
-					world.terrain.tileAt(5, 5).take(AttackEvent(
-							inventory.remove({ _.isInstanceOf[AbstractArrow] }).get.asInstanceOf[Weapon],
-							tileLocation, world.terrain.tileAt(5, 5), this, 1.5))
-			println("An arrow has been shot.")
-			}
-			*/
         }
 	}
 }

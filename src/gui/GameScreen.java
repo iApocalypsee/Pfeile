@@ -4,6 +4,7 @@ import comp.Button;
 import general.Keys;
 import general.Main;
 import newent.*;
+import player.weapon.AttackDrawer;
 import scala.Unit;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;
@@ -51,8 +52,13 @@ public class GameScreen extends Screen {
 
 	private VisualMap map;
 	private VisualEntity visualEntity;
+    private final AttackDrawer attackDrawer = new AttackDrawer();
 
-	private LifeUI lifeUI = null;
+    public AttackDrawer getAttackDrawer () {
+        return attackDrawer;
+    }
+
+    private LifeUI lifeUI = null;
 	// I need lazy initialization of lifeUI, else it will throw a null pointer exception.
 	private LifeUI getLifeUI() {
 		if(lifeUI == null) {
@@ -221,6 +227,7 @@ public class GameScreen extends Screen {
 		super.draw(g);
 		map.draw(g);
 		visualEntity.draw(g);
+        attackDrawer.draw(g);
 		// Zeichnet die Welt und den UserInterface, der den Player darstellt
 		endTurnButton.draw(g);
 		shootButton.draw(g);

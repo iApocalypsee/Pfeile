@@ -30,7 +30,7 @@ trait AttackContainer extends BoardPositionable {
     onAttacked callAsync e
   }
 
-  def queuedAttacks = _attackList.toSeq
+  def queuedAttacks = _attackList.toList
 
   Main.getContext.onTurnEnd += { () =>
     _attackList.clone() foreach { p =>
@@ -75,7 +75,7 @@ class AttackProgress (val event: AttackEvent) {
   private var _progress = 0.0
 
   /** Updates the progress with the associated travel speed. */
-  def updateProgress(): Unit = {
+  private[newent] def updateProgress(): Unit = {
     _progress += event.travelSpeed
   }
 
