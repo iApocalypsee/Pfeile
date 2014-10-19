@@ -15,9 +15,15 @@ class VisualEntity(ec: Seq[EntityComponentWrapper] = Seq.empty[EntityComponentWr
 
   private var _entityComps = mutable.MutableList[EntityComponentWrapper]()
 
+  /** The list of all components that relate to entities. */
   def entityComponents = _entityComps.toList
+  /** Ditto. */
   def javaEntityComponents = JavaConversions.seqAsJavaList(entityComponents)
 
+  /** Auxiliary constructor for creating [[VisualEntity]] objects from a java list.
+    *
+    * @param javaEntityList The java list from where to pull the data from.
+    */
   def this(javaEntityList: java.util.List[EntityComponentWrapper]) = this(JavaConversions.asScalaBuffer(javaEntityList))
 
   // Copy all the references from the constructor list to the private mutable list
@@ -31,5 +37,6 @@ class VisualEntity(ec: Seq[EntityComponentWrapper] = Seq.empty[EntityComponentWr
     _entityComps = _entityComps filter { _.entity ne ent }
   }
 
+  /** Draws every entity. */
   override def draw(g: Graphics2D): Unit = entityComponents foreach { _.component.draw(g) }
 }

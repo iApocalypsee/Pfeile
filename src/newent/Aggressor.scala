@@ -9,6 +9,10 @@ import newent.event.AttackEvent
   */
 trait Aggressor {
 
+  /** Lets the aggressor perform an attack.
+    *
+    * @param withEvent The event to use.
+    */
   def attack(withEvent: AttackEvent): Unit = {
     assume(withEvent.destination ne null)
     withEvent.destination.take(withEvent)

@@ -70,8 +70,13 @@ object AttackContainer {
 
 }
 
+/** The progress of an attack.
+  *
+  * @param event The event to keep track of.
+  */
 class AttackProgress (val event: AttackEvent) {
 
+  /** The progress, measured in 1. */
   private var _progress = 0.0
 
   /** Updates the progress with the associated travel speed. */
