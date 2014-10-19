@@ -23,6 +23,6 @@ final case class AttackEvent(weapon: Weapon, departure: TileLike, destination: A
 
   lazy val geographicalLength = sqrt(geographicalLengthSq)
 
-  lazy val lengthPerTurn = geographicalLength / travelSpeed
+  //lazy val lengthPerTurn = geographicalLength / travelSpeed
 
 }
