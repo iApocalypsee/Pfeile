@@ -4,6 +4,9 @@ import comp.Button;
 import general.Keys;
 import general.Main;
 import newent.*;
+import scala.Unit;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.BoxedUnit;
 import world.*;
 
 import java.awt.*;
@@ -80,24 +83,52 @@ public class GameScreen extends Screen {
 		Main.getContext().setWorld(new DefaultWorld());
 		TerrainLike terrain = Main.getContext().getWorld().terrain();
 
+		Point spawnPoint = null;
+		Point spawnPointEnemy = null;
+
 		// Comment that out later.
 		// Generating Component objects for every tile...
 		List<TileComponentWrapper> compWrappers = new ArrayList<TileComponentWrapper>(terrain.width() * terrain.height());
 		for (int x = 0; x < terrain.width(); x++) {
 			for (int y = 0; y < terrain.height(); y++) {
-				compWrappers.add(TileComponentWrapper.tile2ComponentTile((TileLike) terrain.tileAt(x, y)));
+				TileLike tile = (TileLike) terrain.tileAt(x, y);
+				compWrappers.add(TileComponentWrapper.tile2ComponentTile(tile));
+				if(spawnPoint == null && tile instanceof GrassTile) {
+					spawnPoint = new Point(tile.latticeX(), tile.latticeY());
+				}
+				if(spawnPointEnemy == null && spawnPoint != null && tile instanceof GrassTile && spawnPoint.x != tile.latticeX() && spawnPoint.y != tile.latticeY()) {
+					spawnPointEnemy = new Point(tile.latticeX(), tile.latticeY());
+				}
 			}
 		}
 
 		visualEntity = new VisualEntity(new LinkedList<EntityComponentWrapper>());
 
-		Player act = new Player(Main.getContext().getWorld(), new Point(0, 0), Main.getUser().getUsername());
+		final Player act = new Player(Main.getContext().getWorld(), spawnPoint, Main.getUser().getUsername());
+		final Player opponent = new Player(Main.getContext().getWorld(), spawnPointEnemy, "Opponent");
+
+		act.onTurnGet().register(new AbstractFunction0<BoxedUnit>() {
+			@Override
+			public BoxedUnit apply() {
+				Main.getContext().setActivePlayer(act);
+				return BoxedUnit.UNIT;
+			}
+		});
+
+		opponent.onTurnGet().register(new AbstractFunction0<BoxedUnit>() {
+			@Override
+			public BoxedUnit apply() {
+				Main.getContext().setActivePlayer(opponent);
+				return BoxedUnit.UNIT;
+			}
+		});
 
 		Main.getContext().setActivePlayer(act);
 		Main.getContext().setTurnPlayer(act);
 
 		// The population of the world has to be performed AFTER the generation/loading of the world.
 		Main.getContext().world().entities().register(Main.getContext().getActivePlayer());
+		Main.getContext().world().entities().register(opponent);
 
 		map = new VisualMap(compWrappers);
 		map.moveMap(100, 300);

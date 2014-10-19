@@ -43,7 +43,7 @@ class Player(world: WorldLike,
   }
 
   /** The default movement points that the entity has. */
-  override def defaultMovementPoints = 2
+  override def defaultMovementPoints = 3
   override val pathfinderLogic       = new AStarPathfinder(20, { t => true })
   override val life                  = new Life(100.0, 1.0, 100.0)
 
