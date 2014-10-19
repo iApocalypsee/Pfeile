@@ -135,26 +135,6 @@ public class AnimatedLine implements Drawable {
 		bounds = comp.Component.createRectPolygon(p1, p2, p3, p4);
 	}
 
-    /** the end point where the line ends */
-    public Point getEnd () {
-        return end;
-    }
-
-    /** this where the line starts */
-    public Point getStart () {
-        return start;
-    }
-
-    /** set the Point where the line ends */
-    public void setEnd (Point end) {
-        this.end = end;
-    }
-
-    /** set the point where the points starts */
-    public void setStart (Point start) {
-        this.start = start;
-    }
-
     /** the width of the animated line */
     public float getWidth () {
         return width;

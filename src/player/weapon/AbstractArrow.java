@@ -22,6 +22,9 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 	 */
 	protected float attackValueCurrent;
 
+    /** the rotation of the BufferedImage to draw the arrow to the direction of the attacked field */
+    protected double rotation;
+
 	protected double speed;
 
 	/**
@@ -344,7 +347,8 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
         return posYAim;
     }
 
-    /** setzt die y-Position auf dem Bildschrim vom Ziel */
+    /** setzt die y-Position auf dem Bildschrim vom Ziel
+     * <b> use calculateRotation if neccary </b>*/
     public void setPosYAim (int posYAim) {
         this.posYAim = posYAim;
     }
@@ -363,6 +367,24 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
         return super.getRange();
     }
 
+    /** returns the roation of the BufferedImage. With this value the image is drawn in direction to the aim. It's in radient.*/
+    public double getRotation () {
+        return rotation;
+    }
+
+    /** rotates the BufferedImage to <code>rotation</code> so that the arrow is aim to the posXAim/posYAim
+     * the calculation is only done, if <code>posYAim - posY != 0</code>. */
+    public void calculateRotation () {
+        if (posYAim - posY != 0)
+            rotation = -Math.atan((posXAim - posX)/(posYAim - posY));
+        else { // in case of the figure standing horizontal
+            if (posXAim - posX > 0) // the figure needs to be rotated clockwise (horizontally laying on the ground)
+                rotation = Math.toRadians(90.0);
+            else if (posXAim - posX < 0) // the figure needs to be rotated counterclockwise (horizontally laing on the ground)
+                rotation = Math.toRadians(-90.0);
+        }
+    }
+
     /** gibt die BufferedImage des Pfeils zur�ck
 	 * @see <code> ArrowHelper.getArrowImage(int selectedIndex) </code> */
 	public abstract BufferedImage getImage();
@@ -370,7 +392,9 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
     /** TODO: without Zoom */
 	@Override
 	public void draw(Graphics2D g) {
+        g.rotate(getRotation(), getPosX() + 0.5 * getImage().getWidth(), getPosY() + 0.5 * getImage().getWidth());
 		g.drawImage(getImage(), getPosX(), getPosY(), getImage().getWidth(), getImage().getHeight(), null);
+        g.rotate(-getRotation(), getPosX() + 0.5 * getImage().getWidth(), getPosY() + 0.5 * getImage().getWidth());
 	}
 }
 

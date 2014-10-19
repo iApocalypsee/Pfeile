@@ -17,7 +17,7 @@ public class StoneArrow extends AbstractArrow {
 	/** Name des Pfeils */
 	public static final String NAME = "Steinpfeil";
 	
-	public static final Color UNIFIED_COLOR = new Color(66, 57, 42, 75);
+	public static final Color UNIFIED_COLOR = new Color(142, 120, 93, 200);
 	
 	
 	/** Bild des Pfeils */

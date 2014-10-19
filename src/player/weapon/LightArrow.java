@@ -16,7 +16,7 @@ public class LightArrow extends AbstractArrow {
 	
 	public static final String NAME = "Lichtpfeil";
 	
-	public static final Color UNIFIED_COLOR = new Color(227, 200, 232, 75);
+	public static final Color UNIFIED_COLOR = new Color(255, 253, 193, 200);
 	
 	/** Bild des Pfeils */
 	private static BufferedImage img_Light;

@@ -57,13 +57,13 @@ public class AimSelectionScreen extends Screen {
 		confirm = new Button (1178, 491, this, "Bestätigen");
 
         animatedLine = new AnimatedLine(0,0,0,0,Color.RED);
-        animatedLine.setWidth(4.0f);
+        animatedLine.setWidth(3.0f);
 
         onScreenEnter.register(new AbstractFunction0<BoxedUnit>() {
             @Override
             public BoxedUnit apply () {
-                animatedLine.setStart(new Point ((int) Main.getContext().getActivePlayer().bounds().getBounds().getCenterX(),
-                        (int) Main.getContext().getActivePlayer().bounds().getBounds().getCenterY()));
+                animatedLine.setStartX((int) Main.getContext().getActivePlayer().bounds().getBounds().getCenterX());
+                animatedLine.setStartY((int) Main.getContext().getActivePlayer().bounds().getBounds().getCenterY());
                 animatedLine.setColor(ArrowHelper.getUnifiedColor(ArrowSelectionScreen.getInstance().getSelectedIndex()));
                 return BoxedUnit.UNIT;
             }
@@ -206,7 +206,8 @@ public class AimSelectionScreen extends Screen {
                         } else {
                             setPosX_selectedField(tileWrapper.tile().latticeX());
                             setPosY_selectedField(tileWrapper.tile().latticeY());
-                            animatedLine.setEnd(evt.getPoint());
+                            animatedLine.setEndX((int) tileWrapper.tile().bounds().getBounds().getCenterX());
+                            animatedLine.setEndY((int) tileWrapper.tile().bounds().getBounds().getCenterY());
                             stopFlag = true;
                         }
                     }
@@ -258,13 +259,16 @@ public class AimSelectionScreen extends Screen {
                 arrow.setFieldX(active.getGridX());
                 arrow.setFieldY(active.getGridY());
 
-                arrow.setPosX(active.bounds().getBounds().x);
-                arrow.setPosY(active.bounds().getBounds().y);
+                // the center of the player is the center of the arrow
+                arrow.setPosX((int) (active.bounds().getBounds().getCenterX() - 0.5 * arrow.getImage().getWidth()));
+                arrow.setPosY((int) (active.bounds().getBounds().getCenterY() - 0.5 * arrow.getImage().getHeight()));
+
+                arrow.calculateRotation();
 
 				target.take(new AttackEvent(arrow, (TileLike) active.tileLocation(), target, active, arrow.getSpeed()));
 				ArrowSelectionScreen.getInstance().updateInventoryList();
 			} else {
-				// Hier gibt es den Pfeil nicht. Fehlerbehandlung.
+                throw new RuntimeException("The selected arrow doesn't exit. He can't be shot");
 			}
         }
 	}

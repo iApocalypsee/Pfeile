@@ -18,7 +18,7 @@ public class FireArrow extends AbstractArrow {
 	/** Name des Pfeils: */
 	public static final String NAME = "Feuerpfeil";
 	
-	public static final Color UNIFIED_COLOR = new Color(255, 0, 0, 75);
+	public static final Color UNIFIED_COLOR = new Color(207, 41, 6, 200);
 	
 	/** Bild des Pfeils */
 	private static BufferedImage img_Fire;
