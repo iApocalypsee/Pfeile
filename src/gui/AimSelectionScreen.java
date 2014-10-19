@@ -1,5 +1,6 @@
 package gui;
 
+import animation.AnimatedLine;
 import comp.Button;
 import general.Main;
 import newent.Player;
@@ -42,6 +43,9 @@ public class AimSelectionScreen extends Screen {
 	private String warningMessage = "";
 	private float transparencyWarningMessage = 0;
 	private Point positionWarningMessage = new Point (40, Main.getWindowHeight() - 105);
+
+    /** the animated line from the player to the aim */
+    private AnimatedLine animatedLine;
 	
 	/** Konstrucktor von AimSelectionScreen: ruft super(...) auf und setzt die Variabelnwerte nach der Initialisierung; start den thread of <code> FieldSelector </code> */
 	public AimSelectionScreen() {
@@ -51,7 +55,19 @@ public class AimSelectionScreen extends Screen {
 		setPosY_selectedField(-1);
 		
 		confirm = new Button (1178, 491, this, "Bestätigen");
-		
+
+        animatedLine = new AnimatedLine(0,0,0,0,Color.RED);
+        animatedLine.setWidth(4.0f);
+
+        onScreenEnter.register(new AbstractFunction0<BoxedUnit>() {
+            @Override
+            public BoxedUnit apply () {
+                animatedLine.setStart(new Point ((int) Main.getContext().getActivePlayer().bounds().getBounds().getCenterX(),
+                        (int) Main.getContext().getActivePlayer().bounds().getBounds().getCenterY()));
+                animatedLine.setColor(ArrowHelper.getUnifiedColor(ArrowSelectionScreen.getInstance().getSelectedIndex()));
+                return BoxedUnit.UNIT;
+            }
+        });
 		
 		// MouseListener f�r confirm-Button
 		confirm.addMouseListener ( new MouseAdapter () {
@@ -111,6 +127,8 @@ public class AimSelectionScreen extends Screen {
 			g.fillPolygon(selectedTile.bounds());
             g.setColor(new Color (255, 34, 0, 255));
             g.drawPolygon(selectedTile.bounds());
+            animatedLine.updateOffset(0.6);
+            animatedLine.draw(g);
 		}
 
         // TODO: inizalizise and create TimeLifeBox
@@ -188,6 +206,7 @@ public class AimSelectionScreen extends Screen {
                         } else {
                             setPosX_selectedField(tileWrapper.tile().latticeX());
                             setPosY_selectedField(tileWrapper.tile().latticeY());
+                            animatedLine.setEnd(evt.getPoint());
                             stopFlag = true;
                         }
                     }
