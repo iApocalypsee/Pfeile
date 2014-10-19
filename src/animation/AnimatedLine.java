@@ -29,6 +29,10 @@ public class AnimatedLine implements Drawable {
 			BasicStroke.JOIN_MITER,
 			10.0f, new float[]{10f}, 0.0f);
 
+	private int guiBoundsThickness = 30;
+
+	private Polygon bounds;
+
 	/**
 	 * Creates an animated line
 	 *
@@ -66,6 +70,69 @@ public class AnimatedLine implements Drawable {
 
 	public void setMaximumOffset(double maximumOffset) {
 		this.maximumOffset = maximumOffset;
+	}
+
+	public void setStartX(int x) {
+		start.x = x;
+		recalculateBounds();
+	}
+
+	public void setStartY(int y) {
+		start.y = y;
+		recalculateBounds();
+	}
+
+	public void setEndX(int x) {
+		end.x = x;
+		recalculateBounds();
+	}
+
+	public void setEndY(int y) {
+		end.y = y;
+		recalculateBounds();
+	}
+
+	public int getStartX() {
+		return start.x;
+	}
+
+	public int getStartY() {
+		return start.y;
+	}
+
+	public int getEndX() {
+		return end.x;
+	}
+
+	public int getEndY() {
+		return end.y;
+	}
+
+	private void recalculateBounds() {
+		// Preparation for bounds calculation
+
+		double halfThickness = guiBoundsThickness / 2.0;
+		double verticalCathete = end.y - start.y;
+		double horizontalCathete = end.x - start.x;
+		double hypot = Math.sqrt(Math.pow(horizontalCathete, 2) + Math.pow(verticalCathete, 2));
+
+		double alpha = horizontalCathete / hypot;
+		double beta = verticalCathete / hypot;
+
+		// Bounds calculation is here.
+		double x_off = halfThickness * Math.cos(Math.toRadians(180 - 90 - alpha));
+		double y_off = halfThickness * Math.sin(Math.toRadians(180 - 90 - alpha));
+
+		final Point p1 = new Point(end.x + (int) x_off, end.y + (int) -y_off);
+		final Point p2 = new Point(end.x + (int) -x_off, end.y + (int) y_off);
+
+		x_off = halfThickness * Math.sin(Math.toRadians(180 - 90 - beta));
+		y_off = halfThickness * Math.cos(Math.toRadians(180 - 90 - beta));
+
+		final Point p3 = new Point(start.x + (int) -x_off, start.y + (int) y_off);
+		final Point p4 = new Point(start.x + (int) x_off, start.y + (int) -y_off);
+
+		bounds = comp.Component.createRectPolygon(p1, p2, p3, p4);
 	}
 
     /** the end point where the line ends */

@@ -705,4 +705,13 @@ public abstract class Component implements IComponent {
 		ret.addPoint(x + width, y);
 		return ret;
 	}
+
+	public static Polygon createRectPolygon(Point p1, Point p2, Point p3, Point p4) {
+		Polygon ret = new Polygon();
+		ret.addPoint(p1.x, p1.y);
+		ret.addPoint(p2.x, p2.y);
+		ret.addPoint(p3.x, p3.y);
+		ret.addPoint(p4.x, p4.y);
+		return ret;
+	}
 }
