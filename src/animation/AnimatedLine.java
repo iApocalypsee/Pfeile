@@ -5,20 +5,29 @@ import gui.Drawable;
 import java.awt.*;
 
 /**
- * @author Josip Palavra
+ * An animated line that "moves" the dashing to a direction with updating.
+ *
+ * The line supports a bounds object, which is calculated on-demand.
+ *
  */
 public class AnimatedLine implements Drawable {
 
 	private Point start;
 	private Point end;
 
-	/** The color with which the line is drawn. */
+	/**
+	 * The color with which the line is drawn.
+	 */
 	private Color color;
 
-	/** The current offset of the animated (dashed) line, */
+	/**
+	 * The current offset of the animated (dashed) line,
+	 */
 	private double offset = 0.0;
 
-	/** The maximum offset. For fluent offsetting, set it to 20. */
+	/**
+	 * The maximum offset. For fluent offsetting, set it to 20.
+	 */
 	private double maximumOffset = 20.0;
 
 	private volatile BasicStroke dashStroke = new BasicStroke(1.0f,
@@ -28,7 +37,7 @@ public class AnimatedLine implements Drawable {
 
 	private int guiBoundsThickness = 30;
 
-	private Polygon bounds;
+	private Polygon bounds = null;
 
 	/**
 	 * Creates an animated line
@@ -46,7 +55,8 @@ public class AnimatedLine implements Drawable {
 
 	public void updateOffset(double delta) {
 		offset += delta;
-		if (offset > maximumOffset) offset = 0.0;
+		if (offset > maximumOffset) offset -= maximumOffset;
+		else if (offset < 0.0) offset += maximumOffset;
 		dashStroke = new BasicStroke(1.0f,
 				BasicStroke.CAP_BUTT,
 				BasicStroke.JOIN_MITER,
@@ -71,22 +81,22 @@ public class AnimatedLine implements Drawable {
 
 	public void setStartX(int x) {
 		start.x = x;
-		recalculateBounds();
+		bounds = null;
 	}
 
 	public void setStartY(int y) {
 		start.y = y;
-		recalculateBounds();
+		bounds = null;
 	}
 
 	public void setEndX(int x) {
 		end.x = x;
-		recalculateBounds();
+		bounds = null;
 	}
 
 	public void setEndY(int y) {
 		end.y = y;
-		recalculateBounds();
+		bounds = null;
 	}
 
 	public int getStartX() {
@@ -103,6 +113,11 @@ public class AnimatedLine implements Drawable {
 
 	public int getEndY() {
 		return end.y;
+	}
+
+	public Polygon getBounds() {
+		if(bounds == null) recalculateBounds();
+		return bounds;
 	}
 
 	private void recalculateBounds() {

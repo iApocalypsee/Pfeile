@@ -3,18 +3,19 @@ package gui;
 import comp.Button;
 import general.Keys;
 import general.Main;
-import newent.*;
+import newent.EntityComponentWrapper;
+import newent.Player;
+import newent.VisualEntity;
 import player.weapon.AttackDrawer;
-import scala.Unit;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;
 import world.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * <b>4.1.2014 (Josip):</b> Konstruktor braucht keine ScreenManager-Instanz mehr. <br><br>
