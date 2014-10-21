@@ -8,7 +8,6 @@ import newent.event.AttackEvent;
 import player.weapon.AbstractArrow;
 import player.weapon.ArrowHelper;
 import player.weapon.Item;
-import player.weapon.Weapon;
 import scala.Option;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.AbstractFunction1;
@@ -127,7 +126,7 @@ public class AimSelectionScreen extends Screen {
 			g.fillPolygon(selectedTile.bounds());
             g.setColor(new Color (255, 34, 0, 255));
             g.drawPolygon(selectedTile.bounds());
-            animatedLine.updateOffset(0.6);
+            animatedLine.updateOffset(- 0.5);
             animatedLine.draw(g);
 		}
 
@@ -250,8 +249,8 @@ public class AimSelectionScreen extends Screen {
 
 
                 assert targetTileComponent != null;
-                arrow.setPosXAim(targetTileComponent.component().getX());
-                arrow.setPosYAim(targetTileComponent.component().getY());
+                arrow.setPosXAim((int) (targetTileComponent.component().getSimplifiedBounds().getCenterX() - 0.5 * arrow.getImage().getWidth()));
+                arrow.setPosYAim((int) (targetTileComponent.component().getSimplifiedBounds().getCenterY() - 0.5 * arrow.getImage().getHeight()));
 
                 arrow.setFieldXAim(getPosX_selectedField());
                 arrow.setFieldYAim(getPosY_selectedField());

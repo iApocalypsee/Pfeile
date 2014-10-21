@@ -1,6 +1,7 @@
 package player.weapon;
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import general.Mechanics;
@@ -332,7 +333,7 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 		this.posY = posY;
 	}
 
-    /** gibt die X-Position auf dem Bildschirm vom Ziel zurück */
+    /** gibt die X-Position auf dem Bildschirm vom Ziel zurück. It is equal to the Center-X-Position of the aimed tile minus half the arrowImage.getWidth()*/
     public int getPosXAim () {
         return posXAim;
     }
@@ -373,28 +374,43 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
     }
 
     /** rotates the BufferedImage to <code>rotation</code> so that the arrow is aim to the posXAim/posYAim
-     * the calculation is only done, if <code>posYAim - posY != 0</code>. */
-    public void calculateRotation () {
-        if (posYAim - posY != 0)
-            rotation = -Math.atan((posXAim - posX)/(posYAim - posY));
-        else { // in case of the figure standing horizontal
-            if (posXAim - posX > 0) // the figure needs to be rotated clockwise (horizontally laying on the ground)
-                rotation = Math.toRadians(90.0);
-            else if (posXAim - posX < 0) // the figure needs to be rotated counterclockwise (horizontally laing on the ground)
-                rotation = Math.toRadians(-90.0);
-        }
+     * the value is calculated with the x and y position of this arrow as well as the x and y position of the aim. If
+     * they are both not inizalized yet, it's pretty useless to call this method. */
+     public void calculateRotation () {
+         if (posXAim > posX && posYAim < posY) {
+             rotation = Math.atan((double) (posXAim - posX) / (double) (posY - posYAim));
+         } else if (posXAim > posX && posYAim > posY) {
+             rotation = Math.toRadians(90.0) + Math.atan((double) (posYAim - posY) / (double) (posXAim - posX));
+         } else if (posXAim < posX && posYAim > posY) {
+             rotation = - (Math.toRadians(90.0) + Math.atan((double) (posYAim - posY) / (double) (posX - posXAim)));
+         } else if (posXAim < posX && posYAim < posY) {
+             rotation = - Math.atan((double) (posX - posXAim) / (double) (posY - posYAim));
+         } else { // the special cases, where the point is placed either on the same x-position or on the same y-position
+             if (posYAim > posY && posXAim == posX) // the arrow is turned around
+                 rotation = Math.toRadians(180.0);
+             else if (posXAim - posX > 0 && posYAim == posY) // the arrow needs to be rotated clockwise (horizontally on the ground)
+                 rotation = Math.toRadians(90.0);
+             else if (posXAim - posX < 0 && posYAim == posY) // the arrow needs to be rotated counterclockwise (horizontally on the ground)
+                 rotation = - Math.toRadians(90.0);
+             else if (posYAim < posY && posXAim == posX)// the aim is directly over the tile, so no rotation is needed.
+                 rotation = 0;
+             else
+                 throw new RuntimeException("the X/Y-Position of the arrow and the aim is not possible. positionOfArrow: " + "(" + posX + "|" + posY + ")" + " positionOfAim: " + "(" + posXAim + "|" + posYAim + ").");
+         }
     }
 
     /** gibt die BufferedImage des Pfeils zur�ck
 	 * @see <code> ArrowHelper.getArrowImage(int selectedIndex) </code> */
 	public abstract BufferedImage getImage();
 
-    /** TODO: without Zoom */
+    /** TODO: do the Zoom */
 	@Override
 	public void draw(Graphics2D g) {
-        g.rotate(getRotation(), getPosX() + 0.5 * getImage().getWidth(), getPosY() + 0.5 * getImage().getWidth());
+        AffineTransform old = g.getTransform();
+        // it should be rotated from the center of the arrowImage
+        g.rotate(getRotation(), getPosX() + (int) (0.5 * getImage().getWidth()), getPosY() + (int) (0.5 * getImage().getHeight()));
 		g.drawImage(getImage(), getPosX(), getPosY(), getImage().getWidth(), getImage().getHeight(), null);
-        g.rotate(-getRotation(), getPosX() + 0.5 * getImage().getWidth(), getPosY() + 0.5 * getImage().getWidth());
+        g.setTransform(old);
 	}
 }
 
