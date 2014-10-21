@@ -1,10 +1,9 @@
 package player.weapon;
 
 import general.Main;
-import gui.GameScreen;
 import newent.InventoryLike;
-import sun.security.provider.SHA;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
@@ -247,7 +246,62 @@ public final class ArrowHelper {
         }
         return arrowsCount;
     }
-	
+
+    /** returns the unifiedColor of the arrow. That is similar to:
+     * ...Arrow.UNIFIED_COLOR
+     * @param arrowIndex
+     * @return UNIFIED_COLOR - the standard Color of an arrow
+     */
+    public static Color getUnifiedColor (int arrowIndex) {
+        switch (arrowIndex) {
+            case FireArrow.INDEX: return FireArrow.UNIFIED_COLOR;
+            case WaterArrow.INDEX: return WaterArrow.UNIFIED_COLOR;
+            case StoneArrow.INDEX: return StoneArrow.UNIFIED_COLOR;
+            case StormArrow.INDEX: return StormArrow.UNIFIED_COLOR;
+            case LightArrow.INDEX: return LightArrow.UNIFIED_COLOR;
+            case ShadowArrow.INDEX: return ShadowArrow.UNIFIED_COLOR;
+            case IceArrow.INDEX: return IceArrow.UNIFIED_COLOR;
+            case LightningArrow.INDEX: return LightningArrow.UNIFIED_COLOR;
+            default:
+                return null;
+        }
+    }
+
+    /** returns the unifiedColor of the arrow. That is similar to:
+     * ...Arrow.UNIFIED_COLOR
+     * @param arrowClass
+     * @return UNIFIED_COLOR - the standard Color of an arrow
+     */
+    public static Color getUnifiedColor (Class <? extends AbstractArrow> arrowClass) {
+        if (arrowClass.equals(FireArrow.class))
+            return FireArrow.UNIFIED_COLOR;
+        else if (arrowClass.equals(WaterArrow.class))
+            return WaterArrow.UNIFIED_COLOR;
+        else if (arrowClass.equals(StoneArrow.class))
+            return StoneArrow.UNIFIED_COLOR;
+        else if (arrowClass.equals(StormArrow.class))
+            return StormArrow.UNIFIED_COLOR;
+        else if (arrowClass.equals(IceArrow.class))
+            return IceArrow.UNIFIED_COLOR;
+        else if (arrowClass.equals(LightningArrow.class))
+            return LightningArrow.UNIFIED_COLOR;
+        else if (arrowClass.equals(LightArrow.class))
+            return LightArrow.UNIFIED_COLOR;
+        else if (arrowClass.equals(ShadowArrow.class))
+            return ShadowArrow.UNIFIED_COLOR;
+        else
+            return null;
+    }
+
+    /** returns the unifiedColor of the arrow. That is similar to:
+     * ...Arrow.UNIFIED_COLOR
+     * @param arrowName
+     * @return UNIFIED_COLOR - the standard Color of an arrow
+     */
+    public static Color getUnifiedColor (String arrowName) {
+        return getUnifiedColor(ArrowHelper.arrowNameToIndex(arrowName));
+    }
+
 	/** gibt ein Bild des Pfeils des Indexes <code> selectedArrow </code> zur�ck; */
 	public static BufferedImage getArrowImage (int selectedArrow) {
 		return arrowImages[selectedArrow];

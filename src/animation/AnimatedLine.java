@@ -8,7 +8,6 @@ import java.awt.*;
  * An animated line that "moves" the dashing to a direction with updating.
  *
  * The line supports a bounds object, which is calculated on-demand.
- *
  */
 public class AnimatedLine implements Drawable {
 
@@ -24,13 +23,18 @@ public class AnimatedLine implements Drawable {
 	 * The current offset of the animated (dashed) line,
 	 */
 	private double offset = 0.0;
+	
+    /** 
+     * The width of the line 
+     */
+    private float width = 1.0f;
 
 	/**
 	 * The maximum offset. For fluent offsetting, set it to 20.
 	 */
 	private double maximumOffset = 20.0;
 
-	private volatile BasicStroke dashStroke = new BasicStroke(1.0f,
+	private volatile BasicStroke dashStroke = new BasicStroke(width,
 			BasicStroke.CAP_BUTT,
 			BasicStroke.JOIN_MITER,
 			10.0f, new float[]{10f}, 0.0f);
@@ -57,7 +61,7 @@ public class AnimatedLine implements Drawable {
 		offset += delta;
 		if (offset > maximumOffset) offset -= maximumOffset;
 		else if (offset < 0.0) offset += maximumOffset;
-		dashStroke = new BasicStroke(1.0f,
+		dashStroke = new BasicStroke(width,
 				BasicStroke.CAP_BUTT,
 				BasicStroke.JOIN_MITER,
 				10.0f, new float[]{10f}, (float) offset);
@@ -147,7 +151,21 @@ public class AnimatedLine implements Drawable {
 		bounds = comp.Component.createRectPolygon(p1, p2, p3, p4);
 	}
 
-	@Override
+    /** the width of the animated line */
+    public float getWidth () {
+        return width;
+    }
+
+    /** sets the width of the line. The standard is 1.0f.*/
+    public void setWidth (float width) {
+        this.width = width;
+        dashStroke = new BasicStroke(width,
+                BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER,
+                10.0f, new float[]{10f}, (float) offset);
+    }
+
+    @Override
 	public void draw(Graphics2D g) {
 		g.setStroke(dashStroke);
 		g.setColor(color);
