@@ -92,7 +92,9 @@ public class Main {
      */
     private Main() {
 	    FiniteDuration turnTime = new FiniteDuration(30, TimeUnit.SECONDS);
-	    setContext(new PfeileContext(new PfeileContext.Values(turnTime)));
+	    PfeileContext.Values values = new PfeileContext.Values();
+	    values.turnTime_$eq(turnTime);
+	    setContext(new PfeileContext(values));
     }
 
     // ###########################################################

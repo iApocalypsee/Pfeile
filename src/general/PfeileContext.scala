@@ -4,6 +4,7 @@ import newent.Player
 import world.WorldLike
 
 import scala.concurrent.duration._
+import scala.xml.XML
 
 /** The game mechanics of "Pfeile" in its own class. <p>
   *
@@ -73,12 +74,11 @@ object PfeileContext {
 
   /** Class holding all value information about the game. <p>
     * These values exclude e.g. the world, the active player, the turn player,... such things.
-    *
-    * @param _turnTime The amount of time that the turn player has to make his moves.
-    *                  No time per move, time per turn.
     */
   // TODO Add XML document for default/recommended values.
-  class Values(private var _turnTime: FiniteDuration) extends Serializable {
+  class Values extends Serializable {
+
+    private var _turnTime: FiniteDuration = null
 
     /** Returns the time in which a player is allowed to make moves. <p>
       *
