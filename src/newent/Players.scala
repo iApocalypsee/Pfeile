@@ -1,14 +1,12 @@
 package newent
 
-import java.awt.{Color, Point}
-
-import comp.Component
-import general.{Delegate, Main}
-import newent.event.AttackEvent
+import general.Delegate
+import general.Main.getGameWindow
 import newent.pathfinding.AStarPathfinder
-import player.weapon.{Weapon, AbstractArrow}
-import world.{GrassTile, WorldLike}
 import player.Life
+import world.WorldLike
+
+import java.awt.{Color, Point}
 
 /** Represents a player in the world.
   *
@@ -22,6 +20,11 @@ class Player(world: WorldLike,
                                    InventoryEntity with LivingEntity with VisionEntity with Combatant {
 
   // Game section.
+  onDeath += { () =>
+     getGameWindow.getScreenManager.getActiveScreen.onLeavingScreen
+         (getGameWindow.getScreenManager.getActiveScreen, gui.GameOverScreen.SCREEN_INDEX)
+
+  }
 
   private var _localVisionPoint = visionMap.grantVision(getGridX, getGridY, 4)
 
@@ -43,9 +46,9 @@ class Player(world: WorldLike,
   }
 
   /** The default movement points that the entity has. */
-  override def defaultMovementPoints = 3
+  override def defaultMovementPoints = 4
   override val pathfinderLogic       = new AStarPathfinder(20, { t => true })
-  override val life                  = new Life(100.0, 1.0, 100.0)
+  override val life                  = new Life(400.0, 2.2, 400.0)
 
   val onTurnGet = Delegate.createZeroArity
   val onTurnEnd = Delegate.createZeroArity

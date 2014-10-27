@@ -3,9 +3,10 @@ package player;
 import general.Delegate;
 import general.Main;
 import general.Mechanics;
-import gui.Drawable;
+import newent.EntityLike;
+import newent.LivingEntity;
 
-import java.awt.*;
+import java.util.List;
 
 /**
  * Contains only data relevant to life of an entity.
@@ -32,7 +33,30 @@ public class Life {
 		this.life = startingLife;
 	}
 
-	/** GETTER: return 'life */
+    /** Creates a new instance from the Life class by using the standard values.
+     * This is similar to: <code>new Life (Mechanics.lifeMax, Mechanics.lifeRegeneration, Mechanics.lifeMax)</code> with checking
+     * if these values have been initialized.
+     */
+    public Life () {
+        if (Mechanics.lifeMax <= 0)
+            lifemax = Mechanics.lifeMax;
+        else {
+            System.err.println("The value for Mechanics.lifeMax is not valid. It maight be unset. Life is \"maximales Leben: normal\"");
+            lifemax = 400;
+        }
+        if (Mechanics.lifeRegeneration <= 0)
+            liferegen = Mechanics.lifeRegeneration;
+        else {
+            System.err.println("The value for Mechanics.lifeRegeneration is not valid. It maight be unset. \"Lebensregeneration: normal\"");
+            if (Mechanics.lifeMax <= 0)
+                liferegen = (int) Math.round(0.5 * (400 * 0.02) + 4.5);
+            else
+                liferegen = (int) Math.round(0.5 * (Mechanics.lifeMax * 0.02 + 4.5));
+        }
+        life = lifemax;
+    }
+
+    /** GETTER: return 'life */
 	public double getLife() {
 		return life; 
 	}
@@ -65,11 +89,24 @@ public class Life {
 		private final double newLife;
 
 		public LifeChangedEvent(double newLife) {
-			this.newLife = newLife;
+			if (newLife > 0)
+                this.newLife = newLife;
+            else {
+                this.newLife = 0;
+                List<EntityLike> entities = Main.getContext().world().entities().javaEntityList();
+                for (EntityLike entity : entities) {
+                    if (entity instanceof LivingEntity) {
+                        if (((LivingEntity) entity).life().getLife() <= 0) {
+                            ((LivingEntity) entity).onDeath();
+                        }
+                    }
+                }
+            }
 		}
 
 		public double getNewLife() {
 			return newLife;
 		}
 	}
+
 }

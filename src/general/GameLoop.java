@@ -21,7 +21,7 @@ public class GameLoop {
 		double maxTimeDiff = 0.5;
 		int skippedFrames = 1;
 		int maxSkippedFrames = 5;
-        int count = 0;
+
 		while(runFlag) {
 			double currTime = (double) System.nanoTime() / SECOND_AS_NANO;
 			if((currTime - nextTime) > maxTimeDiff)
@@ -31,12 +31,6 @@ public class GameLoop {
 				// assign the time for the next update
 				nextTime += delta;
 				Main.getGameWindow().update();
-                count++;
-                if (count % 2 == 0) {
-                    if (Main.getContext().getActivePlayer().life().getLife() > 0)
-                        Main.getContext().getActivePlayer().life().setLife(
-                                 Main.getContext().getActivePlayer().life().getLife() - 0.5);
-                }
 
 				if((currTime < nextTime) || (skippedFrames > maxSkippedFrames)) {
 					Main.getGameWindow().draw();

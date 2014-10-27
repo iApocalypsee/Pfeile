@@ -24,19 +24,23 @@ class LifeUI(var x: Int, var y: Int, private var _life: Life) extends Drawable {
   // I assume GameScreen for the listener system.
   private val lifebar = new Bar(x, y, 160, 20, GameScreen.getInstance())
 
-  private val percentLife = new Label(lifebar.getX + lifebar.getWidth - 37, lifebar.getY + lifebar.getHeight + 5,
-    GameScreen.getInstance(), percentageLifeDetails)
-  percentLife.getBorder.setNotAvailableColor(java.awt.Color.white)
+  private val percentLife = new Label(lifebar.getX + lifebar.getWidth - 61, lifebar.getY + lifebar.getHeight + 5,
+      GameScreen.getInstance(), percentageLifeDetails)
+  percentLife.getBorder.setNotAvailableColor(Color.white)
 
-  private val accurateLife = new Label(lifebar.getX, lifebar.getY + lifebar.getHeight + 5, GameScreen.getInstance(), accurateLifeDetails)
-  accurateLife.getBorder.setNotAvailableColor(java.awt.Color.white)
+  private val accurateLife = new Label(lifebar.getX + 5, lifebar.getY + lifebar.getHeight + 5, GameScreen.getInstance(), accurateLifeDetails)
+  accurateLife.getBorder.setNotAvailableColor(Color.white)
 
   _life.onLifeChanged += { l =>
     lifebar.fillFactor = l.getNewLife / _life.getMaxLife
-    if(lifebar.fillFactor < 0.25 && lifebar.majorSplitColor.ne(Color.red)) {
-      lifebar.majorSplitColor = Color.red
-      lifebar.split(0.0, Color.red)
-    }
+
+    // red: it is linear increased with fillFactor
+    // blue: it is "0" at 0 or max Life and the more it gets to a fillFactor of 0.5, the higher is the green value
+    // green: opposite of red.
+    lifebar.majorSplitColor = new Color(255 - (255 * lifebar.fillFactor).asInstanceOf[Int],
+        (lifebar.fillFactor * 255).asInstanceOf[Int], (Math.sin(lifebar.fillFactor * Math.PI) * 35.0).asInstanceOf[Int])
+    lifebar.split(0.0, lifebar.majorSplitColor)
+
     percentLife setText percentageLifeDetails
     accurateLife setText accurateLifeDetails
   }
@@ -47,6 +51,6 @@ class LifeUI(var x: Int, var y: Int, private var _life: Life) extends Drawable {
     accurateLife.draw(g)
   }
 
-  private def accurateLifeDetails = f"${life.getLife}%.1f / ${life.getMaxLife}%.1f"
-  private def percentageLifeDetails = f"${life.getRelativeLife}%.1f${"%"}%s"
+  private def accurateLifeDetails = f"${life.getLife.asInstanceOf[Int]} / ${life.getMaxLife.asInstanceOf[Int]}"
+  private def percentageLifeDetails = f"${life.getRelativeLife}%.2f${"%"}%s"
 }
