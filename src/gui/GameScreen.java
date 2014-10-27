@@ -196,12 +196,12 @@ public class GameScreen extends Screen {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 //				if(toggleStopwatch.getBounds().contains(e.getPoint())) {
-				if(Main.timeObj.isRunning()) {
-					Main.timeObj.stop();
+				if(Main.getContext().getTimeClock().isRunning()) {
+					Main.getContext().getTimeClock().stop();
 				} else {
-					Main.timeObj.start();
+					Main.getContext().getTimeClock().start();
 				}
-				System.out.println("Toggled stopwatch to " + Main.timeObj.isRunning());
+				System.out.println("Toggled stopwatch to " + Main.getContext().getTimeClock().isRunning());
 //				}
 			}
 
@@ -235,7 +235,7 @@ public class GameScreen extends Screen {
 		toggleStopwatch.draw(g);
 
 		getLifeUI().draw(g);
-		Main.timeObj.draw(g);
+		Main.getContext().getTimeClock().draw(g);
 	}
 
 	@Override

@@ -45,11 +45,6 @@ public final class Mechanics {
 	
 	/** GesamtPfeilAnzahl: arrowNumberFreeSet + arrowNumberPreSet */
 	public static int totalArrowNumber;
-
-	
-	/** Zeit pro Zug */
-	public static int timePerPlay;
-
 	
 	/** Weltengr��e in X-Richtung f�r fields: Anzahl der Felder */
 	public static int worldSizeX;

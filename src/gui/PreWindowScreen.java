@@ -6,11 +6,11 @@ import comp.Component;
 import comp.Label;
 import general.Main;
 import general.Mechanics;
+import scala.concurrent.duration.FiniteDuration;
 
-import javax.sound.sampled.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is the Screen in which all (Mechanics) values like worldSize are set. It replaces the old PreWindow.
@@ -209,7 +209,7 @@ public class PreWindowScreen extends Screen {
                 Mechanics.turnsPerRound = 7;
                 labels[6].setText("Züge pro Runde: " + Mechanics.turnsPerRound);
 
-                Mechanics.timePerPlay = 60000;
+                Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(1, TimeUnit.MINUTES));
                 labels[7].setText("Zeit pro Zug: " + "1 min");
 
                 Mechanics.handicapPlayer = 0;
@@ -257,7 +257,7 @@ public class PreWindowScreen extends Screen {
                     openConfirmDialog("Select unselected Selections: Schadensmultiplikator");
                     return;
                 }
-                if (Mechanics.timePerPlay == -1) {
+                if (Main.getContext().getTimeClock().isTurnTimeInfinite()) {
                     openConfirmDialog("Select unselected Selections: Zeit pro Zug");
                     return;
                 }
@@ -360,12 +360,12 @@ public class PreWindowScreen extends Screen {
                             // Zeit pro Zug
                             boxSelectTime.triggerListeners(e);
                             switch (boxSelectTime.getSelectedIndex()) {
-                                case 0: Mechanics.timePerPlay = 5 * 60000; break;
-                                case 1: Mechanics.timePerPlay = 2 * 60000; break;
-                                case 3: Mechanics.timePerPlay = Math.round((40f / 60f) * 60000); break;
-                                case 4: Mechanics.timePerPlay = Math.round((30f / 60f) * 60000); break;
-                                case 5: Mechanics.timePerPlay = Math.round((20f / 60f) * 60000); break;
-                                default: Mechanics.timePerPlay = 60000; // 1 min
+                                case 0: Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(5, TimeUnit.MINUTES)); break;
+                                case 1: Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(2, TimeUnit.MINUTES)); break;
+                                case 3: Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(40, TimeUnit.SECONDS)); break;
+                                case 4: Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(30, TimeUnit.SECONDS)); break;
+                                case 5: Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(20, TimeUnit.SECONDS)); break;
+                                default: Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(1, TimeUnit.MINUTES)); // 1 min
                             }
                             labels[7].setText("Zeit pro Zug: " + boxSelectTime.getSelectedValue());
                             return;

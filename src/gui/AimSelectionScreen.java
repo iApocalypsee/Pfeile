@@ -134,7 +134,7 @@ public class AimSelectionScreen extends Screen {
 		// TimeLifeBox.draw(g);
         // TODO: create a new Field infoBox
 		// Field.infoBox.draw(g);
-		Main.timeObj.draw(g);
+		Main.getContext().getTimeClock().draw(g);
 		
 		confirm.draw(g);
 		

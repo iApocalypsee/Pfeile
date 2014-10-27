@@ -3,11 +3,7 @@ package general;
 import akka.actor.ActorSystem;
 import animation.SoundPool;
 import gui.*;
-import misc.VolatileResource;
 import player.weapon.ArrowHelper;
-import scala.concurrent.duration.FiniteDuration;
-import scala.runtime.AbstractFunction1;
-import scala.runtime.BoxedUnit;
 
 import java.awt.*;
 import java.util.HashSet;
@@ -15,7 +11,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Hauptklasse mit der Main-Methode und den abstraktesten Objekten unseres Spiels.
@@ -43,18 +38,12 @@ public class Main {
     public static int getWindowHeight() { return 768; }
     /** Returns the time in between two frames. The timeout is recalculated in every drawing process.
      * @return The time in between two frames. */
-    public int getTimeSinceLastFrame() {
-        return this.timeSinceLastFrame;
-    }
-    public static int delta() {
+    public static int getTimeSinceLastFrame() {
         return main.timeSinceLastFrame;
     }
     private int timeSinceLastFrame = 0;
     private static GameWindow gameWindow;
-    private static GraphicsEnvironment environmentG;
     private static GraphicsDevice graphicsDevice;
-    public static TimeClock timeObj;
-    private static Thread stopwatchThread;
     private static Main main;
     // threading vars
     private static ExecutorService exec = Executors.newCachedThreadPool();
@@ -91,10 +80,8 @@ public class Main {
      * in <code>foo()</code> get�tigt.
      */
     private Main() {
-	    FiniteDuration turnTime = new FiniteDuration(30, TimeUnit.SECONDS);
 	    PfeileContext.Values values = new PfeileContext.Values();
-	    values.turnTime_$eq(turnTime);
-	    setContext(new PfeileContext(values));
+        setContext(new PfeileContext(values));
     }
 
     // ###########################################################
@@ -106,20 +93,21 @@ public class Main {
      * Main-Method �ffnet eine neue Instanz von Main: main
      */
     public static void main(String[] arguments) {
+        // Let's begin playing the title song (so the user knows, that something is done while loading the game)
+        SoundPool.play_titleMelodie();
+
         user = new User("Just a user");
 
         main = new Main();
         main.printSystemProperties();
 
-        environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsEnvironment environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
         graphicsDevice = environmentG.getDefaultScreenDevice();
         gameWindow = new GameWindow();
 
         new player.weapon.ArrowHelper();
 
         gameWindow.initializeScreens();
-        // Let's begin playing the title song
-        SoundPool.play_titleMelodie();
 
         GameWindow.adjustWindow(gameWindow);
         toggleFullscreen(true);
@@ -127,6 +115,8 @@ public class Main {
         // window showing process
         gameWindow.createBufferStrategy();
         gameWindow.setVisible(true);
+
+        getContext().initTimeClock();
 
         // run the game until GameWindow
         GameLoop.run(1 / 60.0);
@@ -142,8 +132,6 @@ public class Main {
         main.populateWorld();
         // add the arrows to the inventory
         main.doArrowSelectionAddingArrows();
-        // and TimeClock with stopWatchThread
-        main.initTimeClock();
         // empty method
         main.disposeInitialResources();
 
@@ -182,8 +170,7 @@ public class Main {
     private void runGame() {
 
         // start TimeClock
-        stopwatchThread.start();
-        timeObj.start();
+        getContext().getTimeClock().start();
 
         GameLoop.run(1 / 60.0);
 
@@ -229,18 +216,6 @@ public class Main {
      * Neueste �nderungen an der Erstellung von Spielern unten bei den r.nextInt() Aufrufen.
      */
     private void populateWorld() {
-    }
-
-    /**
-     * Initialiert die TimeClock
-     */
-    private void initTimeClock() {
-		/* Instanziert 'timeClock' */
-        timeObj = new TimeClock();
-		
-		/* TimeClock wird zu Thread */
-        stopwatchThread = new Thread(timeObj);
-        stopwatchThread.setDaemon(true);
     }
 
     /**
@@ -398,20 +373,6 @@ public class Main {
      */
     public static GameWindow getGameWindow() {
         return gameWindow;
-    }
-
-    /**
-     * GETTER: GraphicsEnviroment
-     */
-    public static GraphicsEnvironment getGraphicsEnvironment() {
-        return environmentG;
-    }
-
-    /**
-     * GETTER: GraphicsDevice
-     */
-    public static GraphicsDevice getGraphicsDevice() {
-        return graphicsDevice;
     }
 
     public static User getUser() {

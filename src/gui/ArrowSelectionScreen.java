@@ -220,6 +220,7 @@ public class ArrowSelectionScreen extends Screen {
         GameScreen.getInstance().getMap().draw(g);
         GameScreen.getInstance().getVisualEntity().draw(g);
 
+        Main.getContext().getTimeClock().draw(g);
 		
 		// Zeichnen der Pfeilauswahl-Buttons
 		for (Button buttonListArrow : buttonListArrows) {

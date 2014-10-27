@@ -6,6 +6,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import comp.Component;
+import scala.concurrent.duration.Duration$;
+import scala.concurrent.duration.FiniteDuration;
 
 
 /**
@@ -25,9 +27,6 @@ public class TimeClock extends Component implements Runnable {
 	 * true: Zeit l�uft ab
 	 * false: TimeClock ist gestoppt */
 	private boolean isRunning;
-	
-	/** �brige Zeit (in Millisekunden) bis der Timmer abl�uft */
-	private long timeLeft = Mechanics.timePerPlay;
 
 	/** aktuelle Zeit */
 	private long timeCurrent = 0;
@@ -35,10 +34,12 @@ public class TimeClock extends Component implements Runnable {
     private long sumTime = 0;
 	
 	/** String, der am Bildschirm die Zeit angeben soll */
-	private String timePrintString = timeFormatter(Mechanics.timePerPlay);
+	private String timePrintString = null;
 
 	public final Delegate.Function0Delegate onTimeOver = new Delegate.Function0Delegate();
-	
+
+    private FiniteDuration _turnTime = null;
+
 	// KONSTURCKTOR
 	/** KONSTRUCKTOR der Klasse 
 	 */
@@ -57,16 +58,17 @@ public class TimeClock extends Component implements Runnable {
 			if (isRunning()) {
 				timeCurrent = System.currentTimeMillis(); 
 				sumTime = sumTime + (timeCurrent - lastTime);
-				if (Mechanics.timePerPlay - sumTime <= 0) {
+				if (turnTime().toMillis() - sumTime <= 0) {
 					isRunning = false;
+                    timePrintString = timeFormatter(0);
 					onTimeOver.call();
 				} else {
-					timePrintString = timeFormatter (Mechanics.timePerPlay - sumTime);
+					timePrintString = timeFormatter (turnTime().toMillis() - sumTime);
 					lastTime = timeCurrent;
 				}
 			} else {
 				try {
-					Thread.sleep(15);
+					Thread.sleep(30);
 				} catch (InterruptedException e) {e.printStackTrace();}
 			}
 		}
@@ -172,7 +174,7 @@ public class TimeClock extends Component implements Runnable {
 	 * @return true - wenn die maximale Zeit pro Zug ('timeMax') ohne die Vergangene Zeit ('timeCurrent') kleiner als 0
 	 */
 	public synchronized boolean isEnd () {
-        return Mechanics.timePerPlay - timeCurrent < 0;
+        return turnTime().toMillis() - timeCurrent < 0;
 	}
 	
 	/** GETTER 
@@ -185,13 +187,42 @@ public class TimeClock extends Component implements Runnable {
 	 * @return timeLeft - die �brige Zeit f�r diesen Zug
 	 */
 	public synchronized long getMilliDeath() {
-		return Mechanics.timePerPlay - timeCurrent;
+		return turnTime().toMillis() - timeCurrent;
 	}
 	
 	public boolean isRunning() {
 		return isRunning;
 	}
 
+    /** Returns the time in which a player is allowed to make moves. <p>
+     *
+     * If the underlying turn time variable is null, this method returns Duration.Inf,
+     * otherwise it returns the underlying turn time variable directly. <p>
+     *
+     * For direct time calculation, use time conversion methods provided with the Duration object:
+     * <code>toMillis, toNanos, toMinutes, toSeconds</code>
+     */
+    public scala.concurrent.duration.Duration turnTime ()
+    {
+        if(_turnTime == null)
+            return Duration$.MODULE$.Inf();
+        else
+            return _turnTime;
+    }
+
+    /** Sets the new turn time.
+     *
+     * The new value may be <code>null</code>. In case of <code>null</code> the turn time
+     * defaults to infinite time.
+     */
+    public void setTurnTime (FiniteDuration turnTime) {
+        _turnTime = turnTime;
+    }
+
+    /** Returns true if the turn time is infinite. */
+    public boolean isTurnTimeInfinite () {
+        return _turnTime == null;
+    }
 
 	@Override
 	public void draw(Graphics2D g) {

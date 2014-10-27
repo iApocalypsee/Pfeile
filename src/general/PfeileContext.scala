@@ -4,7 +4,6 @@ import newent.Player
 import world.WorldLike
 
 import scala.concurrent.duration._
-import scala.xml.XML
 
 /** The game mechanics of "Pfeile" in its own class. <p>
   *
@@ -14,9 +13,12 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
   import PfeileContext._
 
-  private var _activePlayer : Player    = null
-  private var _turnPlayer   : Player    = null
-  private var _world        : WorldLike = null
+  private var _activePlayer   : Player    = null
+  private var _turnPlayer     : Player    = null
+  private var _world          : WorldLike = null
+  private var _timeObj: TimeClock = null
+  private var _stopwatchThread: Thread    = null
+
 
   /** Called when the turn has been ended. */
   val onTurnEnd = Delegate.createZeroArity
@@ -40,13 +42,13 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   def activePlayer = _activePlayer
   def activePlayerOption = optReturn(activePlayer _)
   def activePlayer_=(p: Player): Unit = {
-    _activePlayer = p
-    _activePlayer.onTurnGet += { () =>
-      Main.timeObj.reset()
-      Main.timeObj.start()
+      _activePlayer = p
+      _activePlayer.onTurnGet += { () =>
+      _timeObj.reset()
+      _timeObj.start()
     }
     _activePlayer.onTurnEnd += { () =>
-      Main.timeObj.stop()
+      _timeObj.stop()
     }
   }
 
@@ -67,41 +69,30 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   def getWorld = world
   def setWorld(w: WorldLike) = world = w
 
+  def getTimeClock = _timeObj
+
+  /**
+   * Initialiert die TimeClock
+   */
+  def initTimeClock () : Unit = {
+     _timeObj = new TimeClock
+     _stopwatchThread = new Thread(_timeObj)
+     _stopwatchThread.setDaemon(true)
+     _stopwatchThread.setPriority(Thread.MIN_PRIORITY + 1)
+     _stopwatchThread.start()
+  }
+
   private def players = world.entities.entityList.filter({ _.isInstanceOf[Player] }).asInstanceOf[Seq[Player]]
 }
 
 object PfeileContext {
 
   /** Class holding all value information about the game. <p>
-    * These values exclude e.g. the world, the active player, the turn player,... such things.
+    * These values exclude e.g. the world, the active player, the turn player,... such things. </p>
+    * The values for the turn can be found in TimeClock (<code>Main.getContext().getTimeClock()</code>)
     */
   // TODO Add XML document for default/recommended values.
   class Values extends Serializable {
-
-    private var _turnTime: FiniteDuration = null
-
-    /** Returns the time in which a player is allowed to make moves. <p>
-      *
-      * If the underlying turn time variable is null, this method returns Duration.Inf,
-      * otherwise it returns the underlying turn time variable directly. <p>
-      *
-      * For direct time calculation, use time conversion methods provided with the Duration object:
-      * <code>toMillis, toNanos, toMinutes, toSeconds</code>
-      */
-    def turnTime: Duration = {
-      if(_turnTime eq null) Duration.Inf
-      else _turnTime
-    }
-
-    /** Sets the new turn time.
-      *
-      * The new value may be <code>null</code>. In case of <code>null</code> the turn time
-      * defaults to infinite time.
-      */
-    def turnTime_=(a: FiniteDuration) = _turnTime = a
-
-    /** Returns true if the turn time is infinite. */
-    def isTurnTimeInfinite = _turnTime eq null
 
   }
 
@@ -111,5 +102,4 @@ object PfeileContext {
     if(f_result eq null) None
     else Some(f_result)
   }
-
 }
