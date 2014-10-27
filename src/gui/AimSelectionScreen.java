@@ -96,8 +96,28 @@ public class AimSelectionScreen extends Screen {
 	}
 	
 	@Override
-	public void keyPressed(KeyEvent arg0) {
-		super.keyPressed(arg0);
+	public void keyPressed(KeyEvent event) {
+		super.keyPressed(event);
+
+        // "Bestätigen" Button
+        if (event.getKeyCode() == KeyEvent.VK_B) {
+            // the code inside hier should be the same like confirm.mouseListener
+            // if not make, make sure it is
+            if (posX_selectedField == -1|| posY_selectedField == -1) {
+                warningMessage = "Kein Zielfeld ausgewählt";
+                transparencyWarningMessage = 1f;
+            } else {
+                onLeavingScreen(AimSelectionScreen.this, GameScreen.SCREEN_INDEX);
+
+                // deliver the attack message to the specified tile
+                // assuming that the thread is done updating the values
+                DeliverShootThread msg = new DeliverShootThread();
+                msg.setDaemon(true);
+                msg.start();
+
+                transparencyWarningMessage = 1f;
+            }
+        }
 	}
 
 	@Override

@@ -174,6 +174,9 @@ public class Main {
         // start TimeClock
         getContext().getTimeClock().start();
 
+        // FIXME
+        getContext().getActivePlayer().life().setLife(getContext().getActivePlayer().life().getMaxLife());
+
         GameLoop.run(1 / 60.0);
 
         // TODO: System, bei der nach jeder Runde der Bonusauswahlbildschirm und ArrowSelectionPreSet kommt

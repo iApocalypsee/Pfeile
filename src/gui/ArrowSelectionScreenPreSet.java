@@ -64,6 +64,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
             public BoxedUnit apply (ScreenChangedEvent v1) {
                 Main.getContext().getTimeClock().reset();
                 Main.getContext().getTimeClock().start();
+                System.out.println(Main.getContext().getTimeClock().getMilliDeath());
 
                 return BoxedUnit.UNIT;
             }
@@ -217,21 +218,36 @@ public class ArrowSelectionScreenPreSet extends Screen {
     private class ButtonHelper extends MouseAdapter {
         @Override
         public void mouseReleased (MouseEvent e) {
-            // not necessary code, however it could work faster
-            //if (buttonListArrows[0].getY() + buttonListArrows[0].getHeight() >= e.getPoint().y) {
-                for (Button buttonListArrow : buttonListArrows) {
-                    if (buttonListArrow.getSimplifiedBounds().contains(e.getPoint())) {
-                        if (Mechanics.arrowNumberPreSet > selectedArrows.size()) {
-                            if (selectedArrows.get(0).equals("<keine Pfeile>")) {
-                                selectedArrows.remove(0);
-                            }
-                            selectedArrows.add(buttonListArrow.getText());
-                            remainingArrows.setText("Übrige Pfeile: " + (Mechanics.arrowNumberPreSet - selectedArrows.size()));
-                            setArrowListSelected(selectedArrows);
+            for (Button buttonListArrow : buttonListArrows) {
+                if (buttonListArrow.getSimplifiedBounds().contains(e.getPoint())) {
+                    if (Mechanics.arrowNumberPreSet > selectedArrows.size()) {
+                        if (selectedArrows.get(0).equals("<keine Pfeile>")) {
+                            selectedArrows.remove(0);
                         }
+                        selectedArrows.add(buttonListArrow.getText());
+                        remainingArrows.setText("Übrige Pfeile: " + (Mechanics.arrowNumberPreSet - selectedArrows.size()));
+                        setArrowListSelected(selectedArrows);
                     }
                 }
-            // }
+            }
+        }
+    }
+
+    @Override
+    public void keyPressed (KeyEvent e) {
+        super.keyPressed(e);
+
+        // Bestätigen. Code hier drinn muss der selbe sein wie in dem Listener von confirmButton
+        if (e.getKeyCode() == KeyEvent.VK_B) {
+            if (selectedArrows.size() > Mechanics.arrowNumberPreSet) {
+                throw new IllegalStateException("To many arrows added: They can't be more than " + Mechanics.arrowNumberPreSet);
+            }
+
+            if (selectedArrows.size() < Mechanics.arrowNumberPreSet) {
+                openConfirmQuestion("Bitten wählen sie alle Pfeile aus!");
+            } else {
+                GameLoop.setRunFlag(false);
+            }
         }
     }
 

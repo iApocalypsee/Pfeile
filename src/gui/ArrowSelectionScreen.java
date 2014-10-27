@@ -266,8 +266,9 @@ public class ArrowSelectionScreen extends Screen {
 	public void keyDown (KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			onLeavingScreen(this, PauseScreen.SCREEN_INDEX);
-		} 
-		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+		}
+        // "abbrechen" --> KeyEvent.VK_A
+		if (e.getKeyCode() == KeyEvent.VK_A) {
 			onLeavingScreen(this, GameScreen.SCREEN_INDEX);
 		}
 	}

@@ -108,6 +108,7 @@ public class GameScreen extends Screen {
 				}
 			}
 		}
+        // TODO: zufälliges Spawnen
 
 		visualEntity = new VisualEntity(new LinkedList<EntityComponentWrapper>());
 
@@ -167,31 +168,14 @@ public class GameScreen extends Screen {
 
 		});
 
-		shootButton.addMouseListener(new MouseListener() {
-
+		shootButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				onLeavingScreen(this, ArrowSelectionScreen.SCREEN_INDEX);
 			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
 		});
 
-		toggleStopwatch.addMouseListener(new MouseListener() {
+		toggleStopwatch.addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -203,22 +187,6 @@ public class GameScreen extends Screen {
 				}
 				System.out.println("Toggled stopwatch to " + Main.getContext().getTimeClock().isRunning());
 //				}
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
 			}
 		});
 	}
@@ -241,39 +209,15 @@ public class GameScreen extends Screen {
 	@Override
 	public void keyDown(KeyEvent e) {
 		super.keyDown(e);
-		if (Keys.isKeyPressed(KeyEvent.VK_LEFT)) {
-			onLeavingScreen(this, MainMenuScreen.SCREEN_INDEX);
-		}
+
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			onLeavingScreen(this, PauseScreen.SCREEN_INDEX);
 		}
-        /*
-		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-//			onLeavingScreen(this, ArrowSelectionScreen.SCREEN_INDEX);
+        // if you press s for "Shoot"-Button
+		if(e.getKeyCode() == KeyEvent.VK_S) {
+			onLeavingScreen(this, ArrowSelectionScreen.SCREEN_INDEX);
 		}
-		*/
 	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		super.mouseMoved(e);
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		super.mousePressed(e);
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		super.mouseReleased(e);
-	}
-
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
-        super.mouseWheelMoved(e);
-    }
 
     public void lockUI() {
 		endTurnButton.declineInput();

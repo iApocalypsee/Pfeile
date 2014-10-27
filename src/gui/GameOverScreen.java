@@ -7,6 +7,7 @@ import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Random;
@@ -119,6 +120,17 @@ public class GameOverScreen extends Screen {
         }
 
         return new Color(red , green, blue);
+    }
+
+    @Override
+    public void keyPressed (KeyEvent keyEvent) {
+        // "Beenden" - Button
+        if (keyEvent.getKeyCode() == KeyEvent.VK_B) {
+            // this should be the same code like in closeGame.mouseReleased
+            // if not, make it the same
+            runFlag = false;
+            GameLoop.setRunFlag(false);
+        }
     }
 
     @Override

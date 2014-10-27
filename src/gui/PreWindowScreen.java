@@ -613,6 +613,234 @@ public class PreWindowScreen extends Screen {
         }
     }
 
+    @Override
+    public void keyPressed (KeyEvent e) {
+        // Standardeinstellungen
+        if (e.getKeyCode() == KeyEvent.VK_S) {
+            Mechanics.KI = 2;
+            labels[0].setText("Computerstärke: " + "normal");
+
+            Mechanics.arrowNumberFreeSet = 5;
+            labels[1].setText("Pfeilanzahl [frei wählbar]: " + Mechanics.arrowNumberFreeSet);
+
+            Mechanics.arrowNumberPreSet = 10;
+            labels[2].setText("Pfeilanzahl [vorher wählbar]: " + Mechanics.arrowNumberPreSet);
+
+            Mechanics.lifeMax = 400;
+            labels[3].setText("maximales Leben: " + "mittel");
+
+            Mechanics.lifeRegeneration = 3;
+            labels[4].setText("Lebensregeneration: " + "mittel");
+
+            Mechanics.damageMulti = 3;
+            labels[5].setText("Schadensmultiplikator: " + "mittel");
+
+            Mechanics.turnsPerRound = 7;
+            labels[6].setText("Züge pro Runde: " + Mechanics.turnsPerRound);
+
+            Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(1, TimeUnit.MINUTES));
+            labels[7].setText("Zeit pro Zug: " + "1 min");
+
+            Mechanics.handicapPlayer = 0;
+            labels[8].setText("Handicap [Spieler]: " + "0%");
+
+            Mechanics.handicapKI = 0;
+            labels[9].setText("Handicap [Computer]: " + "0%");
+
+            Mechanics.worldSizeX = 13;
+            Mechanics.worldSizeY = 11;
+            labels[10].setText("Weltgröße: " + "normal");
+        }
+        // Fertig --> readyButton
+        else if (e.getKeyCode() == KeyEvent.VK_F) {
+            // tests, if every value was correctly added (i.e. not not-added)
+            // and if necessary he opens the confirmDialog
+            if (Mechanics.KI == -1) {
+                openConfirmDialog("Select Unselected Selections: Computerstärke");
+                return;
+            }
+            if (Mechanics.arrowNumberFreeSet == -1) {
+                openConfirmDialog("Select unselected Selections: Pfeilanzahl [frei wählbar]");
+                return;
+            }
+            if (Mechanics.arrowNumberPreSet == -1) {
+                openConfirmDialog("Select unselected Selections: Pfeilanzahl [vorher wählbar]");
+                return;
+            }
+            if (Mechanics.turnsPerRound == -1) {
+                openConfirmDialog("Select unselected Selections: Züge pro Runde");
+                return;
+            }
+            if (Mechanics.lifeMax == -1) {
+                openConfirmDialog("Select unselected Selections: maximales Leben");
+                return;
+            }
+            if (Mechanics.lifeRegeneration == -1) {
+                openConfirmDialog("Select unselected Selections: Lebensregeneration");
+                return;
+            }
+            if (Mechanics.damageMulti == -1f) {
+                openConfirmDialog("Select unselected Selections: Schadensmultiplikator");
+                return;
+            }
+            if (Main.getContext().getTimeClock().isTurnTimeInfinite()) {
+                openConfirmDialog("Select unselected Selections: Zeit pro Zug");
+                return;
+            }
+            if (Mechanics.worldSizeX == -1 || Mechanics.worldSizeY == -1) {
+                openConfirmDialog("Select unselected Selections: Weltgröße");
+                return;
+            }
+            if (Mechanics.handicapPlayer == -1 || Mechanics.handicapKI == -1) {
+                openConfirmDialog("Select unselected Selections: Handicap");
+                return;
+            }
+
+            correctInits();
+            new ArrowSelectionScreenPreSet();
+
+            if (Mechanics.arrowNumberPreSet > 0)
+                onLeavingScreen(this, ArrowSelectionScreenPreSet.SCREEN_INDEX);
+            else
+                onLeavingScreen(this, GameScreen.SCREEN_INDEX);
+        }
+        // Bestätigen
+        else if (e.getKeyCode() == KeyEvent.VK_B) {
+            //selectorComboBox.triggerListeners(e);
+            switch (selectorComboBox.getSelectedIndex()) {
+                case 0 : {
+                    // Computerstärke: erbärmlich = 0 --> brutal = 4
+                    switch (boxSelectKI.getSelectedIndex()) {
+                        case 0: Mechanics.KI = 4; break;
+                        case 1: Mechanics.KI = 3; break;
+                        case 3: Mechanics.KI = 1; break;
+                        case 4: Mechanics.KI = 0; break;
+                        default: Mechanics.KI = 2;
+                    }
+                    labels[0].setText("Computerstärke: " + boxSelectKI.getSelectedValue());
+                    return;
+                }
+                case 1 : {
+                    // Pfeilanzahl [frei wählbar]
+                    Mechanics.arrowNumberFreeSet = spinnerModelFreeSet.getValue();
+                    labels[1].setText("Pfeilanzahl [frei wählbar]: " + Mechanics.arrowNumberFreeSet);
+                    return;
+                }
+                case 2 : {
+                    // Pfeilanzahl [vorher wählbar]
+                    Mechanics.arrowNumberPreSet = spinnerModelPreSet.getValue();
+                    labels[2].setText("Pfeilanzahl [vorher wählbar]: " + spinnerModelPreSet.getValue());
+                    return;
+                }
+                case 3 : {
+                    // maximales Leben
+                    switch (boxSelectHigh.getSelectedIndex()) {
+                        case 0: Mechanics.lifeMax = 600; break;
+                        case 1: Mechanics.lifeMax = 480; break;
+                        case 3: Mechanics.lifeMax = 320; break;
+                        case 4: Mechanics.lifeMax = 270; break;
+                        default: Mechanics.lifeMax = 400;
+                    }
+                    labels[3].setText("maximales Leben: " + boxSelectHigh.getSelectedValue());
+                    return;
+                }
+                case 4 : {
+                    // Lebensregeneration
+                    switch (boxSelectHigh.getSelectedIndex()) {
+                        case 0: Mechanics.lifeRegeneration = 5; break; // hoch
+                        case 1: Mechanics.lifeRegeneration = 4; break;
+                        case 3: Mechanics.lifeRegeneration = 2; break;
+                        case 4: Mechanics.lifeRegeneration = 1; break; // niedrig
+                        default: Mechanics.lifeRegeneration = 3; // mittel
+                    }
+                    labels[4].setText("Lebensregeneration: " + boxSelectHigh.getSelectedValue());
+                    return;
+                }
+                case 5 : {
+                    // Schadensmuliplikator
+                    switch (boxSelectHigh.getSelectedIndex()) {
+                        case 0: Mechanics.damageMulti = 1.8f; break; // hoch
+                        case 1: Mechanics.damageMulti = 1.3f; break;
+                        case 3: Mechanics.damageMulti = 0.8f; break;
+                        case 4: Mechanics.damageMulti = 0.6f; break; // niedrig
+                        default: Mechanics.damageMulti = 1.0f;       // mittel
+                    }
+                    labels[5].setText("Schadensmultiplikator: " + boxSelectHigh.getSelectedValue());
+                    return;
+                }
+                case 6 : {
+                    // Züge pro Runde
+                    Mechanics.turnsPerRound = spinnerModelTurnsPerRound.getValue();
+                    labels[6].setText("Züge pro Runde: " + spinnerModelTurnsPerRound.getValue());
+                    return;
+                }
+                case 7 : {
+                    // Zeit pro Zug
+                    switch (boxSelectTime.getSelectedIndex()) {
+                        case 0: Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(5, TimeUnit.MINUTES)); break;
+                        case 1: Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(2, TimeUnit.MINUTES)); break;
+                        case 3: Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(40, TimeUnit.SECONDS)); break;
+                        case 4: Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(30, TimeUnit.SECONDS)); break;
+                        case 5: Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(20, TimeUnit.SECONDS)); break;
+                        default: Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(1, TimeUnit.MINUTES)); // 1 min
+                    }
+                    labels[7].setText("Zeit pro Zug: " + boxSelectTime.getSelectedValue());
+                    return;
+                }
+                case 8 : {
+                    // Handicap
+                    switch (boxSelectHandicapPlayer.getSelectedIndex()) {
+                        case 0: Mechanics.handicapPlayer = +25; break;
+                        case 1: Mechanics.handicapPlayer = +20; break;
+                        case 2: Mechanics.handicapPlayer = +15; break;
+                        case 3: Mechanics.handicapPlayer = +10; break;
+                        case 4: Mechanics.handicapPlayer = + 5; break;
+                        case 6: Mechanics.handicapPlayer = - 5; break;
+                        case 7: Mechanics.handicapPlayer = -10; break;
+                        case 8: Mechanics.handicapPlayer = -15; break;
+                        case 9: Mechanics.handicapPlayer = -20; break;
+                        case 10: Mechanics.handicapPlayer= -25; break;
+                        default: Mechanics.handicapPlayer=   0;
+                    }
+                    labels[8].setText("Handicap [Spieler]: " + boxSelectHandicapPlayer.getSelectedValue());
+                    switch (boxSelectHandicapKI.getSelectedIndex()) {
+                        case 0: Mechanics.handicapKI = +25; break;
+                        case 1: Mechanics.handicapKI = +20; break;
+                        case 2: Mechanics.handicapKI = +15; break;
+                        case 3: Mechanics.handicapKI = +10; break;
+                        case 4: Mechanics.handicapKI = + 5; break;
+                        case 6: Mechanics.handicapKI = - 5; break;
+                        case 7: Mechanics.handicapKI = -10; break;
+                        case 8: Mechanics.handicapKI = -15; break;
+                        case 9: Mechanics.handicapKI = -20; break;
+                        case 10: Mechanics.handicapKI= -25; break;
+                        default: Mechanics.handicapKI=   0;
+                    }
+                    labels[9].setText("Handicap [Computer]: " + boxSelectHandicapKI.getSelectedValue());
+                    return;
+                }
+                case 9: {
+                    // Weltgröße
+                    switch (boxSelectSize.getSelectedIndex()) {
+                        case 0: Mechanics.worldSizeX = 23; Mechanics.worldSizeY = 21; break;
+                        case 1: Mechanics.worldSizeX = 17; Mechanics.worldSizeY = 15; break;
+                        case 3: Mechanics.worldSizeX =  9; Mechanics.worldSizeY =  7; break;
+                        case 4: Mechanics.worldSizeX =  6; Mechanics.worldSizeY =  4; break;
+                        default:Mechanics.worldSizeX = 13; Mechanics.worldSizeY = 11;
+                    }
+                    labels[10].setText("Weltgröße: " + boxSelectSize.getSelectedValue());
+                    return;
+                }
+                default: {
+                    openConfirmDialog("Der ausgewählte Index von der <code> selectorComboBox </code> konnte nicht gefunden werden.");
+                    System.err.println("The selected Index of selectorComboBox couldn't be found. " +
+                            selectorComboBox.getSelectedValue() + " at " + selectorComboBox.getSelectedIndex() +
+                            " This error is in PreWindowScreen at: confirmButton.addMouseListener(...).");
+                }
+            }
+        }
+    }
+
     /**
      * Use that methods after clicking at <code> readyButton </code>, because here the missing corrections
      * i.e.<code> Mechanics.lifeRegeneration </code>
