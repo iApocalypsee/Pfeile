@@ -118,6 +118,7 @@ public class AimSelectionScreen extends Screen {
         // Draw the world and the player
         GameScreen.getInstance().getMap().draw(g);
         GameScreen.getInstance().getVisualEntity().draw(g);
+        GameScreen.getInstance().getAttackDrawer().draw(g);
 		
 		// draw the selectedField 
 		if (posX_selectedField >= 0 && posY_selectedField >= 0) {

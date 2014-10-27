@@ -118,7 +118,7 @@ public class Main {
 
         getContext().initTimeClock();
 
-        // run the game until GameWindow
+        // run the game until GameScreen
         GameLoop.run(1 / 60.0);
 
         // TODO: all gerate world methods need to be here or if they can be declared as a thread before GameLoop.run(1 / 60.0);
@@ -140,7 +140,8 @@ public class Main {
         SoundPool.playLoop_mainThemeMelodie(SoundPool.LOOP_COUNTINOUSLY);
 
         // Schalten wir auf den GameScreen evtl. über Warte-Screen wechseln
-        getGameWindow().getScreenManager().setActiveScreen(GameScreen.SCREEN_INDEX);
+        getGameWindow().getScreenManager().getActiveScreen().onLeavingScreen(
+                getGameWindow().getScreenManager().getActiveScreen(), GameScreen.SCREEN_INDEX);
 
         // starten wir das Spiel
         main.runGame();
@@ -168,7 +169,8 @@ public class Main {
      * Hier laeuft das Spiel nach allen Insizialisierungen
      */
     private void runGame() {
-
+        // reset TimeClock first, because with the change of the activePlayer a delegate in PfeileContext starts TimeClock and the activePlayer is set before this line
+        getContext().getTimeClock().reset();
         // start TimeClock
         getContext().getTimeClock().start();
 

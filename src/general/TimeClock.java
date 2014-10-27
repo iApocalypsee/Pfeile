@@ -26,10 +26,7 @@ public class TimeClock extends Component implements Runnable {
 	/** Variable, ob die Zeit abl�uft: 
 	 * true: Zeit l�uft ab
 	 * false: TimeClock ist gestoppt */
-	private boolean isRunning;
-
-	/** aktuelle Zeit */
-	private long timeCurrent = 0;
+	private boolean isRunning = false;
 
     private long sumTime = 0;
 	
@@ -56,7 +53,8 @@ public class TimeClock extends Component implements Runnable {
 		long lastTime = System.currentTimeMillis();
 		while (true) {
 			if (isRunning()) {
-				timeCurrent = System.currentTimeMillis(); 
+				/* aktuelle Zeit */
+                long timeCurrent = System.currentTimeMillis();
 				sumTime = sumTime + (timeCurrent - lastTime);
 				if (turnTime().toMillis() - sumTime <= 0) {
 					isRunning = false;
@@ -65,7 +63,11 @@ public class TimeClock extends Component implements Runnable {
 				} else {
 					timePrintString = timeFormatter (turnTime().toMillis() - sumTime);
 					lastTime = timeCurrent;
-				}
+
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException e) { e.printStackTrace(); }
+                }
 			} else {
 				try {
 					Thread.sleep(30);
@@ -88,6 +90,7 @@ public class TimeClock extends Component implements Runnable {
 	 * HINWEIS: an Start/Stop wird nicht ge�ndert, also ggf. stop / start aufrufen */
 	public synchronized void reset() {
 		sumTime = 0;
+        timePrintString = timeFormatter(turnTime().toMillis());
 	}
 	
 	
@@ -144,50 +147,47 @@ public class TimeClock extends Component implements Runnable {
         }else if (millisecTime>357539999){                 //�berpr�ft ob das limit von format nicht �berschreitet
             throw new RuntimeException("Time value exceeds allowed format"); 
         }else {
-          millisecTime = millisecTime/1000000;
-          long min= (millisecTime/60);
-          long sec= millisecTime-min*60;
+           millisecTime = millisecTime/1000000;
+           long min= (millisecTime/60);
+           long sec= millisecTime-min*60;
           
-          if(min < 10 && sec < 10){
-              time = "0"+min+":"+"0"+sec;
-          }
-          if(min > 10 && sec < 10){
-                  time = ""+min+":"+"0"+sec;
-              }
-          if(min < 10 && sec > 10){
-                  time = "0"+min+":"+sec;
-              }
-          if(min > 10 && sec > 10){
-                  time = ""+min+":"+sec;
-              }
-          
-          
+           if(min < 10 && sec < 10){
+                 time = "0"+min+":"+"0"+sec;
+           }
+           if(min > 10 && sec < 10){
+               time = ""+min+":"+"0"+sec;
+           }
+           if(min < 10 && sec > 10){
+               time = "0"+min+":"+sec;
+           }
+           if(min > 10 && sec > 10){
+               time = ""+min+":"+sec;
+           }
         } 
         return time;
     }
 	
 	/**
-	 * UNUSED
-	 * 
-	 * gibt zur�ck ob der Zug enden muss oder nicht
-	 * 
-	 * @return true - wenn die maximale Zeit pro Zug ('timeMax') ohne die Vergangene Zeit ('timeCurrent') kleiner als 0
+	 * gibt zur�ck ob der Zug enden muss oder nicht (entspricht
+     * <code>return getMilliDeath() < 0</code>)
+	 *
+	 * @return true - wenn die maximale Zeit pro Zug ('timeMax') ohne die Vergangene Zeit ('sumTime') kleiner als 0
 	 */
 	public synchronized boolean isEnd () {
-        return turnTime().toMillis() - timeCurrent < 0;
+        return turnTime().toMillis() - sumTime < 0;
 	}
 	
 	/** GETTER 
 	 * @return timePrintString*/ 
-	public synchronized String getTimePrintString () {
+	protected synchronized String getTimePrintString () {
 		return timePrintString;
 	}
 	
-	/** 
+	/** <code>turnTime().toMillis - sumTime </code> (sumTime ist die abgelaufene Zeit)
 	 * @return timeLeft - die �brige Zeit f�r diesen Zug
 	 */
 	public synchronized long getMilliDeath() {
-		return turnTime().toMillis() - timeCurrent;
+		return turnTime().toMillis() - sumTime;
 	}
 	
 	public boolean isRunning() {
@@ -196,7 +196,8 @@ public class TimeClock extends Component implements Runnable {
 
     /** Returns the time in which a player is allowed to make moves. <p>
      *
-     * If the underlying turn time variable is null, this method returns Duration.Inf,
+     * If the underlying turn time variable is null, this method returns <code>Duration.Inf</code> (scala) /
+     * <code> scala.concurrent.duration.Duration$.MODULES$.Inf()</code> (java),
      * otherwise it returns the underlying turn time variable directly. <p>
      *
      * For direct time calculation, use time conversion methods provided with the Duration object:
@@ -239,6 +240,6 @@ public class TimeClock extends Component implements Runnable {
 		
 		g.setColor(Color.BLACK);
 		g.setFont(STD_FONT);
-        g.drawString(this.getTimePrintString(), getX() + 4, getY() + 16);
+        g.drawString(getTimePrintString(), getX() + 4, getY() + 16);
 	}
 }

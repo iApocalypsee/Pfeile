@@ -8,6 +8,8 @@ import general.GameLoop;
 import general.Main;
 import general.Mechanics;
 import player.weapon.*;
+import scala.runtime.AbstractFunction1;
+import scala.runtime.BoxedUnit;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -56,6 +58,16 @@ public class ArrowSelectionScreenPreSet extends Screen {
      */
     public ArrowSelectionScreenPreSet() {
         super(SCREEN_NAME, SCREEN_INDEX);
+
+        onScreenLeft.register(new AbstractFunction1<ScreenChangedEvent, BoxedUnit>() {
+            @Override
+            public BoxedUnit apply (ScreenChangedEvent v1) {
+                Main.getContext().getTimeClock().reset();
+                Main.getContext().getTimeClock().start();
+
+                return BoxedUnit.UNIT;
+            }
+        });
 
         selectedArrows = new LinkedList<String>();
         arrowListSelected = new List(50, 200, 200, 350, this, selectedArrows);

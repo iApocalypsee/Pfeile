@@ -26,8 +26,6 @@ public class GameWindow extends JFrame {
 
 	private ScreenManager screenManager;
 
-    public static final Rectangle STD_WND_RECT = new Rectangle(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
-
 	/**
 	 * Konstruktor von GameWindow.
 	 */
@@ -83,6 +81,7 @@ public class GameWindow extends JFrame {
 		GameScreen.getInstance();
         ArrowSelectionScreen.getInstance();
         new ArrowSelectionScreenPreSet();
+        new GameOverScreen();
 		// NewWorldTestScreen$.MODULE$;
         screenManager.setActiveScreen(new PreWindowScreen());
 	}
@@ -118,7 +117,6 @@ public class GameWindow extends JFrame {
 	 */
 	public void update() {
 		Keys.updateKeys();
-		// TODO Very important, insert game code update calls here!
 	}
 
 	public void draw() {

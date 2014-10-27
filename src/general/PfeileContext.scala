@@ -16,7 +16,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   private var _activePlayer   : Player    = null
   private var _turnPlayer     : Player    = null
   private var _world          : WorldLike = null
-  private var _timeObj: TimeClock = null
+  private var _timeObj        : TimeClock = null
   private var _stopwatchThread: Thread    = null
 
 
@@ -75,7 +75,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
    * Initialiert die TimeClock
    */
   def initTimeClock () : Unit = {
-     _timeObj = new TimeClock
+     _timeObj = new TimeClock()
      _stopwatchThread = new Thread(_timeObj)
      _stopwatchThread.setDaemon(true)
      _stopwatchThread.setPriority(Thread.MIN_PRIORITY + 1)
