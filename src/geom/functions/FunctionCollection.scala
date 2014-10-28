@@ -6,22 +6,34 @@ package geom.functions
   */
 object FunctionCollection {
 
-  /** Applies the cubic function to the given parameters. notice: cei(0) = b
-		and cei(d) = b + c
-    * <b>acceleration until halfway, then deceleration </b>
+  /** Applies the cubic function to the given parameters.
+    * <b>acceleration until halfway, then deceleration </b><p>
     *
-    * @param t_arg Current time. (the current x-value)
-    * @param b The start value. [cnstant] (the start y-value)
-    * @param c Delta (change in value) [constant] (the end y-value, depending on the start-y-value; if b=0, then c=endValueOfY
-    * @param d Duration. [constant] (the end x-value is the first t_current + d): percusion of calculation
-    * @return A totally crazy abnormal value which is out of my bounds of thinking.
+    * <b>Usage</b><p>
+    * Let <code>b = 2.0; c = 2.5; d = 100.0</code>
+    * Notice for calculation:
+    * {{{
+    *   cubic_easing_inout(0, b, c, d) = b
+    *   cubic_easing_inout(d, b, c, d) = b + c
+    *
+    *             if x < 1 --------------> (c/2) * t^3 + b       = (c/2)x^3 + b
+    *   cei(x) =
+    *             else ------------------> (c/2) * (t^3 + 2) + b = (c/2)x^3 + b + c
+    * }}}
+    *
+    * @param t current x value, as in <code>f(x)</code>.
+    * @param b Start value <b>and</b> first summand of the end value.
+    * @param c Second summand of the end value. (the change in value)
+    * @param d Precision of the graph. (duration of x)
+    * @return Not so crazy anymore, just a higher-order function.
     */
-  def cubic_easing_inOut(t_arg: Double, b: Double, c: Double, d: Double): Double = {
-    var t = t_arg
-    t /= d/2
-    if (t < 1) return c/2*t*t*t + b
-    t -= 2
-    return c/2*(t*t*t + 2) + b
+  def cubic_easing_inout(t: Double, b: Double, c: Double, d: Double): Double = {
+    var _t = t
+    //_t /= d / 2
+    _t = _t / (d / 2)
+    if (_t < 1) return c / 2 * _t * _t * _t + b
+    _t -= 2
+    return c / 2 * (_t * _t * _t + 2) + b
   }
 
    /** Applies the quadratic function to the given parameters: acceleration until halfway, then deceleration

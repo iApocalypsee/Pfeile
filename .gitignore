@@ -25,6 +25,8 @@ javadocexport.xml
 .classpath
 /bin
 
+src/test/
+
 # and other stuff that we should not/do not need here
 src/resources/sfx/
 
