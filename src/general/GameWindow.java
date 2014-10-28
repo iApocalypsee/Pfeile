@@ -107,7 +107,6 @@ public class GameWindow extends JFrame {
 		window.setExtendedState(Frame.MAXIMIZED_BOTH);
 		window.setUndecorated(true);
 		window.setResizable(false);
-		window.setAlwaysOnTop(true);
 		window.setLocationRelativeTo(null);
 	}
 
