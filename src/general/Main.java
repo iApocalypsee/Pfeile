@@ -2,6 +2,7 @@ package general;
 
 import akka.actor.ActorSystem;
 import animation.SoundPool;
+import general.io.PreInitStage;
 import gui.*;
 import player.weapon.ArrowHelper;
 
@@ -144,7 +145,7 @@ public class Main {
 
         // Schalten wir auf den GameScreen evtl. über Warte-Screen wechseln
         getGameWindow().getScreenManager().getActiveScreen().onLeavingScreen(
-                getGameWindow().getScreenManager().getActiveScreen(), GameScreen.SCREEN_INDEX);
+		        getGameWindow().getScreenManager().getActiveScreen(), GameScreen.SCREEN_INDEX);
 
         // starten wir das Spiel
         main.runGame();
