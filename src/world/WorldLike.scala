@@ -15,6 +15,9 @@ trait WorldLike {
   /** The entities that describe the population of the world. */
   def entities: EntityManagerLike
 
+  /** The name of the world. Defaults to its hash code. */
+  def name: String = hashCode().toString
+
 }
 
 class DefaultWorld extends WorldLike {

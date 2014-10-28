@@ -93,6 +93,9 @@ public class Main {
      * Main-Method �ffnet eine neue Instanz von Main: main
      */
     public static void main(String[] arguments) {
+
+	    PreInitStage.execute();
+
         // Let's begin playing the title song (so the user knows, that something is done while loading the game)
         SoundPool.play_titleMelodie();
 

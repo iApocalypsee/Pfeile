@@ -1,6 +1,5 @@
 package newent
 
-import general.Delegate.Delegate
 import player.Life
 
 /** An entity that has its own life status.

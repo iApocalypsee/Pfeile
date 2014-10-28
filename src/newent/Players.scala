@@ -21,8 +21,7 @@ class Player(world: WorldLike,
 
   // Game section.
   onDeath += { () =>
-     getGameWindow.getScreenManager.getActiveScreen.onLeavingScreen
-         (getGameWindow.getScreenManager.getActiveScreen, gui.GameOverScreen.SCREEN_INDEX)
+     getGameWindow.getScreenManager.getActiveScreen.onLeavingScreen(getGameWindow.getScreenManager.getActiveScreen, gui.GameOverScreen.SCREEN_INDEX)
 
   }
 

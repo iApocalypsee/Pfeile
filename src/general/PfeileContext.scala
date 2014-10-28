@@ -4,6 +4,7 @@ import newent.Player
 import world.WorldLike
 
 import scala.concurrent.duration._
+import scala.xml._
 
 /** The game mechanics of "Pfeile" in its own class. <p>
   *
@@ -18,7 +19,6 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   private var _world          : WorldLike = null
   private var _timeObj        : TimeClock = null
   private var _stopwatchThread: Thread    = null
-
 
   /** Called when the turn has been ended. */
   val onTurnEnd = Delegate.createZeroArity
