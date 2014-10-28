@@ -1,4 +1,6 @@
-package geom
+package geom.functions
+
+import geom.Vector2
 
 /**
  *

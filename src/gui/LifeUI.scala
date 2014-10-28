@@ -1,5 +1,7 @@
 package gui
 
+import geom.functions.FunctionCollection
+
 import java.awt.{Color, Graphics2D}
 
 import comp.{Label, Bar}
@@ -34,11 +36,17 @@ class LifeUI(var x: Int, var y: Int, private var _life: Life) extends Drawable {
   _life.onLifeChanged += { l =>
     lifebar.fillFactor = l.getNewLife / _life.getMaxLife
 
-    // red: it is linear increased with fillFactor
-    // blue: it is "0" at 0 or max Life and the more it gets to a fillFactor of 0.5, the higher is the green value
-    // green: opposite of red.
-    lifebar.majorSplitColor = new Color(255 - (255 * lifebar.fillFactor).asInstanceOf[Int],
-        (lifebar.fillFactor * 255).asInstanceOf[Int], (Math.sin(lifebar.fillFactor * Math.PI) * 35.0).asInstanceOf[Int])
+    // red: it is qudratic increased up to the middle and then the growth decreses qudraticly with fillFactor: 0 -> 255
+    // blue: it is "0" at 0 or max Life and the more it gets to a fillFactor of 0.5, the higher is the blue value
+    // green: opposite of red. 255 -> 0
+
+
+    lifebar.majorSplitColor = new Color(
+       255 - FunctionCollection.quadratic_easing_inOut(255.0 * lifebar.fillFactor, 0.0, 255.0, 255.0).asInstanceOf[Int],
+       FunctionCollection.quadratic_easing_inOut(255.0 * lifebar.fillFactor, 0.0, 255.0, 255.0).asInstanceOf[Int],
+       (Math.sin(lifebar.fillFactor * Math.PI) * 32.0).asInstanceOf[Int],
+       255)
+
     lifebar.split(0.0, lifebar.majorSplitColor)
 
     percentLife setText percentageLifeDetails

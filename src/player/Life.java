@@ -97,7 +97,7 @@ public class Life {
                 for (EntityLike entity : entities) {
                     if (entity instanceof LivingEntity) {
                         if (((LivingEntity) entity).life().getLife() <= 0) {
-                            ((LivingEntity) entity).onDeath();
+                            ((LivingEntity) entity).onDeath().call();
                         }
                     }
                 }

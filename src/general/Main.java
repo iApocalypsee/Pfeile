@@ -31,8 +31,6 @@ public class Main {
     /** Die erw�nschte FPS-Rate. Wenn <code>setFPS == 0</code>, ist die Framerate unbegrenzt.
      * Unbegrenzte Framerate noch nicht implementiert! */
     private volatile int setFPS = 35;
-    /** Der Timeout, der in der <code>Thread.sleep()</code>-Methode als Argument verwendet wird. */
-    private int framerateTimeout = 1000 / setFPS;
     // Zeichenvariablen.
     private boolean running = true;
     public static int getWindowWidth() { return 1366;}
@@ -94,7 +92,6 @@ public class Main {
      * Main-Method �ffnet eine neue Instanz von Main: main
      */
     public static void main(String[] arguments) {
-
 	    PreInitStage.execute();
 
         // Let's begin playing the title song (so the user knows, that something is done while loading the game)
@@ -350,7 +347,6 @@ public class Main {
      * Berechnet den {@link #framerateTimeout} neu.
      */
     private void recalculateTimeout() {
-        framerateTimeout = 1000 / setFPS;
     }
 
     /**

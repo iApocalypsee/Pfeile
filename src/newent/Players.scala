@@ -22,7 +22,6 @@ class Player(world: WorldLike,
   // Game section.
   onDeath += { () =>
      getGameWindow.getScreenManager.getActiveScreen.onLeavingScreen(getGameWindow.getScreenManager.getActiveScreen, gui.GameOverScreen.SCREEN_INDEX)
-
   }
 
   private var _localVisionPoint = visionMap.grantVision(getGridX, getGridY, 4)
