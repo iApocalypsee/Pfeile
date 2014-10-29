@@ -12,6 +12,4 @@ trait LivingEntity extends Entity {
   /** The life of the entity. */
   val life: Life
 
-  /** called when the entity is killed. If the entity was a player, you need to register a function to GameOverScreen or GameWonScreen */
-  val onDeath = general.Delegate.createZeroArity
 }

@@ -20,9 +20,6 @@ class Player(world: WorldLike,
                                    InventoryEntity with LivingEntity with VisionEntity with Combatant {
 
   // Game section.
-  onDeath += { () =>
-     getGameWindow.getScreenManager.getActiveScreen.onLeavingScreen(getGameWindow.getScreenManager.getActiveScreen, gui.GameOverScreen.SCREEN_INDEX)
-  }
 
   private var _localVisionPoint = visionMap.grantVision(getGridX, getGridY, 4)
 
@@ -47,6 +44,11 @@ class Player(world: WorldLike,
   override def defaultMovementPoints = 4
   override val pathfinderLogic       = new AStarPathfinder(20, { t => true })
   override val life                  = new Life(400.0, 2.2, 400.0)
+
+  // Delegate registration only valid after initialization of the actual life object.
+  life.onDeath += { () =>
+    getGameWindow.getScreenManager.getActiveScreen.onLeavingScreen(getGameWindow.getScreenManager.getActiveScreen, gui.GameOverScreen.SCREEN_INDEX)
+  }
 
   val onTurnGet = Delegate.createZeroArity
   val onTurnEnd = Delegate.createZeroArity

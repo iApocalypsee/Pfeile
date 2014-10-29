@@ -5,6 +5,8 @@ import general.Main;
 import general.Mechanics;
 import newent.EntityLike;
 import newent.LivingEntity;
+import scala.runtime.AbstractFunction1;
+import scala.runtime.BoxedUnit;
 
 import java.util.List;
 
@@ -19,6 +21,7 @@ public class Life {
 
 	/** Called when the life has been changed. */
 	public final Delegate.Delegate<LifeChangedEvent> onLifeChanged = new Delegate.Delegate<LifeChangedEvent>();
+	public final Delegate.Function0Delegate onDeath = new Delegate.Function0Delegate();
 
 	/**
 	 * Creates a new instance from the Life class with customized preferences.
@@ -31,6 +34,16 @@ public class Life {
 		this.lifemax = lifemax;
 		this.liferegen = liferegen;
 		this.life = startingLife;
+
+		onLifeChanged.register(new AbstractFunction1<LifeChangedEvent, BoxedUnit>() {
+			@Override
+			public BoxedUnit apply(LifeChangedEvent v1) {
+				if(v1.getNewLife() <= 0) {
+					onDeath.call();
+				}
+				return BoxedUnit.UNIT;
+			}
+		});
 	}
 
     /** Creates a new instance from the Life class by using the standard values.
@@ -82,26 +95,16 @@ public class Life {
 	}
 
 	/**
-	 * Fired when the life has been changed.
+	 * Fired when the life has been changed. <p></p>
+	 * This class is just an event class that carries information to the delegates. It should not
+	 * execute any code beforehand.
 	 */
 	public final class LifeChangedEvent {
 
 		private final double newLife;
 
 		public LifeChangedEvent(double newLife) {
-			if (newLife > 0)
-                this.newLife = newLife;
-            else {
-                this.newLife = 0;
-                List<EntityLike> entities = Main.getContext().world().entities().javaEntityList();
-                for (EntityLike entity : entities) {
-                    if (entity instanceof LivingEntity) {
-                        if (((LivingEntity) entity).life().getLife() <= 0) {
-                            ((LivingEntity) entity).onDeath().call();
-                        }
-                    }
-                }
-            }
+			this.newLife = newLife;
 		}
 
 		public double getNewLife() {
