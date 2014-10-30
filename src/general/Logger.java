@@ -41,14 +41,15 @@ public final class Logger {
 	public static void logCurrentStackTrace() {
 		StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
 		String log = "Stack trace (most recent call first): \n";
-		for(StackTraceElement e : stackTrace) {
-			if(e.getLineNumber() >= 100) {
+		for (int i = 1; i < stackTrace.length; i++) {
+			StackTraceElement e = stackTrace[i];
+			if (e.getLineNumber() >= 100) {
 				log += "\tline " + e.getLineNumber() + "\t" + e.getClassName() + "::" + e.getMethodName();
 			} else {
 				log += "\tline " + e.getLineNumber() + "\t\t" + e.getClassName() + "::" + e.getMethodName();
 			}
 
-			if(e.isNativeMethod()) {
+			if (e.isNativeMethod()) {
 				log += " <<native>>";
 			}
 			log += "\n";
