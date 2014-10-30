@@ -214,9 +214,15 @@ public class GameScreen extends Screen {
 			onLeavingScreen(this, PauseScreen.SCREEN_INDEX);
 		}
         // if you press s for "Shoot"-Button
-		if(e.getKeyCode() == KeyEvent.VK_S) {
+		else if(e.getKeyCode() == KeyEvent.VK_S) {
 			onLeavingScreen(this, ArrowSelectionScreen.SCREEN_INDEX);
 		}
+        else if(e.getKeyCode() == KeyEvent.VK_E) {
+            Main.getContext().onTurnEnd().call();
+        }
+        //FIXME remove this later
+        else
+            getLifeUI().life().setLife(getLifeUI().life().getLife() - 5);
 	}
 
     public void lockUI() {

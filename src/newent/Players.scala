@@ -47,7 +47,9 @@ class Player(world: WorldLike,
 
   // Delegate registration only valid after initialization of the actual life object.
   life.onDeath += { () =>
-    getGameWindow.getScreenManager.getActiveScreen.onLeavingScreen(getGameWindow.getScreenManager.getActiveScreen, gui.GameOverScreen.SCREEN_INDEX)
+     getGameWindow.getScreenManager.getActiveScreen.onLeavingScreen(getGameWindow.getScreenManager.getActiveScreen, gui.GameOverScreen.SCREEN_INDEX)
+     //animation.SoundPool.stop_allMelodies()
+     //animation.SoundPool.start_gameOverMelodie()
   }
 
   val onTurnGet = Delegate.createZeroArity
