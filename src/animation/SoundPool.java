@@ -64,6 +64,7 @@ public class SoundPool {
         } catch (Exception e) { e.printStackTrace(); }
         finally {
             try {
+                assert audioInputStream != null;
                 audioInputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -146,4 +147,11 @@ public class SoundPool {
 
     /** Is the tensionTheme music clip still playing? */
     public static boolean isPlaying_tensionThemeMelodie () { return tensionThemeMelodie.isRunning(); }
+
+    /** This stops all possible melodies */
+    public static void stop_allMelodies() {
+        stop_mainThemeMelodie();
+        stop_tensionThemeMelodie();
+        stop_titleMelodie();
+    }
 }

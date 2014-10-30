@@ -2,6 +2,7 @@ package gui;
 
 import comp.Button;
 import general.GameLoop;
+import general.Logger;
 import general.Main;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;
@@ -10,21 +11,22 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Random;
 
 /** This is the Screen being called at the end of the Game */
 public class GameOverScreen extends Screen {
     public static final int SCREEN_INDEX = 13;
     public static final String SCREEN_NAME = "Game Over";
 
-    private final Color TRANSPAREND_BACKGROUND = new Color (60, 60, 87, 96);
+    private final Color TRANSPAREND_BACKGROUND = new Color (79, 79, 79, 76);
 
     private Button closeGame;
     private Font font_GameOver;
     private Font font_YouLose;
-    private Color lastColorOfYouLose;
+    private volatile Color lastColorOfYouLose;
+    private Color gameOverColor;
     private Thread calcTimeThread = null;
     private int counter = 0;
+    private long timer = 0;
     private boolean runFlag = true;
 
     /**
@@ -36,19 +38,20 @@ public class GameOverScreen extends Screen {
         super(SCREEN_NAME, SCREEN_INDEX);
 
         lastColorOfYouLose = new Color(213, 192, 24);
+        gameOverColor = new Color(247, 16, 11);
 
-        font_GameOver = new Font("28 Days Later", Font.BOLD, 380);
+        font_GameOver = new Font("28 Days Later", Font.PLAIN, 300);
         if (comp.Component.isFontInstalled(font_GameOver) == false) {
-            font_GameOver = new Font("ShadowedGermanica", Font.BOLD, 380);
+            font_GameOver = new Font("ShadowedGermanica", Font.BOLD, 310);
             if (comp.Component.isFontInstalled(font_GameOver) == false)
-                font_GameOver = new Font(comp.Component.STD_FONT.getFontName(), Font.BOLD, 380);
+                font_GameOver = new Font(comp.Component.STD_FONT.getFontName(), Font.BOLD, 310);
         }
-        // TODO: Schriftarten wählen
-        font_YouLose = new Font("Aladdin", Font.BOLD, 320);
+
+        font_YouLose = new Font("Aladdin", Font.BOLD, 260);
         if (comp.Component.isFontInstalled(font_GameOver) == false) {
-            font_YouLose = new Font("18thCentury", Font.BOLD, 300);
+            font_YouLose = new Font("18thCentury", Font.BOLD, 245);
             if (comp.Component.isFontInstalled(font_GameOver) == false)
-                font_YouLose = new Font(comp.Component.STD_FONT.getFontName(), Font.BOLD, 300);
+                font_YouLose = new Font(comp.Component.STD_FONT.getFontName(), Font.BOLD, 245);
         }
 
 
@@ -65,18 +68,20 @@ public class GameOverScreen extends Screen {
         calcTimeThread = new Thread(new Runnable() {
             private long lastFrame;
             private long thisFrame;
-
-            /** current Time from calcTimeThread in MilliSecounds*/
-            private long timer = 0;
+            private long delta;
 
             @Override
             public void run () {
                 lastFrame = System.currentTimeMillis();
                 while (runFlag) {
                     thisFrame = System.currentTimeMillis();
-                    timer = timer + (int) (thisFrame - lastFrame);
-                    counter++;
-                    lastColorOfYouLose = calcColor();
+                    timer = thisFrame - lastFrame;
+                    delta = delta + timer;
+                    // if (delta >= 1000) {
+                        delta = delta - 1000;
+                        counter++;
+                        lastColorOfYouLose = calcColor();
+                    // }
                     lastFrame = thisFrame;
 
                     try {
@@ -100,26 +105,20 @@ public class GameOverScreen extends Screen {
     /** returns the Color of the String "You Lose!". It uses "timer", calculated by the Thread, to change the Color in
      * a way, that the String will sparkle. */
     public Color calcColor () {
-        new Color (243, 197, 26);
-        int red, green, blue;
-        red = lastColorOfYouLose.getRed();
-        green = lastColorOfYouLose.getGreen();
-        blue = lastColorOfYouLose.getBlue();
+        // Old Version getting black and wight
+        //int red, green, blue;
+        // sin(x / (0.1 * Math.PI)) sind die Nullstellen bei 0+- k * 1 mit k aus den Ganzen Zahlen
+        // jede 1/60s: counter++
+        // ==> bei counter % 30 : 0.5s
+        // bei sin(counter/(pi*6))^2 jede Sekunde ist die Nullstelle erreicht. dh. innerhalb einer S ändert er die Farbe
+        // von ganz dunkel zu ganz hell zu ganz dunkel
+        double sin = Math.sin(counter/(Math.PI * 102));
+        //red = (int) Math.round(Math.abs(sin * sin * sin * 255.0));
+        //green = (int) Math.round(Math.abs(sin * sin * sin * 255.0));
+        //blue = (int) Math.round(Math.abs(sin * sin * sin * 255.0));
+        //return new Color(red , green, blue);
 
-        // every 1/8 secound
-        if (counter % (60 * 0.125)== 0) {
-            red = (int) (Math.abs(Math.sin(counter)) * 240);
-        }
-        // every 1/4 secound
-        if (counter % (60 * 0.25) == 0) {
-            green = (int) (Math.abs(Math.sin(counter - Math.PI / 4)) * 240);
-        }
-        // every 1/2 secound
-        if (counter % (60 * 0.5) == 0) {
-            blue = (int) (Math.abs(Math.sin(counter - Math.PI)) * 240);
-        }
-
-        return new Color(red , green, blue);
+        return new Color(Color.HSBtoRGB((float) (counter / (Math.PI * 84)), (float) (sin * sin), 1f));
     }
 
     @Override
@@ -143,13 +142,13 @@ public class GameOverScreen extends Screen {
         g.setColor(TRANSPAREND_BACKGROUND);
         g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 
-        g.setColor(new Color(247, 16, 11));
+        g.setColor(gameOverColor);
         g.setFont(font_GameOver);
-        g.drawString("Game Over", 20, 30);
+        g.drawString("Game Over", 20, 300);
 
         g.setColor(lastColorOfYouLose);
         g.setFont(font_YouLose);
-        g.drawString("You Lose!", 60, 600);
+        g.drawString("You Lose!", 108, 590);
 
         closeGame.draw(g);
     }
