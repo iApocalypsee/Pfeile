@@ -73,17 +73,26 @@ public class PreWindowScreen extends Screen {
     /** Font for "Pfeile", printed in the upper right corner */
     private Font fontBig;
 
+    /** Color for "Pfeile" */
+    private Color colorBig;
+
     /** position of <code>g.drawString("Pfeile", fontBigPosition.x, fontBigPosition.y); </code> */
     private Point fontBigPosition;
 
     /** Font for "Ein Strategiespiel" */
     private Font fontMiddle;
 
+    /** Color of "Ein Strategiespiel" */
+    private Color colorMiddle;
+
     /** position of <code>g.drawString("ein Strategiespiel", fontMiddlePosition.x, fontMiddlePosition.y); </code>*/
     private Point fontMiddlePosition;
 
     /** Font for "Josip Palavra und Daniel Schmaus" */
     private Font fontSmall;
+
+    /** Color for "Josip Palavra und Daniel Schmaus" */
+    private Color colorSmall;
 
     /** position of <code>g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y")</code> */
     private Point fontSmallPosition;
@@ -168,6 +177,10 @@ public class PreWindowScreen extends Screen {
         spinnerModelTurnsPerRound = new SpinnerModel(7, 1, 40, 1);
         spinner = new Spinner(boxSelectHigh.getX(), selectorComboBox.getY(), this, spinnerModelPreSet);
         spinner.setVisible(false);
+
+        colorBig = new Color (159, 30, 29);
+        colorMiddle = new Color (213, 191, 131);
+        colorSmall = new Color (205, 212, 228);
 
         fontBig = new Font("Blade 2", Font.BOLD, 220);
         fontMiddle = new Font("Calligraphic", Font.PLAIN, 48);
@@ -879,13 +892,13 @@ public class PreWindowScreen extends Screen {
         g.setColor(TRANSPARENT_BACKGROUND);
         g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 
-        g.setColor(new Color (159, 30, 29));
+        g.setColor(colorBig);
         g.setFont(fontBig);
         g.drawString("Pfeile", fontBigPosition.x, fontBigPosition.y);
-        g.setColor(new Color (213, 191, 131));
+        g.setColor(colorMiddle);
         g.setFont(fontMiddle);
         g.drawString("ein Strategiespiel", fontMiddlePosition.x, fontMiddlePosition.y);
-        g.setColor(new Color (205, 212, 228));
+        g.setColor(colorSmall);
         g.setFont(fontSmall);
         g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y );
 

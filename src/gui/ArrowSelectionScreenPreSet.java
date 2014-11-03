@@ -44,14 +44,20 @@ public class ArrowSelectionScreenPreSet extends Screen {
     /** Font for "Ein Strategiespiel" */
     private Font fontMiddle;
 
-    /** position of <code>g.drawString("ein Strategiespiel", fontMiddlePosition.x, fontMiddlePosition.y); </code>*/
+    /** position of <code>g.drawString("ein Strategiespiel", fontMiddlePosition.x, fontMiddlePosition.y); </code> */
     private Point fontMiddlePosition;
+
+    /** position of <code>g.drawString("ein Strategiespiel", fontMiddlePosition.x, fontMiddlePosition.y); </code> */
+    private Color colorMiddle;
 
     /** Font for "Pfeile", printed in the upper right corner */
     private Font fontBig;
 
     /** position of <code>g.drawString("Pfeile", fontBigPosition.x, fontBigPosition.y); </code> */
     private Point fontBigPosition;
+
+    /** Color of <code>g.drawString("Pfeile", fontBigPosition.x, fontBigPosition.y); </code> */
+    private Color colorBig;
 
     /**
      * Screen für die Pfeilauswahl für vorhersetzbaren Pfeilen.
@@ -81,6 +87,9 @@ public class ArrowSelectionScreenPreSet extends Screen {
         }
 
         remainingArrows.setDeclineInputColor(new Color(202, 199, 246));
+
+        colorBig = new Color (159, 30, 29);
+        colorMiddle = new Color (213, 191, 131);
 
         fontBig = new Font("Blade 2", Font.BOLD, 220);
         fontMiddle = new Font("Calligraphic", Font.PLAIN, 48);
@@ -282,16 +291,29 @@ public class ArrowSelectionScreenPreSet extends Screen {
                 setArrowListSelected(selectedArrows);
             }
         }
+        // FIXME: remove this code here later
+        // die Anzahl an zufälligen Pfeilen durch alle anderen Tasten direkt auswählen
+        else {
+            java.util.Random randomGen = new Random();
+            if (selectedArrows.get(0).equals("<keine Pfeile>")) {
+                selectedArrows.remove(0);
+            }
+            while (selectedArrows.size() < Mechanics.arrowNumberPreSet) {
+                selectedArrows.add(ArrowHelper.arrowIndexToName(randomGen.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES)));
+            }
+            remainingArrows.setText("Übrige Pfeile: " + (Mechanics.arrowNumberPreSet - selectedArrows.size()));
+            setArrowListSelected(selectedArrows);
+        }
     }
 
     @Override
     public void draw(Graphics2D g) {
         g.setColor(TRANSPARENT_BACKGROUND);
         g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
-        g.setColor(new Color (159, 30, 29));
+        g.setColor(colorBig);
         g.setFont(fontBig);
         g.drawString("Pfeile", fontBigPosition.x, fontBigPosition.y);
-        g.setColor(new Color (213, 191, 131));
+        g.setColor(colorMiddle);
         g.setFont(fontMiddle);
         g.drawString("ein Strategiespiel", fontMiddlePosition.x, fontMiddlePosition.y);
 
