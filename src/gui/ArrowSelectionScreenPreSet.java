@@ -14,6 +14,7 @@ import scala.runtime.BoxedUnit;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.LinkedList;
+import java.util.Random;
 
 /**
  * This Screen is used to set the Arrows before the Game (<code>Mechanics.arrowNumberPreSet</code>). It directly replaces
@@ -29,7 +30,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
     public static final String SCREEN_NAME = "ArrowSelectionScreenPreSet";
 
     private Label remainingArrows;
-    private Button readyButton;
+    private Button readyButton, randomButton;
 
     /** Liste der Button f�r andere Aufgaben */
     Button [] buttonListArrows = new Button[8];
@@ -154,6 +155,26 @@ public class ArrowSelectionScreenPreSet extends Screen {
             }
         });
 
+        randomButton = new Button (readyButton.getX(), readyButton.getY() - 300, this, "Zufälliger Pfeil");
+        randomButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased (MouseEvent e) {
+                if (randomButton.getSimplifiedBounds().contains(e.getPoint())) {
+                    java.util.Random randomGen = new Random();
+                    String arrow = ArrowHelper.arrowIndexToName(randomGen.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES));
+
+                    if (Mechanics.arrowNumberPreSet > selectedArrows.size()) {
+                        if (selectedArrows.get(0).equals("<keine Pfeile>")) {
+                            selectedArrows.remove(0);
+                        }
+                        selectedArrows.add(arrow);
+                        remainingArrows.setText("Übrige Pfeile: " + (Mechanics.arrowNumberPreSet - selectedArrows.size()));
+                        setArrowListSelected(selectedArrows);
+                    }
+                }
+            }
+        });
+
         selectedArrows.add("<keine Pfeile>");
         setArrowListSelected(selectedArrows);
 
@@ -247,6 +268,18 @@ public class ArrowSelectionScreenPreSet extends Screen {
                 openConfirmQuestion("Bitten wählen sie alle Pfeile aus!");
             } else {
                 GameLoop.setRunFlag(false);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_Z) {
+            java.util.Random randomGen = new Random();
+            String arrow = ArrowHelper.arrowIndexToName(randomGen.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES));
+
+            if (Mechanics.arrowNumberPreSet > selectedArrows.size()) {
+                if (selectedArrows.get(0).equals("<keine Pfeile>")) {
+                    selectedArrows.remove(0);
+                }
+                selectedArrows.add(arrow);
+                remainingArrows.setText("Übrige Pfeile: " + (Mechanics.arrowNumberPreSet - selectedArrows.size()));
+                setArrowListSelected(selectedArrows);
             }
         }
     }
