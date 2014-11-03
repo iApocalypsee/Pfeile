@@ -1,7 +1,6 @@
 package gui;
 
 import comp.Button;
-import general.Keys;
 import general.Main;
 import newent.EntityComponentWrapper;
 import newent.Player;
@@ -16,6 +15,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * <b>4.1.2014 (Josip):</b> Konstruktor braucht keine ScreenManager-Instanz mehr. <br><br>
@@ -64,9 +64,7 @@ public class GameScreen extends Screen {
 	private LifeUI getLifeUI() {
 		if(lifeUI == null) {
 			synchronized(this) {
-				if(lifeUI == null) {
-					lifeUI = new LifeUI(Main.getWindowWidth() - 200, Main.getWindowHeight() - 150, Main.getContext().getActivePlayer().life());
-				}
+				lifeUI = new LifeUI(Main.getWindowWidth() - 200, Main.getWindowHeight() - 150, Main.getContext().getActivePlayer().life());
 			}
 		}
 		return lifeUI;
@@ -90,9 +88,6 @@ public class GameScreen extends Screen {
 		Main.getContext().setWorld(new DefaultWorld());
 		TerrainLike terrain = Main.getContext().getWorld().terrain();
 
-		Point spawnPoint = null;
-		Point spawnPointEnemy = null;
-
 		// Comment that out later.
 		// Generating Component objects for every tile...
 		List<TileComponentWrapper> compWrappers = new ArrayList<TileComponentWrapper>(terrain.width() * terrain.height());
@@ -100,15 +95,28 @@ public class GameScreen extends Screen {
 			for (int y = 0; y < terrain.height(); y++) {
 				TileLike tile = (TileLike) terrain.tileAt(x, y);
 				compWrappers.add(TileComponentWrapper.tile2ComponentTile(tile));
-				if(spawnPoint == null && tile instanceof GrassTile) {
-					spawnPoint = new Point(tile.latticeX(), tile.latticeY());
-				}
-				if(spawnPointEnemy == null && spawnPoint != null && tile instanceof GrassTile && spawnPoint.x != tile.latticeX() && spawnPoint.y != tile.latticeY()) {
-					spawnPointEnemy = new Point(tile.latticeX(), tile.latticeY());
-				}
 			}
 		}
-        // TODO: zufälliges Spawnen
+
+        // spawning
+        Point spawnPoint = null;
+        Point spawnPointEnemy = null;
+        java.util.Random randomGen = new Random();
+
+        boolean isSpawnValid = false;
+        do {
+            TileLike tile = (TileLike) terrain.tileAt(randomGen.nextInt(terrain.width()), randomGen.nextInt(terrain.height()));
+            if(spawnPoint == null && tile instanceof GrassTile) {
+                spawnPoint = new Point(tile.latticeX(), tile.latticeY());
+            }
+            tile = (TileLike) terrain.tileAt(randomGen.nextInt(terrain.width()), randomGen.nextInt(terrain.height()));
+            if(spawnPoint != null && tile instanceof GrassTile) {
+                if ((spawnPoint.x > tile.latticeX() + 3 || spawnPoint.x < tile.latticeX() - 3) && (spawnPoint.y > tile.latticeY() + 3 || spawnPoint.y < tile.latticeY() - 3)) {
+                    spawnPointEnemy = new Point(tile.latticeX(), tile.latticeY());
+                    isSpawnValid = true;
+                }
+            }
+        } while (!isSpawnValid);
 
 		visualEntity = new VisualEntity(new LinkedList<EntityComponentWrapper>());
 
@@ -222,7 +230,7 @@ public class GameScreen extends Screen {
         }
         //FIXME remove this later
         else
-            getLifeUI().life().setLife(getLifeUI().life().getLife() - 5);
+            getLifeUI().life().setLife(getLifeUI().life().getLife() - 10);
 	}
 
     public void lockUI() {

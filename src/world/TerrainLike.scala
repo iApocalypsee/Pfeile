@@ -31,7 +31,7 @@ trait TerrainLike {
     *
     * @param x The x coordinate.
     * @param y The y coordinate.
-    * @return A boolean value.
+    * @return is the point at the given point on the map (<code>x >= 0 && y >= 0 && x < width && y < height</code>)
     */
   def isTileValid(x: Int, y: Int) = x >= 0 && x < width && y >= 0 && y < height
 
