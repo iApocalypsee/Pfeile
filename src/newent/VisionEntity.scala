@@ -11,7 +11,7 @@ trait VisionEntity extends Entity {
   val visionMap = new VisionMap(this)
 
   /** The sight radius. */
-  var visionRadius = 4
+  var visionRadius = 5
 
   // These calls are NOT OPTIONAL right now, don't delete them!
   setGridX(getGridX)

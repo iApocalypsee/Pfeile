@@ -21,13 +21,13 @@ class Player(world: WorldLike,
 
   // Game section.
 
-  private var _localVisionPoint = visionMap.grantVision(getGridX, getGridY, 4)
+  private var _localVisionPoint = visionMap.grantVision(getGridX, getGridY, 5)
 
   private def updateLocalVisionPoint(): Unit = {
     if(_localVisionPoint ne null) {
       _localVisionPoint.releaseVision()
     }
-    _localVisionPoint = visionMap.grantVision(getGridX, getGridY, 4)
+    _localVisionPoint = visionMap.grantVision(getGridX, getGridY, 5)
   }
 
   override protected def setGridX(x: Int): Unit = {
@@ -47,6 +47,7 @@ class Player(world: WorldLike,
 
   // Delegate registration only valid after initialization of the actual life object.
   life.onDeath += { () =>
+     general.Main.getContext.getTimeClock.stop()
      getGameWindow.getScreenManager.getActiveScreen.onLeavingScreen(getGameWindow.getScreenManager.getActiveScreen, gui.GameOverScreen.SCREEN_INDEX)
      //animation.SoundPool.stop_allMelodies()
      //animation.SoundPool.start_gameOverMelodie()

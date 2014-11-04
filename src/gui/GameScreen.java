@@ -111,7 +111,7 @@ public class GameScreen extends Screen {
             }
             tile = (TileLike) terrain.tileAt(randomGen.nextInt(terrain.width()), randomGen.nextInt(terrain.height()));
             if(spawnPoint != null && tile instanceof GrassTile) {
-                if ((spawnPoint.x > tile.latticeX() + 3 || spawnPoint.x < tile.latticeX() - 3) && (spawnPoint.y > tile.latticeY() + 3 || spawnPoint.y < tile.latticeY() - 3)) {
+                if ((spawnPoint.x > tile.latticeX() + 2 || spawnPoint.x < tile.latticeX() - 2) && (spawnPoint.y > tile.latticeY() + 2 || spawnPoint.y < tile.latticeY() - 2)) {
                     spawnPointEnemy = new Point(tile.latticeX(), tile.latticeY());
                     isSpawnValid = true;
                 }

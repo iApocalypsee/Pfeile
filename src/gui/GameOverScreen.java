@@ -39,7 +39,7 @@ public class GameOverScreen extends Screen {
         transparentBackground = new Color (42, 40, 48, 0);
 
         lastColorOfYouLose = new Color(213, 192, 24, 0);
-        gameOverColor = new Color(247, 16, 11, 26);
+        gameOverColor = new Color(209, 15, 8, 0);
 
         font_GameOver = new Font("28 Days Later", Font.PLAIN, 300);
         if (comp.Component.isFontInstalled(font_GameOver) == false) {
@@ -86,7 +86,7 @@ public class GameOverScreen extends Screen {
                 }
             }
         });
-        calcTimeThread.setPriority(2);
+        calcTimeThread.setPriority(4);
         calcTimeThread.setDaemon(true);
 
         onScreenEnter.register(new AbstractFunction0<BoxedUnit>() {
@@ -121,13 +121,21 @@ public class GameOverScreen extends Screen {
         // hue: einfach durch den farbkeis kreisen (blau, rot, grün,...)
         // staturation: sieht wie eine MMMMMMM formige sinusfunktion aus, bei 1 gibt es kräftige farben, bei 0 weiß(grau-schwarz)
         // brighness: immer ganz hell (bei 1), d.h. kein scharz oder dunkle farben
+        // colorTemp is used for ALL_COLOURS_CHANGING
         Color colorTemp = new Color(Color.HSBtoRGB((float) (counter / (Math.PI * 84)), (float) ((sin * sin + sin2 * sin2) / 1.6), 1f));
-        // erst nach 4s fängt YouLose an, aber dreifach so schnell wie gameOver
+
+        // erst nach 3.1s fängt YouLose an, aber ~2.5 so schnell wie gameOver
         if (lastColorOfYouLose.getAlpha() < 255 && timer > 3100 && (counter % 3 == 0 || counter % 4 == 0))
-            lastColorOfYouLose = new Color(colorTemp.getRed(), colorTemp.getGreen(), colorTemp.getBlue(), lastColorOfYouLose.getAlpha() + 1);
+            /*RED_CHANGING:*/ lastColorOfYouLose = new Color((int) (Math.sin(counter / (Math.PI * 60)) * Math.sin(counter / (Math.PI * 60)) * 25 + 230), (int) (Math.sin(counter/(Math.PI * 70)) * Math.sin(counter/(Math.PI * 70)) * 255), (int) (Math.sin(counter / (Math.PI * 81)) * Math.sin(counter / (Math.PI * 81)) * 35), lastColorOfYouLose.getAlpha() + 1);
+            //ALL_COLOURS_CHANGING:lastColorOfYouLose = new Color(colorTemp.getRed(), colorTemp.getGreen(), colorTemp.getBlue(), lastColorOfYouLose.getAlpha() + 1);
         else
-            lastColorOfYouLose = new Color(colorTemp.getRed(), colorTemp.getGreen(), colorTemp.getBlue(), lastColorOfYouLose.getAlpha());
-        if (counter % 3 == 0 && gameOverColor.getAlpha() < 255)
+            /*RED_CHANGING:*/ lastColorOfYouLose = new Color((int) (Math.sin(counter / (Math.PI * 60)) * Math.sin(counter / (Math.PI * 60)) * 25 + 230), (int) (Math.sin(counter/(Math.PI * 70)) * Math.sin(counter/(Math.PI * 70)) * 255), (int) (Math.sin(counter / (Math.PI * 81)) * Math.sin(counter / (Math.PI * 81)) * 35), lastColorOfYouLose.getAlpha());
+            //ALL_COLOURS_CHANGING: lastColorOfYouLose = new Color(colorTemp.getRed(), colorTemp.getGreen(), colorTemp.getBlue(), lastColorOfYouLose.getAlpha());
+        if (gameOverColor.getAlpha() < 160)
+            gameOverColor = new Color(gameOverColor.getRed(), gameOverColor.getGreen(), gameOverColor.getBlue(), gameOverColor.getAlpha() + 1);
+        else if (counter % 2 == 0 && gameOverColor.getAlpha() < 210)
+            gameOverColor = new Color(gameOverColor.getRed(), gameOverColor.getGreen(), gameOverColor.getBlue(), gameOverColor.getAlpha() + 1);
+        else if (counter % 3 == 0 && gameOverColor.getAlpha() < 255)
             gameOverColor = new Color(gameOverColor.getRed(), gameOverColor.getGreen(), gameOverColor.getBlue(), gameOverColor.getAlpha() + 1);
     }
 
@@ -162,10 +170,6 @@ public class GameOverScreen extends Screen {
         g.setColor(lastColorOfYouLose);
         g.setFont(font_YouLose);
         g.drawString("You Lose!", 108, 590);
-
-        System.out.println("BACKGROUND: " + transparentBackground.getAlpha());
-        System.out.println("GAME OVER: " + gameOverColor.getAlpha());
-        System.out.println();
 
         closeGame.draw(g);
     }

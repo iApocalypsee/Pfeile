@@ -164,7 +164,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
             }
         });
 
-        randomButton = new Button (readyButton.getX(), readyButton.getY() - 300, this, "Zufälliger Pfeil");
+        randomButton = new Button (readyButton.getX(), readyButton.getY() - 200, this, "Zufälliger Pfeil");
         randomButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased (MouseEvent e) {
@@ -321,6 +321,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
             arrowButton.draw(g);
         }
         arrowListSelected.draw(g);
+        randomButton.draw(g);
         readyButton.draw(g);
         remainingArrows.draw(g);
         confirmDialog.draw(g);
