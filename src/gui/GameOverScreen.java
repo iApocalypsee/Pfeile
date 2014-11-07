@@ -1,6 +1,7 @@
 package gui;
 
 import comp.Button;
+import comp.Component;
 import general.GameLoop;
 import general.Main;
 import scala.runtime.AbstractFunction0;
@@ -10,6 +11,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 
 /** This is the Screen being called at the end of the Game */
 public class GameOverScreen extends Screen {
@@ -23,6 +25,8 @@ public class GameOverScreen extends Screen {
     private Font font_YouLose;
     private volatile Color lastColorOfYouLose;
     private volatile Color gameOverColor;
+    private double scaleGameOver;
+    private Point scaleCenter;
     private Thread calcTimeThread = null;
     private int counter = 0;
     /** the time since the Thread started in Millisecounds */
@@ -40,6 +44,7 @@ public class GameOverScreen extends Screen {
 
         lastColorOfYouLose = new Color(213, 192, 24, 0);
         gameOverColor = new Color(209, 15, 8, 0);
+        scaleGameOver = 0.0025;
 
         font_GameOver = new Font("28 Days Later", Font.PLAIN, 300);
         if (comp.Component.isFontInstalled(font_GameOver) == false) {
@@ -55,6 +60,8 @@ public class GameOverScreen extends Screen {
                 font_YouLose = new Font(comp.Component.STD_FONT.getFontName(), Font.BOLD, 245);
         }
 
+        // x = 20; y = 300 von g.drawString("Game Over", 20, 300);
+        scaleCenter = new Point((int) (20 + 0.5 * comp.Component.getTextBounds("Game Over", font_GameOver).getWidth()), (int) (300 + 0.5 * Component.getTextBounds("Game Over", font_GameOver).getHeight()));
 
         closeGame = new Button(Main.getWindowWidth() - 150, Main.getWindowHeight() - 100, this, "Beenden");
 
@@ -81,7 +88,7 @@ public class GameOverScreen extends Screen {
                     lastFrame = thisFrame;
 
                     try {
-                        Thread.sleep((long) (1000 / 60.0));
+                        Thread.sleep((long) (1000 / 80.0));
                     } catch (InterruptedException e) { e.printStackTrace();}
                 }
             }
@@ -103,6 +110,12 @@ public class GameOverScreen extends Screen {
     protected void calcColor () {
         if (transparentBackground.getAlpha() < 255 && counter % 2 == 0)
             transparentBackground = new Color(transparentBackground.getRed(), transparentBackground.getGreen(), transparentBackground.getBlue(), transparentBackground.getAlpha() + 1);
+        // 60mal pro Sekunde ==>
+        if (scaleGameOver < 1.0) {
+            scaleGameOver = scaleGameOver + 0.0025;
+            if (scaleGameOver > 1.0)
+                scaleGameOver = 1.0;
+        }
 
         // Old Version getting black and wight
         //int red, green, blue;
@@ -111,8 +124,8 @@ public class GameOverScreen extends Screen {
         // ==> bei counter % 30 : 0.5s
         // bei sin(counter/(pi*6))^2 jede Sekunde ist die Nullstelle erreicht. dh. innerhalb einer S ‰ndert er die Farbe
         // von ganz dunkel zu ganz hell zu ganz dunkel
-        double sin = Math.sin(counter/(Math.PI * 102));
-        double sin2 = Math.sin(counter/(Math.PI * 51));
+        double sin = Math.sin(counter/(Math.PI * 125));
+        double sin2 = Math.sin(counter/(Math.PI * 66));
         //red = (int) Math.round(Math.abs(sin * sin * sin * 255.0));
         //green = (int) Math.round(Math.abs(sin * sin * sin * 255.0));
         //blue = (int) Math.round(Math.abs(sin * sin * sin * 255.0));
@@ -122,20 +135,21 @@ public class GameOverScreen extends Screen {
         // staturation: sieht wie eine MMMMMMM formige sinusfunktion aus, bei 1 gibt es kr‰ftige farben, bei 0 weiﬂ(grau-schwarz)
         // brighness: immer ganz hell (bei 1), d.h. kein scharz oder dunkle farben
         // colorTemp is used for ALL_COLOURS_CHANGING
-        Color colorTemp = new Color(Color.HSBtoRGB((float) (counter / (Math.PI * 84)), (float) ((sin * sin + sin2 * sin2) / 1.6), 1f));
+        Color colorTemp = new Color(Color.HSBtoRGB((float) (counter / (Math.PI * 92)), (float) ((sin * sin + sin2 * sin2) / 1.6), 1f));
 
         // erst nach 3.1s f‰ngt YouLose an, aber ~2.5 so schnell wie gameOver
-        if (lastColorOfYouLose.getAlpha() < 255 && timer > 3100 && (counter % 3 == 0 || counter % 4 == 0))
-            /*RED_CHANGING:*/ lastColorOfYouLose = new Color((int) (Math.sin(counter / (Math.PI * 60)) * Math.sin(counter / (Math.PI * 60)) * 25 + 230), (int) (Math.sin(counter/(Math.PI * 70)) * Math.sin(counter/(Math.PI * 70)) * 255), (int) (Math.sin(counter / (Math.PI * 81)) * Math.sin(counter / (Math.PI * 81)) * 35), lastColorOfYouLose.getAlpha() + 1);
+        if (lastColorOfYouLose.getAlpha() < 255 && timer > 4000 && counter % 3 == 0)
+            /*RED_CHANGING:*/ lastColorOfYouLose = new Color((int) (Math.sin(counter / (Math.PI * 70)) * Math.sin(counter / (Math.PI * 70)) * 25 + 230),
+                    (int) (Math.sin(counter/(Math.PI * 81)) * Math.sin(counter/(Math.PI * 81)) * 255),
+                    (int) (Math.sin(counter / (Math.PI * 71)) * Math.sin(counter / (Math.PI * 71)) * 35), lastColorOfYouLose.getAlpha() + 1);
             //ALL_COLOURS_CHANGING:lastColorOfYouLose = new Color(colorTemp.getRed(), colorTemp.getGreen(), colorTemp.getBlue(), lastColorOfYouLose.getAlpha() + 1);
         else
-            /*RED_CHANGING:*/ lastColorOfYouLose = new Color((int) (Math.sin(counter / (Math.PI * 60)) * Math.sin(counter / (Math.PI * 60)) * 25 + 230), (int) (Math.sin(counter/(Math.PI * 70)) * Math.sin(counter/(Math.PI * 70)) * 255), (int) (Math.sin(counter / (Math.PI * 81)) * Math.sin(counter / (Math.PI * 81)) * 35), lastColorOfYouLose.getAlpha());
+            /*RED_CHANGING:*/ lastColorOfYouLose = new Color((int) (Math.sin(counter / (Math.PI * 70)) * Math.sin(counter / (Math.PI * 70)) * 25 + 230),
+                    (int) (Math.sin(counter/(Math.PI * 81)) * Math.sin(counter/(Math.PI * 81)) * 255),
+                    (int) (Math.sin(counter / (Math.PI * 71)) * Math.sin(counter / (Math.PI * 71)) * 35), lastColorOfYouLose.getAlpha());
             //ALL_COLOURS_CHANGING: lastColorOfYouLose = new Color(colorTemp.getRed(), colorTemp.getGreen(), colorTemp.getBlue(), lastColorOfYouLose.getAlpha());
-        if (gameOverColor.getAlpha() < 160)
-            gameOverColor = new Color(gameOverColor.getRed(), gameOverColor.getGreen(), gameOverColor.getBlue(), gameOverColor.getAlpha() + 1);
-        else if (counter % 2 == 0 && gameOverColor.getAlpha() < 210)
-            gameOverColor = new Color(gameOverColor.getRed(), gameOverColor.getGreen(), gameOverColor.getBlue(), gameOverColor.getAlpha() + 1);
-        else if (counter % 3 == 0 && gameOverColor.getAlpha() < 255)
+
+        if (gameOverColor.getAlpha() < 255)
             gameOverColor = new Color(gameOverColor.getRed(), gameOverColor.getGreen(), gameOverColor.getBlue(), gameOverColor.getAlpha() + 1);
     }
 
@@ -165,8 +179,12 @@ public class GameOverScreen extends Screen {
 
         g.setColor(gameOverColor);
         g.setFont(font_GameOver);
-        g.drawString("Game Over", 20, 300);
+        AffineTransform transform = g.getTransform();
+        g.translate(scaleCenter.x, scaleCenter.y);
+        g.scale(scaleGameOver, scaleGameOver);
+        g.drawString("Game Over", 20 - scaleCenter.x, 300 - scaleCenter.y);
 
+        g.setTransform(transform);
         g.setColor(lastColorOfYouLose);
         g.setFont(font_YouLose);
         g.drawString("You Lose!", 108, 590);
