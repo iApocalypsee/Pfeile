@@ -1,10 +1,9 @@
 package general
 
+import gui.GameScreen
 import newent.Player
 import world.WorldLike
 
-import scala.concurrent.duration._
-import scala.xml._
 
 /** The game mechanics of "Pfeile" in its own class. <p>
   *
@@ -25,6 +24,8 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
   // Notifies the entities in the world that a turn has been ended
   onTurnEnd += { () =>
+     _timeObj.stop()
+
     import scala.concurrent.ExecutionContext.Implicits.global
 
     _turnPlayer.onTurnEnd.call()
@@ -37,6 +38,8 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     val nextIndex = if(indexOfCurrent + 1 >= playerList.size) 0 else indexOfCurrent + 1
     _turnPlayer = playerList(nextIndex)
     _turnPlayer.onTurnGet.callAsync()
+    _timeObj.reset()
+    _timeObj.start()
   }
 
   def activePlayer = _activePlayer
@@ -44,11 +47,8 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   def activePlayer_=(p: Player): Unit = {
       _activePlayer = p
       _activePlayer.onTurnGet += { () =>
-      _timeObj.reset()
-      _timeObj.start()
     }
     _activePlayer.onTurnEnd += { () =>
-      _timeObj.stop()
     }
   }
 
@@ -79,7 +79,26 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
      _stopwatchThread = new Thread(_timeObj)
      _stopwatchThread.setDaemon(true)
      _stopwatchThread.setPriority(Thread.MIN_PRIORITY + 1)
-     _stopwatchThread.start()
+
+     val sm = Main.getGameWindow.getScreenManager
+     _timeObj.onTimeOver += { () =>
+
+        if (sm.getActiveScreenIndex == gui.GameScreen.SCREEN_INDEX) {
+           onTurnEnd.call()
+        } else if (sm.getActiveScreenIndex == gui.ArrowSelectionScreen.SCREEN_INDEX) {
+           sm.setActiveScreen(gui.GameScreen.SCREEN_INDEX)
+           onTurnEnd.call()
+        } else if (sm.getActiveScreenIndex == gui.AimSelectionScreen.SCREEN_INDEX) {
+           sm.setActiveScreen(gui.GameScreen.SCREEN_INDEX)
+           onTurnEnd.call()
+        } else
+           throw new java.lang.RuntimeException ("Time is out. Getting to GameScreen of the activePlayer, the active Screen is neither GameScreen nor Aim- or ArrowSelectionScreen. ActiveScreen: " + sm.getActiveScreen.getName)
+     }
+
+     GameScreen.getInstance().onScreenEnter += { () =>
+        if (!_stopwatchThread.isAlive)
+           _stopwatchThread.start()
+     }
   }
 
   private def players = world.entities.entityList.filter({ _.isInstanceOf[Player] }).asInstanceOf[Seq[Player]]

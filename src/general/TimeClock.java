@@ -2,8 +2,7 @@ package general;
 
 import gui.GameScreen;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 
 import comp.Component;
 import scala.concurrent.duration.Duration$;
@@ -29,6 +28,10 @@ public class TimeClock extends Component implements Runnable {
 	private boolean isRunning = false;
 
     private long sumTime = 0;
+
+    private static Color brightDarkGrey = Color.DARK_GRAY.brighter();
+
+    private Color colorTime;
 	
 	/** String, der am Bildschirm die Zeit angeben soll */
 	private String timePrintString = null;
@@ -44,7 +47,8 @@ public class TimeClock extends Component implements Runnable {
 		super(Main.getWindowWidth() / 2 - 72 / 2, 25, 72, 26, 
 				GameScreen.getInstance());
 		stop();
-	}
+        colorTime = Color.BLACK;
+    }
 	
 	/** �bernimmt timeSinceLastFrame + Aufruf durch 'Main'
 	 *  .... updated die aktuelle Zeit; �bernimmt Thread */
@@ -62,15 +66,24 @@ public class TimeClock extends Component implements Runnable {
 					onTimeOver.call();
 				} else {
 					timePrintString = timeFormatter (turnTime().toMillis() - sumTime);
+
+                    // smaller than 3s
+                    if (turnTime().toMillis() - sumTime <= 3000)
+                        colorTime = new Color(222, 6, 0);
+                    // smaller than 10s
+                    else if (turnTime().toMillis() - sumTime <= 10000)
+                        colorTime = new Color (118, 1, 0);
+
+
 					lastTime = timeCurrent;
 
                     try {
-                        Thread.sleep(1);
+                        Thread.sleep(3);
                     } catch (InterruptedException e) { e.printStackTrace(); }
                 }
 			} else {
 				try {
-					Thread.sleep(30);
+					Thread.sleep(35);
 				} catch (InterruptedException e) {e.printStackTrace();}
 			}
 		}
@@ -89,6 +102,8 @@ public class TimeClock extends Component implements Runnable {
 	/** setzt TimeClock auf maximale Zeit zur�ck
 	 * HINWEIS: an Start/Stop wird nicht ge�ndert, also ggf. stop / start aufrufen */
 	public synchronized void reset() {
+        // the time must be bigger than 10s
+        colorTime = Color.BLACK;
 		sumTime = 0;
         timePrintString = timeFormatter(turnTime().toMillis());
 	}
@@ -143,9 +158,9 @@ public class TimeClock extends Component implements Runnable {
         if(millisecTime<0){                        //�berpr�ft ob zeit negativ ist
             //throw new RuntimeException("Negativ time value provided");
         	
-        	time = "00:00:000";
-        }else if (millisecTime>357539999){                 //�berpr�ft ob das limit von format nicht �berschreitet
-            throw new RuntimeException("Time value exceeds allowed format"); 
+        	time = "00:00";
+        //} else if (millisecTime>357539999){                 //�berpr�ft ob das limit von format nicht �berschreitet
+        //    throw new RuntimeException("Time value exceeds allowed format");
         }else {
            millisecTime = millisecTime/1000000;
            long min= (millisecTime/60);
@@ -227,7 +242,7 @@ public class TimeClock extends Component implements Runnable {
 
 	@Override
 	public void draw(Graphics2D g) {
-		g.setColor(Color.DARK_GRAY.brighter());
+		g.setColor(brightDarkGrey);
 		g.fillRoundRect(getX() - 2,
 				getY() - 2,
 				getWidth() + 4,
@@ -238,7 +253,7 @@ public class TimeClock extends Component implements Runnable {
 				getWidth(),
 				getHeight(), 30, 12);
 		
-		g.setColor(Color.BLACK);
+		g.setColor(colorTime);
 		g.setFont(STD_FONT);
         g.drawString(getTimePrintString(), getX() + 4, getY() + 16);
 	}
