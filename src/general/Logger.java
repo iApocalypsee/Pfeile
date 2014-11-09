@@ -35,6 +35,14 @@ public final class Logger {
 		}
 	}
 
+	public static void log(Object any) {
+		log(any.toString());
+	}
+
+	public static void log(Object any, LoggingLevel level) {
+		log(any.toString(), level);
+	}
+
 	/**
 	 * Logs the current stack trace to the console.
 	 */
