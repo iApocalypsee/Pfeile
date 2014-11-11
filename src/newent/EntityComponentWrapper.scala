@@ -3,8 +3,10 @@ package newent
 import java.awt.Graphics2D
 
 import comp.{Component, ComponentWrapper}
+import general.Logger
 import gui.GameScreen
 import newent.event.LocationChangedEvent
+import world.IsometricPolygonTile
 
 /**
  *
@@ -29,17 +31,14 @@ class EntityComponentWrapper(val entity: EntityLike) extends ComponentWrapper(en
 
       // Find the end tile in the component wrappers, I need access to GUI functions.
       val opt = screen.getMap.tiles.find { _.tile eq l.end }
-
-      val opt_guiChange = opt.map { w =>
-        val tileRect = w.tile.bounds.getBounds
-        setX(tileRect.x)
-        setY(tileRect.y)
-        1
+      if(opt.isDefined) {
+        val tile = opt.get
+        // TODO Not nice implementation. I don't want the entity component be dependent on the tile bounds.
+        setBounds(tile.component.getBounds)
+        Logger.logMethodWithMessage(s"Entity bounds of ${l.entity} adjusted.")
       }
-
-      if(opt_guiChange.isDefined) opt_guiChange.get
     }
 
-    entity.onLocationChanged.call(LocationChangedEvent(entity.getGridX, entity.getGridY, entity.getGridX, entity.getGridY, entity))
+    //entity.onLocationChanged.call(LocationChangedEvent(entity.getGridX, entity.getGridY, entity.getGridX, entity.getGridY, entity))
   }
 }

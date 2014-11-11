@@ -30,13 +30,8 @@ class Player(world: WorldLike,
     _localVisionPoint = visionMap.grantVision(getGridX, getGridY, 5)
   }
 
-  override protected def setGridX(x: Int): Unit = {
-    super.setGridX( x )
-    updateLocalVisionPoint()
-  }
-
-  override protected def setGridY(y: Int): Unit = {
-    super.setGridY( y )
+  override protected def setGridPosition(x: Int, y: Int): Unit = {
+    super.setGridPosition( x, y )
     updateLocalVisionPoint()
   }
 

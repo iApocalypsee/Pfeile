@@ -28,6 +28,7 @@ public final class Logger {
 		String lstr = level.toString().toUpperCase();
 		String timestamp = new Date().toString();
 
+
 		if(level == LoggingLevel.Error) {
 			System.err.printf("[%s] [%s]: %s\n", lstr, timestamp, msg);
 		} else {
@@ -69,10 +70,31 @@ public final class Logger {
 	 * Logs the stack trace element where execution is currently.
 	 */
 	public static void logCurrentMethodLocation() {
-		StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
+		log(getStackFrameCall(2));
+	}
+
+	public static String getCurrentMethodLocation() {
 		// I want the previous stack to print out, because there is the line to the call to this method.
-		StackTraceElement ref = stackTrace[1];
-		log("In " + ref.getClassName() + "::" + ref.getMethodName() + " @ line " + ref.getLineNumber());
+		return getStackFrameCall(2);
+	}
+
+	public static String getStackFrameCall(int index) {
+		StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
+		StackTraceElement ref = stackTrace[index];
+		return "In " + ref.getClassName() + "::" + ref.getMethodName() + " @ line " + ref.getLineNumber();
+	}
+
+	public static void logMethodWithMessage(String msg) {
+		logMethodWithMessage(msg, LoggingLevel.Info);
+	}
+
+	public static void logMethodWithMessage(String msg, LoggingLevel level) {
+		String endmsg = getStackFrameCall(3) + "\n";
+		String[] newLineSplits = msg.split("\\r?\\n");
+		for(String str : newLineSplits) {
+			endmsg += "::\t\t" + str + "\n";
+		}
+		log(endmsg, level);
 	}
 
 	/**

@@ -13,8 +13,4 @@ trait VisionEntity extends Entity {
   /** The sight radius. */
   var visionRadius = 5
 
-  // These calls are NOT OPTIONAL right now, don't delete them!
-  setGridX(getGridX)
-  setGridY(getGridY)
-
 }

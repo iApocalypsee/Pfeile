@@ -65,12 +65,17 @@ abstract class Entity(override val world: WorldLike, spawnPosition: (Int, Int), 
   /** Sets the x position of the entity. Should not be called directly from outside classes!
     * @param x The new x position to set to.
     */
-  protected def setGridX(x: Int) = _x = x
+  protected def setGridX(x: Int) = setGridPosition(x, _y)
 
   /** Sets the y position of the entity. Should not be called directly from outside classes!
     * @param y The new y position to set to.
     */
-  protected def setGridY(y: Int) = _y = y
+  protected def setGridY(y: Int) = setGridPosition(_x, y)
+
+  protected def setGridPosition(x: Int = _x, y: Int = _y) = {
+    _x = x
+    _y = y
+  }
 
 }
 
@@ -128,8 +133,7 @@ trait MoveableEntity extends Entity {
             // And fire the event to the location changed delegate
             val prevX = getGridX
             val prevY = getGridY
-            setGridX( step.x )
-            setGridY( step.y )
+            setGridPosition(step.x, step.y)
             onLocationChanged.callAsync( LocationChangedEvent( prevX, prevY, getGridX, getGridY, this ) )
             _currentPath = Some( Path( p.steps.tail ) )
 
