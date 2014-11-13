@@ -3,7 +3,7 @@ package newent
 import java.awt.Graphics2D
 
 import comp.{Component, ComponentWrapper}
-import general.Logger
+import general.LogFacility
 import gui.GameScreen
 import newent.event.LocationChangedEvent
 import world.IsometricPolygonTile
@@ -33,9 +33,8 @@ class EntityComponentWrapper(val entity: EntityLike) extends ComponentWrapper(en
       val opt = screen.getMap.tiles.find { _.tile eq l.end }
       if(opt.isDefined) {
         val tile = opt.get
-        // TODO Not nice implementation. I don't want the entity component be dependent on the tile bounds.
+        // TODO Not nice implementation. I don't want the entity component to be dependent on the tile bounds.
         setBounds(tile.component.getBounds)
-        Logger.logMethodWithMessage(s"Entity bounds of ${l.entity} adjusted.")
       }
     }
 

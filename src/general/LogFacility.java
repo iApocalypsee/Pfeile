@@ -6,13 +6,13 @@ import java.util.Date;
  * Class for logging operations, mainly to the console.
  * @author Josip
  */
-public final class Logger {
+public final class LogFacility {
 
-	private Logger() {
+	private LogFacility() {
 	}
 
 	/**
-	 * Logs a message to the console. The message is pushed with {@link general.Logger.LoggingLevel#Info} level.
+	 * Logs a message to the console. The message is pushed with {@link LogFacility.LoggingLevel#Info} level.
 	 * @param msg The message to log.
 	 */
 	public static void log(String msg) {
@@ -36,12 +36,24 @@ public final class Logger {
 		}
 	}
 
+	public static void log(String msg, String level) {
+		log(msg, LoggingLevel.valueOf(level));
+	}
+
+	public static void log(String msg, String level, String label) {
+		log("[(" + label.toLowerCase() + ")] -> " + msg, level);
+	}
+
 	public static void log(Object any) {
 		log(any.toString());
 	}
 
 	public static void log(Object any, LoggingLevel level) {
 		log(any.toString(), level);
+	}
+
+	public static void log(Object any, String level) {
+		log(any, LoggingLevel.valueOf(level));
 	}
 
 	/**

@@ -1,6 +1,6 @@
 package newent
 
-import general.{Delegate, Main}
+import general.{LogFacility, Delegate, Main}
 import newent.event.AttackEvent
 import player.BoardPositionable
 
@@ -30,15 +30,21 @@ trait AttackContainer extends BoardPositionable {
     onAttacked callAsync e
   }
 
-  def queuedAttacks = _attackList.toList
+  def takeImmediately(e: AttackEvent): Unit = {
+    onImpact callAsync e
+  }
 
-  Main.getContext.onTurnEnd += { () =>
+  def queuedAttacks = _attackList.clone().toList
+
+  final def updateQueues(): Unit = {
     _attackList.clone() foreach { p =>
       p.updateProgress()
       // If the attack has reached the container, do following steps
       if(p.progress >= 1.0) {
         // Remove the attack from the list, since it is impacting
         val removed = _attackList.remove(_attackList.indexOf(p))
+        LogFacility.log(s"Impacting attack: by ${removed.event.aggressor} to " +
+          s"${removed.event.destination.toString} with ${removed.event.weapon.getName}", "Debug", "atkmech")
         // And notify the callbacks about this event
         onImpact callAsync removed.event
       }

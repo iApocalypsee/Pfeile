@@ -27,6 +27,9 @@ sealed trait EntityLike extends BoardPositionable with RawComponent {
 
   /** The name of the entity. Must be unique. */
   val name: String
+
+  /** Delegate for the entity that a player cycle has been completed. */
+  val onTurnEnd = Delegate.createZeroArity
 }
 
 /** (Another) Base class for all entities. The new-old entity traits used old interfaces

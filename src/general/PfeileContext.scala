@@ -31,6 +31,12 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     _turnPlayer.onTurnEnd.call()
 
     _world.entities.entityList.foreach { _.turnover() }
+    for(y <- 0 until _world.terrain.height) {
+      for(x <- 0 until _world.terrain.width) {
+        val tile = _world.terrain.tileAt(x, y)
+        tile.updateQueues()
+      }
+    }
 
     // Notifying the next player about that it is his turn now.
     val playerList = players

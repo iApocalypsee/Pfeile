@@ -49,7 +49,6 @@ class Player(world: WorldLike,
   }
 
   val onTurnGet = Delegate.createZeroArity
-  val onTurnEnd = Delegate.createZeroArity
 
   // GUI section.
 
