@@ -8,6 +8,8 @@ import general.Main;
 import general.Mechanics;
 import newent.*;
 import player.weapon.*;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.BoxedUnit;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -171,12 +173,12 @@ public class ArrowSelectionScreen extends Screen {
 		confirmDialog.getOk().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-                if (Mechanics.arrowNumberFreeSetUseable > 0) {
+                if (Main.getContext().getActivePlayer().getArrowNumberFreeSetUsable() > 0) {
                     final InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
                     if (!inventory.put(ArrowHelper.instanceArrow(selectedIndex))) {
                         if (inventory.maximumSize() - inventory.currentSize() <= 0) {
                             warningMessage = "Das Inventar ist voll: Maximale Inventargröße " + inventory.maximumSize();
-                        } else if (Mechanics.arrowNumberFreeSetUseable <= 0){
+                        } else if (Main.getContext().getActivePlayer().getArrowNumberFreeSetUsable() <= 0){
                             warningMessage = "Es wurde bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + Mechanics.arrowNumberFreeSet + "";
 
                             // Es können jetzt beliebig viele Pfeile eines Types ausgewählt werden
@@ -192,7 +194,7 @@ public class ArrowSelectionScreen extends Screen {
                         }
                         transparencyWarningMessage = 1f;
                     } else {
-                        Mechanics.arrowNumberFreeSetUseable--;
+                        Main.getContext().getActivePlayer().setArrowNumberFreeSetUsable(Main.getContext().getActivePlayer().getArrowNumberFreeSetUsable() - 1);
                         updateInventoryList();
                     }
                 } else {
@@ -208,7 +210,17 @@ public class ArrowSelectionScreen extends Screen {
 				closeConfirmDialogQuestion();
 			}
 		});
-	}
+
+        updateInventoryList();
+        onScreenEnter.register(new AbstractFunction0<BoxedUnit>() {
+            @Override
+            public BoxedUnit apply () {
+                updateInventoryList();
+                transparencyWarningMessage = 0;
+                return BoxedUnit.UNIT;
+            }
+        });
+    }
 	
 	@Override
 	public void draw(Graphics2D g) {
@@ -393,31 +405,39 @@ public class ArrowSelectionScreen extends Screen {
 	/**
 	 * Updates the inventory list of the player registered in the client as the "active" player.
 	 */
-	public void updateInventoryList () {
-		arrowList.clear();
+	private void updateInventoryList () {
+        Thread updateThreaded = new Thread() {
+            @Override
+            public void run () {
+                arrowList.clear();
 
-        final int[] arrowsCount = ArrowHelper.arrowCountInventory();
-        arrowList.add("Feuerpfeil " + "[" + arrowsCount[FireArrow.INDEX] + "]");
-        arrowList.add("Wasserpfeil " + "[" + arrowsCount[WaterArrow.INDEX] + "]");
-        arrowList.add("Sturmpfeil " + "[" + arrowsCount[StormArrow.INDEX] + "]");
-        arrowList.add("Steinpfeil " + "[" + arrowsCount[StoneArrow.INDEX] + "]");
-        arrowList.add("Eispfeil " + "[" + arrowsCount[IceArrow.INDEX] + "]");
-        arrowList.add("Blitzpfeil " + "[" + arrowsCount[LightningArrow.INDEX] + "]");
-        arrowList.add("Lichtpfeil " + "[" + arrowsCount[LightArrow.INDEX] + "]");
-        arrowList.add("Schattenpfeil " + "[" + arrowsCount[ShadowArrow.INDEX] + "]");
-		
-		if (inventoryList.isAcceptingInput()) {
-			inventoryList = new comp.List(inventoryList_PosX, inventoryList_PosY, inventoryList_Width, inventoryList_Height, this, arrowList);
-			inventoryList.setRoundBorder(true);
-			inventoryList.setVisible(true); 
-			inventoryList.addMouseListener(new MouseListHandler());
-			inventoryList.acceptInput();
-		} else {
-			inventoryList = new comp.List(inventoryList_PosX, inventoryList_PosY, inventoryList_Width, inventoryList_Height, this, arrowList);
-			inventoryList.setRoundBorder(true);
-			inventoryList.setVisible(true); 
-			inventoryList.addMouseListener(new MouseListHandler());
-			inventoryList.declineInput();
-		}
+                final int[] arrowsCount = ArrowHelper.arrowCountInventory();
+                arrowList.add("Feuerpfeil " + "[" + arrowsCount[FireArrow.INDEX] + "]");
+                arrowList.add("Wasserpfeil " + "[" + arrowsCount[WaterArrow.INDEX] + "]");
+                arrowList.add("Sturmpfeil " + "[" + arrowsCount[StormArrow.INDEX] + "]");
+                arrowList.add("Steinpfeil " + "[" + arrowsCount[StoneArrow.INDEX] + "]");
+                arrowList.add("Eispfeil " + "[" + arrowsCount[IceArrow.INDEX] + "]");
+                arrowList.add("Blitzpfeil " + "[" + arrowsCount[LightningArrow.INDEX] + "]");
+                arrowList.add("Lichtpfeil " + "[" + arrowsCount[LightArrow.INDEX] + "]");
+                arrowList.add("Schattenpfeil " + "[" + arrowsCount[ShadowArrow.INDEX] + "]");
+
+                if (inventoryList.isAcceptingInput()) {
+                    inventoryList = new comp.List(inventoryList_PosX, inventoryList_PosY, inventoryList_Width, inventoryList_Height, ArrowSelectionScreen.getInstance(), arrowList);
+                    inventoryList.setRoundBorder(true);
+                    inventoryList.setVisible(true);
+                    inventoryList.addMouseListener(new MouseListHandler());
+                    inventoryList.acceptInput();
+                } else {
+                    inventoryList = new comp.List(inventoryList_PosX, inventoryList_PosY, inventoryList_Width, inventoryList_Height, ArrowSelectionScreen.getInstance(), arrowList);
+                    inventoryList.setRoundBorder(true);
+                    inventoryList.setVisible(true);
+                    inventoryList.addMouseListener(new MouseListHandler());
+                    inventoryList.declineInput();
+                }
+            }
+        };
+        updateThreaded.setDaemon(true);
+        updateThreaded.setPriority(7);
+        updateThreaded.start();
 	}
 }

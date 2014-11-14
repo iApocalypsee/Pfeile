@@ -27,7 +27,7 @@ trait AttackContainer extends BoardPositionable {
 
   def take(e: AttackEvent): Unit = {
     _attackList += new AttackProgress(e)
-    onAttacked callAsync e
+    onAttacked.callAsync(e)
   }
 
   def takeImmediately(e: AttackEvent): Unit = {
@@ -46,7 +46,7 @@ trait AttackContainer extends BoardPositionable {
         LogFacility.log(s"Impacting attack: by ${removed.event.aggressor} to " +
           s"${removed.event.destination.toString} with ${removed.event.weapon.getName}", "Debug", "atkmech")
         // And notify the callbacks about this event
-        onImpact callAsync removed.event
+        onImpact.callAsync(removed.event)
       }
     }
   }
@@ -72,7 +72,7 @@ object AttackContainer {
   def allAttackContainers(): Seq[AttackContainer] = Main.getContext.getWorld.terrain.tiles ++ allACEntities()
 
   /** Ditto. */
-  def javaAllAttackContainers() = allAttackContainers.asJava
+  def javaAllAttackContainers() = allAttackContainers().asJava
 
 }
 

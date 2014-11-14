@@ -40,6 +40,13 @@ class Player(world: WorldLike,
   override val pathfinderLogic       = new AStarPathfinder(20, { t => true })
   override val life                  = new Life(400.0, 2.2, 400.0)
 
+  /** the number of arrows the player an still use from this his/her selected usable <code> Mechanics.arrowNumberFreeSet </code> inventory */
+  private var arrowNumberFreeSetUsable = general.Mechanics.arrowNumberFreeSet
+   /** the number of arrows the player an still use from this his/her selected usable <code> Mechanics.arrowNumberFreeSet </code> inventory */
+  def getArrowNumberFreeSetUsable = { arrowNumberFreeSetUsable }
+   /** the number of arrows the player an still use from this his/her selected usable <code> Mechanics.arrowNumberFreeSet </code> inventory */
+  def setArrowNumberFreeSetUsable (arrowNumberUsable :Int) = { arrowNumberFreeSetUsable = arrowNumberUsable }
+
   // Delegate registration only valid after initialization of the actual life object.
   life.onDeath += { () =>
      general.Main.getContext.getTimeClock.stop()

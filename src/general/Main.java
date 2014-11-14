@@ -196,8 +196,6 @@ public class Main {
 		            ArrowHelper.instanceArrow(selectedArrow)))
                 System.err.println("Cannot add " + selectedArrow + " at Main.doArrowSelectionAddingArrows() - adding the arrowNumberPreSet");
         }
-
-        ArrowSelectionScreen.getInstance().updateInventoryList();
     }
 
 	private void newWorldTest() {
@@ -331,7 +329,7 @@ public class Main {
             throw new IllegalArgumentException("Negative FPS not permitted.");
         }
         this.setFPS = fps;
-        recalculateTimeout();
+        //recalculateTimeout();
     }
 
     /**
@@ -341,12 +339,6 @@ public class Main {
      */
     public int getFPS() {
         return fps;
-    }
-
-    /**
-     * Berechnet den {@link #framerateTimeout} neu.
-     */
-    private void recalculateTimeout() {
     }
 
     /**
