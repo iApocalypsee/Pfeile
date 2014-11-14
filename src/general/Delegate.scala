@@ -89,21 +89,23 @@ object Delegate {
     *
     * @tparam In The input type of the function. For multiple values, use tuples.
     */
-  class Delegate[In <: AnyRef](callbackList: List[(In) => Unit]) extends DelegateLike {
+  class Delegate[In <: AnyRef](callbackList: List[(In) => Any]) extends DelegateLike {
 
-    override type FunType = (In) => Unit
+    override type FunType = (In) => Any
 
     // Auxiliary constructor for instantiating a clean delegate with no registered callbacks.
-    def this() = this( List[(In) => Unit]( ) )
+    def this() = this( List[(In) => Any]( ) )
 
     // The callbacks have to be registered
     callbackList foreach {
       register
     }
 
+    def apply(arg: In): Unit = call(arg)
+
     def call(arg: In): Unit = callbacks foreach {
-      case pf: PartialFunction[In, Unit] => if (pf.isDefinedAt( arg )) pf( arg ) else throw new MatchError( this )
-      case reg_f: ((In) => Unit) => reg_f( arg )
+      case pf: PartialFunction[In, Any] => if (pf.isDefinedAt( arg )) pf( arg ) else throw new MatchError( this )
+      case reg_f: ((In) => Any) => reg_f( arg )
     }
 
     /** Code in java zum ausführen der gethreaden Version:
@@ -181,15 +183,17 @@ object Delegate {
     *   };
     * }}}
     */
-  class Function0Delegate(callbackList: List[() => Unit]) extends DelegateLike {
+  class Function0Delegate(callbackList: List[() => Any]) extends DelegateLike {
 
-    override type FunType = () => Unit
+    override type FunType = () => Any
 
-    def this() = this( List[() => Unit]( ) )
+    def this() = this( List[() => Any]( ) )
 
     callbackList foreach {
       register
     }
+
+    def apply(): Unit = call()
 
     def call(): Unit = callbacks foreach {
       _( )
