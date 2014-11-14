@@ -71,9 +71,8 @@ class DefaultEntityManager extends EntityManagerLike {
   private var _entityList = mutable.MutableList[EntityLike]()
 
   override def +=(e: EntityLike): Unit = {
-    import scala.concurrent.ExecutionContext.Implicits.global
     _entityList += e
-    onEntityRegistered callAsync e
+    onEntityRegistered(e)
   }
 
   override def sortOut(f: (EntityLike) => Boolean): Unit = _entityList = _entityList filter f

@@ -2,6 +2,7 @@ package gui;
 
 import comp.Button;
 import general.Main;
+import general.PfeileContext;
 import newent.EntityComponentWrapper;
 import newent.Player;
 import newent.VisualEntity;
@@ -140,7 +141,7 @@ public class GameScreen extends Screen {
 		});
 
 		Main.getContext().setActivePlayer(act);
-		Main.getContext().setTurnPlayer(act);
+		Main.getContext().playerList().setTurnPlayer(act);
 
 		// The population of the world has to be performed AFTER the generation/loading of the world.
 		Main.getContext().world().entities().register(Main.getContext().getActivePlayer());

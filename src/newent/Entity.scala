@@ -19,9 +19,6 @@ sealed trait EntityLike extends BoardPositionable with RawComponent {
   /** The tile on which the entity is currently on. */
   def tileLocation = world.terrain.tileAt( getGridX, getGridY )
 
-  /** Lets the entity know that a turn has been finished. */
-  def turnover(): Unit
-
   /** Called when the location of the entity changes. */
   val onLocationChanged = Delegate.create[LocationChangedEvent]
 
@@ -29,7 +26,7 @@ sealed trait EntityLike extends BoardPositionable with RawComponent {
   val name: String
 
   /** Delegate for the entity that a player cycle has been completed. */
-  val onTurnEnd = Delegate.createZeroArity
+  val onTurnCycleEnded = Delegate.createZeroArity
 }
 
 /** (Another) Base class for all entities. The new-old entity traits used old interfaces
@@ -150,9 +147,8 @@ trait MoveableEntity extends Entity {
     }
   }
 
-  /** Lets the entity know that a turn has been finished. */
-  override def turnover(): Unit = {
-    moveAlong( )
+  onTurnCycleEnded += { () =>
+    moveAlong()
     _currentMovementPoints = defaultMovementPoints
   }
 

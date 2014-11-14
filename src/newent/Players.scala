@@ -43,9 +43,9 @@ class Player(world: WorldLike,
   /** the number of arrows the player an still use from this his/her selected usable <code> Mechanics.arrowNumberFreeSet </code> inventory */
   private var arrowNumberFreeSetUsable = general.Mechanics.arrowNumberFreeSet
    /** the number of arrows the player an still use from this his/her selected usable <code> Mechanics.arrowNumberFreeSet </code> inventory */
-  def getArrowNumberFreeSetUsable = { arrowNumberFreeSetUsable }
+  def getArrowNumberFreeSetUsable = arrowNumberFreeSetUsable
    /** the number of arrows the player an still use from this his/her selected usable <code> Mechanics.arrowNumberFreeSet </code> inventory */
-  def setArrowNumberFreeSetUsable (arrowNumberUsable :Int) = { arrowNumberFreeSetUsable = arrowNumberUsable }
+  def setArrowNumberFreeSetUsable(arrowNumberUsable: Int) = arrowNumberFreeSetUsable = arrowNumberUsable
 
   // Delegate registration only valid after initialization of the actual life object.
   life.onDeath += { () =>
@@ -55,7 +55,14 @@ class Player(world: WorldLike,
      //animation.SoundPool.start_gameOverMelodie()
   }
 
+  /** Called when turn is assigned to the player. */
   val onTurnGet = Delegate.createZeroArity
+
+  /** Called when the player ended his turn. <p>
+    * In terms of UI the equivalent to the delegate would be pressing the "End turn" button,
+    * which essentially tells the program that the player has completed all of his actions now.
+    */
+  val onMovesCompleted = Delegate.createZeroArity
 
   // GUI section.
 

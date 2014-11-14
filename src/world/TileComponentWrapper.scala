@@ -16,7 +16,7 @@ class VisualMap(val tiles: List[TileComponentWrapper]) extends Drawable {
 
   private val _revealedTileColor = new java.awt.Color(0.0f, 0.0f, 0.0f, 0.2f)
 
-  private var _sightType: SightType = FullSightType
+  private var _sightType: SightType = VisionSightType
 
   /** Constructs a visual map from a Java list. Interop method. */
   def this(t: java.util.List[TileComponentWrapper]) = this(JavaConversions.asScalaBuffer(t).toList)

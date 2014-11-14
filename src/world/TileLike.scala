@@ -73,6 +73,13 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
 
   IsometricPolygonTile.appendToTileTypeList(this.getClass)
 
+  onImpact += { e =>
+    // Every entity that is an attack container and is standing on THIS tile has to feel the attack...
+    terrain.world.entities.entityList.filter { _.tileLocation == this }.foreach {
+      case x: AttackContainer => x.takeImmediately(e)
+    }
+  }
+
   override var tileHeight: Int = 0
 
   // Points that describe the corner points of the polygon.
@@ -132,13 +139,6 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
   override def northWest: TileLike = terrain.tileAt( latticeX - 1, latticeY )
 
   override def entities = terrain.world.entities.entityList.filter { e => e.getGridX == latticeX && e.getGridY == latticeY }
-
-  onImpact += { e =>
-    // Every entity that is an attack container and is standing on THIS tile has to feel the attack...
-    terrain.world.entities.entityList.filter { _.tileLocation == this }.foreach {
-      case x: AttackContainer => x.takeImmediately(e)
-    }
-  }
 
   override val getGridY = latticeX
   override val getGridX = latticeY

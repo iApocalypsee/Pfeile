@@ -17,7 +17,7 @@ trait LivingEntity extends Entity with AttackContainer {
   // Every living entity can be attacked with weapons, so every weapon
   // should have a visible effect on the living entity.
 
-  onTurnEnd += { () =>
+  onTurnCycleEnded += { () =>
     updateQueues()
   }
 
