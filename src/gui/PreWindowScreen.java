@@ -4,8 +4,11 @@ import comp.*;
 import comp.Button;
 import comp.Component;
 import comp.Label;
+import general.LogFacility;
 import general.Main;
 import general.Mechanics;
+import newent.EntityComponentWrapper;
+import newent.Player;
 import scala.concurrent.duration.FiniteDuration;
 
 import java.awt.*;
@@ -882,7 +885,12 @@ public class PreWindowScreen extends Screen {
     private static void setTotalArrowNumberCorrect() {
         Mechanics.totalArrowNumber = Mechanics.arrowNumberFreeSet
                 + Mechanics.arrowNumberPreSet;
-        Mechanics.arrowNumberFreeSetUseable = Mechanics.arrowNumberFreeSet;
+        for (EntityComponentWrapper entityWrapper : GameScreen.getInstance().getVisualEntity().javaEntityComponents()) {
+            if (entityWrapper.entity() instanceof Player) {
+                Player player = (Player) entityWrapper.entity();
+                player.setArrowNumberFreeSetUsable(Mechanics.arrowNumberFreeSet);
+            }
+        }
     }
 
 

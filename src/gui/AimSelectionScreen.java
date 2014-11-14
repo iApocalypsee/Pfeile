@@ -64,6 +64,7 @@ public class AimSelectionScreen extends Screen {
                 animatedLine.setStartX((int) Main.getContext().getActivePlayer().bounds().getBounds().getCenterX());
                 animatedLine.setStartY((int) Main.getContext().getActivePlayer().bounds().getBounds().getCenterY());
                 animatedLine.setColor(ArrowHelper.getUnifiedColor(ArrowSelectionScreen.getInstance().getSelectedIndex()));
+                transparencyWarningMessage = 0.0f;
                 return BoxedUnit.UNIT;
             }
         });
@@ -286,7 +287,6 @@ public class AimSelectionScreen extends Screen {
                 arrow.calculateRotation();
 
 				target.take(new AttackEvent(arrow, (TileLike) active.tileLocation(), target, active, arrow.getSpeed()));
-				ArrowSelectionScreen.getInstance().updateInventoryList();
 			} else {
                 throw new RuntimeException("The selected arrow doesn't exit. He can't be shot");
 			}

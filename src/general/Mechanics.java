@@ -15,9 +15,6 @@ public final class Mechanics {
 	/** CLASSIC: Spieleranzahl standardmï¿½ï¿½ig auf zwei, spï¿½ter mï¿½ssten mehr in einer Partie dazukommen */
 	public static int playerNumber = 2, stdArrowNumber;
 	
-	/** Zeitbegrenzung */
-	public static int timeBrake = -1;
-	
 	
 	/** Maximales Leben */
 	public static int lifeMax = -1;
@@ -40,9 +37,6 @@ public final class Mechanics {
 	 * und dann damit den KI angreifen muss */
 	public static int arrowNumberFreeSet = -1;
 	
-	/** Pfeilanzahl, die noch von den frei setzbaren (in ArrowSelectionScreen) Pfeil übrig ist */
-	public static int arrowNumberFreeSetUseable = -1;
-	
 	/** GesamtPfeilAnzahl: arrowNumberFreeSet + arrowNumberPreSet */
 	public static int totalArrowNumber;
 	
@@ -58,11 +52,6 @@ public final class Mechanics {
 	
 	/** Anzahl der erledigten Züge pro Runde */
 	public static int currentTurn = 0;
-	
-	/** boolean-Wert:
-	 * true:  Zug ist zuende (d.h. durch Drücken eines ZugBeenden-Buttons)
-	 * false: Spieler ist noch am Zug */
-	public static boolean isTurnEnd;
 	
 	/** Handicap-Wert des Spielers */
 	public static byte HandicapPlayer = 0;
