@@ -1,6 +1,6 @@
 package gui
 
-import geom.functions.FunctionCollection
+import geom.functions.{FunctionCollectionEasing, FunctionCollection}
 
 import java.awt.{Color, Graphics2D}
 
@@ -42,8 +42,8 @@ class LifeUI(var x: Int, var y: Int, private var _life: Life) extends Drawable {
 
 
     lifebar.majorSplitColor = new Color(
-       255 - FunctionCollection.quadratic_easing_inOut(255.0 * lifebar.fillFactor, 0.0, 255.0, 255.0).asInstanceOf[Int],
-       FunctionCollection.quadratic_easing_inOut(255.0 * lifebar.fillFactor, 0.0, 255.0, 255.0).asInstanceOf[Int],
+       255 - FunctionCollectionEasing.quadratic_easing_inOut(255.0 * lifebar.fillFactor, 0.0, 255.0, 255.0).asInstanceOf[Int],
+       FunctionCollectionEasing.quadratic_easing_inOut(255.0 * lifebar.fillFactor, 0.0, 255.0, 255.0).asInstanceOf[Int],
        (Math.sin(lifebar.fillFactor * Math.PI) * 32.0).asInstanceOf[Int],
        255)
 

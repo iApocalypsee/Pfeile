@@ -230,7 +230,6 @@ public class ArrowSelectionScreen extends Screen {
 		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 
         GameScreen.getInstance().getMap().draw(g);
-        GameScreen.getInstance().getVisualEntity().draw(g);
         GameScreen.getInstance().getAttackDrawer().draw(g);
 
         Main.getContext().getTimeClock().draw(g);

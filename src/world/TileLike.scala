@@ -61,6 +61,7 @@ trait TileLike extends RawComponent with OverrideMetadatable with AttackContaine
   /** Java interop method for the entity list. */
   def javaEntities = JavaConversions.seqAsJavaList( entities )
 
+  override def toString = s"(x=$latticeX|y=$latticeY) - ${getClass.getName}"
 }
 
 /** A tile implementation that displays itself isometrically.

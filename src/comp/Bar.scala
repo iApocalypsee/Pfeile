@@ -27,8 +27,8 @@ class Bar(x: Int, y: Int, width: Int, height: Int, back: Screen) extends Compone
     * @param a The new fill factor.
     */
   def fillFactor_=(a: Double) = {
-    require(a >= 0.0 && a <= 1.0)
-    _fillFactor = a
+    val a_modified = if (a < 0.0) 0.0 else if (a > 1.0) 1.0 else a
+    _fillFactor = a_modified
     _endingWidth = (getWidth * fillFactor).asInstanceOf[Int]
   }
 

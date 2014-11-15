@@ -43,8 +43,6 @@ trait AttackContainer extends BoardPositionable {
       if(p.progress >= 1.0) {
         // Remove the attack from the list, since it is impacting
         val removed = _attackList.remove(_attackList.indexOf(p))
-        LogFacility.log(s"Impacting attack: by ${removed.event.aggressor} to " +
-          s"${removed.event.destination.toString} with ${removed.event.weapon.getName}", "Debug", "atkmech")
         // And notify the callbacks about this event
         onImpact.callAsync(removed.event)
       }

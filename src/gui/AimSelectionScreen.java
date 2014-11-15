@@ -4,6 +4,7 @@ import animation.AnimatedLine;
 import comp.Button;
 import general.Main;
 import newent.Player;
+import newent.VisionStatus;
 import newent.event.AttackEvent;
 import player.weapon.AbstractArrow;
 import player.weapon.ArrowHelper;
@@ -138,7 +139,6 @@ public class AimSelectionScreen extends Screen {
 
         // Draw the world and the player
         GameScreen.getInstance().getMap().draw(g);
-        GameScreen.getInstance().getVisualEntity().draw(g);
         GameScreen.getInstance().getAttackDrawer().draw(g);
 		
 		// draw the selectedField 
@@ -218,20 +218,27 @@ public class AimSelectionScreen extends Screen {
                     if(!tileWrapper.tile().bounds().contains(evt.getPoint()))
                         continue;
 
-                    if(tileWrapper.component().isVisible()) {
-                        if (tileWrapper.tile().bounds().contains(
-                                Main.getContext().getActivePlayer().getGridX(),
-                                Main.getContext().getActivePlayer().getGridY())) {
-                            warningMessage = "Selbstangriff ist nicht möglich!";
-                            transparencyWarningMessage = 1f;
-                        } else {
-                            setPosX_selectedField(tileWrapper.tile().latticeX());
-                            setPosY_selectedField(tileWrapper.tile().latticeY());
-                            animatedLine.setEndX((int) tileWrapper.tile().bounds().getBounds().getCenterX());
-                            animatedLine.setEndY((int) tileWrapper.tile().bounds().getBounds().getCenterY());
-                            stopFlag = true;
-                        }
-                    }
+	                int tileX = tileWrapper.tile().latticeX();
+	                int tileY = tileWrapper.tile().latticeY();
+
+	                int playerX = Main.getContext().getActivePlayer().getGridX();
+	                int playerY = Main.getContext().getActivePlayer().getGridY();
+	                VisionStatus status = Main.getContext().getActivePlayer().visionMap().visionStatusOf(tileX, tileY);
+
+	                if(playerX == tileWrapper.tile().latticeX() && playerY == tileWrapper.tile().latticeY()) {
+		                warningMessage = "Selbstangriff nicht möglich!";
+		                transparencyWarningMessage = 1f;
+	                } else if(status == VisionStatus.Hidden) {
+		                // Don't do anything, the player should not even notice that he did not
+		                // reveal that tile yet. That's why it's called Fog of War...
+		                return;
+	                } else {
+		                setPosX_selectedField(tileX);
+		                setPosY_selectedField(tileY);
+		                animatedLine.setEndX((int) tileWrapper.tile().bounds().getBounds().getCenterX());
+		                animatedLine.setEndY((int) tileWrapper.tile().bounds().getBounds().getCenterY());
+		                stopFlag = true;
+	                }
                 }
             }
 		}
