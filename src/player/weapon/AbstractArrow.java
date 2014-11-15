@@ -5,6 +5,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import general.Mechanics;
+import geom.functions.FunctionCollection;
 
 /**
  * Die abstrakte Pfeil-Klasse, von der die Pfeilarten abgeleitet werden. Wenn
@@ -368,35 +369,17 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
         return super.getRange();
     }
 
-    /** returns the roation of the BufferedImage. With this value the image is drawn in direction to the aim. It's in radient.*/
+    /** returns the rotation of the BufferedImage. With this value the image is drawn in direction to the aim. It's in radient.*/
     public double getRotation () {
         return rotation;
     }
 
-    /** rotates the BufferedImage to <code>rotation</code> so that the arrow is aim to the posXAim/posYAim
-     * the value is calculated with the x and y position of this arrow as well as the x and y position of the aim. If
-     * they are both not inizalized yet, it's pretty useless to call this method. */
-     public void calculateRotation () {
-         if (posXAim > posX && posYAim < posY) {
-             rotation = Math.atan((double) (posXAim - posX) / (double) (posY - posYAim));
-         } else if (posXAim > posX && posYAim > posY) {
-             rotation = Math.toRadians(90.0) + Math.atan((double) (posYAim - posY) / (double) (posXAim - posX));
-         } else if (posXAim < posX && posYAim > posY) {
-             rotation = - (Math.toRadians(90.0) + Math.atan((double) (posYAim - posY) / (double) (posX - posXAim)));
-         } else if (posXAim < posX && posYAim < posY) {
-             rotation = - Math.atan((double) (posX - posXAim) / (double) (posY - posYAim));
-         } else { // the special cases, where the point is placed either on the same x-position or on the same y-position
-             if (posYAim > posY && posXAim == posX) // the arrow is turned around
-                 rotation = Math.toRadians(180.0);
-             else if (posXAim - posX > 0 && posYAim == posY) // the arrow needs to be rotated clockwise (horizontally on the ground)
-                 rotation = Math.toRadians(90.0);
-             else if (posXAim - posX < 0 && posYAim == posY) // the arrow needs to be rotated counterclockwise (horizontally on the ground)
-                 rotation = - Math.toRadians(90.0);
-             else if (posYAim < posY && posXAim == posX)// the aim is directly over the tile, so no rotation is needed.
-                 rotation = 0;
-             else
-                 throw new RuntimeException("the X/Y-Position of the arrow and the aim is not possible. positionOfArrow: " + "(" + posX + "|" + posY + ")" + " positionOfAim: " + "(" + posXAim + "|" + posYAim + ").");
-         }
+    /** changes the rotation of the BufferedImage. With this value the image is drawn in the direction to the aim.
+     * Basically it updates the the rotation with:
+     * <p> <code>rotation = FunctionCollection.angle(getPosX(), getPosY(), getPosXAim(), getPosYAim());</code>
+     */
+    public void calculateRotation () {
+        rotation = FunctionCollection.angle(posX, posY, posXAim, posYAim);
     }
 
     /** gibt die BufferedImage des Pfeils zur�ck
