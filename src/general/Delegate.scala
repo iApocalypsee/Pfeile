@@ -31,14 +31,16 @@ object Delegate {
     /** The type of function that the delegate expects. */
     type FunType
 
-    private var _callbacks = new mutable.ArrayBuffer[FunType]
+    private var _callbacks = new mutable.ArrayBuffer[Handle]
 
     /** Registers a callback function to the delegate.
       *
       * @param f The function to register.
       */
-    def +=(f: FunType): Unit = synchronized {
-      _callbacks += f
+    def +=(f: FunType): Handle = synchronized {
+      val handle = new Handle( f )
+      _callbacks += handle
+      handle
     }
 
     /** Registers a callback function to the delegate. <br>
@@ -46,15 +48,17 @@ object Delegate {
       *
       * @param f The function to register.
       */
-    def register(f: FunType): Unit = +=( f )
+    def register(f: FunType): Handle = +=( f )
 
     /** Unregisters a callback function from the delegate.
       *
       * @param f The function to unregister.
       */
     def -=(f: FunType): Unit = synchronized {
-      _callbacks -= f
+      _callbacks = _callbacks.filterNot( _.function == f )
     }
+
+    def -=(h: Handle): Unit = _callbacks -= h
 
     /** Unregisters a callback function from the delegate. <br>
       * This method exists for Java-interop.
@@ -63,11 +67,36 @@ object Delegate {
       */
     def unlog(f: FunType): Unit = -=( f )
 
+    def unlog(h: Handle): Unit = -=( h )
+
     /** Clears all callbacks from the delegate, meaning that there will not remain any callbacks after. */
     def clear(): Unit = _callbacks.clear( )
 
     /** Returns the callbacks of the delegate as an immutable list. */
-    def callbacks = _callbacks.toList
+    def callbacks = _callbacks.collect {
+      case e => e.function
+    }.toList
+
+    class Handle private[DelegateLike](val function: FunType) {
+
+      private var _disposed = false
+
+      /** Does the handle reference to a function in the delegate yet? */
+      def isValid = _disposed
+
+      /** Removes the handle from the delegate. <p>
+        * The function enables the caller to remove the function he once added to the delegate.
+        * If the function does not exist anymore or the [[dispose( )]] method has been called already,
+        * no action is done.
+        */
+      def dispose(): Unit = {
+        if (!isValid) {
+          _callbacks -= this
+          _disposed = true
+        }
+      }
+    }
+
   }
 
   /** A standard delegate that accepts an input type and an output type. <p>
@@ -87,7 +116,7 @@ object Delegate {
     * }}}
     * where <code>[InputType]</code> is the respective input type of the callback function.
     *
-    * @tparam In The input type of the function. For multiple values, use tuples.
+    * @tparam In The input type of the function. For multiple values, use tuples or custom classes.
     */
   class Delegate[In <: AnyRef](callbackList: List[(In) => Any]) extends DelegateLike {
 
@@ -101,7 +130,7 @@ object Delegate {
       register
     }
 
-    def apply(arg: In): Unit = call(arg)
+    def apply(arg: In): Unit = call( arg )
 
     def call(arg: In): Unit = callbacks foreach {
       case pf: PartialFunction[In, Any] => if (pf.isDefinedAt( arg )) pf( arg ) else throw new MatchError( this )
@@ -131,11 +160,15 @@ object Delegate {
 
     private def except = throw new UnsupportedOperationException( "Delegate is immutable." )
 
-    override def +=(f: FunType): Unit = except
+    override def +=(f: FunType): Handle = except
 
-    override def register(f: FunType): Unit = except
+    override def register(f: FunType): Handle = except
 
     override def -=(f: FunType): Unit = except
+
+    override def -=(h: Handle): Unit = except
+
+    override def unlog(h: Handle): Unit = except
 
     override def unlog(f: FunType): Unit = except
   }
@@ -193,7 +226,7 @@ object Delegate {
       register
     }
 
-    def apply(): Unit = call()
+    def apply(): Unit = call( )
 
     def call(): Unit = callbacks foreach {
       _( )
