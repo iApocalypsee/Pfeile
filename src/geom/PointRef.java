@@ -3,7 +3,7 @@ package geom;
 import java.awt.geom.Point2D;
 
 /**
- * Represents a point implying the use of the internal {@link com.github.pfeile.geom.PointRef.DoubleRef} class.
+ * Represents a point implying the use of the internal {@link PointRef.DoubleRef} class.
  * @author Josip
  */
 public class PointRef extends Point2D {

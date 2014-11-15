@@ -90,7 +90,8 @@ class AttackProgress (val event: AttackEvent) {
     _progress += event.travelSpeed
   }
 
-  /** Returns the progress of the attack in percent. */
+  /** Returns the progress of the attack in percent.
+    * <code> _progress / event.geographicalLength </code> */
   def progress = _progress / event.geographicalLength
 
 }

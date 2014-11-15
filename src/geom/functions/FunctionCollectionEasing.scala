@@ -4,7 +4,7 @@ package geom.functions
   *
   * A good source for such inconvenient functions is http://gizma.com/easing/#cub2.
   */
-object FunctionCollection {
+object FunctionCollectionEasing {
 
   /** Applies the cubic function to the given parameters.
     * <b>acceleration until halfway, then deceleration </b><p>
