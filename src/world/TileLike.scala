@@ -1,14 +1,13 @@
 package world
 
-import java.awt.{Color, Graphics2D, Polygon}
+import java.awt.{Color, Polygon}
 
 import comp.RawComponent
 import geom.PointDef
 import misc.metadata.OverrideMetadatable
 import newent.{AttackContainer, EntityLike}
 
-import scala.collection.JavaConversions
-import scala.collection.mutable
+import scala.collection.{JavaConversions, mutable}
 
 /** Base trait for all tiles.
   *
@@ -34,25 +33,33 @@ trait TileLike extends RawComponent with OverrideMetadatable with AttackContaine
 
   /** The tile located north of this tile. */
   def north: TileLike
+
   /** The tile located northeast of this tile. */
   def northEast: TileLike
+
   /** The tile located east of this tile. */
   def east: TileLike
+
   /** The tile located southeast of this tile. */
   def southEast: TileLike
+
   /** The tile located south of this tile. */
   def south: TileLike
+
   /** The tile located southwest of this tile. */
   def southWest: TileLike
+
   /** The tile located west of this tile. */
   def west: TileLike
+
   /** The tile located northwest of this tile. */
   def northWest: TileLike
 
   /** The entities that are currently on this tile. */
   def entities: Seq[EntityLike]
+
   /** Java interop method for the entity list. */
-  def javaEntities = JavaConversions.seqAsJavaList(entities)
+  def javaEntities = JavaConversions.seqAsJavaList( entities )
 
 }
 
@@ -67,16 +74,20 @@ trait TileLike extends RawComponent with OverrideMetadatable with AttackContaine
   */
 abstract class IsometricPolygonTile protected(override val latticeX: Int,
                                               override val latticeY: Int,
-                                              override val terrain: DefaultTerrain) extends TileLike {
+                                              override val terrain: DefaultTerrain) extends TileLike with
+                                                                                            OnDemandEntitiesStrategy {
 
   require( terrain ne null )
 
-  IsometricPolygonTile.appendToTileTypeList(this.getClass)
+  IsometricPolygonTile.appendToTileTypeList( this.getClass )
 
   onImpact += { e =>
     // Every entity that is an attack container and is standing on THIS tile has to feel the attack...
-    terrain.world.entities.entityList.filter { _.tileLocation == this }.foreach {
-      case x: AttackContainer => x.takeImmediately(e)
+    terrain.world.entities.entityList.filter {
+      _.tileLocation == this
+    }.foreach {
+      case x: AttackContainer => x.takeImmediately( e )
+      case _ =>
     }
   }
 
@@ -91,11 +102,12 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
   private val _originalNorth = new PointDef( 0, 0 )
 
   private var _polygon: Polygon = null
+
   override def bounds = _polygon
 
   // Make the call to the method here, because the initialization of the attributes above
   // has to finish before they get set to another value...
-  recalculateOriginalPoints()
+  recalculateOriginalPoints( )
 
   /** Recalculates the original points for the isometric tile.
     *
@@ -125,20 +137,25 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
 
   /** The draw function with which the tile is visualized on the display. */
   override def drawFunction = { g =>
-    g.setColor(color)
-    g.fillPolygon(bounds)
+    g.setColor( color )
+    g.fillPolygon( bounds )
   }
 
   override def north: TileLike = terrain.tileAt( latticeX - 1, latticeY + 1 )
-  override def northEast: TileLike = terrain.tileAt( latticeX, latticeY + 1 )
-  override def east: TileLike = terrain.tileAt( latticeX + 1, latticeY + 1 )
-  override def southEast: TileLike = terrain.tileAt( latticeX + 1, latticeY )
-  override def south: TileLike = terrain.tileAt( latticeX + 1, latticeY - 1 )
-  override def southWest: TileLike = terrain.tileAt( latticeX, latticeY - 1 )
-  override def west: TileLike = terrain.tileAt( latticeX - 1, latticeY - 1 )
-  override def northWest: TileLike = terrain.tileAt( latticeX - 1, latticeY )
 
-  override def entities = terrain.world.entities.entityList.filter { e => e.getGridX == latticeX && e.getGridY == latticeY }
+  override def northEast: TileLike = terrain.tileAt( latticeX, latticeY + 1 )
+
+  override def east: TileLike = terrain.tileAt( latticeX + 1, latticeY + 1 )
+
+  override def southEast: TileLike = terrain.tileAt( latticeX + 1, latticeY )
+
+  override def south: TileLike = terrain.tileAt( latticeX + 1, latticeY - 1 )
+
+  override def southWest: TileLike = terrain.tileAt( latticeX, latticeY - 1 )
+
+  override def west: TileLike = terrain.tileAt( latticeX - 1, latticeY - 1 )
+
+  override def northWest: TileLike = terrain.tileAt( latticeX - 1, latticeY )
 
   override val getGridY = latticeX
   override val getGridX = latticeY
@@ -150,10 +167,10 @@ object IsometricPolygonTile {
 
   import scala.math._
 
-  private[this] val _tileTypeList = mutable.MutableList[Class[_ <: IsometricPolygonTile]]()
+  private[this] val _tileTypeList = mutable.MutableList[Class[_ <: IsometricPolygonTile]]( )
 
   private def appendToTileTypeList(t: Class[_ <: IsometricPolygonTile]): Unit = {
-    if(!_tileTypeList.contains(t)) _tileTypeList += t
+    if (!_tileTypeList.contains( t )) _tileTypeList += t
   }
 
   def tileTypeList = _tileTypeList.toList
@@ -166,7 +183,8 @@ object IsometricPolygonTile {
 
 }
 
-class GrassTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends IsometricPolygonTile(latticeX, latticeY, terrain) {
+class GrassTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends IsometricPolygonTile( latticeX,
+  latticeY, terrain ) {
 
   override def color = GrassTile.TileColor
 
@@ -174,10 +192,12 @@ class GrassTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends I
 }
 
 object GrassTile {
-  lazy val TileColor = new Color(0x1C9618)
+
+  lazy val TileColor = new Color( 0x1C9618 )
 }
 
-class SeaTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends IsometricPolygonTile(latticeX, latticeY, terrain) {
+class SeaTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends IsometricPolygonTile( latticeX,
+  latticeY, terrain ) {
 
   override def color = SeaTile.TileColor
 
@@ -185,5 +205,6 @@ class SeaTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends Iso
 }
 
 object SeaTile {
-  lazy val TileColor = new Color(0x3555DB)
+
+  lazy val TileColor = new Color( 0x3555DB )
 }

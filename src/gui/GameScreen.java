@@ -204,7 +204,10 @@ public class GameScreen extends Screen {
 	public void draw(Graphics2D g) {
 		super.draw(g);
 		map.draw(g);
-		visualEntity.draw(g);
+		// I practically do not need the visual entity to let the entities draw on to the screen
+		// BUT I still need the component objects, which reside in the visual entity object.
+		// Drawing of the entities is done in VisualMap
+		//visualEntity.draw(g);
         attackDrawer.draw(g);
 		// Zeichnet die Welt und den UserInterface, der den Player darstellt
 		endTurnButton.draw(g);

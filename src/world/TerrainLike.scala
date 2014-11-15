@@ -85,7 +85,7 @@ class DefaultTerrain(override val world: DefaultWorld) extends TerrainLike {
   // Wow. The generation process is so straightforward.
   private val _primitiveRandom = new Random
   // The tiles are managed in a (multidimensional) array, NOT in a scala collection class.
-  private val _tiles = Array.tabulate(width, height) { (x, y) =>
+  private lazy val _tiles = Array.tabulate(width, height) { (x, y) =>
     _primitiveRandom.nextInt(2) match {
       case 0 => new GrassTile(x, y, DefaultTerrain.this)
       case 1 => new SeaTile(x, y, DefaultTerrain.this)

@@ -77,6 +77,9 @@ class VisualMap(val tiles: List[TileComponentWrapper]) extends Drawable {
           g.setColor(_revealedTileColor)
           g.fillPolygon(c.component.getBounds)
         }
+        if(status == VisionStatus.Visible) {
+          c.tile.entities.foreach { _.drawFunction(g) }
+        }
       }
     }
   }
