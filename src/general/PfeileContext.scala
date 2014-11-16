@@ -32,11 +32,14 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
   // Notifies the entities in the world that a turn has been ended
   onTurnEnd += { () =>
-     // not right now...
+     GameScreen.getInstance().lockUI()
 
-     //val attacks = new AttackingCalculator
-     //attacks.arrowsFlying()
+     val attacks = new AttackingCalculator
+     attacks.arrowsFlying()
+
      PlayerList.++()
+
+     GameScreen.getInstance().releaseUI()
   }
 
   PlayerList.onTurnCycleGlobalEnded += { () =>

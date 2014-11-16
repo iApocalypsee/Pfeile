@@ -60,12 +60,6 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 	 */
 	protected int rangeValueCurrent;
 
-	/**
-	 * Wie weit der Pfeil bisher geflogen ist : in Metern angegeben Feld: [auf
-	 * 25m genau] Laenge = 100 Breite = 100
-	 */
-	protected int distanceReached;
-
 	 /** Wie Schnel sich der Pfeil bewegt */
 	protected int arrowSpeed;
 	//
@@ -137,7 +131,6 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 		setAimMissingRate(aimMissingRate);
 		setAimMissingCurrent(aimMissing);
 		setDamageLosingRate(damageLosingRate);
-		setDistanceReached(0);
 		setSpeed(speed);
 
 		// TODO: arrowSpeed in subclasses of AbstractArrow
@@ -232,21 +225,6 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 
 	public void setRangeValueCurrent(int newRangeValueCurrent) {
 		rangeValueCurrent = newRangeValueCurrent;
-	}
-
-	/** Zur�ckgelgete Distanz des Pfeils [in 25m genau] */
-	public int getDistanceReached() {
-		return distanceReached;
-	}
-
-	/**
-	 * Setzt: Zur�ckgelgete Distanz des Pfeils [in 25m genau]
-	 * 
-	 * @param newDistanceReached
-	 *            (int-Wert)
-	 */
-	public void setDistanceReached(int newDistanceReached) {
-		distanceReached = newDistanceReached;
 	}
 
 	/** X-Position bei den Feldern */

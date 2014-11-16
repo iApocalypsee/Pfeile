@@ -34,7 +34,8 @@ public class FunctionCollection {
             else if (y2 < y1 && x2 == x1)// the aim is directly over the tile, so no rotation is needed.
                 return 0;
             else
-                throw new IllegalArgumentException("There need to be a mistake in the implementation of FunctionCollection.angle! The (x1|y1)-Position and/or the (x2|y2)-Position is not possible. firstPosition: " + "( " + x1 + " | " + y1 + " )" + " secondPosition: " + "( " + x2 + " | " + y2 + " ).");
+                throw new IllegalArgumentException("The point are on the same position. No angle can be calculated!\t" +
+                        "(x1|y1): ( " + x1 + " | " + y1 + " ) && (x2|y2): ( " + x2 + " | " + y2 + " ).");
         }
     }
 }

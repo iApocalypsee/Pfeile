@@ -114,15 +114,23 @@ public class AttackingCalculator {
                 LogFacility.log("MilliSec: " + milliSec + "\tx_current (radius reached): " +
                         ((int) ((radius * accuracy) * 1000) / 1000.0) + "\t(x|y): ( " + attackingArrow.getPosX() + " | " + attackingArrow.getPosY() + " )", LogFacility.LoggingLevel.Debug);
 
-                // That isn't working
 
-                attackingArrow.setPosY(posYOld +
-                        (int) FunctionCollectionEasing.quadratic_easing_inOut(radius * accuracy, attackingArrow.getPosY(), attackingArrow.getPosYAim(), radius));
-                attackingArrow.setPosX((int) (posXOld + radius * accuracy));
+                attackingArrow.setPosX((int) (posXOld + Math.round(
+                        FunctionCollectionEasing.quadratic_easing_inOut(radius * accuracy, 0, attackingArrow.getPosXAim() - posXOld, radius))));
+
+                attackingArrow.setPosY((int) (posYOld + Math.round(
+                        FunctionCollectionEasing.quadratic_easing_inOut(radius * accuracy, 0, attackingArrow.getPosYAim() - posYOld, radius))));
 
 
                 /*
+                // That isn't working
+                attackingArrow.setPosY(posYOld +
+                        (int) FunctionCollectionEasing.quadratic_easing_inOut(radius * accuracy, attackingArrow.getPosY(), attackingArrow.getPosYAim(), radius));
+                attackingArrow.setPosX((int) (posXOld + radius * accuracy));
+                */
 
+                /*
+                // That is not working as well :(
                 // (milliSec / (attackingArrow.getSpeed() * timeMulti))  => accuracy
                 attackingArrow.setPosY((int) (posYOld
                         + radius * Math.sin(alpha) * (attackingArrow.getPosYAim() - attackingArrow.getPosY())
