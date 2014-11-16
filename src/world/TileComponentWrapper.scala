@@ -1,25 +1,36 @@
 package world
 
 import java.awt.event.{MouseEvent, MouseAdapter}
-import java.awt.{Color, Graphics2D}
+import java.awt.geom.AffineTransform
+import java.awt.{Polygon, Color, Graphics2D}
 
 import comp.{ComponentWrapper, Component}
-import general.Main
+import general.{LogFacility, Main}
 import gui.{AdjustableDrawing, GameScreen, Drawable}
 import newent.VisionStatus
 
 import scala.collection.JavaConversions
 
-class VisualMap(val tiles: List[TileComponentWrapper]) extends Drawable {
+class VisualMap(world: WorldLike) extends Drawable {
 
+  /** Data object that holds information on how to display the viewport. */
   private val _vp = new WorldViewport
 
+  /** The color which is drawn on top of the tile when it is revealed (but not visible). */
   private val _revealedTileColor = new java.awt.Color(0.0f, 0.0f, 0.0f, 0.2f)
 
+  /** Object that gives information on how to display the map.
+    *
+    * There are two options currently on displaying the map:
+    * <ul>
+    *   <li>The full map, thus ignoring every vision map.
+    *   <li>The map according to the vision map of the active player.
+    * </ul>
+    */
   private var _sightType: SightType = VisionSightType
 
-  /** Constructs a visual map from a Java list. Interop method. */
-  def this(t: java.util.List[TileComponentWrapper]) = this(JavaConversions.asScalaBuffer(t).toList)
+  /** The world that is being displayed currently. */
+  private val _displayWorld = world
 
   /** Returns the current shifting of the map in the x direction. */
   def getShiftY: Float = _vp.getShiftY
@@ -42,12 +53,25 @@ class VisualMap(val tiles: List[TileComponentWrapper]) extends Drawable {
   def moveMap(shiftX: Float, shiftY: Float): Unit = {
     _vp.setShiftX(getShiftX + shiftX - getShiftX)
     _vp.setShiftY(getShiftY + shiftY - getShiftY)
-    tiles foreach { c => c.component.setX(c.component.getX + shiftX.asInstanceOf[Int]) }
-    tiles foreach { c => c.component.setY(c.component.getY + shiftY.asInstanceOf[Int]) }
+
+    // Recalculate the position of every tile...
+    _displayWorld.terrain.tiles foreach { c =>
+      c.component.setX((c.component.getX + shiftX).asInstanceOf[Int])
+      c.component.setY((c.component.getY + shiftY).asInstanceOf[Int])
+    }
   }
 
-  def javaTiles = JavaConversions.seqAsJavaList(tiles)
+  def zoom(factor: Float): Unit = {
+    _vp.setZoom(factor)
+    val transform = new AffineTransform
+    transform.scale(factor, factor)
 
+    // Recalculate the boundaries of every tile...
+    _displayWorld.terrain.tiles foreach { t =>
+      t.component.setWidth((t.component.getWidth * factor).asInstanceOf[Int])
+      t.component.setHeight((t.component.getWidth * factor).asInstanceOf[Int])
+    }
+  }
 
   /** Draws the whole map. */
   override def draw(g: Graphics2D): Unit = {
@@ -66,19 +90,18 @@ class VisualMap(val tiles: List[TileComponentWrapper]) extends Drawable {
 
   /** Draws the map with the currently active player's vision map. */
   object VisionSightType extends SightType {
-    protected[VisualMap] override def draw(g: Graphics2D): Unit = tiles foreach { c =>
+    protected[VisualMap] override def draw(g: Graphics2D): Unit = _displayWorld.terrain.tiles foreach { tile =>
       // Only draw the tile if the active player has actually revealed the tile.
-      val status = Main.getContext.activePlayer.visionMap.visionStatusOf(c.tile.latticeX, c.tile.latticeY)
+      val status = Main.getContext.activePlayer.visionMap.visionStatusOf(tile.latticeX, tile.latticeY)
 
       if(status != VisionStatus.Hidden) {
-        c.component.draw(g)
-        c.component.drawAll(g)
+        tile.component.draw(g)
         if(status == VisionStatus.Revealed) {
           g.setColor(_revealedTileColor)
-          g.fillPolygon(c.component.getBounds)
+          g.fill(tile.component.getBounds)
         }
         if(status == VisionStatus.Visible) {
-          c.tile.entities.foreach { _.drawFunction(g) }
+          tile.entities foreach { e => e.component.draw(g) }
         }
       }
     }
@@ -87,47 +110,9 @@ class VisualMap(val tiles: List[TileComponentWrapper]) extends Drawable {
   /** Draws the map with no vision system included. So this is the full map. */
   object FullSightType extends SightType {
     protected[VisualMap] override def draw(g: Graphics2D): Unit = {
-      tiles foreach { c =>
-        c.component.draw(g)
-        c.component.drawAll(g)
+      _displayWorld.terrain.tiles foreach { tile =>
+        tile.component.draw(g)
       }
     }
   }
-}
-
-/** The tile trait should not know that it is surrounded by a component wrapper class.
-  * This wrapper class is taking care of the visuals.
-  *
-  * @param tile The tile to keep.
-  */
-class TileComponentWrapper(val tile: TileLike) extends ComponentWrapper(tile) {
-
-  override val component = new Component with AdjustableDrawing {
-
-    // Initialization has to be done...
-    setBounds(tile.bounds)
-    setBackingScreen(GameScreen.getInstance())
-    handle({ g => g.setColor(Color.GRAY); g.fillPolygon(getBounds) }, { isMouseFocused })
-
-    override def getBounds = tile.bounds
-
-    addMouseListener(new MouseAdapter {
-      override def mouseReleased(e: MouseEvent): Unit = {
-        Main.getContext.activePlayer.moveTowards(tile.latticeX, tile.latticeY)
-      }
-    })
-
-    private lazy val f = tile.drawFunction
-
-    override def draw(g: Graphics2D) = {
-      f(g)
-      drawAll(g)
-    }
-  }
-
-}
-
-object TileComponentWrapper {
-  /** Converts a [[TileLike]] object to a [[TileComponentWrapper]] object. */
-  implicit def tile2ComponentTile(t: TileLike) = new TileComponentWrapper(t)
 }

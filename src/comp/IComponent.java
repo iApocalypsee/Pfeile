@@ -50,7 +50,7 @@ public interface IComponent extends Drawable {
 
 	void scale(double x, double y);
 
-	Polygon getBounds();
+	Shape getBounds();
 	Rectangle getSimplifiedBounds();
 
 	void acceptInput();

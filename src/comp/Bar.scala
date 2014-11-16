@@ -75,7 +75,7 @@ class Bar(x: Int, y: Int, width: Int, height: Int, back: Screen) extends Compone
 
     // The outer color.
     g.setColor(getBorder.getOuterColor)
-    g.drawPolygon(getBounds)
+    g.draw(getBounds)
 
   }
 }

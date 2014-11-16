@@ -2,20 +2,16 @@ package gui;
 
 import comp.Button;
 import general.Main;
-import general.PfeileContext;
-import newent.EntityComponentWrapper;
 import newent.Player;
-import newent.VisualEntity;
 import player.weapon.AttackDrawer;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;
 import world.*;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Random;
 
 /**
@@ -53,7 +49,6 @@ public class GameScreen extends Screen {
 	private Button toggleStopwatch;
 
 	private VisualMap map;
-	private VisualEntity visualEntity;
     private final AttackDrawer attackDrawer = new AttackDrawer();
 
     public AttackDrawer getAttackDrawer () {
@@ -89,16 +84,6 @@ public class GameScreen extends Screen {
 		Main.getContext().setWorld(new DefaultWorld());
 		TerrainLike terrain = Main.getContext().getWorld().terrain();
 
-		// Comment that out later.
-		// Generating Component objects for every tile...
-		List<TileComponentWrapper> compWrappers = new ArrayList<TileComponentWrapper>(terrain.width() * terrain.height());
-		for (int x = 0; x < terrain.width(); x++) {
-			for (int y = 0; y < terrain.height(); y++) {
-				TileLike tile = (TileLike) terrain.tileAt(x, y);
-				compWrappers.add(TileComponentWrapper.tile2ComponentTile(tile));
-			}
-		}
-
         // spawning
         Point spawnPoint = null;
         Point spawnPointEnemy = null;
@@ -118,8 +103,6 @@ public class GameScreen extends Screen {
                 }
             }
         } while (!isSpawnValid);
-
-		visualEntity = new VisualEntity(new LinkedList<EntityComponentWrapper>());
 
 		final Player act = new Player(Main.getContext().getWorld(), spawnPoint, Main.getUser().getUsername());
 		final Player opponent = new Player(Main.getContext().getWorld(), spawnPointEnemy, "Opponent");
@@ -147,8 +130,8 @@ public class GameScreen extends Screen {
 		Main.getContext().world().entities().register(Main.getContext().getActivePlayer());
 		Main.getContext().world().entities().register(opponent);
 
-		map = new VisualMap(compWrappers);
-		map.moveMap(100, 300);
+		map = new VisualMap(Main.getContext().getWorld());
+		map.moveMap(100, 500);
 
 		// später DAS HIER auskommentieren
 		ScreenManager.ref_gameScreen = this;
@@ -221,20 +204,23 @@ public class GameScreen extends Screen {
 	@Override
 	public void keyDown(KeyEvent e) {
 		super.keyDown(e);
-
-		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-			onLeavingScreen(this, PauseScreen.SCREEN_INDEX);
+		switch(e.getKeyCode()) {
+			case KeyEvent.VK_ESCAPE:
+				onLeavingScreen(this, PauseScreen.SCREEN_INDEX);
+				break;
+			case KeyEvent.VK_S:
+				onLeavingScreen(this, ArrowSelectionScreen.SCREEN_INDEX);
+				break;
+			case KeyEvent.VK_E:
+				Main.getContext().onTurnEnd().call();
+				break;
+			case KeyEvent.VK_PAGE_UP:
+				map.zoom(1.05f);
+				break;
+			case KeyEvent.VK_PAGE_DOWN:
+				map.zoom(0.95f);
+				break;
 		}
-        // if you press s for "Shoot"-Button
-		else if(e.getKeyCode() == KeyEvent.VK_S) {
-			onLeavingScreen(this, ArrowSelectionScreen.SCREEN_INDEX);
-		}
-        else if(e.getKeyCode() == KeyEvent.VK_E) {
-            Main.getContext().onTurnEnd().call();
-        }
-        //FIXME remove this later
-        else
-            getLifeUI().life().setLife(getLifeUI().life().getLife() - 10);
 	}
 
     public void lockUI() {
@@ -252,8 +238,4 @@ public class GameScreen extends Screen {
 	public VisualMap getMap() {
 		return map;
 	}
-
-    public VisualEntity getVisualEntity() {
-        return visualEntity;
-    }
 }

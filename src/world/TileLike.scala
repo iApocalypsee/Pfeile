@@ -1,9 +1,12 @@
 package world
 
-import java.awt.{Color, Polygon}
+import java.awt.event.{MouseEvent, MouseAdapter}
+import java.awt.{Color, Graphics2D, Polygon}
 
-import comp.RawComponent
+import comp.{Component, DisplayRepresentable}
+import general.Main
 import geom.PointDef
+import gui.{GameScreen, AdjustableDrawing}
 import misc.metadata.OverrideMetadatable
 import newent.{AttackContainer, EntityLike}
 
@@ -16,7 +19,7 @@ import scala.collection.{JavaConversions, mutable}
   * that has not implemented any Component interface.
   * @author Josip Palavra
   */
-trait TileLike extends RawComponent with OverrideMetadatable with AttackContainer {
+trait TileLike extends DisplayRepresentable with OverrideMetadatable with AttackContainer {
 
   /** The x position in the grid of the world. */
   val latticeX: Int
@@ -94,54 +97,6 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
 
   override var tileHeight: Int = 0
 
-  // Points that describe the corner points of the polygon.
-  // It is easier to have 4 point objects instead of one polygon instance
-  // from which I have to pull the data every time.
-  private val _originalWest = new PointDef( 0, 0 )
-  private val _originalSouth = new PointDef( 0, 0 )
-  private val _originalEast = new PointDef( 0, 0 )
-  private val _originalNorth = new PointDef( 0, 0 )
-
-  private var _polygon: Polygon = null
-
-  override def bounds = _polygon
-
-  // Make the call to the method here, because the initialization of the attributes above
-  // has to finish before they get set to another value...
-  recalculateOriginalPoints( )
-
-  /** Recalculates the original points for the isometric tile.
-    *
-    * The original points can change by moving the geometry of the map, so every time the map geometry
-    * changes, this method should be called in order to keep visuals.
-    */
-  def recalculateOriginalPoints(): Unit = {
-    import world.IsometricPolygonTile._
-
-    // Why do I subtract for the y coordinate?
-    // Because the screen coordinate system's y axis goes downwards, not upwards...
-    _originalWest.setLocation( latticeX * TileHalfWidth + latticeY * TileHalfWidth,
-      latticeX * TileHalfHeight - latticeY * TileHalfHeight )
-
-    // Again the y coordinate system axis goes down, not up. In OpenGL it's the other way around...
-    _originalNorth.setLocation( _originalWest.getX + TileHalfWidth, _originalWest.getY - TileHalfHeight )
-    _originalEast.setLocation( _originalWest.getX + TileWidth, _originalWest.getY )
-    _originalSouth.setLocation( _originalWest.getX + TileHalfWidth, _originalWest.getY + TileHalfHeight )
-
-    // Discard the old polygon instance since it is no more...
-    _polygon = new Polygon
-    _polygon.addPoint( _originalWest.getX.asInstanceOf[Int], _originalWest.getY.asInstanceOf[Int] )
-    _polygon.addPoint( _originalSouth.getX.asInstanceOf[Int], _originalSouth.getY.asInstanceOf[Int] )
-    _polygon.addPoint( _originalEast.getX.asInstanceOf[Int], _originalEast.getY.asInstanceOf[Int] )
-    _polygon.addPoint( _originalNorth.getX.asInstanceOf[Int], _originalNorth.getY.asInstanceOf[Int] )
-  }
-
-  /** The draw function with which the tile is visualized on the display. */
-  override def drawFunction = { g =>
-    g.setColor( color )
-    g.fillPolygon( bounds )
-  }
-
   override def north: TileLike = terrain.tileAt( latticeX - 1, latticeY + 1 )
 
   override def northEast: TileLike = terrain.tileAt( latticeX, latticeY + 1 )
@@ -158,10 +113,80 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
 
   override def northWest: TileLike = terrain.tileAt( latticeX - 1, latticeY )
 
+  /** Ditto. */
   override val getGridY = latticeX
+  /** Ditto. */
   override val getGridX = latticeY
 
+  /** Returns the color that is used to represent the isometric tile. */
   def color: Color
+
+  /** The component that the representable object uses first. Method is called only once.
+    *
+    * The start component must not be null at first, else it will throw a [[IllegalArgumentException]].
+    * @return A component object which the representable object uses first.
+    */
+  override protected def startComponent = new Component with AdjustableDrawing {
+
+    // Points that describe the corner points of the polygon.
+    // It is easier to have 4 point objects instead of one polygon instance
+    // from which I have to pull the data every time.
+    private val _originalWest = new PointDef( 0, 0 )
+    private val _originalSouth = new PointDef( 0, 0 )
+    private val _originalEast = new PointDef( 0, 0 )
+    private val _originalNorth = new PointDef( 0, 0 )
+
+    // Make the call to the method here, because the initialization of the attributes above
+    // has to finish before they get set to another value...
+    recalculateOriginalPoints( )
+
+    // When the mouse moves over the tile, it should be marked in a grayish style.
+    handle({ g => g.setColor(Color.GRAY); g.fill(getBounds) }, { isMouseFocused })
+    setBackingScreen(GameScreen.getInstance())
+
+    // When the user is clicking on the tile, the active player should move towards it.
+    addMouseListener(new MouseAdapter {
+      override def mouseReleased(e: MouseEvent): Unit = {
+        Main.getContext.activePlayer.moveTowards(latticeX, latticeY)
+      }
+    })
+
+    /** Recalculates the original points for the isometric tile.
+      *
+      * The original points can change by moving the geometry of the map, so every time the map geometry
+      * changes, this method should be called in order to keep visuals.
+      */
+    def recalculateOriginalPoints(): Unit = {
+      import world.IsometricPolygonTile._
+
+      // Why do I subtract for the y coordinate?
+      // Because the screen coordinate system's y axis goes downwards, not upwards...
+      _originalWest.setLocation( latticeX * TileHalfWidth + latticeY * TileHalfWidth,
+        latticeX * TileHalfHeight - latticeY * TileHalfHeight )
+
+      // Again the y coordinate system axis goes down, not up. In OpenGL it's the other way around...
+      _originalNorth.setLocation( _originalWest.getX + TileHalfWidth, _originalWest.getY - TileHalfHeight )
+      _originalEast.setLocation( _originalWest.getX + TileWidth, _originalWest.getY )
+      _originalSouth.setLocation( _originalWest.getX + TileHalfWidth, _originalWest.getY + TileHalfHeight )
+
+      // Discard the old polygon instance since it is no more...
+      val _polygon = new Polygon
+      _polygon.addPoint( _originalWest.getX.asInstanceOf[Int], _originalWest.getY.asInstanceOf[Int] )
+      _polygon.addPoint( _originalSouth.getX.asInstanceOf[Int], _originalSouth.getY.asInstanceOf[Int] )
+      _polygon.addPoint( _originalEast.getX.asInstanceOf[Int], _originalEast.getY.asInstanceOf[Int] )
+      _polygon.addPoint( _originalNorth.getX.asInstanceOf[Int], _originalNorth.getY.asInstanceOf[Int] )
+
+      setBounds(_polygon)
+    }
+
+    override def draw(g: Graphics2D): Unit = {
+      g.setColor(color)
+      g.fill(getBounds)
+      drawAll(g)
+    }
+  }
+
+
 }
 
 object IsometricPolygonTile {

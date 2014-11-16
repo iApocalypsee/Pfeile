@@ -2,7 +2,7 @@ package world
 
 import world.brush.TileTypeBrush
 
-import scala.collection.mutable
+import scala.collection.{JavaConversions, mutable}
 import scala.util.Random
 
 /** Base trait for all terrain types.
@@ -63,6 +63,17 @@ trait TerrainLike {
       }
     }
     ret.toList
+  }
+
+  /** Ditto. */
+  def javaTiles = {
+    val ret = mutable.ArrayBuffer[TileLike]()
+    for(y <- 0 until height) {
+      for(x <- 0 until width) {
+        ret += tileAt(x, y)
+      }
+    }
+    JavaConversions.bufferAsJavaList(ret)
   }
 
   def generate(r: Random = new Random)(seed: Long = r.nextLong( )): Unit

@@ -1,18 +1,19 @@
 package gui;
 
-import comp.*;
 import comp.Button;
+import comp.*;
 import comp.Component;
 import comp.Label;
-import general.LogFacility;
 import general.Main;
 import general.Mechanics;
-import newent.EntityComponentWrapper;
+import newent.EntityLike;
 import newent.Player;
 import scala.concurrent.duration.FiniteDuration;
 
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -885,12 +886,12 @@ public class PreWindowScreen extends Screen {
     private static void setTotalArrowNumberCorrect() {
         Mechanics.totalArrowNumber = Mechanics.arrowNumberFreeSet
                 + Mechanics.arrowNumberPreSet;
-        for (EntityComponentWrapper entityWrapper : GameScreen.getInstance().getVisualEntity().javaEntityComponents()) {
-            if (entityWrapper.entity() instanceof Player) {
-                Player player = (Player) entityWrapper.entity();
-                player.setArrowNumberFreeSetUsable(Mechanics.arrowNumberFreeSet);
-            }
-        }
+	    for(EntityLike e : Main.getContext().getWorld().entities().javaEntityList()) {
+		    if(e instanceof Player) {
+			    Player player = (Player) e;
+			    ((Player) e).setArrowNumberFreeSetUsable(Mechanics.arrowNumberFreeSet);
+		    }
+	    }
     }
 
 

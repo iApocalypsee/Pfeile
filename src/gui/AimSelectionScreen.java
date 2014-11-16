@@ -13,7 +13,6 @@ import scala.Option;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
-import world.TileComponentWrapper;
 import world.TileLike;
 
 import java.awt.*;
@@ -62,8 +61,8 @@ public class AimSelectionScreen extends Screen {
         onScreenEnter.register(new AbstractFunction0<BoxedUnit>() {
             @Override
             public BoxedUnit apply () {
-                animatedLine.setStartX((int) Main.getContext().getActivePlayer().bounds().getBounds().getCenterX());
-                animatedLine.setStartY((int) Main.getContext().getActivePlayer().bounds().getBounds().getCenterY());
+                animatedLine.setStartX((int) Main.getContext().getActivePlayer().getComponent().getBounds().getBounds().getCenterX());
+                animatedLine.setStartY((int) Main.getContext().getActivePlayer().getComponent().getBounds().getBounds().getCenterY());
                 animatedLine.setColor(ArrowHelper.getUnifiedColor(ArrowSelectionScreen.getInstance().getSelectedIndex()));
                 transparencyWarningMessage = 0.0f;
                 return BoxedUnit.UNIT;
@@ -145,9 +144,9 @@ public class AimSelectionScreen extends Screen {
 		if (posX_selectedField >= 0 && posY_selectedField >= 0) {
             TileLike selectedTile = (TileLike) (Main.getContext().getWorld().terrain().tileAt(posX_selectedField, posY_selectedField));
 			g.setColor(new Color(255, 4, 3, 161));
-			g.fillPolygon(selectedTile.bounds());
+			g.fill(selectedTile.getComponent().getBounds());
             g.setColor(new Color (255, 34, 0, 255));
-            g.drawPolygon(selectedTile.bounds());
+            g.fill(selectedTile.getComponent().getBounds());
             animatedLine.updateOffset(- 0.5);
             animatedLine.draw(g);
 		}
@@ -214,18 +213,18 @@ public class AimSelectionScreen extends Screen {
 		public void run() {
 			super.run();
             if(!stopFlag) {
-                for (TileComponentWrapper tileWrapper : GameScreen.getInstance().getMap().javaTiles()) {
-                    if(!tileWrapper.tile().bounds().contains(evt.getPoint()))
+                for (TileLike tileWrapper : Main.getContext().getWorld().terrain().javaTiles()) {
+                    if(!tileWrapper.getComponent().getBounds().contains(evt.getPoint()))
                         continue;
 
-	                int tileX = tileWrapper.tile().latticeX();
-	                int tileY = tileWrapper.tile().latticeY();
+	                int tileX = tileWrapper.latticeX();
+	                int tileY = tileWrapper.latticeY();
 
 	                int playerX = Main.getContext().getActivePlayer().getGridX();
 	                int playerY = Main.getContext().getActivePlayer().getGridY();
 	                VisionStatus status = Main.getContext().getActivePlayer().visionMap().visionStatusOf(tileX, tileY);
 
-	                if(playerX == tileWrapper.tile().latticeX() && playerY == tileWrapper.tile().latticeY()) {
+	                if(playerX == tileWrapper.latticeX() && playerY == tileWrapper.latticeY()) {
 		                warningMessage = "Selbstangriff nicht möglich!";
 		                transparencyWarningMessage = 1f;
 	                } else if(status == VisionStatus.Hidden) {
@@ -235,8 +234,8 @@ public class AimSelectionScreen extends Screen {
 	                } else {
 		                setPosX_selectedField(tileX);
 		                setPosY_selectedField(tileY);
-		                animatedLine.setEndX((int) tileWrapper.tile().bounds().getBounds().getCenterX());
-		                animatedLine.setEndY((int) tileWrapper.tile().bounds().getBounds().getCenterY());
+		                animatedLine.setEndX((int) tileWrapper.getComponent().getBounds().getBounds().getCenterX());
+		                animatedLine.setEndY((int) tileWrapper.getComponent().getBounds().getBounds().getCenterY());
 		                stopFlag = true;
 	                }
                 }
@@ -267,19 +266,8 @@ public class AimSelectionScreen extends Screen {
 
 			if(opt.isDefined()) {
 
-                java.util.List<TileComponentWrapper> tileComponents = GameScreen.getInstance().getMap().javaTiles();
-                TileComponentWrapper targetTileComponent = null;
-                for(TileComponentWrapper t : tileComponents) {
-                    if(t.tile() == target) {
-                        targetTileComponent = t;
-                        break;
-                    }
-                }
-
-
-                assert targetTileComponent != null;
-                arrow.setPosXAim((int) (targetTileComponent.component().getSimplifiedBounds().getCenterX() - 0.5 * arrow.getImage().getWidth()));
-                arrow.setPosYAim((int) (targetTileComponent.component().getSimplifiedBounds().getCenterY() - 0.5 * arrow.getImage().getHeight()));
+                arrow.setPosXAim((int) (target.component().getSimplifiedBounds().getCenterX() - 0.5 * arrow.getImage().getWidth()));
+                arrow.setPosYAim((int) (target.component().getSimplifiedBounds().getCenterY() - 0.5 * arrow.getImage().getHeight()));
 
                 arrow.setFieldXAim(getPosX_selectedField());
                 arrow.setFieldYAim(getPosY_selectedField());
@@ -288,8 +276,8 @@ public class AimSelectionScreen extends Screen {
                 arrow.setFieldY(active.getGridY());
 
                 // the center of the player is the center of the arrow
-                arrow.setPosX((int) (active.bounds().getBounds().getCenterX() - 0.5 * arrow.getImage().getWidth()));
-                arrow.setPosY((int) (active.bounds().getBounds().getCenterY() - 0.5 * arrow.getImage().getHeight()));
+                arrow.setPosX((int) (active.getComponent().getBounds().getBounds().getCenterX() - 0.5 * arrow.getImage().getWidth()));
+                arrow.setPosY((int) (active.getComponent().getBounds().getBounds().getCenterY() - 0.5 * arrow.getImage().getHeight()));
 
                 arrow.calculateRotation();
 

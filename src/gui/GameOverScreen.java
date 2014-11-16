@@ -169,7 +169,6 @@ public class GameOverScreen extends Screen {
         if (transparentBackground.getAlpha() < 255) {
             // Draw the world and the player and the arrows, that are still flaying
             GameScreen.getInstance().getMap().draw(g);
-            GameScreen.getInstance().getVisualEntity().draw(g);
             GameScreen.getInstance().getAttackDrawer().draw(g);
         }
 

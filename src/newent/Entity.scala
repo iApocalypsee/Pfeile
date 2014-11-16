@@ -2,7 +2,7 @@ package newent
 
 import java.awt.Point
 
-import comp.RawComponent
+import comp.{DisplayRepresentable, RawComponent}
 import general.Delegate
 import newent.event.LocationChangedEvent
 import newent.pathfinding.{Path, Pathfinder}
@@ -11,7 +11,7 @@ import world.WorldLike
 
 import scala.util.control.Breaks._
 
-sealed trait EntityLike extends BoardPositionable with RawComponent {
+sealed trait EntityLike extends BoardPositionable with DisplayRepresentable {
 
   /** The world in which the entity is living. */
   val world: WorldLike

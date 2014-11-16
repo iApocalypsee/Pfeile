@@ -49,7 +49,7 @@ public class Label extends Component {
 			// Only draw a background if it is desired.
 			if(backgroundColor != null) {
 				g.setColor(backgroundColor);
-				g.fillPolygon(getBounds());
+				g.fill(getBounds());
 			}
 
 			if(isAcceptingInput()) {

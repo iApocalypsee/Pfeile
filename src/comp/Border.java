@@ -180,12 +180,14 @@ public class Border implements Drawable {
 		}
 		
 		g.setStroke(stroke);
-		
+		/*
 		if(roundedBorder) {
 			g.drawRoundRect(surr.getX(), surr.getY(), surr.getWidth(), surr.getHeight(), arcWidth, arcHeight);
 		} else {
 			g.drawRect(surr.getX(), surr.getY(), surr.getWidth(), surr.getHeight());
 		}
+		*/
+		g.draw(surr.getBounds());
 	}
 	
 	public void setStroke(BasicStroke s) {

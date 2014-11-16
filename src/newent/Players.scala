@@ -1,12 +1,13 @@
 package newent
 
+import java.awt.{Color, Graphics2D, Point}
+
+import comp.Component
 import general.Delegate
 import general.Main.getGameWindow
 import newent.pathfinding.AStarPathfinder
 import player.Life
 import world.WorldLike
-
-import java.awt.{Color, Point}
 
 /** Represents a player in the world.
   *
@@ -64,10 +65,6 @@ class Player(world: WorldLike,
     */
   val onMovesCompleted = Delegate.createZeroArity
 
-  // GUI section.
-
-  private val drawColor = new Color(255, 0, 0)
-
   /******* TEST CODE FOR ATTACK MECHANISM *********
   Main.getContext.onTurnEnd += { () =>
     world.terrain.tileAt(5, 5).take(AttackEvent(
@@ -81,11 +78,22 @@ class Player(world: WorldLike,
   }
   */
 
-  // The draw function just draws a rectangle for now, I can add images later. Later!
-  override def drawFunction = { g =>
-    g.setColor(drawColor)
-    g.fillPolygon(tileLocation.bounds)
-  }
-  override def bounds       = tileLocation.bounds
+  /** The component that the representable object uses first. Method is called only once.
+    *
+    * The start component must not be null at first, else it will throw a [[IllegalArgumentException]].
+    * @return A component object which the representable object uses first.
+    */
+  override protected def startComponent = new Component {
 
+    private val drawColor = new Color(255, 0, 0)
+
+    setBounds(tileLocation.component.getBounds)
+
+    onLocationChanged += { e => setBounds(e.end.component.getBounds) }
+
+    override def draw(g: Graphics2D): Unit = {
+      g.setColor(drawColor)
+      g.fill(getBounds)
+    }
+  }
 }
