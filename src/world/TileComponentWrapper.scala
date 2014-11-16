@@ -1,15 +1,11 @@
 package world
 
-import java.awt.event.{MouseEvent, MouseAdapter}
-import java.awt.geom.AffineTransform
-import java.awt.{Polygon, Color, Graphics2D}
-
-import comp.{ComponentWrapper, Component}
-import general.{LogFacility, Main}
-import gui.{AdjustableDrawing, GameScreen, Drawable}
+import general.Main
+import gui.Drawable
 import newent.VisionStatus
 
-import scala.collection.JavaConversions
+import java.awt.Graphics2D
+import java.awt.geom.AffineTransform
 
 class VisualMap(world: WorldLike) extends Drawable {
 

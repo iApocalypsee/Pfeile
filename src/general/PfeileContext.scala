@@ -2,6 +2,7 @@ package general
 
 import gui.GameScreen
 import newent.{EntityLike, Player}
+import player.weapon.AttackingCalculator
 import world.WorldLike
 
 
@@ -31,7 +32,11 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
   // Notifies the entities in the world that a turn has been ended
   onTurnEnd += { () =>
-    PlayerList.++()
+     // not right now...
+
+     //val attacks = new AttackingCalculator
+     //attacks.arrowsFlying()
+     PlayerList.++()
   }
 
   PlayerList.onTurnCycleGlobalEnded += { () =>

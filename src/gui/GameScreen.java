@@ -220,6 +220,14 @@ public class GameScreen extends Screen {
 			case KeyEvent.VK_PAGE_DOWN:
 				map.zoom(0.95f);
 				break;
+            // FIXME: remove this later
+            default:
+                if (lifeUI.life().getLifeRegeneration() - 30 < 0)
+                    lifeUI.life().setLife(0);
+                else
+                    lifeUI.life().setLife(lifeUI.life().getLife() - 30);
+
+
 		}
 	}
 

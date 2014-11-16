@@ -28,12 +28,15 @@ final case class AttackEvent(weapon: Weapon, departure: TileLike, destination: A
     * programming, so I don't want to use it every time when I can just use the squared value.
     */
   lazy val geographicalLengthSq = pow(departure.latticeX - destination.getGridX, 2) +
-    pow(departure.latticeY - destination.getGridY, 2)
+      pow(departure.latticeY - destination.getGridY, 2)
 
   /** The squarerooted geographical length. */
   lazy val geographicalLength = sqrt(geographicalLengthSq)
 
-  /** The geographical length that the attack passes per turn. */
+  /** The geographical length (in Tiles per Turn) that the attack passes per turn. */
   lazy val lengthPerTurn = geographicalLength / travelSpeed
 
+  /** the length in GUI values between the departure Position and the destination position */
+  def lengthGUI = sqrt(pow(departure.bounds.getBounds.getCenterX - departure.terrain.tileAt(destination.getGridX, destination.getGridY).bounds.getBounds.getCenterX, 2)
+      + pow(departure.bounds.getBounds.getCenterY - departure.terrain.tileAt(destination.getGridX, destination.getGridY).bounds.getBounds.getCenterY, 2))
 }

@@ -1,5 +1,6 @@
 package player.weapon;
 
+import general.LogFacility;
 import geom.functions.FunctionCollection;
 import geom.functions.FunctionCollectionEasing;
 import newent.AttackProgress;
@@ -35,16 +36,33 @@ public class AttackingCalculator {
 
         isEveryArrowReady = new boolean[attackingArrows.size()];
 
-        while (!isEveryAttackReady(isEveryArrowReady)) {
-            for (int i = 0; i < attackingArrows.size(); i++) {
-                AbstractArrow attackingArrow = attackingArrows.get(i);
-                AttackProgress attackProgress = filteredProgresses.get(i);
+        AttackingThread [] attackingThreads = new AttackingThread[attackingArrows.size()];
 
-                AttackingThread attackingThread = new AttackingThread (attackingArrow, attackProgress, i);
-                attackingThread.setDaemon(true);
-                attackingThread.setPriority(3);
-                attackingThread.start();
-            }
+        for (int i = 0; i < attackingArrows.size(); i++) {
+            AbstractArrow attackingArrow = attackingArrows.get(i);
+            AttackProgress attackProgress = filteredProgresses.get(i);
+
+            attackingThreads[i] = new AttackingThread (attackingArrow, attackProgress, Thread.currentThread(), i);
+            attackingThreads[i].setDaemon(true);
+            attackingThreads[i].setPriority(3);
+            attackingThreads[i].start();
+        }
+
+        /*
+        The upper thread need to wait.
+        If the thread doesn't wait, the activePlayer will change and the arrows cannot be seen.
+
+        synchronized (this) {
+            try {
+                Thread.currentThread().wait();
+            } catch (InterruptedException e) { e.printStackTrace(); }
+        }
+        */
+
+        for (AttackingThread attackingThread : attackingThreads) {
+            try {
+                attackingThread.join();
+            } catch (InterruptedException e) { e.printStackTrace(); }
         }
 
         // if ready stop the timer and reset the milli-seconds after beginning
@@ -65,30 +83,59 @@ public class AttackingCalculator {
         private AbstractArrow attackingArrow;
         private AttackProgress attackProgress;
         private int positionOfBooleanArray;
+        private Thread headingThread;
 
-        AttackingThread (AbstractArrow attackingArrow, AttackProgress attackProgress, int positionOfBooleanArray) {
+        AttackingThread (AbstractArrow attackingArrow, AttackProgress attackProgress, Thread currentThread, int positionOfBooleanArray) {
             this.attackingArrow = attackingArrow;
             this.attackProgress = attackProgress;
             this.positionOfBooleanArray = positionOfBooleanArray;
+            headingThread = currentThread;
         }
 
         @Override
         public void run () {
             // alpha (radiant) is the ankle between the position of the aim and the current Point
-            double alpha = FunctionCollection.angle(attackingArrow.getPosX(), attackingArrow.getPosY(), attackingArrow.getPosY(), attackingArrow.getPosY());
+            double alpha = FunctionCollection.angle(attackingArrow.getPosX(), attackingArrow.getPosY(), attackingArrow.getPosXAim(), attackingArrow.getPosYAim());
 
-            // radius = geographicalLength / speed;
-            double radius = attackProgress.event().lengthPerTurn();
+            // radius = lengthGUI * (1 - the percentage of the progress);
+            double radius = attackProgress.event().lengthGUI() * (1 - attackProgress.progress());
 
-            double accuracy = 0.005;
+            int posXOld = attackingArrow.getPosX();
+            int posYOld = attackingArrow.getPosY();
+
+            System.out.println("\nRadius: " + radius);
+
+            double timeMulti = 200;
 
             // as long as MilliSec are smaller than the speed (in tiles/turn) * 500 milliSec (per turn per tile)
-            while (milliSec < attackingArrow.getSpeed() * 500) {
-                attackingArrow.setPosY((int) FunctionCollectionEasing.quadratic_easing_inOut(attackingArrow.getSpeed() * 500 * accuracy, attackingArrow.getPosY(), attackingArrow.getPosYAim(), radius));
-                attackingArrow.setPosX((int) (attackingArrow.getPosX() + radius / accuracy));
-                accuracy = accuracy + 0.005;
+            while (milliSec < attackingArrow.getSpeed() * timeMulti) {
+                double accuracy = milliSec / (attackingArrow.getSpeed() * timeMulti);
+
+                LogFacility.log("MilliSec: " + milliSec + "\tx_current (radius reached): " +
+                        ((int) ((radius * accuracy) * 1000) / 1000.0) + "\t(x|y): ( " + attackingArrow.getPosX() + " | " + attackingArrow.getPosY() + " )", LogFacility.LoggingLevel.Debug);
+
+                // That isn't working
+
+                attackingArrow.setPosY(posYOld +
+                        (int) FunctionCollectionEasing.quadratic_easing_inOut(radius * accuracy, attackingArrow.getPosY(), attackingArrow.getPosYAim(), radius));
+                attackingArrow.setPosX((int) (posXOld + radius * accuracy));
+
+
+                /*
+
+                // (milliSec / (attackingArrow.getSpeed() * timeMulti))  => accuracy
+                attackingArrow.setPosY((int) (posYOld
+                        + radius * Math.sin(alpha) * (attackingArrow.getPosYAim() - attackingArrow.getPosY())
+                        * accuracy));
+
+                attackingArrow.setPosX((int) (posXOld
+                        + radius * Math.cos(alpha) * (attackingArrow.getPosXAim() - attackingArrow.getPosX())
+                        * accuracy));
+
+                */
+
                 try {
-                    Thread.sleep(20);
+                    Thread.sleep(15);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -97,6 +144,17 @@ public class AttackingCalculator {
 
             // It's ready
             isEveryArrowReady[positionOfBooleanArray] = true;
+            LogFacility.log("Arrow arrived!", LogFacility.LoggingLevel.Info);
+
+            /*
+            //wait & notify doesn't work
+
+            if (isEveryAttackReady(isEveryArrowReady)) {
+                synchronized (this) {
+                    headingThread.notifyAll();
+                }
+            }
+            */
         }
     }
 }

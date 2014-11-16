@@ -1,10 +1,10 @@
 package misc.metadata;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import java.io.*;
-import java.nio.file.Path;
-import java.util.*;
+import java.io.NotSerializableException;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Represents a metadata override list.
