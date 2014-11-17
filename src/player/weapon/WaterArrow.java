@@ -34,7 +34,7 @@ public class WaterArrow extends AbstractArrow {
 	/** ruft den Konstrucktor von 'AbstractArrow' auf */
 	public WaterArrow() {
 		
-		super(38f, 34f, 600, 0.0125f, 0.0125f, 0.065f, 0.13f, 5, "Wasserpfeil");
+		super(38f, 34f, 600, 0.0125f, 0.0125f, 0.065f, 0.13f, 3.1, "Wasserpfeil");
 		
 	}
 	

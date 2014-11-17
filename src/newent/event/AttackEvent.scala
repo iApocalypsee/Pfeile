@@ -30,13 +30,13 @@ final case class AttackEvent(weapon: Weapon, departure: TileLike, destination: A
   lazy val geographicalLengthSq = pow(departure.latticeX - destination.getGridX, 2) +
       pow(departure.latticeY - destination.getGridY, 2)
 
-  /** The squarerooted geographical length. */
+  /** The squarerooted geographical length. (in Tiles) */
   lazy val geographicalLength = sqrt(geographicalLengthSq)
 
   /** The geographical length (in Tiles per Turn) that the attack passes per turn. */
   lazy val lengthPerTurn = geographicalLength / travelSpeed
 
   /** the length in GUI values between the departure Position and the destination position */
-  def lengthGUI = sqrt(pow(departure.getComponent.getBounds.getBounds.getCenterX - departure.terrain.tileAt(destination.getGridX, destination.getGridY).getComponent.getBounds.getBounds.getCenterX, 2)
+  lazy val lengthGUI = sqrt(pow(departure.getComponent.getBounds.getBounds.getCenterX - departure.terrain.tileAt(destination.getGridX, destination.getGridY).getComponent.getBounds.getBounds.getCenterX, 2)
       + pow(departure.getComponent.getBounds.getBounds.getCenterY - departure.terrain.tileAt(destination.getGridX, destination.getGridY).getComponent.getBounds.getBounds.getCenterY, 2))
 }

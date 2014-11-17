@@ -131,7 +131,7 @@ public class GameScreen extends Screen {
 		Main.getContext().world().entities().register(opponent);
 
 		map = new VisualMap(Main.getContext().getWorld());
-		map.moveMap(100, 500);
+		map.moveMap(120, 470);
 
 		// später DAS HIER auskommentieren
 		ScreenManager.ref_gameScreen = this;
@@ -222,10 +222,10 @@ public class GameScreen extends Screen {
 				break;
             // FIXME: remove this later
             default:
-                if (lifeUI.life().getLife() - 30 < 0)
+                if (lifeUI.life().getLife() - 20 < 0)
                     lifeUI.life().setLife(0);
                 else
-                    lifeUI.life().setLife(lifeUI.life().getLife() - 30);
+                    lifeUI.life().setLife(lifeUI.life().getLife() - 20);
 		}
 	}
 

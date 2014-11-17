@@ -6,7 +6,7 @@ package geom.functions;
 public class FunctionCollection {
 
     /** This returns the angle (in radiant not in degree) between the points (x1|y1) and (x2|y2).
-     * It is in the range of <code>- Math.PI</code> and <code>Math.PI</code>, while <code>0</code> is no rotation.
+     * It is in the range of <code>- Math.PI</code> (not included) and <code>Math.PI</code> (included), while <code>0</code> is no rotation.
      * A positive value means rotation clockwise and a negative one counterclockwise.
      *
      * @param x1 the x value of the first point
@@ -14,6 +14,7 @@ public class FunctionCollection {
      * @param x2 the x value of the second point
      * @param y2 the y value of the second point
      * @return the radiant angle between these points
+     * @throws java.lang.IllegalArgumentException if the points (x1|y1) (x2|y2) are the same <code>x1 == x2 && y1 == y2</code>
      */
     public static double angle (double x1, double y1, double x2, double y2) {
         if (x2 > x1 && y2 < y1) {
@@ -34,8 +35,8 @@ public class FunctionCollection {
             else if (y2 < y1 && x2 == x1)// the aim is directly over the tile, so no rotation is needed.
                 return 0;
             else
-                throw new IllegalArgumentException("The point are on the same position. No angle can be calculated!\t" +
-                        "(x1|y1): ( " + x1 + " | " + y1 + " ) && (x2|y2): ( " + x2 + " | " + y2 + " ).");
+                throw new IllegalArgumentException("The points are on the same position. The angle can't be calculated! \t" +
+                        "(x1|y1): ( " + x1 + " | " + y1 + " ) \t (x2|y2): ( " + x2 + " | " + y2 + " ).");
         }
     }
 }
