@@ -1,6 +1,10 @@
 package comp;
 
+import general.Delegate;
+import geom.Vector2;
 import gui.Screen;
+import scala.Function1;
+import scala.Unit;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.awt.*;
@@ -88,6 +92,17 @@ public abstract class Component implements IComponent {
 	 * Die Farbgebung innen und außen.
 	 */
 	private Border border;
+
+	/**
+	 * Ability of the component to draw additional things that belong to the component
+	 * but don't have to belong to the boundaries of the component.
+	 */
+	private Function1<Graphics2D, Unit> additionalDrawing = null;
+
+	/**
+	 * Called when the bounds have been moved.
+	 */
+	public final Delegate.Delegate<Vector2> onMoved = new Delegate.Delegate<Vector2>();
 
 	/**
 	 * Indicates whether the mouse is inside the components' bounds or not.
@@ -321,8 +336,14 @@ public abstract class Component implements IComponent {
 	 */
 	public void setX(int x) {
 		if (!chained) {
-			AffineTransform transform = AffineTransform.getTranslateInstance(x - getX(), 0);
+			int translation = x - getX();
+			AffineTransform transform = AffineTransform.getTranslateInstance(translation, 0);
 			bounds = transform.createTransformedShape(bounds);
+			// Do not pollute the registered function with an event in which...
+			// well... nothing really changed.
+			if(x != getX()) {
+				onMoved.apply(new Vector2(translation, 0));
+			}
 		}
 	}
 
@@ -341,8 +362,23 @@ public abstract class Component implements IComponent {
 	 */
 	public void setY(int y) {
 		if (!chained) {
-			AffineTransform transform = AffineTransform.getTranslateInstance(0, y - getY());
+			int translation = y - getY();
+			AffineTransform transform = AffineTransform.getTranslateInstance(0, translation);
 			bounds = transform.createTransformedShape(bounds);
+			// Do not pollute the registered function with an event in which...
+			// well... nothing really changed.
+			if(y != getY()) {
+				onMoved.apply(new Vector2(0, translation));
+			}
+		}
+	}
+
+	public void setLocation(int x, int y) {
+		int xTranslation = x - getX(), yTranslation = y - getY();
+		AffineTransform transform = AffineTransform.getTranslateInstance(xTranslation, yTranslation);
+		bounds = transform.createTransformedShape(bounds);
+		if(xTranslation != 0 || yTranslation != 0) {
+			onMoved.apply(new Vector2(xTranslation, yTranslation));
 		}
 	}
 
@@ -398,7 +434,6 @@ public abstract class Component implements IComponent {
 		} else {
 			bounds = new Rectangle(getX(), getY(), getWidth(), height);
 		}
-
 	}
 
 	/**
@@ -407,7 +442,9 @@ public abstract class Component implements IComponent {
 	 *
 	 * @param x Der Streckfaktor in x Richtung
 	 * @param y Der Streckfaktor in y Richtung
+	 * @deprecated Use {@link #applyTransformation(java.awt.geom.AffineTransform)} instead.
 	 */
+	@Deprecated
 	public void scale(double x, double y) {
 		throw new NotImplementedException();
 	}
@@ -570,6 +607,7 @@ public abstract class Component implements IComponent {
 		this.border = border;
 	}
 
+	@Deprecated
 	public void updateGUI() {
 	}
 
@@ -604,6 +642,23 @@ public abstract class Component implements IComponent {
 		return new Point(r.x + r.width / 2, r.y + r.height / 2);
 	}
 
+	/**
+	 * Returns the routine that draws additional things on to the screen that belong
+	 * to the component. These additional drawn things do not have to be inside the
+	 * boundaries of the component. <p>
+	 * Subclasses do decide on their own, when and in which way additional drawings are used,
+	 * so do not depend on the additional drawing routine to be drawn for every subclass
+	 * of Component.
+	 * @return The chunk of code representing the additional drawing commands for the component.
+	 */
+	public Function1<Graphics2D, Unit> getAdditionalDrawing() {
+		return additionalDrawing;
+	}
+
+	public void setAdditionalDrawing(Function1<Graphics2D, Unit> additionalDrawing) {
+		this.additionalDrawing = additionalDrawing;
+	}
+
 	@Override
 	public void removeMouseWheelListener(MouseWheelListener mouseWheelListener) {
 		mouseWheelListeners.remove(mouseWheelListener);
@@ -612,6 +667,16 @@ public abstract class Component implements IComponent {
 	@Override
 	public void addMouseWheelListener(MouseWheelListener mouseWheelListener) {
 		mouseWheelListeners.add(mouseWheelListener);
+	}
+
+	/**
+	 * Applies the given transformation to the bounds of the component. <p>
+	 * This call is essentially equivalent to the call
+	 * {@code setBounds(transformation.createTransformedShape(getBounds()))}.
+	 * @param transformation The transformation to apply to the bounds.
+	 */
+	public void applyTransformation(AffineTransform transformation) {
+		bounds = transformation.createTransformedShape(bounds);
 	}
 
 	// Some static helper methods...

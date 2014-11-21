@@ -105,6 +105,10 @@ public class Button extends Component {
                 g.drawString(text, getX() + STD_INSETS.left + optImage.getWidth() + STD_INSETS.left,
                         getY() + STD_INSETS.top + 20);
             }
+
+	        if(getAdditionalDrawing() != null) {
+		        getAdditionalDrawing().apply(g);
+	        }
         }
     }
 	

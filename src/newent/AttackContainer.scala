@@ -85,10 +85,11 @@ class AttackProgress (val event: AttackEvent) {
 
   /** Updates the progress with the associated travel speed. */
   private[newent] def updateProgress(): Unit = {
-    _progress += event.travelSpeed
+    _progress += (event.travelSpeed / event.geographicalLength)
   }
 
   /** Returns the progress of the attack in percent.
     * <code> _progress / event.geographicalLength </code> */
-  def progress = _progress / event.geographicalLength
+  def progress = _progress
+
 }

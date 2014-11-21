@@ -14,6 +14,8 @@ case class Vector2(var x: Float, var y: Float) extends VectorLike {
 
   def this(x: Double, y: Double) = this( x.asInstanceOf[Float], y.asInstanceOf[Float] )
 
+  def this(p: Point) = this(p.x, p.y)
+
   /** The squared length of the vector.
     *
     * Use this to avoid additional square rooting. Square rooting takes additional time to calculate.
