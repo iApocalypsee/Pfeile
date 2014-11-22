@@ -1,5 +1,6 @@
 package newent.event
 
+import comp.DisplayRepresentable
 import newent.{Aggressor, AttackContainer}
 import player.weapon.Weapon
 import world.TileLike
@@ -28,7 +29,7 @@ final case class AttackEvent(weapon: Weapon, departure: TileLike, destination: A
     * programming, so I don't want to use it every time when I can just use the squared value.
     */
   lazy val geographicalLengthSq = pow(departure.latticeX - destination.getGridX, 2) +
-      pow(departure.latticeY - destination.getGridY, 2)
+    pow(departure.latticeY - destination.getGridY, 2)
 
   /** The squarerooted geographical length. (in Tiles) */
   lazy val geographicalLength = sqrt(geographicalLengthSq)
@@ -37,6 +38,17 @@ final case class AttackEvent(weapon: Weapon, departure: TileLike, destination: A
   lazy val lengthPerTurn = geographicalLength / travelSpeed
 
   /** the length in GUI values between the departure Position and the destination position */
-  lazy val lengthGUI = sqrt(pow(departure.getComponent.getBounds.getBounds.getCenterX - departure.terrain.tileAt(destination.getGridX, destination.getGridY).getComponent.getBounds.getBounds.getCenterX, 2)
-      + pow(departure.getComponent.getBounds.getBounds.getCenterY - departure.terrain.tileAt(destination.getGridX, destination.getGridY).getComponent.getBounds.getBounds.getCenterY, 2))
+  lazy val lengthGUI = destination match {
+    // If the destination can be represented by a component, then calculate it.
+    case x: DisplayRepresentable =>
+      def rectBoundsOf(d: DisplayRepresentable) = d.component.getBounds.getBounds
+
+      val depart_cx = rectBoundsOf(departure).getCenterX
+      val depart_cy = rectBoundsOf(departure).getCenterY
+      val dest_cx = rectBoundsOf(x).getCenterX
+      val dest_cy = rectBoundsOf(x).getCenterY
+      sqrt(pow(depart_cx - dest_cx, 2) + pow(depart_cy - dest_cy, 2))
+    case _ => throw new UnsupportedOperationException(s"GUI length calculation not available on type ${destination
+      .getClass.getName}!")
+  }
 }
