@@ -19,8 +19,6 @@ trait StandardComponent extends IComponent {
     override def draw(g: Graphics2D): Unit = StandardComponent.this.draw(g)
   }
 
-  def chain() = c.chain()
-  def unchain() = c.unchain()
   override def getStatus = c.getStatus
   override def setStatus(status: ComponentStatus) = c.setStatus(status)
   override def getBackingScreen = c.getBackingScreen
@@ -50,7 +48,6 @@ trait StandardComponent extends IComponent {
   def remove(c: Component) = c.remove(c)
   override def isVisible = c.isVisible
   override def setVisible(vvvvvv: Boolean) = c.setVisible(vvvvvv)
-  def isChained = c.isChained
   override def getName = c.getName
   def setName(name: String) = c.setName(name)
   override def isAcceptingInput = c.isAcceptingInput

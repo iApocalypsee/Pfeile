@@ -62,12 +62,6 @@ public abstract class Component implements IComponent {
 	private boolean visible = true;
 
 	/**
-	 * Zeigt an, ob die Koordinaten des Steuerelements verändert werden können.
-	 * Kann mittels {@link #chain()} und {@link #unchain()} gesteuert werden.
-	 */
-	private boolean chained = false;
-
-	/**
 	 * Die Liste der MouseListener.
 	 */
 	private List<MouseListener> mouseListeners;
@@ -230,34 +224,6 @@ public abstract class Component implements IComponent {
 	}
 
 	/**
-	 * Legt fest, dass die Koordinaten des Steuerelements nicht verändern werden dürfen. Ist für die
-	 * Parent-Children-Beziehung in Component gedacht, kann aber auch so verwendet werden.
-	 * Wenn diese Methode auf einem Steuerelement aufgerufen wird, welches ein Parent-Steuerelement
-	 * hat, dann ändert sich die <b>relative</b> Position zum Parent-Steuerelement nicht.
-	 * Dafür kann dieses Steuerelement auch nicht individuell verschoben werden, bis
-	 * {@link #unchain()} aufgerufen wird.
-	 *
-	 * @see #unchain()
-	 */
-	public void chain() {
-		if (!chained) {
-			chained = true;
-		}
-	}
-
-	/**
-	 * Legt fest, dass die Koordinaten des Steuerelements sich verändern dürfen. Dieser
-	 * Zustand kann von {@link #chain()} wieder aufgelöst werden.
-	 *
-	 * @see #chain()
-	 */
-	public void unchain() {
-		if (chained) {
-			chained = false;
-		}
-	}
-
-	/**
 	 * @return the status
 	 */
 	public ComponentStatus getStatus() {
@@ -335,15 +301,13 @@ public abstract class Component implements IComponent {
 	 * @param x Die neue x Position des Steuerelements.
 	 */
 	public void setX(int x) {
-		if (!chained) {
-			int translation = x - getX();
-			AffineTransform transform = AffineTransform.getTranslateInstance(translation, 0);
-			bounds = transform.createTransformedShape(bounds);
-			// Do not pollute the registered function with an event in which...
-			// well... nothing really changed.
-			if(x != getX()) {
-				onMoved.apply(new Vector2(translation, 0));
-			}
+		int translation = x - getX();
+		AffineTransform transform = AffineTransform.getTranslateInstance(translation, 0);
+		bounds = transform.createTransformedShape(bounds);
+		// Do not pollute the registered function with an event in which...
+		// well... nothing really changed.
+		if (x != getX()) {
+			onMoved.apply(new Vector2(translation, 0));
 		}
 	}
 
@@ -361,15 +325,13 @@ public abstract class Component implements IComponent {
 	 * @param y Die neue y Position des Steuerelements.
 	 */
 	public void setY(int y) {
-		if (!chained) {
-			int translation = y - getY();
-			AffineTransform transform = AffineTransform.getTranslateInstance(0, translation);
-			bounds = transform.createTransformedShape(bounds);
-			// Do not pollute the registered function with an event in which...
-			// well... nothing really changed.
-			if(y != getY()) {
-				onMoved.apply(new Vector2(0, translation));
-			}
+		int translation = y - getY();
+		AffineTransform transform = AffineTransform.getTranslateInstance(0, translation);
+		bounds = transform.createTransformedShape(bounds);
+		// Do not pollute the registered function with an event in which...
+		// well... nothing really changed.
+		if (y != getY()) {
+			onMoved.apply(new Vector2(0, translation));
 		}
 	}
 
@@ -377,7 +339,7 @@ public abstract class Component implements IComponent {
 		int xTranslation = x - getX(), yTranslation = y - getY();
 		AffineTransform transform = AffineTransform.getTranslateInstance(xTranslation, yTranslation);
 		bounds = transform.createTransformedShape(bounds);
-		if(xTranslation != 0 || yTranslation != 0) {
+		if (xTranslation != 0 || yTranslation != 0) {
 			onMoved.apply(new Vector2(xTranslation, yTranslation));
 		}
 	}
@@ -393,7 +355,7 @@ public abstract class Component implements IComponent {
 	 * @param width the width to set
 	 */
 	public void setWidth(int width) {
-		if(getWidth() != 0) {
+		if (getWidth() != 0) {
 			Shape old = bounds;
 			AffineTransform centerTransform = AffineTransform.getTranslateInstance(-getX(), -getY());
 			AffineTransform resetTransform = AffineTransform.getTranslateInstance(getX(), getY());
@@ -420,7 +382,7 @@ public abstract class Component implements IComponent {
 	 * @param height the height to set
 	 */
 	public void setHeight(int height) {
-		if(getHeight() != 0) {
+		if (getHeight() != 0) {
 			Shape old = bounds;
 			AffineTransform centerTransform = AffineTransform.getTranslateInstance(-getX(), -getY());
 			AffineTransform resetTransform = AffineTransform.getTranslateInstance(getX(), getY());
@@ -567,16 +529,6 @@ public abstract class Component implements IComponent {
 		}
 	}
 
-	/**
-	 * Zeigt an, ob die Koordinaten des Steuerelements verändert werden können.
-	 * Kann mittels {@link #chain()} und {@link #unchain()} gesteuert werden.
-	 *
-	 * @return Ob die Koordinaten des Steuerelements verändert werden können.
-	 */
-	public boolean isChained() {
-		return chained;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -649,6 +601,7 @@ public abstract class Component implements IComponent {
 	 * Subclasses do decide on their own, when and in which way additional drawings are used,
 	 * so do not depend on the additional drawing routine to be drawn for every subclass
 	 * of Component.
+	 *
 	 * @return The chunk of code representing the additional drawing commands for the component.
 	 */
 	public Function1<Graphics2D, Unit> getAdditionalDrawing() {
@@ -673,6 +626,7 @@ public abstract class Component implements IComponent {
 	 * Applies the given transformation to the bounds of the component. <p>
 	 * This call is essentially equivalent to the call
 	 * {@code setBounds(transformation.createTransformedShape(getBounds()))}.
+	 *
 	 * @param transformation The transformation to apply to the bounds.
 	 */
 	public void applyTransformation(AffineTransform transformation) {
