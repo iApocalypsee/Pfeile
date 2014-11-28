@@ -88,6 +88,13 @@ public abstract class Component implements IComponent {
 	private Border border;
 
 	/**
+	 * The parent of the component, if any.
+	 * Coordinates are given according to the parent. If the parent is null, the corodinates
+	 * are absolute.
+	 */
+	private Component parent = null;
+
+	/**
 	 * Ability of the component to draw additional things that belong to the component
 	 * but don't have to belong to the boundaries of the component.
 	 */
@@ -294,9 +301,12 @@ public abstract class Component implements IComponent {
 		return getSimplifiedBounds().x;
 	}
 
+	public int getRelativeX() {
+		return getSimplifiedBounds().x - (parent != null ? parent.getX() : 0);
+	}
+
 	/**
-	 * Setzt die x Position des Steuerelements. Kann nicht verändert werden, solange {@link #isChained()}
-	 * <code>true</code> zurückgibt.
+	 * Setzt die x Position des Steuerelements.
 	 *
 	 * @param x Die neue x Position des Steuerelements.
 	 */
@@ -306,9 +316,15 @@ public abstract class Component implements IComponent {
 		bounds = transform.createTransformedShape(bounds);
 		// Do not pollute the registered function with an event in which...
 		// well... nothing really changed.
-		if (x != getX()) {
+		if (translation != 0) {
 			onMoved.apply(new Vector2(translation, 0));
 		}
+	}
+
+	public void setRelativeX(int x) {
+		if(parent == null) throw new NullPointerException("Parent of component is null.");
+		// Just translate the relative coordinate to the absolute coordinate.
+		setX(x + parent.getSimplifiedBounds().x);
 	}
 
 	/**
@@ -318,9 +334,12 @@ public abstract class Component implements IComponent {
 		return getSimplifiedBounds().y;
 	}
 
+	public int getRelativeY() {
+		return getSimplifiedBounds().y - (parent != null ? parent.getY() : 0);
+	}
+
 	/**
-	 * Setzt die y Position des Steuerelements. Kann nicht verändert werden, solange {@link #isChained()}
-	 * <code>true</code> ist.
+	 * Setzt die y Position des Steuerelements.
 	 *
 	 * @param y Die neue y Position des Steuerelements.
 	 */
@@ -330,9 +349,14 @@ public abstract class Component implements IComponent {
 		bounds = transform.createTransformedShape(bounds);
 		// Do not pollute the registered function with an event in which...
 		// well... nothing really changed.
-		if (y != getY()) {
+		if (translation != 0) {
 			onMoved.apply(new Vector2(0, translation));
 		}
+	}
+
+	public void setRelativeY(int y) {
+		if(parent == null) throw new NullPointerException("Parent of component is null.");
+		setY(y + parent.getSimplifiedBounds().y);
 	}
 
 	public void setLocation(int x, int y) {
@@ -342,6 +366,15 @@ public abstract class Component implements IComponent {
 		if (xTranslation != 0 || yTranslation != 0) {
 			onMoved.apply(new Vector2(xTranslation, yTranslation));
 		}
+	}
+
+	public void setRelativeLocation(int x, int y) {
+		if(parent == null) throw new NullPointerException("Parent of component is null.");
+		setLocation(x + parent.getSimplifiedBounds().x, y + parent.getSimplifiedBounds().y);
+	}
+
+	public void move(int x, int y) {
+		setLocation(getX() + x, getY() + y);
 	}
 
 	/**
@@ -404,6 +437,7 @@ public abstract class Component implements IComponent {
 	 *
 	 * @param x Der Streckfaktor in x Richtung
 	 * @param y Der Streckfaktor in y Richtung
+	 * @throws sun.reflect.generics.reflectiveObjects.NotImplementedException always.
 	 * @deprecated Use {@link #applyTransformation(java.awt.geom.AffineTransform)} instead.
 	 */
 	@Deprecated
@@ -570,6 +604,22 @@ public abstract class Component implements IComponent {
 	 */
 	public boolean isMouseFocused() {
 		return mouseFocused;
+	}
+
+	public Component getParent() {
+		return parent;
+	}
+
+	public void setParent(Component parent) {
+		if(this.parent != null) {
+			AffineTransform resetTransform = AffineTransform.getTranslateInstance(-this.parent.getX(), -this.parent.getY());
+			bounds = resetTransform.createTransformedShape(bounds);
+		}
+		this.parent = parent;
+		if(this.parent != null) {
+			AffineTransform newTransform = AffineTransform.getTranslateInstance(this.parent.getX(), this.parent.getY());
+			bounds = newTransform.createTransformedShape(bounds);
+		}
 	}
 
 	/**

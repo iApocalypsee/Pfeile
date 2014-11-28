@@ -25,23 +25,12 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
 
   // Every time the frame is moved, the contained components have to be moved as well.
   onMoved += { vec =>
-
-    // Inner function that makes calculating the new position for every component easier.
-    def new_coordinates(c: IComponent): (Int, Int) = ((c.getX + vec.x).asInstanceOf[Int],
-      (c.getY + vec.y).asInstanceOf[Int])
-
-    comps foreach { component =>
-      val new_coords = new_coordinates(component)
-      component.setLocation(new_coords _1, new_coords _2)
-    }
-
+    // Move every component by the vector
+    comps foreach { _.move(vec.x.asInstanceOf[Int], vec.y.asInstanceOf[Int]) }
   }
 
   /** The components that the frame is managing. */
   private val comps = mutable.MutableList[Component]()
-
-  /** The topline bar. Just a convenience of mine... */
-  private lazy val toplineBar = ToplineBar
 
   /** The close button of the frame. */
   private val closeButton = {
@@ -107,6 +96,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     */
   def <<(c: Component) = {
     comps += c
+    c.setParent(this)
     c.onMoved += { _ =>
       if (!c.getBounds.intersects(this.getBounds.getBounds2D)) {
         LogFacility.log("Component \"" + c.getName + "\" is not intersecting bounds of frame \"" + getName + "\" " +
@@ -130,7 +120,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
   }
 
   // Singleton instance object, represents the top bar which "holds" the close button.
-  private object ToplineBar extends Component(getX, getY, getWidth, FrameStyle.CommonInset * 2 + closeButton
+  private object ToplineBar extends Component(0, 0, getWidth, FrameStyle.CommonInset * 2 + closeButton
     .getHeight, backingScreen)      with MouseDragDetector {
 
     onMouseDragDetected += { vec =>

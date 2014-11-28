@@ -13,6 +13,7 @@ import gui.Screen
  * @author Josip Palavra
  * @version 24.07.2014
  */
+@deprecated
 trait StandardComponent extends IComponent {
 
   private val c = new Component() {
