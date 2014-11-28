@@ -17,9 +17,9 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 object Delegate {
 
-  def create[In <: AnyRef] = new Delegate[In]
+  @inline def create[In <: AnyRef] = new Delegate[In]
 
-  def createZeroArity = new Function0Delegate
+  @inline def createZeroArity = new Function0Delegate
 
   // Inner classes.
   // I made them inner classes so that these classes don't float
@@ -130,7 +130,7 @@ object Delegate {
       register
     }
 
-    def apply(arg: In): Unit = call( arg )
+    @inline def apply(arg: In): Unit = call( arg )
 
     def call(arg: In): Unit = callbacks foreach {
       case pf: PartialFunction[In, Any] => if (pf.isDefinedAt( arg )) pf( arg ) else throw new MatchError( this )
@@ -226,7 +226,7 @@ object Delegate {
       register
     }
 
-    def apply(): Unit = call( )
+    @inline def apply(): Unit = call( )
 
     def call(): Unit = callbacks foreach {
       _( )
