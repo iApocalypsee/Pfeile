@@ -3,6 +3,7 @@ package newent
 import comp.Circle
 import general.Delegate
 import newent.VisionMap.{VisionPromise, VisionEntry}
+import player.BoardPositionable
 import world.TileLike
 
 import scala.collection.mutable
@@ -10,35 +11,36 @@ import scala.concurrent.Future
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-/**
- *
- * @author Josip Palavra
- */
+/** Represents the parts of the map that have been revealed, are visible or are not even discovered.
+  *
+  * @constructor Creates a new vision map.
+  * @param entity The entity to tie the vision map to.
+  */
 class VisionMap(val entity: VisionEntity) {
 
   /** The vision entries, where everything about vision is saved, inaccessible from the tile classes. */
   private val _entries = {
-    val result = mutable.MutableList[VisionEntry]( )
+    val result = mutable.MutableList[VisionEntry]()
     val terrain = entity.tileLocation.terrain
     for (y <- 0 until terrain.height) {
       for (x <- 0 until terrain.width) {
-        result += new VisionEntry( terrain.tileAt( x, y ) )
+        result += new VisionEntry(terrain.tileAt(x, y))
       }
     }
     result.toList
   }
 
-  private var _grantedVisionObjects = mutable.MutableList[VisionPromise]( )
+  private var _grantedVisionObjects = mutable.MutableList[VisionPromise]()
 
   /** Returns a vision object that can be "released". */
   def grantVision(x: Int, y: Int, radius: Int): VisionPromise = {
-    val grantedVision = new VisionPromise( x, y, radius )
+    val grantedVision = new VisionPromise(x, y, radius)
     // When the vision is released, I need to keep a way of removing the vision object from the map
     grantedVision._onVisionReleased += { () =>
       // Remove the constructed promise when the vision is going to be released.
-      _grantedVisionObjects = _grantedVisionObjects.filterNot { _ == grantedVision }
+      _grantedVisionObjects = _grantedVisionObjects.filterNot(_ == grantedVision)
       // Recalculate the vision map, since the vision objects have changed.
-      updateEntries( )
+      updateEntries()
     }
     _grantedVisionObjects += grantedVision
     updateEntries()
@@ -48,20 +50,24 @@ class VisionMap(val entity: VisionEntity) {
   /** Returns true if the specified tile on these coordinates is visible. */
   def isVisible(x: Int, y: Int): Boolean = visionStatusOf(x, y) eq VisionStatus.Visible
 
+  /** Returns the current vision status of any board positionable object. */
+  def visionStatusOf(p: BoardPositionable): VisionStatus = visionStatusOf(p.getGridX, p.getGridY)
+
   /** Returns the current vision status of the tile. */
   def visionStatusOf(x: Int, y: Int): VisionStatus = {
     require(entity.world.terrain.isTileValid(x, y))
-    val findResult = _entries.find { e => e.tile.latticeX == x && e.tile.latticeY == y }.get
+    val findResult = _entries.find { e => e.tile.latticeX == x && e.tile.latticeY == y}.get
     findResult.visionStatus
   }
 
   /** Updates the vision entries based on the vision promises that have been granted. */
   private def updateEntries(): Unit = {
-    makeNonVisible( )
+    // Reset every visibility so that no tile has the status "Visible"
+    makeNonVisible()
     _grantedVisionObjects foreach { v =>
       _entries foreach { e =>
         Future {
-          if (v.circle.contains( e.tile.latticeX, e.tile.latticeY )) {
+          if (v.circle.contains(e.tile.latticeX, e.tile.latticeY)) {
             e.visionStatus = VisionStatus.Visible
           }
         }
@@ -96,9 +102,9 @@ object VisionMap {
     /** Circle for representing the geometry of the vision. */
     private[VisionMap] val circle = {
       val ret = new Circle
-      ret.setX( x )
-      ret.setY( y )
-      ret.setRadius( radius )
+      ret.setX(x)
+      ret.setY(y)
+      ret.setRadius(radius)
       ret
     }
 
@@ -111,11 +117,11 @@ object VisionMap {
     def releaseVision() = {
       // I know in advance that the VisionMap class registered a callback on the delegate for
       // deleting this promise out of the vision.
-      _onVisionReleased.call( )
-      _onVisionReleased.clear( )
+      _onVisionReleased.call()
+      _onVisionReleased.clear()
     }
 
-    override def finalize(): Unit = {
+    protected override def finalize(): Unit = {
       releaseVision()
     }
 
