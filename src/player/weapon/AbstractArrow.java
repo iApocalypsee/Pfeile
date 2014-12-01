@@ -27,6 +27,7 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
     /** the rotation of the BufferedImage to draw the arrow to the direction of the attacked field */
     protected double rotation;
 
+    /** the speed of the arrow */
 	protected double speed;
 
 	/**
@@ -60,14 +61,18 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 	 */
 	protected int rangeValueCurrent;
 
-	 /** Wie Schnel sich der Pfeil bewegt */
-	protected int arrowSpeed;
-	//
-	// /** Wie gro� seine Beschleunigung ist */
-	// protected int acceleration;
-	
-	/** Wie weit der Schaden des Pfeils nach dem Auftreffen reicht */
-	protected int damageRadius;
+    /** changes the damage radius of that arrow */
+    private void setDamageRadius (float damageRadius) {
+        this.damageRadius = damageRadius;
+    }
+
+    /* the radius in tiles, where the enemies get damage */
+    public float getDamageRadius () {
+        return damageRadius;
+    }
+
+    /** Wie weit der Schaden des Pfeils nach dem Auftreffen reicht */
+	protected float damageRadius;
 
 	/** Positon im Koordinatensystem des Pfeils: Die X-Position */
 	protected int fieldX;
@@ -109,7 +114,7 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 	 */
 	public AbstractArrow(float attackVal, float defenseVal, int rangeVal,
 			float selfHittingRate, float aimMissing, float aimMissingRate,
-			float damageLosingRate, double speed, String name) {
+			float damageLosingRate, double speed, float damageRadius, String name) {
 		super(name);
 		setAttackValue(attackVal);
 		setAttackValCurrent(attackVal);
@@ -132,9 +137,7 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 		setAimMissingCurrent(aimMissing);
 		setDamageLosingRate(damageLosingRate);
 		setSpeed(speed);
-
-		// TODO: arrowSpeed in subclasses of AbstractArrow
-		// TODO: damageRadius
+        setDamageRadius(damageRadius);
 	}
 
 	/** Gibt den Aktuellen Wert des Schadens zur�ck */
@@ -247,20 +250,7 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 		this.fieldY = fieldY;
 	}
 
-	/** Gibt die Feldnummer des Feldes zur�ck, auf dem der Pfeil ist */
-	public int getFieldNr() {
-		return fieldNr;
-	}
-
-	/**
-	 * Setzt die Feldnummer neu SETZT DAMIT AUCH EINE NEUE POSITON: die Position
-	 * des Feldes der 'int fieldNr'
-	 */
-	public void setFieldNr(int fieldNr) {
-		this.fieldNr = fieldNr;
-	}
-
-	/**
+    /**
 	 * Gibt die Feldposition X des Feldes (im Field-Koordinatensystem) zur�ck,
 	 * dessen Ziel (Zielfeld) der Pfeil anvisiert hat
 	 */
@@ -374,20 +364,3 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
         g.setTransform(old);
 	}
 }
-
-// /** Setzt die Feldnummer neu;
-// * Der neue Wert wird automaisch aus den Werten f�r die X- und Y- Position in
-// den Feldkoordinaten berechnet */
-// public void reFreshFieldNr () {
-// this.fieldNr = Field.getFieldNrFromPos(fieldX, fieldY);
-// }
-// /** setzt die X UND Y Positon bei den Feldern neu;
-// * Der neue Wert wird automatisch aus der FieldNr dieses Pfeils berechnet
-// */
-// public void reFreshPosXYfield () {
-// this.posX = com.github.pfeile.gui.Field.getPosXFromFieldNr (fieldNr);
-// this.posY = com.github.pfeile.gui.Field.getPosYFromFieldNr (fieldNr);
-// }
-// --> acceleration
-// --> damageRadius
-

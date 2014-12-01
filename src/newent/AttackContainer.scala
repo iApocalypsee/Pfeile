@@ -1,6 +1,6 @@
 package newent
 
-import general.{LogFacility, Delegate, Main}
+import general.{Delegate, Main}
 import newent.event.AttackEvent
 import player.BoardPositionable
 

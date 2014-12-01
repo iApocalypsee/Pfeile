@@ -1,9 +1,11 @@
 package world
 
+import player.weapon.AbstractArrow
+
 import java.awt.event.{MouseEvent, MouseAdapter}
 import java.awt.{Color, Graphics2D, Polygon}
 
-import comp.{Component, DisplayRepresentable}
+import comp.{Circle, Component, DisplayRepresentable}
 import general.Main
 import geom.PointDef
 import gui.{GameScreen, AdjustableDrawing}
@@ -86,12 +88,21 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
   IsometricPolygonTile.appendToTileTypeList( this.getClass )
 
   onImpact += { e =>
-    // Every entity that is an attack container and is standing on THIS tile has to feel the attack...
+    // Every entity that is an attack container and is standing on THIS tile (if it is any attack) has to feel the attack...
     terrain.world.entities.entityList.filter {
-      _.tileLocation == this
+       // if the weapon is an error, the damage radius need to be calculated
+       if (e.isInstanceOf [AbstractArrow]) {
+
+          val radius = e.weapon.asInstanceOf[AbstractArrow].getDamageRadius
+
+          //val area = new Circle (/** x-position of: _.tileLocation == this*/,/** y-position of: _.tileLocation == this */, radius)
+
+          _.tileLocation == this
+       } else
+          _.tileLocation == this
     }.foreach {
-      case x: AttackContainer => x.takeImmediately( e )
-      case _ =>
+       case x: AttackContainer => x.takeImmediately( e )
+       case _ =>
     }
   }
 

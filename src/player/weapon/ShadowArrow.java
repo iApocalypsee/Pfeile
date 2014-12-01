@@ -33,7 +33,7 @@ public class ShadowArrow extends AbstractArrow {
 	/** ruft den Konstrucktor von 'AbstractArrow' auf */
 	public ShadowArrow() {
 		
-		super(39f, 25f, 1200, 0.0675f, 0.005f, 0.085f, 0.03f, 6.0, "Schattenpfeil");
+		super(39f, 25f, 1200, 0.0675f, 0.005f, 0.085f, 0.03f, 6.0, 5.3f, "Schattenpfeil");
 		
 	}
 	

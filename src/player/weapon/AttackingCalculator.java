@@ -11,7 +11,7 @@ public class AttackingCalculator {
     /** this value increases every millisecond. It counts the time, after starting the flying process */
     private long milliSec;
     /** a time multiplier in milliseconds to calculate Tiles per turn to Tiles per (milli-)second. The higher TIME_MULTI, the longer the arrows will need to fly:
-     * <p> <code>TIME_MULTI * attackingArrow.getSpeed()</code>*/
+     * <p> <code>TIME_MULTI / attackingArrow.getSpeed()</code>*/
     private static final int TIME_MULTI = 1200;
 
     private class Clock extends TimerTask {
