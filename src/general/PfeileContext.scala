@@ -34,8 +34,8 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   onTurnEnd += { () =>
      GameScreen.getInstance().lockUI()
 
-     val attacks = new AttackingCalculator
-     attacks.arrowsFlying()
+     // looks weird, but with a static method I can't manage the thread
+     new AttackingCalculator().arrowsFlying()
 
      PlayerList.++()
 
@@ -43,6 +43,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   }
 
   PlayerList.onTurnCycleGlobalEnded += { () =>
+
     // Notify the tiles first that the turn cycle has been completed.
     for(y <- 0 until _world.terrain.height) {
       for(x <- 0 until _world.terrain.width) {

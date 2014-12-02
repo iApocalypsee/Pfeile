@@ -2,6 +2,7 @@ package newent
 
 import general.LogFacility
 import player.Life
+import player.weapon.AbstractArrow
 
 /** An entity that has its own life status.
   *
@@ -21,9 +22,13 @@ trait LivingEntity extends Entity with AttackContainer {
   }
 
   onImpact += { event =>
-    LogFacility.log(s"Impacting attack: by ${event.aggressor} to " +
-      s"${event.destination.toString} with ${event.weapon.getName}", "Debug", "atkmech")
-    life.setLife(life.getLife - event.weapon.getAttackValue)
+     LogFacility.log(s"Impacting attack: by ${event.aggressor} to " +
+        s"${event.destination.toString} with ${event.weapon.getName}", "Debug", "atkmech")
+
+     if (event.weapon.isInstanceOf[AbstractArrow]) {
+        life.setLife(life.getLife - event.weapon.asInstanceOf[AbstractArrow].getAttackValCurrent)
+     } else
+        life.setLife(life.getLife - event.weapon.getAttackValue)
   }
 
 }

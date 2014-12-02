@@ -38,6 +38,18 @@ public class Circle implements Shape {
 		radius = 0.0;
 	}
 
+    /**
+     * This constructs a new circle
+     * @param x      the X coordinate of the middle of the circle
+     * @param y      the y coordinate of the middle of the circle
+     * @param radius the radius of the circle
+     */
+    public Circle (double x, double y, double radius) {
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+    }
+
 	public double getX() {
 		return x;
 	}

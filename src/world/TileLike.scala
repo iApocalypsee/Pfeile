@@ -4,10 +4,16 @@ import java.awt.event.{MouseAdapter, MouseEvent}
 import java.awt.{Color, Graphics2D, Polygon}
 
 import comp.{Component, DisplayRepresentable}
+import comp.{Circle, Component, DisplayRepresentable}
 import general.Main
 import geom.PointDef
 import gui.{AdjustableDrawing, GameScreen}
+import gui.{AdjustableDrawing, GameScreen}
 import newent.{AttackContainer, EntityLike}
+import player.weapon.AbstractArrow
+
+import java.awt.event.{MouseAdapter, MouseEvent}
+import java.awt.{Color, Graphics2D, Polygon}
 
 import scala.collection.{JavaConversions, mutable}
 
@@ -85,12 +91,40 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
   IsometricPolygonTile.appendToTileTypeList( this.getClass )
 
   onImpact += { e =>
-    // Every entity that is an attack container and is standing on THIS tile has to feel the attack...
-    terrain.world.entities.entityList.filter {
-      _.tileLocation == this
-    }.foreach {
-      case x: AttackContainer => x.takeImmediately( e )
-      case _ =>
+     // Every entity that is an attack container and is standing on THIS tile
+     // If there is any weapon the entity needs to feel the attack only on this file
+     // If it is an arrow, there need to be a damage radius
+
+     var filteredEntityList: scala.Seq[EntityLike] = null
+
+     if (e.weapon.isInstanceOf[AbstractArrow]) {
+        val maxList = terrain.world.entities.entityList
+
+        val aim = maxList.filter {
+           _.tileLocation == this
+        }.last
+
+        // the idea is that the position of every enemy should be in the area, which is the tile the arrow will impact
+        val radius = e.weapon.asInstanceOf[AbstractArrow].getDamageRadius
+        val area = new Circle(aim.tileLocation.getGridX, aim.tileLocation.getGridY, radius)
+
+        for (i <- 0 until maxList.size) {
+           if (area.contains(maxList.apply(i).tileLocation.getGridX, maxList.apply(i).tileLocation.getGridY)) {
+              // this should add the object at the position i in maxList to the filteredEntityList
+              filteredEntityList.:+(maxList.apply(i))
+           }
+        }
+
+     } else {
+        filteredEntityList = terrain.world.entities.entityList.filter {
+           _.tileLocation == this
+        }
+     }
+
+     // Splitting for easier use
+     filteredEntityList.foreach {
+       case x: AttackContainer => x.takeImmediately( e )
+       case _ =>
     }
   }
 

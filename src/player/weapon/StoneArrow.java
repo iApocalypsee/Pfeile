@@ -34,7 +34,7 @@ public class StoneArrow extends AbstractArrow {
 	/** ruft den Konstrucktor von 'AbstractArrow' auf */
 	public StoneArrow() {
 		
-		super(39f, 37f, 400, 0.0075f, 0.025f, 0.14f, 0.04f, 5, "Steinpfeil");
+		super(39f, 37f, 400, 0.0075f, 0.025f, 0.14f, 0.04f, 5, 4.5f, "Steinpfeil");
 		
 	}
 	
