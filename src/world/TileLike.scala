@@ -1,13 +1,12 @@
 package world
 
-import java.awt.event.{MouseEvent, MouseAdapter}
+import java.awt.event.{MouseAdapter, MouseEvent}
 import java.awt.{Color, Graphics2D, Polygon}
 
 import comp.{Component, DisplayRepresentable}
 import general.Main
 import geom.PointDef
-import gui.{GameScreen, AdjustableDrawing}
-import misc.metadata.OverrideMetadatable
+import gui.{AdjustableDrawing, GameScreen}
 import newent.{AttackContainer, EntityLike}
 
 import scala.collection.{JavaConversions, mutable}
@@ -19,7 +18,7 @@ import scala.collection.{JavaConversions, mutable}
   * that has not implemented any Component interface.
   * @author Josip Palavra
   */
-trait TileLike extends DisplayRepresentable with OverrideMetadatable with AttackContainer {
+trait TileLike extends DisplayRepresentable with AttackContainer {
 
   /** The x position in the grid of the world. */
   val latticeX: Int

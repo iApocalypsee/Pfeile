@@ -96,4 +96,15 @@ class Player(world: WorldLike,
       g.fill(getBounds)
     }
   }
+
+  /** The initial attribute object with which the entity begins recording its attributes.
+    *
+    * The method just gets called once to initialize an underlying field.
+    */
+  override protected def initialAttribute = new Attributes {
+
+    override protected def initialCurrent(initObject: Current) = initObject
+
+    override protected def initialLasting(initObject: Lasting) = initObject
+  }
 }
