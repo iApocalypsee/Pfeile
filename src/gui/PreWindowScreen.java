@@ -213,11 +213,11 @@ public class PreWindowScreen extends Screen {
 
                 Mechanics.arrowNumberPreSet = 10;
                 labels[2].setText("Pfeilanzahl [vorher wählbar]: " + Mechanics.arrowNumberPreSet);
-
-                Mechanics.lifeMax = 400;
+	            
+	            Player.LifeMax().set(400d);
                 labels[3].setText("maximales Leben: " + "mittel");
 
-                Mechanics.lifeRegeneration = 3;
+	            Player.LifeRegeneration().set(3d);
                 labels[4].setText("Lebensregeneration: " + "mittel");
 
                 Mechanics.damageMulti = 3;
@@ -262,11 +262,11 @@ public class PreWindowScreen extends Screen {
                     openConfirmDialog("Select unselected Selections: Züge pro Runde");
                     return;
                 }
-                if (Mechanics.lifeMax == -1) {
+                if (Player.LifeMax().get() == -1) {
                     openConfirmDialog("Select unselected Selections: maximales Leben");
                     return;
                 }
-                if (Mechanics.lifeRegeneration == -1) {
+                if (Player.LifeRegeneration().get() == -1) {
                     openConfirmDialog("Select unselected Selections: Lebensregeneration");
                     return;
                 }
@@ -332,11 +332,11 @@ public class PreWindowScreen extends Screen {
                             // maximales Leben
                             boxSelectHigh.triggerListeners(e);
                             switch (boxSelectHigh.getSelectedIndex()) {
-                                case 0: Mechanics.lifeMax = 600; break;
-                                case 1: Mechanics.lifeMax = 480; break;
-                                case 3: Mechanics.lifeMax = 320; break;
-                                case 4: Mechanics.lifeMax = 270; break;
-                                default: Mechanics.lifeMax = 400;
+                                case 0: Player.LifeMax().set(600.); break;
+                                case 1: Player.LifeMax().set(480.); break;
+                                case 3: Player.LifeMax().set(320.); break;
+                                case 4: Player.LifeMax().set(270.); break;
+                                default: Player.LifeMax().set(400.);
                             }
                             labels[3].setText("maximales Leben: " + boxSelectHigh.getSelectedValue());
                             return;
@@ -345,11 +345,11 @@ public class PreWindowScreen extends Screen {
                             // Lebensregeneration
                             boxSelectHigh.triggerListeners(e);
                             switch (boxSelectHigh.getSelectedIndex()) {
-                                case 0: Mechanics.lifeRegeneration = 5; break; // hoch
-                                case 1: Mechanics.lifeRegeneration = 4; break;
-                                case 3: Mechanics.lifeRegeneration = 2; break;
-                                case 4: Mechanics.lifeRegeneration = 1; break; // niedrig
-                                default: Mechanics.lifeRegeneration = 3; // mittel
+                                case 0: Player.LifeRegeneration().set(5.); break; // hoch
+                                case 1: Player.LifeRegeneration().set(4.); break;
+                                case 3: Player.LifeRegeneration().set(2.); break;
+                                case 4: Player.LifeRegeneration().set(1.); break; // niedrig
+                                default: Player.LifeRegeneration().set(3.); // mittel
                             }
                             labels[4].setText("Lebensregeneration: " + boxSelectHigh.getSelectedValue());
                             return;
@@ -643,10 +643,10 @@ public class PreWindowScreen extends Screen {
             Mechanics.arrowNumberPreSet = 10;
             labels[2].setText("Pfeilanzahl [vorher wählbar]: " + Mechanics.arrowNumberPreSet);
 
-            Mechanics.lifeMax = 400;
+            Player.LifeMax().set(400.);
             labels[3].setText("maximales Leben: " + "mittel");
 
-            Mechanics.lifeRegeneration = 3;
+            Player.LifeRegeneration().set(3.);
             labels[4].setText("Lebensregeneration: " + "mittel");
 
             Mechanics.damageMulti = 3;
@@ -688,11 +688,11 @@ public class PreWindowScreen extends Screen {
                 openConfirmDialog("Select unselected Selections: Züge pro Runde");
                 return;
             }
-            if (Mechanics.lifeMax == -1) {
+            if (Player.LifeMax().get() == -1) {
                 openConfirmDialog("Select unselected Selections: maximales Leben");
                 return;
             }
-            if (Mechanics.lifeRegeneration == -1) {
+            if (Player.LifeRegeneration().get() == -1) {
                 openConfirmDialog("Select unselected Selections: Lebensregeneration");
                 return;
             }
@@ -752,11 +752,11 @@ public class PreWindowScreen extends Screen {
                 case 3 : {
                     // maximales Leben
                     switch (boxSelectHigh.getSelectedIndex()) {
-                        case 0: Mechanics.lifeMax = 600; break;
-                        case 1: Mechanics.lifeMax = 480; break;
-                        case 3: Mechanics.lifeMax = 320; break;
-                        case 4: Mechanics.lifeMax = 270; break;
-                        default: Mechanics.lifeMax = 400;
+                        case 0: Player.LifeMax().set(600.); break;
+                        case 1: Player.LifeMax().set(480.); break;
+                        case 3: Player.LifeMax().set(320.); break;
+                        case 4: Player.LifeMax().set(270.); break;
+                        default: Player.LifeMax().set(400.);
                     }
                     labels[3].setText("maximales Leben: " + boxSelectHigh.getSelectedValue());
                     return;
@@ -764,11 +764,11 @@ public class PreWindowScreen extends Screen {
                 case 4 : {
                     // Lebensregeneration
                     switch (boxSelectHigh.getSelectedIndex()) {
-                        case 0: Mechanics.lifeRegeneration = 5; break; // hoch
-                        case 1: Mechanics.lifeRegeneration = 4; break;
-                        case 3: Mechanics.lifeRegeneration = 2; break;
-                        case 4: Mechanics.lifeRegeneration = 1; break; // niedrig
-                        default: Mechanics.lifeRegeneration = 3; // mittel
+                        case 0: Player.LifeRegeneration().set(5.); break; // hoch
+                        case 1: Player.LifeRegeneration().set(4.); break;
+                        case 3: Player.LifeRegeneration().set(2.); break;
+                        case 4: Player.LifeRegeneration().set(1.); break; // niedrig
+                        default: Player.LifeRegeneration().set(3.); // mittel
                     }
                     labels[4].setText("Lebensregeneration: " + boxSelectHigh.getSelectedValue());
                     return;
@@ -860,24 +860,19 @@ public class PreWindowScreen extends Screen {
 
     /**
      * Use that methods after clicking at <code> readyButton </code>, because here the missing corrections
-     * i.e.<code> Mechanics.lifeRegeneration </code>
+     * i.e.<code> Player.LifeRegeneration().get() </code>
      */
     public static void correctInits() {
-        if (Mechanics.lifeRegeneration == 1) { // 5 = hoch; 1 == niedrig
-            Mechanics.lifeRegeneration = (int) Math
-                    .round(0.5 * (Mechanics.lifeMax * 0.008 + 2));
-        } else if (Mechanics.lifeRegeneration == 2) {
-            Mechanics.lifeRegeneration = (int) Math
-                    .round(0.5 * (Mechanics.lifeMax * 0.001 + 3));
-        } else if (Mechanics.lifeRegeneration == 4) {
-            Mechanics.lifeRegeneration = (int) Math
-                    .round(0.5 * (Mechanics.lifeMax * 0.02 + 4.5));
-        } else if (Mechanics.lifeRegeneration == 5) {
-            Mechanics.lifeRegeneration = (int) Math
-                    .round(0.5 * (Mechanics.lifeMax * 0.025 + 7));
+        if (Player.LifeRegeneration().get() == 1) { // 5 = hoch; 1 == niedrig
+            Player.LifeRegeneration().set((0.5 * (Player.LifeMax().get() * 0.008 + 2)));
+        } else if (Player.LifeRegeneration().get() == 2) {
+            Player.LifeRegeneration().set(0.5 * (Player.LifeMax().get() * 0.001 + 3));
+        } else if (Player.LifeRegeneration().get() == 4) {
+            Player.LifeRegeneration().set(0.5 * (Player.LifeMax().get() * 0.02 + 4.5));
+        } else if (Player.LifeRegeneration().get() == 5) {
+            Player.LifeRegeneration().set(0.5 * (Player.LifeMax().get() * 0.025 + 7));
         } else { // Standard: lifeRegeneration: normal
-            Mechanics.lifeRegeneration = (int) Math
-                    .round(0.5 * (Mechanics.lifeMax * 0.015 + 3.5));
+            Player.LifeRegeneration().set(0.5 * (Player.LifeMax().get() * 0.015 + 3.5));
         }
         setTotalArrowNumberCorrect();
     }

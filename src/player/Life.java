@@ -5,6 +5,7 @@ import general.Main;
 import general.Mechanics;
 import newent.EntityLike;
 import newent.LivingEntity;
+import newent.Player;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
 
@@ -25,7 +26,7 @@ public class Life {
 
 	/**
 	 * Creates a new instance from the Life class with customized preferences.
-	 * @param lifemax The maximum life that the object has.
+	 * @param lifemax The maximum life that the object has. (required: > 0.0)
 	 * @param liferegen The regeneration per turn.
 	 * @param startingLife The starting amount of life.
 	 */
@@ -49,22 +50,25 @@ public class Life {
     /** Creates a new instance from the Life class by using the standard values.
      * This is similar to: <code>new Life (Mechanics.lifeMax, Mechanics.lifeRegeneration, Mechanics.lifeMax)</code> with checking
      * if these values have been initialized.
+     *
+     * <b>This is just a constructor for the player. So use the other constructor. </b>
      */
+    @Deprecated
     public Life () {
-        if (Mechanics.lifeMax <= 0)
-            lifemax = Mechanics.lifeMax;
+        if (Player.LifeMax().get() <= 0)
+            lifemax = Player.LifeMax().get();
         else {
             System.err.println("The value for Mechanics.lifeMax is not valid. It maight be unset. Life is \"maximales Leben: normal\"");
             lifemax = 400;
         }
-        if (Mechanics.lifeRegeneration <= 0)
-            liferegen = Mechanics.lifeRegeneration;
+        if (Player.LifeRegeneration().get() <= 0)
+            liferegen = Player.LifeRegeneration().get();
         else {
             System.err.println("The value for Mechanics.lifeRegeneration is not valid. It maight be unset. \"Lebensregeneration: normal\"");
-            if (Mechanics.lifeMax <= 0)
+            if (Player.LifeMax().get() <= 0)
                 liferegen = (int) Math.round(0.5 * (400 * 0.02) + 4.5);
             else
-                liferegen = (int) Math.round(0.5 * (Mechanics.lifeMax * 0.02 + 4.5));
+                liferegen = (int) Math.round(0.5 * (Player.LifeRegeneration().get() * 0.02 + 4.5));
         }
         life = lifemax;
     }

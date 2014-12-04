@@ -1,6 +1,7 @@
 package gui;
 
 import comp.Button;
+import comp.InternalFrame;
 import general.Main;
 import newent.Player;
 import player.weapon.AttackDrawer;
@@ -12,6 +13,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Path2D;
 import java.util.Random;
 
 /**
@@ -49,6 +51,7 @@ public class GameScreen extends Screen {
 	private Button toggleStopwatch;
 
 	private VisualMap map;
+	private InternalFrame frame = new InternalFrame(50, 50, 100, 100, this);
     private final AttackDrawer attackDrawer = new AttackDrawer();
 
     public AttackDrawer getAttackDrawer () {
@@ -181,6 +184,8 @@ public class GameScreen extends Screen {
 //				}
 			}
 		});
+
+		frame.$less$less(new Button(75, 75, this, "Fooey"));
 	}
 
 	@Override
@@ -196,6 +201,8 @@ public class GameScreen extends Screen {
 		endTurnButton.draw(g);
 		shootButton.draw(g);
 		toggleStopwatch.draw(g);
+
+		frame.draw(g);
 
 		getLifeUI().draw(g);
 		Main.getContext().getTimeClock().draw(g);

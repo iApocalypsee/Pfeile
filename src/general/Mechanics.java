@@ -15,14 +15,6 @@ public final class Mechanics {
 	/** CLASSIC: Spieleranzahl standardm��ig auf zwei, sp�ter m�ssten mehr in einer Partie dazukommen */
 	public static int playerNumber = 2, stdArrowNumber;
 	
-	
-	/** Maximales Leben */
-	public static int lifeMax = -1;
-	
-	
-	/** Regeneration */
-	public static int lifeRegeneration = -1;
-	
 	/** Schaden-Muliplikator */
 	public static float damageMulti = -1f;
 	

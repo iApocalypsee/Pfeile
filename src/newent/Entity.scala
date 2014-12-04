@@ -95,7 +95,6 @@ trait TeleportableEntity extends Entity {
     setGridY( y )
     onLocationChanged.callAsync( LocationChangedEvent( prevX, prevY, getGridX, getGridY, this ) )
   }
-
 }
 
 trait InventoryEntity extends Entity {

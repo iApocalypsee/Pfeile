@@ -3,7 +3,7 @@ package newent
 import java.awt.{Color, Graphics2D, Point}
 
 import comp.Component
-import general.Delegate
+import general.{Property, Delegate}
 import general.Main.getGameWindow
 import newent.pathfinding.AStarPathfinder
 import player.Life
@@ -39,7 +39,7 @@ class Player(world: WorldLike,
   /** The default movement points that the entity has. */
   override def defaultMovementPoints = 4
   override val pathfinderLogic       = new AStarPathfinder(20, { t => true })
-  override val life                  = new Life(400.0, 2.2, 400.0)
+  override lazy val life             = new Life(Player.LifeMax.get, Player.LifeRegeneration.get, Player.LifeRegeneration.get)
 
   /** the number of arrows the player an still use from this his/her selected usable <code> Mechanics.arrowNumberFreeSet </code> inventory */
   private var arrowNumberFreeSetUsable = general.Mechanics.arrowNumberFreeSet
@@ -107,4 +107,14 @@ class Player(world: WorldLike,
 
     override protected def initialLasting(initObject: Lasting) = initObject
   }
+}
+
+object Player {
+
+  /** the maximum life, which a player can have. It is initalized by PreWindowScreen (notice, that the value will be -1.0 before it) */
+  lazy val LifeMax = Property.apply[java.lang.Double](-1.0)
+
+  /** the life regeneration of a player. It is initalized by PreWindowScreen (before that the value will be -1.0) */
+  lazy val LifeRegeneration = Property.apply[java.lang.Double](-1.0)
+
 }

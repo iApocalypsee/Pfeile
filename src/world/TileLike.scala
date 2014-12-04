@@ -3,17 +3,12 @@ package world
 import java.awt.event.{MouseAdapter, MouseEvent}
 import java.awt.{Color, Graphics2D, Polygon}
 
-import comp.{Component, DisplayRepresentable}
 import comp.{Circle, Component, DisplayRepresentable}
 import general.Main
 import geom.PointDef
 import gui.{AdjustableDrawing, GameScreen}
-import gui.{AdjustableDrawing, GameScreen}
 import newent.{AttackContainer, EntityLike}
 import player.weapon.AbstractArrow
-
-import java.awt.event.{MouseAdapter, MouseEvent}
-import java.awt.{Color, Graphics2D, Polygon}
 
 import scala.collection.{JavaConversions, mutable}
 
@@ -95,7 +90,7 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
      // If there is any weapon the entity needs to feel the attack only on this file
      // If it is an arrow, there need to be a damage radius
 
-     var filteredEntityList: scala.Seq[EntityLike] = null
+     var filteredEntityList = mutable.ListBuffer[EntityLike]()
 
      if (e.weapon.isInstanceOf[AbstractArrow]) {
         val maxList = terrain.world.entities.entityList
@@ -111,12 +106,12 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
         for (i <- 0 until maxList.size) {
            if (area.contains(maxList.apply(i).tileLocation.getGridX, maxList.apply(i).tileLocation.getGridY)) {
               // this should add the object at the position i in maxList to the filteredEntityList
-              filteredEntityList.:+(maxList.apply(i))
+              filteredEntityList += maxList.apply(i)
            }
         }
 
      } else {
-        filteredEntityList = terrain.world.entities.entityList.filter {
+        filteredEntityList ++= terrain.world.entities.entityList.filter {
            _.tileLocation == this
         }
      }

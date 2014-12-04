@@ -4,9 +4,7 @@ package general
  *
  * @author Josip Palavra
  */
-case class Property[A] private(_value: Option[A]) {
-
-  private var value = _value
+case class Property[A] private(private var value: Option[A]) {
 
   /** Called when the underlying value of the property object is being returned
     * to the called by the [[general.Property#get]] method.
@@ -96,7 +94,7 @@ case class Property[A] private(_value: Option[A]) {
     *                   [[scala.None]].
     */
   class SetChange private[Property](val oldVal: Option[A], initNewVal: A) {
-    val newVal = if (initNewVal == null) None else Some(initNewVal)
+    val newVal: Option[A] = if (initNewVal == null) None else Some(initNewVal)
   }
 
 }
