@@ -1,5 +1,6 @@
 package world
 
+import general.PfeileContext
 import world.brush.TileTypeBrush
 
 import scala.collection.{JavaConversions, mutable}
@@ -90,8 +91,10 @@ class DefaultTerrain(override val world: DefaultWorld) extends TerrainLike {
 
   override type TileType = IsometricPolygonTile
 
-  override lazy val width  = 25
-  override lazy val height = 25
+  /** It uses PfeileContext.WORLD_SIZE_X */
+  override lazy val width  = PfeileContext.WORLD_SIZE_X.get.intValue()
+  /** PfeileContext.WORLD_SIZE_Y is used */
+  override lazy val height = PfeileContext.WORLD_SIZE_Y.get.intValue()
 
   // Wow. The generation process is so straightforward.
   private val _primitiveRandom = new Random

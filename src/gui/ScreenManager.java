@@ -1,8 +1,8 @@
 package gui;
 
-import java.awt.Graphics2D;
-import java.util.Hashtable;
+import java.awt.*;
 import java.util.Date;
+import java.util.Hashtable;
 
 /**
  * Der ScreenManager verwaltet die einzelnen Screens. Er ist daf�r zust�ndig,

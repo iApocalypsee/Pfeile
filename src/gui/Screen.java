@@ -1,24 +1,17 @@
 package gui;
 
+import comp.Component;
+import comp.Component.ComponentStatus;
 import comp.IComponent;
 import general.Delegate;
 import general.Main;
-
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.util.*;
-
-import comp.Component;
-import comp.Component.ComponentStatus;
 import scala.concurrent.ExecutionContext;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Hauptklasse für Screens.

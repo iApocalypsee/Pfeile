@@ -1,8 +1,5 @@
 package gui
 
-import comp.{SpinnerModel, Spinner}
-import general.Main
-
 /**
  *
  * @author Josip Palavra

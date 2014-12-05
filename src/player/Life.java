@@ -1,15 +1,9 @@
 package player;
 
-import general.Delegate;
-import general.Main;
-import general.Mechanics;
-import newent.EntityLike;
-import newent.LivingEntity;
+import general.*;
 import newent.Player;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
-
-import java.util.List;
 
 /**
  * Contains only data relevant to life of an entity.
@@ -22,18 +16,20 @@ public class Life {
 
 	/** Called when the life has been changed. */
 	public final Delegate.Delegate<LifeChangedEvent> onLifeChanged = new Delegate.Delegate<LifeChangedEvent>();
+
+    /** Called when the life is equal to or under 0. This happens, then the livingEntity dies. */
 	public final Delegate.Function0Delegate onDeath = new Delegate.Function0Delegate();
 
 	/**
 	 * Creates a new instance from the Life class with customized preferences.
-	 * @param lifemax The maximum life that the object has. (required: > 0.0)
-	 * @param liferegen The regeneration per turn.
+	 * @param lifeMax The maximum life that the object has. (required: > 0.0)
+	 * @param lifeRegeneration The regeneration per turn.
 	 * @param startingLife The starting amount of life.
 	 */
-	public Life(double lifemax, double liferegen, double startingLife) {
+	public Life(double lifeMax, double lifeRegeneration, double startingLife) {
 		scala.Predef.require(lifemax > 0.0);
-		this.lifemax = lifemax;
-		this.liferegen = liferegen;
+		this.lifemax = lifeMax;
+		this.liferegen = lifeRegeneration;
 		this.life = startingLife;
 
 		onLifeChanged.register(new AbstractFunction1<LifeChangedEvent, BoxedUnit>() {
@@ -48,27 +44,27 @@ public class Life {
 	}
 
     /** Creates a new instance from the Life class by using the standard values.
-     * This is similar to: <code>new Life (Mechanics.lifeMax, Mechanics.lifeRegeneration, Mechanics.lifeMax)</code> with checking
+     * This is similar to: <code>new Life (Player.LifeMax().get(), Player.LifeRegeneration().get(), Player.LifeMax().get())</code> with checking
      * if these values have been initialized.
      *
      * <b>This is just a constructor for the player. So use the other constructor. </b>
      */
     @Deprecated
     public Life () {
-        if (Player.LifeMax().get() <= 0)
-            lifemax = Player.LifeMax().get();
+        if (Player.MAXIMUM_LIFE().get() <= 0)
+            lifemax = Player.MAXIMUM_LIFE().get();
         else {
-            System.err.println("The value for Mechanics.lifeMax is not valid. It maight be unset. Life is \"maximales Leben: normal\"");
+            System.err.println("The value for Player.LifeMax().get() is not valid. It might be unset. Life is \"maximales Leben: normal\"");
             lifemax = 400;
         }
-        if (Player.LifeRegeneration().get() <= 0)
-            liferegen = Player.LifeRegeneration().get();
+        if (Player.LIFE_REGENERATION().get() <= 0)
+            liferegen = Player.LIFE_REGENERATION().get();
         else {
-            System.err.println("The value for Mechanics.lifeRegeneration is not valid. It maight be unset. \"Lebensregeneration: normal\"");
-            if (Player.LifeMax().get() <= 0)
+            System.err.println("The value for Player.LifeRegeneration().get() is not valid. It maight be unset. \"Lebensregeneration: normal\"");
+            if (Player.MAXIMUM_LIFE().get() <= 0)
                 liferegen = (int) Math.round(0.5 * (400 * 0.02) + 4.5);
             else
-                liferegen = (int) Math.round(0.5 * (Player.LifeRegeneration().get() * 0.02 + 4.5));
+                liferegen = (int) Math.round(0.5 * (Player.LIFE_REGENERATION().get() * 0.02 + 4.5));
         }
         life = lifemax;
     }

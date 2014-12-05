@@ -1,6 +1,6 @@
 package gui;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 
 public interface Drawable {
 	

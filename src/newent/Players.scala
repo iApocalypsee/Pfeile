@@ -3,7 +3,7 @@ package newent
 import java.awt.{Color, Graphics2D, Point}
 
 import comp.Component
-import general.{Property, Delegate}
+import general.{PfeileContext, Property, Delegate}
 import general.Main.getGameWindow
 import newent.pathfinding.AStarPathfinder
 import player.Life
@@ -39,14 +39,10 @@ class Player(world: WorldLike,
   /** The default movement points that the entity has. */
   override def defaultMovementPoints = 4
   override val pathfinderLogic       = new AStarPathfinder(20, { t => true })
-  override lazy val life             = new Life(Player.LifeMax.get, Player.LifeRegeneration.get, Player.LifeRegeneration.get)
+  override lazy val life             = new Life(Player.MAXIMUM_LIFE.get, Player.LIFE_REGENERATION.get, Player.MAXIMUM_LIFE.get)
 
-  /** the number of arrows the player an still use from this his/her selected usable <code> Mechanics.arrowNumberFreeSet </code> inventory */
-  private var arrowNumberFreeSetUsable = general.Mechanics.arrowNumberFreeSet
-   /** the number of arrows the player an still use from this his/her selected usable <code> Mechanics.arrowNumberFreeSet </code> inventory */
-  def getArrowNumberFreeSetUsable = arrowNumberFreeSetUsable
-   /** the number of arrows the player an still use from this his/her selected usable <code> Mechanics.arrowNumberFreeSet </code> inventory */
-  def setArrowNumberFreeSetUsable(arrowNumberUsable: Int) = arrowNumberFreeSetUsable = arrowNumberUsable
+  /** the number of arrows the player an still use from this his/her selected usable <code> PfeileContext.ARROW_NUMBER_FREE_SET </code> inventory */
+  lazy val arrowNumberFreeSetUsable = Property.apply[java.lang.Integer](PfeileContext.ARROW_NUMBER_FREE_SET.get)
 
   // Delegate registration only valid after initialization of the actual life object.
   life.onDeath += { () =>
@@ -112,9 +108,9 @@ class Player(world: WorldLike,
 object Player {
 
   /** the maximum life, which a player can have. It is initalized by PreWindowScreen (notice, that the value will be -1.0 before it) */
-  lazy val LifeMax = Property.apply[java.lang.Double](-1.0)
+  lazy val MAXIMUM_LIFE = Property.apply[java.lang.Double](-1.0)
 
   /** the life regeneration of a player. It is initalized by PreWindowScreen (before that the value will be -1.0) */
-  lazy val LifeRegeneration = Property.apply[java.lang.Double](-1.0)
+  lazy val LIFE_REGENERATION = Property.apply[java.lang.Double](-1.0)
 
 }

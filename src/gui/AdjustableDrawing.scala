@@ -1,7 +1,8 @@
 package gui
 
-import scala.collection.mutable
 import java.awt.Graphics2D
+
+import scala.collection.mutable
 
 /**
  * Represents an object to which individual drawing commands

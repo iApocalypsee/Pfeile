@@ -13,7 +13,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Path2D;
 import java.util.Random;
 
 /**
@@ -228,7 +227,7 @@ public class GameScreen extends Screen {
 				map.zoom(0.95f);
 				break;
             // FIXME: remove this later
-            default:
+            case KeyEvent.VK_SPACE:
                 if (lifeUI.life().getLife() - 20 < 0)
                     lifeUI.life().setLife(0);
                 else

@@ -1,23 +1,25 @@
 package gui;
 
-import comp.*;
 import comp.Button;
+import comp.ConfirmDialog;
 import comp.Label;
 import comp.List;
 import general.GameLoop;
 import general.Main;
-import general.Mechanics;
+import general.PfeileContext;
 import player.weapon.*;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
 
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.Random;
 
 /**
- * This Screen is used to set the Arrows before the Game (<code>Mechanics.arrowNumberPreSet</code>). It directly replaces
+ * This Screen is used to set the Arrows before the Game (<code>PfeileContext.arrowNumberPreSet</code>). It directly replaces
  * ArrowSelection, but it is obviously a Screen.
  * <p>
  * The Problem right now is, that if you've added an arrow to <code>arrowListSelected</code> (List on the right side of the Screen)
@@ -80,10 +82,10 @@ public class ArrowSelectionScreenPreSet extends Screen {
         selectedArrows = new LinkedList<String>();
         arrowListSelected = new List(50, 200, 200, 350, this, selectedArrows);
 
-        if (Mechanics.arrowNumberPreSet > 1) {
+        if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > 1) {
             remainingArrows = new Label(Main.getWindowWidth() - 232, Main.getWindowHeight() - 200, this, "Verfügbare Pfeile definieren!");
         } else {
-            remainingArrows = new Label (Main.getWindowWidth() - 232, Main.getWindowHeight() - 200, this, "Verfügbaren Pfeil definieren!");
+            remainingArrows = new Label(Main.getWindowWidth() - 232, Main.getWindowHeight() - 200, this, "Verfügbaren Pfeil definieren!");
         }
 
         remainingArrows.setDeclineInputColor(new Color(202, 199, 246));
@@ -151,11 +153,12 @@ public class ArrowSelectionScreenPreSet extends Screen {
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (readyButton.getSimplifiedBounds().contains(e.getPoint())) {
-                    if (selectedArrows.size() > Mechanics.arrowNumberPreSet) {
-                        throw new IllegalStateException("To many arrows added: They can't be more than " + Mechanics.arrowNumberPreSet);
+                    if (selectedArrows.size() > PfeileContext.ARROW_NUMBER_PRE_SET().get()) {
+                        throw new IllegalStateException("To many arrows added: They can't be more than "
+                                + PfeileContext.ARROW_NUMBER_PRE_SET().get());
                     }
 
-                    if (selectedArrows.size() < Mechanics.arrowNumberPreSet) {
+                    if (selectedArrows.size() < PfeileContext.ARROW_NUMBER_PRE_SET().get()) {
                         openConfirmQuestion("Bitten wählen sie alle Pfeile aus!");
                     } else {
                         GameLoop.setRunFlag(false);
@@ -172,12 +175,12 @@ public class ArrowSelectionScreenPreSet extends Screen {
                     java.util.Random randomGen = new Random();
                     String arrow = ArrowHelper.arrowIndexToName(randomGen.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES));
 
-                    if (Mechanics.arrowNumberPreSet > selectedArrows.size()) {
+                    if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > selectedArrows.size()) {
                         if (selectedArrows.get(0).equals("<keine Pfeile>")) {
                             selectedArrows.remove(0);
                         }
                         selectedArrows.add(arrow);
-                        remainingArrows.setText("Übrige Pfeile: " + (Mechanics.arrowNumberPreSet - selectedArrows.size()));
+                        remainingArrows.setText("Übrige Pfeile: " + (PfeileContext.ARROW_NUMBER_PRE_SET().get() - selectedArrows.size()));
                         setArrowListSelected(selectedArrows);
                     }
                 }
@@ -199,7 +202,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
                         selectedArrows.add("<keine Pfeile>");
                         setArrowListSelected(selectedArrows);
 
-                        if (Mechanics.arrowNumberPreSet > 1)
+                        if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > 1)
                             remainingArrows.setText("Verfügbare Pfeile auswählen!");
                         else
                             remainingArrows.setText("Verfügbaren Pfeil auswählen!");
@@ -207,7 +210,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
                     } else {
                         setArrowListSelected(selectedArrows);
                         remainingArrows.setText("Übrige Pfeile: "
-                                + (Mechanics.arrowNumberPreSet - selectedArrows
+                                + (PfeileContext.ARROW_NUMBER_PRE_SET().get() - selectedArrows
                                 .size()));
                     }
                 }
@@ -250,12 +253,12 @@ public class ArrowSelectionScreenPreSet extends Screen {
         public void mouseReleased (MouseEvent e) {
             for (Button buttonListArrow : buttonListArrows) {
                 if (buttonListArrow.getSimplifiedBounds().contains(e.getPoint())) {
-                    if (Mechanics.arrowNumberPreSet > selectedArrows.size()) {
+                    if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > selectedArrows.size()) {
                         if (selectedArrows.get(0).equals("<keine Pfeile>")) {
                             selectedArrows.remove(0);
                         }
                         selectedArrows.add(buttonListArrow.getText());
-                        remainingArrows.setText("Übrige Pfeile: " + (Mechanics.arrowNumberPreSet - selectedArrows.size()));
+                        remainingArrows.setText("Übrige Pfeile: " + (PfeileContext.ARROW_NUMBER_PRE_SET().get() - selectedArrows.size()));
                         setArrowListSelected(selectedArrows);
                     }
                 }
@@ -269,11 +272,11 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
         // Bestätigen. Code hier drinn muss der selbe sein wie in dem Listener von confirmButton
         if (e.getKeyCode() == KeyEvent.VK_B) {
-            if (selectedArrows.size() > Mechanics.arrowNumberPreSet) {
-                throw new IllegalStateException("To many arrows added: They can't be more than " + Mechanics.arrowNumberPreSet);
+            if (selectedArrows.size() > PfeileContext.ARROW_NUMBER_PRE_SET().get()) {
+                throw new IllegalStateException("To many arrows added: They can't be more than " + PfeileContext.ARROW_NUMBER_PRE_SET().get());
             }
 
-            if (selectedArrows.size() < Mechanics.arrowNumberPreSet) {
+            if (selectedArrows.size() < PfeileContext.ARROW_NUMBER_PRE_SET().get()) {
                 openConfirmQuestion("Bitten wählen sie alle Pfeile aus!");
             } else {
                 GameLoop.setRunFlag(false);
@@ -282,12 +285,12 @@ public class ArrowSelectionScreenPreSet extends Screen {
             java.util.Random randomGen = new Random();
             String arrow = ArrowHelper.arrowIndexToName(randomGen.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES));
 
-            if (Mechanics.arrowNumberPreSet > selectedArrows.size()) {
+            if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > selectedArrows.size()) {
                 if (selectedArrows.get(0).equals("<keine Pfeile>")) {
                     selectedArrows.remove(0);
                 }
                 selectedArrows.add(arrow);
-                remainingArrows.setText("Übrige Pfeile: " + (Mechanics.arrowNumberPreSet - selectedArrows.size()));
+                remainingArrows.setText("Übrige Pfeile: " + (PfeileContext.ARROW_NUMBER_PRE_SET().get() - selectedArrows.size()));
                 setArrowListSelected(selectedArrows);
             }
         }
@@ -298,10 +301,10 @@ public class ArrowSelectionScreenPreSet extends Screen {
             if (selectedArrows.get(0).equals("<keine Pfeile>")) {
                 selectedArrows.remove(0);
             }
-            while (selectedArrows.size() < Mechanics.arrowNumberPreSet) {
+            while (selectedArrows.size() < PfeileContext.ARROW_NUMBER_PRE_SET().get()) {
                 selectedArrows.add(ArrowHelper.arrowIndexToName(randomGen.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES)));
             }
-            remainingArrows.setText("Übrige Pfeile: " + (Mechanics.arrowNumberPreSet - selectedArrows.size()));
+            remainingArrows.setText("Übrige Pfeile: " + (PfeileContext.ARROW_NUMBER_PRE_SET().get() - selectedArrows.size()));
             setArrowListSelected(selectedArrows);
         }
     }

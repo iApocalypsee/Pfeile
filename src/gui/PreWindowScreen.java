@@ -5,7 +5,8 @@ import comp.*;
 import comp.Component;
 import comp.Label;
 import general.Main;
-import general.Mechanics;
+import general.PfeileContext;
+import newent.Bot;
 import newent.EntityLike;
 import newent.Player;
 import scala.concurrent.duration.FiniteDuration;
@@ -17,7 +18,7 @@ import java.awt.event.MouseEvent;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This is the Screen in which all (Mechanics) values like worldSize are set. It replaces the old PreWindow.
+ * This is the Screen in which some PfeileContext values like worldSize are set. It replaces the old PreWindow.
  */
 public class PreWindowScreen extends Screen {
     public static final int SCREEN_INDEX = 21;
@@ -62,13 +63,13 @@ public class PreWindowScreen extends Screen {
     /** The Spinner for selecting the amount of arrows. */
     private Spinner spinner;
 
-    /** SpinnerModel for choosing <code>Mechanics.arrowNumberPreSet</code> - "Pfeilanzahl [frei wählbar]" */
+    /** SpinnerModel for choosing <code>PfeileContext.ARROW_NUMBER_FREE_SET</code> - "Pfeilanzahl [frei wählbar]" */
     private SpinnerModel spinnerModelPreSet;
 
-    /** SpinnerModel for choosing <code>Mechanics.arrowNumberFreeSet</code> - "Pfeilanzahl [vorher wählbar]" */
+    /** SpinnerModel for choosing <code>PfeileContext.ARROW_NUMBER_PRE_SET</code> - "Pfeilanzahl [vorher wählbar]" */
     private SpinnerModel spinnerModelFreeSet;
 
-    /** SpinnerModel for choosing <code>Mechanics.turnsPerRound</code> - "Züge pro Runde" */
+    /** SpinnerModel for choosing <code>PfeileContext.TURNS_PER_ROUND</code> - "Züge pro Runde" */
     private SpinnerModel spinnerModelTurnsPerRound;
 
     /** backgroundColor */
@@ -205,38 +206,38 @@ public class PreWindowScreen extends Screen {
         standardButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased (MouseEvent e) {
-                Mechanics.KI = 2;
+                Bot.STRENGTH().set((byte) 2);
                 labels[0].setText("Computerstärke: " + "normal");
 
-                Mechanics.arrowNumberFreeSet = 5;
-                labels[1].setText("Pfeilanzahl [frei wählbar]: " + Mechanics.arrowNumberFreeSet);
+                PfeileContext.ARROW_NUMBER_FREE_SET().set(5);
+                labels[1].setText("Pfeilanzahl [frei wählbar]: " + PfeileContext.ARROW_NUMBER_FREE_SET().get());
 
-                Mechanics.arrowNumberPreSet = 10;
-                labels[2].setText("Pfeilanzahl [vorher wählbar]: " + Mechanics.arrowNumberPreSet);
+                PfeileContext.ARROW_NUMBER_PRE_SET().set(15);
+                labels[2].setText("Pfeilanzahl [vorher wählbar]: " + PfeileContext.ARROW_NUMBER_PRE_SET().get());
 	            
-	            Player.LifeMax().set(400d);
+	            Player.MAXIMUM_LIFE().set(400d);
                 labels[3].setText("maximales Leben: " + "mittel");
 
-	            Player.LifeRegeneration().set(3d);
+	            Player.LIFE_REGENERATION().set(3d);
                 labels[4].setText("Lebensregeneration: " + "mittel");
 
-                Mechanics.damageMulti = 3;
+                PfeileContext.DAMAGE_MULTI().set(1.0f);
                 labels[5].setText("Schadensmultiplikator: " + "mittel");
 
-                Mechanics.turnsPerRound = 7;
-                labels[6].setText("Züge pro Runde: " + Mechanics.turnsPerRound);
+                PfeileContext.TURNS_PER_ROUND().set(7);
+                labels[6].setText("Züge pro Runde: " + PfeileContext.TURNS_PER_ROUND().get());
 
                 Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(1, TimeUnit.MINUTES));
                 labels[7].setText("Zeit pro Zug: " + "1 min");
 
-                Mechanics.handicapPlayer = 0;
+                PfeileContext.HANDICAP_PLAYER().set((byte) 0);
                 labels[8].setText("Handicap [Spieler]: " + "0%");
 
-                Mechanics.handicapKI = 0;
+                PfeileContext.HANDICAP_KI().set((byte) 0);
                 labels[9].setText("Handicap [Computer]: " + "0%");
 
-                Mechanics.worldSizeX = 13;
-                Mechanics.worldSizeY = 11;
+                PfeileContext.WORLD_SIZE_X().set(28);
+                PfeileContext.WORLD_SIZE_Y().set(25);
                 labels[10].setText("Weltgröße: " + "normal");
             }
         });
@@ -246,31 +247,31 @@ public class PreWindowScreen extends Screen {
             public void mouseReleased (MouseEvent e) {
                 // tests, if every value was correctly added (i.e. not not-added)
                 // and if necessary he opens the confirmDialog
-                if (Mechanics.KI == -1) {
+                if (Bot.STRENGTH().get() == -1) {
                     openConfirmDialog("Select Unselected Selections: Computerstärke");
                     return;
                 }
-                if (Mechanics.arrowNumberFreeSet == -1) {
+                if (PfeileContext.ARROW_NUMBER_FREE_SET().get() == -1) {
                     openConfirmDialog("Select unselected Selections: Pfeilanzahl [frei wählbar]");
                     return;
                 }
-                if (Mechanics.arrowNumberPreSet == -1) {
+                if (PfeileContext.ARROW_NUMBER_PRE_SET().get() == -1) {
                     openConfirmDialog("Select unselected Selections: Pfeilanzahl [vorher wählbar]");
                     return;
                 }
-                if (Mechanics.turnsPerRound == -1) {
+                if (PfeileContext.TURNS_PER_ROUND().get() == -1) {
                     openConfirmDialog("Select unselected Selections: Züge pro Runde");
                     return;
                 }
-                if (Player.LifeMax().get() == -1) {
+                if (Player.MAXIMUM_LIFE().get() == -1) {
                     openConfirmDialog("Select unselected Selections: maximales Leben");
                     return;
                 }
-                if (Player.LifeRegeneration().get() == -1) {
+                if (Player.LIFE_REGENERATION().get() == -1) {
                     openConfirmDialog("Select unselected Selections: Lebensregeneration");
                     return;
                 }
-                if (Mechanics.damageMulti == -1f) {
+                if (PfeileContext.DAMAGE_MULTI().get() == -1f) {
                     openConfirmDialog("Select unselected Selections: Schadensmultiplikator");
                     return;
                 }
@@ -278,11 +279,11 @@ public class PreWindowScreen extends Screen {
                     openConfirmDialog("Select unselected Selections: Zeit pro Zug");
                     return;
                 }
-                if (Mechanics.worldSizeX == -1 || Mechanics.worldSizeY == -1) {
+                if (PfeileContext.WORLD_SIZE_X().get() == -1 || PfeileContext.WORLD_SIZE_Y().get() == -1) {
                     openConfirmDialog("Select unselected Selections: Weltgröße");
                     return;
                 }
-                if (Mechanics.handicapPlayer == -1 || Mechanics.handicapKI == -1) {
+                if (PfeileContext.HANDICAP_PLAYER().get() == -1 || PfeileContext.HANDICAP_KI().get() == -1) {
                     openConfirmDialog("Select unselected Selections: Handicap");
                     return;
                 }
@@ -290,7 +291,7 @@ public class PreWindowScreen extends Screen {
                 correctInits();
                 new ArrowSelectionScreenPreSet();
 
-                if (Mechanics.arrowNumberPreSet > 0)
+                if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > 0)
                     onLeavingScreen(this, ArrowSelectionScreenPreSet.SCREEN_INDEX);
                 else
                     onLeavingScreen(this, GameScreen.SCREEN_INDEX);
@@ -307,36 +308,36 @@ public class PreWindowScreen extends Screen {
                             // Computerstärke: erbärmlich = 0 --> brutal = 4
                             boxSelectKI.triggerListeners(e);
                             switch (boxSelectKI.getSelectedIndex()) {
-                                case 0: Mechanics.KI = 4; break;
-                                case 1: Mechanics.KI = 3; break;
-                                case 3: Mechanics.KI = 1; break;
-                                case 4: Mechanics.KI = 0; break;
-                                default: Mechanics.KI = 2;
+                                case 0: Bot.STRENGTH().set((byte) 4); break;
+                                case 1: Bot.STRENGTH().set((byte) 3); break;
+                                case 3: Bot.STRENGTH().set((byte) 1); break;
+                                case 4: Bot.STRENGTH().set((byte) 0); break;
+                                default: Bot.STRENGTH().set((byte) 2);
                             }
                             labels[0].setText("Computerstärke: " + boxSelectKI.getSelectedValue());
                             return;
                         }
                         case 1 : {
                             // Pfeilanzahl [frei wählbar]
-                            Mechanics.arrowNumberFreeSet = spinnerModelFreeSet.getValue();
-                            labels[1].setText("Pfeilanzahl [frei wählbar]: " + Mechanics.arrowNumberFreeSet);
+                            PfeileContext.ARROW_NUMBER_FREE_SET().set(spinnerModelFreeSet.getValue());
+                            labels[1].setText("Pfeilanzahl [frei wählbar]: " + PfeileContext.ARROW_NUMBER_FREE_SET().get());
                             return;
                         }
                         case 2 : {
                             // Pfeilanzahl [vorher wählbar]
-                            Mechanics.arrowNumberPreSet = spinnerModelPreSet.getValue();
-                            labels[2].setText("Pfeilanzahl [vorher wählbar]: " + spinnerModelPreSet.getValue());
+                            PfeileContext.ARROW_NUMBER_PRE_SET().set(spinnerModelPreSet.getValue());
+                            labels[2].setText("Pfeilanzahl [vorher wählbar]: " + PfeileContext.ARROW_NUMBER_FREE_SET().get());
                             return;
                         }
                         case 3 : {
                             // maximales Leben
                             boxSelectHigh.triggerListeners(e);
                             switch (boxSelectHigh.getSelectedIndex()) {
-                                case 0: Player.LifeMax().set(600.); break;
-                                case 1: Player.LifeMax().set(480.); break;
-                                case 3: Player.LifeMax().set(320.); break;
-                                case 4: Player.LifeMax().set(270.); break;
-                                default: Player.LifeMax().set(400.);
+                                case 0: Player.MAXIMUM_LIFE().set(600.); break;
+                                case 1: Player.MAXIMUM_LIFE().set(480.); break;
+                                case 3: Player.MAXIMUM_LIFE().set(320.); break;
+                                case 4: Player.MAXIMUM_LIFE().set(270.); break;
+                                default: Player.MAXIMUM_LIFE().set(400.);
                             }
                             labels[3].setText("maximales Leben: " + boxSelectHigh.getSelectedValue());
                             return;
@@ -345,11 +346,11 @@ public class PreWindowScreen extends Screen {
                             // Lebensregeneration
                             boxSelectHigh.triggerListeners(e);
                             switch (boxSelectHigh.getSelectedIndex()) {
-                                case 0: Player.LifeRegeneration().set(5.); break; // hoch
-                                case 1: Player.LifeRegeneration().set(4.); break;
-                                case 3: Player.LifeRegeneration().set(2.); break;
-                                case 4: Player.LifeRegeneration().set(1.); break; // niedrig
-                                default: Player.LifeRegeneration().set(3.); // mittel
+                                case 0: Player.LIFE_REGENERATION().set(5.); break; // hoch
+                                case 1: Player.LIFE_REGENERATION().set(4.); break;
+                                case 3: Player.LIFE_REGENERATION().set(2.); break;
+                                case 4: Player.LIFE_REGENERATION().set(1.); break; // niedrig
+                                default: Player.LIFE_REGENERATION().set(3.); // mittel
                             }
                             labels[4].setText("Lebensregeneration: " + boxSelectHigh.getSelectedValue());
                             return;
@@ -358,18 +359,18 @@ public class PreWindowScreen extends Screen {
                             // Schadensmuliplikator
                             boxSelectHigh.triggerListeners(e);
                             switch (boxSelectHigh.getSelectedIndex()) {
-                                case 0: Mechanics.damageMulti = 1.8f; break; // hoch
-                                case 1: Mechanics.damageMulti = 1.3f; break;
-                                case 3: Mechanics.damageMulti = 0.8f; break;
-                                case 4: Mechanics.damageMulti = 0.6f; break; // niedrig
-                                default: Mechanics.damageMulti = 1.0f;       // mittel
+                                case 0: PfeileContext.DAMAGE_MULTI().set(1.9f); break; // hoch
+                                case 1: PfeileContext.DAMAGE_MULTI().set(1.35f); break;
+                                case 3: PfeileContext.DAMAGE_MULTI().set(0.85f); break;
+                                case 4: PfeileContext.DAMAGE_MULTI().set(0.65f); break; // niedrig
+                                default: PfeileContext.DAMAGE_MULTI().set(1.0f);       // mittel
                             }
                             labels[5].setText("Schadensmultiplikator: " + boxSelectHigh.getSelectedValue());
                             return;
                         }
                         case 6 : {
                             // Züge pro Runde
-                            Mechanics.turnsPerRound = spinnerModelTurnsPerRound.getValue();
+                            PfeileContext.TURNS_PER_ROUND().set(spinnerModelTurnsPerRound.getValue());
                             labels[6].setText("Züge pro Runde: " + spinnerModelTurnsPerRound.getValue());
                             return;
                         }
@@ -391,33 +392,33 @@ public class PreWindowScreen extends Screen {
                             // Handicap
                             boxSelectHandicapPlayer.triggerListeners(e);
                             switch (boxSelectHandicapPlayer.getSelectedIndex()) {
-                                case 0: Mechanics.handicapPlayer = +25; break;
-                                case 1: Mechanics.handicapPlayer = +20; break;
-                                case 2: Mechanics.handicapPlayer = +15; break;
-                                case 3: Mechanics.handicapPlayer = +10; break;
-                                case 4: Mechanics.handicapPlayer = + 5; break;
-                                case 6: Mechanics.handicapPlayer = - 5; break;
-                                case 7: Mechanics.handicapPlayer = -10; break;
-                                case 8: Mechanics.handicapPlayer = -15; break;
-                                case 9: Mechanics.handicapPlayer = -20; break;
-                                case 10: Mechanics.handicapPlayer= -25; break;
-                                default: Mechanics.handicapPlayer=   0;
+                                case 0: PfeileContext.HANDICAP_PLAYER().set((byte) +25); break;
+                                case 1: PfeileContext.HANDICAP_PLAYER().set((byte) +20); break;
+                                case 2: PfeileContext.HANDICAP_PLAYER().set((byte) +15); break;
+                                case 3: PfeileContext.HANDICAP_PLAYER().set((byte) +10); break;
+                                case 4: PfeileContext.HANDICAP_PLAYER().set((byte) + 5); break;
+                                case 6: PfeileContext.HANDICAP_PLAYER().set((byte) - 5); break;
+                                case 7: PfeileContext.HANDICAP_PLAYER().set((byte) -10); break;
+                                case 8: PfeileContext.HANDICAP_PLAYER().set((byte) -15); break;
+                                case 9: PfeileContext.HANDICAP_PLAYER().set((byte) -20); break;
+                                case 10: PfeileContext.HANDICAP_PLAYER().set((byte) -25); break;
+                                default: PfeileContext.HANDICAP_PLAYER().set((byte) 0);
                             }
                             labels[8].setText("Handicap [Spieler]: " + boxSelectHandicapPlayer.getSelectedValue());
 
                             boxSelectHandicapKI.triggerListeners(e);
                             switch (boxSelectHandicapKI.getSelectedIndex()) {
-                                case 0: Mechanics.handicapKI = +25; break;
-                                case 1: Mechanics.handicapKI = +20; break;
-                                case 2: Mechanics.handicapKI = +15; break;
-                                case 3: Mechanics.handicapKI = +10; break;
-                                case 4: Mechanics.handicapKI = + 5; break;
-                                case 6: Mechanics.handicapKI = - 5; break;
-                                case 7: Mechanics.handicapKI = -10; break;
-                                case 8: Mechanics.handicapKI = -15; break;
-                                case 9: Mechanics.handicapKI = -20; break;
-                                case 10: Mechanics.handicapKI= -25; break;
-                                default: Mechanics.handicapKI=   0;
+                                case 0: PfeileContext.HANDICAP_KI().set((byte) +25); break;
+                                case 1: PfeileContext.HANDICAP_KI().set((byte) +20); break;
+                                case 2: PfeileContext.HANDICAP_KI().set((byte) +15); break;
+                                case 3: PfeileContext.HANDICAP_KI().set((byte) +10); break;
+                                case 4: PfeileContext.HANDICAP_KI().set((byte) + 5); break;
+                                case 6: PfeileContext.HANDICAP_KI().set((byte) - 5); break;
+                                case 7: PfeileContext.HANDICAP_KI().set((byte) -10); break;
+                                case 8: PfeileContext.HANDICAP_KI().set((byte) -15); break;
+                                case 9: PfeileContext.HANDICAP_KI().set((byte) -20); break;
+                                case 10: PfeileContext.HANDICAP_KI().set((byte) -25); break;
+                                default: PfeileContext.HANDICAP_KI().set((byte) 0);
                             }
                             labels[9].setText("Handicap [Computer]: " + boxSelectHandicapKI.getSelectedValue());
                             return;
@@ -426,11 +427,11 @@ public class PreWindowScreen extends Screen {
                             // Weltgröße
                             boxSelectSize.triggerListeners(e);
                             switch (boxSelectSize.getSelectedIndex()) {
-                                case 0: Mechanics.worldSizeX = 23; Mechanics.worldSizeY = 21; break;
-                                case 1: Mechanics.worldSizeX = 17; Mechanics.worldSizeY = 15; break;
-                                case 3: Mechanics.worldSizeX =  9; Mechanics.worldSizeY =  7; break;
-                                case 4: Mechanics.worldSizeX =  6; Mechanics.worldSizeY =  4; break;
-                                default:Mechanics.worldSizeX = 13; Mechanics.worldSizeY = 11;
+                                case 0: PfeileContext.WORLD_SIZE_X().set(55); PfeileContext.WORLD_SIZE_Y().set(48);
+                                case 1: PfeileContext.WORLD_SIZE_X().set(35); PfeileContext.WORLD_SIZE_Y().set(30);
+                                case 3: PfeileContext.WORLD_SIZE_X().set(22); PfeileContext.WORLD_SIZE_Y().set(18);
+                                case 4: PfeileContext.WORLD_SIZE_X().set(15); PfeileContext.WORLD_SIZE_Y().set(12);
+                                default: PfeileContext.WORLD_SIZE_X().set(28); PfeileContext.WORLD_SIZE_Y().set(25);
                             }
                             labels[10].setText("Weltgröße: " + boxSelectSize.getSelectedValue());
                             return;
@@ -634,69 +635,69 @@ public class PreWindowScreen extends Screen {
     public void keyPressed (KeyEvent e) {
         // Standardeinstellungen
         if (e.getKeyCode() == KeyEvent.VK_S) {
-            Mechanics.KI = 2;
+            Bot.STRENGTH().set((byte) 2);
             labels[0].setText("Computerstärke: " + "normal");
 
-            Mechanics.arrowNumberFreeSet = 5;
-            labels[1].setText("Pfeilanzahl [frei wählbar]: " + Mechanics.arrowNumberFreeSet);
+            PfeileContext.ARROW_NUMBER_FREE_SET().set(5);
+            labels[1].setText("Pfeilanzahl [frei wählbar]: " + PfeileContext.ARROW_NUMBER_FREE_SET().get());
 
-            Mechanics.arrowNumberPreSet = 10;
-            labels[2].setText("Pfeilanzahl [vorher wählbar]: " + Mechanics.arrowNumberPreSet);
+            PfeileContext.ARROW_NUMBER_PRE_SET().set(15);
+            labels[2].setText("Pfeilanzahl [vorher wählbar]: " + PfeileContext.ARROW_NUMBER_PRE_SET().get());
 
-            Player.LifeMax().set(400.);
+            Player.MAXIMUM_LIFE().set(400.);
             labels[3].setText("maximales Leben: " + "mittel");
 
-            Player.LifeRegeneration().set(3.);
+            Player.LIFE_REGENERATION().set(3.);
             labels[4].setText("Lebensregeneration: " + "mittel");
 
-            Mechanics.damageMulti = 3;
+            PfeileContext.DAMAGE_MULTI().set(1.0f);
             labels[5].setText("Schadensmultiplikator: " + "mittel");
 
-            Mechanics.turnsPerRound = 7;
-            labels[6].setText("Züge pro Runde: " + Mechanics.turnsPerRound);
+            PfeileContext.TURNS_PER_ROUND().set(7);
+            labels[6].setText("Züge pro Runde: " + PfeileContext.TURNS_PER_ROUND().get());
 
             Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(1, TimeUnit.MINUTES));
             labels[7].setText("Zeit pro Zug: " + "1 min");
 
-            Mechanics.handicapPlayer = 0;
+            PfeileContext.HANDICAP_PLAYER().set((byte) 0);
             labels[8].setText("Handicap [Spieler]: " + "0%");
 
-            Mechanics.handicapKI = 0;
+            PfeileContext.HANDICAP_KI().set((byte) 0);
             labels[9].setText("Handicap [Computer]: " + "0%");
 
-            Mechanics.worldSizeX = 13;
-            Mechanics.worldSizeY = 11;
+            PfeileContext.WORLD_SIZE_X().set(28);
+            PfeileContext.WORLD_SIZE_Y().set(25);
             labels[10].setText("Weltgröße: " + "normal");
         }
         // Fertig --> readyButton
         else if (e.getKeyCode() == KeyEvent.VK_F) {
             // tests, if every value was correctly added (i.e. not not-added)
             // and if necessary he opens the confirmDialog
-            if (Mechanics.KI == -1) {
+            if (Bot.STRENGTH().get() == -1) {
                 openConfirmDialog("Select Unselected Selections: Computerstärke");
                 return;
             }
-            if (Mechanics.arrowNumberFreeSet == -1) {
+            if (PfeileContext.ARROW_NUMBER_FREE_SET().get() == -1) {
                 openConfirmDialog("Select unselected Selections: Pfeilanzahl [frei wählbar]");
                 return;
             }
-            if (Mechanics.arrowNumberPreSet == -1) {
+            if (PfeileContext.ARROW_NUMBER_PRE_SET().get() == -1) {
                 openConfirmDialog("Select unselected Selections: Pfeilanzahl [vorher wählbar]");
                 return;
             }
-            if (Mechanics.turnsPerRound == -1) {
+            if (PfeileContext.TURNS_PER_ROUND().get() == -1) {
                 openConfirmDialog("Select unselected Selections: Züge pro Runde");
                 return;
             }
-            if (Player.LifeMax().get() == -1) {
+            if (Player.MAXIMUM_LIFE().get() == -1) {
                 openConfirmDialog("Select unselected Selections: maximales Leben");
                 return;
             }
-            if (Player.LifeRegeneration().get() == -1) {
+            if (Player.LIFE_REGENERATION().get() == -1) {
                 openConfirmDialog("Select unselected Selections: Lebensregeneration");
                 return;
             }
-            if (Mechanics.damageMulti == -1f) {
+            if (PfeileContext.DAMAGE_MULTI().get() == -1f) {
                 openConfirmDialog("Select unselected Selections: Schadensmultiplikator");
                 return;
             }
@@ -704,11 +705,11 @@ public class PreWindowScreen extends Screen {
                 openConfirmDialog("Select unselected Selections: Zeit pro Zug");
                 return;
             }
-            if (Mechanics.worldSizeX == -1 || Mechanics.worldSizeY == -1) {
+            if (PfeileContext.WORLD_SIZE_X().get() == -1 || PfeileContext.WORLD_SIZE_Y().get() == -1) {
                 openConfirmDialog("Select unselected Selections: Weltgröße");
                 return;
             }
-            if (Mechanics.handicapPlayer == -1 || Mechanics.handicapKI == -1) {
+            if (PfeileContext.HANDICAP_PLAYER().get() == -1 || PfeileContext.HANDICAP_KI().get() == -1) {
                 openConfirmDialog("Select unselected Selections: Handicap");
                 return;
             }
@@ -716,7 +717,7 @@ public class PreWindowScreen extends Screen {
             correctInits();
             new ArrowSelectionScreenPreSet();
 
-            if (Mechanics.arrowNumberPreSet > 0)
+            if (PfeileContext.ARROW_NUMBER_FREE_SET().get() > 0)
                 onLeavingScreen(this, ArrowSelectionScreenPreSet.SCREEN_INDEX);
             else
                 onLeavingScreen(this, GameScreen.SCREEN_INDEX);
@@ -728,35 +729,35 @@ public class PreWindowScreen extends Screen {
                 case 0 : {
                     // Computerstärke: erbärmlich = 0 --> brutal = 4
                     switch (boxSelectKI.getSelectedIndex()) {
-                        case 0: Mechanics.KI = 4; break;
-                        case 1: Mechanics.KI = 3; break;
-                        case 3: Mechanics.KI = 1; break;
-                        case 4: Mechanics.KI = 0; break;
-                        default: Mechanics.KI = 2;
+                        case 0: Bot.STRENGTH().set((byte) 4); break;
+                        case 1: Bot.STRENGTH().set((byte) 3); break;
+                        case 3: Bot.STRENGTH().set((byte) 1); break;
+                        case 4: Bot.STRENGTH().set((byte) 0); break;
+                        default: Bot.STRENGTH().set((byte) 2);
                     }
                     labels[0].setText("Computerstärke: " + boxSelectKI.getSelectedValue());
                     return;
                 }
                 case 1 : {
                     // Pfeilanzahl [frei wählbar]
-                    Mechanics.arrowNumberFreeSet = spinnerModelFreeSet.getValue();
-                    labels[1].setText("Pfeilanzahl [frei wählbar]: " + Mechanics.arrowNumberFreeSet);
+                    PfeileContext.ARROW_NUMBER_FREE_SET().set(spinnerModelFreeSet.getValue());
+                    labels[1].setText("Pfeilanzahl [frei wählbar]: " + PfeileContext.ARROW_NUMBER_FREE_SET().get());
                     return;
                 }
                 case 2 : {
                     // Pfeilanzahl [vorher wählbar]
-                    Mechanics.arrowNumberPreSet = spinnerModelPreSet.getValue();
-                    labels[2].setText("Pfeilanzahl [vorher wählbar]: " + spinnerModelPreSet.getValue());
+                    PfeileContext.ARROW_NUMBER_PRE_SET().set(spinnerModelPreSet.getValue());
+                    labels[2].setText("Pfeilanzahl [vorher wählbar]: " + PfeileContext.ARROW_NUMBER_PRE_SET().get());
                     return;
                 }
                 case 3 : {
                     // maximales Leben
                     switch (boxSelectHigh.getSelectedIndex()) {
-                        case 0: Player.LifeMax().set(600.); break;
-                        case 1: Player.LifeMax().set(480.); break;
-                        case 3: Player.LifeMax().set(320.); break;
-                        case 4: Player.LifeMax().set(270.); break;
-                        default: Player.LifeMax().set(400.);
+                        case 0: Player.MAXIMUM_LIFE().set(600.); break;
+                        case 1: Player.MAXIMUM_LIFE().set(480.); break;
+                        case 3: Player.MAXIMUM_LIFE().set(320.); break;
+                        case 4: Player.MAXIMUM_LIFE().set(270.); break;
+                        default: Player.MAXIMUM_LIFE().set(400.);
                     }
                     labels[3].setText("maximales Leben: " + boxSelectHigh.getSelectedValue());
                     return;
@@ -764,11 +765,11 @@ public class PreWindowScreen extends Screen {
                 case 4 : {
                     // Lebensregeneration
                     switch (boxSelectHigh.getSelectedIndex()) {
-                        case 0: Player.LifeRegeneration().set(5.); break; // hoch
-                        case 1: Player.LifeRegeneration().set(4.); break;
-                        case 3: Player.LifeRegeneration().set(2.); break;
-                        case 4: Player.LifeRegeneration().set(1.); break; // niedrig
-                        default: Player.LifeRegeneration().set(3.); // mittel
+                        case 0: Player.LIFE_REGENERATION().set(5.); break; // hoch
+                        case 1: Player.LIFE_REGENERATION().set(4.); break;
+                        case 3: Player.LIFE_REGENERATION().set(2.); break;
+                        case 4: Player.LIFE_REGENERATION().set(1.); break; // niedrig
+                        default: Player.LIFE_REGENERATION().set(3.); // mittel
                     }
                     labels[4].setText("Lebensregeneration: " + boxSelectHigh.getSelectedValue());
                     return;
@@ -776,18 +777,18 @@ public class PreWindowScreen extends Screen {
                 case 5 : {
                     // Schadensmuliplikator
                     switch (boxSelectHigh.getSelectedIndex()) {
-                        case 0: Mechanics.damageMulti = 1.8f; break; // hoch
-                        case 1: Mechanics.damageMulti = 1.3f; break;
-                        case 3: Mechanics.damageMulti = 0.8f; break;
-                        case 4: Mechanics.damageMulti = 0.6f; break; // niedrig
-                        default: Mechanics.damageMulti = 1.0f;       // mittel
+                        case 0: PfeileContext.DAMAGE_MULTI().set(1.9f); break; // hoch
+                        case 1: PfeileContext.DAMAGE_MULTI().set(1.35f); break;
+                        case 3: PfeileContext.DAMAGE_MULTI().set(0.85f); break;
+                        case 4: PfeileContext.DAMAGE_MULTI().set(0.65f); break;// niedrig
+                        default:PfeileContext.DAMAGE_MULTI().set(1.0f);  // mittel
                     }
                     labels[5].setText("Schadensmultiplikator: " + boxSelectHigh.getSelectedValue());
                     return;
                 }
                 case 6 : {
                     // Züge pro Runde
-                    Mechanics.turnsPerRound = spinnerModelTurnsPerRound.getValue();
+                    PfeileContext.TURNS_PER_ROUND().set(spinnerModelTurnsPerRound.getValue());
                     labels[6].setText("Züge pro Runde: " + spinnerModelTurnsPerRound.getValue());
                     return;
                 }
@@ -807,31 +808,31 @@ public class PreWindowScreen extends Screen {
                 case 8 : {
                     // Handicap
                     switch (boxSelectHandicapPlayer.getSelectedIndex()) {
-                        case 0: Mechanics.handicapPlayer = +25; break;
-                        case 1: Mechanics.handicapPlayer = +20; break;
-                        case 2: Mechanics.handicapPlayer = +15; break;
-                        case 3: Mechanics.handicapPlayer = +10; break;
-                        case 4: Mechanics.handicapPlayer = + 5; break;
-                        case 6: Mechanics.handicapPlayer = - 5; break;
-                        case 7: Mechanics.handicapPlayer = -10; break;
-                        case 8: Mechanics.handicapPlayer = -15; break;
-                        case 9: Mechanics.handicapPlayer = -20; break;
-                        case 10: Mechanics.handicapPlayer= -25; break;
-                        default: Mechanics.handicapPlayer=   0;
+                        case 0: PfeileContext.HANDICAP_PLAYER().set((byte) +25); break;
+                        case 1: PfeileContext.HANDICAP_PLAYER().set((byte) +20); break;
+                        case 2: PfeileContext.HANDICAP_PLAYER().set((byte) +15); break;
+                        case 3: PfeileContext.HANDICAP_PLAYER().set((byte) +10); break;
+                        case 4: PfeileContext.HANDICAP_PLAYER().set((byte) + 5); break;
+                        case 6: PfeileContext.HANDICAP_PLAYER().set((byte) - 5); break;
+                        case 7: PfeileContext.HANDICAP_PLAYER().set((byte) -10); break;
+                        case 8: PfeileContext.HANDICAP_PLAYER().set((byte) -15); break;
+                        case 9: PfeileContext.HANDICAP_PLAYER().set((byte) -20); break;
+                        case 10: PfeileContext.HANDICAP_PLAYER().set((byte) -25); break;
+                        default: PfeileContext.HANDICAP_PLAYER().set((byte) 0);
                     }
                     labels[8].setText("Handicap [Spieler]: " + boxSelectHandicapPlayer.getSelectedValue());
                     switch (boxSelectHandicapKI.getSelectedIndex()) {
-                        case 0: Mechanics.handicapKI = +25; break;
-                        case 1: Mechanics.handicapKI = +20; break;
-                        case 2: Mechanics.handicapKI = +15; break;
-                        case 3: Mechanics.handicapKI = +10; break;
-                        case 4: Mechanics.handicapKI = + 5; break;
-                        case 6: Mechanics.handicapKI = - 5; break;
-                        case 7: Mechanics.handicapKI = -10; break;
-                        case 8: Mechanics.handicapKI = -15; break;
-                        case 9: Mechanics.handicapKI = -20; break;
-                        case 10: Mechanics.handicapKI= -25; break;
-                        default: Mechanics.handicapKI=   0;
+                        case 0: PfeileContext.HANDICAP_KI().set((byte) +25); break;
+                        case 1: PfeileContext.HANDICAP_KI().set((byte) +20); break;
+                        case 2: PfeileContext.HANDICAP_KI().set((byte) +15); break;
+                        case 3: PfeileContext.HANDICAP_KI().set((byte) +10); break;
+                        case 4: PfeileContext.HANDICAP_KI().set((byte) + 5); break;
+                        case 6: PfeileContext.HANDICAP_KI().set((byte) - 5); break;
+                        case 7: PfeileContext.HANDICAP_KI().set((byte) -10); break;
+                        case 8: PfeileContext.HANDICAP_KI().set((byte) -15); break;
+                        case 9: PfeileContext.HANDICAP_KI().set((byte) -20); break;
+                        case 10: PfeileContext.HANDICAP_KI().set((byte) -25); break;
+                        default: PfeileContext.HANDICAP_KI().set((byte) 0);
                     }
                     labels[9].setText("Handicap [Computer]: " + boxSelectHandicapKI.getSelectedValue());
                     return;
@@ -839,11 +840,11 @@ public class PreWindowScreen extends Screen {
                 case 9: {
                     // Weltgröße
                     switch (boxSelectSize.getSelectedIndex()) {
-                        case 0: Mechanics.worldSizeX = 23; Mechanics.worldSizeY = 21; break;
-                        case 1: Mechanics.worldSizeX = 17; Mechanics.worldSizeY = 15; break;
-                        case 3: Mechanics.worldSizeX =  9; Mechanics.worldSizeY =  7; break;
-                        case 4: Mechanics.worldSizeX =  6; Mechanics.worldSizeY =  4; break;
-                        default:Mechanics.worldSizeX = 13; Mechanics.worldSizeY = 11;
+                        case 0: PfeileContext.WORLD_SIZE_X().set(55); PfeileContext.WORLD_SIZE_Y().set(48);
+                        case 1: PfeileContext.WORLD_SIZE_X().set(35); PfeileContext.WORLD_SIZE_Y().set(30);
+                        case 3: PfeileContext.WORLD_SIZE_X().set(22); PfeileContext.WORLD_SIZE_Y().set(18);
+                        case 4: PfeileContext.WORLD_SIZE_X().set(15); PfeileContext.WORLD_SIZE_Y().set(12);
+                        default: PfeileContext.WORLD_SIZE_X().set(28); PfeileContext.WORLD_SIZE_Y().set(25);
                     }
                     labels[10].setText("Weltgröße: " + boxSelectSize.getSelectedValue());
                     return;
@@ -863,28 +864,29 @@ public class PreWindowScreen extends Screen {
      * i.e.<code> Player.LifeRegeneration().get() </code>
      */
     public static void correctInits() {
-        if (Player.LifeRegeneration().get() == 1) { // 5 = hoch; 1 == niedrig
-            Player.LifeRegeneration().set((0.5 * (Player.LifeMax().get() * 0.008 + 2)));
-        } else if (Player.LifeRegeneration().get() == 2) {
-            Player.LifeRegeneration().set(0.5 * (Player.LifeMax().get() * 0.001 + 3));
-        } else if (Player.LifeRegeneration().get() == 4) {
-            Player.LifeRegeneration().set(0.5 * (Player.LifeMax().get() * 0.02 + 4.5));
-        } else if (Player.LifeRegeneration().get() == 5) {
-            Player.LifeRegeneration().set(0.5 * (Player.LifeMax().get() * 0.025 + 7));
+        if (Player.LIFE_REGENERATION().get() == 1) { // 5 = hoch; 1 == niedrig
+            Player.LIFE_REGENERATION().set((0.5 * (Player.MAXIMUM_LIFE().get() * 0.008 + 2)));
+        } else if (Player.LIFE_REGENERATION().get() == 2) {
+            Player.LIFE_REGENERATION().set(0.5 * (Player.MAXIMUM_LIFE().get() * 0.001 + 3));
+        } else if (Player.LIFE_REGENERATION().get() == 4) {
+            Player.LIFE_REGENERATION().set(0.5 * (Player.MAXIMUM_LIFE().get() * 0.02 + 4.5));
+        } else if (Player.LIFE_REGENERATION().get() == 5) {
+            Player.LIFE_REGENERATION().set(0.5 * (Player.MAXIMUM_LIFE().get() * 0.025 + 7));
         } else { // Standard: lifeRegeneration: normal
-            Player.LifeRegeneration().set(0.5 * (Player.LifeMax().get() * 0.015 + 3.5));
+            Player.LIFE_REGENERATION().set(0.5 * (Player.MAXIMUM_LIFE().get() * 0.015 + 3.5));
         }
+        Bot.MAXIMUM_LIFE().set(Player.MAXIMUM_LIFE().get());
+        Bot.LIFE_REGENERATION().set(Player.LIFE_REGENERATION().get());
         setTotalArrowNumberCorrect();
     }
 
     /** upper methods: setLifeRegenerationCorrect() --> Corrects the totalArrowNumber() */
     private static void setTotalArrowNumberCorrect() {
-        Mechanics.totalArrowNumber = Mechanics.arrowNumberFreeSet
-                + Mechanics.arrowNumberPreSet;
+        PfeileContext.ARROW_NUMBER_TOTAL().set(PfeileContext.ARROW_NUMBER_FREE_SET().get() + PfeileContext.ARROW_NUMBER_PRE_SET().get());
 	    for(EntityLike e : Main.getContext().getWorld().entities().javaEntityList()) {
 		    if(e instanceof Player) {
 			    Player player = (Player) e;
-			    ((Player) e).setArrowNumberFreeSetUsable(Mechanics.arrowNumberFreeSet);
+			    player.arrowNumberFreeSetUsable().set(PfeileContext.ARROW_NUMBER_FREE_SET().get());
 		    }
 	    }
     }

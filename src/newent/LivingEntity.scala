@@ -1,6 +1,6 @@
 package newent
 
-import general.LogFacility
+import general.{PfeileContext, LogFacility}
 import player.Life
 import player.weapon.AbstractArrow
 
@@ -26,9 +26,9 @@ trait LivingEntity extends Entity with AttackContainer {
         s"${event.destination.toString} with ${event.weapon.getName}", "Debug", "atkmech")
 
      if (event.weapon.isInstanceOf[AbstractArrow]) {
-        life.setLife(life.getLife - event.weapon.asInstanceOf[AbstractArrow].getAttackValCurrent)
+        life.setLife(life.getLife - event.weapon.asInstanceOf[AbstractArrow].getAttackValCurrent * PfeileContext.DAMAGE_MULTI.get)
      } else
-        life.setLife(life.getLife - event.weapon.getAttackValue)
+        life.setLife(life.getLife - event.weapon.getAttackValue * PfeileContext.DAMAGE_MULTI.get)
   }
 
 }

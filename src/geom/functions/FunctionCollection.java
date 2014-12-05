@@ -39,4 +39,41 @@ public class FunctionCollection {
                         "(x1|y1): ( " + x1 + " | " + y1 + " ) \t (x2|y2): ( " + x2 + " | " + y2 + " ).");
         }
     }
+
+    /** this method rounds <code>number</code> to 25 */
+    public static long roundTo25 (long number) {
+
+        // Hier ist es immer 0; ohne Aufruf, hat lastDigits = Integer.parseInt(....) probleme
+        if (number <= 9 && number >= -9) {
+            return 0;
+        }
+
+        // Nur mit positiven Zahlen rechnen, im nachhinein dann das Vorzeichen wieder hinzufügen (gespeichert in isPositive)
+        boolean isPositive = number > 0;
+
+        number = Math.abs(number);
+
+        // Letzten beiden Ziffern
+        int lastDigits = Integer.parseInt(Character.toString(String.valueOf(number).charAt(String.valueOf(number).length() - 1))) +
+                Integer.parseInt(Character.toString(String.valueOf(number).charAt(String.valueOf(number).length() - 2))) * 10;
+
+        // Letze beiden Stellen wegscheiden
+        number = number / 100;
+        number = number * 100;
+
+        // Hier werden die neuen Stellen wieder hinzugefügt
+        if (lastDigits >= 0 && lastDigits <= 12) {
+            // number = number + 0;
+        } else if (lastDigits >= 13 && lastDigits <= 37)
+            number = number + 25;
+        else if (lastDigits >= 38 && lastDigits <= 62)
+            number = number + 50;
+        else if (lastDigits >= 63 && lastDigits <= 87)
+            number = number + 75;
+        else if (lastDigits >= 88 && lastDigits <= 99)
+            number = number + 100;
+
+        // Vorzeichen hinzufügen und zurückgeben
+        return isPositive ? number : -number;
+    }
 }

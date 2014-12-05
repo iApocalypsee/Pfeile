@@ -1,6 +1,5 @@
 package newent
 
-import general.Mechanics
 import player.weapon.Item
 
 import scala.collection.{JavaConversions, mutable}

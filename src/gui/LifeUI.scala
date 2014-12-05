@@ -1,11 +1,10 @@
 package gui
 
-import geom.functions.{FunctionCollectionEasing, FunctionCollection}
+import comp.{Bar, Label}
+import geom.functions.FunctionCollectionEasing
+import player.Life
 
 import java.awt.{Color, Graphics2D}
-
-import comp.{Label, Bar}
-import player.Life
 
 /** Class for drawing the UI components of the active player's life.
   *

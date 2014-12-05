@@ -5,8 +5,8 @@ import comp.Component;
 import comp.ConfirmDialog;
 import comp.TextBox;
 import general.Main;
-import general.Mechanics;
-import newent.*;
+import general.PfeileContext;
+import newent.InventoryLike;
 import player.weapon.*;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;
@@ -173,13 +173,13 @@ public class ArrowSelectionScreen extends Screen {
 		confirmDialog.getOk().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-                if (Main.getContext().getActivePlayer().getArrowNumberFreeSetUsable() > 0) {
+                if (Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().get() > 0) {
                     final InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
                     if (!inventory.put(ArrowHelper.instanceArrow(selectedIndex))) {
                         if (inventory.maximumSize() - inventory.currentSize() <= 0) {
                             warningMessage = "Das Inventar ist voll: Maximale Inventargröße " + inventory.maximumSize();
-                        } else if (Main.getContext().getActivePlayer().getArrowNumberFreeSetUsable() <= 0){
-                            warningMessage = "Es wurde bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + Mechanics.arrowNumberFreeSet + "";
+                        } else if (Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().get() <= 0){
+                            warningMessage = "Es wurde bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + PfeileContext.ARROW_NUMBER_FREE_SET().get() + "";
 
                             // Es können jetzt beliebig viele Pfeile eines Types ausgewählt werden
                             // } else if (inventory.maxStack(selectedIndex) >= inventory.getItemCount(selecteddIndex)) {
@@ -194,11 +194,11 @@ public class ArrowSelectionScreen extends Screen {
                         }
                         transparencyWarningMessage = 1f;
                     } else {
-                        Main.getContext().getActivePlayer().setArrowNumberFreeSetUsable(Main.getContext().getActivePlayer().getArrowNumberFreeSetUsable() - 1);
+                        Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().set(Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().get() - 1);
                         updateInventoryList();
                     }
                 } else {
-                    warningMessage = "Es wurde bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + Mechanics.arrowNumberFreeSet;
+                    warningMessage = "Es wurde bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + PfeileContext.ARROW_NUMBER_FREE_SET().get();
                     transparencyWarningMessage = 1f;
                 }
                 closeConfirmDialogQuestion();

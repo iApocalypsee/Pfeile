@@ -218,7 +218,57 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   }
 }
 
+/** It some values, that are very important for the whole game, not just for a single class. It is partly similar to
+  * previous <code>general.Mechanics</code>*/
 object PfeileContext {
+
+   /** this is the number of players (Humans and Bots) in the games.
+     * Right now, its always 2.
+     */
+   val PLAYER_NUMBER = Property.apply[java.lang.Byte](2 toByte)
+
+   /** this is the damage multiplier. Every damage will be multiplied with this value.
+     * It is set by PreWindowScreen.  */
+   val DAMAGE_MULTI = Property.apply[java.lang.Float](-1f)
+
+   /** the number of arrows, which need to be set before the start of a round. Don't mix it up with <code>ARROW_NUMBER_FREE_SET</code>.*/
+   val ARROW_NUMBER_PRE_SET = Property.apply[java.lang.Integer](-1)
+
+   /** this is the number of arrow, which can be selected during the round. That's why they can be chosen for a
+     * special purpose. Don't mix it up with <code>ARROW_NUMBER_PRE_SET</code> */
+   val ARROW_NUMBER_FREE_SET = Property.apply[java.lang.Integer](-1)
+
+   /** this is the total number of arrows. It's <code>ARROW_NUMBER_FREE_SET + ARROW_NUMBER_PRE_SET </code>*/
+   val ARROW_NUMBER_TOTAL = Property.apply[java.lang.Integer](-1)
+
+   /** The number of turns per round. A turn of a player ends when the user presses the endTurn-Button;
+     * A turnCycle ends, when every players'/bots' turn is done; The round is over, then this value (turnsPerRound) is reached.
+     * A new round allows the player to chose from some (3?) possible rewards and the player is able to select new
+     * arrowsPreSet. Moreover, the player is allowed to use all arrowsFreeSet again (after selecting, of course).*/
+   val TURNS_PER_ROUND = Property.apply[java.lang.Integer](-1)
+
+   /** The number of turns that are done counts higher, until turns per round is reached, resets then with directing to the reward system. */
+   var currentTurn: Int = 0
+
+   /** the handicap of the player.
+     * The value is percentage of support/deterioration saved as java Byte, because their is no use in wasting free memory.
+     * Compare to <code>HANDICAP_KI</code>
+     */
+   val HANDICAP_PLAYER = Property.apply[java.lang.Byte](0 toByte)
+
+   /** the handicap value of the bot.
+    * Basically, it is the percentage of support/deterioration saved as java Byte, because their is no use in wasting free memory.
+    * Compare to <code>HANDICAP_PLAYER</code>
+    * */
+   val HANDICAP_KI = Property.apply[java.lang.Byte](0 toByte)
+
+   /** the size of the world in x direction, calculated in Tiles.
+     * The default value is 28. */
+   val WORLD_SIZE_X = Property.apply[java.lang.Integer](28)
+
+   /** the size of the world in y-direction; in Tiles
+     * the default value is 25. */
+   val WORLD_SIZE_Y = Property.apply[java.lang.Integer](25)
 
   /** Class holding all value information about the game. <p>
     * These values exclude e.g. the world, the active player, the turn player,... such things. </p>
@@ -227,14 +277,13 @@ object PfeileContext {
   // TODO Add XML document for default/recommended values.
   final class Values extends Serializable {
 
-    private var _turnCycleCount = 0
+     private var _turnCycleCount = 0
 
-    /** Describes how many turn cycles have been completed. */
-    def turnCycleCount = _turnCycleCount
-    private[PfeileContext] def turnCycleCount_=(a: Int) = _turnCycleCount = a
-    /** Describes how many turn cycles have been completed. */
-    def getTurnCycleCount = turnCycleCount
-
+     /** Describes how many turn cycles have been completed. */
+     def turnCycleCount = _turnCycleCount
+     private[PfeileContext] def turnCycleCount_=(a: Int) = _turnCycleCount = a
+     /** Describes how many turn cycles have been completed. */
+     def getTurnCycleCount = turnCycleCount
   }
 
   // Returns an option instead of the direct reference value: None instead of null, Some(obj) instead of obj

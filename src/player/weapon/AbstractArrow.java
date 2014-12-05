@@ -4,7 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-import general.Mechanics;
+import general.PfeileContext;
 import geom.functions.FunctionCollection;
 
 /**
@@ -78,9 +78,7 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 	protected int fieldX;
 	/** Position im Koordinatensystem des Pfeils: Y-Position */
 	protected int fieldY;
-	/** Nummer des Feldes über das sich der Pfeil befindet */
-	protected int fieldNr;
-	/** X-Position des Pfeils - f�r GUI */
+    /** X-Position des Pfeils - f�r GUI */
 	protected int posX;
 	/** Y-Position des Pfeils - f�r GUI */
 	protected int posY;
@@ -121,10 +119,10 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 		setDefenseValue(defenseVal);
 		// Reichweite des Pfeils wird minimal (+/- 1 Feld) an die Entfernung
 		// angepasst
-		if (Mechanics.worldSizeX <= 7) {
+		if (PfeileContext.WORLD_SIZE_X().get() <= 22) {
 			setRange(rangeVal - 100);
 			setRangeValueCurrent(rangeVal - 100);
-		} else if (Mechanics.worldSizeX > 7 && Mechanics.worldSizeX <= 17) {
+		} else if (PfeileContext.WORLD_SIZE_Y().get() < 40) {
 			setRange(rangeVal);
 			setRangeValueCurrent(rangeVal);
 		} else {
