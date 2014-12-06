@@ -331,7 +331,7 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 	}
 
     @Override
-    public int getRange () {
+    public double getRange () {
         return super.getRange();
     }
 
