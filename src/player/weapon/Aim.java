@@ -1,7 +1,11 @@
 package player.weapon;
 
 
+import general.Main;
 import player.BoardPositionable;
+import world.TileLike;
+
+import java.awt.*;
 
 /** The Aim is used by every {@link player.weapon.RangedWeapon} to hold the information of the aim,
  * in that the attack impacts. */
@@ -49,6 +53,39 @@ public class Aim implements BoardPositionable {
     @Override
     public int getGridY () {
         return posYGrid;
+    }
+
+    /** this calculates the Position of the tile(<code>getGridX(), getGridY()</code>) for the Gui.
+     *
+     * @return the center of the attacked Tile
+     */
+     public Point getPositionGui () {
+        TileLike tile = (TileLike) Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
+        Rectangle rect = tile.getComponent().getBounds().getBounds();
+        return new Point((int) rect.getCenterX(), (int) rect.getCenterY());
+    }
+
+    /** This returns the more accurate x-position of the attacked Tile then the similar method <code>getPositionGui()</code>.
+     *
+     * @return the accurate x position of the center of the attackedTile
+     * @see player.weapon.Aim#getPosYGui()
+     * @see Aim#getPositionGui()
+     *
+     */
+    public double getPosXGui () {
+        TileLike attackedTile = (TileLike) Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
+        return attackedTile.getComponent().getBounds().getBounds2D().getCenterX();
+    }
+
+    /** This returns the more accurate y-position of the attacked Tile then the similar method <code>getPositionGui()</code>.
+     *
+     * @return the accurate y position of the center of the attackedTile
+     * @see player.weapon.Aim#getPosXGui()
+     * @see Aim#getPositionGui()
+     */
+    public double getPosYGui () {
+        TileLike attackedTile = (TileLike) Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
+        return attackedTile.getComponent().getBounds().getBounds2D().getCenterY();
     }
 
     /** The radius of the attack, in which the attacks effects the surrounding area. <p>

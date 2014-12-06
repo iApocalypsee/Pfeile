@@ -5,6 +5,36 @@ package geom.functions;
  */
 public class FunctionCollection {
 
+    /** The hypotenuse (without squareRooting it!) between the points (x1|y1) and (x2|y2).
+     * If you just for example want to compare what the shorter distance is, much calculating time can be saved, by just calling
+     * this method instead of the square rooted version <code>FunctionCollection.distance(...)</code>.
+     *
+     * @param x1 the x value of the first point
+     * @param y1 the y value of the first point
+     * @param x2 the x value of the second point
+     * @param y2 the y value of the second point
+     * @return the not square rooted distance between (x1|y1) and (x2|y2)
+     */
+    public static double distanceWithoutSqrt (double x1, double y1, double x2, double y2) {
+        double changeX = x2 - x1;
+        double changeY = y2 - y1;
+        return changeX * changeX + changeY * changeY;
+    }
+
+
+    /** This calculates the hypotenuse of the points (x1|y1) and (x2|y2).
+     * It is the square root of {@code distanceWithoutSqrt}: <code>Math.sqrt(FunctionCollection.hypotenuseSqrt(x1, y1, x2, y2))</code>.
+     *
+     * @param x1 the x value of the first point
+     * @param y1 the y value of the first point
+     * @param x2 the x value of the second point
+     * @param y2 the y value of the second point
+     * @return The distance between the two points (x1|y1) (x2|y2)
+     */
+    public static double distance (double x1, double y1, double x2, double y2) {
+        return Math.sqrt(distanceWithoutSqrt(x1, y1, x2, y2));
+    }
+
     /** This returns the angle (in radiant not in degree) between the points (x1|y1) and (x2|y2).
      * It is in the range of <code>- Math.PI</code> (not included) and <code>Math.PI</code> (included), while <code>0</code> is no rotation.
      * A positive value means rotation clockwise and a negative one counterclockwise.

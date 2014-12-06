@@ -7,7 +7,7 @@ public final class Converter {
      * Convert-Methode: Wandelt die LinkedList 'values' in ein
      * Sting-Array um
      *
-     * @param values
+     * @param values any List<String>
      * @return String[] mit Inhalt aus der LinkedList 'values'
      */
     public static String[] convert (List<String> values) {

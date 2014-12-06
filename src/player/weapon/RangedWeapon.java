@@ -8,15 +8,35 @@ public abstract class RangedWeapon extends Weapon {
     /** the aim of of the RangedWeapon */
     private Aim aim;
 
-	public RangedWeapon(String name) {
-		super(name);
+    /** the damageRadius is going to be set to 1, this means only the tile at
+     * <code>getAim().getGridX(), getAim().getGridY()</code> is effected by the attack.
+     * The range is 0 as well as the x and y position of the Aim. */
+ 	public RangedWeapon(String name) {
+        super(name);
+        this.range = 0;
+        aim = new Aim(0, 0, 1);
 	}
-
+    /** the damageRadius is going to be set to 1, this means only the tile at
+     * <code>getAim().getGridX(), getAim().getGridY()</code> is effected by the attack */
     public RangedWeapon(String name, double range) {
         super(name);
         this.range = range;
+        aim = new Aim(0, 0, 1);
     }
 
+    /** sets every Parameter without <code>getAim().getGridX()</code> and <code>getAim().getGridY()</code>. (both are 0) */
+    public RangedWeapon(String name, double range, double damageRadius) {
+        super(name);
+        this.range = range;
+        aim = new Aim(0, 0, damageRadius);
+    }
+
+    /**
+     *
+     * @param name the name of the RangedWeapon, defined in Item
+     * @param range the range of the attack/weapon
+     * @param aim where the attack is going to impact and how
+     */
     public RangedWeapon(String name, double range, Aim aim) {
         super(name);
         this.range = range;
@@ -29,6 +49,7 @@ public abstract class RangedWeapon extends Weapon {
      * ({@link newent.LivingEntity} registers the damage function} <p>
      *     This method returns the damage at the tile (posX|posY), with the center of the attack at
      *     <code>getAim().getGridX(), getAim().getGridY()</code> within the borders of <code>getAim().getDamageRadius()</code>.
+     *     The damage is already multiplied with the damageMultiplier <code>PfeileContext.DAMAGE_MULTI</code> at {@link general.PfeileContext}.
      *
      * @param posX the x-position of the tile, where the damage should be calculated
      * @param posY the y-position of the tile, where the attack impacts

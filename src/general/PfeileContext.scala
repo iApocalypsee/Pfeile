@@ -247,9 +247,6 @@ object PfeileContext {
      * arrowsPreSet. Moreover, the player is allowed to use all arrowsFreeSet again (after selecting, of course).*/
    val TURNS_PER_ROUND = Property.apply[java.lang.Integer](-1)
 
-   /** The number of turns that are done counts higher, until turns per round is reached, resets then with directing to the reward system. */
-   var currentTurn: Int = 0
-
    /** the handicap of the player.
      * The value is percentage of support/deterioration saved as java Byte, because their is no use in wasting free memory.
      * Compare to <code>HANDICAP_KI</code>

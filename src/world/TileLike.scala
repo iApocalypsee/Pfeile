@@ -100,7 +100,7 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
         }.last
 
         // the idea is that the position of every enemy should be in the area, which is the tile the arrow will impact
-        val radius = e.weapon.asInstanceOf[AbstractArrow].getDamageRadius
+        val radius = e.weapon.asInstanceOf[AbstractArrow].getAim.getDamageRadius
         val area = new Circle(aim.tileLocation.getGridX, aim.tileLocation.getGridY, radius)
 
         for (i <- 0 until maxList.size) {

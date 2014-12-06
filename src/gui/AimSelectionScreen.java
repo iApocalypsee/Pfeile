@@ -265,15 +265,11 @@ public class AimSelectionScreen extends Screen {
 			});
 
 			if(opt.isDefined()) {
+                arrow.getAim().setGridX(getPosX_selectedField());
+                arrow.getAim().setGridY(getPosY_selectedField());
 
-                arrow.setPosXAim((int) (target.component().getSimplifiedBounds().getCenterX() - 0.5 * arrow.getImage().getWidth()));
-                arrow.setPosYAim((int) (target.component().getSimplifiedBounds().getCenterY() - 0.5 * arrow.getImage().getHeight()));
-
-                arrow.setFieldXAim(getPosX_selectedField());
-                arrow.setFieldYAim(getPosY_selectedField());
-
-                arrow.setFieldX(active.getGridX());
-                arrow.setFieldY(active.getGridY());
+                arrow.setGridX(active.getGridX());
+                arrow.setGridY(active.getGridY());
 
                 // the center of the player is the center of the arrow
                 arrow.setPosX((int) (active.getComponent().getBounds().getBounds().getCenterX() - 0.5 * arrow.getImage().getWidth()));
