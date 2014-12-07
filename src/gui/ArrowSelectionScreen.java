@@ -167,7 +167,7 @@ public class ArrowSelectionScreen extends Screen {
 		
 		buttonList.add(confirmButton); 
 		buttonList.add(cancelButton);
-		
+
 		confirmDialog = new ConfirmDialog(stoneArrowButton.getX(), stoneArrowButton.getY() + 260, this, "");
 		confirmDialog.setVisible(false);
 		confirmDialog.getOk().addMouseListener(new MouseAdapter() {
