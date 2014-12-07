@@ -52,11 +52,17 @@ public class AimSelectionScreen extends Screen {
     /*+ the Color with which the selectedField is drawn */
     private static Color selectedTileInLineColor = new Color(255, 34, 0, 255);
 
+    private static Color damageRadiusColor = new Color (255, 133, 0, 188);
+
     /** the extended bounds of the selected field. It's 2px bigger then the normal one, to be able to draw an border */
     private Rectangle boundsSelectedTileExtended;
 
     /** the bounds of the selected field. It's faster to save it instead of loading it with every draw call. */
     private Shape boundsSelectedTile;
+
+    /** the bounds of the oval, which is showing the damage radius. The oval fits in the Rectangle. This is why I've
+     * chosen a Rectangle. */
+    private Rectangle boundsOvalDamageRadius;
 
     /** this is the font of the warning message. It's saved here for speeding up the draw method. */
     private static Font fontWarningMessage = new Font(comp.Component.STD_FONT.getFontName(), Font.BOLD, 26);
@@ -74,6 +80,9 @@ public class AimSelectionScreen extends Screen {
         animatedLine.setWidth(3.0f);
 
         boundsSelectedTileExtended = new Rectangle();
+        boundsSelectedTile = new Polygon();
+        final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
+        boundsOvalDamageRadius = new Rectangle(0, 0, (int) arrow.getAim().getDamageRadius() * 2,(int) arrow.getAim().getDamageRadius() * 2);
 
         onScreenEnter.register(new AbstractFunction0<BoxedUnit>() {
             @Override
@@ -82,6 +91,10 @@ public class AimSelectionScreen extends Screen {
                 animatedLine.setStartY((int) Main.getContext().getActivePlayer().getComponent().getBounds().getBounds().getCenterY());
                 animatedLine.setColor(ArrowHelper.getUnifiedColor(ArrowSelectionScreen.getInstance().getSelectedIndex()));
                 transparencyWarningMessage = 0.0f;
+
+                final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
+                boundsOvalDamageRadius = new Rectangle(boundsOvalDamageRadius.x, boundsOvalDamageRadius.y, (int) arrow.getAim().getDamageRadius() * 2,(int) arrow.getAim().getDamageRadius() * 2);
+
                 return BoxedUnit.UNIT;
             }
         });
@@ -217,7 +230,8 @@ public class AimSelectionScreen extends Screen {
 		                animatedLine.setEndX((int) bounds.getCenterX());
 		                animatedLine.setEndY((int) bounds.getCenterY());
                         boundsSelectedTileExtended.setBounds((int) bounds.getX() - 2, (int) bounds.getY() - 2, bounds.width + 2, bounds.height + 2);
-		                stopFlag = true;
+		                boundsOvalDamageRadius.setLocation((int) (bounds.getCenterX() - boundsOvalDamageRadius.getWidth() / 2), (int) (bounds.getCenterY() - boundsOvalDamageRadius.getHeight() / 2));
+                        stopFlag = true;
 	                }
                 }
             }
@@ -275,12 +289,16 @@ public class AimSelectionScreen extends Screen {
         GameScreen.getInstance().getMap().draw(g);
         GameScreen.getInstance().getAttackDrawer().draw(g);
 
-        // draw the selectedField
+        // draw the selected field and the damage radius
         if (posX_selectedField >= 0 && posY_selectedField >= 0) {
             g.setColor(selectedTileOutLineColor);
             g.fill(boundsSelectedTileExtended);
             g.setColor(selectedTileInLineColor);
             g.fill(boundsSelectedTile);
+            // drawing the damage radius twice, that the line is thicker
+            g.setColor(damageRadiusColor);
+            g.drawOval(boundsOvalDamageRadius.x, boundsOvalDamageRadius.y, boundsOvalDamageRadius.width, boundsOvalDamageRadius.height);
+            g.drawOval(boundsOvalDamageRadius.x + 1, boundsOvalDamageRadius.y + 1, boundsOvalDamageRadius.width - 1, boundsOvalDamageRadius.width - 1);
             animatedLine.updateOffset(- 0.5);
             animatedLine.draw(g);
         }
@@ -294,13 +312,14 @@ public class AimSelectionScreen extends Screen {
         confirm.draw(g);
 
         // Finally, draw the waringMessage
-        g.setColor(new Color(1f, 0f, 0f, transparencyWarningMessage));
-        g.setFont(fontWarningMessage);
-        g.drawString(warningMessage, positionWarningMessage.x, positionWarningMessage.y);
+        if (transparencyWarningMessage > 0) {
+            g.setColor(new Color(1f, 0f, 0f, transparencyWarningMessage));
+            g.setFont(fontWarningMessage);
+            g.drawString(warningMessage, positionWarningMessage.x, positionWarningMessage.y);
 
-        transparencyWarningMessage = transparencyWarningMessage - 0.013f;
-
-        if (transparencyWarningMessage < 0)
-            transparencyWarningMessage = 0;
+            transparencyWarningMessage = transparencyWarningMessage - 0.013f;
+            if (transparencyWarningMessage < 0)
+                transparencyWarningMessage = 0;
+        }
     }
 }
