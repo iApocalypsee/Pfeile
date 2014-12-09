@@ -30,27 +30,16 @@ public class Main {
 
     /** Die derzeitige Anzahl an FPS, die das Spiel gerade erzielt. */
     private volatile int fps;
-    /** Die erw�nschte FPS-Rate. Wenn <code>setFPS == 0</code>, ist die Framerate unbegrenzt.
-     * Unbegrenzte Framerate noch nicht implementiert! */
-    private volatile int setFPS = 35;
     // Zeichenvariablen.
     private boolean running = true;
     public static int getWindowWidth() { return 1366;}
     public static int getWindowHeight() { return 768; }
-    /** Returns the time in between two frames. The timeout is recalculated in every drawing process.
-     * @return The time in between two frames. */
-    public static int getTimeSinceLastFrame() {
-        return main.timeSinceLastFrame;
-    }
-    private int timeSinceLastFrame = 0;
+
     private static GameWindow gameWindow;
     private static GraphicsDevice graphicsDevice;
     private static Main main;
-    // threading vars
-    private static ExecutorService exec = Executors.newCachedThreadPool();
-    private static Set<Future<?>> futures = new HashSet<Future<?>>(5);
 
-	// Just user data. User data is not intertwined with game data.
+    // Just user data. User data is not intertwined with game data.
 	// The game data uses data from user, but the user does not use any data from world.
     private static User user;
 
@@ -236,47 +225,10 @@ public class Main {
     // ########################################
 
     /**
-     * Setzt die neue FPS-Rate.
-     *
-     * @param fps Die neu erw�nschte FPS-Anzahl.
-     * @throws IllegalArgumentException wenn die angegebene Rate unter 0 liegt.
-     */
-    public void setFPS(int fps) {
-        if (fps <= 0) {
-            throw new IllegalArgumentException("Negative FPS not permitted.");
-        }
-        this.setFPS = fps;
-        //recalculateTimeout();
-    }
-
-    /**
-     * Gibt die vom Spiel gerade erzielten FPS zur�ck.
-     *
-     * @return Die vom Spiel gerade erzielten FPS.
-     */
-    public int getFPS() {
-        return fps;
-    }
-
-    /**
      * Abmessungen des Fensters: <code> new Rectangle (0, 0, Main.getWindowWidth(), Main.getWindowHeight()); </code>
      */
     public static Rectangle getWindowDimensions() {
         return new Rectangle(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
-    }
-
-    /**
-     * <code> while (isRunning() == true) main.render(); </code>
-     */
-    public boolean isRunning() {
-        return running;
-    }
-
-    /**
-     * <code> while (isRunning() == true) main.render(); </code>
-     */
-    void setRunning(boolean running) {
-        this.running = running;
     }
 
     /**

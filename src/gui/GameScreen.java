@@ -81,6 +81,8 @@ public class GameScreen extends Screen {
 					map = new VisualMap(Main.getContext().getWorld());
 					map.moveMap(120, 470);
 				}
+                // if it isn't here it isn't working TODO: put that in loadedWorldScreen.onScreenLeft.+=
+                Main.getContext().getTimeClock().start();
 				return BoxedUnit.UNIT;
 			}
 		});
@@ -209,7 +211,7 @@ public class GameScreen extends Screen {
 		// Drawing of the entities is done in VisualMap
 		//visualEntity.draw(g);
         attackDrawer.draw(g);
-		// Zeichnet die Welt und den UserInterface, der den Player darstellt
+		// Zeichnet die Welt und den UserInterface, der den Player dargestellt
 		endTurnButton.draw(g);
 		shootButton.draw(g);
 		toggleStopwatch.draw(g);
@@ -218,7 +220,7 @@ public class GameScreen extends Screen {
 
 		getLifeUI().draw(g);
 
-		//Main.getContext().getTimeClock().draw(g);
+		Main.getContext().getTimeClock().draw(g);
 	}
 
 	@Override

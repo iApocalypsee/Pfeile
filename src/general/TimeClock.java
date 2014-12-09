@@ -1,12 +1,12 @@
 package general;
 
-import gui.GameScreen;
-
-import java.awt.*;
-
 import comp.Component;
+import gui.GameScreen;
+import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.Duration$;
 import scala.concurrent.duration.FiniteDuration;
+
+import java.awt.*;
 
 
 /**
@@ -31,14 +31,15 @@ public class TimeClock extends Component implements Runnable {
 
     private static Color brightDarkGrey = Color.DARK_GRAY.brighter();
 
-    private Color colorTime;
+    private Color colorTime = Color.RED;
 	
 	/** String, der am Bildschirm die Zeit angeben soll */
-	private String timePrintString = null;
+	private String timePrintString = "ERROR";
 
 	public final Delegate.Function0Delegate onTimeOver = new Delegate.Function0Delegate();
 
-    private FiniteDuration _turnTime = null;
+
+    private static Property<FiniteDuration> _turnTime = Property.withValidation();
 
 	// KONSTURCKTOR
 	/** KONSTRUCKTOR der Klasse 
@@ -111,7 +112,7 @@ public class TimeClock extends Component implements Runnable {
 	
 	/** Umwandlung einer long-Variable in einem String min:sec:ms */
 	public static String timeFormatter(long millisecTime) {
-        String time = null;
+        String time;
         if(millisecTime < 0){  //�berpr�ft ob die Zeit negativ ist
             //throw new RuntimeException("Negativ time value provided");
         	time = "00:00:000";
@@ -218,12 +219,12 @@ public class TimeClock extends Component implements Runnable {
      * For direct time calculation, use time conversion methods provided with the Duration object:
      * <code>toMillis, toNanos, toMinutes, toSeconds</code>
      */
-    public scala.concurrent.duration.Duration turnTime ()
+    public static Duration turnTime ()
     {
-        if(_turnTime == null)
+        if(_turnTime.get() == null)
             return Duration$.MODULE$.Inf();
         else
-            return _turnTime;
+            return _turnTime.get();
     }
 
     /** Sets the new turn time.
@@ -231,13 +232,15 @@ public class TimeClock extends Component implements Runnable {
      * The new value may be <code>null</code>. In case of <code>null</code> the turn time
      * defaults to infinite time.
      */
-    public void setTurnTime (FiniteDuration turnTime) {
-        _turnTime = turnTime;
+    public static void setTurnTime (FiniteDuration turnTime) {
+        if (!turnTime.isFinite())
+            _turnTime.set(null);
+        _turnTime.set(turnTime);
     }
 
     /** Returns true if the turn time is infinite. */
-    public boolean isTurnTimeInfinite () {
-        return _turnTime == null;
+    public static boolean isTurnTimeInfinite () {
+        return _turnTime.isEmpty();
     }
 
 	@Override

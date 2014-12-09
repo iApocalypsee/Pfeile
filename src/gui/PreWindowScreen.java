@@ -6,6 +6,7 @@ import comp.Component;
 import comp.Label;
 import general.Main;
 import general.PfeileContext;
+import general.TimeClock;
 import newent.Bot;
 import newent.EntityLike;
 import newent.Player;
@@ -278,12 +279,10 @@ public class PreWindowScreen extends Screen {
                     openConfirmDialog("Select unselected Selections: Schadensmultiplikator");
                     return;
                 }
-	            /* TODO Move value initialization to Value class.
-                if (Main.getContext().getTimeClock().isTurnTimeInfinite()) {
+                if (TimeClock.isTurnTimeInfinite()) {
                     openConfirmDialog("Select unselected Selections: Zeit pro Zug");
                     return;
                 }
-                */
                 if (PfeileContext.WORLD_SIZE_X().get() == -1 || PfeileContext.WORLD_SIZE_Y().get() == -1) {
                     openConfirmDialog("Select unselected Selections: Weltgröße");
                     return;
@@ -661,7 +660,7 @@ public class PreWindowScreen extends Screen {
             PfeileContext.TURNS_PER_ROUND().set(7);
             labels[6].setText("Züge pro Runde: " + PfeileContext.TURNS_PER_ROUND().get());
 
-            Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(1, TimeUnit.MINUTES));
+            TimeClock.setTurnTime(new FiniteDuration(1, TimeUnit.MINUTES));
             labels[7].setText("Zeit pro Zug: " + "1 min");
 
             PfeileContext.HANDICAP_PLAYER().set((byte) 0);
@@ -706,7 +705,7 @@ public class PreWindowScreen extends Screen {
                 openConfirmDialog("Select unselected Selections: Schadensmultiplikator");
                 return;
             }
-            if (Main.getContext().getTimeClock().isTurnTimeInfinite()) {
+            if (TimeClock.isTurnTimeInfinite()) {
                 openConfirmDialog("Select unselected Selections: Zeit pro Zug");
                 return;
             }
@@ -800,12 +799,12 @@ public class PreWindowScreen extends Screen {
                 case 7 : {
                     // Zeit pro Zug
                     switch (boxSelectTime.getSelectedIndex()) {
-                        case 0: Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(5, TimeUnit.MINUTES)); break;
-                        case 1: Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(2, TimeUnit.MINUTES)); break;
-                        case 3: Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(40, TimeUnit.SECONDS)); break;
-                        case 4: Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(30, TimeUnit.SECONDS)); break;
-                        case 5: Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(20, TimeUnit.SECONDS)); break;
-                        default: Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(1, TimeUnit.MINUTES)); // 1 min
+                        case 0: TimeClock.setTurnTime(new FiniteDuration(5, TimeUnit.MINUTES)); break;
+                        case 1: TimeClock.setTurnTime(new FiniteDuration(2, TimeUnit.MINUTES)); break;
+                        case 3: TimeClock.setTurnTime(new FiniteDuration(40, TimeUnit.SECONDS)); break;
+                        case 4: TimeClock.setTurnTime(new FiniteDuration(30, TimeUnit.SECONDS)); break;
+                        case 5: TimeClock.setTurnTime(new FiniteDuration(20, TimeUnit.SECONDS)); break;
+                        default:TimeClock.setTurnTime(new FiniteDuration(1, TimeUnit.MINUTES)); // 1 min
                     }
                     labels[7].setText("Zeit pro Zug: " + boxSelectTime.getSelectedValue());
                     return;

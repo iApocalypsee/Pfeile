@@ -41,7 +41,7 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
         Main.setContext(s.get)
 
         // TODO Decouple this code; screens should be already initialized at this point.
-        ArrowSelectionScreen.getInstance.init
+        ArrowSelectionScreen.getInstance.init()
 
         // Switch forward to the game screen immediately. The world has been generated and
         // populated now.

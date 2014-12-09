@@ -55,7 +55,7 @@ public class AimSelectionScreen extends Screen {
     private static Color damageRadiusColor = new Color (255, 133, 0, 188);
 
     /** the extended bounds of the selected field. It's 2px bigger then the normal one, to be able to draw an border */
-    private Rectangle boundsSelectedTileExtended;
+    private Polygon boundsSelectedTileExtended;
 
     /** the bounds of the selected field. It's faster to save it instead of loading it with every draw call. */
     private Shape boundsSelectedTile;
@@ -79,22 +79,24 @@ public class AimSelectionScreen extends Screen {
         animatedLine = new AnimatedLine(0,0,0,0,Color.RED);
         animatedLine.setWidth(3.0f);
 
-        boundsSelectedTileExtended = new Rectangle();
+        boundsSelectedTileExtended = new Polygon();
         boundsSelectedTile = new Polygon();
-        final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
-        boundsOvalDamageRadius = new Rectangle(0, 0, (int) arrow.getAim().getDamageRadius() * 2,(int) arrow.getAim().getDamageRadius() * 2);
+        boundsOvalDamageRadius = new Rectangle (0, 0, 0, 0);
 
         onScreenEnter.register(new AbstractFunction0<BoxedUnit>() {
             @Override
             public BoxedUnit apply () {
+                final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
+
                 animatedLine.setStartX((int) Main.getContext().getActivePlayer().getComponent().getBounds().getBounds().getCenterX());
                 animatedLine.setStartY((int) Main.getContext().getActivePlayer().getComponent().getBounds().getBounds().getCenterY());
                 animatedLine.setColor(ArrowHelper.getUnifiedColor(ArrowSelectionScreen.getInstance().getSelectedIndex()));
                 transparencyWarningMessage = 0.0f;
 
-                final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
-                boundsOvalDamageRadius = new Rectangle(boundsOvalDamageRadius.x, boundsOvalDamageRadius.y, (int) arrow.getAim().getDamageRadius() * 2,(int) arrow.getAim().getDamageRadius() * 2);
-
+                // a new Rectangle for a new arrow, because of different damageRadius
+                TileLike anyTile = (TileLike) Main.getContext().getWorld().terrain().tileAt(0, 0);
+                boundsOvalDamageRadius = new Rectangle(boundsOvalDamageRadius.x, boundsOvalDamageRadius.y,
+                        (int) (arrow.getAim().getDamageRadius() * anyTile.getComponent().getWidth()), (int) (arrow.getAim().getDamageRadius() * anyTile.getComponent().getWidth()));
                 return BoxedUnit.UNIT;
             }
         });
@@ -229,7 +231,12 @@ public class AimSelectionScreen extends Screen {
                         Rectangle bounds = boundsSelectedTile.getBounds();
 		                animatedLine.setEndX((int) bounds.getCenterX());
 		                animatedLine.setEndY((int) bounds.getCenterY());
-                        boundsSelectedTileExtended.setBounds((int) bounds.getX() - 2, (int) bounds.getY() - 2, bounds.width + 2, bounds.height + 2);
+                        boundsSelectedTileExtended = new Polygon();
+                        boundsSelectedTileExtended.addPoint(bounds.x - 2, (int) (bounds.y + 0.5 * bounds.height));
+                        boundsSelectedTileExtended.addPoint((int) (bounds.x + 0.5 * bounds.width), (int) (bounds.y + 0.5 * bounds.height - 2));
+                        boundsSelectedTileExtended.addPoint(bounds.x + bounds.width + 2, (int) (bounds.y + 0.5 * bounds.width));
+                        boundsSelectedTileExtended.addPoint((int) (bounds.x + 0.5 * bounds.width), (int) (bounds.y + 0.5 * bounds.height + 2));
+
 		                boundsOvalDamageRadius.setLocation((int) (bounds.getCenterX() - boundsOvalDamageRadius.getWidth() / 2), (int) (bounds.getCenterY() - boundsOvalDamageRadius.getHeight() / 2));
                         stopFlag = true;
 	                }

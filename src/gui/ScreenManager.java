@@ -9,7 +9,7 @@ import java.util.Hashtable;
  * dass die Screens gewechselt werden, <b>nicht daf�r, dass der aktuelle Screen
  * gezeichnet wird.</b> Der aktuelle Screen wird vom ScreenManager durch die
  * Methode {@link ScreenManager#getActiveScreen()} bereitgestellt und dessen
- * {@link Screen#drawScreen(Graphics2D)}-Methode wird von GameWindow aus
+ * {@link Screen#draw(Graphics2D)}-Methode wird von GameWindow aus
  * aufgerufen.
  * <br><br>
  * <b>10.1.2014 (Josip):</b> {@link #getLastScreenChange()} kann jetzt genutzt werden.
@@ -98,7 +98,7 @@ public final class ScreenManager implements Drawable {
 
 	@Override
 	public void draw(Graphics2D g) {
-		if (getActiveScreen() != null)
-			getActiveScreen().draw(g);
+        // It's not necessary to check; every Screen is initialized
+		getActiveScreen().draw(g);
 	}
 }

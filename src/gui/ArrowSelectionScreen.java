@@ -342,7 +342,7 @@ public class ArrowSelectionScreen extends Screen {
 				onLeavingScreen(this, GameScreen.SCREEN_INDEX);
 			} 
 			if (confirmButton.getBounds().contains(e.getPoint())) {
-				if (selectedArrowBox.getEnteredText().equals(selectedArrowBox.getStdText()) == false) {
+				if (!selectedArrowBox.getEnteredText().equals(selectedArrowBox.getStdText())) {
                     for (int i = 0; i < inventory.currentSize(); i++) {
                         if (inventory.javaItems().get(i).getClass() == ArrowHelper.reformArrow(selectedArrowBox.getEnteredText())) {
                             selectedIndex = ArrowHelper.reformArrow(selectedArrowBox.getEnteredText());

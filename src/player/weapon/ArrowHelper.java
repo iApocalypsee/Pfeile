@@ -19,6 +19,9 @@ public final class ArrowHelper {
      */
     public static final int NUMBER_OF_ARROW_TYPES = 8;
 
+    /** don't instance ArrowHelper, exept, if you want to initialize ArrowHelper at the beginning
+     * (before using {@link player.weapon.ArrowHelper#getArrowImage(int)}
+     */
     public ArrowHelper() {
 		arrowImages = new BufferedImage[NUMBER_OF_ARROW_TYPES];
 		arrowImages[FireArrow.INDEX] = new FireArrow().getImage();
@@ -249,7 +252,7 @@ public final class ArrowHelper {
 
     /** returns the unifiedColor of the arrow. That is similar to:
      * ...Arrow.UNIFIED_COLOR
-     * @param arrowIndex
+     * @param arrowIndex the index of the arrow like anyArrow.ARROW_INDEX
      * @return UNIFIED_COLOR - the standard Color of an arrow
      */
     public static Color getUnifiedColor (int arrowIndex) {
@@ -295,7 +298,7 @@ public final class ArrowHelper {
 
     /** returns the unifiedColor of the arrow. That is similar to:
      * ...Arrow.UNIFIED_COLOR
-     * @param arrowName
+     * @param arrowName the name of the arrow like anyArrow.ARROW_NAME
      * @return UNIFIED_COLOR - the standard Color of an arrow
      */
     public static Color getUnifiedColor (String arrowName) {

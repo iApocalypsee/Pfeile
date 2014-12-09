@@ -25,10 +25,9 @@ public class Keys implements KeyListener {
 		int keyCode = e.getKeyCode();
 		if (keyCode >= 0 && keyCode <= keys.length)
 			keys[keyCode] = true;
-		@SuppressWarnings("unused")
-		gui.Screen s = Main.getGameWindow().getScreenManager().getActiveScreen();
-		Main.getGameWindow().getScreenManager().getActiveScreen().keyDown(e);
-		Main.getGameWindow().getScreenManager().getActiveScreen().keyPressed(e);
+		gui.Screen activeScreen = Main.getGameWindow().getScreenManager().getActiveScreen();
+		activeScreen.keyDown(e);
+		activeScreen.keyPressed(e);
 	}
 
 	@Override

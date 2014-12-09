@@ -97,13 +97,13 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
   /**
    * Initialiert die TimeClock
-   * TODO Decouple code!...
+   * TODO Decouple code!... Where???
    */
   def initTimeClock () : Unit = {
      _timeObj = new TimeClock()
      _stopwatchThread = new Thread(_timeObj)
      _stopwatchThread.setDaemon(true)
-     _stopwatchThread.setPriority(Thread.MIN_PRIORITY + 1)
+     _stopwatchThread.setPriority(Thread.MIN_PRIORITY + 2)
 
      val sm = Main.getGameWindow.getScreenManager
      _timeObj.onTimeOver.register { () =>
