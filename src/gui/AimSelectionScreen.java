@@ -27,15 +27,15 @@ public class AimSelectionScreen extends Screen {
 	
 	public static final int SCREEN_INDEX = 4;
 
-	/** X-Position des Ausgew�hlten Feldes 
+	/** X-Position des Ausgewählten Feldes
 	 * * (wenn noch nie auf <code> AimSelectionScreen </code> gecklickt wurde, ist der Wert -1)*/
 	private volatile int posX_selectedField;
 	
-	/** Y-Position des Ausgew�hlten Feldes 
+	/** Y-Position des Ausgewählten Feldes
 	 * (wenn noch nie auf <code> AimSelectionScreen </code> gecklickt wurde, ist der Wert -1) */
 	private volatile int posY_selectedField;
 	
-	/** Best�tigen-Button */
+	/** the button to confirm the decision to shoot an arrow at the selected field */
 	private Button confirm;
 	
 	// These are only for the warning Message
@@ -45,6 +45,27 @@ public class AimSelectionScreen extends Screen {
 
     /** the animated line from the player to the aim */
     private AnimatedLine animatedLine;
+
+    /** the Color of the border of the selectedField */
+    private static Color selectedTileOutLineColor = new Color(229, 217, 255, 161);
+
+    /*+ the Color with which the selectedField is drawn */
+    private static Color selectedTileInLineColor = new Color(255, 34, 0, 255);
+
+    private static Color damageRadiusColor = new Color (255, 133, 0, 188);
+
+    /** the extended bounds of the selected field. It's 2px bigger then the normal one, to be able to draw an border */
+    private Rectangle boundsSelectedTileExtended;
+
+    /** the bounds of the selected field. It's faster to save it instead of loading it with every draw call. */
+    private Shape boundsSelectedTile;
+
+    /** the bounds of the oval, which is showing the damage radius. The oval fits in the Rectangle. This is why I've
+     * chosen a Rectangle. */
+    private Rectangle boundsOvalDamageRadius;
+
+    /** this is the font of the warning message. It's saved here for speeding up the draw method. */
+    private static Font fontWarningMessage = new Font(comp.Component.STD_FONT.getFontName(), Font.BOLD, 26);
 	
 	/** Konstrucktor von AimSelectionScreen: ruft super(...) auf und setzt die Variabelnwerte nach der Initialisierung; start den thread of <code> FieldSelector </code> */
 	public AimSelectionScreen() {
@@ -58,6 +79,11 @@ public class AimSelectionScreen extends Screen {
         animatedLine = new AnimatedLine(0,0,0,0,Color.RED);
         animatedLine.setWidth(3.0f);
 
+        boundsSelectedTileExtended = new Rectangle();
+        boundsSelectedTile = new Polygon();
+        final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
+        boundsOvalDamageRadius = new Rectangle(0, 0, (int) arrow.getAim().getDamageRadius() * 2,(int) arrow.getAim().getDamageRadius() * 2);
+
         onScreenEnter.register(new AbstractFunction0<BoxedUnit>() {
             @Override
             public BoxedUnit apply () {
@@ -65,6 +91,10 @@ public class AimSelectionScreen extends Screen {
                 animatedLine.setStartY((int) Main.getContext().getActivePlayer().getComponent().getBounds().getBounds().getCenterY());
                 animatedLine.setColor(ArrowHelper.getUnifiedColor(ArrowSelectionScreen.getInstance().getSelectedIndex()));
                 transparencyWarningMessage = 0.0f;
+
+                final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
+                boundsOvalDamageRadius = new Rectangle(boundsOvalDamageRadius.x, boundsOvalDamageRadius.y, (int) arrow.getAim().getDamageRadius() * 2,(int) arrow.getAim().getDamageRadius() * 2);
+
                 return BoxedUnit.UNIT;
             }
         });
@@ -129,45 +159,6 @@ public class AimSelectionScreen extends Screen {
 		FieldSelectActor actor = new FieldSelectActor(e);
 		actor.setDaemon(true);
 		actor.start();
-	}
-
-	@Override
-	public void draw (Graphics2D g) {
-		// Background will be drawn
-		super.draw(g);
-
-        // Draw the world and the player
-        GameScreen.getInstance().getMap().draw(g);
-        GameScreen.getInstance().getAttackDrawer().draw(g);
-		
-		// draw the selectedField 
-		if (posX_selectedField >= 0 && posY_selectedField >= 0) {
-            TileLike selectedTile = (TileLike) (Main.getContext().getWorld().terrain().tileAt(posX_selectedField, posY_selectedField));
-			g.setColor(new Color(255, 4, 3, 161));
-			g.fill(selectedTile.getComponent().getBounds());
-            g.setColor(new Color (255, 34, 0, 255));
-            g.fill(selectedTile.getComponent().getBounds());
-            animatedLine.updateOffset(- 0.5);
-            animatedLine.draw(g);
-		}
-
-        // TODO: inizalizise and create TimeLifeBox
-		// TimeLifeBox.draw(g);
-        // TODO: create a new Field infoBox
-		// Field.infoBox.draw(g);
-		Main.getContext().getTimeClock().draw(g);
-		
-		confirm.draw(g);
-		
-		// Finally, draw the waringMessage
-		g.setColor(new Color(1f, 0f, 0f, transparencyWarningMessage));
-		g.setFont(new Font(comp.Component.STD_FONT.getFontName(), Font.BOLD, 26));
-		g.drawString(warningMessage, positionWarningMessage.x, positionWarningMessage.y);
-		
-		transparencyWarningMessage = transparencyWarningMessage - 0.013f;
-		
-		if (transparencyWarningMessage < 0) 
-			transparencyWarningMessage = 0;
 	}
 	
 	
@@ -234,9 +225,13 @@ public class AimSelectionScreen extends Screen {
 	                } else {
 		                setPosX_selectedField(tileX);
 		                setPosY_selectedField(tileY);
-		                animatedLine.setEndX((int) tileWrapper.getComponent().getBounds().getBounds().getCenterX());
-		                animatedLine.setEndY((int) tileWrapper.getComponent().getBounds().getBounds().getCenterY());
-		                stopFlag = true;
+                        boundsSelectedTile = tileWrapper.getComponent().getBounds();
+                        Rectangle bounds = boundsSelectedTile.getBounds();
+		                animatedLine.setEndX((int) bounds.getCenterX());
+		                animatedLine.setEndY((int) bounds.getCenterY());
+                        boundsSelectedTileExtended.setBounds((int) bounds.getX() - 2, (int) bounds.getY() - 2, bounds.width + 2, bounds.height + 2);
+		                boundsOvalDamageRadius.setLocation((int) (bounds.getCenterX() - boundsOvalDamageRadius.getWidth() / 2), (int) (bounds.getCenterY() - boundsOvalDamageRadius.getHeight() / 2));
+                        stopFlag = true;
 	                }
                 }
             }
@@ -265,15 +260,11 @@ public class AimSelectionScreen extends Screen {
 			});
 
 			if(opt.isDefined()) {
+                arrow.getAim().setGridX(getPosX_selectedField());
+                arrow.getAim().setGridY(getPosY_selectedField());
 
-                arrow.setPosXAim((int) (target.component().getSimplifiedBounds().getCenterX() - 0.5 * arrow.getImage().getWidth()));
-                arrow.setPosYAim((int) (target.component().getSimplifiedBounds().getCenterY() - 0.5 * arrow.getImage().getHeight()));
-
-                arrow.setFieldXAim(getPosX_selectedField());
-                arrow.setFieldYAim(getPosY_selectedField());
-
-                arrow.setFieldX(active.getGridX());
-                arrow.setFieldY(active.getGridY());
+                arrow.setGridX(active.getGridX());
+                arrow.setGridY(active.getGridY());
 
                 // the center of the player is the center of the arrow
                 arrow.setPosX((int) (active.getComponent().getBounds().getBounds().getCenterX() - 0.5 * arrow.getImage().getWidth()));
@@ -287,4 +278,48 @@ public class AimSelectionScreen extends Screen {
 			}
         }
 	}
+
+
+    @Override
+    public void draw (Graphics2D g) {
+        // Background will be drawn
+        super.draw(g);
+
+        // Draw the world and the player
+        GameScreen.getInstance().getMap().draw(g);
+        GameScreen.getInstance().getAttackDrawer().draw(g);
+
+        // draw the selected field and the damage radius
+        if (posX_selectedField >= 0 && posY_selectedField >= 0) {
+            g.setColor(selectedTileOutLineColor);
+            g.fill(boundsSelectedTileExtended);
+            g.setColor(selectedTileInLineColor);
+            g.fill(boundsSelectedTile);
+            // drawing the damage radius twice, that the line is thicker
+            g.setColor(damageRadiusColor);
+            g.drawOval(boundsOvalDamageRadius.x, boundsOvalDamageRadius.y, boundsOvalDamageRadius.width, boundsOvalDamageRadius.height);
+            g.drawOval(boundsOvalDamageRadius.x + 1, boundsOvalDamageRadius.y + 1, boundsOvalDamageRadius.width - 1, boundsOvalDamageRadius.width - 1);
+            animatedLine.updateOffset(- 0.5);
+            animatedLine.draw(g);
+        }
+
+        // TODO: inizalizise and create TimeLifeBox
+        // TimeLifeBox.draw(g);
+        // TODO: create a new Field infoBox
+        // Field.infoBox.draw(g);
+        Main.getContext().getTimeClock().draw(g);
+
+        confirm.draw(g);
+
+        // Finally, draw the waringMessage
+        if (transparencyWarningMessage > 0) {
+            g.setColor(new Color(1f, 0f, 0f, transparencyWarningMessage));
+            g.setFont(fontWarningMessage);
+            g.drawString(warningMessage, positionWarningMessage.x, positionWarningMessage.y);
+
+            transparencyWarningMessage = transparencyWarningMessage - 0.013f;
+            if (transparencyWarningMessage < 0)
+                transparencyWarningMessage = 0;
+        }
+    }
 }

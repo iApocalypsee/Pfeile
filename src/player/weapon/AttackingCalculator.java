@@ -102,11 +102,11 @@ public class AttackingCalculator {
                 //        ((int) ((radius * accuracy) * 1000) / 1000.0) + "\t(x|y): ( " + attackingArrow.getPosX() + " | " + attackingArrow.getPosY() + " )", LogFacility.LoggingLevel.Debug);
 
                 attackingArrow.setPosX((int) (posXOld + Math.round(
-                        FunctionCollectionEasing.quadratic_easing_inOut(radius * accuracy, 0, attackingArrow.getPosXAim() - posXOld, radius)
+                        FunctionCollectionEasing.quadratic_easing_inOut(radius * accuracy, 0, attackingArrow.getAim().getPosXGui() - posXOld, radius)
                             * (radius / attackProgress.event().lengthGUI()))));
 
                 attackingArrow.setPosY((int) (posYOld + Math.round(
-                        FunctionCollectionEasing.quadratic_easing_inOut(radius * accuracy, 0, attackingArrow.getPosYAim() - posYOld, radius)
+                        FunctionCollectionEasing.quadratic_easing_inOut(radius * accuracy, 0, attackingArrow.getAim().getPosYGui() - posYOld, radius)
                                 * (radius / attackProgress.event().lengthGUI()))));
 
                  try {

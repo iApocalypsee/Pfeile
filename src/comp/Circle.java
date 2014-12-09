@@ -121,8 +121,7 @@ public class Circle implements Shape {
 	 */
 	@Override
 	public Rectangle getBounds() {
-		Rectangle rect = new Rectangle((int) (x  - radius), (int) (y - radius), (int) (radius * 2), (int) (radius * 2));
-		return rect;
+        return new Rectangle((int) (x  - radius), (int) (y - radius), (int) (radius * 2), (int) (radius * 2));
 	}
 
 	/**
@@ -191,7 +190,8 @@ public class Circle implements Shape {
 	@Override
 	public boolean contains(double x, double y) {
 		// get the relative length to the middle point of the circle
-		double xlen = x - this.x, ylen = y - this.y;
+		double xlen = x - this.x;
+        double ylen = y - this.y;
 		// use the pythagorean theorem to calculate the triangle between xlen, ylen and the middle point
 		double res = Math.pow(xlen, 2) + Math.pow(ylen, 2);
 		// and return the check

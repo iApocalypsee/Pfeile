@@ -1,28 +1,28 @@
 package player.weapon;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-
 import general.PfeileContext;
 import geom.functions.FunctionCollection;
+import gui.Drawable;
+import player.BoardPositionable;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 
 /**
  * Die abstrakte Pfeil-Klasse, von der die Pfeilarten abgeleitet werden. Wenn
  * Spieler Pfeile bekommen, bekommen sie Pfeil-Instanzen durch den Konstruktor
  * der Subklasse. Diese Objekte kommen in das Inventar des Spielers.
- * 
+ *
+ * The attackValue of the arrow is its maximum value, which isn't constant because of the damageRadius
+ *
+ * USE ARROW HELPER for the indexes.
  * <b> Indexes: </b> Feuer = 0; Wasser = 1; Sturm = 2; Stein = 3; Eis = 4; Blitz
  * = 5; Licht = 6; Schatten = 7;
  * 
  * @version 25.11.2013
  */
-public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable {
-
-	/**
-	 * Wert des Schadens (nach Abnahme durch Entfernung)
-	 */
-	protected float attackValueCurrent;
+public abstract class AbstractArrow extends RangedWeapon implements Drawable, BoardPositionable {
 
     /** the rotation of the BufferedImage to draw the arrow to the direction of the attacked field */
     protected double rotation;
@@ -51,30 +51,7 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 	/** Treffunsicherheitsquote: Faktor der Erh�hung (pro 25m) */
 	protected float aimMissingRate;
 
-	/** aktuelle Treffunsicherheitsquote */
-	protected float aimMissingCurrent;
-
-	/**
-	 * Reichweite des Pfeils : in Metern angegeben [25m genau] Verwenden, falls
-	 * andere Pfeile [d.h. Sturmpfeil] oder Felder / andere Eigenschaften die
-	 * Reichweite ver�ndern
-	 */
-	protected int rangeValueCurrent;
-
-    /** changes the damage radius of that arrow */
-    private void setDamageRadius (float damageRadius) {
-        this.damageRadius = damageRadius;
-    }
-
-    /* the radius in tiles, where the enemies get damage */
-    public float getDamageRadius () {
-        return damageRadius;
-    }
-
-    /** Wie weit der Schaden des Pfeils nach dem Auftreffen reicht */
-	protected float damageRadius;
-
-	/** Positon im Koordinatensystem des Pfeils: Die X-Position */
+    /** Positon im Koordinatensystem des Pfeils: Die X-Position */
 	protected int fieldX;
 	/** Position im Koordinatensystem des Pfeils: Y-Position */
 	protected int fieldY;
@@ -82,70 +59,35 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 	protected int posX;
 	/** Y-Position des Pfeils - f�r GUI */
 	protected int posY;
-	/**
-	 * X-Positon im Koordinatensystem der Felder: Hier ist die Position X des
-	 * Zielfeldes
-	 */
-	protected int fieldXAim;
-	/**
-	 * Y-Positon im Koordinatensystem der Felder: Hier ist die Position Y des
-	 * Zielfeldes
-	 */
-	protected int fieldYAim;
-
-    /** X-Position des Ziels auf Bildschirm */
-    protected int posXAim;
-
-    /** Y-Poition auf Bildschirm des Ziels */
-    protected int posYAim;
 
 	/**
-	 * <b> KONSTUCKTOR: <b> float : Grundschaden des Pfeils float :
-	 * Grundverteidigung des Pfeils int : Grundreichweite des Pfeils float :
-	 * Selbsttrefferwahrscheinlichkeit float : Treffunsicherheitsquote float :
-	 * Faktor der Erh�hung der Treffunsicherheitsquote float : Faktor der
+	 * <b> KONSTUCKTOR: </b> <p> attackVal: float : Grundschaden des Pfeils <p> defenseVal: float :
+	 * Grundverteidigung des Pfeils <p> rangeVal: int : Grundreichweite des Pfeils <p> float :
+	 * Selbsttrefferwahrscheinlichkeit <p> float : Treffunsicherheitsquote <p> float :
+	 * Faktor der Erh�hung der Treffunsicherheitsquote <p> float : Faktor der
 	 * Verringerung der Schadenswirkung
-	 * 
-	 * // int : arrowSpeed - Geschwindigkeit des Pfeils // int : acceleration -
-	 * Beschleunigung des Pfeils // int : damageRadius - Schadensradius des
-	 * Pfeils
 	 */
-	public AbstractArrow(float attackVal, float defenseVal, int rangeVal,
+	public AbstractArrow(float attackVal, float defenseVal, double rangeVal,
 			float selfHittingRate, float aimMissing, float aimMissingRate,
 			float damageLosingRate, double speed, float damageRadius, String name) {
 		super(name);
 		setAttackValue(attackVal);
-		setAttackValCurrent(attackVal);
 		setDefenseValue(defenseVal);
 		// Reichweite des Pfeils wird minimal (+/- 1 Feld) an die Entfernung
 		// angepasst
 		if (PfeileContext.WORLD_SIZE_X().get() <= 22) {
 			setRange(rangeVal - 100);
-			setRangeValueCurrent(rangeVal - 100);
-		} else if (PfeileContext.WORLD_SIZE_Y().get() < 40) {
+		} else if (PfeileContext.WORLD_SIZE_X().get() < 40) {
 			setRange(rangeVal);
-			setRangeValueCurrent(rangeVal);
 		} else {
 			setRange(rangeVal + 100);
-			setRangeValueCurrent(rangeVal + 100);
 		}
 		setSelfHittingRate(selfHittingRate);
 		setAimMissing(aimMissing);
 		setAimMissingRate(aimMissingRate);
-		setAimMissingCurrent(aimMissing);
 		setDamageLosingRate(damageLosingRate);
 		setSpeed(speed);
-        setDamageRadius(damageRadius);
-	}
-
-	/** Gibt den Aktuellen Wert des Schadens zur�ck */
-	public float getAttackValCurrent() {
-		return attackValueCurrent;
-	}
-
-	/** Setzt den Aktuellen Wert des Schadens (nicht Grundschaden) zur�ck */
-	public void setAttackValCurrent(float newAtackValueCurrent) {
-		attackValueCurrent = newAtackValueCurrent;
+        getAim().setDamageRadius(damageRadius);
 	}
 
 	/** Gibt die Schadensverlustrate zur�ck */
@@ -184,100 +126,30 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 	}
 
 	/** Treffunsicherheitsquote (Faktor der Erh�hung) */
-	private void setAimMissingRate(float newAimMissingRate) {
-		this.aimMissingRate = newAimMissingRate;
+	private void setAimMissingRate(float aimMissingRate) {
+		this.aimMissingRate = aimMissingRate;
 	}
 
-	/**
-	 * Treffunsicherheitsquote (aktueller Wert =! Grundwert [Erh�hung durch
-	 * Entfernung])
-	 */
-	public float getAimMissingCurrent() {
-		return this.aimMissingRate;
-	}
-
-	/**
-	 * Treffunsicherheitsquote (aktueller Wert [nicht gleich Grundwert; Erh�hung
-	 * durch Entfernung]
-	 */
-	public void setAimMissingCurrent(float newAimMissingCurrent) {
-		this.aimMissingRate = newAimMissingCurrent;
-	}
-
-    /** returns the current attack value of the arrow */
+    /** X-Position bei den Feldern */
     @Override
-    public float getAttackValue () {
-        return attackValueCurrent;
-    }
-
-    /** TODO: Defense Value is independed from the attacking arrow */
-    @Override
-    public float getDefenseValue () {
-        return super.getDefenseValue();
-    }
-
-    /**
-	 * Aktuelle Reichweite {vom Start zum Ziel} (nicht Grundweite: sie wurde
-	 * ggf. durch andere Pfeile,... ge�ndert) in 25m genau
-	 */
-	public int getRangeValueCurrent() {
-		return rangeValueCurrent;
-	}
-
-	public void setRangeValueCurrent(int newRangeValueCurrent) {
-		rangeValueCurrent = newRangeValueCurrent;
-	}
-
-	/** X-Position bei den Feldern */
-	public int getFieldX() {
+	public int getGridX () {
 		return fieldX;
 	}
 
 	/** X-Position bei den Feldern */
-	public void setFieldX(int fieldX) {
+	public void setGridX (int fieldX) {
 		this.fieldX = fieldX;
 	}
 
 	/** Y-Position bei den Feldern */
-	public int getFieldY() {
+    @Override
+	public int getGridY () {
 		return fieldY;
 	}
 
 	/** Y-Position bei den Feldern */
-	public void setFieldY(int fieldY) {
+	public void setGridY (int fieldY) {
 		this.fieldY = fieldY;
-	}
-
-    /**
-	 * Gibt die Feldposition X des Feldes (im Field-Koordinatensystem) zur�ck,
-	 * dessen Ziel (Zielfeld) der Pfeil anvisiert hat
-	 */
-	public int getFieldXAim() {
-		return fieldXAim;
-	}
-
-	/**
-	 * Seitzt die Feldposition X des Feldes (aus dem Field-Koordinatensystem)
-	 * zur�ck, dessen Ziel (Zielfeld) der anvisiert hat
-	 */
-	public void setFieldXAim(int fieldXAim) {
-		this.fieldXAim = fieldXAim;
-	}
-
-	/**
-	 * Gibt die Feldposition Y des Feldes (im Field-Koordinatensystem) zur�ck,
-	 * dessen Ziel (Zielfeld) der Pfeil anvisiert hat
-	 */
-	public int getFieldYAim() {
-		return fieldYAim;
-	}
-
-	/**
-	 * Seitzt die Feldposition Y des Feldes (aus dem Field-Koordinatensystem)
-	 * zur�ck, dessen Ziel (Zielfeld) der anvisiert hat
-	 */
-	public void setFieldYAim(int fieldYAim) {
-		this.fieldYAim = fieldYAim;
 	}
 
 	/** Position X auf dem Bildschrim (Pixel) */
@@ -300,27 +172,6 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 		this.posY = posY;
 	}
 
-    /** gibt die X-Position auf dem Bildschirm vom Ziel zurück. It is equal to the Center-X-Position of the aimed tile minus half the arrowImage.getWidth()*/
-    public int getPosXAim () {
-        return posXAim;
-    }
-
-    /** setzt die x-Position auf dem Bildschirm vom Ziel */
-    public void setPosXAim (int posXAim) {
-        this.posXAim = posXAim;
-    }
-
-    /** Y-Position auf dem Bildschrim vom Ziel */
-    public int getPosYAim () {
-        return posYAim;
-    }
-
-    /** setzt die y-Position auf dem Bildschrim vom Ziel
-     * <b> use calculateRotation if neccary </b>*/
-    public void setPosYAim (int posYAim) {
-        this.posYAim = posYAim;
-    }
-
     /** the speed of the arrow in tiles per turn */
 	public double getSpeed() {
 		return speed;
@@ -330,22 +181,31 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 		this.speed = speed;
 	}
 
-    @Override
-    public int getRange () {
-        return super.getRange();
-    }
-
     /** returns the rotation of the BufferedImage. With this value the image is drawn in direction to the aim. It's in radient.*/
     public double getRotation () {
         return rotation;
     }
 
+    @Override
+    public double damageAt (int posX, int posY) {
+        double currentDistance = FunctionCollection.distance(getAim().getGridX(), getAim().getGridY(), posX, posY);
+
+        if (currentDistance >= getAim().getDamageRadius()) {
+            return 0;
+        } else {
+            // this the normalized cos (cos(x * 0.5 * Math.PI) of the ratio from the distance from center
+            double distanceRatio = Math.cos((currentDistance / getAim().getDamageRadius()) * 0.5 * Math.PI);
+            // distanceRatio * distanceRatio: because the curve is more smoothly at the edges.
+            return distanceRatio * distanceRatio * getAttackValue() * PfeileContext.DAMAGE_MULTI().get();
+        }
+    }
+
     /** changes the rotation of the BufferedImage. With this value the image is drawn in the direction to the aim.
      * Basically it updates the the rotation with:
-     * <p> <code>rotation = FunctionCollection.angle(getPosX(), getPosY(), getPosXAim(), getPosYAim());</code>
+     * <p> <code>rotation = FunctionCollection.angle(getPosX(), getPosY(), getAim().getPosXGui(), getAim().getPosYGui());</code>
      */
     public void calculateRotation () {
-        rotation = FunctionCollection.angle(posX, posY, posXAim, posYAim);
+        rotation = FunctionCollection.angle(posX, posY, getAim().getPosXGui(), getAim().getPosYGui());
     }
 
     /** gibt die BufferedImage des Pfeils zur�ck
@@ -353,7 +213,7 @@ public abstract class AbstractArrow extends RangedWeapon implements gui.Drawable
 	public abstract BufferedImage getImage();
 
     /** TODO: do the Zoom */
-	@Override
+    @Override
 	public void draw(Graphics2D g) {
         AffineTransform old = g.getTransform();
         // it should be rotated from the center of the arrowImage
