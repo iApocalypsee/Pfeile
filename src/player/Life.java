@@ -27,7 +27,7 @@ public class Life {
 	 * @param startingLife The starting amount of life.
 	 */
 	public Life(double lifeMax, double lifeRegeneration, double startingLife) {
-		scala.Predef.require(lifemax > 0.0);
+		scala.Predef.require(lifeMax > 0.0);
 		this.lifemax = lifeMax;
 		this.liferegen = lifeRegeneration;
 		this.life = startingLife;

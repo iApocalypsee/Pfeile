@@ -80,7 +80,7 @@ public class GameWindow extends JFrame {
 		new AimSelectionScreen();
 		GameScreen.getInstance();
         ArrowSelectionScreen.getInstance();
-        new ArrowSelectionScreenPreSet();
+        ArrowSelectionScreenPreSet.getInstance();
         new GameOverScreen();
 		// NewWorldTestScreen$.MODULE$;
         screenManager.setActiveScreen(new PreWindowScreen());
@@ -135,72 +135,6 @@ public class GameWindow extends JFrame {
 		g.dispose();
 		strat.show();
 	}
-
-	/**
-	 * Hauptbereich für EndSequence --> Initialisierungen, dann Aufruf der
-	 * Zeichenmethoden für die eigentliche Darstellung
-	 * TODO Muss auf andere Screens ausgelagert werden
-	 */
-	@Deprecated
-	public void endSequenceDied() {
-		Graphics g = strat.getDrawGraphics();
-		Graphics2D g2D = (Graphics2D) g;
-
-		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-
-
-		//drawFieldGray(g2D);
-
-		drawEndSequenceDied(g2D);
-
-		g2D.dispose();
-		strat.show();
-	}
-
-	/**
-	 * Zeichnet EndSequence - Aufruf i.d.R. durch 'endSequence()'
-	 */
-	private void drawEndSequenceDied(Graphics2D g) {
-		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
-
-		g.setColor(Color.RED);
-		Font endSequenceFont = new Font("18thCentury", Font.BOLD, 150);
-		g.setFont(endSequenceFont);
-		g.drawString("DIED", Main.getWindowWidth() / 2 - 100,
-				Main.getWindowHeight() / 2 - 10);
-	}
-
-	public void endSequenceWon() {
-		Graphics g = strat.getDrawGraphics();
-		Graphics2D g2D = (Graphics2D) g;
-
-		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-
-		//drawFieldGray(g2D);
-
-		drawEndSequenceWon(g2D);
-
-		g2D.dispose();
-		strat.show();
-	}
-
-	private void drawEndSequenceWon(Graphics2D g) {
-		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
-
-		g.setColor(Color.RED);
-		Font endSequenceFont = new Font("18thCentury", Font.BOLD, 150);
-		g.setFont(endSequenceFont);
-		g.drawString("WON", Main.getWindowWidth() / 2 - 100,
-				Main.getWindowHeight() / 2 - 10);
-
-	}
-
-
-	// ANDERE METHODEN ############################################
 
 	/**
 	 * @return the screenManager

@@ -20,17 +20,13 @@ trait WorldLike {
 
 }
 
-class DefaultWorld extends WorldLike {
+abstract class DefaultWorld extends WorldLike {
 
   // FIXME Change here...
 
-  private val _entities = new DefaultEntityManager
-
-  /** The terrain that describes the geography of the world. */
-  override val terrain = new DefaultTerrain(this)
   terrain.generate()()
 
   /** The entities that describe the population of the world. */
-  override def entities = _entities
+  override val entities = new DefaultEntityManager
 
 }

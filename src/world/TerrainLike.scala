@@ -87,14 +87,14 @@ trait TerrainLike {
   * or whatsoever GUI class we have.
   *
   */
-class DefaultTerrain(override val world: DefaultWorld) extends TerrainLike {
+class DefaultTerrain(override val world: DefaultWorld, initWidth: Int, initHeight: Int) extends TerrainLike {
 
   override type TileType = IsometricPolygonTile
 
   /** It uses PfeileContext.WORLD_SIZE_X */
-  override lazy val width  = PfeileContext.WORLD_SIZE_X.get.intValue()
+  override lazy val width  = initWidth
   /** PfeileContext.WORLD_SIZE_Y is used */
-  override lazy val height = PfeileContext.WORLD_SIZE_Y.get.intValue()
+  override lazy val height = initHeight
 
   // Wow. The generation process is so straightforward.
   private val _primitiveRandom = new Random

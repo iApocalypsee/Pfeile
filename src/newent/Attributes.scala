@@ -9,14 +9,14 @@ abstract class Attributes {
   lazy val current: Property[Current] = {
     val startObject = initialCurrent(new Current)
     require(startObject != null)
-    Property(startObject)
+    Property.withValidation(startObject)
   }
 
   /** The lasting properties of the entity. */
   lazy val lasting: Property[Lasting] = {
     val startObject = initialLasting(new Lasting)
     require(startObject != null)
-    Property(startObject)
+    Property.withValidation(startObject)
   }
 
   /** Checks if the new current object has enough metadata objects. */

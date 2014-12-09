@@ -19,6 +19,10 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   private var _timeObj        : TimeClock = null
   private var _stopwatchThread: Thread    = null
 
+  // Extract the call to other locations, does not fit inside here.
+  // TimeClock is a GUI component, there is nothing to do here for TimeClock.
+  initTimeClock()
+
   /** Called when the world attribute has been changed. <p>
     * The argument is given as a tuple of two world objects: <p>
     * The first world is the old world, the second one is the new world.
@@ -82,6 +86,10 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     onWorldSwapped((old, w))
   }
 
+  onWorldSwapped += { _ =>
+    println("World has been swapped.")
+  }
+
   def getWorld = world
   def setWorld(w: WorldLike) = world = w
 
@@ -89,6 +97,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
   /**
    * Initialiert die TimeClock
+   * TODO Decouple code!...
    */
   def initTimeClock () : Unit = {
      _timeObj = new TimeClock()
@@ -222,6 +231,10 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   * previous <code>general.Mechanics</code>*/
 object PfeileContext {
 
+  // TODO Not good, static variables which are not exchangeable.
+  // It is better to have these variables in a special "Values" class, which we can
+  // swap out to provide different values for different games.
+
    /** this is the number of players (Humans and Bots) in the games.
      * Right now, its always 2.
      */
@@ -239,6 +252,7 @@ object PfeileContext {
    val ARROW_NUMBER_FREE_SET = Property.apply[java.lang.Integer](-1)
 
    /** this is the total number of arrows. It's <code>ARROW_NUMBER_FREE_SET + ARROW_NUMBER_PRE_SET </code>*/
+   // TODO On-demand calculation would fit better here (in other words, a method would fit better here than a property).
    val ARROW_NUMBER_TOTAL = Property.apply[java.lang.Integer](-1)
 
    /** The number of turns per round. A turn of a player ends when the user presses the endTurn-Button;

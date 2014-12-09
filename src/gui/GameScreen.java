@@ -49,7 +49,7 @@ public class GameScreen extends Screen {
 	private Button shootButton;
 	private Button toggleStopwatch;
 
-	private VisualMap map;
+	private VisualMap map = null;
 	private InternalFrame frame = new InternalFrame(50, 50, 100, 100, this);
     private final AttackDrawer attackDrawer = new AttackDrawer();
 
@@ -73,6 +73,17 @@ public class GameScreen extends Screen {
 	 */
 	private GameScreen() {
 		super(GameScreen.SCREEN_NAME, GameScreen.SCREEN_INDEX);
+
+		onScreenEnter.register(new AbstractFunction0<BoxedUnit>() {
+			@Override
+			public BoxedUnit apply() {
+				if(map == null) {
+					map = new VisualMap(Main.getContext().getWorld());
+					map.moveMap(120, 470);
+				}
+				return BoxedUnit.UNIT;
+			}
+		});
 	}
 
 	/** This method must be called just once!
@@ -83,6 +94,7 @@ public class GameScreen extends Screen {
 	 * So construct it first, then do all the initialization afterwards.
 	 */
 	private void postInit() {
+		/*
 		Main.getContext().setWorld(new DefaultWorld());
 		TerrainLike terrain = Main.getContext().getWorld().terrain();
 
@@ -132,8 +144,7 @@ public class GameScreen extends Screen {
 		Main.getContext().world().entities().register(Main.getContext().getActivePlayer());
 		Main.getContext().world().entities().register(opponent);
 
-		map = new VisualMap(Main.getContext().getWorld());
-		map.moveMap(120, 470);
+		*/
 
 		// später DAS HIER auskommentieren
 		ScreenManager.ref_gameScreen = this;
@@ -190,7 +201,9 @@ public class GameScreen extends Screen {
 	@Override
 	public void draw(Graphics2D g) {
 		super.draw(g);
-		map.draw(g);
+		if(map != null) {
+			map.draw(g);
+		}
 		// I practically do not need the visual entity to let the entities draw on to the screen
 		// BUT I still need the component objects, which reside in the visual entity object.
 		// Drawing of the entities is done in VisualMap
@@ -204,7 +217,8 @@ public class GameScreen extends Screen {
 		frame.draw(g);
 
 		getLifeUI().draw(g);
-		Main.getContext().getTimeClock().draw(g);
+
+		//Main.getContext().getTimeClock().draw(g);
 	}
 
 	@Override

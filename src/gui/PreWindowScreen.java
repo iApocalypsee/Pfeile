@@ -19,6 +19,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * This is the Screen in which some PfeileContext values like worldSize are set. It replaces the old PreWindow.
+ *
+ * TODO Can you make the class shorter? I don't want to examine 900 (!) lines of code...
  */
 public class PreWindowScreen extends Screen {
     public static final int SCREEN_INDEX = 21;
@@ -227,7 +229,8 @@ public class PreWindowScreen extends Screen {
                 PfeileContext.TURNS_PER_ROUND().set(7);
                 labels[6].setText("Züge pro Runde: " + PfeileContext.TURNS_PER_ROUND().get());
 
-                Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(1, TimeUnit.MINUTES));
+	            // TODO Move value initialization to Value class.
+                //Main.getContext().getTimeClock().setTurnTime(new FiniteDuration(1, TimeUnit.MINUTES));
                 labels[7].setText("Zeit pro Zug: " + "1 min");
 
                 PfeileContext.HANDICAP_PLAYER().set((byte) 0);
@@ -275,10 +278,12 @@ public class PreWindowScreen extends Screen {
                     openConfirmDialog("Select unselected Selections: Schadensmultiplikator");
                     return;
                 }
+	            /* TODO Move value initialization to Value class.
                 if (Main.getContext().getTimeClock().isTurnTimeInfinite()) {
                     openConfirmDialog("Select unselected Selections: Zeit pro Zug");
                     return;
                 }
+                */
                 if (PfeileContext.WORLD_SIZE_X().get() == -1 || PfeileContext.WORLD_SIZE_Y().get() == -1) {
                     openConfirmDialog("Select unselected Selections: Weltgröße");
                     return;
@@ -289,7 +294,7 @@ public class PreWindowScreen extends Screen {
                 }
 
                 correctInits();
-                new ArrowSelectionScreenPreSet();
+                ArrowSelectionScreenPreSet.getInstance();
 
                 if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > 0)
                     onLeavingScreen(this, ArrowSelectionScreenPreSet.SCREEN_INDEX);
@@ -715,7 +720,7 @@ public class PreWindowScreen extends Screen {
             }
 
             correctInits();
-            new ArrowSelectionScreenPreSet();
+            ArrowSelectionScreenPreSet.getInstance();
 
             if (PfeileContext.ARROW_NUMBER_FREE_SET().get() > 0)
                 onLeavingScreen(this, ArrowSelectionScreenPreSet.SCREEN_INDEX);
@@ -839,6 +844,7 @@ public class PreWindowScreen extends Screen {
                 }
                 case 9: {
                     // Weltgröße
+	                // FIXME Case branches never trigger, execution always jumps to default branch!!!
                     switch (boxSelectSize.getSelectedIndex()) {
                         case 0: PfeileContext.WORLD_SIZE_X().set(55); PfeileContext.WORLD_SIZE_Y().set(48);
                         case 1: PfeileContext.WORLD_SIZE_X().set(35); PfeileContext.WORLD_SIZE_Y().set(30);
@@ -877,7 +883,8 @@ public class PreWindowScreen extends Screen {
         }
         Bot.MAXIMUM_LIFE().set(Player.MAXIMUM_LIFE().get());
         Bot.LIFE_REGENERATION().set(Player.LIFE_REGENERATION().get());
-        setTotalArrowNumberCorrect();
+	    // FIXME Commented out for now, causes NullPointerException.
+        //setTotalArrowNumberCorrect();
     }
 
     /** upper methods: setLifeRegenerationCorrect() --> Corrects the totalArrowNumber() */

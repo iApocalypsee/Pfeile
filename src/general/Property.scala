@@ -7,14 +7,14 @@ package general
 case class Property[A] private(private var value: Option[A]) {
 
   /** Called when the underlying value of the property object is being returned
-    * to the called by the [[general.Property#get]] method.
+    * to the called by the [[general.Property# g e t]] method.
     */
   val onGet = Delegate.createZeroArity
 
   /** Called when the underlying value of the property object is swapped with
     * a new value.
     *
-    * Delegate is called inside the [[general.Property#set]] method.
+    * Delegate is called inside the [[general.Property# s e t]] method.
     */
   val onSet = Delegate.create[SetChange]
 
@@ -27,12 +27,12 @@ case class Property[A] private(private var value: Option[A]) {
     * @return The underlying value that the property holds.
     * @see [[scala.Option]]
     */
-  @inline def get = option.get
+  @inline def get = synchronized { option.get }
 
   /** Returns the option containing the possible value of the property.
     *
     * The important thing about the option is that the property __does not have
-    * to have a value in it__, in contrast to [[general.Property#get]].
+    * to have a value in it__, in contrast to [[general.Property# g e t]].
     *
     * @return The option holding the possible property value.
     */
@@ -50,7 +50,7 @@ case class Property[A] private(private var value: Option[A]) {
     *
     * @param x The new value of the property.
     */
-  def set(x: A): Unit = {
+  def set(x: A): Unit = synchronized {
     val change = new SetChange(value, x)
     onSet(change)
     value = change.newVal
@@ -87,13 +87,16 @@ case class Property[A] private(private var value: Option[A]) {
 
   @inline def <==(x: A): Unit = set(x)
 
-  /** Holds the data being swapped out in the [[general.Property#set]] method.
+  def update(x: A) = set(x)
+
+  /** Holds the data being swapped out in the [[general.Property# s e t]] method.
     *
     * @param oldVal The old value (to be replaced)
     * @param initNewVal The new value (to be set). If that parameter is null, `SetChange.newVal` is assigned
     *                   [[scala.None]].
     */
   class SetChange private[Property](val oldVal: Option[A], initNewVal: A) {
+
     val newVal: Option[A] = if (initNewVal == null) None else Some(initNewVal)
   }
 

@@ -43,6 +43,15 @@ public class ArrowSelectionScreenPreSet extends Screen {
     /** Hintergrund Farbe */
     private static final Color TRANSPARENT_BACKGROUND = new Color(39, 47, 69, 204);
 
+	private static ArrowSelectionScreenPreSet instance = null;
+
+	public static ArrowSelectionScreenPreSet getInstance() {
+		if(instance == null) {
+			instance = new ArrowSelectionScreenPreSet();
+		}
+		return instance;
+	}
+
     /** Font for "Ein Strategiespiel" */
     private Font fontMiddle;
 
@@ -65,19 +74,8 @@ public class ArrowSelectionScreenPreSet extends Screen {
      * Screen für die Pfeilauswahl für vorhersetzbaren Pfeilen.
      * äquivalent zu <code> ArrowSelection </code>.
      */
-    public ArrowSelectionScreenPreSet() {
+    private ArrowSelectionScreenPreSet() {
         super(SCREEN_NAME, SCREEN_INDEX);
-
-        onScreenLeft.register(new AbstractFunction1<ScreenChangedEvent, BoxedUnit>() {
-            @Override
-            public BoxedUnit apply (ScreenChangedEvent v1) {
-                Main.getContext().getTimeClock().reset();
-                Main.getContext().getTimeClock().start();
-                System.out.println(Main.getContext().getTimeClock().getMilliDeath());
-
-                return BoxedUnit.UNIT;
-            }
-        });
 
         selectedArrows = new LinkedList<String>();
         arrowListSelected = new List(50, 200, 200, 350, this, selectedArrows);
@@ -161,7 +159,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
                     if (selectedArrows.size() < PfeileContext.ARROW_NUMBER_PRE_SET().get()) {
                         openConfirmQuestion("Bitten wählen sie alle Pfeile aus!");
                     } else {
-                        GameLoop.setRunFlag(false);
+                        onLeavingScreen(this, LoadingWorldScreen.getInstance().SCREEN_INDEX);
                     }
                 }
             }
@@ -273,13 +271,17 @@ public class ArrowSelectionScreenPreSet extends Screen {
         // Bestätigen. Code hier drinn muss der selbe sein wie in dem Listener von confirmButton
         if (e.getKeyCode() == KeyEvent.VK_B) {
             if (selectedArrows.size() > PfeileContext.ARROW_NUMBER_PRE_SET().get()) {
-                throw new IllegalStateException("To many arrows added: They can't be more than " + PfeileContext.ARROW_NUMBER_PRE_SET().get());
+                throw new IllegalStateException("Too many arrows added: They can't be more than " + PfeileContext.ARROW_NUMBER_PRE_SET().get());
             }
 
             if (selectedArrows.size() < PfeileContext.ARROW_NUMBER_PRE_SET().get()) {
                 openConfirmQuestion("Bitten wählen sie alle Pfeile aus!");
             } else {
+	            /*
+	            // FIXME Keep the rendering going; too complicated for me!
                 GameLoop.setRunFlag(false);
+                */
+	            onLeavingScreen(this, LoadingWorldScreen.getInstance().SCREEN_INDEX);
             }
         } else if (e.getKeyCode() == KeyEvent.VK_Z) {
             java.util.Random randomGen = new Random();

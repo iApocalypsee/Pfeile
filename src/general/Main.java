@@ -5,6 +5,8 @@ import animation.SoundPool;
 import general.io.PreInitStage;
 import gui.*;
 import player.weapon.ArrowHelper;
+import scala.runtime.AbstractFunction1;
+import scala.runtime.BoxedUnit;
 
 import java.awt.*;
 import java.util.HashSet;
@@ -79,8 +81,6 @@ public class Main {
      * in <code>foo()</code> get�tigt.
      */
     private Main() {
-	    PfeileContext.Values values = new PfeileContext.Values();
-        setContext(new PfeileContext(values));
     }
 
     // ###########################################################
@@ -117,32 +117,25 @@ public class Main {
         gameWindow.createBufferStrategy();
         gameWindow.setVisible(true);
 
-        getContext().initTimeClock();
+	    ArrowSelectionScreenPreSet.getInstance().onScreenLeft.register(new AbstractFunction1<Screen.ScreenChangedEvent, BoxedUnit>() {
+		    @Override
+		    public BoxedUnit apply(Screen.ScreenChangedEvent v1) {
+			    main.disposeInitialResources();
+			    return BoxedUnit.UNIT;
+		    }
+	    });
 
-        // run the game until GameScreen
-        GameLoop.run(1 / 60.0);
-
-        // TODO: all gerate world methods need to be here or if they can be declared as a thread before GameLoop.run(1 / 60.0);
-        // empty method
-        main.postInitScreens();
-        // empty method
-        main.newWorldTest();
-        // empty method
-        main.generateWorld();
-        // empty method
-        main.populateWorld();
-        // add the arrows to the inventory
-        main.doArrowSelectionAddingArrows();
-        // empty method
-        main.disposeInitialResources();
+	    LoadingWorldScreen.getInstance().onScreenLeft.register(new AbstractFunction1<Screen.ScreenChangedEvent, BoxedUnit>() {
+		    @Override
+		    public BoxedUnit apply(Screen.ScreenChangedEvent v1) {
+			    main.doArrowSelectionAddingArrows();
+			    return BoxedUnit.UNIT;
+		    }
+	    });
 
         // play the sound
         SoundPool.stop_titleMelodie();
         SoundPool.playLoop_mainThemeMelodie(SoundPool.LOOP_COUNTINOUSLY);
-
-        // Schalten wir auf den GameScreen evtl. über Warte-Screen wechseln
-        getGameWindow().getScreenManager().getActiveScreen().onLeavingScreen(
-		        getGameWindow().getScreenManager().getActiveScreen(), GameScreen.SCREEN_INDEX);
 
         // starten wir das Spiel
         main.runGame();
@@ -155,8 +148,6 @@ public class Main {
 
         // sanftes Schlie�en des GameWindows anstelle des harten System.exit(0)
         gameWindow.dispose();
-        // und dann trotzdem HARTES BEENDEN!!! :D
-        System.exit(0);
     }
 
     /** EMPTY */
@@ -170,10 +161,12 @@ public class Main {
      * Hier laeuft das Spiel nach allen Insizialisierungen
      */
     private void runGame() {
+	    /*
         // reset TimeClock first, because with the change of the activePlayer a delegate in PfeileContext starts TimeClock and the activePlayer is set before this line
         getContext().getTimeClock().reset();
         // start TimeClock
         getContext().getTimeClock().start();
+        */
 
         GameLoop.run(1 / 60.0);
 
@@ -198,26 +191,8 @@ public class Main {
         }
     }
 
-	private void newWorldTest() {
-    }
-
     // ###### GENERATE WORLD
     // ###### SPAWN-SYSTEM
-
-    /**
-     * Generates the world.
-     */
-    private void generateWorld() {
-        // a callable object has to be used, as the world cannot be saved instantly to
-        // a GameScreen object
-        //futures.add(exec.submit(worldGen));
-    }
-
-    /**
-     * Neueste �nderungen an der Erstellung von Spielern unten bei den r.nextInt() Aufrufen.
-     */
-    private void populateWorld() {
-    }
 
     /**
      * Prints all system properties to console.
@@ -253,65 +228,7 @@ public class Main {
     // ########################################################################
     // UNIMPORTANT METHODS -- NOT USED METHODS -- DEPRECATED METHODS ##########
     // ########################################################################
-
-    /**
-     * empty: aufruf in Main ist auskommentiert
-     */
-    protected void postInitScreens() {
-        ArrowSelectionScreen.getInstance().init();
-    }
-
-    /**
-     * ruft die eigentlichen Schleifen auf, je nachdem ob man gewonnen /
-     * Gewonnen: doEndSequenceWonLoop (Aktuell 1000 MilliSekunden lang);
-     * Verloren: doEndSequenceDiedLoop (Aktuell 1000 MilliSekunden lang)
-     */
-    @SuppressWarnings("unused")
-    private void endSequenceLoop() {
-//		if (lifePlayer.getLife() <= 0 || timeObj.getMilliDeath() < 0) {
-//			// Hier einstellen, wie lange Die End-Sequenz Schleife laufen soll
-//			doEndSequenceDiedLoop(1000);
-//		} else if (lifeKI.getLife() <= 0) {
-//			// Hier einstellen, wie lange die End-Sequenz Schleife laufen soll
-//			doEndSequenceWonLoop(1000);
-//		}
-    }
-
-    /**
-     * Berechnung der Endsequence: Gewonnen Aufruf durch: endSequenceLoop()
-     * milliSec: Die Zeit in Millisekunden, bis er automaisch terminiert
-     */
-    @SuppressWarnings("unused")
-    private void doEndSequenceWonLoop(long milliSec) {
-        long endSequenceWonStartTime = System.currentTimeMillis();
-        do {
-            gameWindow.endSequenceWon();
-            Keys.updateKeys();
-
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        } while (endSequenceWonStartTime <= System.currentTimeMillis() + milliSec);
-    }
-
-    /**
-     * Berechnung der Endsequence: Verloren Aufruf durch: endSequenceLoop()
-     */
-    @SuppressWarnings({"deprecation", "unused"})
-    private void doEndSequenceDiedLoop(long milliSecDied) {
-        long startTimeEndSequence = System.currentTimeMillis();
-        do {
-            gameWindow.endSequenceDied();
-            Keys.updateKeys();
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        } while (startTimeEndSequence <= milliSecDied + System.currentTimeMillis());
-    }
+	// None right now.
 
     // ########################################
     // GETTERS ################################
