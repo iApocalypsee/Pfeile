@@ -8,6 +8,7 @@ import general.Main;
 import general.PfeileContext;
 import general.TimeClock;
 import newent.Bot;
+import newent.BotStrength;
 import newent.EntityLike;
 import newent.Player;
 import scala.concurrent.duration.FiniteDuration;
@@ -318,10 +319,12 @@ public class PreWindowScreen extends Screen {
     private void triggerReadyButton () {
         // tests, if every value was correctly added (i.e. not not-added)
         // and if necessary he opens the confirmDialog
-        if (Bot.STRENGTH().get() == -1) {
+
+        /* if (Bot.Strength().get() == -1) {
             openConfirmDialog("Select Unselected Selections: Computerstärke");
             return;
         }
+        */
         if (PfeileContext.ARROW_NUMBER_FREE_SET().get() == -1) {
             openConfirmDialog("Select unselected Selections: Pfeilanzahl [frei wählbar]");
             return;
@@ -372,7 +375,7 @@ public class PreWindowScreen extends Screen {
 
     /** this method triggers the action which is produced by standardButton ("Standardeinstellungen") or pressing "s" */
     private void triggerStandardButton () {
-        Bot.STRENGTH().set((byte) 2);
+        BotStrength.Strength = BotStrength.NORMAL;
         labels[0].setText("Computerstärke: " + "normal");
 
         PfeileContext.ARROW_NUMBER_FREE_SET().set(5);
@@ -420,11 +423,11 @@ public class PreWindowScreen extends Screen {
                 if (e != null)
                     boxSelectKI.triggerListeners(e);
                 switch (boxSelectKI.getSelectedIndex()) {
-                    case 0: Bot.STRENGTH().set((byte) 4); break;
-                    case 1: Bot.STRENGTH().set((byte) 3); break;
-                    case 3: Bot.STRENGTH().set((byte) 1); break;
-                    case 4: Bot.STRENGTH().set((byte) 0); break;
-                    default: Bot.STRENGTH().set((byte) 2);
+                    case 0: BotStrength.Strength = BotStrength.BRUTAL; break;
+                    case 1: BotStrength.Strength = BotStrength.STRONG; break;
+                    case 3: BotStrength.Strength = BotStrength.WEAK; break;
+                    case 4: BotStrength.Strength = BotStrength.MISERABLE; break;
+                    default: BotStrength.Strength = BotStrength.NORMAL;
                 }
                 labels[0].setText("Computerstärke: " + boxSelectKI.getSelectedValue());
                 return;
@@ -714,7 +717,7 @@ public class PreWindowScreen extends Screen {
 		    }
 		    else if (e instanceof Bot) {
                 Bot bot = (Bot) e;
-                // FIXME: add what arrowsPreSet the bot want to have
+                bot.selectArrowsPreSet();
                 bot.arrowNumberFreeSetUsable().set(PfeileContext.ARROW_NUMBER_FREE_SET().get());
             }
 	    }

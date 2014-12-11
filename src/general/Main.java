@@ -167,7 +167,7 @@ public class Main {
      * Fuegt die Pfeile in das Inventar des Spielers ein
      */
     private void doArrowSelectionAddingArrows() {
-        final ArrowSelectionScreenPreSet arrowSelection = (ArrowSelectionScreenPreSet) (getGameWindow().getScreenManager().getScreens().get(ArrowSelectionScreenPreSet.SCREEN_INDEX));
+        final ArrowSelectionScreenPreSet arrowSelection = ArrowSelectionScreenPreSet.getInstance();
 
         for (String selectedArrow : arrowSelection.selectedArrows) {
             if (!Main.getContext().getActivePlayer().inventory().put(

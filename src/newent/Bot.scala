@@ -1,18 +1,19 @@
 package newent
 
 import comp.Component
-import general.{PfeileContext, Delegate, Property}
+import general.{Delegate, PfeileContext, Property}
 import newent.pathfinding.{AStarPathfinder, Pathfinder}
 import player.Life
 import world.WorldLike
 
-import java.awt.{Graphics2D, Color, Point}
+import java.awt.{Color, Graphics2D, Point}
 
 /** The KI is not implemented as a intelligent KI. It is just a basic construct, that is similar to the Player class.
-  * Right now, the Bot is like a Player with the single difference of Bot.STRENGTH.*/
+  * Right now, the Bot is like a Player with the single difference of using the interface <code>IntelligentArrowSelectionEntity</code>.
+  * SCALA doesn't recognize the default method, so there is an error, which no error at all. */
 class Bot (world: WorldLike, spawnPoint: Point, name: String)
          extends Entity(world, spawnPoint, name) with MoveableEntity with TeleportableEntity with
-            InventoryEntity with LivingEntity with VisionEntity with Combatant {
+            InventoryEntity with LivingEntity with VisionEntity with Combatant with IntelligentArrowSelectionEntity {
 
    /** The component that the representable object uses first. Method is called only once.
      *
@@ -84,20 +85,15 @@ class Bot (world: WorldLike, spawnPoint: Point, name: String)
 
    /** the number of arrows the player an still use from this his/her selected usable <code> PfeileContext.ARROW_NUMBER_FREE_SET </code> inventory */
    val arrowNumberFreeSetUsable = Property.apply[java.lang.Integer](PfeileContext.ARROW_NUMBER_FREE_SET.get)
+
+
+   /** the power of this KI: <p>
+     * <b> Compare with <code>BotStrength</code>
+     */
+   lazy val Strength: BotStrength = BotStrength.Strength
 }
 
-
 object Bot {
-   /** the power of a KI; it is:
-     * </p>
-     *   0 --> miserable
-     *   1 --> week
-     *   2 --> normal
-     *   3 --> strong
-     *   4 --> brutal
-     */
-   lazy val STRENGTH = Property.apply[java.lang.Byte](-1.0 toByte)
-
    /** The standard maximum life of a bot */
    lazy val MAXIMUM_LIFE = Property.apply[java.lang.Double](-1.0)
 
