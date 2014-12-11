@@ -367,7 +367,7 @@ public class PreWindowScreen extends Screen {
         if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > 0)
             onLeavingScreen(this, ArrowSelectionScreenPreSet.SCREEN_INDEX);
         else
-            onLeavingScreen(this, GameScreen.SCREEN_INDEX);
+            onLeavingScreen(this, LoadingWorldScreen$.MODULE$.SCREEN_INDEX);
     }
 
     /** this method triggers the action which is produced by standardButton ("Standardeinstellungen") or pressing "s" */
@@ -701,18 +701,22 @@ public class PreWindowScreen extends Screen {
         }
         Bot.MAXIMUM_LIFE().set(Player.MAXIMUM_LIFE().get());
         Bot.LIFE_REGENERATION().set(Player.LIFE_REGENERATION().get());
-	    // FIXME Commented out for now, causes NullPointerException.
-        //setTotalArrowNumberCorrect();
     }
 
-    /** upper methods: setLifeRegenerationCorrect() --> Corrects the totalArrowNumber() */
-    private static void setTotalArrowNumberCorrect() {
+    /** this updates {@link general.PfeileContext#ARROW_NUMBER_TOTAL()} and arrowNumberFreeSetUsable (from Player and Bot)
+     * Only use this method directly after added all Players (and Bots) to the entityList */
+    public static void correctArrowNumber () {
         PfeileContext.ARROW_NUMBER_TOTAL().set(PfeileContext.ARROW_NUMBER_FREE_SET().get() + PfeileContext.ARROW_NUMBER_PRE_SET().get());
 	    for(EntityLike e : Main.getContext().getWorld().entities().javaEntityList()) {
 		    if(e instanceof Player) {
 			    Player player = (Player) e;
 			    player.arrowNumberFreeSetUsable().set(PfeileContext.ARROW_NUMBER_FREE_SET().get());
 		    }
+		    else if (e instanceof Bot) {
+                Bot bot = (Bot) e;
+                // FIXME: add what arrowsPreSet the bot want to have
+                bot.arrowNumberFreeSetUsable().set(PfeileContext.ARROW_NUMBER_FREE_SET().get());
+            }
 	    }
     }
 

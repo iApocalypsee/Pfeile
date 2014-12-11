@@ -4,12 +4,9 @@ import comp.Button;
 import comp.ConfirmDialog;
 import comp.Label;
 import comp.List;
-import general.GameLoop;
 import general.Main;
 import general.PfeileContext;
 import player.weapon.*;
-import scala.runtime.AbstractFunction1;
-import scala.runtime.BoxedUnit;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -151,16 +148,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (readyButton.getSimplifiedBounds().contains(e.getPoint())) {
-                    if (selectedArrows.size() > PfeileContext.ARROW_NUMBER_PRE_SET().get()) {
-                        throw new IllegalStateException("To many arrows added: They can't be more than "
-                                + PfeileContext.ARROW_NUMBER_PRE_SET().get());
-                    }
-
-                    if (selectedArrows.size() < PfeileContext.ARROW_NUMBER_PRE_SET().get()) {
-                        openConfirmQuestion("Bitten wählen sie alle Pfeile aus!");
-                    } else {
-                        onLeavingScreen(this, LoadingWorldScreen.getInstance().SCREEN_INDEX);
-                    }
+                    triggerReadyButton();
                 }
             }
         });
@@ -170,17 +158,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
             @Override
             public void mouseReleased (MouseEvent e) {
                 if (randomButton.getSimplifiedBounds().contains(e.getPoint())) {
-                    java.util.Random randomGen = new Random();
-                    String arrow = ArrowHelper.arrowIndexToName(randomGen.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES));
-
-                    if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > selectedArrows.size()) {
-                        if (selectedArrows.get(0).equals("<keine Pfeile>")) {
-                            selectedArrows.remove(0);
-                        }
-                        selectedArrows.add(arrow);
-                        remainingArrows.setText("Übrige Pfeile: " + (PfeileContext.ARROW_NUMBER_PRE_SET().get() - selectedArrows.size()));
-                        setArrowListSelected(selectedArrows);
-                    }
+                    triggerRandomButton();
                 }
             }
         });
@@ -264,41 +242,46 @@ public class ArrowSelectionScreenPreSet extends Screen {
         }
     }
 
+    /** this will execute all effects the readyButton or pressing at "" will have */
+    private void triggerReadyButton () {
+        if (selectedArrows.size() > PfeileContext.ARROW_NUMBER_PRE_SET().get()) {
+            throw new IllegalStateException("To many arrows added: They can't be more than "
+                    + PfeileContext.ARROW_NUMBER_PRE_SET().get());
+        }
+
+        if (selectedArrows.size() < PfeileContext.ARROW_NUMBER_PRE_SET().get()) {
+            openConfirmQuestion("Bitten wählen sie alle Pfeile aus!");
+        } else {
+            onLeavingScreen(this, LoadingWorldScreen.getInstance().SCREEN_INDEX);
+        }
+    }
+
+    /** the button randomButton is executed (also pressing "r"). A randomly selected Arrow is added to the inventory. */
+    private void triggerRandomButton () {
+        java.util.Random randomGen = new Random();
+        String arrow = ArrowHelper.arrowIndexToName(randomGen.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES));
+
+        if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > selectedArrows.size()) {
+            if (selectedArrows.get(0).equals("<keine Pfeile>")) {
+                selectedArrows.remove(0);
+            }
+            selectedArrows.add(arrow);
+            remainingArrows.setText("Übrige Pfeile: " + (PfeileContext.ARROW_NUMBER_PRE_SET().get() - selectedArrows.size()));
+            setArrowListSelected(selectedArrows);
+        }
+    }
+
     @Override
     public void keyPressed (KeyEvent e) {
         super.keyPressed(e);
 
-        // Bestätigen. Code hier drinn muss der selbe sein wie in dem Listener von confirmButton
         if (e.getKeyCode() == KeyEvent.VK_B) {
-            if (selectedArrows.size() > PfeileContext.ARROW_NUMBER_PRE_SET().get()) {
-                throw new IllegalStateException("Too many arrows added: They can't be more than " + PfeileContext.ARROW_NUMBER_PRE_SET().get());
-            }
-
-            if (selectedArrows.size() < PfeileContext.ARROW_NUMBER_PRE_SET().get()) {
-                openConfirmQuestion("Bitten wählen sie alle Pfeile aus!");
-            } else {
-	            /*
-	            // FIXME Keep the rendering going; too complicated for me!
-                GameLoop.setRunFlag(false);
-                */
-	            onLeavingScreen(this, LoadingWorldScreen.getInstance().SCREEN_INDEX);
-            }
+            triggerReadyButton();
         } else if (e.getKeyCode() == KeyEvent.VK_Z) {
-            java.util.Random randomGen = new Random();
-            String arrow = ArrowHelper.arrowIndexToName(randomGen.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES));
-
-            if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > selectedArrows.size()) {
-                if (selectedArrows.get(0).equals("<keine Pfeile>")) {
-                    selectedArrows.remove(0);
-                }
-                selectedArrows.add(arrow);
-                remainingArrows.setText("Übrige Pfeile: " + (PfeileContext.ARROW_NUMBER_PRE_SET().get() - selectedArrows.size()));
-                setArrowListSelected(selectedArrows);
-            }
+            triggerRandomButton();
         }
-        // FIXME: remove this code here later
-        // die Anzahl an zufälligen Pfeilen durch alle anderen Tasten direkt auswählen
-        else {
+        // by pressing "KeyEvent.VK_SPACE" all arrows are added randomly
+        else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             java.util.Random randomGen = new Random();
             if (selectedArrows.get(0).equals("<keine Pfeile>")) {
                 selectedArrows.remove(0);

@@ -3,17 +3,15 @@ package general;
 import akka.actor.ActorSystem;
 import animation.SoundPool;
 import general.io.PreInitStage;
-import gui.*;
+import gui.ArrowSelectionScreenPreSet;
+import gui.LoadingWorldScreen;
+import gui.PreWindowScreen;
+import gui.Screen;
 import player.weapon.ArrowHelper;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
 
 import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * Hauptklasse mit der Main-Methode und den abstraktesten Objekten unseres Spiels.
@@ -28,10 +26,6 @@ public class Main {
 
     // NUR INTIALISIERUNG - WIE WERTE UND VARIABLEN ###############
 
-    /** Die derzeitige Anzahl an FPS, die das Spiel gerade erzielt. */
-    private volatile int fps;
-    // Zeichenvariablen.
-    private boolean running = true;
     public static int getWindowWidth() { return 1366;}
     public static int getWindowHeight() { return 768; }
 
@@ -118,6 +112,8 @@ public class Main {
 		    @Override
 		    public BoxedUnit apply(Screen.ScreenChangedEvent v1) {
 			    main.doArrowSelectionAddingArrows();
+                // the players have been added to entityList, so this call is valid now
+                PreWindowScreen.correctArrowNumber();
 			    return BoxedUnit.UNIT;
 		    }
 	    });
