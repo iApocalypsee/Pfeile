@@ -105,22 +105,7 @@ public class AimSelectionScreen extends Screen {
 		confirm.addMouseListener ( new MouseAdapter () {
 			@Override
 			public void mouseReleased (MouseEvent e) {
-				if (confirm.getSimplifiedBounds().contains(e.getPoint())) {
-					if (posX_selectedField == -1|| posY_selectedField == -1) {
-						warningMessage = "Kein Zielfeld ausgewählt";
-						transparencyWarningMessage = 1f;
-					} else {
-						onLeavingScreen(AimSelectionScreen.this, GameScreen.SCREEN_INDEX);
-
-						// deliver the attack message to the specified tile
-						// assuming that the thread is done updating the values
-						DeliverShootThread msg = new DeliverShootThread();
-						msg.setDaemon(true);
-						msg.start();
-
-						transparencyWarningMessage = 1f;
-					}
-				}
+				triggerConfirmButton();
 			}
 		});
 		confirm.setRoundBorder(true);
@@ -132,26 +117,28 @@ public class AimSelectionScreen extends Screen {
 	public void keyPressed(KeyEvent event) {
 		super.keyPressed(event);
 
-        // "Bestätigen" Button
+        // "Bestätigen" Button --> confirmButton
         if (event.getKeyCode() == KeyEvent.VK_B) {
-            // the code inside hier should be the same like confirm.mouseListener
-            // if not make, make sure it is
-            if (posX_selectedField == -1|| posY_selectedField == -1) {
-                warningMessage = "Kein Zielfeld ausgewählt";
-                transparencyWarningMessage = 1f;
-            } else {
-                onLeavingScreen(AimSelectionScreen.this, GameScreen.SCREEN_INDEX);
-
-                // deliver the attack message to the specified tile
-                // assuming that the thread is done updating the values
-                DeliverShootThread msg = new DeliverShootThread();
-                msg.setDaemon(true);
-                msg.start();
-
-                transparencyWarningMessage = 1f;
-            }
+            triggerConfirmButton();
         }
 	}
+
+    private void triggerConfirmButton () {
+        if (posX_selectedField == -1|| posY_selectedField == -1) {
+            warningMessage = "Kein Zielfeld ausgewählt";
+            transparencyWarningMessage = 1f;
+        } else {
+            onLeavingScreen(AimSelectionScreen.this, GameScreen.SCREEN_INDEX);
+
+            // deliver the attack message to the specified tile
+            // assuming that the thread is done updating the values
+            DeliverShootThread msg = new DeliverShootThread();
+            msg.setDaemon(true);
+            msg.start();
+
+            transparencyWarningMessage = 1f;
+        }
+    }
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
