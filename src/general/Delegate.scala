@@ -21,6 +21,8 @@ object Delegate {
 
   @inline def createZeroArity = new Function0Delegate
 
+  @inline def createOneCall[In <: AnyRef] = new OnceCallDelegate[In]
+
   // Inner classes.
   // I made them inner classes so that these classes don't float
   // in the class world like a space ship.
@@ -77,6 +79,8 @@ object Delegate {
       case e => e.function
     }.toList
 
+    def isOnceCall: Boolean
+
     class Handle private[DelegateLike](val function: FunType) {
 
       private var _disposed = false
@@ -95,6 +99,42 @@ object Delegate {
           _disposed = true
         }
       }
+    }
+
+  }
+
+  trait ParameterizedDelegate[In] extends DelegateLike {
+
+    override type FunType = (In) => Any
+
+    @inline def apply(arg: In): Unit = call( arg )
+
+    def call(arg: In): Unit = callbacks foreach {
+      case pf: PartialFunction[In, Any] => if (pf.isDefinedAt( arg )) pf( arg ) else throw new MatchError( this )
+      case reg_f: ((In) => Any) => reg_f( arg )
+    }
+
+    /** Code in java zum ausführen der gethreaden Version:
+      *
+    <code> delegate.callAsync(<In>, scala.concurrent.ExecutionContext.Implicits$.MODULE$.global()); </code> */
+    def callAsync(arg: In)(implicit ec: ExecutionContext): Future[Unit] = Future {
+      call( arg )
+    }
+
+  }
+
+  trait NonParameterizedDelegate extends DelegateLike {
+
+    override type FunType = () => Any
+
+    @inline def apply(): Unit = call( )
+
+    def call(): Unit = callbacks foreach {
+      _( )
+    }
+
+    def callAsync()(implicit ec: ExecutionContext): Future[Unit] = Future {
+      call( )
     }
 
   }
@@ -118,9 +158,7 @@ object Delegate {
     *
     * @tparam In The input type of the function. For multiple values, use tuples or custom classes.
     */
-  class Delegate[In <: AnyRef](callbackList: List[(In) => Any]) extends DelegateLike {
-
-    override type FunType = (In) => Any
+  class Delegate[In <: AnyRef](callbackList: List[(In) => Any]) extends ParameterizedDelegate[In] {
 
     // Auxiliary constructor for instantiating a clean delegate with no registered callbacks.
     def this() = this( List[(In) => Any]( ) )
@@ -130,55 +168,33 @@ object Delegate {
       register
     }
 
-    @inline def apply(arg: In): Unit = call( arg )
+    /** Creates a [[general.Delegate.OnceCallDelegate]] for this delegate. */
+    def asOnceCall: OnceCallDelegate[In] = new OnceCallDelegate(callbacks)
 
-    def call(arg: In): Unit = callbacks foreach {
-      case pf: PartialFunction[In, Any] => if (pf.isDefinedAt( arg )) pf( arg ) else throw new MatchError( this )
-      case reg_f: ((In) => Any) => reg_f( arg )
-    }
-
-    /** Code in java zum ausführen der gethreaden Version:
-      *
-    <code> delegate.callAsync(<In>, scala.concurrent.ExecutionContext.Implicits$.MODULE$.global()); </code> */
-    def callAsync(arg: In)(implicit ec: ExecutionContext): Future[Unit] = Future {
-      call( arg )
-    }
-  }
-
-  /** Delegate that calls its functions only once before clearing its list of callbacks.
-    *
-    * @tparam In The input type.
-    */
-  class OnceDelegate[In <: AnyRef] extends DelegateLike {
-
-    override type FunType = (In) => Any
-
-    @inline def apply(arg: In): Unit = call(arg)
-
-    def call(arg: In): Unit = {
-      callbacks foreach {
-        case pf: PartialFunction[In, Any] => if (pf.isDefinedAt( arg )) pf( arg ) else throw new MatchError( this )
-        case reg_f: ((In) => Any) => reg_f( arg )
-      }
-      clear()
-    }
-
-    def callAsync(arg: In)(implicit ec: ExecutionContext): Future[Unit] = Future {
-      call(arg)
-    }
+    override def isOnceCall = false
 
   }
 
-  /** Scala style trait for calling just once.
+  /** Delegate that calls its callbacks only once before the callback list is cleared instantly.
     *
+    * @param callbackList The list of functions to hand to the delegate.
     * @tparam In The input type of the function. For multiple values, use tuples or custom classes.
     */
-  trait OneCall[In <: AnyRef] extends Delegate[In] {
+  class OnceCallDelegate[In <: AnyRef](callbackList: List[In => Any]) extends Delegate[In](callbackList) {
 
-    override def call(arg: In): Unit = {
+    // Auxiliary constructor for instantiating a clean delegate with no registered callbacks.
+    def this() = this( List[(In) => Any]( ) )
+
+    override def isOnceCall = true
+    override def asOnceCall = this
+
+    override def call(arg: In) = {
       super.call(arg)
       clear()
     }
+
+    /** Returns a normal delegate for every callback in this [[general.Delegate.OnceCallDelegate]]. */
+    def asNormalDelegate = new Delegate(callbacks)
 
   }
 
@@ -210,33 +226,6 @@ object Delegate {
     override def unlog(f: FunType): Unit = except
   }
 
-  /** Checks the argument with a check function returning a boolean value. <p>
-    * If the function returns true, the argument is good, else something's wrong.
-    *
-    * @tparam In The input type of the function. For multiple values, use tuples.
-    */
-  trait Check[In <: AnyRef] extends Delegate[In] {
-
-    override def call(arg: In): Unit = {
-      if (check( arg )) super.call( arg )
-      else {
-        println( s"$arg has not been accepted" +
-          s" by ${check _}" )
-      }
-    }
-
-    def check(arg: In): Boolean = true
-  }
-
-  /** Checks specifically if the argument is null. If true, a [[NullPointerException]] is thrown.
-    *
-    * @tparam In The input type of the function. For multiple values, use tuples.
-    */
-  trait NullCheck[In <: AnyRef] extends Check[In] {
-
-    override def check(arg: In): Boolean = if (arg eq null) throw new NullPointerException else super.check( arg )
-  }
-
   /** A delegate that does not receive any input parameters. <p>
     *
     * I cannot create a delegate that models a Function0 with a normal Delegate class. I had to
@@ -253,9 +242,7 @@ object Delegate {
     *   };
     * }}}
     */
-  class Function0Delegate(callbackList: List[() => Any]) extends DelegateLike {
-
-    override type FunType = () => Any
+  class Function0Delegate(callbackList: List[() => Any]) extends NonParameterizedDelegate {
 
     def this() = this( List[() => Any]( ) )
 
@@ -263,15 +250,8 @@ object Delegate {
       register
     }
 
-    @inline def apply(): Unit = call( )
+    override def isOnceCall = false
 
-    def call(): Unit = callbacks foreach {
-      _( )
-    }
-
-    def callAsync()(implicit ec: ExecutionContext): Future[Unit] = Future {
-      call( )
-    }
   }
 
 
