@@ -145,6 +145,43 @@ object Delegate {
     }
   }
 
+  /** Delegate that calls its functions only once before clearing its list of callbacks.
+    *
+    * @tparam In The input type.
+    */
+  class OnceDelegate[In <: AnyRef] extends DelegateLike {
+
+    override type FunType = (In) => Any
+
+    @inline def apply(arg: In): Unit = call(arg)
+
+    def call(arg: In): Unit = {
+      callbacks foreach {
+        case pf: PartialFunction[In, Any] => if (pf.isDefinedAt( arg )) pf( arg ) else throw new MatchError( this )
+        case reg_f: ((In) => Any) => reg_f( arg )
+      }
+      clear()
+    }
+
+    def callAsync(arg: In)(implicit ec: ExecutionContext): Future[Unit] = Future {
+      call(arg)
+    }
+
+  }
+
+  /** Scala style trait for calling just once.
+    *
+    * @tparam In The input type of the function. For multiple values, use tuples or custom classes.
+    */
+  trait OneCall[In <: AnyRef] extends Delegate[In] {
+
+    override def call(arg: In): Unit = {
+      super.call(arg)
+      clear()
+    }
+
+  }
+
   /** An implementation of an immutable delegate. Mixin trait for [[DelegateLike]].
     * <p>
     * Use this trait like so:
