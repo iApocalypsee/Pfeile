@@ -3,17 +3,15 @@ package gui;
 import comp.Button;
 import comp.InternalFrame;
 import general.Main;
-import newent.Player;
 import player.weapon.AttackDrawer;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;
-import world.*;
+import world.VisualMap;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Random;
 
 /**
  * <b>4.1.2014 (Josip):</b> Konstruktor braucht keine ScreenManager-Instanz mehr. <br><br>
@@ -81,8 +79,6 @@ public class GameScreen extends Screen {
 					map = new VisualMap(Main.getContext().getWorld());
 					map.moveMap(120, 470);
 				}
-                // if it isn't here it isn't working TODO: put that in loadedWorldScreen.onScreenLeft.+=
-                Main.getContext().getTimeClock().start();
 				return BoxedUnit.UNIT;
 			}
 		});
@@ -96,57 +92,6 @@ public class GameScreen extends Screen {
 	 * So construct it first, then do all the initialization afterwards.
 	 */
 	private void postInit() {
-		/*
-		Main.getContext().setWorld(new DefaultWorld());
-		TerrainLike terrain = Main.getContext().getWorld().terrain();
-
-        // spawning
-        Point spawnPoint = null;
-        Point spawnPointEnemy = null;
-        java.util.Random randomGen = new Random();
-
-        boolean isSpawnValid = false;
-        do {
-            TileLike tile = (TileLike) terrain.tileAt(randomGen.nextInt(terrain.width()), randomGen.nextInt(terrain.height()));
-            if(spawnPoint == null && tile instanceof GrassTile) {
-                spawnPoint = new Point(tile.latticeX(), tile.latticeY());
-            }
-            tile = (TileLike) terrain.tileAt(randomGen.nextInt(terrain.width()), randomGen.nextInt(terrain.height()));
-            if(spawnPoint != null && tile instanceof GrassTile) {
-                if ((spawnPoint.x > tile.latticeX() + 2 || spawnPoint.x < tile.latticeX() - 2) && (spawnPoint.y > tile.latticeY() + 2 || spawnPoint.y < tile.latticeY() - 2)) {
-                    spawnPointEnemy = new Point(tile.latticeX(), tile.latticeY());
-                    isSpawnValid = true;
-                }
-            }
-        } while (!isSpawnValid);
-
-		final Player act = new Player(Main.getContext().getWorld(), spawnPoint, Main.getUser().getUsername());
-		final Player opponent = new Player(Main.getContext().getWorld(), spawnPointEnemy, "Opponent");
-
-		act.onTurnGet().register(new AbstractFunction0<BoxedUnit>() {
-			@Override
-			public BoxedUnit apply() {
-				Main.getContext().setActivePlayer(act);
-				return BoxedUnit.UNIT;
-			}
-		});
-
-		opponent.onTurnGet().register(new AbstractFunction0<BoxedUnit>() {
-			@Override
-			public BoxedUnit apply() {
-				Main.getContext().setActivePlayer(opponent);
-				return BoxedUnit.UNIT;
-			}
-		});
-
-		Main.getContext().setActivePlayer(act);
-		Main.getContext().playerList().setTurnPlayer(act);
-
-		// The population of the world has to be performed AFTER the generation/loading of the world.
-		Main.getContext().world().entities().register(Main.getContext().getActivePlayer());
-		Main.getContext().world().entities().register(opponent);
-
-		*/
 
 		// später DAS HIER auskommentieren
 		ScreenManager.ref_gameScreen = this;

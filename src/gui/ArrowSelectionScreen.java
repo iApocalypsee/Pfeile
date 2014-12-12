@@ -50,10 +50,10 @@ public class ArrowSelectionScreen extends Screen {
 	private Button cancelButton; 
 	
 	/** Liste der Button mit den m�glichen Pfeilen */
-	List<Button> buttonListArrows = new ArrayList<Button>(); 
+	List<Button> buttonListArrows = new ArrayList<>();
 	
 	/** Liste der Button f�r andere Aufgaben */
-	List<Button> buttonList = new ArrayList<Button>();
+	List<Button> buttonList = new ArrayList<>();
 	
 	/** confirmOpenDialog */
 	private boolean isConfirmDialogOpen = false;
@@ -76,14 +76,20 @@ public class ArrowSelectionScreen extends Screen {
 	
 	private float transparencyWarningMessage = 0;
 	
-	private Point pointWarningMessage = new Point(40, Main.getWindowHeight() - 105);
+	private Point pointWarningMessage;
 	
 	private String warningMessage = "";
 	
 	private ConfirmDialog confirmDialog;
-	
+
+    /** apart form creating a new ArrowSelectionScreen, this also initialized it's values Threaded */
 	public ArrowSelectionScreen() {
 		super(ArrowSelectionScreen.SCREEN_NAME, ArrowSelectionScreen.SCREEN_INDEX);
+
+        // the Thread calls init()
+        Thread initThread = new Thread (this :: init);
+        initThread.setPriority(7);
+        initThread.start();
 	}
 	
 	public void init () {
@@ -118,15 +124,17 @@ public class ArrowSelectionScreen extends Screen {
 		lightningArrowButton.iconify(ArrowHelper.getArrowImage(LightningArrow.INDEX));
 		lightArrowButton.iconify(ArrowHelper.getArrowImage(LightArrow.INDEX));
 		shadowArrowButton.iconify(ArrowHelper.getArrowImage(ShadowArrow.INDEX));
-		
-		MouseHandler mListner = new MouseHandler();
+
+        pointWarningMessage = new Point(40, Main.getWindowHeight() - 105);
+
+		MouseHandler mListener = new MouseHandler();
 		
 		for (int i = 0; i < ArrowHelper.NUMBER_OF_ARROW_TYPES; i++) {
 			buttonListArrows.get(i).setWidth(shadowArrowButton.getWidth() + 12);
-			buttonListArrows.get(i).addMouseListener (mListner); 
+			buttonListArrows.get(i).addMouseListener (mListener);
 		}
 		
-		arrowList = new ArrayList <String> ();
+		arrowList = new ArrayList<>();
 
         final int[] arrowsCount = ArrowHelper.arrowCountInventory();
 		arrowList.add("Feuerpfeil " + "[" + arrowsCount[FireArrow.INDEX] + "]");

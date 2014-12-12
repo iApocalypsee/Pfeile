@@ -88,8 +88,11 @@ public class AimSelectionScreen extends Screen {
             public BoxedUnit apply () {
                 final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
 
-                animatedLine.setStartX((int) Main.getContext().getActivePlayer().getComponent().getBounds().getBounds().getCenterX());
-                animatedLine.setStartY((int) Main.getContext().getActivePlayer().getComponent().getBounds().getBounds().getCenterY());
+                setPosX_selectedField(-1);
+                setPosY_selectedField(-1);
+
+                animatedLine.setStartX(0);
+                animatedLine.setStartY(0);
                 animatedLine.setColor(ArrowHelper.getUnifiedColor(ArrowSelectionScreen.getInstance().getSelectedIndex()));
                 transparencyWarningMessage = 0.0f;
 
