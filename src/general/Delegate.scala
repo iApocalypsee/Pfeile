@@ -17,11 +17,11 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 object Delegate {
 
-  @inline def create[In <: AnyRef] = new Delegate[In]
+  @inline def create[In] = new Delegate[In]
 
   @inline def createZeroArity = new Function0Delegate
 
-  @inline def createOneCall[In <: AnyRef] = new OnceCallDelegate[In]
+  @inline def createOneCall[In] = new OnceCallDelegate[In]
 
   // Inner classes.
   // I made them inner classes so that these classes don't float
@@ -158,7 +158,7 @@ object Delegate {
     *
     * @tparam In The input type of the function. For multiple values, use tuples or custom classes.
     */
-  class Delegate[In <: AnyRef](callbackList: List[(In) => Any]) extends ParameterizedDelegate[In] {
+  class Delegate[In](callbackList: List[(In) => Any]) extends ParameterizedDelegate[In] {
 
     // Auxiliary constructor for instantiating a clean delegate with no registered callbacks.
     def this() = this( List[(In) => Any]( ) )
@@ -180,7 +180,7 @@ object Delegate {
     * @param callbackList The list of functions to hand to the delegate.
     * @tparam In The input type of the function. For multiple values, use tuples or custom classes.
     */
-  class OnceCallDelegate[In <: AnyRef](callbackList: List[In => Any]) extends Delegate[In](callbackList) {
+  class OnceCallDelegate[In](callbackList: List[In => Any]) extends Delegate[In](callbackList) {
 
     // Auxiliary constructor for instantiating a clean delegate with no registered callbacks.
     def this() = this( List[(In) => Any]( ) )
