@@ -252,6 +252,23 @@ object Delegate {
 
     override def isOnceCall = false
 
+    def asOnceCall = new OnceCallFunction0Delegate(callbacks)
+
+  }
+
+  class OnceCallFunction0Delegate(callbackList: List[() => Any]) extends Function0Delegate {
+
+    def this() = this( List[() => Any]( ) )
+
+    def asNormalDelegate = new Function0Delegate(callbacks)
+
+    override def isOnceCall = true
+    override def asOnceCall = this
+
+    override def call() = {
+      super.call()
+      clear()
+    }
   }
 
 
