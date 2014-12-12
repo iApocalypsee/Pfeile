@@ -2,8 +2,8 @@ package player.weapon;
 
 import general.PfeileContext;
 import geom.functions.FunctionCollection;
-import gui.Drawable;
 import player.BoardPositionable;
+import comp.Component;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -22,7 +22,9 @@ import java.awt.image.BufferedImage;
  * 
  * @version 25.11.2013
  */
-public abstract class AbstractArrow extends RangedWeapon implements Drawable, BoardPositionable {
+public abstract class AbstractArrow extends RangedWeapon implements BoardPositionable {
+
+    private Component component;
 
     /** the rotation of the BufferedImage to draw the arrow to the direction of the attacked field */
     protected double rotation;
@@ -55,11 +57,6 @@ public abstract class AbstractArrow extends RangedWeapon implements Drawable, Bo
 	protected int fieldX;
 	/** Position im Koordinatensystem des Pfeils: Y-Position */
 	protected int fieldY;
-    /** X-Position des Pfeils - f�r GUI */
-	protected int posX;
-	/** Y-Position des Pfeils - f�r GUI */
-	protected int posY;
-
 	/**
 	 * <b> KONSTUCKTOR: </b> <p> attackVal: float : Grundschaden des Pfeils <p> defenseVal: float :
 	 * Grundverteidigung des Pfeils <p> rangeVal: int : Grundreichweite des Pfeils <p> float :
@@ -73,14 +70,13 @@ public abstract class AbstractArrow extends RangedWeapon implements Drawable, Bo
 		super(name);
 		setAttackValue(attackVal);
 		setDefenseValue(defenseVal);
-		// Reichweite des Pfeils wird minimal (+/- 1 Feld) an die Entfernung
-		// angepasst
+		// Reichweite des Pfeils wird minimal (+/- 1 Tile) an die Entfernung angepasst
 		if (PfeileContext.WORLD_SIZE_X().get() <= 22) {
-			setRange(rangeVal - 100);
+			setRange(rangeVal - 1);
 		} else if (PfeileContext.WORLD_SIZE_X().get() < 40) {
 			setRange(rangeVal);
 		} else {
-			setRange(rangeVal + 100);
+			setRange(rangeVal + 1);
 		}
 		setSelfHittingRate(selfHittingRate);
 		setAimMissing(aimMissing);
@@ -88,6 +84,18 @@ public abstract class AbstractArrow extends RangedWeapon implements Drawable, Bo
 		setDamageLosingRate(damageLosingRate);
 		setSpeed(speed);
         getAim().setDamageRadius(damageRadius);
+        component = new Component() {
+            @Override
+            public void draw (Graphics2D g) {
+                AffineTransform old = g.getTransform();
+                // it should be rotated from the center of the arrowImage
+                g.rotate(getRotation(), getPosX() + (int) (0.5 * getImage().getWidth()), getPosY() + (int) (0.5 * getImage().getHeight()));
+                g.drawImage(getImage(), getPosX(), getPosY(), getImage().getWidth(), getImage().getHeight(), null);
+                g.setTransform(old);
+            }
+        };
+        component.setWidth(getImage().getWidth());
+        component.setHeight(getImage().getHeight());
 	}
 
 	/** Gibt die Schadensverlustrate zur�ck */
@@ -152,24 +160,28 @@ public abstract class AbstractArrow extends RangedWeapon implements Drawable, Bo
 		this.fieldY = fieldY;
 	}
 
-	/** Position X auf dem Bildschrim (Pixel) */
+	/** Position X auf dem Bildschrim (Pixel).
+     *  */
 	public int getPosX() {
-		return posX;
+		return component.getX();
 	}
 
-	/** Position X auf dem Bildschirm (Pixel) */
+	/** Position X auf dem Bildschirm (Pixel).
+     * This call is redirected to <code>getComponent().setX(posX)</code> */
 	public void setPosX(int posX) {
-		this.posX = posX;
+		component.setX(posX);
 	}
 
-	/** Position Y auf dem Bildschirm (Pixel) */
+	/** Position Y auf dem Bildschirm (Pixel).
+     * This call is redirected to <code>getComponent().getY()</code> */
 	public int getPosY() {
-		return posY;
+		return component.getY();
 	}
 
-	/** Position Y auf dem Bildschirm (Pixel) */
+	/** Position Y auf dem Bildschirm (Pixel).
+     * This call is redirected to <code>getComponent().setY(posY)</code> */
 	public void setPosY(int posY) {
-		this.posY = posY;
+		component.setY(posY);
 	}
 
     /** the speed of the arrow in tiles per turn */
@@ -184,6 +196,11 @@ public abstract class AbstractArrow extends RangedWeapon implements Drawable, Bo
     /** returns the rotation of the BufferedImage. With this value the image is drawn in direction to the aim. It's in radient.*/
     public double getRotation () {
         return rotation;
+    }
+
+    /** this returns the Component of an Arrow. */
+    public Component getComponent () {
+        return component;
     }
 
     @Override
@@ -205,20 +222,10 @@ public abstract class AbstractArrow extends RangedWeapon implements Drawable, Bo
      * <p> <code>rotation = FunctionCollection.angle(getPosX(), getPosY(), getAim().getPosXGui(), getAim().getPosYGui());</code>
      */
     public void calculateRotation () {
-        rotation = FunctionCollection.angle(posX, posY, getAim().getPosXGui(), getAim().getPosYGui());
+        rotation = FunctionCollection.angle(getComponent().getX(), getComponent().getY(), getAim().getPosXGui(), getAim().getPosYGui());
     }
 
     /** gibt die BufferedImage des Pfeils zur�ck
 	 * @see <code> ArrowHelper.getArrowImage(int selectedIndex) </code> */
 	public abstract BufferedImage getImage();
-
-    /** TODO: do the Zoom */
-    @Override
-	public void draw(Graphics2D g) {
-        AffineTransform old = g.getTransform();
-        // it should be rotated from the center of the arrowImage
-        g.rotate(getRotation(), getPosX() + (int) (0.5 * getImage().getWidth()), getPosY() + (int) (0.5 * getImage().getHeight()));
-		g.drawImage(getImage(), getPosX(), getPosY(), getImage().getWidth(), getImage().getHeight(), null);
-        g.setTransform(old);
-	}
 }

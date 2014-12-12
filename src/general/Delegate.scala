@@ -23,6 +23,8 @@ object Delegate {
 
   @inline def createOneCall[In] = new OnceCallDelegate[In]
 
+  @inline def createZeroArityOneCall = new OnceCallFunction0Delegate
+
   // Inner classes.
   // I made them inner classes so that these classes don't float
   // in the class world like a space ship.

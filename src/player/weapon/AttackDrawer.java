@@ -27,7 +27,7 @@ public class AttackDrawer implements Drawable {
      */
     public static  List<AttackProgress> getAttackProgressesOfArrows () {
         List <AttackContainer> attackContainerList = AttackContainer$.MODULE$.javaAllAttackContainers();
-        List <AttackProgress> filteredProgresses = new LinkedList<AttackProgress>();
+        List <AttackProgress> filteredProgresses = new LinkedList<>();
 
         for (AttackContainer anAttackContainerList : attackContainerList) {
             List<AttackProgress> arrowList = JavaConversions.seqAsJavaList(anAttackContainerList.queuedAttacks());
@@ -46,7 +46,7 @@ public class AttackDrawer implements Drawable {
 
         for (AttackProgress filteredProgress : filteredProgresses) {
             AbstractArrow attackingArrow = (AbstractArrow) filteredProgress.event().weapon();
-            attackingArrow.draw(g);
+            attackingArrow.getComponent().draw(g);
         }
     }
 }

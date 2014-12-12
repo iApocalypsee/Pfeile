@@ -112,6 +112,7 @@ public class Main {
 		    @Override
 		    public BoxedUnit apply(Screen.ScreenChangedEvent v1) {
 			    main.doArrowSelectionAddingArrows();
+                getContext().onStartRunningTimeClock().call();
                 // the players have been added to entityList, so this call is valid now
                 PreWindowScreen.correctArrowNumber();
 			    return BoxedUnit.UNIT;

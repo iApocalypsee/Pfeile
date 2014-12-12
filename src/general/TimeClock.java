@@ -55,7 +55,7 @@ public class TimeClock extends Component implements Runnable {
 
         ScreenManager sm = Main.getGameWindow().getScreenManager();
 
-        Main.getContext().getTimeClock().onTimeOver.register(new AbstractFunction0<BoxedUnit>() {
+        onTimeOver.register(new AbstractFunction0<BoxedUnit>() {
             @Override
             public BoxedUnit apply () {
                 if (sm.getActiveScreenIndex() == gui.GameScreen.SCREEN_INDEX) {

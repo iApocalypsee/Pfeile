@@ -95,6 +95,9 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
   def getTimeClock = _timeObj
 
+  /** it is called, when TimeClock needs to start to run, this means at leaving LoadingWorldScreen */
+  lazy val onStartRunningTimeClock = Delegate.createZeroArityOneCall
+
   /**
    * Initialiert die TimeClock
    */
@@ -104,7 +107,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
      _stopwatchThread.setDaemon(true)
      _stopwatchThread.setPriority(Thread.MIN_PRIORITY + 2)
 
-     GameScreen.getInstance().onScreenEnter += { () =>
+     onStartRunningTimeClock += { () =>
         if (!_stopwatchThread.isAlive)
            _stopwatchThread.start()
      }
