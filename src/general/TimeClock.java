@@ -2,9 +2,12 @@ package general;
 
 import comp.Component;
 import gui.GameScreen;
+import gui.ScreenManager;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.Duration$;
 import scala.concurrent.duration.FiniteDuration;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.BoxedUnit;
 
 import java.awt.*;
 
@@ -49,6 +52,27 @@ public class TimeClock extends Component implements Runnable {
 				GameScreen.getInstance());
 		stop();
         colorTime = Color.BLACK;
+
+        ScreenManager sm = Main.getGameWindow().getScreenManager();
+
+        Main.getContext().getTimeClock().onTimeOver.register(new AbstractFunction0<BoxedUnit>() {
+            @Override
+            public BoxedUnit apply () {
+                if (sm.getActiveScreenIndex() == gui.GameScreen.SCREEN_INDEX) {
+                    Main.getContext().onTurnEnd().call();
+                } else if (sm.getActiveScreenIndex() == gui.ArrowSelectionScreen.SCREEN_INDEX) {
+                    sm.setActiveScreen(gui.GameScreen.SCREEN_INDEX);
+                    Main.getContext().onTurnEnd().call();
+                } else if (sm.getActiveScreenIndex() == gui.AimSelectionScreen.SCREEN_INDEX) {
+                    sm.setActiveScreen(gui.GameScreen.SCREEN_INDEX);
+                    Main.getContext().onTurnEnd().call();
+                } else
+                    throw new java.lang.RuntimeException ("Time is out. The active Screen is neither GameScreen nor Aim- or ArrowSelectionScreen. Register it! " +
+                            "ActiveScreen: " + sm.getActiveScreen().getName());
+
+                return BoxedUnit.UNIT;
+            }
+        });
     }
 	
 	/** �bernimmt timeSinceLastFrame + Aufruf durch 'Main'

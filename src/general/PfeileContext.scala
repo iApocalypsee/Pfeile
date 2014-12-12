@@ -97,28 +97,12 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
   /**
    * Initialiert die TimeClock
-   * TODO Decouple code!... Where???
    */
   def initTimeClock () : Unit = {
      _timeObj = new TimeClock()
      _stopwatchThread = new Thread(_timeObj)
      _stopwatchThread.setDaemon(true)
      _stopwatchThread.setPriority(Thread.MIN_PRIORITY + 2)
-
-     val sm = Main.getGameWindow.getScreenManager
-     _timeObj.onTimeOver.register { () =>
-
-        if (sm.getActiveScreenIndex == gui.GameScreen.SCREEN_INDEX) {
-           onTurnEnd.call()
-        } else if (sm.getActiveScreenIndex == gui.ArrowSelectionScreen.SCREEN_INDEX) {
-           sm.setActiveScreen(gui.GameScreen.SCREEN_INDEX)
-           onTurnEnd.call()
-        } else if (sm.getActiveScreenIndex == gui.AimSelectionScreen.SCREEN_INDEX) {
-           sm.setActiveScreen(gui.GameScreen.SCREEN_INDEX)
-           onTurnEnd.call()
-        } else
-           throw new java.lang.RuntimeException ("Time is out. Getting to GameScreen of the activePlayer, the active Screen is neither GameScreen nor Aim- or ArrowSelectionScreen. ActiveScreen: " + sm.getActiveScreen.getName)
-     }
 
      GameScreen.getInstance().onScreenEnter += { () =>
         if (!_stopwatchThread.isAlive)
@@ -252,8 +236,7 @@ object PfeileContext {
    val ARROW_NUMBER_FREE_SET = Property.apply[java.lang.Integer](-1)
 
    /** this is the total number of arrows. It's <code>ARROW_NUMBER_FREE_SET + ARROW_NUMBER_PRE_SET </code>*/
-   // TODO On-demand calculation would fit better here (in other words, a method would fit better here than a property).
-   val ARROW_NUMBER_TOTAL = Property.apply[java.lang.Integer](-1)
+   def ARROW_NUMBER_TOTAL = ARROW_NUMBER_FREE_SET.get + ARROW_NUMBER_PRE_SET.get
 
    /** The number of turns per round. A turn of a player ends when the user presses the endTurn-Button;
      * A turnCycle ends, when every players'/bots' turn is done; The round is over, then this value (turnsPerRound) is reached.

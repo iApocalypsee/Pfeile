@@ -9,11 +9,11 @@ import world.WorldLike
 import java.awt.{Color, Graphics2D, Point}
 
 /** The KI is not implemented as a intelligent KI. It is just a basic construct, that is similar to the Player class.
-  * Right now, the Bot is like a Player with the single difference of using the interface <code>IntelligentArrowSelectionEntity</code>.
+  * Right now, the Bot is like a Player with the single difference of using the interface <code>IntelligentArrowSelectionBot</code>.
   * SCALA doesn't recognize the default method, so there is an error, which no error at all. */
 class Bot (world: WorldLike, spawnPoint: Point, name: String)
          extends Entity(world, spawnPoint, name) with MoveableEntity with TeleportableEntity with
-            InventoryEntity with LivingEntity with VisionEntity with Combatant with IntelligentArrowSelectionEntity {
+            InventoryEntity with LivingEntity with VisionEntity with Combatant with IntelligentArrowSelectionBot {
 
    /** The component that the representable object uses first. Method is called only once.
      *

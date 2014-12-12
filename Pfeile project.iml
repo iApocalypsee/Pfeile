@@ -3,8 +3,8 @@
   <component name="FacetManager">
     <facet type="scala" name="Scala">
       <configuration>
-        <option name="compilerLibraryLevel" value="Project" />
-        <option name="compilerLibraryName" value="Scala 2.11 library" />
+        <option name="compilerLibraryLevel" value="Global" />
+        <option name="compilerLibraryName" value="scala-2.11" />
         <option name="compilerOptions" value="-encoding cp1252" />
         <option name="languageLevel" value="Scala 2.11" />
       </configuration>
@@ -17,7 +17,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Scala 2.11 library" level="project" />
+    <orderEntry type="library" name="scala-2.11" level="application" />
     <orderEntry type="module-library">
       <library name="JUnit4">
         <CLASSES>
