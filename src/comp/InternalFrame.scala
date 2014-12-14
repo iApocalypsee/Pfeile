@@ -3,7 +3,7 @@ package comp
 import java.awt._
 import java.awt.event.{MouseAdapter, MouseEvent}
 
-import general.LogFacility
+import general.{Delegate, LogFacility}
 import gui.Screen
 
 import scala.collection.mutable
@@ -31,6 +31,9 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
 
   /** The components that the frame is managing. */
   private val comps = mutable.MutableList[Component]()
+
+  /** Called when the internal frame's close button has been pressed. */
+  val onClosed = Delegate.createZeroArity
 
   /** The close button of the frame. */
   private val closeButton = {
@@ -70,6 +73,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     ret.addMouseListener(new MouseAdapter {
       override def mouseReleased(e: MouseEvent): Unit = {
         InternalFrame.this.setVisible(v = false)
+        onClosed()
       }
     })
     ret
@@ -165,7 +169,7 @@ object InternalFrame {
     /** The dimensions of the close button.
       * On the basis of this value the height of the top line bar is calculated.
       */
-    lazy val CloseButtonDimension = new Dimension(20, 20)
+    lazy val CloseButtonDimension = new Dimension(15, 15)
 
   }
 

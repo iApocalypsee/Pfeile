@@ -1,7 +1,6 @@
 package gui;
 
 import comp.Button;
-import comp.InternalFrame;
 import general.Main;
 import player.weapon.AttackDrawer;
 import scala.runtime.AbstractFunction0;
@@ -24,7 +23,7 @@ import java.awt.event.MouseEvent;
  * @version 20.1.2014
  * @see ScreenManager
  */
-public class GameScreen extends Screen {
+public class GameScreen extends Screen implements FrameContainer {
 	
 	private static GameScreen instance = null;
 	
@@ -48,8 +47,9 @@ public class GameScreen extends Screen {
 	private Button toggleStopwatch;
 
 	private VisualMap map = null;
-	private InternalFrame frame = new InternalFrame(50, 50, 100, 100, this);
     private final AttackDrawer attackDrawer = new AttackDrawer();
+
+	private final FrameContainerObject frameContainerObject = new FrameContainerObject();
 
     public AttackDrawer getAttackDrawer () {
         return attackDrawer;
@@ -141,8 +141,6 @@ public class GameScreen extends Screen {
 //				}
 			}
 		});
-
-		frame.$less$less(new Button(75, 75, this, "Fooey"));
 	}
 
 	@Override
@@ -160,10 +158,9 @@ public class GameScreen extends Screen {
 		endTurnButton.draw(g);
 		shootButton.draw(g);
 		toggleStopwatch.draw(g);
-
-		frame.draw(g);
-
 		getLifeUI().draw(g);
+
+		frameContainerObject.drawFrames(g);
 
 		Main.getContext().getTimeClock().draw(g);
 	}
@@ -210,5 +207,18 @@ public class GameScreen extends Screen {
 
 	public VisualMap getMap() {
 		return map;
+	}
+
+	/**
+	 * The object managing the internal frames for the screen.
+	 */
+	@Override
+	public FrameContainerObject frameContainer() {
+		return frameContainerObject;
+	}
+
+	@Override
+	public FrameContainerObject getFrameContainer() {
+		return frameContainer();
 	}
 }

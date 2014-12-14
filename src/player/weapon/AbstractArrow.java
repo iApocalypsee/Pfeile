@@ -1,11 +1,19 @@
 package player.weapon;
 
+import comp.*;
+import comp.Component;
+import comp.Label;
 import general.PfeileContext;
 import geom.functions.FunctionCollection;
+import gui.FrameContainerObject;
+import gui.GameScreen;
 import player.BoardPositionable;
-import comp.Component;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.BoxedUnit;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
@@ -94,6 +102,39 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
                 g.setTransform(old);
             }
         };
+		component.setBackingScreen(GameScreen.getInstance());
+		component.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// Variables.
+				FrameContainerObject containerObject = GameScreen.getInstance().getFrameContainer();
+				InternalFrame dataFrame = new InternalFrame(50, 50, 125, 125, GameScreen.getInstance());
+				String arrowType = "Arrow type: " + getName();
+				String damage = "Damage: " + getAttackValue();
+				String speed = "Speed: " + getSpeed();
+
+				Label arrowTypeLabel = new Label(10, 15, GameScreen.getInstance(), arrowType);
+				Label damageLabel = new Label(10, 27, GameScreen.getInstance(), damage);
+				Label speedLabel = new Label(10, 39, GameScreen.getInstance(), speed);
+
+				// Add the label to show the actual data to the screen.
+				dataFrame.add(arrowTypeLabel);
+				dataFrame.add(damageLabel);
+				dataFrame.add(speedLabel);
+				// When the frame closes, it should be removed from the container object as well.
+				dataFrame.onClosed().register(new AbstractFunction0<Object>() {
+					@Override
+					public Object apply() {
+						containerObject.removeFrame(dataFrame);
+						return BoxedUnit.UNIT;
+					}
+				});
+
+				containerObject.addFrame(dataFrame);
+			}
+
+		});
         component.setWidth(getImage().getWidth());
         component.setHeight(getImage().getHeight());
 	}

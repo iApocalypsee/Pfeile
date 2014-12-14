@@ -14,10 +14,10 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
   import PfeileContext._
 
-  private var _activePlayer   : Player    = null
-  private var _world          : WorldLike = null
-  private var _timeObj        : TimeClock = null
-  private var _stopwatchThread: Thread    = null
+  private var _activePlayer: Player = null
+  private var _world: WorldLike = null
+  private var _timeObj: TimeClock = null
+  private var _stopwatchThread: Thread = null
 
   // Extract the call to other locations, does not fit inside here.
   // TimeClock is a GUI component, there is nothing to do here for TimeClock.
@@ -101,11 +101,11 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   /**
    * Initialiert die TimeClock
    */
-  def initTimeClock () : Unit = {
-     _timeObj = new TimeClock()
-     _stopwatchThread = new Thread(_timeObj)
-     _stopwatchThread.setDaemon(true)
-     _stopwatchThread.setPriority(Thread.MIN_PRIORITY + 2)
+  def initTimeClock(): Unit = {
+    _timeObj = new TimeClock()
+    _stopwatchThread = new Thread(_timeObj)
+    _stopwatchThread.setDaemon(true)
+    _stopwatchThread.setPriority(Thread.MIN_PRIORITY + 2)
 
      onStartRunningTimeClock += { () =>
         if (!_stopwatchThread.isAlive)
@@ -138,7 +138,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
       // Example would be the moving mechanism of the entity.
       world.entities.entityList foreach { e => e.onTurnCycleEnded() }
       values.turnCycleCount += 1
-      LogFacility.log(s"Turn cycle no.${values.turnCycleCount} completed.")
+      LogFacility.log(s"Turn cycle no.${values.turnCycleCount } completed.")
     }
 
     /** Function for the entity managers. <p>
