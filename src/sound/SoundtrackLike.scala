@@ -1,11 +1,7 @@
 package sound
 
 import java.net.URI
-import java.util.concurrent.TimeUnit
-import javax.sound.sampled.DataLine.Info
 import javax.sound.sampled._
-
-import sound.Channel.Playing
 
 import scala.concurrent.duration.FiniteDuration
 

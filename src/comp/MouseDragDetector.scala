@@ -1,10 +1,10 @@
 package comp
 
-import java.awt.Point
-import java.awt.event.{MouseAdapter, MouseEvent, MouseMotionAdapter}
-
 import general.Delegate
 import geom.Vector2
+
+import java.awt.Point
+import java.awt.event.{MouseAdapter, MouseEvent, MouseMotionAdapter}
 
 /** Components wanting to keep track of being "actively dragged" by the user
   * can inherit this trait as an alternative to coding "active dragging" by yourself.

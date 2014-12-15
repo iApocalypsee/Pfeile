@@ -1,8 +1,8 @@
 package comp
 
-import java.awt.{Color, Graphics2D}
-
 import gui.Screen
+
+import java.awt.{Color, Graphics2D}
 
 import scala.collection.mutable
 

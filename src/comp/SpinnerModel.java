@@ -1,7 +1,5 @@
 package comp;
 
-        import javax.swing.*;
-
 /**
  * This is a Spinner model for just for numbers (int values).
  * an implementation with double is not needed right now, however it would be easy to do it as every method stays the same.

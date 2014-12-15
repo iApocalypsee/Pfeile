@@ -2,9 +2,7 @@ package comp;
 
 import gui.Drawable;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 
 /**
  * <b>21.1.2014:</b> Die Farbauswahl und dein Mechanismus zur Farbberechnung kapsele ich

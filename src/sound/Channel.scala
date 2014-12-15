@@ -1,9 +1,9 @@
 package sound
 
-import javax.sound.sampled.{LineEvent, LineListener}
-
 import general.Delegate.Function0Delegate
 import sound.Channel.Playing
+
+import javax.sound.sampled.{LineEvent, LineListener}
 
 /**
  *

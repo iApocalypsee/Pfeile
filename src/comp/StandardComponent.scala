@@ -1,10 +1,10 @@
 package comp
 
-import java.awt.{Polygon, Graphics2D}
-import java.awt.event.{MouseWheelListener, MouseEvent, MouseMotionListener, MouseListener}
-
 import comp.Component.ComponentStatus
 import gui.Screen
+
+import java.awt.event.{MouseEvent, MouseListener, MouseMotionListener, MouseWheelListener}
+import java.awt.{Graphics2D, Polygon}
 
 /**
  * The only thing that is abstract in this trait is the draw(Graphics2D) method

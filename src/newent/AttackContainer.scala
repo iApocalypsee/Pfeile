@@ -48,7 +48,6 @@ trait AttackContainer extends BoardPositionable {
       }
     }
   }
-
 }
 
 object AttackContainer {

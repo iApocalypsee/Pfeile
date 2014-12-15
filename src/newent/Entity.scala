@@ -3,13 +3,10 @@ package newent
 import comp.DisplayRepresentable
 import general.Delegate
 import newent.event.LocationChangedEvent
-import newent.pathfinding.{Path, Pathfinder}
 import player.BoardPositionable
 import world.WorldLike
 
 import java.awt.Point
-
-import scala.util.control.Breaks._
 
 sealed trait EntityLike extends BoardPositionable with DisplayRepresentable {
 

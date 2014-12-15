@@ -1,6 +1,6 @@
 package player;
 
-import general.*;
+import general.Delegate;
 import newent.Player;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;

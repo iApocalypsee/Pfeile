@@ -6,7 +6,7 @@ package newent.pathfinding
  */
 case class Path(steps: Seq[Path.Step]) {
 
-  import Path.Step
+  import newent.pathfinding.Path.Step
 
   def length = steps.size
 

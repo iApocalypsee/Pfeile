@@ -1,8 +1,8 @@
 package newent
 
-import general.{PfeileContext, LogFacility}
+import general.{LogFacility, PfeileContext}
 import player.Life
-import player.weapon.{RangedWeapon, AbstractArrow}
+import player.weapon.RangedWeapon
 
 /** An entity that has its own life status.
   *

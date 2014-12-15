@@ -2,8 +2,7 @@ package comp;
 
 import gui.Screen;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class TextBox extends Component {

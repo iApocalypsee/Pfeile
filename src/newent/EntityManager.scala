@@ -2,7 +2,7 @@ package newent
 
 import general.Delegate
 
-import scala.collection.{mutable, JavaConversions}
+import scala.collection.{JavaConversions, mutable}
 
 /** Base trait for all entity managers.
   *

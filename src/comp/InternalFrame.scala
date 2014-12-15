@@ -1,10 +1,10 @@
 package comp
 
-import java.awt._
-import java.awt.event.{MouseAdapter, MouseEvent}
-
 import general.{Delegate, LogFacility}
 import gui.Screen
+
+import java.awt._
+import java.awt.event.{MouseAdapter, MouseEvent}
 
 import scala.collection.mutable
 

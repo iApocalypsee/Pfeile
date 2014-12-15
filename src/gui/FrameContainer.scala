@@ -1,12 +1,11 @@
 package gui
 
-import java.awt.Graphics2D
-
 import comp.InternalFrame
 import general.Delegate
 
-import scala.collection.mutable
+import java.awt.Graphics2D
 
+import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /** A screen that can contain an unspecified amount of internal frames.

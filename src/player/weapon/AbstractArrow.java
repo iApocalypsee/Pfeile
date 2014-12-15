@@ -1,7 +1,7 @@
 package player.weapon;
 
-import comp.*;
 import comp.Component;
+import comp.InternalFrame;
 import comp.Label;
 import general.PfeileContext;
 import geom.functions.FunctionCollection;

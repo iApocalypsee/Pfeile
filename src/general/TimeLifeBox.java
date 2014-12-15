@@ -1,11 +1,8 @@
 package general;
 
 import gui.Drawable;
-import gui.GameScreen;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import java.awt.*;
 
 /** Box um Leben und Uhr */
 public class TimeLifeBox implements Drawable {

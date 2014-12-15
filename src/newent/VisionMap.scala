@@ -2,14 +2,13 @@ package newent
 
 import comp.Circle
 import general.Delegate
-import newent.VisionMap.{VisionPromise, VisionEntry}
+import newent.VisionMap.{VisionEntry, VisionPromise}
 import player.BoardPositionable
 import world.TileLike
 
 import scala.collection.mutable
-import scala.concurrent.Future
-
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 /** Represents the parts of the map that have been revealed, are visible or are not even discovered.
   *

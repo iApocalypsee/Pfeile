@@ -2,9 +2,7 @@ package comp;
 
 import gui.Screen;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
+import java.awt.*;
 
 public class Label extends Component {
 	

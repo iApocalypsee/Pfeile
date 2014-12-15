@@ -1,7 +1,5 @@
 package general;
 
-import java.awt.*;
-
 /**
  * A really efficient working game loop. The only drawback is (I think atleast)
  * that it is optimized for real time games, not turn based games like our game.

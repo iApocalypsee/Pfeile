@@ -1,14 +1,14 @@
 package world
 
-import java.awt.event.{MouseAdapter, MouseEvent}
-import java.awt.{Color, Graphics2D, Polygon}
-
 import comp.{Circle, Component, DisplayRepresentable}
 import general.Main
 import geom.PointDef
 import gui.{AdjustableDrawing, GameScreen}
 import newent.{AttackContainer, EntityLike}
 import player.weapon.AbstractArrow
+
+import java.awt.event.{MouseAdapter, MouseEvent}
+import java.awt.{Color, Graphics2D, Polygon}
 
 import scala.collection.{JavaConversions, mutable}
 

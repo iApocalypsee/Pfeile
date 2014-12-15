@@ -1,6 +1,5 @@
 package general;
 
-import comp.Component;
 import comp.GUIUpdater;
 import comp.IComponent;
 

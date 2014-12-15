@@ -1,6 +1,6 @@
 package world.brush
 
-import world.{TileLike, TerrainLike}
+import world.{TerrainLike, TileLike}
 
 /**
  *

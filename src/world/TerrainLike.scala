@@ -1,6 +1,5 @@
 package world
 
-import general.PfeileContext
 import world.brush.TileTypeBrush
 
 import scala.collection.{JavaConversions, mutable}

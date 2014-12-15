@@ -39,7 +39,7 @@ class Bot (world: WorldLike, spawnPoint: Point, name: String)
 
 
    life.onDeath+= { () =>
-      general.Main.getContext.getTimeClock.stop();
+      general.Main.getContext.getTimeClock.stop()
       // TODO: setActiveScreen (GameWonScreen.SCREEN_INDEX)
    }
 

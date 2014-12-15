@@ -1,16 +1,15 @@
 package gui
 
-import java.awt.Graphics2D
-
 import comp.Component.ComponentStatus
 import comp.Label
 import general.{Main, PfeileContext, Property}
 import world.ContextCreator
 
-import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import java.awt.Graphics2D
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 /**
  *

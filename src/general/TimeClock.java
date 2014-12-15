@@ -79,8 +79,13 @@ public class TimeClock extends Component implements Runnable {
 	 *  .... updated die aktuelle Zeit; �bernimmt Thread */
 	@Override
 	public void run() {
+        /*
+        LogFacility.log("ENTERED run() of TimeClock.", LogFacility.LoggingLevel.Debug);
+        LogFacility.log("sumTime: " + sumTime + " turnTime " + turnTime().toMillis() + " turnTime - sumTime " + (turnTime().toMillis() - sumTime));
+        LogFacility.log("isRunning() " + isRunning());
+        */
 		long lastTime = System.currentTimeMillis();
-		while (true) {
+		while (!Thread.currentThread().isInterrupted()) {
 			if (isRunning()) {
 				/* aktuelle Zeit */
                 long timeCurrent = System.currentTimeMillis();
@@ -91,6 +96,7 @@ public class TimeClock extends Component implements Runnable {
 					onTimeOver.call();
 				} else {
 					timePrintString = timeFormatter (turnTime().toMillis() - sumTime);
+                    //LogFacility.log("TimeClock is running out: " + (turnTime().toMillis() - sumTime), LogFacility.LoggingLevel.Debug);
 
                     // smaller than 3s
                     if (turnTime().toMillis() - sumTime <= 3000)
@@ -99,11 +105,12 @@ public class TimeClock extends Component implements Runnable {
                     else if (turnTime().toMillis() - sumTime <= 10000)
                         colorTime = new Color (118, 1, 0);
 
-
 					lastTime = timeCurrent;
 
                     try {
-                        Thread.sleep(3);
+                        // only 1 millisecond if timeFormatter(long) is used
+                        // even 1000 (or 999) if timeFormatterShort(long) is used
+                        Thread.sleep(1);
                     } catch (InterruptedException e) { e.printStackTrace(); }
                 }
 			} else {
@@ -137,7 +144,7 @@ public class TimeClock extends Component implements Runnable {
 	/** Umwandlung einer long-Variable in einem String min:sec:ms */
 	public static String timeFormatter(long millisecTime) {
         String time;
-        if(millisecTime < 0){  //�berpr�ft ob die Zeit negativ ist
+        if(millisecTime <= 0){  //�berpr�ft ob die Zeit negativ ist
             //throw new RuntimeException("Negativ time value provided");
         	time = "00:00:000";
 //        } else if (millisecTime > 357539999){   //�berpr�ft ob das Limit des Formates nicht �berschreitet
@@ -180,7 +187,7 @@ public class TimeClock extends Component implements Runnable {
 	/** Umwandlung einer Zeitangabe in Millisekunden in einen String [min:sec] */
 	public static String timeFormatterShort(long millisecTime) {
         String time = null;
-        if(millisecTime<0){                        //�berpr�ft ob zeit negativ ist
+        if(millisecTime <= 0){                        //�berpr�ft ob zeit negativ ist
             //throw new RuntimeException("Negativ time value provided");
         	
         	time = "00:00";

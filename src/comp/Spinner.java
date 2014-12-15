@@ -1,10 +1,8 @@
 package comp;
 
-import general.Keys;
 import gui.Screen;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;

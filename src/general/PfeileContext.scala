@@ -12,7 +12,7 @@ import world.WorldLike
   */
 class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
-  import PfeileContext._
+  import general.PfeileContext._
 
   private var _activePlayer: Player = null
   private var _world: WorldLike = null

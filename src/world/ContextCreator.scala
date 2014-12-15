@@ -1,15 +1,14 @@
 package world
 
-import java.awt.Point
-
 import general.io.StageDescriptable
 import general.{Main, PfeileContext, Property, StageOrganized}
 import newent.Player
 
-import scala.concurrent.Future
-import scala.util.Random
+import java.awt.Point
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.util.Random
 
 /**
  *

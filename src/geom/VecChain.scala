@@ -1,9 +1,9 @@
 package geom
 
+import geom.interfaces.{Triangle, Vector, VectorChain}
+
 import java.awt.geom.Point2D
 import java.util
-
-import geom.interfaces.{Vector, Triangle, VectorChain}
 
 import scala.collection.mutable
 
