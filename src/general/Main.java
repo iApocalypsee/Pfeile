@@ -26,7 +26,16 @@ public class Main {
 
     // NUR INTIALISIERUNG - WIE WERTE UND VARIABLEN ###############
 
-    public static int getWindowWidth() { return 1366;}
+    /** the width of the displayed window
+     * @return 1366
+     * @see general.Main#getWindowHeight()
+     * @see general.Main#getWindowDimensions() */
+    public static int getWindowWidth() { return 1366; }
+    
+    /** the height of the displayed window
+     * @return 768
+     * @see Main#getWindowHeight()
+     * @see Main#getWindowDimensions() */
     public static int getWindowHeight() { return 768; }
 
     private static GameWindow gameWindow;
@@ -134,6 +143,13 @@ public class Main {
 
         // sanftes Schlie�en des GameWindows anstelle des harten System.exit(0)
         gameWindow.dispose();
+
+        // stop all melodies
+        SoundPool.stop_allMelodies();
+
+        // There is no other way, that closes the games.
+        // Some Threads were still running in background, that continued the game without seeing a screen.
+        System.exit(0);
     }
 
     /** EMPTY */
@@ -157,7 +173,6 @@ public class Main {
         GameLoop.run(1 / 60.0);
 
         // TODO: System, bei der nach jeder Runde der Bonusauswahlbildschirm und ArrowSelectionPreSet kommt
-        // TODO: System muss auch auf Niederlage überprüfen
     }
 
     // #########################################################

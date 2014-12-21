@@ -35,8 +35,14 @@ public class TimeClock extends Component implements Runnable {
     private static Color brightDarkGrey = Color.DARK_GRAY.brighter();
 
     private Color colorTime = Color.RED;
+
+    /** this is the color, which is shown, when the time is very low (<3000 ms) */
+    private Color colorVeryLowLife = new Color(222, 6, 0);
+
+    /** this is the color, which is shown, when the time is low (<10000 ms) */
+    private Color colorLowLife = new Color (118, 1, 0);
 	
-	/** String, der am Bildschirm die Zeit angeben soll */
+	/** this String displays the time */
 	private String timePrintString = "ERROR";
 
 	public final Delegate.Function0Delegate onTimeOver = new Delegate.Function0Delegate();
@@ -87,7 +93,7 @@ public class TimeClock extends Component implements Runnable {
 		long lastTime = System.currentTimeMillis();
 		while (!Thread.currentThread().isInterrupted()) {
 			if (isRunning()) {
-				/* aktuelle Zeit */
+				/** the time at which the beginning of this calculation begins (with <code>System.currentTimeMillis()</code>) */
                 long timeCurrent = System.currentTimeMillis();
 				sumTime = sumTime + (timeCurrent - lastTime);
 				if (turnTime().toMillis() - sumTime <= 0) {
@@ -100,10 +106,10 @@ public class TimeClock extends Component implements Runnable {
 
                     // smaller than 3s
                     if (turnTime().toMillis() - sumTime <= 3000)
-                        colorTime = new Color(222, 6, 0);
+                        colorTime = colorVeryLowLife;
                     // smaller than 10s
                     else if (turnTime().toMillis() - sumTime <= 10000)
-                        colorTime = new Color (118, 1, 0);
+                        colorTime = colorLowLife;
 
 					lastTime = timeCurrent;
 
