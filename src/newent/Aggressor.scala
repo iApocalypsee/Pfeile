@@ -6,8 +6,9 @@ import newent.event.AttackEvent
   *
   * For now, the aggressor can just attack another attack container, but that is already the quintessence
   * of an aggressor in combat.
+  * If the object is an aggressor, then it has to belong to a team.
   */
-trait Aggressor {
+trait Aggressor extends CanJoinTeam {
 
   /** Lets the aggressor perform an attack.
     *

@@ -1,8 +1,5 @@
 package general;
 
-import comp.GUIUpdater;
-import comp.IComponent;
-
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -16,11 +13,6 @@ public class Keys implements KeyListener {
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
-		for(IComponent c : Main.getGameWindow().getScreenManager().getActiveScreen().getComponents()) {
-			if(c instanceof GUIUpdater) {
-				((GUIUpdater) c).updateGUI();
-			}
-		}
 		int keyCode = e.getKeyCode();
 		if (keyCode >= 0 && keyCode <= keys.length)
 			keys[keyCode] = true;

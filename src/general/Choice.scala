@@ -14,12 +14,20 @@ class Choice {
 
   /** All decisions with which the request can be completed. */
   lazy val decisions = {
+
     val thisClass = this.getClass
+
     // I have to interact with code that possibly has not been even written yet.
     val decisionFields = thisClass.getDeclaredFields.filter { x =>
+      // I cannot access private fields, so make them accessible
       x.setAccessible(true)
-      x.getType == classOf[Decision]
+      // If the field is not of type Decision, ignore it
+      val isDecisionType = x.getType == classOf[Decision]
+      // If the field has a IgnorableDecision annotation attached to it, ignore it.
+      val hasAnnotation = x.getAnnotation(classOf[IgnorableDecision]) != null
+      isDecisionType && !hasAnnotation
     }
+
     // Collects every field of type decision from this class under this list.
     val collectingList = mutable.ListBuffer[Decision]()
     for (x <- decisionFields) {
@@ -35,11 +43,11 @@ class Choice {
       * This delegate applies only to this decision and nothing else,
       * unlike the [[general.Choice#onChoosed()]].
       */
-    lazy val onChoosed = Delegate.createZeroArity
+    lazy val onChosen = Delegate.createZeroArity
 
     /** Picks this decision. */
     def decide(): Unit = {
-      onChoosed()
+      onChosen()
       consequence()
     }
 
