@@ -76,7 +76,7 @@ public class ComboBox extends Component {
 
     private void init (Screen screenBacking) {
         if (values.length > 0) {
-            // längsten Eintrag herausfinden und diese Länge verwenden
+            // lï¿½ngsten Eintrag herausfinden und diese Lï¿½nge verwenden
             FontRenderContext frc = new FontRenderContext(new AffineTransform(), true, true);
             double width = 0;
             int index = 0;
