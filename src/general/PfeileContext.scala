@@ -1,7 +1,7 @@
 package general
 
 import gui.GameScreen
-import newent.{EntityLike, Player}
+import newent.{Team, EntityLike, Player}
 import player.weapon.AttackingCalculator
 import world.WorldLike
 
@@ -150,6 +150,8 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
       e match {
         case player: Player =>
           LogFacility.log(s"Recognized player: $player", "Debug")
+          // Every player starts off with his own team.
+          player.sign(new Team(s"Team of ${player.name}"))
           playerBuffer += player
         case _ =>
       }

@@ -18,7 +18,7 @@ trait CanHoldTeamContract {
   def sign(x: CanHoldTeamContract): Unit = {
     // Do not even try to sign contracts with yourself.
     if (x == this) return
-    // Does the opponent teamable want to sign a contract at all?
+    // Does the opponent partner want to sign a contract at all?
     val isContractFeasible = x.askPermissionForContract(this)
     if (!isContractFeasible) return
     // Establish the teaming contract.
@@ -29,14 +29,16 @@ trait CanHoldTeamContract {
 
   /**
     * Disables the given contract.
+    * This method gives just the opportunity to subclasses to remove the contract properly.
+    * It is __important__, that this method is <b>not called from inside the class!</b>
     * @param x The contract to cancel.
     */
-  def dissolveContract(x: TeamContract): Unit
+  protected[newent] def removeContract(x: TeamContract): Unit
 
   /**
-   * Gives the opportunity to subclasses to write the now established contract somewhere.
-   * @param x The established contract.
-   */
+    * Gives the opportunity to subclasses to write the now established contract somewhere.
+    * @param x The established contract.
+    */
   protected def writeContract(x: TeamContract): Unit
 
 }
@@ -47,14 +49,14 @@ case object Null_CanHoldTeamContract extends CanHoldTeamContract {
   private def onCalled = LogFacility.log("Called Null object of [[CanHoldTeamContract]]")
 
   /**
-   * Disables the given contract.
-   * @param x The contract to cancel.
-   */
-  override def dissolveContract(x: TeamContract): Unit = onCalled
+    * Disables the given contract.
+    * @param x The contract to cancel.
+    */
+  override protected[newent] def removeContract(x: TeamContract): Unit = onCalled
 
   /**
-   * Gives the opportunity to subclasses to write the now established contract somewhere.
-   * @param x The established contract.
-   */
+    * Gives the opportunity to subclasses to write the now established contract somewhere.
+    * @param x The established contract.
+    */
   override protected def writeContract(x: TeamContract): Unit = onCalled
 }

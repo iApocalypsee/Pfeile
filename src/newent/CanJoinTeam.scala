@@ -10,11 +10,7 @@ trait CanJoinTeam extends CanHoldTeamContract {
   /** The contract to which this object is bound to. */
   def boundTo = _boundTo
 
-  /**
-    * Disables the given contract.
-    * @param x The contract to cancel.
-    */
-  override def dissolveContract(x: TeamContract = boundTo): Unit = {
+  override protected[newent] def removeContract(x: TeamContract = boundTo): Unit = {
     require(x == boundTo, "Team contract does not correspond to the CanJoinTeam object.")
     _boundTo = NoTeamContract
   }
