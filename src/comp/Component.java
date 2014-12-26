@@ -1,22 +1,21 @@
 package comp;
 
 import general.Delegate;
+import general.JavaInterop;
 import geom.Vector2;
 import gui.Screen;
 import scala.Function1;
 import scala.Unit;
+import scala.runtime.BoxedUnit;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelListener;
+import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.function.Function;
 
 /**
  * A standard implementation of a component.
@@ -39,7 +38,7 @@ public abstract class Component implements IComponent {
 	/**
 	 * Das umfassende Polygon um die Komponente.
 	 */
-	private Shape bounds = new Polygon();
+	private Shape bounds;
 
 	/**
 	 * Der Name des Steuerelements. Wird hauptsächlich für {@link Component#children} benötigt.
@@ -64,23 +63,23 @@ public abstract class Component implements IComponent {
 	/**
 	 * Die Liste der MouseListener.
 	 */
-	private List<MouseListener> mouseListeners;
+	private java.util.List<MouseListener> mouseListeners;
 
 	/**
 	 * Die Liste der MouseMotionListener.
 	 */
-	private List<MouseMotionListener> mouseMotionListeners;
+	private java.util.List<MouseMotionListener> mouseMotionListeners;
 
 	/**
 	 * Die Liste der MouseWheelListener.
 	 */
-	private List<MouseWheelListener> mouseWheelListeners = new LinkedList<MouseWheelListener>();
+	private java.util.List<MouseWheelListener> mouseWheelListeners = new LinkedList<>();
 
 	/**
 	 * Die Steuerelemente, die von diesem hier abhängen. Die Koordinatenangaben der
 	 * untergeordneten Elemente werden relativ zu diesem hier angegeben.
 	 */
-	private Hashtable<String, Component> children = new Hashtable<String, Component>();
+	private Hashtable<String, Component> children = new Hashtable<>();
 
 	/**
 	 * Die Farbgebung innen und außen.
@@ -103,7 +102,17 @@ public abstract class Component implements IComponent {
 	/**
 	 * Called when the bounds have been moved.
 	 */
-	public final Delegate.Delegate<Vector2> onMoved = new Delegate.Delegate<Vector2>();
+	public final Delegate.Delegate<Vector2> onMoved = new Delegate.Delegate<>();
+
+	/**
+	 * Called when the component's dimensions have changed.
+	 */
+	public final Delegate.Delegate<Vector2> onResize = new Delegate.Delegate<>();
+
+	/**
+	 * Called when any transformation has been done to the component.
+	 */
+	public final Delegate.Function0Delegate onTransformed = new Delegate.Function0Delegate();
 
 	/**
 	 * Indicates whether the mouse is inside the components' bounds or not.
@@ -122,20 +131,15 @@ public abstract class Component implements IComponent {
 	 */
 	public Component() {
 
-		mouseListeners = new LinkedList<MouseListener>();
-		mouseMotionListeners = new LinkedList<MouseMotionListener>();
+		mouseListeners = new LinkedList<>();
+		mouseMotionListeners = new LinkedList<>();
 
 		bounds = new Rectangle();
 
 		border = new Border();
 		border.setComponent(this);
 
-		addMouseMotionListener(new MouseMotionListener() {
-
-			@Override
-			public void mouseDragged(MouseEvent arg0) {
-			}
-
+		addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent arg0) {
 				if (status != ComponentStatus.MOUSE) {
@@ -144,11 +148,7 @@ public abstract class Component implements IComponent {
 			}
 		});
 
-		addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-			}
+		addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mouseEntered(MouseEvent arg0) {
@@ -184,30 +184,14 @@ public abstract class Component implements IComponent {
 
 		this.status = ComponentStatus.NO_MOUSE;
 		this.name = Integer.toString(this.hashCode());
-	}
 
-	/**
-	 * Nur zu Debug-Zwecken. Gibt den Status einer Component auf die Konsole aus.
-	 *
-	 * @param c The component of which status to print.
-	 */
-	protected static void printStatus(final Component c) {
-		switch (c.getStatus()) {
-			case NO_MOUSE:
-				System.out.println(c.name + ": NO_MOUSE");
-				break;
-			case MOUSE:
-				System.out.println(c.name + ": MOUSE");
-				break;
-			case CLICK:
-				System.out.println(c.name + ": CLICK");
-				break;
-			case NOT_AVAILABLE:
-				System.out.println(c.name + ": NOT_AVAILABLE");
-				break;
-			default:
-				break;
-		}
+		Function<Vector2, Object> callback = (Vector2 x) -> {
+			onTransformed.apply();
+			return BoxedUnit.UNIT;
+		};
+
+		onMoved.register(JavaInterop.asScalaFunction(callback));
+		onResize.register(JavaInterop.asScalaFunction(callback));
 	}
 
 	/**
@@ -262,7 +246,7 @@ public abstract class Component implements IComponent {
 		this.backingScreen.add(this);
 	}
 
-	public List<MouseListener> getMouseListeners() {
+	public java.util.List<MouseListener> getMouseListeners() {
 		return mouseListeners;
 	}
 
@@ -276,7 +260,7 @@ public abstract class Component implements IComponent {
 		}
 	}
 
-	public List<MouseMotionListener> getMouseMotionListeners() {
+	public java.util.List<MouseMotionListener> getMouseMotionListeners() {
 		return mouseMotionListeners;
 	}
 
@@ -290,7 +274,7 @@ public abstract class Component implements IComponent {
 		}
 	}
 
-	public List<MouseWheelListener> getMouseWheelListeners() {
+	public java.util.List<MouseWheelListener> getMouseWheelListeners() {
 		return mouseWheelListeners;
 	}
 
@@ -402,6 +386,7 @@ public abstract class Component implements IComponent {
 		} else {
 			bounds = new Rectangle(getX(), getY(), width, getHeight());
 		}
+		onResize.apply(new Vector2(width, getHeight()));
 	}
 
 	/**
@@ -429,31 +414,7 @@ public abstract class Component implements IComponent {
 		} else {
 			bounds = new Rectangle(getX(), getY(), getWidth(), height);
 		}
-	}
-
-	/**
-	 * Streckt {@link #getBounds()}, sodass {@link #getBounds()} mit {@link #getWidth()} und
-	 * {@link #getHeight()} wieder übereinstimmen.
-	 *
-	 * @param x Der Streckfaktor in x Richtung
-	 * @param y Der Streckfaktor in y Richtung
-	 * @throws sun.reflect.generics.reflectiveObjects.NotImplementedException always.
-	 * @deprecated Use {@link #applyTransformation(java.awt.geom.AffineTransform)} instead.
-	 */
-	@Deprecated
-	public void scale(double x, double y) {
-		throw new NotImplementedException();
-	}
-
-	/**
-	 * Diese Methode nimmt an, dass die {@link #bounds} rechteckig gemacht werden sollen.
-	 *
-	 * @param x width
-	 * @param y height
-	 */
-	@Deprecated
-	void assumeRect(int x, int y) {
-		throw new NotImplementedException();
+		onResize.apply(new Vector2(getWidth(), height));
 	}
 
 	/**
@@ -470,6 +431,7 @@ public abstract class Component implements IComponent {
 	 * @param bounds Das neue Polygonobjekt.
 	 */
 	protected final void setBounds(Shape bounds) {
+		onTransformed.apply();
 		this.bounds = bounds;
 	}
 
@@ -681,6 +643,7 @@ public abstract class Component implements IComponent {
 	 */
 	public void applyTransformation(AffineTransform transformation) {
 		bounds = transformation.createTransformedShape(bounds);
+		onTransformed.apply();
 	}
 
 	// Some static helper methods...

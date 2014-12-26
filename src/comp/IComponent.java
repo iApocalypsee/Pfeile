@@ -48,8 +48,6 @@ public interface IComponent extends Drawable {
 	void setWidth(int width);
 	void setHeight(int height);
 
-	void scale(double x, double y);
-
 	Shape getBounds();
 	Rectangle getSimplifiedBounds();
 
