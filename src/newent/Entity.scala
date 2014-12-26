@@ -44,7 +44,7 @@ abstract class Entity(override val world: WorldLike, spawnPosition: (Int, Int), 
   private var _y = spawnPosition._2
 
   /** The name of the entity. It is never going to change. */
-  lazy val name: String = {
+  val name: String = {
     if (n eq null) hashCode.toString
     else if (world.entities.entityList.filter { e => e.name == n}.isEmpty) n
     else throw new NotUniqueNameException( n )
