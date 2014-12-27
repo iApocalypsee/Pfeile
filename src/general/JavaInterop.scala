@@ -5,11 +5,11 @@ import java.util.function.{Predicate, Consumer, Supplier}
 
 object JavaInterop {
 
-  implicit def asScalaFunction[A](x: Supplier[A]): () => A = () => x.get()
+  implicit def asScalaFunctionSupplier[A](x: Supplier[A]): () => A = () => x.get()
 
-  implicit def asScalaFunction[A](x: Consumer[A]): A => Unit = i => x.accept(i)
+  implicit def asScalaFunctionConsumer[A](x: Consumer[A]): A => Unit = i => x.accept(i)
 
-  implicit def asScalaFunction[A](x: Predicate[A]): A => Boolean = i => x.test(i)
+  implicit def asScalaFunctionPredicate[A](x: Predicate[A]): A => Boolean = i => x.test(i)
 
   implicit def asScalaFunction[A, R](x: function.Function[A, R]): A => R = i => x(i)
 

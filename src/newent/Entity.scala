@@ -36,6 +36,7 @@ sealed trait EntityLike extends BoardPositionable with DisplayRepresentable {
   * @param world The world of the entity. Should not be null.
   * @param spawnPosition The position where the entity spawns.
   */
+// TODO Implement level systems for entities, if possible.
 abstract class Entity(override val world: WorldLike, spawnPosition: (Int, Int), n: String = null) extends EntityLike {
 
   require( world ne null )
