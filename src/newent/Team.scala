@@ -1,54 +1,89 @@
 package newent
 
+import general.LogFacility
+
 /**
-  * Represents a collection of team contracts that are rooted together towards the team.
+  * Created by jolecaric on 28.12.14.
   */
-class Team(val name: String) extends CanHoldTeamContract {
+sealed abstract class Team protected {
 
-  private var _contracts = List[TeamContract]()
+  private var _members = List[CanHoldTeamContract]()
 
-  override protected[newent] def removeContract(x: TeamContract): Unit = {
-    if (!isContractPresent(x)) return
-    filterContractOut(x)
+  /** All members of the team. */
+  def members = _members
+  def getMembers = members
+
+  /**
+    * Causes the specified object to join the team.
+    * @param x The object to be integrated into the team.
+    */
+  def integrate(x: CanHoldTeamContract): Unit = {
+    require(x != null)
+    _members = _members ++ List(x)
+    x.onJoinedTeam(this)
   }
 
+  /* Not yet, implementation follows later on...
   /**
-    * Checks if a contract is present at all.
-    * @param x The contract to check for.
-    * @return A boolean value indicating whether the contract is present in the team's contract listing.
-    */
-  private def isContractPresent(x: TeamContract) = _contracts contains x
-
-  /**
-    * Removes the specified contract.
-    * @param x The contract to delete.
-    */
-  private def filterContractOut(x: TeamContract) = _contracts = _contracts.filterNot { _ == x }
-
-  /**
-    * Gives the opportunity to subclasses to write the now established contract somewhere.
-    * @param x The established contract.
-    */
-  override protected def writeContract(x: TeamContract): Unit = _contracts = _contracts ++ List(x)
-
-  /** The contracts that the team currently holds. */
-  def contracts = _contracts
-
-  /**
-    * Finds any contractors under this team that satisfy the given function and returns them
-    * in a new list.
-    * @param f The selector function.
-    * @return The contractors that satisfy the function predicate.
-    */
-  def findContractors(f: CanHoldTeamContract => Boolean): List[CanHoldTeamContract] = {
-
-    def findMatches(x: TeamContract) = {
-      var returnedList: List[CanHoldTeamContract] = Nil
-      if (f(x.side1)) returnedList = returnedList ++ List(x.side1)
-      if (f(x.side2)) returnedList = returnedList ++ List(x.side2)
-      returnedList
-    }
-
-    contracts.foldLeft(List[CanHoldTeamContract]()) { _ ++ findMatches(_) }
+   * Kicks the specified object out of the team.
+   * @param x The team member to kick.
+   */
+  def kick(x: CanHoldTeamContract) = kick(_ == x)
+  def kick(selector: CanHoldTeamContract => Boolean): Unit = {
+    _members = _members filterNot selector
   }
+  */
+
+  def isInTeam(x: CanHoldTeamContract): Boolean = _members.contains(x)
+
+  /** Returns true if this team is the barbarian one. */
+  def isBarbarian: Boolean
+
 }
+
+/**
+  * All entities that are not part of any team are collected in this object.
+  * Every member of this team considers every other entity as its enemy, regardless of
+  * whether he is a member of this team or not.
+  */
+object BarbarianTeam extends Team {
+
+  override def isBarbarian = true
+
+  // Implementation of considering every other entity as hostile...
+  override def isInTeam(x: CanHoldTeamContract) = false
+  // ... that's it.
+}
+
+/**
+  * A team that is led by a player.
+  * This is one of the two ways a team can exist. A player controls the team overall
+  * and decides the name for it.
+  * I will implement more for this class as the mechanics of the game develop.
+  *
+  * @param head The player that is leading the team.
+  * @param name The name of the team.
+  */
+class CommandTeam(val head: Player, val name: String) extends Team {
+
+  // This is the only way of injecting the player object into the members
+  // list, since the overridden function does not accept players.
+  super.integrate(head)
+
+  override def isBarbarian = true
+
+  /**
+   * Causes the specified object to join the team.
+   * This function __denies players to join the team.__
+   * @param x The object to be integrated into the team. If it is
+   *          an object of type [[newent.Player]], it is ignored.
+   */
+  override def integrate(x: CanHoldTeamContract): Unit = {
+    if (!x.isInstanceOf[Player]) super.integrate(x)
+    else LogFacility.log(x.toString + " can not be added to team " + name, "Info")
+  }
+
+  def getHead = head
+  def getName = name
+}
+

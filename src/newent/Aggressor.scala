@@ -8,7 +8,7 @@ import newent.event.AttackEvent
   * of an aggressor in combat.
   * If the object is an aggressor, then it has to belong to a team.
   */
-trait Aggressor extends CanJoinTeam {
+trait Aggressor extends CanHoldTeamContract {
 
   /** Lets the aggressor perform an attack.
     *

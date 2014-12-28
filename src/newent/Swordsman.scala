@@ -1,5 +1,6 @@
 package newent
 
+import java.awt.Point
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 
@@ -7,11 +8,16 @@ import comp.ImageComponent
 import gui.GameScreen
 import newent.pathfinding.AStarPathfinder
 import player.Life
-import world.{SeaTile, WorldLike}
+import world.{ SeaTile, WorldLike }
 
-class Swordsman(world: WorldLike, spawnPosition: (Int, Int), name: String)
-  extends Entity(world, spawnPosition, name) with
-          LivingEntity with VisionEntity with MoveableEntity with CanJoinTeam with Combatant {
+/**
+  * A swordsman. Ditto.
+  * @param world The world of the entity. Should not be null.
+  * @param spawnPosition The position where the entity spawns.
+  * @param team The team to which it should belong.
+  */
+class Swordsman(world: WorldLike, spawnPosition: Point, team: Team)
+  extends Entity(world, spawnPosition, null) with LivingEntity with VisionEntity with MoveableEntity with Combatant {
 
   override val life = new Life(90, 0, 90)
 
@@ -19,7 +25,8 @@ class Swordsman(world: WorldLike, spawnPosition: (Int, Int), name: String)
   // not allowed to walk on sea tiles.
   override val pathfinderLogic = new AStarPathfinder(20, t => !t.isInstanceOf[SeaTile])
 
-  /** The initial attribute object with which the entity begins recording its attributes.
+  /**
+    * The initial attribute object with which the entity begins recording its attributes.
     *
     * The method just gets called once to initialize an underlying field.
     */
@@ -33,12 +40,19 @@ class Swordsman(world: WorldLike, spawnPosition: (Int, Int), name: String)
   /** The default movement points that the entity has. */
   override def defaultMovementPoints = 3
 
-  /** The component that the representable object uses first. Method is called only once.
+  /**
+    * The component that the representable object uses first. Method is called only once.
     *
     * The start component must not be null at first, else it will throw a [[IllegalArgumentException]].
     * @return A component object which the representable object uses first.
     */
   override protected def startComponent = new ImageComponent(0, 0, Swordsman.swordsmanTexture, GameScreen.getInstance())
+
+  /**
+    * The initial team with which the object begins to cooperate.
+    * Can be overridden to join a different team in the beginning.
+    */
+  override protected def initialTeam = team
 }
 
 object Swordsman {
