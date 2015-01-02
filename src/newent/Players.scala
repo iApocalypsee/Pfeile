@@ -41,6 +41,11 @@ class Player(world: WorldLike,
   override val pathfinderLogic       = new AStarPathfinder(20, { t => true })
   override lazy val life             = new Life(Player.MAXIMUM_LIFE.get, Player.LIFE_REGENERATION.get, Player.MAXIMUM_LIFE.get)
 
+
+  /** The initial team with which the object begins to cooperate.
+    * Can be overridden to join a different team in the beginning. */
+  override protected def initialTeam = new CommandTeam(this, "Team of " + this.name)
+
   /** the number of arrows the player an still use from this his/her selected usable <code> PfeileContext.ARROW_NUMBER_FREE_SET </code> inventory */
   lazy val arrowNumberFreeSetUsable = Property.apply[java.lang.Integer](PfeileContext.ARROW_NUMBER_FREE_SET.get)
 
@@ -85,24 +90,14 @@ class Player(world: WorldLike,
 
     setBounds(tileLocation.component.getBounds)
 
-    onLocationChanged += { e => setBounds(e.end.component.getBounds) }
+    onLocationChanged += { e => setBounds(e.end.component.getBounds)}
 
-    override def draw(g: Graphics2D): Unit = {
+    override protected def drawImpl(g: Graphics2D): Unit = {
       g.setColor(drawColor)
       g.fill(getBounds)
     }
   }
 
-  /** The initial attribute object with which the entity begins recording its attributes.
-    *
-    * The method just gets called once to initialize an underlying field.
-    */
-  override protected def initialAttribute = new Attributes {
-
-    override protected def initialCurrent(initObject: Current) = initObject
-
-    override protected def initialLasting(initObject: Lasting) = initObject
-  }
 }
 
 object Player {

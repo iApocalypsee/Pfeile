@@ -8,13 +8,19 @@ import general.Delegate
   */
 trait CanHoldTeamContract {
 
-  private var _boundTo = TeamContract(initialTeam, this)
-
-  join(initialTeam)
+  /** Called when this object joined a team. */
+  val onJoinedTeam = Delegate.create[Team]
 
   /** The initial team with which the object begins to cooperate.
     * Can be overridden to join a different team in the beginning. */
   protected def initialTeam: Team = BarbarianTeam
+
+  // This field only exists becaus I want the "initialTeam" function to call only once.
+  private val _initialTeamForOnceCalled = initialTeam
+
+  private var _boundTo = TeamContract(_initialTeamForOnceCalled, this)
+
+  join(_initialTeamForOnceCalled)
 
   /**
    * Controls whether this object wants to team up with a certain group.
@@ -37,9 +43,6 @@ trait CanHoldTeamContract {
   /** Returns the contract to which this object is bound. */
   def belongsTo = _boundTo
   def getBelongsTo = belongsTo
-
-  /** Called when this object joined a team. */
-  val onJoinedTeam = Delegate.create[Team]
 
   // Every time the object joins a team, the contract variable has to be changed.
   onJoinedTeam += { t =>

@@ -52,7 +52,7 @@ class Bar(x: Int, y: Int, width: Int, height: Int, back: Screen) extends Compone
     _splits += addition
   }
 
-  override def draw(g: Graphics2D): Unit = {
+  override protected def drawImpl(g: Graphics2D): Unit = {
 
     // The inner color that lies behind the fill status
     //g.setColor(getBorder.getInnerColor)

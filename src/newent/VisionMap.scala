@@ -2,15 +2,17 @@ package newent
 
 import comp.Circle
 import general.Delegate
-import newent.VisionMap.{VisionEntry, VisionPromise}
+import newent.VisionMap.{ VisionEntry, VisionPromise }
 import player.BoardPositionable
 import world.TileLike
 
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-/** Represents the parts of the map that have been revealed, are visible or are not even discovered.
+/**
+  * Represents the parts of the map that have been revealed, are visible or are not even discovered.
   *
   * @constructor Creates a new vision map.
   * @param entity The entity to tie the vision map to.
@@ -55,9 +57,15 @@ class VisionMap(val entity: VisionEntity) {
   /** Returns the current vision status of the tile. */
   def visionStatusOf(x: Int, y: Int): VisionStatus = {
     require(entity.world.terrain.isTileValid(x, y))
-    val findResult = _entries.find { e => e.tile.latticeX == x && e.tile.latticeY == y}.get
+    val findResult = _entries.find { e => e.tile.latticeX == x && e.tile.latticeY == y }.get
     findResult.visionStatus
   }
+
+  /**
+    * Collects all tiles from this vision map that are visible to the entity.
+    */
+  def visibleTiles = _entries.filter(_.visionStatus == VisionStatus.Visible).map(_.tile)
+  def getVisibleTiles = visibleTiles.asJava
 
   /** Updates the vision entries based on the vision promises that have been granted. */
   private def updateEntries(): Unit = {
@@ -96,7 +104,7 @@ object VisionMap {
   }
 
   /** Represents a vision point in the map. Just like a "ward". */
-  class VisionPromise private[VisionMap](x: Int, y: Int, radius: Int) {
+  class VisionPromise private[VisionMap] (x: Int, y: Int, radius: Int) {
 
     /** Circle for representing the geometry of the vision. */
     private[VisionMap] val circle = {
@@ -108,20 +116,16 @@ object VisionMap {
     }
 
     /** Called when the vision has been released on this promise. */
-    private[VisionMap] val _onVisionReleased = Delegate.createZeroArity
+    private[VisionMap] val _onVisionReleased = Delegate.createZeroArityOneCall
 
-    /** Releases the promise from the vision, meaning that the vision point is no longer
+    /**
+      * Releases the promise from the vision, meaning that the vision point is no longer
       * meaningful for the vision map.
       */
     def releaseVision() = {
       // I know in advance that the VisionMap class registered a callback on the delegate for
       // deleting this promise out of the vision.
       _onVisionReleased.call()
-      _onVisionReleased.clear()
-    }
-
-    protected override def finalize(): Unit = {
-      releaseVision()
     }
 
   }

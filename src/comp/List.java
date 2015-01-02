@@ -107,7 +107,7 @@ public class List extends Component {
     }
 
 	@Override
-	public void draw(Graphics2D g) {
+	protected void drawImpl(Graphics2D g) {
 		
 		if(isVisible()) {
 			

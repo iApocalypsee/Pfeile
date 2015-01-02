@@ -1,0 +1,18 @@
+package comp;
+
+import gui.Screen;
+
+import java.awt.*;
+
+public class Region extends Component {
+
+    public Region(int x, int y, int width, int height, Screen screen) {
+        super(x, y, width, height, screen);
+    }
+
+    @Override
+    protected void drawImpl(Graphics2D g) {
+        // Nothing, it's a region.
+    }
+
+}

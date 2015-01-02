@@ -96,7 +96,7 @@ public class TextBox extends Component {
 	}
 
 	@Override
-	public void draw(Graphics2D g) {
+	protected void drawImpl(Graphics2D g) {
 		
 		getBorder().draw(g);
 		
@@ -174,7 +174,7 @@ public class TextBox extends Component {
 		getBorder().setRoundedBorder(isRoundRect);
 	}
 	
-	/** gibt zurück, ob das Rechteck (Border) das gezeichnet werden soll, rund ist oder nicht */
+	/** gibt zurï¿½ck, ob das Rechteck (Border) das gezeichnet werden soll, rund ist oder nicht */
 	public boolean isRoundBorder () {
 		return getBorder().isRoundedBorder();
 	}

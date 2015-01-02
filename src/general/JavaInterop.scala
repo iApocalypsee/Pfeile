@@ -17,4 +17,12 @@ object JavaInterop {
     override def apply(t: A) = x(t)
   }
 
+  implicit def asJavaFunction[R](x: () => R): function.Supplier[R] = new Supplier[R] {
+    override def get(): R = x()
+  }
+
+  implicit def asJavaFunction[A](x: A => Unit): function.Consumer[A] = new function.Consumer[A] {
+    override def accept(t: A): Unit = x(t)
+  }
+
 }

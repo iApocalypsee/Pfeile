@@ -28,7 +28,7 @@ class Bot (world: WorldLike, spawnPoint: Point, name: String)
 
       onLocationChanged += { e => setBounds(e.end.component.getBounds)}
 
-      override def draw(g: Graphics2D): Unit = {
+      override protected def drawImpl(g: Graphics2D): Unit = {
          g.setColor(drawColor)
          g.fill(getBounds)
       }

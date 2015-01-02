@@ -192,7 +192,7 @@ public class ComboBox extends Component {
     }
 
     @Override
-    public void draw(Graphics2D g) {
+    protected void drawImpl(Graphics2D g) {
         if (isVisible()) {
             g.setColor(Color.BLACK);
             g.fillRect(containerLabel.getX() - 3, containerLabel.getY() - 3, getWidth() + 7, clickButton.getHeight() + 7);

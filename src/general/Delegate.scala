@@ -52,13 +52,13 @@ object Delegate {
       *
       * @param f The function to register.
       */
-    def register(f: FunType): Handle = +=( f )
+    final def register(f: FunType): Handle = +=( f )
 
     /** Unregisters a callback function from the delegate.
       *
       * @param f The function to unregister.
       */
-    def -=(f: FunType): Unit = synchronized {
+    final def -=(f: FunType): Unit = synchronized {
       _callbacks = _callbacks.filterNot( _.function == f )
     }
 
@@ -69,9 +69,9 @@ object Delegate {
       *
       * @param f The function to unregister.
       */
-    def unlog(f: FunType): Unit = -=( f )
+    final def unlog(f: FunType): Unit = -=( f )
 
-    def unlog(h: Handle): Unit = -=( h )
+    final def unlog(h: Handle): Unit = -=( h )
 
     /** Clears all callbacks from the delegate, meaning that there will not remain any callbacks after. */
     def clear(): Unit = _callbacks.clear( )
@@ -217,15 +217,7 @@ object Delegate {
 
     override def +=(f: FunType): Handle = except
 
-    override def register(f: FunType): Handle = except
-
-    override def -=(f: FunType): Unit = except
-
     override def -=(h: Handle): Unit = except
-
-    override def unlog(h: Handle): Unit = except
-
-    override def unlog(f: FunType): Unit = except
   }
 
   /** A delegate that does not receive any input parameters. <p>

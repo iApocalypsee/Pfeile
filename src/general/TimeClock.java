@@ -65,13 +65,13 @@ public class TimeClock extends Component implements Runnable {
             @Override
             public BoxedUnit apply () {
                 if (sm.getActiveScreenIndex() == gui.GameScreen.SCREEN_INDEX) {
-                    Main.getContext().onTurnEnd().call();
+                    Main.getContext().getTurnSystem().increment();
                 } else if (sm.getActiveScreenIndex() == gui.ArrowSelectionScreen.SCREEN_INDEX) {
                     sm.setActiveScreen(gui.GameScreen.SCREEN_INDEX);
-                    Main.getContext().onTurnEnd().call();
+                    Main.getContext().getTurnSystem().increment();
                 } else if (sm.getActiveScreenIndex() == gui.AimSelectionScreen.SCREEN_INDEX) {
                     sm.setActiveScreen(gui.GameScreen.SCREEN_INDEX);
-                    Main.getContext().onTurnEnd().call();
+                    Main.getContext().getTurnSystem().increment();
                 } else
                     throw new java.lang.RuntimeException ("Time is out. The active Screen is neither GameScreen nor Aim- or ArrowSelectionScreen. Register it! " +
                             "ActiveScreen: " + sm.getActiveScreen().getName());
@@ -281,7 +281,7 @@ public class TimeClock extends Component implements Runnable {
     }
 
 	@Override
-	public void draw(Graphics2D g) {
+	protected void drawImpl(Graphics2D g) {
 		g.setColor(brightDarkGrey);
 		g.fillRoundRect(getX() - 2,
 				getY() - 2,

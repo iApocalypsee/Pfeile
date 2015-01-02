@@ -1,6 +1,7 @@
 package gui;
 
 import comp.Button;
+import general.JavaInterop;
 import general.Main;
 import player.weapon.AttackDrawer;
 import scala.runtime.AbstractFunction0;
@@ -72,16 +73,13 @@ public class GameScreen extends Screen implements FrameContainer {
 	private GameScreen() {
 		super(GameScreen.SCREEN_NAME, GameScreen.SCREEN_INDEX);
 
-		onScreenEnter.register(new AbstractFunction0<BoxedUnit>() {
-			@Override
-			public BoxedUnit apply() {
-				if(map == null) {
-					map = new VisualMap(Main.getContext().getWorld());
-					map.moveMap(120, 470);
-				}
-				return BoxedUnit.UNIT;
+		onScreenEnter.register(JavaInterop.asScalaFunctionSupplier(() -> {
+			if(map == null) {
+				map = new VisualMap(Main.getContext().getWorld());
+				map.moveMap(120, 470);
 			}
-		});
+			return BoxedUnit.UNIT;
+		}));
 	}
 
 	/** This method must be called just once!
@@ -115,7 +113,7 @@ public class GameScreen extends Screen implements FrameContainer {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				Main.getContext().onTurnEnd().call();
+				Main.getContext().turnSystem().increment();
 			}
 
 		});
@@ -176,7 +174,7 @@ public class GameScreen extends Screen implements FrameContainer {
 				onLeavingScreen(this, ArrowSelectionScreen.SCREEN_INDEX);
 				break;
 			case KeyEvent.VK_E:
-				Main.getContext().onTurnEnd().call();
+				Main.getContext().turnSystem().increment();
 				break;
 			case KeyEvent.VK_PAGE_UP:
 				map.zoom(1.05f);

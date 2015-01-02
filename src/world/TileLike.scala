@@ -207,7 +207,7 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
       setBounds(_polygon)
     }
 
-    override def draw(g: Graphics2D): Unit = {
+    override protected def drawImpl(g: Graphics2D): Unit = {
       g.setColor(color)
       g.fill(getBounds)
       drawAll(g)

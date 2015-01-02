@@ -29,18 +29,17 @@ public class Label extends Component {
 	}
 
 	public Label(int x, int y, Screen backing, String text) {
-		super(x, y, 0, 0, backing);
+		super(0, 0, 0, 0, backing);
 		
 		Dimension text_bounds = Component.getTextBounds(text, STD_FONT);
-		setWidth(text_bounds.width);
-		setHeight(text_bounds.height);
+		setBounds(new Rectangle(x, y, text_bounds.width, text_bounds.height));
 		
 		this.text = text;
 		declineInput();
 	}
 
 	@Override
-	public void draw(Graphics2D g) {
+	protected void drawImpl(Graphics2D g) {
 		
 		if(isVisible()) {
 
@@ -73,8 +72,6 @@ public class Label extends Component {
 			} else {
 				g.setColor(declineInputColor);
 			}
-
-			g.setFont(STD_FONT);
 			
 			g.drawString(text, getX() + STD_INSET_X, getY() + STD_INSET_Y);
 		}

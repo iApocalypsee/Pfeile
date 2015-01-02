@@ -13,8 +13,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
+import java.io.FileFilter;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -98,6 +100,12 @@ public abstract class Component implements IComponent {
 	 * but don't have to belong to the boundaries of the component.
 	 */
 	private Function1<Graphics2D, Unit> additionalDrawing = null;
+
+	/**
+	 * A routine that is executed before the actual component is being drawn.
+	 * This routine can be used to change fonts or colors.
+	 */
+	private Consumer<Graphics2D> preDrawRoutine = g -> {};
 
 	/**
 	 * Called when the bounds have been moved.
@@ -555,9 +563,26 @@ public abstract class Component implements IComponent {
 		this.border = border;
 	}
 
-	@Deprecated
-	public void updateGUI() {
+	@Override
+	public void draw(Graphics2D g) {
+		final AffineTransform oldTransform = g.getTransform();
+		final Font oldFont = g.getFont();
+		final Color oldColor = g.getColor();
+
+		preDrawRoutine.accept(g);
+
+		drawImpl(g);
+
+		g.setTransform(oldTransform);
+		g.setFont(oldFont);
+		g.setColor(oldColor);
 	}
+
+	/**
+	 * The actual drawing code for the component.
+	 * @param g The graphics object to draw with.
+	 */
+	protected abstract void drawImpl(Graphics2D g);
 
 	/**
 	 * Returns <code>true</code> if, and only if, the mouse is in the components' bounds.
@@ -622,6 +647,23 @@ public abstract class Component implements IComponent {
 
 	public void setAdditionalDrawing(Function1<Graphics2D, Unit> additionalDrawing) {
 		this.additionalDrawing = additionalDrawing;
+	}
+
+	/**
+	 * Returns the routine that is executed before the actual component is being drawn.
+	 * This routine can be used to change fonts or colors before the component is drawn. <p>
+	 * An important thing to note here is that the operations that are done to the Graphics2D
+	 * object need not be resetted by the user; the Component class takes care of it automatically.
+	 *
+	 * @return A function described above.
+	 */
+	public Consumer<Graphics2D> getPreDrawRoutine() {
+		return preDrawRoutine;
+	}
+
+	public void setPreDrawRoutine(Consumer<Graphics2D> preDrawRoutine) {
+		if(preDrawRoutine == null) throw new NullPointerException();
+		this.preDrawRoutine = preDrawRoutine;
 	}
 
 	@Override

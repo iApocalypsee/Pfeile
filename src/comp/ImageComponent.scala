@@ -30,7 +30,7 @@ class ImageComponent(x: Int, y: Int, image: BufferedImage, screen: Screen) exten
     _rotTransform = AffineTransform.getRotateInstance(toRadians(_rotation))
   }
 
-  override def draw(g: Graphics2D): Unit = {
+  override protected def drawImpl(g: Graphics2D): Unit = {
     val oldTransformation = g.getTransform
     g.setTransform(_rotTransform)
     g.drawImage(image, x, y, null)

@@ -80,7 +80,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
   }
   this << ToplineBar
 
-  override def draw(g: Graphics2D) = {
+  override protected def drawImpl(g: Graphics2D) = {
     if (isVisible) {
       g.setColor(FrameStyle.InnerColor)
       g.fillRect(getX, getY, getWidth, getHeight)
@@ -132,7 +132,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
       frame.setLocation((frame.getX + vec.x).asInstanceOf[Int], (frame.getY + vec.y).asInstanceOf[Int])
     }
 
-    override def draw(g: Graphics2D): Unit = {
+    override protected def drawImpl(g: Graphics2D): Unit = {
       if (isVisible) {
         g.setColor(FrameStyle.TopBarColor)
         g.fill(getBounds)

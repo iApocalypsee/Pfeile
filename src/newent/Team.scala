@@ -80,7 +80,7 @@ class CommandTeam(val head: Player, val name: String) extends Team {
    */
   override def integrate(x: CanHoldTeamContract): Unit = {
     if (!x.isInstanceOf[Player]) super.integrate(x)
-    else LogFacility.log(x.toString + " can not be added to team " + name, "Info")
+    else if(x != head) LogFacility.log(x.toString + " can not be added to team " + name, "Info")
   }
 
   def getHead = head

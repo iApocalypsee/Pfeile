@@ -79,7 +79,6 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       opponent.onTurnGet += { () => context.activePlayer = opponent }
 
       context.setActivePlayer(act)
-      context.playerList.setTurnPlayer(act)
 
       context.world.entities += act
       context.world.entities += opponent
