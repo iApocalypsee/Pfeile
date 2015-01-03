@@ -217,10 +217,13 @@ public class AimSelectionScreen extends Screen {
 	                } else {
 		                setPosX_selectedField(tileX);
 		                setPosY_selectedField(tileY);
+
                         boundsSelectedTile = tileWrapper.getComponent().getBounds();
                         Rectangle bounds = boundsSelectedTile.getBounds();
+
 		                animatedLine.setEndX((int) bounds.getCenterX());
 		                animatedLine.setEndY((int) bounds.getCenterY());
+
                         boundsSelectedTileExtended = new Polygon();
                         boundsSelectedTileExtended.addPoint(bounds.x - 2, (int) (bounds.y + 0.5 * bounds.height));
                         boundsSelectedTileExtended.addPoint((int) (bounds.x + 0.5 * bounds.width), (int) (bounds.y + 0.5 * bounds.height - 2));
@@ -264,8 +267,8 @@ public class AimSelectionScreen extends Screen {
                 arrow.setGridY(active.getGridY());
 
                 // the center of the player is the center of the arrow
-                arrow.setPosX((int) (active.getComponent().getBounds().getBounds().getCenterX() - 0.5 * arrow.getImage().getWidth()));
-                arrow.setPosY((int) (active.getComponent().getBounds().getBounds().getCenterY() - 0.5 * arrow.getImage().getHeight()));
+                arrow.getComponent().setX((int) (active.getComponent().getSimplifiedBounds().getCenterX() - 0.5 * arrow.getImage().getWidth()));
+                arrow.getComponent().setY((int) (active.getComponent().getSimplifiedBounds().getCenterY() - 0.5 * arrow.getImage().getHeight()));
 
                 arrow.calculateRotation();
 

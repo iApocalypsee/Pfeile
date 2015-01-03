@@ -1,6 +1,6 @@
 package player.weapon;
 
-import comp.Component;
+import comp.ImageComponent;
 import comp.InternalFrame;
 import comp.Label;
 import general.PfeileContext;
@@ -11,10 +11,8 @@ import player.BoardPositionable;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;
 
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 /**
@@ -32,10 +30,7 @@ import java.awt.image.BufferedImage;
  */
 public abstract class AbstractArrow extends RangedWeapon implements BoardPositionable {
 
-    private Component component;
-
-    /** the rotation of the BufferedImage to draw the arrow to the direction of the attacked field */
-    protected double rotation;
+    private ImageComponent component;
 
     /** the speed of the arrow */
 	protected double speed;
@@ -92,21 +87,10 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 		setDamageLosingRate(damageLosingRate);
 		setSpeed(speed);
         getAim().setDamageRadius(damageRadius);
-        component = new Component() {
-            @Override
-            public void draw(Graphics2D g) {
-                AffineTransform old = g.getTransform();
-                // it should be rotated from the center of the arrowImage
-                g.rotate(getRotation(), getPosX() + (int) (0.5 * getImage().getWidth()), getPosY() + (int) (0.5 * getImage().getHeight()));
-                g.drawImage(getImage(), getPosX(), getPosY(), getImage().getWidth(), getImage().getHeight(), null);
-                g.setTransform(old);
-            }
-        };
-		component.setBackingScreen(GameScreen.getInstance());
+		component = new ImageComponent(0, 0, getImage(), GameScreen.getInstance());
 		component.addMouseListener(new MouseAdapter() {
-
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void mouseReleased (MouseEvent e) {
 				// Variables.
 				FrameContainerObject containerObject = GameScreen.getInstance().getFrameContainer();
 				InternalFrame dataFrame = new InternalFrame(50, 50, 125, 125, GameScreen.getInstance());
@@ -125,7 +109,7 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 				// When the frame closes, it should be removed from the container object as well.
 				dataFrame.onClosed().register(new AbstractFunction0<Object>() {
 					@Override
-					public Object apply() {
+					public Object apply () {
 						containerObject.removeFrame(dataFrame);
 						return BoxedUnit.UNIT;
 					}
@@ -133,10 +117,7 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 
 				containerObject.addFrame(dataFrame);
 			}
-
 		});
-        component.setWidth(getImage().getWidth());
-        component.setHeight(getImage().getHeight());
 	}
 
 	/** Gibt die Schadensverlustrate zur�ck */
@@ -160,9 +141,7 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 	}
 
 	/** Treffunsicherheitsquote (Grundwert) */
-	public float getAimMissing() {
-		return this.aimMissingRate;
-	}
+	public float getAimMissing() { return aimMissingRate; }
 
 	/** Treffunsicherheitsquote (Grundwert) */
 	private void setAimMissing(float newAimMissing) {
@@ -179,50 +158,43 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 		this.aimMissingRate = aimMissingRate;
 	}
 
-    /** X-Position bei den Feldern */
+    /** X-position in tiles */
     @Override
-	public int getGridX () {
-		return fieldX;
-	}
+	public int getGridX () { return fieldX; }
 
-	/** X-Position bei den Feldern */
-	public void setGridX (int fieldX) {
-		this.fieldX = fieldX;
-	}
+	/** x-position in tiles */
+	public void setGridX (int gridX) { this.fieldX = gridX; }
 
-	/** Y-Position bei den Feldern */
+	/** y-position in tiles */
     @Override
-	public int getGridY () {
-		return fieldY;
-	}
+	public int getGridY () { return fieldY; }
 
-	/** Y-Position bei den Feldern */
-	public void setGridY (int fieldY) {
-		this.fieldY = fieldY;
-	}
+	/** sets the y-position in tiles */
+	public void setGridY (int gridY) { this.fieldY = gridY; }
 
-	/** Position X auf dem Bildschrim (Pixel).
-     *  */
-	public int getPosX() {
-		return component.getX();
-	}
+	/** the x-position on Screen (in px). Compare with getGridX())
+	 * */
+	public int getPosX() { return component.getX(); }
 
-	/** Position X auf dem Bildschirm (Pixel).
-     * This call is redirected to <code>getComponent().setX(posX)</code> */
+	/** x-position on the screen (in px).
+	 * <p>
+     * This call is redirected to <code>getComponent().setX(posX)</code> and rotates the arrow by calling <code>calculateRotation()</code> */
 	public void setPosX(int posX) {
 		component.setX(posX);
+		calculateRotation();
 	}
 
-	/** Position Y auf dem Bildschirm (Pixel).
+	/** y-position on screen in px.
+	 * <p>
      * This call is redirected to <code>getComponent().getY()</code> */
-	public int getPosY() {
-		return component.getY();
-	}
+	public int getPosY() { return component.getY(); }
 
-	/** Position Y auf dem Bildschirm (Pixel).
-     * This call is redirected to <code>getComponent().setY(posY)</code> */
+	/** sets the y-position on the screen (in px).
+	 * <p>
+     * This call is redirected to <code>getComponent().setY(posY)</code> and the ImageComponent will be rotated <code>calulateRotation()</code>*/
 	public void setPosY(int posY) {
 		component.setY(posY);
+		calculateRotation();
 	}
 
     /** the speed of the arrow in tiles per turn */
@@ -230,17 +202,10 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 		return speed;
 	}
 
-	protected void setSpeed(double speed) {
-		this.speed = speed;
-	}
-
-    /** returns the rotation of the BufferedImage. With this value the image is drawn in direction to the aim. It's in radient.*/
-    public double getRotation () {
-        return rotation;
-    }
+	protected void setSpeed(double speed) { this.speed = speed; }
 
     /** this returns the Component of an Arrow. */
-    public Component getComponent () {
+    public ImageComponent getComponent () {
         return component;
     }
 
@@ -263,10 +228,10 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
      * <p> <code>rotation = FunctionCollection.angle(getPosX(), getPosY(), getAim().getPosXGui(), getAim().getPosYGui());</code>
      */
     public void calculateRotation () {
-        rotation = FunctionCollection.angle(getComponent().getX(), getComponent().getY(), getAim().getPosXGui(), getAim().getPosYGui());
+        component.rotateRadians(FunctionCollection.angle(getComponent().getX(), getComponent().getY(), getAim().getPosXGui(), getAim().getPosYGui()));
     }
 
-    /** gibt die BufferedImage des Pfeils zur�ck
+    /** returns the BufferedImage of this arrow.
 	 * @see <code> ArrowHelper.getArrowImage(int selectedIndex) </code> */
 	public abstract BufferedImage getImage();
 }

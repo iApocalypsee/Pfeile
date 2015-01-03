@@ -739,6 +739,8 @@ public class PreWindowScreen extends Screen {
         g.setFont(fontSmall);
         g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y );
 
+        g.setFont(Component.STD_FONT);
+
         // Components
         boxSelectKI.draw(g);
         boxSelectHigh.draw(g);

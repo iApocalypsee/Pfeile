@@ -120,7 +120,6 @@ public class ConfirmDialog extends comp.Component {
 	public void draw(Graphics2D g) {
         if (isVisible()) {
             getBorder().draw(g);
-            g.setFont(comp.Component.STD_FONT);
             g.setColor(Color.white);
             g.drawString(question, getX() + 10, getY() + 20);
             ok.draw(g);

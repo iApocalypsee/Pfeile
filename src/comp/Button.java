@@ -92,7 +92,6 @@ public class Button extends Component {
 	public void draw(Graphics2D g) {
         if (isVisible()) {
             getBorder().draw(g);
-            g.setFont(Component.STD_FONT);
             g.setColor(Color.white);
 
             if(optImage == null) {

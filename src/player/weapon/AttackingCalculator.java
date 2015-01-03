@@ -101,13 +101,17 @@ public class AttackingCalculator {
                 //LogFacility.log("MilliSec: " + milliSec + "\tx_current (radius reached): " +
                 //        ((int) ((radius * accuracy) * 1000) / 1000.0) + "\t(x|y): ( " + attackingArrow.getPosX() + " | " + attackingArrow.getPosY() + " )", LogFacility.LoggingLevel.Debug);
 
-                attackingArrow.setPosX((int) (posXOld + Math.round(
-                        FunctionCollectionEasing.quadratic_easing_inOut(radius * accuracy, 0, attackingArrow.getAim().getPosXGui() - posXOld, radius)
-                            * (radius / attackProgress.event().lengthGUI()))));
 
-                attackingArrow.setPosY((int) (posYOld + Math.round(
+                // The progress to stretch the normalized position to the real position
+                double progress = radius / attackProgress.event().lengthGUI();
+
+                attackingArrow.getComponent().setX((int) (posXOld + Math.round(
+                        FunctionCollectionEasing.quadratic_easing_inOut(radius * accuracy, 0, attackingArrow.getAim().getPosXGui() - posXOld, radius)
+                                * progress)));
+
+                attackingArrow.getComponent().setY((int) (posYOld + Math.round(
                         FunctionCollectionEasing.quadratic_easing_inOut(radius * accuracy, 0, attackingArrow.getAim().getPosYGui() - posYOld, radius)
-                                * (radius / attackProgress.event().lengthGUI()))));
+                                * progress)));
 
                  try {
                     Thread.sleep(15);

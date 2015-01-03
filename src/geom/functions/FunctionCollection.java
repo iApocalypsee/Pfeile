@@ -66,7 +66,7 @@ public class FunctionCollection {
                 return 0;
             else
                 throw new IllegalArgumentException("The points are on the same position. The angle can't be calculated! \t" +
-                        "(x1|y1): ( " + x1 + " | " + y1 + " ) \t (x2|y2): ( " + x2 + " | " + y2 + " ).");
+                        "(x|y): ( " + x1 + " | " + y1 + " ).");
         }
     }
 

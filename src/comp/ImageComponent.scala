@@ -15,20 +15,42 @@ import gui.Screen
   * @param image The image to display.
   * @param screen The screen to bind the component to. Needed for listener implementation.
   */
-class ImageComponent(x: Int, y: Int, image: BufferedImage, screen: Screen) extends Component(x, y, image.getWidth(), image.getHeight(), screen) {
+class ImageComponent(x: Int, y: Int, image: BufferedImage, screen: Screen) extends Component(x, y, image.getWidth, image.getHeight, screen) {
 
   private var _rotation = 0.0
   private var _rotTransform = new AffineTransform()
 
   /**
-    * Rotates the component by the angle specified.
+    * Rotates the component by the angle specified around its center. Consequently, the AffineTransform is translated
+    * to <code>getSimplifiedBounds().getCenterX(), getSimplifiedBounds().getCenterY()</code>, rotated and then
+    * translated to <code>- getSimplifiedBounds().getCenterX(), - getSimplifiedBounds().getCenterY()</code>.
+    * <p>
+    * <p>
+    * This method is the same like <code>imageComponent.rotateRadians(Math.toRadians(angle))</code>.
+    *
     * @param angle The angle to rotate the component by, in degrees.
     */
-  def rotate(angle: Double): Unit = {
-    applyTransformation(AffineTransform.getRotateInstance(toRadians(angle)))
-    _rotation += angle
-    _rotTransform = AffineTransform.getRotateInstance(toRadians(_rotation))
+  def rotateDegree(angle: Double): Unit = {
+    rotateRadians(toRadians(angle))
   }
+
+  /**
+   * Rotates the component by the angle specified around its center. Consequently, the AffineTransform is translated
+   * to <code>getSimplifiedBounds().getCenterX(), getSimplifiedBounds().getCenterY()</code>, rotated and then
+   * translated to <code>- getSimplifiedBounds().getCenterX(), - getSimplifiedBounds().getCenterY()</code>.
+   *
+   * @param angle The angle to rotate the component by, in radians.
+   */
+  def rotateRadians(angle: Double): Unit = {
+    // getPosX() + (int) (0.5 * getImage().getWidth()), getPosY() + (int) (0.5 * getImage().getHeight())
+    val rotTransform = AffineTransform.getRotateInstance(angle, getSimplifiedBounds.getCenterX, getSimplifiedBounds.getCenterY)
+    applyTransformation(rotTransform)
+    _rotation = angle
+    _rotTransform = rotTransform
+  }
+
+  /** the rotation of this ImageComponent in Radians. To set this value use <code>rotateRadians</code> or <code>rotateDegree</code>.*/
+  def getRotation: Double = { _rotation }
 
   override protected def draw(g: Graphics2D): Unit = {
     val oldTransformation = g.getTransform

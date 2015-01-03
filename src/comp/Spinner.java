@@ -155,7 +155,6 @@ public class Spinner extends Component {
     public void draw(Graphics2D g) {
         if (isVisible()) {
             getBorder().draw(g);
-            g.setFont(STD_FONT);
             valueBox.draw(g);
 
             switch(getStatus()) {

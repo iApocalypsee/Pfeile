@@ -304,6 +304,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
         g.setColor(colorMiddle);
         g.setFont(fontMiddle);
         g.drawString("ein Strategiespiel", fontMiddlePosition.x, fontMiddlePosition.y);
+        g.setFont(comp.Component.STD_FONT);
 
         for(Button arrowButton : buttonListArrows) {
             arrowButton.draw(g);

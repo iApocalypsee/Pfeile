@@ -188,6 +188,8 @@ public class GameOverScreen extends Screen {
         g.setFont(font_YouLose);
         g.drawString("You Lose!", 108, 590);
 
+        g.setFont(Component.STD_FONT);
+
         closeGame.draw(g);
     }
 }
