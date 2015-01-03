@@ -94,7 +94,7 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
         getAim().setDamageRadius(damageRadius);
         component = new Component() {
             @Override
-            protected void drawImpl(Graphics2D g) {
+            public void draw(Graphics2D g) {
                 AffineTransform old = g.getTransform();
                 // it should be rotated from the center of the arrowImage
                 g.rotate(getRotation(), getPosX() + (int) (0.5 * getImage().getWidth()), getPosY() + (int) (0.5 * getImage().getHeight()));

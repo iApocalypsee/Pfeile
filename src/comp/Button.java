@@ -89,7 +89,7 @@ public class Button extends Component {
 	}
 
 	@Override
-	protected void drawImpl(Graphics2D g) {
+	public void draw(Graphics2D g) {
         if (isVisible()) {
             getBorder().draw(g);
             g.setFont(Component.STD_FONT);

@@ -117,7 +117,7 @@ public class ConfirmDialog extends comp.Component {
     }
 
     @Override
-	protected void drawImpl(Graphics2D g) {
+	public void draw(Graphics2D g) {
         if (isVisible()) {
             getBorder().draw(g);
             g.setFont(comp.Component.STD_FONT);

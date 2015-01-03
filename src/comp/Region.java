@@ -11,7 +11,7 @@ public class Region extends Component {
     }
 
     @Override
-    protected void drawImpl(Graphics2D g) {
+    public void draw(Graphics2D g) {
         // Nothing, it's a region.
     }
 

@@ -281,7 +281,7 @@ public class TimeClock extends Component implements Runnable {
     }
 
 	@Override
-	protected void drawImpl(Graphics2D g) {
+	public void draw(Graphics2D g) {
 		g.setColor(brightDarkGrey);
 		g.fillRoundRect(getX() - 2,
 				getY() - 2,

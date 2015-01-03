@@ -96,7 +96,7 @@ public class TextBox extends Component {
 	}
 
 	@Override
-	protected void drawImpl(Graphics2D g) {
+	public void draw(Graphics2D g) {
 		
 		getBorder().draw(g);
 		
