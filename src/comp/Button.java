@@ -66,7 +66,7 @@ public class Button extends Component {
 	 * Berechnet die Bounds des Buttons neu.
 	 */
 	void recalculateDimension() {
-		Dimension d = null;
+		Dimension d;
 		// leerer Text bei text == null
 		if(text != null) {
 			d = Component.getTextBounds(text, STD_FONT);

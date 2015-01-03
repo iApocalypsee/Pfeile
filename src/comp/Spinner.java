@@ -125,7 +125,7 @@ public class Spinner extends Component {
     @Override
     public void setVisible (boolean vvvvvv) {
         super.setVisible(vvvvvv);
-        if (vvvvvv == true)
+        if (vvvvvv)
             valueBox.acceptInput();
         else
             valueBox.declineInput();

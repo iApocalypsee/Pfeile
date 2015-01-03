@@ -135,7 +135,7 @@ public class GameOverScreen extends Screen {
         // staturation: sieht wie eine MMMMMMM formige sinusfunktion aus, bei 1 gibt es kr‰ftige farben, bei 0 weiﬂ(grau-schwarz)
         // brighness: immer ganz hell (bei 1), d.h. kein scharz oder dunkle farben
         // colorTemp is used for ALL_COLOURS_CHANGING
-        Color colorTemp = new Color(Color.HSBtoRGB((float) (counter / (Math.PI * 92)), (float) ((sin * sin + sin2 * sin2) / 1.6), 1f));
+        //Color colorTemp = new Color(Color.HSBtoRGB((float) (counter / (Math.PI * 92)), (float) ((sin * sin + sin2 * sin2) / 1.6), 1f));
 
         // erst nach 3.1s f‰ngt YouLose an, aber ~2.5 so schnell wie gameOver
         if (lastColorOfYouLose.getAlpha() < 255 && timer > 4000 && counter % 3 == 0)

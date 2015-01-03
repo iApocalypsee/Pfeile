@@ -17,6 +17,7 @@ import gui.Screen
   */
 class ImageComponent(x: Int, y: Int, image: BufferedImage, screen: Screen) extends Component(x, y, image.getWidth, image.getHeight, screen) {
 
+  /** in Radians */
   private var _rotation = 0.0
   private var _rotTransform = new AffineTransform()
 
@@ -42,7 +43,6 @@ class ImageComponent(x: Int, y: Int, image: BufferedImage, screen: Screen) exten
    * @param angle The angle to rotate the component by, in radians.
    */
   def rotateRadians(angle: Double): Unit = {
-    // getPosX() + (int) (0.5 * getImage().getWidth()), getPosY() + (int) (0.5 * getImage().getHeight())
     val rotTransform = AffineTransform.getRotateInstance(angle, getSimplifiedBounds.getCenterX, getSimplifiedBounds.getCenterY)
     applyTransformation(rotTransform)
     _rotation = angle
@@ -52,10 +52,10 @@ class ImageComponent(x: Int, y: Int, image: BufferedImage, screen: Screen) exten
   /** the rotation of this ImageComponent in Radians. To set this value use <code>rotateRadians</code> or <code>rotateDegree</code>.*/
   def getRotation: Double = { _rotation }
 
-  override protected def draw(g: Graphics2D): Unit = {
+  override def draw(g: Graphics2D): Unit = {
     val oldTransformation = g.getTransform
     g.setTransform(_rotTransform)
-    g.drawImage(image, x, y, null)
+    g.drawImage(image, getX, getY, null)
     g.setTransform(oldTransformation)
   }
 }

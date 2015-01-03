@@ -28,7 +28,7 @@ public class AttackingCalculator {
         if (filteredProgresses.size() <= 0)
             return;
 
-        List<AbstractArrow> attackingArrows = new LinkedList<AbstractArrow>();
+        List<AbstractArrow> attackingArrows = new LinkedList<>();
 
         for (AttackProgress filteredProgress : filteredProgresses) {
             attackingArrows.add((AbstractArrow) filteredProgress.event().weapon());
