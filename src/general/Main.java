@@ -73,8 +73,7 @@ public class Main {
      * Der Konstruktor. Hier stehen keine Hauptaufrufe. Die Hauptaufrufe werden
      * in <code>foo()</code> get�tigt.
      */
-    private Main() {
-    }
+    private Main() {}
 
     // ###########################################################
     // HIER STEHEN DIE HAUPTAUFRUFE ##############################
@@ -85,14 +84,13 @@ public class Main {
      * Main-Method �ffnet eine neue Instanz von Main: main
      */
     public static void main(String[] arguments) {
-	    PreInitStage.execute();
-
         // Let's begin playing the title song (so the user knows, that something is done while loading the game)
-        //SoundPool.play_titleMelodie();
+        SoundPool.play_titleMelodie();
 
         user = new User("Just a user");
 
         main = new Main();
+        PreInitStage.execute();
         main.printSystemProperties();
 
         GraphicsEnvironment environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -109,7 +107,6 @@ public class Main {
         // window showing process
         gameWindow.setVisible(true);
         gameWindow.createBufferStrategy();
-
 
 	    ArrowSelectionScreenPreSet.getInstance().onScreenLeft.register(new AbstractFunction1<Screen.ScreenChangedEvent, BoxedUnit>() {
 		    @Override
@@ -138,8 +135,8 @@ public class Main {
 	    });
 
         // play the sound
-        //SoundPool.stop_titleMelodie();
-        //SoundPool.playLoop_mainThemeMelodie(SoundPool.LOOP_COUNTINOUSLY);
+        SoundPool.stop_titleMelodie();
+        SoundPool.playLoop_mainThemeMelodie(SoundPool.LOOP_COUNTINOUSLY);
 
         // starten wir das Spiel
         main.runGame();

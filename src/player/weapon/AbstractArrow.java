@@ -205,9 +205,7 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 	protected void setSpeed(double speed) { this.speed = speed; }
 
     /** this returns the Component of an Arrow. */
-    public ImageComponent getComponent () {
-        return component;
-    }
+    public ImageComponent getComponent () { return component; }
 
     @Override
     public double damageAt (int posX, int posY) {

@@ -8,7 +8,7 @@ import java.io.File;
 public class PreInitStage {
 
 	public static void execute() {
-		makeSavegaveDirectory();
+		makeSavegameDirectory();
 	}
 
 	/**
@@ -19,7 +19,7 @@ public class PreInitStage {
 	 * @throws java.lang.RuntimeException if the savegame directory does not exist
 	 * and it cannot be created for some reason.
 	 */
-	private static void makeSavegaveDirectory() {
+	private static void makeSavegameDirectory () {
 		File f = FolderStructure.SAVEGAMES;
 		if(!f.exists()) {
 			boolean isDirectoryMade = f.mkdir();
@@ -32,6 +32,7 @@ public class PreInitStage {
 		} else {
 			System.out.println("Savegame directory located at " + f.getAbsolutePath());
 		}
+		System.out.println();
 	}
 
 }
