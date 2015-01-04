@@ -27,16 +27,16 @@ public class Main {
     // NUR INTIALISIERUNG - WIE WERTE UND VARIABLEN ###############
 
     /** the width of the displayed window
-     * @return 1366
+     * @return getMaximumWindowBounds().width
      * @see general.Main#getWindowHeight()
      * @see general.Main#getWindowDimensions() */
-    public static int getWindowWidth() { return 1366; }
+    public static int getWindowWidth() { return GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width; }
     
     /** the height of the displayed window
-     * @return 768
+     * @return getMaximumWindowBounds().height
      * @see Main#getWindowHeight()
      * @see Main#getWindowDimensions() */
-    public static int getWindowHeight() { return 768; }
+    public static int getWindowHeight() { return GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().height; }
 
     private static GameWindow gameWindow;
     private static GraphicsDevice graphicsDevice;
@@ -240,7 +240,7 @@ public class Main {
      * Abmessungen des Fensters: <code> new Rectangle (0, 0, Main.getWindowWidth(), Main.getWindowHeight()); </code>
      */
     public static Rectangle getWindowDimensions() {
-        return new Rectangle(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
+        return GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
     }
 
     /**
