@@ -7,6 +7,7 @@ import gui.ArrowSelectionScreenPreSet;
 import gui.LoadingWorldScreen;
 import gui.PreWindowScreen;
 import gui.Screen;
+import newent.Player;
 import player.weapon.ArrowHelper;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
@@ -87,7 +88,7 @@ public class Main {
 	    PreInitStage.execute();
 
         // Let's begin playing the title song (so the user knows, that something is done while loading the game)
-        SoundPool.play_titleMelodie();
+        //SoundPool.play_titleMelodie();
 
         user = new User("Just a user");
 
@@ -103,11 +104,12 @@ public class Main {
         gameWindow.initializeScreens();
 
         GameWindow.adjustWindow(gameWindow);
-        toggleFullscreen(true);
+        //toggleFullscreen(true);
 
         // window showing process
-        gameWindow.createBufferStrategy();
         gameWindow.setVisible(true);
+        gameWindow.createBufferStrategy();
+
 
 	    ArrowSelectionScreenPreSet.getInstance().onScreenLeft.register(new AbstractFunction1<Screen.ScreenChangedEvent, BoxedUnit>() {
 		    @Override
@@ -120,17 +122,24 @@ public class Main {
 	    LoadingWorldScreen.getInstance().onScreenLeft.register(new AbstractFunction1<Screen.ScreenChangedEvent, BoxedUnit>() {
 		    @Override
 		    public BoxedUnit apply(Screen.ScreenChangedEvent v1) {
+                final TimeClock timeClock = getContext().getTimeClock();
 			    main.doArrowSelectionAddingArrows();
                 getContext().onStartRunningTimeClock().call();
                 // the players have been added to entityList, so this call is valid now
                 PreWindowScreen.correctArrowNumber();
-			    return BoxedUnit.UNIT;
+
+                // Notify the first player of the player list that it's his turn now.
+                // The delegate has to be called somehow...
+                final TurnSystem turnSystem = getContext().getTurnSystem();
+                turnSystem.onTurnGet().call(turnSystem.getCurrentPlayer());
+
+                return BoxedUnit.UNIT;
 		    }
 	    });
 
         // play the sound
-        SoundPool.stop_titleMelodie();
-        SoundPool.playLoop_mainThemeMelodie(SoundPool.LOOP_COUNTINOUSLY);
+        //SoundPool.stop_titleMelodie();
+        //SoundPool.playLoop_mainThemeMelodie(SoundPool.LOOP_COUNTINOUSLY);
 
         // starten wir das Spiel
         main.runGame();

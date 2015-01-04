@@ -63,7 +63,7 @@ public class TimeClock extends Component implements Runnable {
 
         onTimeOver.register(new AbstractFunction0<BoxedUnit>() {
             @Override
-            public BoxedUnit apply () {
+            public BoxedUnit apply() {
                 if (sm.getActiveScreenIndex() == gui.GameScreen.SCREEN_INDEX) {
                     Main.getContext().getTurnSystem().increment();
                 } else if (sm.getActiveScreenIndex() == gui.ArrowSelectionScreen.SCREEN_INDEX) {
@@ -73,12 +73,23 @@ public class TimeClock extends Component implements Runnable {
                     sm.setActiveScreen(gui.GameScreen.SCREEN_INDEX);
                     Main.getContext().getTurnSystem().increment();
                 } else
-                    throw new java.lang.RuntimeException ("Time is out. The active Screen is neither GameScreen nor Aim- or ArrowSelectionScreen. Register it! " +
+                    throw new java.lang.RuntimeException("Time is out. The active Screen is neither GameScreen nor Aim- or ArrowSelectionScreen. Register it! " +
                             "ActiveScreen: " + sm.getActiveScreen().getName());
 
                 return BoxedUnit.UNIT;
             }
         });
+
+        final PfeileContext context = Main.getContext();
+        context.getTurnSystem().onTurnGet().register(JavaInterop.asScalaFunction(p -> {
+            reset();
+            start();
+            return BoxedUnit.UNIT;
+        }));
+        context.getTurnSystem().onTurnEnded().register(JavaInterop.asScalaFunction(p -> {
+            stop();
+            return BoxedUnit.UNIT;
+        }));
     }
 	
 	/** �bernimmt timeSinceLastFrame + Aufruf durch 'Main'
@@ -90,12 +101,16 @@ public class TimeClock extends Component implements Runnable {
         LogFacility.log("sumTime: " + sumTime + " turnTime " + turnTime().toMillis() + " turnTime - sumTime " + (turnTime().toMillis() - sumTime));
         LogFacility.log("isRunning() " + isRunning());
         */
-		long lastTime = System.currentTimeMillis();
+
+        long lastTime = System.currentTimeMillis();
+
 		while (!Thread.currentThread().isInterrupted()) {
+
+            /** the time at which the beginning of this calculation begins (with <code>System.currentTimeMillis()</code>) */
+            long timeCurrent = System.currentTimeMillis();
+
 			if (isRunning()) {
-				/** the time at which the beginning of this calculation begins (with <code>System.currentTimeMillis()</code>) */
-                long timeCurrent = System.currentTimeMillis();
-				sumTime = sumTime + (timeCurrent - lastTime);
+                sumTime = sumTime + (timeCurrent - lastTime);
 				if (turnTime().toMillis() - sumTime <= 0) {
 					isRunning = false;
                     timePrintString = timeFormatter(0);
@@ -111,8 +126,6 @@ public class TimeClock extends Component implements Runnable {
                     else if (turnTime().toMillis() - sumTime <= 10000)
                         colorTime = colorLowLife;
 
-					lastTime = timeCurrent;
-
                     try {
                         // only 1 millisecond if timeFormatter(long) is used
                         // even 1000 (or 999) if timeFormatterShort(long) is used
@@ -124,6 +137,7 @@ public class TimeClock extends Component implements Runnable {
 					Thread.sleep(35);
 				} catch (InterruptedException e) {e.printStackTrace();}
 			}
+            lastTime = timeCurrent;
 		}
 	}
 

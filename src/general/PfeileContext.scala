@@ -16,12 +16,20 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
   private var _activePlayer: Player = null
   private var _world: WorldLike = null
-  private var _timeObj: TimeClock = null
   private var _stopwatchThread: Thread = null
 
-  // Extract the call to other locations, does not fit inside here.
-  // TimeClock is a GUI component, there is nothing to do here for TimeClock.
-  initTimeClock()
+  private lazy val _lazyTimeObj: TimeClock = {
+    val ret = new TimeClock
+    _stopwatchThread = new Thread(ret)
+    _stopwatchThread.setDaemon(true)
+    _stopwatchThread.setPriority(Thread.MIN_PRIORITY + 2)
+
+    onStartRunningTimeClock += { () =>
+      _stopwatchThread.start()
+      LogFacility.log("Stopwatch thread has been started.", "Debug")
+    }
+    ret
+  }
 
   /**
     * Called when the world attribute has been changed. <p>
@@ -79,16 +87,6 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   def activePlayerOption = optReturn(activePlayer _)
   def activePlayer_=(p: Player): Unit = {
     _activePlayer = p
-    // Time object resetting is done when the active player is notified about
-    // that he is assigned the turn.
-    // Only at these moments the time should reset/start.
-    _activePlayer.onTurnGet += { () =>
-      _timeObj.reset()
-      _timeObj.start()
-    }
-    _activePlayer.onMovesCompleted += { () =>
-      _timeObj.stop()
-    }
   }
 
   def getActivePlayer = _activePlayer
@@ -105,25 +103,10 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   def getWorld = world
   def setWorld(w: WorldLike) = world = w
 
-  def getTimeClock = _timeObj
+  def getTimeClock = _lazyTimeObj
 
   /** it is called, when TimeClock needs to start to run, this means at leaving LoadingWorldScreen */
-  lazy val onStartRunningTimeClock = Delegate.createZeroArityOneCall
-
-  /**
-    * Initialiert die TimeClock
-    */
-  def initTimeClock(): Unit = {
-    _timeObj = new TimeClock()
-    _stopwatchThread = new Thread(_timeObj)
-    _stopwatchThread.setDaemon(true)
-    _stopwatchThread.setPriority(Thread.MIN_PRIORITY + 2)
-
-    onStartRunningTimeClock += { () =>
-      if (!_stopwatchThread.isAlive)
-        _stopwatchThread.start()
-    }
-  }
+  val onStartRunningTimeClock = Delegate.createZeroArity
 }
 
 /**
