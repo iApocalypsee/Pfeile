@@ -3,7 +3,7 @@ package animation;
 import java.awt.image.BufferedImage;
 
 /**
- * Making out of a buffered image and a specified amount of keyframes an com.github.pfeile.animation.
+ * Making out of a buffered image and a specified amount of keyframes an animation.
  * @author Josip
  * @version 2/10/14
  */

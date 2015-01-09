@@ -74,7 +74,7 @@ public class AimSelectionScreen extends Screen {
 		setPosX_selectedField(-1);
 		setPosY_selectedField(-1);
 		
-		confirm = new Button (1178, 491, this, "Bestätigen");
+		confirm = new Button ((int) (0.86 * Main.getWindowWidth()), (int) (0.36 * Main.getWindowHeight()), this, "Bestätigen");
 
         animatedLine = new AnimatedLine(0,0,0,0,Color.RED);
         animatedLine.setWidth(3.0f);

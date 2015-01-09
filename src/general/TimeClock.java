@@ -1,5 +1,6 @@
 package general;
 
+import animation.SoundEffectTimeClock;
 import comp.Component;
 import gui.GameScreen;
 import gui.ScreenManager;
@@ -123,8 +124,12 @@ public class TimeClock extends Component implements Runnable {
                     if (turnTime().toMillis() - sumTime <= 3000)
                         colorTime = colorVeryLowLife;
                     // smaller than 10s
-                    else if (turnTime().toMillis() - sumTime <= 10000)
+                    else if (turnTime().toMillis() - sumTime <= 10000) {
                         colorTime = colorLowLife;
+                        // the time is low, the sound need to be played
+                        if (!SoundEffectTimeClock.isRunning_OutOfTime10Sec())
+                            SoundEffectTimeClock.play_OutOfTime10Sec();
+                    }
 
                     try {
                         // only 1 millisecond if timeFormatter(long) is used
@@ -142,8 +147,11 @@ public class TimeClock extends Component implements Runnable {
 	}
 
 	/** stoppt die Ausf�hrung von TimeClock */
-	public void stop () {
+	public synchronized void stop () {
 		isRunning = false;
+
+        // any sound, which is played, need to be stopped
+        SoundEffectTimeClock.stop_OutOfTime10Sec();
 	}
 	
 	/** started TimeClock */
@@ -154,7 +162,7 @@ public class TimeClock extends Component implements Runnable {
 	/** setzt TimeClock auf maximale Zeit zur�ck
 	 * HINWEIS: an Start/Stop wird nicht ge�ndert, also ggf. stop / start aufrufen */
 	public synchronized void reset() {
-        // the time must be bigger than 10s
+        // the time must be longer than 10s
         colorTime = Color.BLACK;
 		sumTime = 0;
         timePrintString = timeFormatter(turnTime().toMillis());

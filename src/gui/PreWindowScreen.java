@@ -166,8 +166,7 @@ public class PreWindowScreen extends Screen {
         boxSelectKI = new ComboBox(boxSelectHigh.getX(), selectorComboBox.getY(), this, comboBoxValuesKI);
         boxSelectKI.setSelectedIndex(2);
 
-        final String[] comboBoxValuesTime = {"5min", "2 min", "1 min", "40sec",
-                "30sec", "20sec"};
+        final String[] comboBoxValuesTime = {"10min", "5 min", "3 min", "2 min", "1 min", "40sec"};
         boxSelectTime = new ComboBox(boxSelectHigh.getX(), selectorComboBox.getY(), this, comboBoxValuesTime);
         boxSelectTime.setSelectedIndex(2);
         boxSelectTime.setVisible(false);
@@ -179,8 +178,8 @@ public class PreWindowScreen extends Screen {
         confirmDialog.addMouseListener(new MouseAdapterConfirmDialog());
         confirmDialog.setVisible(false);
 
-        spinnerModelPreSet = new SpinnerModel(10, 0, 50, 1);
-        spinnerModelFreeSet = new SpinnerModel(5, 0, 30, 1);
+        spinnerModelPreSet = new SpinnerModel(15, 0, 50, 1);
+        spinnerModelFreeSet = new SpinnerModel(4, 0, 20, 1);
         spinnerModelTurnsPerRound = new SpinnerModel(7, 1, 40, 1);
         spinner = new Spinner(boxSelectHigh.getX(), selectorComboBox.getY(), this, spinnerModelPreSet);
         spinner.setVisible(false);
@@ -379,7 +378,7 @@ public class PreWindowScreen extends Screen {
         BotStrength.Strength = BotStrength.NORMAL;
         labels[0].setText("Computerstärke: " + "normal");
 
-        PfeileContext.ARROW_NUMBER_FREE_SET().set(5);
+        PfeileContext.ARROW_NUMBER_FREE_SET().set(4);
         labels[1].setText("Pfeilanzahl [frei wählbar]: " + PfeileContext.ARROW_NUMBER_FREE_SET().get());
 
         PfeileContext.ARROW_NUMBER_PRE_SET().set(15);
@@ -397,8 +396,8 @@ public class PreWindowScreen extends Screen {
         PfeileContext.TURNS_PER_ROUND().set(7);
         labels[6].setText("Züge pro Runde: " + PfeileContext.TURNS_PER_ROUND().get());
 
-        TimeClock.setTurnTime(new FiniteDuration(1, TimeUnit.MINUTES));
-        labels[7].setText("Zeit pro Zug: " + "1 min");
+        TimeClock.setTurnTime(new FiniteDuration(2, TimeUnit.MINUTES));
+        labels[7].setText("Zeit pro Zug: " + "2 min");
 
         PfeileContext.HANDICAP_PLAYER().set((byte) 0);
         labels[8].setText("Handicap [Spieler]: " + "0%");
@@ -442,7 +441,7 @@ public class PreWindowScreen extends Screen {
             case 2 : {
                 // Pfeilanzahl [vorher wählbar]
                 PfeileContext.ARROW_NUMBER_PRE_SET().set(spinnerModelPreSet.getValue());
-                labels[2].setText("Pfeilanzahl [vorher wählbar]: " + PfeileContext.ARROW_NUMBER_FREE_SET().get());
+                labels[2].setText("Pfeilanzahl [vorher wählbar]: " + PfeileContext.ARROW_NUMBER_PRE_SET().get());
                 return;
             }
             case 3 : {
@@ -494,16 +493,16 @@ public class PreWindowScreen extends Screen {
                 return;
             }
             case 7 : {
-                // Zeit pro Zug
+                // Zeit pro Zug: "10min", "5 min", "3 min", "2 min", "1 min", "40sec"
                 if (e != null)
                     boxSelectTime.triggerListeners(e);
                 switch (boxSelectTime.getSelectedIndex()) {
-                    case 0: TimeClock.setTurnTime(new FiniteDuration(5, TimeUnit.MINUTES)); break;
-                    case 1: TimeClock.setTurnTime(new FiniteDuration(2, TimeUnit.MINUTES)); break;
-                    case 3: TimeClock.setTurnTime(new FiniteDuration(40, TimeUnit.SECONDS)); break;
-                    case 4: TimeClock.setTurnTime(new FiniteDuration(30, TimeUnit.SECONDS)); break;
-                    case 5: TimeClock.setTurnTime(new FiniteDuration(20, TimeUnit.SECONDS)); break;
-                    default: TimeClock.setTurnTime(new FiniteDuration(1, TimeUnit.MINUTES)); // 1 min
+                    case 0: TimeClock.setTurnTime(new FiniteDuration(10, TimeUnit.MINUTES)); break;
+                    case 1: TimeClock.setTurnTime(new FiniteDuration(5, TimeUnit.MINUTES)); break;
+                    case 2: TimeClock.setTurnTime(new FiniteDuration(3, TimeUnit.MINUTES)); break;
+                    case 4: TimeClock.setTurnTime(new FiniteDuration(1, TimeUnit.MINUTES)); break;
+                    case 5: TimeClock.setTurnTime(new FiniteDuration(40, TimeUnit.SECONDS)); break;
+                    default: TimeClock.setTurnTime(new FiniteDuration(2, TimeUnit.MINUTES));
                 }
                 labels[7].setText("Zeit pro Zug: " + boxSelectTime.getSelectedValue());
                 return;
@@ -550,10 +549,10 @@ public class PreWindowScreen extends Screen {
                 if (e != null)
                     boxSelectSize.triggerListeners(e);
                 switch (boxSelectSize.getSelectedIndex()) {
-                    case 0: PfeileContext.WORLD_SIZE_X().set(55); PfeileContext.WORLD_SIZE_Y().set(48);
-                    case 1: PfeileContext.WORLD_SIZE_X().set(35); PfeileContext.WORLD_SIZE_Y().set(30);
-                    case 3: PfeileContext.WORLD_SIZE_X().set(22); PfeileContext.WORLD_SIZE_Y().set(18);
-                    case 4: PfeileContext.WORLD_SIZE_X().set(15); PfeileContext.WORLD_SIZE_Y().set(12);
+                    case 0: PfeileContext.WORLD_SIZE_X().set(55); PfeileContext.WORLD_SIZE_Y().set(48); break;
+                    case 1: PfeileContext.WORLD_SIZE_X().set(35); PfeileContext.WORLD_SIZE_Y().set(30); break;
+                    case 3: PfeileContext.WORLD_SIZE_X().set(22); PfeileContext.WORLD_SIZE_Y().set(18); break;
+                    case 4: PfeileContext.WORLD_SIZE_X().set(15); PfeileContext.WORLD_SIZE_Y().set(12); break;
                     default: PfeileContext.WORLD_SIZE_X().set(28); PfeileContext.WORLD_SIZE_Y().set(25);
                 }
                 labels[10].setText("Weltgröße: " + boxSelectSize.getSelectedValue());

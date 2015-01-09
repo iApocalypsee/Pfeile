@@ -74,52 +74,64 @@ public class SoundPool {
 
     // TITLE MELODIE
     /** This plays the background title melodie of pfeile in an loop <code>count</code> times.
-     * It will always start at the beginning after calling <code> playLoop() </code>.
+     * It will always start at the position after calling <code> playLoop() </code>.
      * To stop it again use <code> stop_titleMelodie </code>
      * The song should play until entering GameScreen / NewWorldTestScreen.
      * So use: <code>SoundPool.playLoop_titleMelodie(SoundPool.LOOP_COUNTINOUSLY);</code>
      * */
-    public static void playLoop_titleMelodie (int count) { titleMelodie.loop(count); }
+    public static void playLoop_titleMelodie (int count) {
+        stop_allMelodies();
+        titleMelodie.loop(count);
+        play_titleMelodie();
+    }
 
     /** This plays the background title melodie of Pfeile once.
      * To stop it again use <code>stop_titleMelodie</code>
+     * The Melodie will always start at the beginning and any other melodie defined by this class will stop.
      */
-    public static void play_titleMelodie () { titleMelodie.start(); }
+    public static void play_titleMelodie () {
+        stop_allMelodies();
+        titleMelodie.setFramePosition(0);
+        titleMelodie.start();
+    }
 
     /** Stops the playing of the endless loop started with <code> playLoop </code>.
      * To Start again use <code>titleMelodie_PlayLoop()</code> or <code>titleMelodie_Play</code>.
      * @see #play_titleMelodie()
      * @see #playLoop_titleMelodie(int)
      */
-    public static void stop_titleMelodie () {
-        titleMelodie.stop();
-    }
+    public static void stop_titleMelodie () { titleMelodie.stop(); }
 
     /** is the titleMelodie Playing? */
-    public static boolean isPlaying_titleMelodie () {
-        return titleMelodie.isRunning();
-    }
+    public static boolean isPlaying_titleMelodie () { return titleMelodie.isRunning(); }
 
 
     // MAIN THEME MELODIE
     /** This plays the main theme melodie of pfeile in an loop with <code>count</code> times.
-     * It will always start at the beginning after calling <code> playLoop() </code>.
+     * It will always start at the point, the melodie is right now, after calling <code> playLoop() </code>.
      * To stop it again use <code> stop </code>
      * It can be played in en endless Loop by using instead of any integer for count <code>SoundPool.LOOP_COUNTINOUSLY</code>
      * */
-    public static void playLoop_mainThemeMelodie (int count) { mainThemeMelodie.loop(count); }
+    public static void playLoop_mainThemeMelodie (int count) {
+        stop_allMelodies();
+        mainThemeMelodie.loop(count);
+        play_mainThemeMelodie();
+    }
 
     /** This plays the background title melodie of Pfeile once.
-     * To stop it again use <code>stop_titleMelodie</code>
+     * To stop it again use <code>stop_titleMelodie</code>.
+     * It will always start at the beginning and every melodie (defined by this class) will stop immediately.
      */
-    public static void play_mainThemeMelodie () { mainThemeMelodie.start(); }
+    public static void play_mainThemeMelodie () {
+        stop_allMelodies();
+        mainThemeMelodie.setFramePosition(0);
+        mainThemeMelodie.start();
+    }
 
     /** Stops the playing of loop started with <code> playLoop </code> or <code>play</code>.
      * To Start again use the play or playLoop method of Soundpool.[play]_mainThemeMelodie.
      */
-    public static void stop_mainThemeMelodie () {
-        mainThemeMelodie.stop();
-    }
+    public static void stop_mainThemeMelodie () { mainThemeMelodie.stop(); }
 
     /** Is the mainTheme music clip still playing? */
     public static boolean isPlaying_mainThemeMelodie () { return mainThemeMelodie.isRunning(); }
@@ -127,16 +139,25 @@ public class SoundPool {
 
     // TENSION THEME MELODIE
     /** This plays the main theme melodie of pfeile in an loop with <code>count</code> times.
-     * It will always start at the beginning after calling <code> playLoop() </code>.
+     * It will always start at the point where it ended at the point of the call, after calling <code> playLoop() </code>.
      * To stop it again use <code> stop_tensionThemeMelodie </code>
      * For an endless loop use : <code>SoundPool.playLoop_tensionThemeMelodie(SoundPool.LOOP_COUNTINOUSLY);</code>
      * */
-    public static void playLoop_tensionThemeMelodie (int count) { tensionThemeMelodie.loop(count); }
+    public static void playLoop_tensionThemeMelodie (int count) {
+        stop_allMelodies();
+        tensionThemeMelodie.loop(count);
+        play_tensionThemeMelodie();
+    }
 
     /** This plays the tensionTheme of Pfeile once.
      * To stop it again use the stop method of tensionTheme
+     * It always starts at the beginning, every other melodie will be stopped by this method.
      */
-    public static void play_tensionThemeMelodie () { tensionThemeMelodie.start(); }
+    public static void play_tensionThemeMelodie () {
+        stop_allMelodies();
+        tensionThemeMelodie.setFramePosition(0);
+        tensionThemeMelodie.start();
+    }
 
     /** Stops the playing of loop started with <code> playLoop </code> or <code>play</code>.
      * To Start again use the play or playLoop methods of tensionThemeMelodie.

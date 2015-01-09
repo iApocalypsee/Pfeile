@@ -7,7 +7,6 @@ import gui.ArrowSelectionScreenPreSet;
 import gui.LoadingWorldScreen;
 import gui.PreWindowScreen;
 import gui.Screen;
-import newent.Player;
 import player.weapon.ArrowHelper;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
@@ -31,13 +30,13 @@ public class Main {
      * @return getMaximumWindowBounds().width
      * @see general.Main#getWindowHeight()
      * @see general.Main#getWindowDimensions() */
-    public static int getWindowWidth() { return GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width; }
+    public static int getWindowWidth() { return getWindowDimensions().width; }
     
     /** the height of the displayed window
      * @return getMaximumWindowBounds().height
      * @see Main#getWindowHeight()
      * @see Main#getWindowDimensions() */
-    public static int getWindowHeight() { return GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().height; }
+    public static int getWindowHeight() { return getWindowDimensions().height; }
 
     private static GameWindow gameWindow;
     private static GraphicsDevice graphicsDevice;
