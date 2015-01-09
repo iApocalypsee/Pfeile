@@ -114,6 +114,12 @@ public class ArrowSelectionScreen extends Screen {
             buttonListArrows.add(lightArrowButton);
             buttonListArrows.add(shadowArrowButton);
 
+			// resizing for higher resolutions, if necessary
+			for (Button button : buttonListArrows) {
+				button.setWidth(button.getWidth() * Main.getWindowWidth() / 1366);
+				button.setX(button.getX() * Main.getWindowWidth() / 1366);
+			}
+
             fireArrowButton.iconify(ArrowHelper.getArrowImage(FireArrow.INDEX));
             waterArrowButton.iconify(ArrowHelper.getArrowImage(WaterArrow.INDEX));
             stoneArrowButton.iconify(ArrowHelper.getArrowImage(StoneArrow.INDEX));

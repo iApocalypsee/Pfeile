@@ -97,7 +97,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
             fontMiddle = new Font("ShadowedGermanica", Font.PLAIN, 45);
 
         // fontBigPosition.x = PreWindowScreen.fontBigPosition.x --> if you change the value there you have to change it here, too.
-        fontBigPosition = new Point(790, comp.Component.getTextBounds("Pfeile", fontBig).height + 5);
+        fontBigPosition = new Point(790, comp.Component.getTextBounds("Pfeile", fontBig).height + 15);
         fontMiddlePosition = new Point(fontBigPosition.x + 43, fontBigPosition.y + comp.Component.getTextBounds("ein Strategiespiel", fontMiddle).height);
 
         /** Y-Position des ersten Buttons (Bildschirm) */
@@ -114,6 +114,11 @@ public class ArrowSelectionScreenPreSet extends Screen {
         buttonListArrows [6] = new Button(posXButton + (buttonListArrows [0].getWidth() + 43) * 6 , posYButtons, this, "Lichtpfeil");
         buttonListArrows [7] = new Button(posXButton + (buttonListArrows [0].getWidth() + 43) * 7, posYButtons, this, "Schattenpfeil");
 
+        // resizing for higher resolutions, if necessary
+        for (Button button : buttonListArrows) {
+            button.setWidth(button.getWidth() * Main.getWindowWidth() / 1366);
+            button.setX(button.getX() * Main.getWindowWidth() / 1366);
+        }
 
         buttonListArrows [0].iconify(ArrowHelper.getArrowImage(FireArrow.INDEX));
         buttonListArrows [1].iconify(ArrowHelper.getArrowImage(WaterArrow.INDEX));

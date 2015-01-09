@@ -2,22 +2,20 @@ package comp;
 
 import general.Delegate;
 import general.JavaInterop;
+import general.Main;
 import geom.Vector2;
 import gui.Screen;
 import scala.Function1;
 import scala.Unit;
 import scala.runtime.BoxedUnit;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
-import java.io.FileFilter;
 import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -122,10 +120,22 @@ public abstract class Component implements IComponent {
 	 */
 	private boolean mouseFocused = false;
 
-	/**
-	 * Die Standardschriftart.
+	/** In order to increase the size of all Text-Elements for higher resolutions, this method returns the size of
+	 * <code>STD_FONT</code> in size 13, if the window is smaller or equal to FullHD (1080) or in size 14, if the
+	 * window is bigger than fullHD. This method is used to bypass the assignment of the final <code>STD_FONT</code>
+	 * variable.
+	 *
+	 * @return STD_FONT
 	 */
-	public static final Font STD_FONT = new Font("Consolas", Font.PLAIN, 13);
+	private static Font getSTD_FONT() {
+		if (Main.getWindowHeight() > 1080)
+			return new Font("Consolas", Font.PLAIN, 14);
+		else
+			return new Font("Consolas", Font.PLAIN, 13);
+	}
+
+	/** The standard font, which is used if no special font has been set. Use it in Buttons, Lists,... */
+	public static final Font STD_FONT = getSTD_FONT();
 
 	public static final Insets STD_INSETS = new Insets(5, 5, 5, 5);
 
@@ -133,7 +143,6 @@ public abstract class Component implements IComponent {
 	 * Erstellt eine Component, deren Daten nicht bekannt sind.
 	 */
 	public Component() {
-
 		mouseListeners = new LinkedList<>();
 		mouseMotionListeners = new LinkedList<>();
 

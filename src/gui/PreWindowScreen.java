@@ -200,7 +200,8 @@ public class PreWindowScreen extends Screen {
         if (comp.Component.isFontInstalled(fontSmall) == false)
             fontSmall = new Font("Berylium", Font.ITALIC, 15);
 
-        fontBigPosition = new Point(confirmButton.getX() + 240, Component.getTextBounds("Pfeile", fontBig).height + 5);
+        // the position of all points should be the same like in ArrowSelectionScreenPreSet
+        fontBigPosition = new Point(confirmButton.getX() + 240, Component.getTextBounds("Pfeile", fontBig).height + 15);
         fontMiddlePosition = new Point(fontBigPosition.x + 43, fontBigPosition.y + Component.getTextBounds("ein Strategiespiel", fontMiddle).height);
         fontSmallPosition = new Point(fontMiddlePosition.x,
                    fontMiddlePosition.y + Component.getTextBounds("von Josip Palavra und Daniel Schmaus", fontSmall).height + 5);
