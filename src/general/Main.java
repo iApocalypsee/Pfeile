@@ -116,10 +116,10 @@ public class Main {
 	    });
 
 	    LoadingWorldScreen.getInstance().onScreenLeft.register(new AbstractFunction1<Screen.ScreenChangedEvent, BoxedUnit>() {
-		    @Override
-		    public BoxedUnit apply(Screen.ScreenChangedEvent v1) {
+            @Override
+            public BoxedUnit apply (Screen.ScreenChangedEvent v1) {
                 final TimeClock timeClock = getContext().getTimeClock();
-			    main.doArrowSelectionAddingArrows();
+                main.doArrowSelectionAddingArrows();
                 getContext().onStartRunningTimeClock().call();
                 // the players have been added to entityList, so this call is valid now
                 PreWindowScreen.correctArrowNumber();
@@ -129,13 +129,14 @@ public class Main {
                 final TurnSystem turnSystem = getContext().getTurnSystem();
                 turnSystem.onTurnGet().call(turnSystem.getCurrentPlayer());
 
-                return BoxedUnit.UNIT;
-		    }
-	    });
 
-        // play the sound
-        SoundPool.stop_titleMelodie();
-        SoundPool.playLoop_mainThemeMelodie(SoundPool.LOOP_COUNTINOUSLY);
+                // play the game sound, when the game begins
+                SoundPool.stop_titleMelodie();
+                SoundPool.playLoop_mainThemeMelodie(SoundPool.LOOP_COUNTINOUSLY);
+
+                return BoxedUnit.UNIT;
+            }
+        });
 
         // starten wir das Spiel
         main.runGame();

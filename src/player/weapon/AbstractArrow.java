@@ -93,18 +93,22 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 			public void mouseReleased (MouseEvent e) {
 				// Variables.
 				FrameContainerObject containerObject = GameScreen.getInstance().getFrameContainer();
-				InternalFrame dataFrame = new InternalFrame(50, 50, 125, 125, GameScreen.getInstance());
+				InternalFrame dataFrame = new InternalFrame(50, 50, 135, 125, GameScreen.getInstance());
 				String arrowType = "Arrow type: " + getName();
 				String damage = "Damage: " + getAttackValue();
+				String defense = "Defense: " + getDefenseValue();
 				String speed = "Speed: " + getSpeed();
+
 
 				Label arrowTypeLabel = new Label(10, 15, GameScreen.getInstance(), arrowType);
 				Label damageLabel = new Label(10, 27, GameScreen.getInstance(), damage);
-				Label speedLabel = new Label(10, 39, GameScreen.getInstance(), speed);
+				Label defenseLabel = new Label(10, 39, GameScreen.getInstance(), defense);
+				Label speedLabel = new Label(10, 51, GameScreen.getInstance(), speed);
 
 				// Add the label to show the actual data to the screen.
 				dataFrame.add(arrowTypeLabel);
 				dataFrame.add(damageLabel);
+				dataFrame.add(defenseLabel);
 				dataFrame.add(speedLabel);
 				// When the frame closes, it should be removed from the container object as well.
 				dataFrame.onClosed().register(new AbstractFunction0<Object>() {

@@ -150,8 +150,9 @@ public class TimeClock extends Component implements Runnable {
 	public synchronized void stop () {
 		isRunning = false;
 
-        // any sound, which is played, need to be stopped
-        SoundEffectTimeClock.stop_OutOfTime10Sec();
+        // the sound need to be stopped, if the explosion (= end of players turn) isn't playing, because otherwise it stops too interrupt.
+        if (!SoundEffectTimeClock.isExplosionPlaying())
+            SoundEffectTimeClock.stop_OutOfTime10Sec();
 	}
 	
 	/** started TimeClock */
