@@ -84,13 +84,21 @@ public class Main {
      */
     public static void main(String[] arguments) {
         // Let's begin playing the title song (so the user knows, that something is done while loading the game)
-        SoundPool.play_titleMelodie();
+        // FREEZES THE "GraphicsEnvironment.getLocalGraphicsEnvironment()" CALL!
+        // SoundPool.play_titleMelodie();
 
         user = new User("Just a user");
 
         main = new Main();
+
+        LogFacility.log("Attempting to execute [[PreInitStage]]...", "Debug", "initprocess");
+
         PreInitStage.execute();
+
+        LogFacility.log("[[PreInitStage]] done!", "Debug", "initprocess");
+
         main.printSystemProperties();
+
 
         GraphicsEnvironment environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
         graphicsDevice = environmentG.getDefaultScreenDevice();
