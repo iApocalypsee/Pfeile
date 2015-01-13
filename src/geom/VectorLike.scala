@@ -4,21 +4,18 @@ package geom
  *
  * @author Josip Palavra
  */
-trait VectorLike {
+trait VectorLike[NumberType <: AnyVal] {
   
-  type VecType <: VectorLike
+  type VecType <: VectorLike[_]
 
   /** The squared length of the vector.
     *
     * Use this to avoid additional square rooting. Square rooting takes additional time to calculate.
     */
-  def lengthSq: Float
+  def lengthSq: NumberType
 
   /** The square root of <code>lengthSq</code> */
-  def length: Float
-
-  /** Normalizes the vector. */
-  def normalize(): Unit
+  def length: NumberType
 
   /** Returns a copy of this vector with normalized coordinates.
     *
@@ -27,29 +24,33 @@ trait VectorLike {
     */
   def normalized: VecType
 
-  def dot(vec: VecType): Float
-
   def +(vec: VecType): VecType
 
-  def +(f: Float): VecType
+  def +(f: NumberType): VecType
 
   def -(vec: VecType): VecType
 
-  def -(f: Float): VecType
+  def -(f: NumberType): VecType
 
   def *(vec: VecType): VecType
 
-  def *(f: Float): VecType
+  def *(f: NumberType): VecType
 
   def /(vec: VecType): VecType
 
-  def /(f: Float): VecType
+  def /(f: NumberType): VecType
 
   def abs: VecType
 
   def ==(vec: VecType): Boolean
+  
+  def unifiedVector(factor: NumberType): VecType
+  
+  def vectorFrom(x: Array[NumberType]): VecType = vectorFrom(x.toList)
+  
+  def vectorFrom(x: List[NumberType]): VecType
 
-  def lerp(dest: VecType, lerpFactor: Float): VecType
-
-  def asFloatArray: Array[Float]
+  def asList: List[NumberType]
+  
+  def dimension = asList.length
 }

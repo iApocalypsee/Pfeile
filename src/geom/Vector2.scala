@@ -5,71 +5,28 @@ import java.awt.Point
 import scala.math._
 
 /**
- *
- * @author Josip Palavra
+ * A two-dimensional, floating point vector.
+ * @param x The x component.
+ * @param y The y component.
  */
-case class Vector2(var x: Float, var y: Float) extends VectorLike {
+case class Vector2(x: Float, y: Float) extends FloatVector {
 
   override type VecType = Vector2
 
-  def this(x: Double, y: Double) = this( x.asInstanceOf[Float], y.asInstanceOf[Float] )
-
   def this(p: Point) = this(p.x, p.y)
 
-  /** The squared length of the vector.
-    *
-    * Use this to avoid additional square rooting. Square rooting takes additional time to calculate.
-    */
-  override def lengthSq = (pow( x, 2 ) + pow( y, 2 )).asInstanceOf[Float]
-
-  /** The square root of <code>lengthSq</code> */
-  override def length = sqrt( lengthSq ).asInstanceOf[Float]
-
-  /** Normalizes the vector. */
-  override def normalize() = {
-    val len = length
-    x /= len
-    y /= len
-  }
-
-  /** Returns a copy of this vector with normalized coordinates.
-    *
-    * The source vector remains unchanged, a deep copy is instantiated and normalized.
-    * @return A normalized copy of this vector.
-    */
-  override def normalized = {
-    val cpy = copy( )
-    cpy.normalize( )
-    cpy
-  }
-
-  override def dot(vec: Vector2): Float = x * vec.x + y * vec.y
+  def dot(vec: Vector2): Float = x * vec.x + y * vec.y
 
   def cross(vec: Vector2): Float = x * vec.y - y * vec.x
 
-  override def +(vec: Vector2) = Vector2( x + vec.x, y + vec.y )
+  override def unifiedVector(factor: Float) = Vector2(factor, factor)
 
-  override def +(f: Float) = Vector2( x + f, y + f )
+  override def vectorFrom(x: List[Float]) = {
+    require(x.size == dimension)
+    Vector2(x(0), x(1))
+  }
 
-  override def -(vec: Vector2) = Vector2( x - vec.x, y - vec.y )
-
-  override def -(f: Float) = Vector2( x - f, y - f )
-
-  override def *(vec: Vector2) = Vector2( x * vec.x, y * vec.y )
-
-  override def *(f: Float) = Vector2( x * f, y * f )
-
-  override def /(vec: Vector2) = Vector2( x / vec.x, y / vec.y )
-
-  override def /(f: Float) = Vector2( x / f, y / f )
-
-  override def abs = Vector2( math.abs( x ), math.abs( y ) )
-
-  override def toString: String = s"Vector2( $x | $y )"
-
-  override def ==(vec: Vector2) = x == vec.x && y == vec.y
-
-  override def lerp(dest: Vector2, lerpFactor: Float): Vector2 = {
+  def lerp(dest: Vector2, lerpFactor: Float): Vector2 = {
     ((dest - this) * lerpFactor) + this
   }
 
@@ -82,16 +39,17 @@ case class Vector2(var x: Float, var y: Float) extends VectorLike {
 
   def round = new Point(math.round(x), math.round(y))
 
-  override def asFloatArray: Array[Float] = Array(x, y)
+  override def asList = List(x, y)
 
-  def div(vec: VecType) = /(vec)
+  def div(vec: Vector2) = /(vec)
   def div(f: Float) = /(f)
-  def add(vec: VecType) = this.+(vec)
+  def add(vec: Vector2) = this.+(vec)
   def add(f: Float) = this.+(f)
-  def sub(vec: VecType) = this.-(vec)
+  def sub(vec: Vector2) = this.-(vec)
   def sub(f: Float) = this.-(f)
-  def mult(vec: VecType) = *(vec)
+  def mult(vec: Vector2) = *(vec)
   def mult(f: Float) = *(f)
 
   def negated = Vector2(-x, -y)
 }
+

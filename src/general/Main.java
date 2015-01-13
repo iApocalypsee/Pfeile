@@ -3,6 +3,7 @@ package general;
 import akka.actor.ActorSystem;
 import animation.SoundPool;
 import general.io.PreInitStage;
+import geom.Vector2;
 import gui.ArrowSelectionScreenPreSet;
 import gui.LoadingWorldScreen;
 import gui.PreWindowScreen;
@@ -83,30 +84,40 @@ public class Main {
      * Main-Method �ffnet eine neue Instanz von Main: main
      */
     public static void main(String[] arguments) {
+
+        GraphicsEnvironment environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
+
         // Let's begin playing the title song (so the user knows, that something is done while loading the game)
         // FREEZES THE "GraphicsEnvironment.getLocalGraphicsEnvironment()" CALL!
-        // SoundPool.play_titleMelodie();
+        SoundPool.play_titleMelodie();
 
-        user = new User("Just a user");
+        LogFacility.log("Running Pfeile on...", "Info");
+        LogFacility.log("====================", "Info");
+
+        new SystemProperties().printSystemProperties();
+
+        LogFacility.putSeparationLine();
+
+        LogFacility.log("Beginning initialization process...", "Info", "initprocess");
 
         main = new Main();
+        user = new User("Just a user");
 
-        LogFacility.log("Attempting to execute [[PreInitStage]]...", "Debug", "initprocess");
+        LogFacility.log("Attempting to execute PreInitStage...", "Info", "initprocess");
 
         PreInitStage.execute();
 
-        LogFacility.log("[[PreInitStage]] done!", "Debug", "initprocess");
+        LogFacility.log("PreInitStage done!", "Info", "initprocess");
 
-        main.printSystemProperties();
-
-
-        GraphicsEnvironment environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
         graphicsDevice = environmentG.getDefaultScreenDevice();
         gameWindow = new GameWindow();
+        LogFacility.log("Game window instantiated.", "Info", "initprocess");
 
         new player.weapon.ArrowHelper();
+        LogFacility.log("Arrow images loaded.", "Info", "initprocess");
 
         gameWindow.initializeScreens();
+        LogFacility.log("Screens initialized.", "Info", "initprocess");
 
         GameWindow.adjustWindow(gameWindow);
         //toggleFullscreen(true);
@@ -205,19 +216,6 @@ public class Main {
                 System.err.println("Cannot add " + selectedArrow + " at Main.doArrowSelectionAddingArrows() - adding the arrowNumberPreSet");
         }
     }
-
-    // ###### GENERATE WORLD
-    // ###### SPAWN-SYSTEM
-
-    /**
-     * Prints all system properties to console.
-     */
-    private void printSystemProperties() {
-        SystemProperties sys_props_out_thread = new SystemProperties();
-        sys_props_out_thread.setPriority(Thread.MIN_PRIORITY);
-        sys_props_out_thread.start();
-    }
-
 
     /**
      * Toggles between fullscreen mode and windowed mode.

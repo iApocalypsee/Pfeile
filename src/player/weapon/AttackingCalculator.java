@@ -1,5 +1,6 @@
 package player.weapon;
 
+import comp.ImageComponent;
 import geom.functions.FunctionCollectionEasing;
 import newent.AttackProgress;
 
@@ -34,7 +35,7 @@ public class AttackingCalculator {
             attackingArrows.add((AbstractArrow) filteredProgress.event().weapon());
         }
 
-        java.util.Timer timer = new java.util.Timer(true);
+        java.util.Timer timer = new java.util.Timer("attackCalculatorScheduler", true);
         // every milliSec has to increase every millisecond
         timer.schedule(new Clock(), 0, 1);
 
@@ -86,7 +87,7 @@ public class AttackingCalculator {
             // double radius = attackProgress.event().lengthGUI() * (1 - attackProgress.progress());
 
             // radius = the length / (tileLength / speed in Tiles / Turn)
-            double radius = attackProgress.event().lengthGUI() / attackProgress.event().lengthPerTurn();
+            double distanceToCover = attackProgress.event().lengthGUI() / attackProgress.event().travelSpeed();
 
             int posXOld = attackingArrow.getPosX();
             int posYOld = attackingArrow.getPosY();
@@ -103,14 +104,20 @@ public class AttackingCalculator {
 
 
                 // The progress to stretch the normalized position to the real position
-                double progress = radius / attackProgress.event().lengthGUI();
+                double progress = distanceToCover / attackProgress.event().lengthGUI();
 
-                attackingArrow.getComponent().setX((int) (posXOld + Math.round(
-                        FunctionCollectionEasing.quadratic_easing_inOut(radius * accuracy, 0, attackingArrow.getAim().getPosXGui() - posXOld, radius)
+                final ImageComponent movedComponent = attackingArrow.getComponent();
+
+                // TODO Replace the quadratic_easing_inOut with a Beziér curve?
+                // I don't understand the usage of quadratic_easing_inOut anymore, because I cannot
+                // imagine such complicated things.
+                // Here should be the bug with the arrow not flying in the right direction.
+                movedComponent.setX((int) (posXOld + Math.round(
+                        FunctionCollectionEasing.quadratic_easing_inOut(distanceToCover * accuracy, 0, attackingArrow.getAim().getPosXGui() - posXOld, distanceToCover)
                                 * progress)));
 
-                attackingArrow.getComponent().setY((int) (posYOld + Math.round(
-                        FunctionCollectionEasing.quadratic_easing_inOut(radius * accuracy, 0, attackingArrow.getAim().getPosYGui() - posYOld, radius)
+                movedComponent.setY((int) (posYOld + Math.round(
+                        FunctionCollectionEasing.quadratic_easing_inOut(distanceToCover * accuracy, 0, attackingArrow.getAim().getPosYGui() - posYOld, distanceToCover)
                                 * progress)));
 
                  try {

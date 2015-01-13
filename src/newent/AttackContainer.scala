@@ -79,16 +79,17 @@ object AttackContainer {
   */
 class AttackProgress (val event: AttackEvent) {
 
-  /** The progress, measured in 1. */
+  /** The progress, measured in percent. */
   private var _progress = 0.0
+
+  private lazy val _progressPerTurn = event.travelSpeed / event.geographicalLength
 
   /** Updates the progress with the associated travel speed. */
   private[newent] def updateProgress(): Unit = {
-    _progress += (event.travelSpeed / event.geographicalLength)
+    _progress += _progressPerTurn
   }
 
-  /** Returns the progress of the attack in percent.
-    * <code> _progress / event.geographicalLength </code> */
+  /** Returns the progress of the attack in percent. */
   def progress = _progress
 
 }

@@ -2,12 +2,10 @@ package general;
 
 import java.util.Properties;
 
-
 /** Thread which prints the System Properties in the console */
-public class SystemProperties extends Thread {
-    @Override
-    public void run() {
+public class SystemProperties {
 
+    public void printSystemProperties() {
         if (System.getProperty("os.name").equalsIgnoreCase("Linux")) {
             System.setProperty("java.awt.headless", "false");
         }
@@ -23,4 +21,5 @@ public class SystemProperties extends Thread {
         System.out.println("Free memory  in JVM: " + Math.round(Runtime.getRuntime().freeMemory() / (1024 * 1024)) + " MB");
         System.out.println("----------------------------------\n");
     }
+
 }

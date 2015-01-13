@@ -56,6 +56,10 @@ public final class LogFacility {
 		log(any, LoggingLevel.valueOf(level));
 	}
 
+	public static void putSeparationLine() {
+		System.out.println();
+	}
+
 	/**
 	 * Logs the current stack trace to the console.
 	 */

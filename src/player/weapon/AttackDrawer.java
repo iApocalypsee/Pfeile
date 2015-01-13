@@ -25,7 +25,7 @@ public class AttackDrawer implements Drawable {
      *
      * @return the AttackProgress of all attacking AbstractArrows
      */
-    public static  List<AttackProgress> getAttackProgressesOfArrows () {
+    public static List<AttackProgress> getAttackProgressesOfArrows () {
         List <AttackContainer> attackContainerList = AttackContainer$.MODULE$.javaAllAttackContainers();
         List <AttackProgress> filteredProgresses = new LinkedList<>();
 
