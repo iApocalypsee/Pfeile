@@ -54,8 +54,11 @@ class ImageComponent(x: Int, y: Int, image: BufferedImage, screen: Screen) exten
 
   override def draw(g: Graphics2D): Unit = {
     val oldTransformation = g.getTransform
-    g.setTransform(_rotTransform)
-    g.drawImage(image, getX, getY, null)
+    g.translate(getX, getY)
+    g.rotate(_rotation)
+    g.drawImage(image, 0, 0, null)
+    g.rotate(-_rotation)
+    g.translate(-getX, -getY)
     g.setTransform(oldTransformation)
   }
 }
