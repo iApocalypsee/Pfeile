@@ -188,12 +188,6 @@ public class Main {
      * Hier laeuft das Spiel nach allen Insizialisierungen
      */
     private void runGame() {
-	    /*
-        // reset TimeClock first, because with the change of the activePlayer a delegate in PfeileContext starts TimeClock and the activePlayer is set before this line
-        getContext().getTimeClock().reset();
-        // start TimeClock
-        getContext().getTimeClock().start();
-        */
 
         GameLoop.run(1 / 60.0);
 

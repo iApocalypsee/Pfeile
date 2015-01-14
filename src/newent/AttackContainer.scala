@@ -24,6 +24,7 @@ trait AttackContainer extends BoardPositionable {
 
   val onAttacked = Delegate.create[AttackEvent]
   val onImpact   = Delegate.create[AttackEvent]
+  val onDamage   = Delegate.create[AttackEvent]
 
   def take(e: AttackEvent): Unit = {
     _attackList += new AttackProgress(e)
@@ -31,7 +32,7 @@ trait AttackContainer extends BoardPositionable {
   }
 
   def takeImmediately(e: AttackEvent): Unit = {
-    onImpact callAsync e
+    onDamage.call(e)
   }
 
   def queuedAttacks = _attackList.clone().toList

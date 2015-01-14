@@ -379,7 +379,7 @@ public class ArrowSelectionScreen extends Screen {
 			if (confirmDialog.isVisible()) {
 				if (confirmDialog.getCancel().getSimplifiedBounds().contains(e.getPoint())) 
 					closeConfirmDialogQuestion();
-				if (confirmDialog.getOk().getSimplifiedBounds().contains(e.getPoint())) 
+				if (confirmDialog.getOk().getSimplifiedBounds().contains(e.getPoint()))
 					closeConfirmDialogQuestion();
 			}
 		}
@@ -435,17 +435,14 @@ public class ArrowSelectionScreen extends Screen {
                 arrowList.add("Lichtpfeil " + "[" + arrowsCount[LightArrow.INDEX] + "]");
                 arrowList.add("Schattenpfeil " + "[" + arrowsCount[ShadowArrow.INDEX] + "]");
 
+				inventoryList = new comp.List(inventoryList_PosX, inventoryList_PosY, inventoryList_Width, inventoryList_Height, ArrowSelectionScreen.getInstance(), arrowList);
+				inventoryList.setRoundBorder(true);
+				inventoryList.setVisible(true);
+				inventoryList.addMouseListener(new MouseListHandler());
+
                 if (inventoryList.isAcceptingInput()) {
-                    inventoryList = new comp.List(inventoryList_PosX, inventoryList_PosY, inventoryList_Width, inventoryList_Height, ArrowSelectionScreen.getInstance(), arrowList);
-                    inventoryList.setRoundBorder(true);
-                    inventoryList.setVisible(true);
-                    inventoryList.addMouseListener(new MouseListHandler());
                     inventoryList.acceptInput();
                 } else {
-                    inventoryList = new comp.List(inventoryList_PosX, inventoryList_PosY, inventoryList_Width, inventoryList_Height, ArrowSelectionScreen.getInstance(), arrowList);
-                    inventoryList.setRoundBorder(true);
-                    inventoryList.setVisible(true);
-                    inventoryList.addMouseListener(new MouseListHandler());
                     inventoryList.declineInput();
                 }
             }

@@ -176,10 +176,6 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 	/** sets the y-position in tiles */
 	public void setGridY (int gridY) { this.fieldY = gridY; }
 
-	/** the x-position on Screen (in px). Compare with getGridX())
-	 * */
-	public int getPosX() { return component.getX(); }
-
 	/** x-position on the screen (in px).
 	 * <p>
      * This call is redirected to <code>getComponent().setX(posX)</code> and rotates the arrow by calling <code>calculateRotation()</code> */
@@ -187,11 +183,6 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 		component.setX(posX);
 		calculateRotation();
 	}
-
-	/** y-position on screen in px.
-	 * <p>
-     * This call is redirected to <code>getComponent().getY()</code> */
-	public int getPosY() { return component.getY(); }
 
 	/** sets the y-position on the screen (in px).
 	 * <p>
@@ -202,9 +193,7 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 	}
 
     /** the speed of the arrow in tiles per turn */
-	public double getSpeed() {
-		return speed;
-	}
+	public double getSpeed() { return speed; }
 
 	protected void setSpeed(double speed) { this.speed = speed; }
 
@@ -213,7 +202,7 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 
     @Override
     public double damageAt (int posX, int posY) {
-        double currentDistance = FunctionCollection.distance(getAim().getGridX(), getAim().getGridY(), posX, posY);
+        double currentDistance = FunctionCollection.distance(getGridX(), getGridY(), getAim().getGridX(), getAim().getGridY());
 
         if (currentDistance >= getAim().getDamageRadius()) {
             return 0;

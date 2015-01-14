@@ -8,8 +8,14 @@ public class SoundEffectTimeClock {
     /** If time is running low, there should be same kind of clicking sound - 10 seconds until explosion at the end of the clip.*/
     private static Clip outOfTime10s;
 
+    /** this controls the volume of OutOfTime10Sec */
+    private static FloatControl gainControl10Sec;
+
     /** the whole clip takes 1 minute with explosion. It is the same sound like <code>outOfTime10s</code>, but with longer ticking clock. */
     private static Clip outOfTime60s;
+
+    /** this controls the volume of OutOfTime60s */
+    private static FloatControl gainControl60Sec;
 
     static {
         AudioInputStream audioInputStream = null;
@@ -23,6 +29,7 @@ public class SoundEffectTimeClock {
             audioInputStream.read(audio, 0, size);
             outOfTime10s = (Clip) AudioSystem.getLine(info);
             outOfTime10s.open(audioFormat, audio, 0, size);
+            gainControl10Sec = (FloatControl) outOfTime10s.getControl(FloatControl.Type.MASTER_GAIN);
 
             audioInputStream = AudioSystem.getAudioInputStream(
                     SoundPool.class.getClassLoader().getResourceAsStream("resources/sfx/soundEffects/1 Minute Countdown Clock.wav"));
@@ -33,6 +40,7 @@ public class SoundEffectTimeClock {
             audioInputStream.read(audio, 0, size);
             outOfTime60s = (Clip) AudioSystem.getLine(info);
             outOfTime60s.open(audioFormat, audio, 0, size);
+            gainControl60Sec = (FloatControl) outOfTime60s.getControl(FloatControl.Type.MASTER_GAIN);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -43,6 +51,10 @@ public class SoundEffectTimeClock {
                 e.printStackTrace();
             }
         }
+
+        // both audio streams need to be quieter by 10db.
+        gainControl10Sec.setValue(-10);
+        gainControl60Sec.setValue(-10);
     }
 
     // OutOfTime10Sec

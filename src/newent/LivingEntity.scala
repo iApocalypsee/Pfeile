@@ -33,7 +33,7 @@ trait LivingEntity extends Entity with AttackContainer {
      }
   }
 
-  onImpact += { event =>
+  onDamage += { event =>
      LogFacility.log(s"Impacting attack: by ${event.aggressor} to " +
            s"${event.destination.toString} with ${event.weapon.getName}", "Debug", "atkmech")
 
