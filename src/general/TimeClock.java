@@ -81,13 +81,13 @@ public class TimeClock extends Component implements Runnable {
             }
         });
 
-        final PfeileContext context = Main.getContext();
-        context.getTurnSystem().onTurnGet().register(JavaInterop.asScalaFunction(p -> {
+        final TurnSystem turnSystem = Main.getContext().getTurnSystem();
+        turnSystem.onTurnGet().register(JavaInterop.asScalaFunction(p -> {
             reset();
             start();
             return BoxedUnit.UNIT;
         }));
-        context.getTurnSystem().onTurnEnded().register(JavaInterop.asScalaFunction(p -> {
+        turnSystem.onTurnEnded().register(JavaInterop.asScalaFunction(p -> {
             stop();
             return BoxedUnit.UNIT;
         }));
@@ -97,16 +97,9 @@ public class TimeClock extends Component implements Runnable {
 	 *  .... updated die aktuelle Zeit; �bernimmt Thread */
 	@Override
 	public void run() {
-        /*
-        LogFacility.log("ENTERED run() of TimeClock.", LogFacility.LoggingLevel.Debug);
-        LogFacility.log("sumTime: " + sumTime + " turnTime " + turnTime().toMillis() + " turnTime - sumTime " + (turnTime().toMillis() - sumTime));
-        LogFacility.log("isRunning() " + isRunning());
-        */
-
         long lastTime = System.currentTimeMillis();
 
 		while (!Thread.currentThread().isInterrupted()) {
-
             /** the time at which the beginning of this calculation begins (with <code>System.currentTimeMillis()</code>) */
             long timeCurrent = System.currentTimeMillis();
 
@@ -115,21 +108,13 @@ public class TimeClock extends Component implements Runnable {
 				if (turnTime().toMillis() - sumTime <= 0) {
 					isRunning = false;
                     timePrintString = timeFormatter(0);
+                    // if the time has been run out, the explosion sound effect reassures, that the player notices it.
+                    SoundEffectTimeClock.play_explosion();
 					onTimeOver.call();
 				} else {
-					timePrintString = timeFormatter (turnTime().toMillis() - sumTime);
-                    //LogFacility.log("TimeClock is running out: " + (turnTime().toMillis() - sumTime), LogFacility.LoggingLevel.Debug);
+                    timePrintString = timeFormatter (turnTime().toMillis() - sumTime);
 
-                    // smaller than 3s
-                    if (turnTime().toMillis() - sumTime <= 3000)
-                        colorTime = colorVeryLowLife;
-                    // smaller than 10s
-                    else if (turnTime().toMillis() - sumTime <= 10000) {
-                        colorTime = colorLowLife;
-                        // the time is low, the sound need to be played
-                        if (!SoundEffectTimeClock.isRunning_OutOfTime10Sec())
-                            SoundEffectTimeClock.play_OutOfTime10Sec();
-                    }
+                    timeEffect();
 
                     try {
                         // only 1 millisecond if timeFormatter(long) is used
@@ -149,10 +134,6 @@ public class TimeClock extends Component implements Runnable {
 	/** stoppt die Ausf�hrung von TimeClock */
 	public synchronized void stop () {
 		isRunning = false;
-
-        // the sound need to be stopped, if the explosion (= end of players turn) isn't playing, because otherwise it stops too interrupt.
-        if (!SoundEffectTimeClock.isExplosionPlaying())
-            SoundEffectTimeClock.stop_OutOfTime10Sec();
 	}
 	
 	/** started TimeClock */
@@ -241,6 +222,23 @@ public class TimeClock extends Component implements Runnable {
            }
         } 
         return time;
+    }
+
+    /** Every special effect (i.e. for easier noticing) is controlled here. */
+    private void timeEffect () {
+        // smaller than 3s
+        if (turnTime().toMillis() - sumTime <= 3000) {
+            colorTime = colorVeryLowLife;
+            // if the time is very low, the critical ticking noise need to be played.
+            if (!SoundEffectTimeClock.isRunning_tickingCriticalNoise())
+                SoundEffectTimeClock.play_tickingCriticalNoise();
+        } // smaller than 10s
+        else if (turnTime().toMillis() - sumTime <= 10000) {
+            colorTime = colorLowLife;
+            // the time is low, the sound need to be played
+            if (!SoundEffectTimeClock.isRunning_tickingNoise())
+                SoundEffectTimeClock.play_tickingNoise();
+        }
     }
 	
 	/**

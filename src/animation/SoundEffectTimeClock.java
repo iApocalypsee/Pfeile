@@ -3,139 +3,170 @@ package animation;
 import javax.sound.sampled.*;
 import java.io.IOException;
 
+
+/** TimeClock needs some sounds, that are provided by these static-methods. <p>
+ * They are: */
 public class SoundEffectTimeClock {
 
     /** If time is running low, there should be same kind of clicking sound - 10 seconds until explosion at the end of the clip.*/
-    private static Clip outOfTime10s;
+    private static Clip tickingNoise;
 
-    /** this controls the volume of OutOfTime10Sec */
-    private static FloatControl gainControl10Sec;
+    /** this controls the volume of <code>tickingNoise</code> */
+    private static FloatControl gainControlTicking;
 
-    /** the whole clip takes 1 minute with explosion. It is the same sound like <code>outOfTime10s</code>, but with longer ticking clock. */
-    private static Clip outOfTime60s;
+    /** An Explosion at the end of timeClock (when the times runs out) is necessary for the user to notice the end of his turn. */
+    private static Clip explosion;
 
-    /** this controls the volume of OutOfTime60s */
-    private static FloatControl gainControl60Sec;
+    /** this controls the volume of <code>explosion</code> */
+    private static FloatControl gainControlExplosion;
+
+    /** If timeClock is below 3s, the user should notice it by playing this sound instead of {@link SoundEffectTimeClock#play_tickingNoise()}. */
+    private static Clip tickingCriticalNoise;
+
+    /** to set the volume of {@link animation.SoundEffectTimeClock#play_tickingCriticalNoise().*/
+    private static FloatControl gainControlTickingCritical;
 
     static {
         AudioInputStream audioInputStream = null;
         try {
+            // loading: tickingNoise
             audioInputStream = AudioSystem.getAudioInputStream(
-                    SoundPool.class.getClassLoader().getResourceAsStream("resources/sfx/soundEffects/10 Seconds Countdown Clock.wav"));
+                    SoundEffectTimeClock.class.getClassLoader().getResourceAsStream("resources/sfx/soundEffects/clock sound effect.wav"));
             AudioFormat audioFormat = audioInputStream.getFormat();
             int size = (int) (audioFormat.getFrameSize() * audioInputStream.getFrameLength());
             byte[] audio = new byte[size];
             DataLine.Info info = new DataLine.Info(Clip.class, audioFormat, size);
             audioInputStream.read(audio, 0, size);
-            outOfTime10s = (Clip) AudioSystem.getLine(info);
-            outOfTime10s.open(audioFormat, audio, 0, size);
-            gainControl10Sec = (FloatControl) outOfTime10s.getControl(FloatControl.Type.MASTER_GAIN);
+            tickingNoise = (Clip) AudioSystem.getLine(info);
+            tickingNoise.open(audioFormat, audio, 0, size);
+            gainControlTicking = (FloatControl) tickingNoise.getControl(FloatControl.Type.MASTER_GAIN);
 
+            // loading: tickingCriticalNoise
             audioInputStream = AudioSystem.getAudioInputStream(
-                    SoundPool.class.getClassLoader().getResourceAsStream("resources/sfx/soundEffects/1 Minute Countdown Clock.wav"));
+                    SoundEffectTimeClock.class.getClassLoader().getResourceAsStream("resources/sfx/soundEffects/clock sound effect.wav"));
             audioFormat = audioInputStream.getFormat();
             size = (int) (audioFormat.getFrameSize() * audioInputStream.getFrameLength());
             audio = new byte[size];
             info = new DataLine.Info(Clip.class, audioFormat, size);
             audioInputStream.read(audio, 0, size);
-            outOfTime60s = (Clip) AudioSystem.getLine(info);
-            outOfTime60s.open(audioFormat, audio, 0, size);
-            gainControl60Sec = (FloatControl) outOfTime60s.getControl(FloatControl.Type.MASTER_GAIN);
+            tickingCriticalNoise = (Clip) AudioSystem.getLine(info);
+            tickingCriticalNoise.open(audioFormat, audio, 0, size);
+            gainControlTickingCritical = (FloatControl) tickingCriticalNoise.getControl(FloatControl.Type.MASTER_GAIN);
+
+            // loading: explosion
+            audioInputStream = AudioSystem.getAudioInputStream(
+                    SoundEffectTimeClock.class.getClassLoader().getResourceAsStream("resources/sfx/soundEffects/explosion.wav"));
+            audioFormat = audioInputStream.getFormat();
+            size = (int) (audioFormat.getFrameSize() * audioInputStream.getFrameLength());
+            audio = new byte[size];
+            info = new DataLine.Info(Clip.class, audioFormat, size);
+            audioInputStream.read(audio, 0, size);
+            explosion = (Clip) AudioSystem.getLine(info);
+            explosion.open(audioFormat, audio, 0, size);
+            gainControlExplosion = (FloatControl) explosion.getControl(FloatControl.Type.MASTER_GAIN);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
                 assert audioInputStream != null;
                 audioInputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            } catch (IOException e) { e.printStackTrace(); }
         }
 
-        // both audio streams need to be quieter by 10db.
-        gainControl10Sec.setValue(-10);
-        gainControl60Sec.setValue(-10);
+        // setting volume
+        gainControlTicking.setValue(-7);   // - 8 db
+        gainControlExplosion.setValue(+2); // + 2 db
+        // instead of using another sound file, I'm just increasing the volume of tickingCriticalNoise
+        gainControlTickingCritical.setValue(-1);  // - 1 db
     }
 
-    // OutOfTime10Sec
+    // TICKING_NOISE
 
-    /** Starts playing the timeClock sound at the beginning. If <code>OutOfTime10Sec</code> is still playing, it will be stopped immediately.
-     * If time of TimeClock is running low, there should be same kind of clicking sound - 10 seconds until explosion at the end of the clip. */
-    public static void play_OutOfTime10Sec () {
-        stopAllSoundEffects();
-
-        outOfTime10s.setFramePosition(0);
-        outOfTime10s.start();
+    /** This plays one tick/click of TimeClock (10s --> 3s). It is equal to one second at the countdown. */
+    public static void play_tickingNoise () {
+        tickingNoise.setFramePosition(0);
+        tickingNoise.start();
     }
 
-    /** Stops playing the timeClock sound.
-     * If time (of TimeClock) is running low, there should be same kind of clicking sound - 10 seconds until explosion at the end of the clip. */
-    public static void stop_OutOfTime10Sec () { outOfTime10s.stop(); }
+    /** Stops playing the ticking/clicking timeClock sound. <b>Usually not necessary! (one tick should/is shorter than a second)</b>*/
+    public static void stop_tickingNoise () { tickingNoise.stop(); }
 
-    /** Is the timeClock sound playing?
-     * If time (of TimeClock) is running low, there should be same kind of clicking sound - 10 seconds until explosion at the end of the clip. */
-    public static boolean isRunning_OutOfTime10Sec () { return outOfTime10s.isRunning(); }
+    /** Is the timeClock sound playing? <b>Usually not necessary (one click need to be shorter than a second)</b>*/
+    public static boolean isRunning_tickingNoise () { return tickingNoise.isRunning(); }
 
     /** the full length in Microseconds of this soundEffect. [1 Microsecond is 1/1000 Millisecond] */
-    public static long getMicroSecLength_OutOfTime10Sec () { return outOfTime10s.getMicrosecondLength(); }
+    public static long getMicroSecLength_tickingNoise () { return tickingNoise.getMicrosecondLength(); }
 
-    /** The position of this soundEffect at this time. Compare with {@link SoundEffectTimeClock#getMicroSecLength_OutOfTime10Sec()}. <p>
+    /** The position of this soundEffect at this time. Compare with {@link SoundEffectTimeClock#getMicroSecLength_tickingNoise()}. <p>
      * The level of precision is not guaranteed. For example, an implementation might calculate the microsecond position
      * from the current frame position and the audio sample frame rate.
      * The precision in microseconds would then be limited to the number of microseconds per sample frame.  */
-    public static long getCurrentMicroSecLength_OutOfTime10Sec () { return outOfTime10s.getMicrosecondPosition(); }
+    public static long getCurrentMicroSecLength_tickingNoise () { return tickingNoise.getMicrosecondPosition(); }
 
+    // TICKING_CRITICAL_NOISE
 
-    // OutOfTime60Sec
-
-
-    /** Starts playing the long clip. If <code>OutOfTime10Sec</code> is playing, it will be stop immediately.
-     * The whole clip takes 1 minute with explosion. It is the same sound like <code>outOfTime10s</code>, but with longer ticking clock. */
-    public static void play_OutOfTime60Sec () {
-        stopAllSoundEffects();
-
-        outOfTime60s.setFramePosition(0);
-        outOfTime60s.start();
+    /** This plays if there are only 3 or fewer seconds left on TimeClock. The sound differs from
+     * {@link SoundEffectTimeClock#play_tickingNoise()}, because the user knows exactly that his turn stops soon. */
+    public static void play_tickingCriticalNoise () {
+        tickingCriticalNoise.setFramePosition(0);
+        tickingCriticalNoise.start();
     }
 
-    /** Stops playing the long clip.
-     * The whole clip takes 1 minute with explosion. It is the same sound like <code>outOfTime10s</code>, but with longer ticking clock. */
-    public static void stop_OutOfTime60Sec () { outOfTime60s.stop(); }
+    /** Stops the ticking sound of <code>TimeClock</code>. <p> <b>Usually this should be unnecessary as the duration of this sound is less than a second.</b>*/
+    public static void stop_tickingCriticalNoise () {
+        tickingCriticalNoise.stop();
+    }
 
-    /** Is the long clip playing?
-     * The whole clip takes 1 minute with explosion. It is the same sound like <code>outOfTime10s</code>, but with longer ticking clock. */
-    public static boolean isRunning_OutOfTime60Sec () { return outOfTime60s.isRunning(); }
+    /** returns if <code>tickingCriticalNoise</code> {@link SoundEffectTimeClock#play_tickingCriticalNoise()}is played right now, or not */
+    public static boolean isRunning_tickingCriticalNoise () {
+        return tickingCriticalNoise.isRunning();
+    }
+
+    /** the complete duration of the sound played if TimeClock is below 3s
+     * @see SoundEffectTimeClock#getCurrentMicroSecLength_tickingCriticalNoise() */
+    public static long getMicroSecLength_tickingCriticalNoise () {
+        return tickingCriticalNoise.getMicrosecondLength();
+    }
+
+    /** position of this soundEffect at this time. Compare with {@link SoundEffectTimeClock#getMicroSecLength_tickingCriticalNoise()}. <p>
+    * The level of precision is not guaranteed. For example, an implementation might calculate the microsecond position
+    * from the current frame position and the audio sample frame rate.
+    * The precision in microseconds would then be limited to the number of microseconds per sample frame. */
+    public static long getCurrentMicroSecLength_tickingCriticalNoise () {
+        return tickingCriticalNoise.getMicrosecondPosition();
+    }
+
+
+    // EXPLOSION
+
+    /** Starts playing explosion. Any click of timeClock will be stopped. The Explosion represents the end of time. */
+    public static void play_explosion () {
+        stopAllSoundEffects();
+
+        explosion.setFramePosition(0);
+        explosion.start();
+    }
+
+    /** Is the explosion playing? <p>
+     * @see SoundEffectTimeClock#play_explosion() */
+    public static boolean isRunning_explosion () { return explosion.isRunning(); }
 
     /** the full length in Microseconds of this soundEffect */
-    public static long getMicroSecLength_OutOfTime60Sec () { return outOfTime60s.getMicrosecondLength(); }
+    public static long getMicroSecLength_Explosion () { return explosion.getMicrosecondLength(); }
 
-    /** The position of this soundEffect at this time. Compare with {@link SoundEffectTimeClock#getMicroSecLength_OutOfTime60Sec()}. <p>
+    /** The position of this soundEffect at this time. Compare with {@link SoundEffectTimeClock#getMicroSecLength_Explosion()}. <p>
      * The level of precision is not guaranteed. For example, an implementation might calculate the microsecond position
      * from the current frame position and the audio sample frame rate.
      * The precision in microseconds would then be limited to the number of microseconds per sample frame.  */
-    public static long getCurrentMicroSecLength_OutOfTime60Sec () { return outOfTime60s.getMicrosecondPosition(); }
+    public static long getCurrentMicroSecLength_explosion () { return explosion.getMicrosecondPosition(); }
 
 
     // general methods
 
-    /** if the explosion is playing either by OutOfTime10Sec or OutOfTime60Sec, this method returns true.
-     * However, the implementation estimates the position where the explosion begins. Consequently, it won't be absolutely
-     * correct, but its precision should be enough for most applications. */
-    public static boolean isExplosionPlaying () {
-        if (isRunning_OutOfTime10Sec()) {
-            // the position the explosion begins is about 00:00:10.105
-            return getCurrentMicroSecLength_OutOfTime10Sec() > 10105000;
-        } else if (isRunning_OutOfTime60Sec()) {
-            // the position the explosion begins is about 00:00:55.105
-            return getCurrentMicroSecLength_OutOfTime60Sec() > 55105000;
-        }
-        // if no sound is playing
-        return false;
-    }
-
-    /** this stops all sound coming from this class both OutOfTime10Sec and OutOfTime60Sec */
+    /** this stops all sound coming from this class except the explosion. (it would sound strange to stop an explosion while it is playing)
+     * The method calls: {@link SoundEffectTimeClock#stop_tickingNoise()} and {@link SoundEffectTimeClock#stop_tickingCriticalNoise()} */
     public static void stopAllSoundEffects () {
-        stop_OutOfTime10Sec();
-        stop_OutOfTime60Sec();
+        stop_tickingNoise();
+        stop_tickingCriticalNoise();
     }
 }

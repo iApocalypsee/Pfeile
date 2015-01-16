@@ -32,7 +32,7 @@ public class FunctionCollection {
      *
      * @return a polygon from an undefined number of points
      */
-    public static Polygon createRectPolygon(Point... points) {
+    public static Polygon createPolygon (Point... points) {
         Polygon poly = new Polygon();
         for (Point point : points)
             poly.addPoint(point.x, point.y);
