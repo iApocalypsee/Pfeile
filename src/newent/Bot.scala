@@ -1,7 +1,8 @@
 package newent
 
 import comp.Component
-import general.{Delegate, PfeileContext, Property}
+import general.{Main, Delegate, PfeileContext, Property}
+import gui.LifeUI
 import newent.pathfinding.{AStarPathfinder, Pathfinder}
 import player.Life
 import world.WorldLike
@@ -36,6 +37,7 @@ class Bot (world: WorldLike, spawnPoint: Point, name: String)
 
    /** the life of the bot is introduced with standard values */
    override lazy val life = new Life (Bot.MAXIMUM_LIFE.get, Bot.LIFE_REGENERATION.get, Bot.MAXIMUM_LIFE.get)
+   override lazy val lifeUI = new LifeUI(Main.getWindowWidth - 200, Main.getWindowHeight - 150, Main.getContext.getActivePlayer.life)
 
 
    life.onDeath+= { () =>

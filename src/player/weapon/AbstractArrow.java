@@ -202,7 +202,8 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 
     @Override
     public double damageAt (int posX, int posY) {
-        double currentDistance = FunctionCollection.distance(getGridX(), getGridY(), getAim().getGridX(), getAim().getGridY());
+		// the distance between the LivingEntity (posX/posY) and the Aim
+        double currentDistance = FunctionCollection.distance(posX, posY, getAim().getGridX(), getAim().getGridY());
 
         if (currentDistance >= getAim().getDamageRadius()) {
             return 0;

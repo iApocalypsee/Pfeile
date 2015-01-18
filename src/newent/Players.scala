@@ -3,8 +3,9 @@ package newent
 import java.awt.{Color, Graphics2D, Point}
 
 import comp.Component
-import general.{PfeileContext, Property, Delegate}
+import general.{Main, PfeileContext, Property, Delegate}
 import general.Main.getGameWindow
+import gui.LifeUI
 import newent.pathfinding.AStarPathfinder
 import player.Life
 import world.WorldLike
@@ -40,7 +41,7 @@ class Player(world: WorldLike,
   override def defaultMovementPoints = 4
   override val pathfinderLogic       = new AStarPathfinder(20, { t => true })
   override lazy val life             = new Life(Player.MAXIMUM_LIFE.get, Player.LIFE_REGENERATION.get, Player.MAXIMUM_LIFE.get)
-
+  override lazy val lifeUI           = new LifeUI(Main.getWindowWidth - 200, Main.getWindowHeight - 150, life)
 
   /** The initial team with which the object begins to cooperate.
     * Can be overridden to join a different team in the beginning. */
@@ -65,19 +66,6 @@ class Player(world: WorldLike,
     * which essentially tells the program that the player has completed all of his actions now.
     */
   val onMovesCompleted = Delegate.createZeroArity
-
-  /******* TEST CODE FOR ATTACK MECHANISM *********
-  Main.getContext.onTurnEnd += { () =>
-    world.terrain.tileAt(5, 5).take(AttackEvent(
-    inventory.remove({ _.isInstanceOf[AbstractArrow] }).get.asInstanceOf[Weapon],
-    tileLocation, world.terrain.tileAt(5, 5), this, 1.5))
-    println("An arrow has been shot.")
-  }
-
-  world.terrain.tileAt(5, 5).onImpact += { e =>
-    println(s"${e.weapon} has arrived at its destination!")
-  }
-  */
 
   /** The component that the representable object uses first. Method is called only once.
     *
