@@ -11,6 +11,8 @@ import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;
 
 import java.awt.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /**
@@ -42,9 +44,9 @@ public class TimeClock extends Component implements Runnable {
 
     /** this is the color, which is shown, when the time is low (<10000 ms) */
     private Color colorLowLife = new Color (118, 1, 0);
-	
-	/** this String displays the time */
-	private String timePrintString = "ERROR";
+
+    /** this String displays the time */
+	private String timePrintString = "NULL";
 
 	public final Delegate.Function0Delegate onTimeOver = new Delegate.Function0Delegate();
 
@@ -59,6 +61,10 @@ public class TimeClock extends Component implements Runnable {
 				GameScreen.getInstance());
 		stop();
         colorTime = Color.BLACK;
+
+        /* every second, the timer will schedule the time effects like other string color or sound */
+        Timer timer = new Timer("TimeEffectScheduler", true);
+        timer.scheduleAtFixedRate(new TimeEffectClock(), 0, 1000);
 
         ScreenManager sm = Main.getGameWindow().getScreenManager();
 
@@ -113,8 +119,6 @@ public class TimeClock extends Component implements Runnable {
 					onTimeOver.call();
 				} else {
                     timePrintString = timeFormatter (turnTime().toMillis() - sumTime);
-
-                    timeEffect();
 
                     try {
                         // only 1 millisecond if timeFormatter(long) is used
@@ -226,18 +230,18 @@ public class TimeClock extends Component implements Runnable {
 
     /** Every special effect (i.e. for easier noticing) is controlled here. */
     private void timeEffect () {
-        // smaller than 3s
-        if (turnTime().toMillis() - sumTime <= 3000) {
+        long timeLeft = getMilliDeath();
+
+        // fewer than 3s
+        if (timeLeft <= 3000) {
             colorTime = colorVeryLowLife;
             // if the time is very low, the critical ticking noise need to be played.
-            if (!SoundEffectTimeClock.isRunning_tickingCriticalNoise())
-                SoundEffectTimeClock.play_tickingCriticalNoise();
-        } // smaller than 10s
-        else if (turnTime().toMillis() - sumTime <= 10000) {
+            SoundEffectTimeClock.play_tickingCriticalNoise();
+        } // fewer than 10s
+        else if (timeLeft <= 10000) {
             colorTime = colorLowLife;
             // the time is low, the sound need to be played
-            if (!SoundEffectTimeClock.isRunning_tickingNoise())
-                SoundEffectTimeClock.play_tickingNoise();
+            SoundEffectTimeClock.play_tickingNoise();
         }
     }
 	
@@ -318,4 +322,12 @@ public class TimeClock extends Component implements Runnable {
 		g.setFont(STD_FONT);
         g.drawString(getTimePrintString(), getX() + 4, getY() + 16);
 	}
+
+    private class TimeEffectClock extends TimerTask {
+        @Override
+        public void run () {
+            if (isRunning)
+                timeEffect();
+        }
+    }
 }
