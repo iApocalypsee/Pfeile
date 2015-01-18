@@ -11,8 +11,6 @@ import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;
 
 import java.awt.*;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 /**
@@ -35,6 +33,18 @@ public class TimeClock extends Component implements Runnable {
 
     private long sumTime = 0;
 
+    /** The default value the timer has; It is also the first time, when the effect <code>timeEffects()</code> is triggered.
+     * It's a little more than 10 seconds, because the screen needs some time to update itself, so these 50ms are just
+     * synchronizing the audio effects with the screen-system [=> update rate in <code>GameLoop</code>: 1/60s]. <p>
+     * Compare with {@link general.TimeClock#timer}.*/
+    private final int DEFAULT_TIMER = 10050;
+
+    /** the time after which the next side effect {@link TimeClock#timeEffects()} is called. This will regulate a second
+     * difference between the start of two {@link animation.SoundEffectTimeClock#play_tickingNoise()} or rather
+     * {@link animation.SoundEffectTimeClock#play_tickingCriticalNoise()}.
+     * It's default value is <code>10sec</code> (<code>DEFAULT_TIMER</code>) because it's the time of the first effect. */
+    private int timer = DEFAULT_TIMER;
+
     private static Color brightDarkGrey = Color.DARK_GRAY.brighter();
 
     private Color colorTime = Color.RED;
@@ -54,17 +64,12 @@ public class TimeClock extends Component implements Runnable {
     private static Property<FiniteDuration> _turnTime = Property.withValidation();
 
 	// KONSTURCKTOR
-	/** KONSTRUCKTOR der Klasse 
-	 */
 	public TimeClock () {
+        // these values put the underlying component directly in the upper middle of the screen.
 		super(Main.getWindowWidth() / 2 - 72 / 2, 25, 72, 26, 
 				GameScreen.getInstance());
 		stop();
         colorTime = Color.BLACK;
-
-        /* every second, the timer will schedule the time effects like other string color or sound */
-        Timer timer = new Timer("TimeEffectScheduler", true);
-        timer.scheduleAtFixedRate(new TimeEffectClock(), 0, 1000);
 
         ScreenManager sm = Main.getGameWindow().getScreenManager();
 
@@ -111,14 +116,22 @@ public class TimeClock extends Component implements Runnable {
 
 			if (isRunning()) {
                 sumTime = sumTime + (timeCurrent - lastTime);
-				if (turnTime().toMillis() - sumTime <= 0) {
-					isRunning = false;
-                    timePrintString = timeFormatter(0);
-                    // if the time has been run out, the explosion sound effect reassures, that the player notices it.
+
+                /** <code>getMilliDeath()</code> or <code>turnTime().toMillis() - sumTime</code> */
+                long timeLeft = getMilliDeath();
+
+				if (timeLeft <= 0) {
+                    // if the time has been run out, the explosion sound effect reassures, that the player notice the reason it.
                     SoundEffectTimeClock.play_explosion();
+                    isRunning = false;
+                    timePrintString = timeFormatter(0);
 					onTimeOver.call();
 				} else {
-                    timePrintString = timeFormatter (turnTime().toMillis() - sumTime);
+                    timePrintString = timeFormatter (timeLeft);
+
+                    if (timeLeft <= timer) {
+                        timeEffects();
+                    }
 
                     try {
                         // only 1 millisecond if timeFormatter(long) is used
@@ -148,25 +161,28 @@ public class TimeClock extends Component implements Runnable {
 	/** setzt TimeClock auf maximale Zeit zur�ck
 	 * HINWEIS: an Start/Stop wird nicht ge�ndert, also ggf. stop / start aufrufen */
 	public synchronized void reset() {
-        // the time must be longer than 10s
+        // resetting these values: default timePrintString color, default time, default time for next timeEffects()-call
+        // and the default printed time with timePrintString
         colorTime = Color.BLACK;
 		sumTime = 0;
+        timer = DEFAULT_TIMER;
         timePrintString = timeFormatter(turnTime().toMillis());
 	}
 	
 	
 	/** Umwandlung einer long-Variable in einem String min:sec:ms */
-	public static String timeFormatter(long millisecTime) {
+	public static String timeFormatter(long milliSecTime) {
         String time;
-        if(millisecTime <= 0){  //�berpr�ft ob die Zeit negativ ist
+        if(milliSecTime <= 0) {
+            time = "00:00:000";
             //throw new RuntimeException("Negativ time value provided");
-        	time = "00:00:000";
-//        } else if (millisecTime > 357539999){   //�berpr�ft ob das Limit des Formates nicht �berschreitet
-//            throw new RuntimeException("Time value exceeds allowed format");
+
+        //  } else if (milliSecTime > 357539999){
+        //      throw new RuntimeException("Time value exceeds allowed format");
         } else {
-          long min = millisecTime / (60 * 1000);
-          long sec = (millisecTime - min * 60 * 1000) / 1000;
-          long ms = millisecTime - min * 60 * 1000 - sec * 1000;
+          long min = milliSecTime / (60 * 1000);
+          long sec = (milliSecTime - min * 60 * 1000) / 1000;
+          long ms = milliSecTime - min * 60 * 1000 - sec * 1000;
           
           if (min <= 0)
         	  time = "00";
@@ -199,18 +215,18 @@ public class TimeClock extends Component implements Runnable {
 	}
 	
 	/** Umwandlung einer Zeitangabe in Millisekunden in einen String [min:sec] */
-	public static String timeFormatterShort(long millisecTime) {
+	public static String timeFormatterShort(long milliSecTime) {
         String time = null;
-        if(millisecTime <= 0){                        //�berpr�ft ob zeit negativ ist
+        if(milliSecTime <= 0) {
+            time = "00:00";
             //throw new RuntimeException("Negativ time value provided");
-        	
-        	time = "00:00";
-        //} else if (millisecTime>357539999){                 //�berpr�ft ob das limit von format nicht �berschreitet
+
+        //} else if (milliSecTime>357539999) {
         //    throw new RuntimeException("Time value exceeds allowed format");
-        }else {
-           millisecTime = millisecTime/1000000;
-           long min= (millisecTime/60);
-           long sec= millisecTime-min*60;
+        } else {
+           milliSecTime = milliSecTime/1000000;
+           long min= (milliSecTime/60);
+           long sec= milliSecTime-min*60;
           
            if(min < 10 && sec < 10){
                  time = "0"+min+":"+"0"+sec;
@@ -228,21 +244,27 @@ public class TimeClock extends Component implements Runnable {
         return time;
     }
 
-    /** Every special effect (i.e. for easier noticing) is controlled here. */
-    private void timeEffect () {
-        long timeLeft = getMilliDeath();
-
-        // fewer than 3s
-        if (timeLeft <= 3000) {
-            colorTime = colorVeryLowLife;
-            // if the time is very low, the critical ticking noise need to be played.
-            SoundEffectTimeClock.play_tickingCriticalNoise();
-        } // fewer than 10s
-        else if (timeLeft <= 10000) {
-            colorTime = colorLowLife;
-            // the time is low, the sound need to be played
-            SoundEffectTimeClock.play_tickingNoise();
+    /** Every special effect (i.e. for easier noticing) is controlled here.
+     * Right now, there is the sound and the change of color.
+     *
+     * Add new Effects here by the syntax: <p>
+     *     case: theTimeUnderOrEqualToTheEffectShouldBePlayed : theEffect  break;
+     *        <i> // maybe you need to add the end of that effect to the {@link TimeClock#reset()} method [i.e. if there need to be the standard color]</i> */
+    private void timeEffects () {
+        switch (timer) {
+            case 1050: SoundEffectTimeClock.play_tickingCriticalNoise(); break;
+            case 2050: SoundEffectTimeClock.play_tickingCriticalNoise(); break;
+            case 3050: SoundEffectTimeClock.play_tickingCriticalNoise(); colorTime = colorVeryLowLife; break;
+            case 4050: SoundEffectTimeClock.play_tickingNoise(); break;
+            case 5050: SoundEffectTimeClock.play_tickingNoise(); break;
+            case 6050: SoundEffectTimeClock.play_tickingNoise(); break;
+            case 7050: SoundEffectTimeClock.play_tickingNoise(); break;
+            case 8050: SoundEffectTimeClock.play_tickingNoise(); break;
+            case 9050: SoundEffectTimeClock.play_tickingNoise(); break;
+            case 10050:SoundEffectTimeClock.play_tickingNoise(); colorTime = colorLowLife; break;
         }
+        // next time it's one second earlier
+        timer = timer - 1000;
     }
 	
 	/**
@@ -322,12 +344,4 @@ public class TimeClock extends Component implements Runnable {
 		g.setFont(STD_FONT);
         g.drawString(getTimePrintString(), getX() + 4, getY() + 16);
 	}
-
-    private class TimeEffectClock extends TimerTask {
-        @Override
-        public void run () {
-            if (isRunning)
-                timeEffect();
-        }
-    }
 }
