@@ -13,10 +13,10 @@ import player.weapon.RangedWeapon
 trait LivingEntity extends Entity with AttackContainer {
 
   /** The life of the entity. */
-  val life: Life
+  protected val life: Life
 
-  /** the life bar of the entity */
-  val lifeUI: LifeUI
+  /** The life of the entity. */
+  def getLife = { life }
 
   // Every living entity can be attacked with weapons, so every weapon
   // should have a visible effect on the living entity.

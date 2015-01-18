@@ -35,9 +35,16 @@ class Bot (world: WorldLike, spawnPoint: Point, name: String)
       }
    }
 
+   /** This draws the LifeBar of the Bot. Well, right now it's the same life bar like a Player, but in the futere,
+     * we need a second one for the Bot. */
+   def drawLifeUI(g: Graphics2D): Unit = {
+       lifeUI.draw(g)
+   }
+
    /** the life of the bot is introduced with standard values */
-   override lazy val life = new Life (Bot.MAXIMUM_LIFE.get, Bot.LIFE_REGENERATION.get, Bot.MAXIMUM_LIFE.get)
-   override lazy val lifeUI = new LifeUI(Main.getWindowWidth - 200, Main.getWindowHeight - 150, Main.getContext.getActivePlayer.life)
+   override protected lazy val life = new Life (Bot.MAXIMUM_LIFE.get, Bot.LIFE_REGENERATION.get, Bot.MAXIMUM_LIFE.get)
+
+   private lazy val lifeUI = new LifeUI(Main.getWindowWidth - 200, Main.getWindowHeight - 150, Main.getContext.getActivePlayer.getLife)
 
 
    life.onDeath+= { () =>

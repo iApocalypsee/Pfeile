@@ -144,7 +144,7 @@ public class GameScreen extends Screen implements FrameContainer {
 		endTurnButton.draw(g);
 		shootButton.draw(g);
 		toggleStopwatch.draw(g);
-		Main.getContext().getActivePlayer().lifeUI().draw(g);
+		Main.getContext().getActivePlayer().drawLifeUI(g);
 
 		frameContainerObject.drawFrames(g);
 

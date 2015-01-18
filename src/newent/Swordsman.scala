@@ -20,7 +20,6 @@ class Swordsman(world: WorldLike, spawnPosition: Point, team: Team)
   extends Entity(world, spawnPosition, null) with LivingEntity with VisionEntity with MoveableEntity with Combatant {
 
   override val life = new Life(90, 0, 90)
-  override val lifeUI = null
 
   // The pathfinder logic. The swordsman looks up the path up to 20 tiles and is
   // not allowed to walk on sea tiles.

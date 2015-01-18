@@ -40,8 +40,13 @@ class Player(world: WorldLike,
   /** The default movement points that the entity has. */
   override def defaultMovementPoints = 4
   override val pathfinderLogic       = new AStarPathfinder(20, { t => true })
-  override lazy val life             = new Life(Player.MAXIMUM_LIFE.get, Player.LIFE_REGENERATION.get, Player.MAXIMUM_LIFE.get)
-  override lazy val lifeUI           = new LifeUI(Main.getWindowWidth - 200, Main.getWindowHeight - 150, life)
+  /** The life of the player. Use the getter <code>getLife()</code> (defined in LivingEntity) */
+  override protected lazy val life   = new Life(Player.MAXIMUM_LIFE.get, Player.LIFE_REGENERATION.get, Player.MAXIMUM_LIFE.get)
+  private lazy val lifeUI            = new LifeUI(Main.getWindowWidth - 200, Main.getWindowHeight - 150, life)
+  /** This draws the life (lifeBar and values) to the right-hand corner */
+  def drawLifeUI(g: Graphics2D) = {
+     lifeUI.draw(g)
+  }
 
   /** The initial team with which the object begins to cooperate.
     * Can be overridden to join a different team in the beginning. */
@@ -74,16 +79,16 @@ class Player(world: WorldLike,
     */
   override protected def startComponent = new Component {
 
-    private val drawColor = new Color(255, 0, 0)
+     private val drawColor = new Color(255, 0, 0)
 
-    setBounds(tileLocation.component.getBounds)
+     setBounds(tileLocation.component.getBounds)
 
-    onLocationChanged += { e => setBounds(e.end.component.getBounds)}
+     onLocationChanged += { e => setBounds(e.end.component.getBounds) }
 
-    override def draw(g: Graphics2D): Unit = {
-      g.setColor(drawColor)
-      g.fill(getBounds)
-    }
+     override def draw(g: Graphics2D): Unit = {
+        g.setColor(drawColor)
+        g.fill(getBounds)
+     }
   }
 
 }
