@@ -61,6 +61,15 @@ public class ArrowSelectionScreen extends Screen {
     private Button fireArrowButton, waterArrowButton, iceArrowButton, stormArrowButton, lightningArrowButton, lightArrowButton, shadowArrowButton, stoneArrowButton;
 	
 	private static final Color TRANSPARENT_BACKGROUND = new Color(0, 0, 0, 185);
+
+	/** This is when the background need to be darkened. [an Dialog is open] */
+	private static final Color COLOR_IS_CONFIRM_DIALOG_OPEN = new Color(0, 0, 0, 0.13f);
+
+	/** This is when the background need to be darkened. [an Dialog is open] */
+	private static final Color COLOR_IS_CONFIRM_DIALOG_VISIBLE = new Color(0, 0, 0, 0.17f);
+
+	/** the Color of warning message need to be red, bold and it's size need to be doubled (-> size 26/28) */
+	private static final Font FONT_WARNING_MESSAGE = new Font(Component.STD_FONT.getFontName(), Font.BOLD, Component.STD_FONT.getSize() * 2);
 	
 	private comp.List inventoryList;
 	
@@ -207,6 +216,8 @@ public class ArrowSelectionScreen extends Screen {
                             transparencyWarningMessage = 1f;
                         } else {
                             Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().set(Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().get() - 1);
+							// when a new arrow is selected, it is usually also the arrow the user is going to use.
+							selectedArrowBox.setEnteredText(ArrowHelper.instanceArrow(selectedIndex).getName());
                             updateInventoryList();
                         }
                     } else {
@@ -261,7 +272,7 @@ public class ArrowSelectionScreen extends Screen {
 		selectedArrowBox.draw(g);
 		
 		if (isConfirmDialogOpen) {
-			g.setColor(new Color(0, 0, 0, 0.13f));
+			g.setColor(COLOR_IS_CONFIRM_DIALOG_OPEN);
 			g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 		}
 		
@@ -271,19 +282,21 @@ public class ArrowSelectionScreen extends Screen {
 		} 
 		
 		if (confirmDialog.isVisible()) {
-			g.setColor(new Color(0, 0, 0, 0.17f));
+			g.setColor(COLOR_IS_CONFIRM_DIALOG_VISIBLE);
 			g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 			confirmDialog.draw(g);
 		}
-		
-		g.setColor(new Color(1f, 0f, 0f, transparencyWarningMessage));
-		g.setFont(new Font(Component.STD_FONT.getFontName(), Font.BOLD, 26));
-		g.drawString(warningMessage, pointWarningMessage.x, pointWarningMessage.y);
-		
-		transparencyWarningMessage = transparencyWarningMessage - 0.013f;
-		
-		if (transparencyWarningMessage < 0) 
-			transparencyWarningMessage = 0;
+
+		if (transparencyWarningMessage > 0) {
+			g.setColor(new Color(1f, 0f, 0f, transparencyWarningMessage));
+			g.setFont(FONT_WARNING_MESSAGE);
+			g.drawString(warningMessage, pointWarningMessage.x, pointWarningMessage.y);
+
+			transparencyWarningMessage = transparencyWarningMessage - 0.013f;
+
+			if (transparencyWarningMessage < 0)
+				transparencyWarningMessage = 0;
+		}
 	}
 
 	
@@ -308,7 +321,8 @@ public class ArrowSelectionScreen extends Screen {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			if (inventoryList.getBounds().contains(e.getPoint())) {
-				// �bernimmt ausgew�hlten Pfeil und schreibt ihn in den ausgew�hlten Pfeil f�r 'commit'
+				// the selected Index is written into the text area, for the user to see what arrow has been selected.
+				// If the user presses "Bestätigen" at confirmButton, the text in selectedArrowBox is used to find the arrow.
 				selectedArrowBox.setEnteredText(ArrowHelper.arrowIndexToName(inventoryList.getSelectedIndex()));
 			}
 		}
@@ -394,8 +408,8 @@ public class ArrowSelectionScreen extends Screen {
 	private void openConfirmQuestion (String question) {
 		confirmDialog.setQuestionText(question);
 		confirmDialog.setVisible(true);
-		isConfirmDialogOpen = true; 
-		
+		isConfirmDialogOpen = true;
+
 		for (Button button : buttonList) {
 			button.declineInput();
 		}
@@ -419,7 +433,7 @@ public class ArrowSelectionScreen extends Screen {
 	/**
 	 * Updates the inventory list of the player registered in the client as the "active" player.
 	 */
-	private void updateInventoryList () {
+	protected void updateInventoryList () {
         Thread updateThreaded = new Thread() {
             @Override
             public void run () {

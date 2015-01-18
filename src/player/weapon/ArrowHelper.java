@@ -181,9 +181,7 @@ public final class ArrowHelper {
     public static AbstractArrow instanceArrow (Class<? extends AbstractArrow> arrow) {
         try {
             return arrow.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return null;

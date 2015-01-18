@@ -131,8 +131,6 @@ public class AimSelectionScreen extends Screen {
             warningMessage = "Kein Zielfeld ausgewählt";
             transparencyWarningMessage = 1f;
         } else {
-            onLeavingScreen(AimSelectionScreen.this, ArrowSelectionScreen.SCREEN_INDEX);
-
             // deliver the attack message to the specified tile
             // assuming that the thread is done updating the values
             DeliverShootThread msg = new DeliverShootThread();
@@ -140,6 +138,8 @@ public class AimSelectionScreen extends Screen {
             msg.start();
 
             transparencyWarningMessage = 1f;
+
+            onLeavingScreen(AimSelectionScreen.this, ArrowSelectionScreen.SCREEN_INDEX);
         }
     }
 
@@ -273,6 +273,8 @@ public class AimSelectionScreen extends Screen {
                 arrow.calculateRotation();
 
 				target.take(new AttackEvent(arrow, (TileLike) active.tileLocation(), target, active, arrow.getSpeed()));
+
+                ArrowSelectionScreen.getInstance().updateInventoryList();
 			} else {
                 throw new RuntimeException("The selected arrow doesn't exit. He can't be shot");
 			}

@@ -28,12 +28,9 @@ public class ShadowArrow extends AbstractArrow {
 		} catch (IOException e) {e.printStackTrace();}
 	}
 	
-	
 	/** ruft den Konstrucktor von 'AbstractArrow' auf */
 	public ShadowArrow() {
-		
-		super(39f, 25f, 1200, 0.0675f, 0.005f, 0.085f, 0.03f, 6.0, 5.3f, "Schattenpfeil");
-		
+		super(57f, 25f, 32, 0.0675f, 0.005f, 0.085f, 0.03f, 6.5, 5.3f, "Schattenpfeil");
 	}
 	
 	/** Gibt das Bild des Schattenpfeils zur�ck 

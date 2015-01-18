@@ -32,9 +32,7 @@ public class StoneArrow extends AbstractArrow {
 	
 	/** ruft den Konstrucktor von 'AbstractArrow' auf */
 	public StoneArrow() {
-		
-		super(39f, 37f, 400, 0.0075f, 0.025f, 0.14f, 0.04f, 5, 4.5f, "Steinpfeil");
-		
+		super(59f, 41f, 12, 0.0075f, 0.025f, 0.14f, 0.04f, 5, 3.5f, "Steinpfeil");
 	}
 	
 	/** Gibt das Bild des Steinpfeiles zur�ck 

@@ -30,9 +30,7 @@ public class LightArrow extends AbstractArrow {
 	
 	/** ruft den Konstrucktor von 'AbstractArrow' auf */
 	public LightArrow() {
-		
-		super(29f, 30f, 1200, 0.0025f, 0.005f, 0.10f, 0.02f, 6.0, 8.3f, "Lichtpfeil");
-
+		super(42f, 32f, 34, 0.0025f, 0.005f, 0.10f, 0.02f, 6.5, 8.3f, "Lichtpfeil");
 	}
 	
 	/** Gibt das Bild vom Lichtpfeil zur�ck

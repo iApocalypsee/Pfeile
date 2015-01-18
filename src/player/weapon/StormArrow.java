@@ -18,7 +18,6 @@ public class StormArrow extends AbstractArrow {
 	
 	public static final Color UNIFIED_COLOR = new Color(141, 237, 195, 200);
 	
-	
 	/** Bild des Pfeils */
 	private static BufferedImage img_Storm;
 	/** Laden des Bildes */
@@ -29,12 +28,9 @@ public class StormArrow extends AbstractArrow {
 		} catch (IOException e) {e.printStackTrace();}
 	}
 	
-	
 	/** ruft den Konstrucktor von 'AbstractArrow' auf */
 	public StormArrow() {
-		
-		super(36f, 36f, 1000, 0.0575f, 0.01f, 0.6f, 0.08f, 4.0, 10f, "Sturmpfeil");
-		
+		super(51f, 38f, 30, 0.0575f, 0.01f, 0.6f, 0.08f, 3.3, 10f, "Sturmpfeil");
 	}
 	
 	/** Gibt das Bild vom Sturmpfeil zur�ck 
