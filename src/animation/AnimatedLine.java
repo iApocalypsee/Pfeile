@@ -1,5 +1,6 @@
 package animation;
 
+import geom.functions.FunctionCollection;
 import gui.Drawable;
 
 import java.awt.*;
@@ -148,7 +149,7 @@ public class AnimatedLine implements Drawable {
 		final Point p3 = new Point(start.x + (int) -x_off, start.y + (int) y_off);
 		final Point p4 = new Point(start.x + (int) x_off, start.y + (int) -y_off);
 
-		bounds = comp.Component.createRectPolygon(p1, p2, p3, p4);
+		bounds = FunctionCollection.createPolygon(p1, p2, p3, p4);
 	}
 
     /** the width of the animated line */

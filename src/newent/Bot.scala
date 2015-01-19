@@ -3,7 +3,8 @@ package newent
 import java.awt.{Color, Graphics2D, Point}
 
 import comp.Component
-import general.{Delegate, PfeileContext, Property}
+import general.{Main, Delegate, PfeileContext, Property}
+import gui.LifeUI
 import newent.pathfinding.{AStarPathfinder, Pathfinder}
 import player.Life
 import world.WorldLike
@@ -43,6 +44,16 @@ class Bot(world: WorldLike, spawnPoint: Point, name: String)
   /** the life of the bot is introduced with standard values */
   override lazy val life = new Life(Bot.MAXIMUM_LIFE.get, Bot.LIFE_REGENERATION.get, Bot.MAXIMUM_LIFE.get)
 
+   /** This draws the LifeBar of the Bot. Well, right now it's the same life bar like a Player, but in the futere,
+     * we need a second one for the Bot. */
+   def drawLifeUI(g: Graphics2D): Unit = {
+       lifeUI.draw(g)
+   }
+
+   /** the life of the bot is introduced with standard values */
+   override protected lazy val life = new Life (Bot.MAXIMUM_LIFE.get, Bot.LIFE_REGENERATION.get, Bot.MAXIMUM_LIFE.get)
+
+   private lazy val lifeUI = new LifeUI(Main.getWindowWidth - 200, Main.getWindowHeight - 150, Main.getContext.getActivePlayer.getLife)
   life.onDeath += { () =>
     general.Main.getContext.getTimeClock.stop()
     // TODO: setActiveScreen (GameWonScreen.SCREEN_INDEX)

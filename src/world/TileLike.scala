@@ -4,6 +4,10 @@ import java.awt.event.{MouseAdapter, MouseEvent}
 import java.awt.{Color, Graphics2D, Polygon}
 
 import comp.{Circle, Component, DisplayRepresentable}
+import java.awt.event.{MouseAdapter, MouseEvent}
+import java.awt.{Color, Graphics2D, Polygon}
+
+import comp.{Component, DisplayRepresentable}
 import general.Main
 import gui.{AdjustableDrawing, GameScreen}
 import newent.{AttackContainer, EntityLike}
@@ -94,6 +98,8 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
      var filteredEntityList = mutable.ListBuffer[EntityLike]()
 
      if (e.weapon.isInstanceOf[AbstractArrow]) {
+
+       /*
         val maxList = terrain.world.entities.entityList
 
         val aim = maxList.filter {
@@ -109,7 +115,12 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
               // this should add the object at the position i in maxList to the filteredEntityList
               filteredEntityList += maxList.apply(i)
            }
-        }
+        } */
+       // Damage System doesn't need this check now. So every entity will take the Attack
+       terrain.world.entities.entityList.foreach {
+         case x: AttackContainer => x.takeImmediately(e)
+         case _ => takeImmediately(e)
+       }
 
      } else {
         filteredEntityList ++= terrain.world.entities.entityList.filter {

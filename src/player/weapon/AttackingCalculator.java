@@ -89,8 +89,8 @@ public class AttackingCalculator {
             // radius = the length / (tileLength / speed in Tiles / Turn)
             double distanceToCover = attackProgress.event().lengthGUI() / attackProgress.event().travelSpeed();
 
-            int posXOld = attackingArrow.getPosX();
-            int posYOld = attackingArrow.getPosY();
+            int posXOld = attackingArrow.getComponent().getX();
+            int posYOld = attackingArrow.getComponent().getY();
 
             // System.out.println("\nRadius: " + radius + "\tDistance: " + attackProgress.event().lengthGUI() + "\tDistance/Radius: " + (attackProgress.event().lengthGUI() / radius));
             // System.out.println("countRounds: " + attackProgress.event().lengthPerTurn());

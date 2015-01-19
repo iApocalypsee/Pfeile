@@ -695,33 +695,4 @@ public abstract class Component implements IComponent {
 		bounds = transformation.createTransformedShape(bounds);
 		onTransformed.apply();
 	}
-
-	// Some static helper methods...
-
-	/**
-	 * Creates a rectangular polygon.
-	 *
-	 * @param x      The x position of the polygon.
-	 * @param y      The y position of the polygon.
-	 * @param width  The width of the rectangle.
-	 * @param height Ditto.
-	 * @return A polygon with a rectangular shape.
-	 */
-	public static Polygon createRectPolygon(int x, int y, int width, int height) {
-		Polygon ret = new Polygon();
-		ret.addPoint(x, y);
-		ret.addPoint(x, y + height);
-		ret.addPoint(x + width, y + height);
-		ret.addPoint(x + width, y);
-		return ret;
-	}
-
-	public static Polygon createRectPolygon(Point p1, Point p2, Point p3, Point p4) {
-		Polygon ret = new Polygon();
-		ret.addPoint(p1.x, p1.y);
-		ret.addPoint(p2.x, p2.y);
-		ret.addPoint(p3.x, p3.y);
-		ret.addPoint(p4.x, p4.y);
-		return ret;
-	}
 }

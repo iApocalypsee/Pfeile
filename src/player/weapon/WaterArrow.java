@@ -18,7 +18,6 @@ public class WaterArrow extends AbstractArrow {
 	
 	public static final Color UNIFIED_COLOR = new Color(60, 166, 221, 200);
 	
-	
 	/** Bild des Pfeils */
 	private static BufferedImage img_Water;
 	/** Laden des Bildes */
@@ -28,13 +27,10 @@ public class WaterArrow extends AbstractArrow {
 					"resources/gfx/arrow textures/waterArrow.png"));
 		} catch (IOException e) {e.printStackTrace();}
 	}
-	
-	
+
 	/** ruft den Konstrucktor von 'AbstractArrow' auf */
 	public WaterArrow() {
-		
-		super(38f, 38f, 600, 0.0125f, 0.0125f, 0.065f, 0.13f, 3.1, 6.0f, "Wasserpfeil");
-		
+		super(55f, 40f, 17, 0.0125f, 0.0125f, 0.065f, 0.13f, 3.1, 6.0f, "Wasserpfeil");
 	}
 	
 	/** Gibt das Bild des Wasserpfeiles zur�ck 

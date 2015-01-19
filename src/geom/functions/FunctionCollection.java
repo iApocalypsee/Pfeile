@@ -1,9 +1,43 @@
 package geom.functions;
 
+import java.awt.*;
+
 /** This contains functions, that are not part of the {@link geom.functions.FunctionCollectionEasing}
  * ({@link geom.functions.FunctionCollectionEasing$}) easing (in/out) functions with acceleration/deceleration
  */
 public class FunctionCollection {
+
+    /**
+     * Creates a rectangular polygon.
+     *
+     * @param x      The x position of the polygon.
+     * @param y      The y position of the polygon.
+     * @param width  The width of the rectangle.
+     * @param height Ditto.
+     * @return A polygon with a rectangular shape.
+     */
+    public static Polygon createRectPolygon(int x, int y, int width, int height) {
+        Polygon ret = new Polygon();
+        ret.addPoint(x, y);
+        ret.addPoint(x, y + height);
+        ret.addPoint(x + width, y + height);
+        ret.addPoint(x + width, y);
+        return ret;
+    }
+
+    /** Creates a Polygon from every point: <p>
+     * <code>Polygon poly = new Polygon();</code> <p>
+     *     <code>for (Point point : points)   poly.addPoint(point.x, point.y);</code> <p>
+     *     <code>return poly;</code>
+     *
+     * @return a polygon from an undefined number of points
+     */
+    public static Polygon createPolygon (Point... points) {
+        Polygon poly = new Polygon();
+        for (Point point : points)
+            poly.addPoint(point.x, point.y);
+        return poly;
+    }
 
     /** The hypotenuse (without squareRooting it!) between the points (x1|y1) and (x2|y2).
      * If you just for example want to compare what the shorter distance is, much calculating time can be saved, by just calling

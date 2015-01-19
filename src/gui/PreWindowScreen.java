@@ -168,7 +168,7 @@ public class PreWindowScreen extends Screen {
 
         final String[] comboBoxValuesTime = {"10min", "5 min", "3 min", "2 min", "1 min", "40sec"};
         boxSelectTime = new ComboBox(boxSelectHigh.getX(), selectorComboBox.getY(), this, comboBoxValuesTime);
-        boxSelectTime.setSelectedIndex(2);
+        boxSelectTime.setSelectedIndex(3);
         boxSelectTime.setVisible(false);
         boxSelectTime.declineInput();
 

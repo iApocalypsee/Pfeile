@@ -33,6 +33,18 @@ public class TimeClock extends Component implements Runnable {
 
     private long sumTime = 0;
 
+    /** The default value the timer has; It is also the first time, when the effect <code>timeEffects()</code> is triggered.
+     * It's a little more than 10 seconds, because the screen needs some time to update itself, so these 50ms are just
+     * synchronizing the audio effects with the screen-system [=> update rate in <code>GameLoop</code>: 1/60s]. <p>
+     * Compare with {@link general.TimeClock#timer}.*/
+    private final int DEFAULT_TIMER = 10050;
+
+    /** the time after which the next side effect {@link TimeClock#timeEffects()} is called. This will regulate a second
+     * difference between the start of two {@link animation.SoundEffectTimeClock#play_tickingNoise()} or rather
+     * {@link animation.SoundEffectTimeClock#play_tickingCriticalNoise()}.
+     * It's default value is <code>10sec</code> (<code>DEFAULT_TIMER</code>) because it's the time of the first effect. */
+    private int timer = DEFAULT_TIMER;
+
     private static Color brightDarkGrey = Color.DARK_GRAY.brighter();
 
     private Color colorTime = Color.RED;
@@ -42,9 +54,9 @@ public class TimeClock extends Component implements Runnable {
 
     /** this is the color, which is shown, when the time is low (<10000 ms) */
     private Color colorLowLife = new Color (118, 1, 0);
-	
-	/** this String displays the time */
-	private String timePrintString = "ERROR";
+
+    /** this String displays the time */
+	private String timePrintString = "NULL";
 
 	public final Delegate.Function0Delegate onTimeOver = new Delegate.Function0Delegate();
 
@@ -52,9 +64,8 @@ public class TimeClock extends Component implements Runnable {
     private static Property<FiniteDuration> _turnTime = Property.withValidation();
 
 	// KONSTURCKTOR
-	/** KONSTRUCKTOR der Klasse 
-	 */
 	public TimeClock () {
+        // these values put the underlying component directly in the upper middle of the screen.
 		super(Main.getWindowWidth() / 2 - 72 / 2, 25, 72, 26, 
 				GameScreen.getInstance());
 		stop();
@@ -81,13 +92,13 @@ public class TimeClock extends Component implements Runnable {
             }
         });
 
-        final PfeileContext context = Main.getContext();
-        context.getTurnSystem().onTurnGet().register(JavaInterop.asScalaFunction(p -> {
+        final TurnSystem turnSystem = Main.getContext().getTurnSystem();
+        turnSystem.onTurnGet().register(JavaInterop.asScalaFunction(p -> {
             reset();
             start();
             return BoxedUnit.UNIT;
         }));
-        context.getTurnSystem().onTurnEnded().register(JavaInterop.asScalaFunction(p -> {
+        turnSystem.onTurnEnded().register(JavaInterop.asScalaFunction(p -> {
             stop();
             return BoxedUnit.UNIT;
         }));
@@ -97,38 +108,29 @@ public class TimeClock extends Component implements Runnable {
 	 *  .... updated die aktuelle Zeit; �bernimmt Thread */
 	@Override
 	public void run() {
-        /*
-        LogFacility.log("ENTERED run() of TimeClock.", LogFacility.LoggingLevel.Debug);
-        LogFacility.log("sumTime: " + sumTime + " turnTime " + turnTime().toMillis() + " turnTime - sumTime " + (turnTime().toMillis() - sumTime));
-        LogFacility.log("isRunning() " + isRunning());
-        */
-
         long lastTime = System.currentTimeMillis();
 
 		while (!Thread.currentThread().isInterrupted()) {
-
             /** the time at which the beginning of this calculation begins (with <code>System.currentTimeMillis()</code>) */
             long timeCurrent = System.currentTimeMillis();
 
 			if (isRunning()) {
                 sumTime = sumTime + (timeCurrent - lastTime);
-				if (turnTime().toMillis() - sumTime <= 0) {
-					isRunning = false;
+
+                /** <code>getMilliDeath()</code> or <code>turnTime().toMillis() - sumTime</code> */
+                long timeLeft = getMilliDeath();
+
+				if (timeLeft <= 0) {
+                    // if the time has been run out, the explosion sound effect reassures, that the player notice the reason it.
+                    SoundEffectTimeClock.play_explosion();
+                    isRunning = false;
                     timePrintString = timeFormatter(0);
 					onTimeOver.call();
 				} else {
-					timePrintString = timeFormatter (turnTime().toMillis() - sumTime);
-                    //LogFacility.log("TimeClock is running out: " + (turnTime().toMillis() - sumTime), LogFacility.LoggingLevel.Debug);
+                    timePrintString = timeFormatter (timeLeft);
 
-                    // smaller than 3s
-                    if (turnTime().toMillis() - sumTime <= 3000)
-                        colorTime = colorVeryLowLife;
-                    // smaller than 10s
-                    else if (turnTime().toMillis() - sumTime <= 10000) {
-                        colorTime = colorLowLife;
-                        // the time is low, the sound need to be played
-                        if (!SoundEffectTimeClock.isRunning_OutOfTime10Sec())
-                            SoundEffectTimeClock.play_OutOfTime10Sec();
+                    if (timeLeft <= timer) {
+                        timeEffects();
                     }
 
                     try {
@@ -149,10 +151,6 @@ public class TimeClock extends Component implements Runnable {
 	/** stoppt die Ausf�hrung von TimeClock */
 	public synchronized void stop () {
 		isRunning = false;
-
-        // the sound need to be stopped, if the explosion (= end of players turn) isn't playing, because otherwise it stops too interrupt.
-        if (!SoundEffectTimeClock.isExplosionPlaying())
-            SoundEffectTimeClock.stop_OutOfTime10Sec();
 	}
 	
 	/** started TimeClock */
@@ -163,25 +161,28 @@ public class TimeClock extends Component implements Runnable {
 	/** setzt TimeClock auf maximale Zeit zur�ck
 	 * HINWEIS: an Start/Stop wird nicht ge�ndert, also ggf. stop / start aufrufen */
 	public synchronized void reset() {
-        // the time must be longer than 10s
+        // resetting these values: default timePrintString color, default time, default time for next timeEffects()-call
+        // and the default printed time with timePrintString
         colorTime = Color.BLACK;
 		sumTime = 0;
+        timer = DEFAULT_TIMER;
         timePrintString = timeFormatter(turnTime().toMillis());
 	}
 	
 	
 	/** Umwandlung einer long-Variable in einem String min:sec:ms */
-	public static String timeFormatter(long millisecTime) {
+	public static String timeFormatter(long milliSecTime) {
         String time;
-        if(millisecTime <= 0){  //�berpr�ft ob die Zeit negativ ist
+        if(milliSecTime <= 0) {
+            time = "00:00:000";
             //throw new RuntimeException("Negativ time value provided");
-        	time = "00:00:000";
-//        } else if (millisecTime > 357539999){   //�berpr�ft ob das Limit des Formates nicht �berschreitet
-//            throw new RuntimeException("Time value exceeds allowed format");
+
+        //  } else if (milliSecTime > 357539999){
+        //      throw new RuntimeException("Time value exceeds allowed format");
         } else {
-          long min = millisecTime / (60 * 1000);
-          long sec = (millisecTime - min * 60 * 1000) / 1000;
-          long ms = millisecTime - min * 60 * 1000 - sec * 1000;
+          long min = milliSecTime / (60 * 1000);
+          long sec = (milliSecTime - min * 60 * 1000) / 1000;
+          long ms = milliSecTime - min * 60 * 1000 - sec * 1000;
           
           if (min <= 0)
         	  time = "00";
@@ -214,18 +215,18 @@ public class TimeClock extends Component implements Runnable {
 	}
 	
 	/** Umwandlung einer Zeitangabe in Millisekunden in einen String [min:sec] */
-	public static String timeFormatterShort(long millisecTime) {
+	public static String timeFormatterShort(long milliSecTime) {
         String time = null;
-        if(millisecTime <= 0){                        //�berpr�ft ob zeit negativ ist
+        if(milliSecTime <= 0) {
+            time = "00:00";
             //throw new RuntimeException("Negativ time value provided");
-        	
-        	time = "00:00";
-        //} else if (millisecTime>357539999){                 //�berpr�ft ob das limit von format nicht �berschreitet
+
+        //} else if (milliSecTime>357539999) {
         //    throw new RuntimeException("Time value exceeds allowed format");
-        }else {
-           millisecTime = millisecTime/1000000;
-           long min= (millisecTime/60);
-           long sec= millisecTime-min*60;
+        } else {
+           milliSecTime = milliSecTime/1000000;
+           long min= (milliSecTime/60);
+           long sec= milliSecTime-min*60;
           
            if(min < 10 && sec < 10){
                  time = "0"+min+":"+"0"+sec;
@@ -241,6 +242,29 @@ public class TimeClock extends Component implements Runnable {
            }
         } 
         return time;
+    }
+
+    /** Every special effect (i.e. for easier noticing) is controlled here.
+     * Right now, there is the sound and the change of color.
+     *
+     * Add new Effects here by the syntax: <p>
+     *     case: theTimeUnderOrEqualToTheEffectShouldBePlayed : theEffect  break;
+     *        <i> // maybe you need to add the end of that effect to the {@link TimeClock#reset()} method [i.e. if there need to be the standard color]</i> */
+    private void timeEffects () {
+        switch (timer) {
+            case 1050: SoundEffectTimeClock.play_tickingCriticalNoise(); break;
+            case 2050: SoundEffectTimeClock.play_tickingCriticalNoise(); break;
+            case 3050: SoundEffectTimeClock.play_tickingCriticalNoise(); colorTime = colorVeryLowLife; break;
+            case 4050: SoundEffectTimeClock.play_tickingNoise(); break;
+            case 5050: SoundEffectTimeClock.play_tickingNoise(); break;
+            case 6050: SoundEffectTimeClock.play_tickingNoise(); break;
+            case 7050: SoundEffectTimeClock.play_tickingNoise(); break;
+            case 8050: SoundEffectTimeClock.play_tickingNoise(); break;
+            case 9050: SoundEffectTimeClock.play_tickingNoise(); break;
+            case 10050:SoundEffectTimeClock.play_tickingNoise(); colorTime = colorLowLife; break;
+        }
+        // next time it's one second earlier
+        timer = timer - 1000;
     }
 	
 	/**

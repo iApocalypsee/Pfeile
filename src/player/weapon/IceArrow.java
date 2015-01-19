@@ -32,9 +32,7 @@ public class IceArrow extends AbstractArrow {
 	
 	/** ruft den Konstrucktor von 'AbstractArrow' auf */
 	public IceArrow() {
-		
-		super(43f, 32f, 500, 0.035f, 0.025f, 0.13f, 0.06f, 5, 6.4f, "Eispfeil");
-		
+		super(64f, 32f, 15, 0.035f, 0.025f, 0.13f, 0.06f, 5, 4.6f, "Eispfeil");
 	}
 	
 	/** Gibt das Bild des Eispfeiles zur�ck 

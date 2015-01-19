@@ -4,7 +4,6 @@ import comp.Button;
 import general.JavaInterop;
 import general.Main;
 import player.weapon.AttackDrawer;
-import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;
 import world.VisualMap;
 
@@ -55,17 +54,6 @@ public class GameScreen extends Screen implements FrameContainer {
     public AttackDrawer getAttackDrawer () {
         return attackDrawer;
     }
-
-    private LifeUI lifeUI = null;
-	// I need lazy initialization of lifeUI, else it will throw a null pointer exception.
-	private LifeUI getLifeUI() {
-		if(lifeUI == null) {
-			synchronized(this) {
-				lifeUI = new LifeUI(Main.getWindowWidth() - 200, Main.getWindowHeight() - 150, Main.getContext().getActivePlayer().life());
-			}
-		}
-		return lifeUI;
-	}
 
 	/**
 	 * Die Welt, die vom GameScreen gezeichnet wird.
@@ -156,7 +144,7 @@ public class GameScreen extends Screen implements FrameContainer {
 		endTurnButton.draw(g);
 		shootButton.draw(g);
 		toggleStopwatch.draw(g);
-		getLifeUI().draw(g);
+		Main.getContext().getActivePlayer().drawLifeUI(g);
 
 		frameContainerObject.drawFrames(g);
 
@@ -184,10 +172,10 @@ public class GameScreen extends Screen implements FrameContainer {
 				break;
             // FIXME: remove this later
             case KeyEvent.VK_SPACE:
-                if (lifeUI.life().getLife() - 20 < 0)
-                    lifeUI.life().setLife(0);
+                if (Main.getContext().getActivePlayer().life().getLife() - 20 < 0)
+                    Main.getContext().getActivePlayer().life().setLife(0);
                 else
-                    lifeUI.life().setLife(lifeUI.life().getLife() - 20);
+                    Main.getContext().getActivePlayer().life().setLife(Main.getContext().getActivePlayer().life().getLife() - 20);
 		}
 	}
 

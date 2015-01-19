@@ -29,10 +29,9 @@ public class FireArrow extends AbstractArrow {
 		} catch (IOException e) {e.printStackTrace();}
 	}
 	
-	
 	/** ruft den Konstruktor von 'AbstractArrow' auf */
 	public FireArrow() {
-		super(57f, 23f, 800, 0.045f, 0.02f, 0.095f, 0.10f, 3.5, 7.2f, "Feuerpfeil");
+		super(82f, 23f, 80, 0.045f, 0.02f, 0.095f, 0.10f, 3.5, 6.2f, "Feuerpfeil");
 	}
 	
 	/** Gibt das Bild des Feuerpfeiles zur�ck 
