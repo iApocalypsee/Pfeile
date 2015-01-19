@@ -3,9 +3,8 @@ package newent
 import java.awt.{Color, Graphics2D, Point}
 
 import comp.Component
-import general.{Main, PfeileContext, Property, Delegate}
 import general.Main.getGameWindow
-import general.{Delegate, PfeileContext, Property}
+import general.{Delegate, Main, PfeileContext, Property}
 import gui.LifeUI
 import newent.pathfinding.AStarPathfinder
 import player.Life
@@ -82,7 +81,6 @@ class Player(world: WorldLike,
 
     private val drawColor = new Color(255, 0, 0)
 
-    setBounds(tileLocation.component.getBounds)
     setSourceShape(tileLocation.component.getSourceShape)
 
     onLocationChanged += { e =>
