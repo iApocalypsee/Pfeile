@@ -8,10 +8,10 @@ package comp
 trait DisplayRepresentable {
 
   /** The component. Is going to be lazily initialized in the getter. */
-  private var _component: IComponent = null
+  private var _component: Component = null
 
   /** Returns the component of the representable object. */
-  def component: IComponent = {
+  def component: Component = {
     // Lazy initialization of the component, because some components rely
     // on data that is initiialized maybe afterwards.
     if(_component eq null) {
@@ -22,20 +22,20 @@ trait DisplayRepresentable {
     _component
   }
   /** Sets the representing component. */
-  def component_=(a: IComponent) = {
+  def component_=(a: Component) = {
     require(a ne null)
     _component = a
   }
 
   // Ditto.
   def getComponent = component
-  def setComponent(a: IComponent) = this.component = a
+  def setComponent(a: Component) = this.component = a
 
   /** The component that the representable object uses first. Method is called only once.
     *
     * The start component must not be null at first, else it will throw a [[IllegalArgumentException]].
     * @return A component object which the representable object uses first.
     */
-  protected def startComponent: IComponent
+  protected def startComponent: Component
 
 }

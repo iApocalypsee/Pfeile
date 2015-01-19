@@ -1,11 +1,10 @@
 package world
 
+import java.awt.Graphics2D
+
 import general.Main
 import gui.Drawable
 import newent.VisionStatus
-
-import java.awt.Graphics2D
-import java.awt.geom.AffineTransform
 
 class VisualMap(world: WorldLike) extends Drawable {
 
@@ -52,22 +51,11 @@ class VisualMap(world: WorldLike) extends Drawable {
 
     // Recalculate the position of every tile...
     _displayWorld.terrain.tiles foreach { c =>
-      c.component.setX((c.component.getX + shiftX).asInstanceOf[Int])
-      c.component.setY((c.component.getY + shiftY).asInstanceOf[Int])
+      c.component.getTransformation.translate(shiftX, shiftY)
     }
   }
 
-  def zoom(factor: Float): Unit = {
-    _vp.setZoom(factor)
-    val transform = new AffineTransform
-    transform.scale(factor, factor)
-
-    // Recalculate the boundaries of every tile...
-    _displayWorld.terrain.tiles foreach { t =>
-      t.component.setWidth((t.component.getWidth * factor).asInstanceOf[Int])
-      t.component.setHeight((t.component.getWidth * factor).asInstanceOf[Int])
-    }
-  }
+  def zoom(factor: Float): Unit = ???
 
   /** Draws the whole map. */
   override def draw(g: Graphics2D): Unit = {

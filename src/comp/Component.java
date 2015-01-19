@@ -16,7 +16,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.function.Function;
 
 /**
  * A standard implementation of a component.
@@ -40,6 +39,12 @@ public abstract class Component implements IComponent {
 	 * Das umfassende Polygon um die Komponente.
 	 */
 	private Shape bounds;
+
+	private Shape srcShape;
+
+	private boolean isTransformationChangedSince = false;
+
+	private final Transformation2D transformation = new Transformation2D();
 
 	/**
 	 * Der Name des Steuerelements. Wird hauptsächlich für {@link Component#children} benötigt.
@@ -146,7 +151,7 @@ public abstract class Component implements IComponent {
 		mouseListeners = new LinkedList<>();
 		mouseMotionListeners = new LinkedList<>();
 
-		bounds = new Rectangle();
+		srcShape = new Rectangle();
 
 		border = new Border();
 		border.setComponent(this);
@@ -197,13 +202,23 @@ public abstract class Component implements IComponent {
 		this.status = ComponentStatus.NO_MOUSE;
 		this.name = Integer.toString(this.hashCode());
 
-		Function<Vector2, Object> callback = (Vector2 x) -> {
+		transformation.onTranslated().register(JavaInterop.asScalaFunction((TranslationChange t) -> {
+			isTransformationChangedSince = true;
 			onTransformed.apply();
 			return BoxedUnit.UNIT;
-		};
+		}));
 
-		onMoved.register(JavaInterop.asScalaFunction(callback));
-		onResize.register(JavaInterop.asScalaFunction(callback));
+		transformation.onScaled().register(JavaInterop.asScalaFunction((ScaleChange t) -> {
+			isTransformationChangedSince = true;
+			onTransformed.apply();
+			return BoxedUnit.UNIT;
+		}));
+
+		transformation.onRotated().register(JavaInterop.asScalaFunction((RotationChange t) -> {
+			isTransformationChangedSince = true;
+			onTransformed.apply();
+			return BoxedUnit.UNIT;
+		}));
 	}
 
 	/**
@@ -220,10 +235,19 @@ public abstract class Component implements IComponent {
 
 		this();
 
-		bounds = new Rectangle(x, y, width, height);
+		// The component's model is now in its own model space.
+		setSourceShape(new Rectangle(-width / 2, -height / 2, width, height));
+		transformation.translate(x, y);
 
 		setBackingScreen(backing);
 
+	}
+
+	public Component(Vector2 initialPosition, Shape srcShape, Screen backing) {
+		super();
+		setSourceShape(srcShape);
+		transformation.translate(initialPosition.x(), initialPosition.y());
+		setBackingScreen(backing);
 	}
 
 	/**
@@ -294,11 +318,11 @@ public abstract class Component implements IComponent {
 	 * @return the x
 	 */
 	public int getX() {
-		return getSimplifiedBounds().x;
+		return (int) transformation.translation().x() - srcShape.getBounds().width / 2;
 	}
 
 	public int getRelativeX() {
-		return getSimplifiedBounds().x - (parent != null ? parent.getX() : 0);
+		return (int) transformation.translation().x() - (parent != null ? parent.getX() : 0);
 	}
 
 	/**
@@ -307,31 +331,25 @@ public abstract class Component implements IComponent {
 	 * @param x Die neue x Position des Steuerelements.
 	 */
 	public void setX(int x) {
-		int translation = x - getX();
-		AffineTransform transform = AffineTransform.getTranslateInstance(translation, 0);
-		bounds = transform.createTransformedShape(bounds);
-		// Do not pollute the registered function with an event in which...
-		// well... nothing really changed.
-		if (translation != 0) {
-			onMoved.apply(new Vector2(translation, 0));
-		}
+		final Vector2 oldPosition = transformation.translation();
+		transformation.translate(x - oldPosition.x() + srcShape.getBounds().width / 2, 0);
 	}
 
 	public void setRelativeX(int x) {
 		if(parent == null) throw new NullPointerException("Parent of component is null.");
 		// Just translate the relative coordinate to the absolute coordinate.
-		setX(x + parent.getSimplifiedBounds().x);
+		setX(x + parent.getX());
 	}
 
 	/**
 	 * @return the y
 	 */
 	public int getY() {
-		return getSimplifiedBounds().y;
+		return (int) transformation.translation().y() - srcShape.getBounds().height / 2;
 	}
 
 	public int getRelativeY() {
-		return getSimplifiedBounds().y - (parent != null ? parent.getY() : 0);
+		return (int) transformation.translation().y() - (parent != null ? parent.getY() : 0);
 	}
 
 	/**
@@ -340,19 +358,13 @@ public abstract class Component implements IComponent {
 	 * @param y Die neue y Position des Steuerelements.
 	 */
 	public void setY(int y) {
-		int translation = y - getY();
-		AffineTransform transform = AffineTransform.getTranslateInstance(0, translation);
-		bounds = transform.createTransformedShape(bounds);
-		// Do not pollute the registered function with an event in which...
-		// well... nothing really changed.
-		if (translation != 0) {
-			onMoved.apply(new Vector2(0, translation));
-		}
+		final Vector2 oldPosition = transformation.translation();
+		transformation.translate(0, y - oldPosition.y() + srcShape.getBounds().height / 2);
 	}
 
 	public void setRelativeY(int y) {
 		if(parent == null) throw new NullPointerException("Parent of component is null.");
-		setY(y + parent.getSimplifiedBounds().y);
+		setY(y + parent.getY());
 	}
 
 	public void setLocation(int x, int y) {
@@ -383,6 +395,7 @@ public abstract class Component implements IComponent {
 	/**
 	 * @param width the width to set
 	 */
+	@Deprecated
 	public void setWidth(int width) {
 		if (getWidth() != 0) {
 			Shape old = bounds;
@@ -411,6 +424,7 @@ public abstract class Component implements IComponent {
 	/**
 	 * @param height the height to set
 	 */
+	@Deprecated
 	public void setHeight(int height) {
 		if (getHeight() != 0) {
 			Shape old = bounds;
@@ -433,18 +447,21 @@ public abstract class Component implements IComponent {
 	 * @return the bounds
 	 */
 	public Shape getBounds() {
+		if(isTransformationChangedSince) {
+			bounds = transformation.transformOriginal(srcShape);
+		}
 		return bounds;
 	}
 
-	/**
-	 * Setzt die Grenzen des Steuerelements neu. Methode sollte noch nicht verwendet werden, da sie
-	 * den Mausinput durcheinander bringen kann.
-	 *
-	 * @param bounds Das neue Polygonobjekt.
-	 */
-	protected final void setBounds(Shape bounds) {
-		onTransformed.apply();
-		this.bounds = bounds;
+	public Shape getSourceShape() {
+		return srcShape;
+	}
+
+	public void setSourceShape(Shape srcShape) {
+		if(srcShape == null) throw new NullPointerException();
+		this.srcShape = srcShape;
+		transformation.resetTransformation();
+		transformation.translate(srcShape.getBounds().width / 2, srcShape.getBounds().height / 2);
 	}
 
 	/**
@@ -582,14 +599,20 @@ public abstract class Component implements IComponent {
 
 	public void setParent(Component parent) {
 		if(this.parent != null) {
-			AffineTransform resetTransform = AffineTransform.getTranslateInstance(-this.parent.getX(), -this.parent.getY());
-			bounds = resetTransform.createTransformedShape(bounds);
+			transformation.translate(-this.parent.getX(), -this.parent.getY());
 		}
 		this.parent = parent;
 		if(this.parent != null) {
-			AffineTransform newTransform = AffineTransform.getTranslateInstance(this.parent.getX(), this.parent.getY());
-			bounds = newTransform.createTransformedShape(bounds);
+			transformation.translate(this.parent.getX(), this.parent.getY());
 		}
+	}
+
+	public Transformation2D getTransformation() {
+		return transformation;
+	}
+
+	public void resetPosition() {
+		transformation.setTranslation(srcShape.getBounds().width / 2, srcShape.getBounds().height / 2);
 	}
 
 	/**
@@ -667,6 +690,7 @@ public abstract class Component implements IComponent {
 	 *
 	 * @param transformation The transformation to apply to the bounds.
 	 */
+	@Deprecated
 	public void applyTransformation(AffineTransform transformation) {
 		bounds = transformation.createTransformedShape(bounds);
 		onTransformed.apply();

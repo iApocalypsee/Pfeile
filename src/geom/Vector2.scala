@@ -17,8 +17,6 @@ case class Vector2(x: Float, y: Float) extends FloatVector {
 
   def dot(vec: Vector2): Float = x * vec.x + y * vec.y
 
-  def cross(vec: Vector2): Float = x * vec.y - y * vec.x
-
   override def unifiedVector(factor: Float) = Vector2(factor, factor)
 
   override def vectorFrom(x: List[Float]) = {

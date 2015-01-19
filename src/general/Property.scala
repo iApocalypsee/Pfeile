@@ -6,6 +6,8 @@ package general
  */
 case class Property[A] private(private var value: Option[A]) {
 
+  private var _getter: A => A = x => x
+
   /** Called when the underlying value of the property object is being returned
     * to the called by the [[general.Property# g e t]] method.
     */
@@ -27,7 +29,7 @@ case class Property[A] private(private var value: Option[A]) {
     * @return The underlying value that the property holds.
     * @see [[scala.Option]]
     */
-  @inline def get = synchronized { option.get }
+  @inline def get = synchronized { _getter(option.get) }
 
   /** Returns the option containing the possible value of the property.
     *
@@ -39,6 +41,12 @@ case class Property[A] private(private var value: Option[A]) {
   def option = {
     onGet()
     value
+  }
+
+  def getter = _getter
+  def getter_=(x: A => A) = {
+    require(x != null)
+    _getter = x
   }
 
   /** Sets the underlying value to a new one.

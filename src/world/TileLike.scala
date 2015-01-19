@@ -1,14 +1,13 @@
 package world
 
+import java.awt.event.{MouseAdapter, MouseEvent}
+import java.awt.{Color, Graphics2D, Polygon}
+
 import comp.{Circle, Component, DisplayRepresentable}
 import general.Main
-import geom.PointDef
 import gui.{AdjustableDrawing, GameScreen}
 import newent.{AttackContainer, EntityLike}
 import player.weapon.AbstractArrow
-
-import java.awt.event.{MouseAdapter, MouseEvent}
-import java.awt.{Color, Graphics2D, Polygon}
 
 import scala.collection.{JavaConversions, mutable}
 
@@ -80,6 +79,8 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
                                               override val latticeY: Int,
                                               override val terrain: DefaultTerrain) extends TileLike with
                                                                                             OnDemandEntitiesStrategy {
+
+  import world.IsometricPolygonTile._
 
   require( terrain ne null )
 
@@ -156,17 +157,9 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
     */
   override protected def startComponent = new Component with AdjustableDrawing {
 
-    // Points that describe the corner points of the polygon.
-    // It is easier to have 4 point objects instead of one polygon instance
-    // from which I have to pull the data every time.
-    private val _originalWest = new PointDef( 0, 0 )
-    private val _originalSouth = new PointDef( 0, 0 )
-    private val _originalEast = new PointDef( 0, 0 )
-    private val _originalNorth = new PointDef( 0, 0 )
-
     // Make the call to the method here, because the initialization of the attributes above
     // has to finish before they get set to another value...
-    recalculateOriginalPoints( )
+    //recalculateOriginalPoints( )
 
     // When the mouse moves over the tile, it should be marked in a grayish style.
     handle({ g => g.setColor(Color.GRAY); g.fill(getBounds) }, { isMouseFocused })
@@ -179,11 +172,17 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
       }
     })
 
+    setSourceShape(IsometricPolygonTile.ComponentShape)
+
+    // Translate so that the tile fits into the grid again.
+    getTransformation.translate(latticeX * TileHalfWidth + latticeY * TileHalfWidth, latticeX * TileHalfHeight - latticeY * TileHalfHeight)
+
     /** Recalculates the original points for the isometric tile.
       *
       * The original points can change by moving the geometry of the map, so every time the map geometry
       * changes, this method should be called in order to keep visuals.
       */
+    /*
     def recalculateOriginalPoints(): Unit = {
       import world.IsometricPolygonTile._
 
@@ -206,6 +205,7 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
 
       setBounds(_polygon)
     }
+    */
 
     override def draw(g: Graphics2D): Unit = {
       g.setColor(color)
@@ -234,6 +234,15 @@ object IsometricPolygonTile {
   lazy val TileHalfHeight = 10
   lazy val TileHeight = TileHalfHeight * 2
   lazy val TileDiagonalLength = sqrt( pow( TileHalfWidth, 2 ) + pow( TileHalfHeight, 2 ) )
+
+  lazy val ComponentShape = {
+    val polygon = new Polygon
+    polygon.addPoint(-TileHalfWidth, 0)
+    polygon.addPoint(0, -TileHalfHeight)
+    polygon.addPoint(TileHalfWidth, 0)
+    polygon.addPoint(0, TileHalfHeight)
+    polygon
+  }
 
 }
 

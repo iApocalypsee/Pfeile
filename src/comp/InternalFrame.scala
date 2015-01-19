@@ -1,10 +1,10 @@
 package comp
 
-import general.{Delegate, LogFacility}
-import gui.Screen
-
 import java.awt._
 import java.awt.event.{MouseAdapter, MouseEvent}
+
+import general.{Delegate, LogFacility}
+import gui.Screen
 
 import scala.collection.mutable
 
@@ -47,7 +47,14 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     this << ret
 
     // Set the close button up according to the rules specified in [[FrameStyle]].
-    ret.setBounds(new Rectangle(xInBounds, yInBounds, widthInBounds, heightInBounds))
+    ret.setSourceShape(new Rectangle(-widthInBounds / 2, -heightInBounds / 2, widthInBounds, heightInBounds))
+
+    // Add the width to x and height to y because:
+    //    The new transform system allows bounds to define custom anchor middle points.
+    //    The best way of handling certain transformations is to put the anchor middle point
+    //    in the center of the component.
+    ret.getTransformation.translate(widthInBounds + xInBounds, heightInBounds + yInBounds)
+
     ret.getBorder.setInnerColor(FrameStyle.CloseButtonColor_Inner)
     ret.setAdditionalDrawing { (g: Graphics2D) =>
       val buttonBounds = ret.getBounds.getBounds

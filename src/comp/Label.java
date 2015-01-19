@@ -32,7 +32,8 @@ public class Label extends Component {
 		super(0, 0, 0, 0, backing);
 		
 		Dimension text_bounds = Component.getTextBounds(text, STD_FONT);
-		setBounds(new Rectangle(x, y, text_bounds.width, text_bounds.height));
+		setSourceShape(new Rectangle(-text_bounds.width / 2, -text_bounds.height / 2, text_bounds.width, text_bounds.height));
+		getTransformation().translate(x, y);
 		
 		this.text = text;
 		declineInput();
