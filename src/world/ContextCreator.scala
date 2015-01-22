@@ -1,10 +1,10 @@
 package world
 
+import java.awt.Point
+
 import general.io.StageDescriptable
 import general.{Main, PfeileContext, Property, StageOrganized}
 import newent.Player
-
-import java.awt.Point
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -82,6 +82,22 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
 
       context.world.entities += act
       context.world.entities += opponent
+
+      /*
+      // gui position of player "act"
+      var endComponent = context.getWorld.terrain.tileAt(spawnPoint.x, spawnPoint.y).component
+      act.component.setSourceShape(endComponent.getSourceShape)
+      act.component.resetPosition()
+      act.component.setX(endComponent.getX)
+      act.component.setY(endComponent.getY)
+
+      // setting gui position of player "opponent"
+      endComponent = context.getWorld.terrain.tileAt(spawnPointEnemy.x, spawnPointEnemy.y).component
+      opponent.component.setSourceShape(endComponent.getSourceShape)
+      opponent.component.resetPosition()
+      opponent.component.setX(endComponent.getX)
+      opponent.component.setY(endComponent.getY)
+      */
 
       context
     }

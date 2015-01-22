@@ -35,7 +35,7 @@ class LifeUI(var x: Int, var y: Int, private var _life: Life) extends Drawable {
   _life.onLifeChanged += { l =>
     lifebar.fillFactor = l.getNewLife / _life.getMaxLife
 
-    // red: it is qudratic increased up to the middle and then the growth decreses qudraticly with fillFactor: 0 -> 255
+    // red: it is quadratic increased up to the middle and then the growth decreases quadratically with fillFactor: 0 -> 255
     // blue: it is "0" at 0 or max Life and the more it gets to a fillFactor of 0.5, the higher is the blue value
     // green: opposite of red. 255 -> 0
 

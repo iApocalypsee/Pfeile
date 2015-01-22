@@ -9,16 +9,16 @@ import java.io.IOException;
  * <p>
  * <b>titleMelodie: </b>  This music clip should be played at the beginning of the game, during PreWindowScreen or ArrowSelectionScreenPreSet.
  * <p>
- * <b>mainThemeMelodie: </b>  This music clip is the prefered melodie during the game when the player is in GameScreen or ArrowSelectionScreen.
+ * <b>mainThemeMelodie: </b>  This music clip is the preferred melodie during the game when the player is in GameScreen or ArrowSelectionScreen.
  * <p>
  * <b>tensionThemeMelodie: </b>  This music clip is reserved for parts in the game where you have tension.
-        Note, that the tension beginns after the first 10 to 20 secounds. It could also be used after the rounds, if you can choose a new item.
+        Note, that the tension begins after the first 10 to 20 seconds. It could also be used after the rounds, if you can choose a new item.
  */
 public class SoundPool {
-    /** plays the loop countinously.
+    /** plays the loop continuously.
      * Use in:
      * <b>playLoop(int)</b> */
-    public static int LOOP_COUNTINOUSLY = Clip.LOOP_CONTINUOUSLY;
+    public static int LOOP_CONTINUOUSLY = Clip.LOOP_CONTINUOUSLY;
 
     /** a music clip for playing the title melodie */
     private static Clip titleMelodie;
@@ -28,6 +28,9 @@ public class SoundPool {
 
     /** a music clip for playing parts with tension. Note, that it needs some time (~15s) to come to that point */
     private static Clip tensionThemeMelodie;
+
+    /** When the game enters {@link gui.GameOverScreen}, this clip is played as background music. It is sad.   */
+    private static Clip gameOverMelodie;
 
     static {
         AudioInputStream audioInputStream = null;
@@ -61,6 +64,17 @@ public class SoundPool {
             audioInputStream.read(audio, 0, size);
             tensionThemeMelodie = (Clip) AudioSystem.getLine(info);
             tensionThemeMelodie.open(audioFormat, audio, 0, size);
+
+            audioInputStream = AudioSystem.getAudioInputStream(
+                    SoundPool.class.getClassLoader().getResourceAsStream("resources/sfx/gameOverMelodie.wav"));
+            audioFormat = audioInputStream.getFormat();
+            size = (int) (audioFormat.getFrameSize() * audioInputStream.getFrameLength());
+            audio = new byte[size];
+            info = new DataLine.Info(Clip.class,audioFormat, size);
+            audioInputStream.read(audio, 0, size);
+            gameOverMelodie = (Clip) AudioSystem.getLine(info);
+            gameOverMelodie.open(audioFormat, audio, 0, size);
+
         } catch (Exception e) { e.printStackTrace(); }
         finally {
             try {
@@ -73,16 +87,16 @@ public class SoundPool {
     }
 
     // TITLE MELODIE
-    /** This plays the background title melodie of pfeile in an loop <code>count</code> times.
+    /** This plays the background title melodie of Pfeile in an loop <code>count</code> times.
      * It will always start at the position after calling <code> playLoop() </code>.
      * To stop it again use <code> stop_titleMelodie </code>
      * The song should play until entering GameScreen / NewWorldTestScreen.
-     * So use: <code>SoundPool.playLoop_titleMelodie(SoundPool.LOOP_COUNTINOUSLY);</code>
+     * So use: <code>SoundPool.playLoop_titleMelodie(SoundPool.LOOP_CONTINUOUSLY);</code>
      * */
     public static void playLoop_titleMelodie (int count) {
         stop_allMelodies();
         titleMelodie.loop(count);
-        play_titleMelodie();
+        titleMelodie.start();
     }
 
     /** This plays the background title melodie of Pfeile once.
@@ -110,12 +124,12 @@ public class SoundPool {
     /** This plays the main theme melodie of pfeile in an loop with <code>count</code> times.
      * It will always start at the point, the melodie is right now, after calling <code> playLoop() </code>.
      * To stop it again use <code> stop </code>
-     * It can be played in en endless Loop by using instead of any integer for count <code>SoundPool.LOOP_COUNTINOUSLY</code>
+     * It can be played in en endless Loop by using instead of any integer for count <code>SoundPool.LOOP_CONTINUOUSLY</code>
      * */
     public static void playLoop_mainThemeMelodie (int count) {
         stop_allMelodies();
         mainThemeMelodie.loop(count);
-        play_mainThemeMelodie();
+        mainThemeMelodie.start();
     }
 
     /** This plays the background title melodie of Pfeile once.
@@ -129,7 +143,7 @@ public class SoundPool {
     }
 
     /** Stops the playing of loop started with <code> playLoop </code> or <code>play</code>.
-     * To Start again use the play or playLoop method of Soundpool.[play]_mainThemeMelodie.
+     * To Start again use the play or playLoop method of <code>SoundPool.[play]_mainThemeMelodie</code>.
      */
     public static void stop_mainThemeMelodie () { mainThemeMelodie.stop(); }
 
@@ -138,15 +152,15 @@ public class SoundPool {
 
 
     // TENSION THEME MELODIE
-    /** This plays the main theme melodie of pfeile in an loop with <code>count</code> times.
+    /** This plays the main theme melodie of Pfeile in an loop with <code>count</code> times.
      * It will always start at the point where it ended at the point of the call, after calling <code> playLoop() </code>.
      * To stop it again use <code> stop_tensionThemeMelodie </code>
-     * For an endless loop use : <code>SoundPool.playLoop_tensionThemeMelodie(SoundPool.LOOP_COUNTINOUSLY);</code>
+     * For an endless loop use : <code>SoundPool.playLoop_tensionThemeMelodie(SoundPool.LOOP_CONTINUOUSLY);</code>
      * */
     public static void playLoop_tensionThemeMelodie (int count) {
         stop_allMelodies();
         tensionThemeMelodie.loop(count);
-        play_tensionThemeMelodie();
+        tensionThemeMelodie.start();
     }
 
     /** This plays the tensionTheme of Pfeile once.
@@ -169,10 +183,53 @@ public class SoundPool {
     /** Is the tensionTheme music clip still playing? */
     public static boolean isPlaying_tensionThemeMelodie () { return tensionThemeMelodie.isRunning(); }
 
+
+    // GAME OVER MELODIE
+    /** The gameOverMelodie is played at the end of the game, if player looses and {@link gui.GameOverScreen} has been
+     * entered.
+     *
+     * @see animation.SoundPool#playLoop_gameOverMelodie(int) */
+    public static void play_gameOverMelodie () {
+        stop_allMelodies();
+        gameOverMelodie.setFramePosition(0);
+        gameOverMelodie.start();
+    }
+
+    /** The gameOverMelodie is played at the end of the game, if player looses and {@link gui.GameOverScreen} has been
+     * entered. {@link SoundPool#stop_allMelodies()} is called within this method.
+     * The melodie is continued <code>count</code> times. If you want to play this melodie until the end
+     * of game use: {@link animation.SoundPool#LOOP_CONTINUOUSLY}.
+     *
+     * @see SoundPool#play_gameOverMelodie() */
+    public static void playLoop_gameOverMelodie (int count) {
+        stop_allMelodies();
+        gameOverMelodie.setFramePosition(0);
+        gameOverMelodie.loop(count);
+        gameOverMelodie.start();
+    }
+
+    /** This should only be true, if the actual Screen is GameOverScreen
+     * <code>Main.getGameWindow().getScreenManager().getActiveScreen().SCREEN_INDEX == GameOverScreen.SCREEN_INDEX</code>.
+     *
+     * @see SoundPool#play_gameOverMelodie()
+     * @return Is the gameOverMelodie playing?
+     */
+    public static boolean isPlaying_gameOverMelodie () { return gameOverMelodie.isRunning(); }
+
+    /** The gameOverMelodie is interrupted. If {@link animation.SoundPool#playLoop_gameOverMelodie(int)} is called, the number
+     * of loops is deleted. */
+    public static void stop_gameOverMelodie () {
+        gameOverMelodie.stop();
+    }
+
+
+    // Referring to all melodies
+
     /** This stops all possible melodies */
     public static void stop_allMelodies() {
         stop_mainThemeMelodie();
         stop_tensionThemeMelodie();
         stop_titleMelodie();
+        stop_gameOverMelodie();
     }
 }

@@ -3,7 +3,6 @@ package general;
 import akka.actor.ActorSystem;
 import animation.SoundPool;
 import general.io.PreInitStage;
-import geom.Vector2;
 import gui.ArrowSelectionScreenPreSet;
 import gui.LoadingWorldScreen;
 import gui.PreWindowScreen;
@@ -151,7 +150,7 @@ public class Main {
 
                 // play the game sound, when the game begins
                 SoundPool.stop_titleMelodie();
-                SoundPool.playLoop_mainThemeMelodie(SoundPool.LOOP_COUNTINOUSLY);
+                SoundPool.playLoop_mainThemeMelodie(SoundPool.LOOP_CONTINUOUSLY);
 
                 return BoxedUnit.UNIT;
             }

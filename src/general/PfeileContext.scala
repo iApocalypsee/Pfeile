@@ -68,18 +68,18 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     LogFacility.log(s"Players in turn system: ${turnSystem.playerList.apply()}")
 
     turnSystem.onGlobalTurnCycleEnded += { () =>
-      // Notify the tiles first that the turn cycle has been completed.
-      // Primarily, this for loop is written to update the arrow queues of the tiles.
-      for (y <- 0 until _world.terrain.height) {
-        for (x <- 0 until _world.terrain.width) {
-          val tile = _world.terrain.tileAt(x, y)
-          tile.updateQueues()
-        }
-      }
-      // Then the entities.
-      world.entities.entityList.foreach { _.onTurnCycleEnded() }
+       // Notify the tiles first that the turn cycle has been completed.
+       // Primarily, this for loop is written to update the arrow queues of the tiles.
+       for (y <- 0 until _world.terrain.height) {
+          for (x <- 0 until _world.terrain.width) {
+            val tile = _world.terrain.tileAt(x, y)
+            tile.updateQueues()
+          }
+       }
+       // Then the entities.
+       world.entities.entityList.foreach { _.onTurnCycleEnded() }
 
-      values.turnCycleCount += 1
+       values.turnCycleCount += 1
     }
 
     turnSystem

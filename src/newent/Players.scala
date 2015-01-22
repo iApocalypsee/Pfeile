@@ -2,6 +2,7 @@ package newent
 
 import java.awt.{Color, Graphics2D, Point}
 
+import animation.SoundPool
 import comp.Component
 import general.Main.getGameWindow
 import general.{Delegate, Main, PfeileContext, Property}
@@ -59,8 +60,7 @@ class Player(world: WorldLike,
   life.onDeath += { () =>
      general.Main.getContext.getTimeClock.stop()
      getGameWindow.getScreenManager.getActiveScreen.onLeavingScreen(getGameWindow.getScreenManager.getActiveScreen, gui.GameOverScreen.SCREEN_INDEX)
-     //animation.SoundPool.stop_allMelodies()
-     //animation.SoundPool.start_gameOverMelodie()
+     SoundPool.playLoop_gameOverMelodie(SoundPool.LOOP_CONTINUOUSLY)
   }
 
   /** Called when turn is assigned to the player. */
