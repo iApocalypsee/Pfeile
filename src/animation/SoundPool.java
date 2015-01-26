@@ -1,7 +1,6 @@
 package animation;
 
-import javax.sound.sampled.*;
-import java.io.IOException;
+import javax.sound.sampled.Clip;
 
 /** This class supports the playing of sounds. All Methods are public and static. Note, that the isPlaying...() methods
  * needs time to return true, because of the overhead. That's why a call directly after the play...() probably returns
@@ -33,61 +32,11 @@ public class SoundPool {
     private static Clip gameOverMelodie;
 
     static {
-        AudioInputStream audioInputStream = null;
-        try{
-
-            // FIXME THIS IS COPY AND PASTE. ABSTRACTION WITH CLASSES WOULD BE REALLY NICE!
-            // Man cannot read this code. Simple as that.
-
-            audioInputStream = AudioSystem.getAudioInputStream(
-                    SoundPool.class.getClassLoader().getResourceAsStream("resources/sfx/titleMelodie.wav"));
-            AudioFormat audioFormat = audioInputStream.getFormat();
-            int size = (int) (audioFormat.getFrameSize() * audioInputStream.getFrameLength());
-            byte[] audio = new byte[size];
-            DataLine.Info info = new DataLine.Info(Clip.class, audioFormat, size);
-            audioInputStream.read(audio, 0, size);
-            titleMelodie = (Clip) AudioSystem.getLine(info);
-            titleMelodie.open(audioFormat, audio, 0, size);
-
-            audioInputStream = AudioSystem.getAudioInputStream(
-                    SoundPool.class.getClassLoader().getResourceAsStream("resources/sfx/mainThemeMelodie.wav"));
-            audioFormat = audioInputStream.getFormat();
-            size = (int) (audioFormat.getFrameSize() * audioInputStream.getFrameLength());
-            audio = new byte[size];
-            info = new DataLine.Info(Clip.class, audioFormat, size);
-            audioInputStream.read(audio, 0, size);
-            mainThemeMelodie = (Clip) AudioSystem.getLine(info);
-            mainThemeMelodie.open(audioFormat, audio, 0, size);
-
-            audioInputStream = AudioSystem.getAudioInputStream(
-                    SoundPool.class.getClassLoader().getResourceAsStream("resources/sfx/tensionThemeMelodie.wav"));
-            audioFormat = audioInputStream.getFormat();
-            size = (int) (audioFormat.getFrameSize() * audioInputStream.getFrameLength());
-            audio = new byte[size];
-            info = new DataLine.Info(Clip.class, audioFormat, size);
-            audioInputStream.read(audio, 0, size);
-            tensionThemeMelodie = (Clip) AudioSystem.getLine(info);
-            tensionThemeMelodie.open(audioFormat, audio, 0, size);
-
-            audioInputStream = AudioSystem.getAudioInputStream(
-                    SoundPool.class.getClassLoader().getResourceAsStream("resources/sfx/gameOverMelodie.wav"));
-            audioFormat = audioInputStream.getFormat();
-            size = (int) (audioFormat.getFrameSize() * audioInputStream.getFrameLength());
-            audio = new byte[size];
-            info = new DataLine.Info(Clip.class,audioFormat, size);
-            audioInputStream.read(audio, 0, size);
-            gameOverMelodie = (Clip) AudioSystem.getLine(info);
-            gameOverMelodie.open(audioFormat, audio, 0, size);
-
-        } catch (Exception e) { e.printStackTrace(); }
-        finally {
-            try {
-                assert audioInputStream != null;
-                audioInputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        // loading all melodies,
+        titleMelodie = SoundLoader.load("resources/sfx/titleMelodie.wav");
+        mainThemeMelodie = SoundLoader.load("resources/sfx/mainThemeMelodie.wav");
+        tensionThemeMelodie = SoundLoader.load("resources/sfx/tensionThemeMelodie.wav");
+        gameOverMelodie = SoundLoader.load("resources/sfx/gameOverMelodie.wav");
     }
 
     // TITLE MELODIE

@@ -1,7 +1,7 @@
 package animation;
 
-import javax.sound.sampled.*;
-import java.io.IOException;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 
 
 /** TimeClock needs some sounds, that are provided by these static-methods. <p>
@@ -11,74 +11,36 @@ public class SoundEffectTimeClock {
     /** If time is running low, there should be same kind of clicking sound - 10 seconds until explosion at the end of the clip.*/
     private static Clip tickingNoise;
 
-    /** this controls the volume of <code>tickingNoise</code> */
-    private static FloatControl gainControlTicking;
-
     /** An Explosion at the end of timeClock (when the times runs out) is necessary for the user to notice the end of his turn. */
     private static Clip explosion;
-
-    /** this controls the volume of <code>explosion</code> */
-    private static FloatControl gainControlExplosion;
 
     /** If timeClock is below 3s, the user should notice it by playing this sound instead of {@link SoundEffectTimeClock#play_tickingNoise()}. */
     private static Clip tickingCriticalNoise;
 
-    /** to set the volume of {@link animation.SoundEffectTimeClock#play_tickingCriticalNoise().*/
-    private static FloatControl gainControlTickingCritical;
-
     static {
-        AudioInputStream audioInputStream = null;
-        try {
-            // loading: tickingNoise
-            audioInputStream = AudioSystem.getAudioInputStream(
-                    SoundEffectTimeClock.class.getClassLoader().getResourceAsStream("resources/sfx/soundEffects/clock sound effect.wav"));
-            AudioFormat audioFormat = audioInputStream.getFormat();
-            int size = (int) (audioFormat.getFrameSize() * audioInputStream.getFrameLength());
-            byte[] audio = new byte[size];
-            DataLine.Info info = new DataLine.Info(Clip.class, audioFormat, size);
-            audioInputStream.read(audio, 0, size);
-            tickingNoise = (Clip) AudioSystem.getLine(info);
-            tickingNoise.open(audioFormat, audio, 0, size);
-            gainControlTicking = (FloatControl) tickingNoise.getControl(FloatControl.Type.MASTER_GAIN);
+        tickingNoise = SoundLoader.load("resources/sfx/soundEffects/clock sound effect.wav");
 
-            // loading: tickingCriticalNoise
-            audioInputStream = AudioSystem.getAudioInputStream(
-                    SoundEffectTimeClock.class.getClassLoader().getResourceAsStream("resources/sfx/soundEffects/clock sound effect.wav"));
-            audioFormat = audioInputStream.getFormat();
-            size = (int) (audioFormat.getFrameSize() * audioInputStream.getFrameLength());
-            audio = new byte[size];
-            info = new DataLine.Info(Clip.class, audioFormat, size);
-            audioInputStream.read(audio, 0, size);
-            tickingCriticalNoise = (Clip) AudioSystem.getLine(info);
-            tickingCriticalNoise.open(audioFormat, audio, 0, size);
-            gainControlTickingCritical = (FloatControl) tickingCriticalNoise.getControl(FloatControl.Type.MASTER_GAIN);
+        /* this controls the volume of <code>tickingNoise</code> */
+        FloatControl gainControlTicking = (FloatControl) tickingNoise.getControl(FloatControl.Type.MASTER_GAIN);
 
-            // loading: explosion
-            audioInputStream = AudioSystem.getAudioInputStream(
-                    SoundEffectTimeClock.class.getClassLoader().getResourceAsStream("resources/sfx/soundEffects/explosion.wav"));
-            audioFormat = audioInputStream.getFormat();
-            size = (int) (audioFormat.getFrameSize() * audioInputStream.getFrameLength());
-            audio = new byte[size];
-            info = new DataLine.Info(Clip.class, audioFormat, size);
-            audioInputStream.read(audio, 0, size);
-            explosion = (Clip) AudioSystem.getLine(info);
-            explosion.open(audioFormat, audio, 0, size);
-            gainControlExplosion = (FloatControl) explosion.getControl(FloatControl.Type.MASTER_GAIN);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                assert audioInputStream != null;
-                audioInputStream.close();
-            } catch (IOException e) { e.printStackTrace(); }
-        }
+        tickingCriticalNoise = SoundLoader.load("resources/sfx/soundEffects/clock sound effect.wav");
+
+        /* to set the volume of {@link animation.SoundEffectTimeClock#play_tickingCriticalNoise().*/
+        FloatControl gainControlTickingCritical = (FloatControl) tickingCriticalNoise.getControl(FloatControl.Type.MASTER_GAIN);
+
+        explosion = SoundLoader.load("resources/sfx/soundEffects/explosion.wav");
+
+        /* this controls the volume of <code>explosion</code> */
+        FloatControl gainControlExplosion = (FloatControl) explosion.getControl(FloatControl.Type.MASTER_GAIN);
+
 
         // setting volume
         gainControlTicking.setValue(-7);   // - 8 db
         gainControlExplosion.setValue(+2); // + 2 db
-        // instead of using another sound file, I'm just increasing the volume of tickingCriticalNoise
         gainControlTickingCritical.setValue(-1);  // - 1 db
+        // instead of using another sound file for criticalTickingNoise, I'm just increasing the volume of tickingCriticalNoise
     }
+
 
     // TICKING_NOISE
 
@@ -102,6 +64,7 @@ public class SoundEffectTimeClock {
      * from the current frame position and the audio sample frame rate.
      * The precision in microseconds would then be limited to the number of microseconds per sample frame.  */
     public static long getCurrentMicroSecLength_tickingNoise () { return tickingNoise.getMicrosecondPosition(); }
+
 
     // TICKING_CRITICAL_NOISE
 
@@ -161,7 +124,7 @@ public class SoundEffectTimeClock {
     public static long getCurrentMicroSecLength_explosion () { return explosion.getMicrosecondPosition(); }
 
 
-    // general methods
+    // GENERAL METHODS
 
     /** this stops all sound coming from this class except the explosion. (it would sound strange to stop an explosion while it is playing)
      * The method calls: {@link SoundEffectTimeClock#stop_tickingNoise()} and {@link SoundEffectTimeClock#stop_tickingCriticalNoise()} */
