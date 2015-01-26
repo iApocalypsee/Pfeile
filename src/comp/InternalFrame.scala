@@ -35,8 +35,10 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
   /** Called when the internal frame's close button has been pressed. */
   val onClosed = Delegate.createZeroArity
 
+  this << ToplineBar
+
   /** The close button of the frame. */
-  private val closeButton = {
+  private lazy val closeButton = {
     val ret = new Button(0, 0, backingScreen, "")
     val xInBounds = x + width - FrameStyle.CommonInset - FrameStyle.CloseButtonDimension.width
     val yInBounds = y + FrameStyle.CommonInset
@@ -85,7 +87,6 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     })
     ret
   }
-  this << ToplineBar
 
   override def draw(g: Graphics2D) = {
     if (isVisible) {
@@ -131,8 +132,15 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
   }
 
   // Singleton instance object, represents the top bar which "holds" the close button.
-  private object ToplineBar extends Component(0, 0, getWidth, FrameStyle.CommonInset * 2 + closeButton
-    .getHeight, backingScreen)      with MouseDragDetector {
+  private object ToplineBar extends Component with MouseDragDetector {
+
+    // 0, 0, getWidth, FrameStyle.CommonInset * 2 + closeButton
+    //.getHeight, backingScreen
+
+    setSourceShape(new Rectangle(-InternalFrame.this.getWidth / 2, -InternalFrame.this.getHeight / 2, InternalFrame.this.getWidth, FrameStyle.CommonInset * 2 + closeButton.getHeight))
+    setParent(InternalFrame.this)
+    setBackingScreen(InternalFrame.this.getBackingScreen)
+    setVisible(true)
 
     onMouseDragDetected += { vec =>
       val frame = InternalFrame.this
@@ -140,10 +148,10 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     }
 
     override protected def draw(g: Graphics2D): Unit = {
-      if (isVisible) {
+      //if (isVisible) {
         g.setColor(FrameStyle.TopBarColor)
         g.fill(getBounds)
-      }
+      //}
     }
   }
 

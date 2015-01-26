@@ -17,9 +17,9 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 object Delegate {
 
-  @inline def create[In] = new Delegate[In]
+  @inline def create[In] = new Delegate[In] with ClearableDelegate
 
-  @inline def createZeroArity = new Function0Delegate
+  @inline def createZeroArity = new Function0Delegate with ClearableDelegate
 
   @inline def createOneCall[In] = new OnceCallDelegate[In]
 
@@ -35,7 +35,7 @@ object Delegate {
     /** The type of function that the delegate expects. */
     type FunType
 
-    private var _callbacks = new mutable.ArrayBuffer[Handle]
+    protected var _callbacks = new mutable.ArrayBuffer[Handle]
 
     /** Registers a callback function to the delegate.
       *
@@ -73,9 +73,6 @@ object Delegate {
 
     final def unlog(h: Handle): Unit = -=( h )
 
-    /** Clears all callbacks from the delegate, meaning that there will not remain any callbacks after. */
-    def clear(): Unit = _callbacks.clear( )
-
     /** Returns the callbacks of the delegate as an immutable list. */
     def callbacks = _callbacks.collect {
       case e => e.function
@@ -102,6 +99,12 @@ object Delegate {
         }
       }
     }
+
+  }
+
+  trait ClearableDelegate extends DelegateLike {
+
+    def clear(): Unit = _callbacks.clear()
 
   }
 
@@ -182,7 +185,7 @@ object Delegate {
     * @param callbackList The list of functions to hand to the delegate.
     * @tparam In The input type of the function. For multiple values, use tuples or custom classes.
     */
-  class OnceCallDelegate[In](callbackList: List[In => Any]) extends Delegate[In](callbackList) {
+  class OnceCallDelegate[In](callbackList: List[In => Any]) extends Delegate[In](callbackList) with ClearableDelegate {
 
     // Auxiliary constructor for instantiating a clean delegate with no registered callbacks.
     def this() = this( List[(In) => Any]( ) )
@@ -250,7 +253,7 @@ object Delegate {
 
   }
 
-  class OnceCallFunction0Delegate(callbackList: List[() => Any]) extends Function0Delegate {
+  class OnceCallFunction0Delegate(callbackList: List[() => Any]) extends Function0Delegate with ClearableDelegate {
 
     def this() = this( List[() => Any]( ) )
 

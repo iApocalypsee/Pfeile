@@ -35,6 +35,10 @@ public class SoundPool {
     static {
         AudioInputStream audioInputStream = null;
         try{
+
+            // FIXME THIS IS COPY AND PASTE. ABSTRACTION WITH CLASSES WOULD BE REALLY NICE!
+            // Man cannot read this code. Simple as that.
+
             audioInputStream = AudioSystem.getAudioInputStream(
                     SoundPool.class.getClassLoader().getResourceAsStream("resources/sfx/titleMelodie.wav"));
             AudioFormat audioFormat = audioInputStream.getFormat();

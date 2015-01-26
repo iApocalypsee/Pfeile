@@ -447,7 +447,7 @@ public abstract class Component implements IComponent {
 	 * @return the bounds
 	 */
 	public Shape getBounds() {
-		if(isTransformationChangedSince) {
+		if(isTransformationChangedSince || bounds == null) {
 			bounds = transformation.transformOriginal(srcShape);
 		}
 		return bounds;
