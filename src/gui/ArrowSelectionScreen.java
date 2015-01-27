@@ -4,10 +4,12 @@ import comp.Button;
 import comp.Component;
 import comp.ConfirmDialog;
 import comp.TextBox;
+import general.JavaInterop;
 import general.Main;
 import general.PfeileContext;
 import newent.InventoryLike;
 import player.weapon.*;
+import scala.Function1;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;
 
@@ -164,8 +166,16 @@ public class ArrowSelectionScreen extends Screen {
             inventoryList = new comp.List(inventoryList_PosX, inventoryList_PosY, inventoryList_Width, inventoryList_Height, ArrowSelectionScreen.this, arrowList);
             inventoryList.setRoundBorder(true);
             inventoryList.setVisible(true);
-            inventoryList.addMouseListener(new MouseListHandler());
-            inventoryList.acceptInput();
+
+			final Function1<Integer, Object> listSelectCallback = JavaInterop.asScalaFunction((Integer selectedIndex) -> {
+				String selectedArrowName = ArrowHelper.arrowIndexToName(selectedIndex);
+				selectedArrowBox.setEnteredText(selectedArrowName);
+				return BoxedUnit.UNIT;
+			});
+
+			inventoryList.onItemSelected.register(listSelectCallback);
+
+			inventoryList.acceptInput();
 
             selectedArrowBox = new TextBox(Main.getWindowWidth() - (Component.getTextBounds("<Pfeil auswählen>", Component.STD_FONT).width + 30) - 37,
                     300, "<Pfeil auswählen>", ArrowSelectionScreen.this);
@@ -315,18 +325,6 @@ public class ArrowSelectionScreen extends Screen {
 	public Class<? extends AbstractArrow> getSelectedIndex() {
 		return selectedIndex;
 	}
-
-	/** Listener f�r die Liste */
-	private class MouseListHandler extends MouseAdapter {
-		@Override
-		public void mousePressed(MouseEvent e) {
-			if (inventoryList.getBounds().contains(e.getPoint())) {
-				// the selected Index is written into the text area, for the user to see what arrow has been selected.
-				// If the user presses "Bestätigen" at confirmButton, the text in selectedArrowBox is used to find the arrow.
-				selectedArrowBox.setEnteredText(ArrowHelper.arrowIndexToName(inventoryList.getSelectedIndex()));
-			}
-		}
-	}
 	
 	/** Listener f�r die Buttons */
 	private class MouseHandler extends MouseAdapter {
@@ -452,7 +450,6 @@ public class ArrowSelectionScreen extends Screen {
 				inventoryList = new comp.List(inventoryList_PosX, inventoryList_PosY, inventoryList_Width, inventoryList_Height, ArrowSelectionScreen.getInstance(), arrowList);
 				inventoryList.setRoundBorder(true);
 				inventoryList.setVisible(true);
-				inventoryList.addMouseListener(new MouseListHandler());
 
                 if (inventoryList.isAcceptingInput()) {
                     inventoryList.acceptInput();
