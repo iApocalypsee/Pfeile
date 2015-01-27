@@ -1,6 +1,5 @@
 package general
 
-import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 
 /** An implementation of the observer pattern.
@@ -35,7 +34,7 @@ object Delegate {
     /** The type of function that the delegate expects. */
     type FunType
 
-    protected var _callbacks = new mutable.ArrayBuffer[Handle]
+    protected var _callbacks = List[Handle]()
 
     /** Registers a callback function to the delegate.
       *
@@ -43,7 +42,7 @@ object Delegate {
       */
     def +=(f: FunType): Handle = synchronized {
       val handle = new Handle( f )
-      _callbacks += handle
+      _callbacks = _callbacks ++ List(handle)
       handle
     }
 
@@ -59,10 +58,21 @@ object Delegate {
       * @param f The function to unregister.
       */
     final def -=(f: FunType): Unit = synchronized {
-      _callbacks = _callbacks.filterNot( _.function == f )
+      val search = _callbacks.find { _.function == f }
+      search match {
+        case Some(handle) =>
+          handle.dispose()
+        case None =>
+          // Do nothing, the specified function has not been found.
+      }
     }
 
-    def -=(h: Handle): Unit = _callbacks -= h
+    def -=(h: Handle): Unit = {
+      val isHandled = _callbacks contains h
+      if(isHandled) {
+        h.dispose()
+      }
+    }
 
     /** Unregisters a callback function from the delegate. <br>
       * This method exists for Java-interop.
@@ -80,7 +90,12 @@ object Delegate {
 
     def isOnceCall: Boolean
 
-    class Handle private[DelegateLike](val function: FunType) {
+    /**
+     * A handle which maps to the function.
+     * '''Do not construct instances of this class on your own, it is considered internal to the delegate!'''
+     * @param function The function to which the handle maps to.
+     */
+    class Handle(val function: FunType) {
 
       private var _disposed = false
 
@@ -94,7 +109,7 @@ object Delegate {
         */
       def dispose(): Unit = {
         if (!isValid) {
-          _callbacks -= this
+          _callbacks = _callbacks.filterNot(_ == this)
           _disposed = true
         }
       }
@@ -104,7 +119,7 @@ object Delegate {
 
   trait ClearableDelegate extends DelegateLike {
 
-    def clear(): Unit = _callbacks.clear()
+    def clear(): Unit = _callbacks = List[Handle]()
 
   }
 
@@ -117,6 +132,20 @@ object Delegate {
     def call(arg: In): Unit = callbacks foreach {
       case pf: PartialFunction[In, Any] => if (pf.isDefinedAt( arg )) pf( arg ) else throw new MatchError( this )
       case reg_f: ((In) => Any) => reg_f( arg )
+    }
+
+    def registerOnce(f: FunType): Handle = synchronized {
+
+      var handle: Handle = null
+
+      val clearLogic = f.andThen { forwardParam =>
+        handle.dispose()
+        forwardParam
+      }
+
+      handle = new Handle(clearLogic)
+      _callbacks = _callbacks ++ List(handle)
+      handle
     }
 
     /** Code in java zum ausführen der gethreaden Version:
@@ -140,6 +169,20 @@ object Delegate {
 
     def callAsync()(implicit ec: ExecutionContext): Future[Unit] = Future {
       call( )
+    }
+
+    def registerOnce(f: FunType): Handle = synchronized {
+
+      var handle: Handle = null
+
+      val clearLogic = { () =>
+        f()
+        handle.dispose()
+      }
+
+      handle = new Handle(clearLogic)
+      _callbacks = _callbacks ++ List(handle)
+      handle
     }
 
   }
@@ -174,8 +217,9 @@ object Delegate {
     }
 
     /** Creates a [[general.Delegate.OnceCallDelegate]] for this delegate. */
+    @deprecated("Use registerOnce() instead.")
     def asOnceCall: OnceCallDelegate[In] = new OnceCallDelegate(callbacks)
-
+    @deprecated("Use registerOnce() instead.")
     override def isOnceCall = false
 
   }
@@ -185,12 +229,15 @@ object Delegate {
     * @param callbackList The list of functions to hand to the delegate.
     * @tparam In The input type of the function. For multiple values, use tuples or custom classes.
     */
+  @deprecated("Use registerOnce() instead.")
   class OnceCallDelegate[In](callbackList: List[In => Any]) extends Delegate[In](callbackList) with ClearableDelegate {
 
     // Auxiliary constructor for instantiating a clean delegate with no registered callbacks.
     def this() = this( List[(In) => Any]( ) )
 
+    @deprecated("Use registerOnce() instead.")
     override def isOnceCall = true
+    @deprecated("Use registerOnce() instead.")
     override def asOnceCall = this
 
     override def call(arg: In) = {
@@ -199,6 +246,7 @@ object Delegate {
     }
 
     /** Returns a normal delegate for every callback in this [[general.Delegate.OnceCallDelegate]]. */
+    @deprecated("Use registerOnce() instead.")
     def asNormalDelegate = new Delegate(callbacks)
 
   }
@@ -253,15 +301,21 @@ object Delegate {
 
   }
 
+  @deprecated("Use registerOnce() instead.")
   class OnceCallFunction0Delegate(callbackList: List[() => Any]) extends Function0Delegate with ClearableDelegate {
 
     def this() = this( List[() => Any]( ) )
 
+    @deprecated("Use registerOnce() instead.")
     def asNormalDelegate = new Function0Delegate(callbacks)
 
+    @deprecated("Use registerOnce() instead.")
     override def isOnceCall = true
+
+    @deprecated("Use registerOnce() instead.")
     override def asOnceCall = this
 
+    @deprecated("Use registerOnce() instead.")
     override def call() = {
       super.call()
       clear()
