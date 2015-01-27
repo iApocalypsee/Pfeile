@@ -3,13 +3,13 @@ package general;
 import akka.actor.ActorSystem;
 import animation.SoundPool;
 import general.io.PreInitStage;
-import gui.ArrowSelectionScreenPreSet;
-import gui.LoadingWorldScreen;
-import gui.PreWindowScreen;
-import gui.Screen;
+import gui.*;
+import newent.Player;
 import player.weapon.ArrowHelper;
+import scala.collection.Seq;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
+import world.TileLike;
 
 import java.awt.*;
 
@@ -155,6 +155,17 @@ public class Main {
                 return BoxedUnit.UNIT;
             }
         });
+
+        GameScreen.getInstance().onScreenEnter.registerOnce(JavaInterop.asScalaFunctionSupplier(() -> {
+
+            final Seq<Player> playerSeq = Main.getContext().getTurnSystem().playerList().apply();
+            playerSeq.foreach(JavaInterop.asScalaFunction(p -> {
+                p.tightenComponentToTile((TileLike) p.tileLocation());
+                return BoxedUnit.UNIT;
+            }));
+
+            return BoxedUnit.UNIT;
+        }));
 
         // starten wir das Spiel
         main.runGame();

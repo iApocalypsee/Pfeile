@@ -49,7 +49,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   lazy val turnSystem = {
 
     // TODO Clear the initialization up a bit. Looks ugly.
-    val turnSystem = new TurnSystem(() => world.entities.entityList.filterType[Player])
+    val turnSystem = new TurnSystem(() => world.entities.entityList.filterType(classOf[Player]))
 
     // Notifies the entities in the world that a turn has been ended
     turnSystem.onTurnEnded += { _ =>

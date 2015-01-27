@@ -9,7 +9,7 @@ import general.{Delegate, Main, PfeileContext, Property}
 import gui.LifeUI
 import newent.pathfinding.AStarPathfinder
 import player.Life
-import world.WorldLike
+import world.{TileLike, WorldLike}
 
 /** Represents a player in the world.
   *
@@ -84,17 +84,21 @@ class Player(world: WorldLike,
     setSourceShape(tileLocation.component.getSourceShape)
 
     onLocationChanged += { e =>
-      val endComponent = e.end.component
-      setSourceShape(endComponent.getSourceShape)
-      resetPosition()
-      setX(endComponent.getX)
-      setY(endComponent.getY)
+      tightenComponentToTile(e.end)
     }
 
     override def draw(g: Graphics2D): Unit = {
       g.setColor(drawColor)
       g.fill(getBounds)
     }
+  }
+
+  def tightenComponentToTile(t: TileLike): Unit = {
+    val endComponent = t.component
+    component.setSourceShape(endComponent.getSourceShape)
+    component.resetPosition()
+    component.setX(endComponent.getX)
+    component.setY(endComponent.getY)
   }
 
 }
