@@ -2,7 +2,6 @@ package gui;
 
 import comp.Component;
 import comp.Component.ComponentStatus;
-import comp.IComponent;
 import general.Delegate;
 import general.Main;
 import scala.concurrent.ExecutionContext;
@@ -52,7 +51,7 @@ public abstract class Screen implements Drawable, MouseListener,
     /**
 	 * Die Components, die der Screen hält.
 	 */
-	private LinkedList<IComponent> components = new LinkedList<IComponent>();
+	private LinkedList<Component> components = new LinkedList<Component>();
 	public final int SCREEN_INDEX;
 	
 	/**
@@ -143,8 +142,8 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * components won't ge updated.
 	 */
 	@SuppressWarnings("unchecked")
-	public synchronized List<IComponent> getComponents() {
-		return (java.util.List<IComponent>) components.clone();
+	public synchronized List<Component> getComponents() {
+		return (java.util.List<Component>) components.clone();
 	}
 
 	/**
@@ -157,7 +156,7 @@ public abstract class Screen implements Drawable, MouseListener,
 		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 		
 		if(preprocessedDrawingEnabled) {
-			for (IComponent c : getComponents()) {
+			for (Component c : getComponents()) {
 				if(c != null) {
 					if(c.isVisible()) {
 	                    if(c.getBounds().intersects(0, 0, Main.getWindowWidth(), Main.getWindowHeight())) {
@@ -199,10 +198,10 @@ public abstract class Screen implements Drawable, MouseListener,
 		if(e.getButton() == 3) {
 			isRightMousePressed = true;
 		}
-		for (IComponent c : getComponents()) {
+		for (Component c : getComponents()) {
             if(c.isVisible()) {
                 if(c.isAcceptingInput()) {
-	                if(c.getSimplifiedBounds().contains(e.getPoint())) {
+	                if(c.getPreciseRectangle().contains(e.getPoint())) {
 		                if (c.getBounds().contains(e.getPoint())) {
 			                for (MouseListener m : c.getMouseListeners()) {
 				                // hier ist eigentlicher Aufruf des Listeners
@@ -237,9 +236,9 @@ public abstract class Screen implements Drawable, MouseListener,
 
 		lastClickPosition = e.getPoint();
 
-		for (IComponent c : getComponents()) {
+		for (Component c : getComponents()) {
 			if (c.isAcceptingInput()) {
-				if(c.getSimplifiedBounds().contains(e.getPoint())) {
+				if(c.getPreciseRectangle().contains(e.getPoint())) {
 					if (c.getBounds().contains(e.getPoint())) {
 						for (MouseListener m : c.getMouseListeners()) {
 							// hier ist eigentlicher Aufruf des Listeners
@@ -284,9 +283,9 @@ public abstract class Screen implements Drawable, MouseListener,
 		if(!isLeftMousePressed) {
 			isLeftMousePressed = true;
 		}
-		for (IComponent c : getComponents()) {
+		for (Component c : getComponents()) {
 			if(c.isAcceptingInput()) {
-				if(c.getSimplifiedBounds().contains(e.getPoint())) {
+				if(c.getPreciseRectangle().contains(e.getPoint())) {
 					if(c.getBounds().contains(e.getPoint())) {
 						if (c.getStatus() != ComponentStatus.MOUSE) {
 							for (MouseListener m : c.getMouseListeners()) {
@@ -316,9 +315,9 @@ public abstract class Screen implements Drawable, MouseListener,
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		mousePosition = e.getPoint();
-		for (IComponent c : getComponents()) {
+		for (Component c : getComponents()) {
 			if(c.isAcceptingInput()) {
-				if(c.getSimplifiedBounds().contains(e.getPoint())) {
+				if(c.getPreciseRectangle().contains(e.getPoint())) {
 					if(c.getBounds().contains(e.getPoint())) {
 						if (c.getStatus() == ComponentStatus.NO_MOUSE) {
 							for (MouseListener m : c.getMouseListeners()) {
@@ -354,7 +353,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		for (IComponent c : getComponents()) {
+		for (Component c : getComponents()) {
 			if(c.isAcceptingInput()) {
 				if(c.getBounds().contains(e.getPoint())) {
 					for (MouseWheelListener m : c.getMouseWheelListeners()) {
@@ -395,7 +394,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * Fügt ein Steuerelement der Auflistung hinzu.
 	 * @param c Das Steuerelement, das hinzugefügt werden soll.
 	 */
-	public final void add(IComponent c) {
+	public final void add(Component c) {
 		components.add(c);
 	}
 	
@@ -403,7 +402,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * Entfernt ein Steuerelement aus der Auflistung.
 	 * @param c Das Steuerelement, das entfernt werden soll.
 	 */
-	public final void remove(IComponent c) {
+	public final void remove(Component c) {
 		if(components.contains(c)) {
 			components.remove(c);
 		}
@@ -414,7 +413,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * @param c The component.
 	 * @return The layer number of the component.
 	 */
-	public int getLayerNumber(IComponent c) {
+	public int getLayerNumber(Component c) {
 		return getComponents().indexOf(c);
 	}
 
@@ -422,7 +421,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * Pushes the specified component one layer into the background.
 	 * @param component The component to push into the background.
 	 */
-	public void pushBack(IComponent component) {
+	public void pushBack(Component component) {
 		if(!getComponents().contains(component)) {
 			System.out.println("Component " + component.getName() + " could not be found.");
 			System.out.println("Message from Screen.pushBack(Component)");

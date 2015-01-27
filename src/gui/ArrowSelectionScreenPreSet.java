@@ -152,7 +152,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
         readyButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-                if (readyButton.getSimplifiedBounds().contains(e.getPoint())) {
+                if (readyButton.getPreciseRectangle().contains(e.getPoint())) {
                     triggerReadyButton();
                 }
             }
@@ -162,7 +162,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
         randomButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased (MouseEvent e) {
-                if (randomButton.getSimplifiedBounds().contains(e.getPoint())) {
+                if (randomButton.getPreciseRectangle().contains(e.getPoint())) {
                     triggerRandomButton();
                 }
             }
@@ -175,7 +175,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
         arrowListSelected.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed (MouseEvent eClicked) {
-                if (arrowListSelected.getSimplifiedBounds().contains(eClicked.getPoint())
+                if (arrowListSelected.getPreciseRectangle().contains(eClicked.getPoint())
                             && arrowListSelected.isAcceptingInput()) {
                     arrowListSelected.triggerListeners(eClicked);
                     selectedArrows.remove(arrowListSelected.getSelectedIndex());
@@ -233,7 +233,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
         @Override
         public void mouseReleased (MouseEvent e) {
             for (Button buttonListArrow : buttonListArrows) {
-                if (buttonListArrow.getSimplifiedBounds().contains(e.getPoint())) {
+                if (buttonListArrow.getPreciseRectangle().contains(e.getPoint())) {
                     if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > selectedArrows.size()) {
                         if (selectedArrows.get(0).equals("<keine Pfeile>")) {
                             selectedArrows.remove(0);

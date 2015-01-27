@@ -1,10 +1,12 @@
 package comp;
 
+import general.Delegate;
 import gui.Screen;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.LinkedList;
 
 /**
@@ -40,6 +42,8 @@ public class List extends Component {
 	 */
 	private int selectedIndex = 0;
 
+	public final Delegate.Delegate<Integer> onItemSelected = new Delegate.Delegate<>();
+
 	static final Insets STD_INSETS = new Insets(5, 8, 6, 8);
 
 	public List(int x, int y, int width, int height, Screen backing, java.util.List<String> items) {
@@ -62,9 +66,8 @@ public class List extends Component {
 			build.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseReleased(MouseEvent e) {
-					if(build.getSimplifiedBounds().contains(e.getPoint())) {
-						selectedIndex = listItems.indexOf(build);
-					}
+					selectedIndex = listItems.indexOf(build);
+					onItemSelected.apply(selectedIndex);
 				}
 			});
 			listItems.add(build);
@@ -72,38 +75,7 @@ public class List extends Component {
 	}
 
     public List(int x, int y, Screen backing, java.util.List<String> items) {
-        super(x, y, 200, 200, backing);
-
-        this.items = items;
-
-        setWidth(tfits().width + STD_INSETS.left + STD_INSETS.right);
-        setHeight(tfits().height + STD_INSETS.bottom + STD_INSETS.top);
-
-        y++;
-
-        for (int i = 0; i < items.size(); i++) {
-            final Label build = new Label(x, y, backing, items.get(i));
-
-            // I need to set the position in the correct order.
-            if (i != 0)
-                build.setY(build.getY() + (build.getHeight() + 1) * i);
-            // The loop wants that.
-
-            // If the label is inside the boundaries of the list, then it should be visible...
-            build.setVisible((build.getY() + build.getHeight()) < (this.getY() + this.getHeight()));
-
-            // Every appended label should have a listener attached to it so that I know
-            // when a list element has been pressed.
-            build.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    if(build.getSimplifiedBounds().contains(e.getPoint())) {
-                        selectedIndex = listItems.indexOf(build);
-                    }
-                }
-            });
-            listItems.add(build);
-        }
+        this(x, y, tfits_static(items).width + STD_INSETS.left + STD_INSETS.right, tfits_static(items).height + STD_INSETS.bottom + STD_INSETS.top, backing, items);
     }
 
 	@Override
@@ -129,6 +101,17 @@ public class List extends Component {
 			if (width < bounds.width)
                 width = bounds.width;
             height = height + bounds.height;
+		}
+		return new Dimension(width, height);
+	}
+
+	static Dimension tfits_static(java.util.List<String> elems) {
+		int width = 0, height = 0;
+		for (String s : elems) {
+			Dimension bounds = new Dimension(getTextBounds(s, STD_FONT).width + 1, getTextBounds(s, STD_FONT).height + 1);
+			if (width < bounds.width)
+				width = bounds.width;
+			height = height + bounds.height;
 		}
 		return new Dimension(width, height);
 	}
@@ -211,7 +194,7 @@ public class List extends Component {
 	 */
 	@Override
 	public void acceptInput() {
-		
+
 		for (Label label : listItems) {
 			label.acceptInput();
 		}
@@ -243,4 +226,10 @@ public class List extends Component {
         for (Label label : listItems)
             label.triggerListeners(e);
     }
+
+	public void appendListenerToLabels(MouseListener listener) {
+		for(Label label : listItems) {
+			label.addMouseListener(listener);
+		}
+	}
 }

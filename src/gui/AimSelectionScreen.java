@@ -267,8 +267,8 @@ public class AimSelectionScreen extends Screen {
                 arrow.setGridY(active.getGridY());
 
                 // the center of the player is the center of the arrow
-                arrow.getComponent().setX((int) (active.getComponent().getSimplifiedBounds().getCenterX() - 0.5 * arrow.getImage().getWidth()));
-                arrow.getComponent().setY((int) (active.getComponent().getSimplifiedBounds().getCenterY() - 0.5 * arrow.getImage().getHeight()));
+                arrow.getComponent().setX((int) (active.getComponent().getPreciseRectangle().getCenterX() - 0.5 * arrow.getImage().getWidth()));
+                arrow.getComponent().setY((int) (active.getComponent().getPreciseRectangle().getCenterY() - 0.5 * arrow.getImage().getHeight()));
 
                 arrow.calculateRotation();
 

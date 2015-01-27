@@ -289,10 +289,10 @@ public class PreWindowScreen extends Screen {
         @Override
         public void mousePressed (MouseEvent e) {
             if (confirmDialog.isVisible()) {
-                if (confirmDialog.getOk().getSimplifiedBounds().contains(e.getPoint()))
+                if (confirmDialog.getOk().getPreciseRectangle().contains(e.getPoint()))
                     closeConfirmDialog();
 
-                if (confirmDialog.getCancel().getSimplifiedBounds().contains(e.getPoint()))
+                if (confirmDialog.getCancel().getPreciseRectangle().contains(e.getPoint()))
                     closeConfirmDialog();
 
             }

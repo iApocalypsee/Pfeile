@@ -391,9 +391,9 @@ public class ArrowSelectionScreen extends Screen {
 			}
 			
 			if (confirmDialog.isVisible()) {
-				if (confirmDialog.getCancel().getSimplifiedBounds().contains(e.getPoint())) 
+				if (confirmDialog.getCancel().getPreciseRectangle().contains(e.getPoint()))
 					closeConfirmDialogQuestion();
-				if (confirmDialog.getOk().getSimplifiedBounds().contains(e.getPoint()))
+				if (confirmDialog.getOk().getPreciseRectangle().contains(e.getPoint()))
 					closeConfirmDialogQuestion();
 			}
 		}

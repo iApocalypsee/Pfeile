@@ -14,6 +14,7 @@ import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
@@ -318,7 +319,7 @@ public abstract class Component implements IComponent {
 	 * @return the x
 	 */
 	public int getX() {
-		return (int) transformation.translation().x() - srcShape.getBounds().width / 2;
+		return (int) getPreciseRectangle().getX();
 	}
 
 	public int getRelativeX() {
@@ -332,7 +333,7 @@ public abstract class Component implements IComponent {
 	 */
 	public void setX(int x) {
 		final Vector2 oldPosition = transformation.translation();
-		transformation.translate(x - oldPosition.x() + srcShape.getBounds().width / 2, 0);
+		transformation.translate(x - oldPosition.x() + getPreciseRectangle().getWidth() / 2, 0);
 	}
 
 	public void setRelativeX(int x) {
@@ -345,7 +346,7 @@ public abstract class Component implements IComponent {
 	 * @return the y
 	 */
 	public int getY() {
-		return (int) transformation.translation().y() - srcShape.getBounds().height / 2;
+		return (int) getPreciseRectangle().getY();
 	}
 
 	public int getRelativeY() {
@@ -359,7 +360,7 @@ public abstract class Component implements IComponent {
 	 */
 	public void setY(int y) {
 		final Vector2 oldPosition = transformation.translation();
-		transformation.translate(0, y - oldPosition.y() + srcShape.getBounds().height / 2);
+		transformation.translate(0, y - oldPosition.y() + getPreciseRectangle().getHeight() / 2);
 	}
 
 	public void setRelativeY(int y) {
@@ -389,28 +390,31 @@ public abstract class Component implements IComponent {
 	 * @return the width
 	 */
 	public int getWidth() {
-		return getSimplifiedBounds().width;
+		return (int) getBounds().getBounds2D().getWidth();
 	}
 
 	/**
 	 * @param width the width to set
 	 */
-	@Deprecated
 	public void setWidth(int width) {
-		if (getWidth() != 0) {
-			Shape old = bounds;
-			AffineTransform centerTransform = AffineTransform.getTranslateInstance(-getX(), -getY());
-			AffineTransform resetTransform = AffineTransform.getTranslateInstance(getX(), getY());
+		double scaleFactor = width / getPreciseRectangle().getWidth();
+		//int oldWidth = (int) (srcShape.getBounds().width * transformation.scale().x());
 
-			Shape transforming = centerTransform.createTransformedShape(old);
+		final double oldX = getPreciseRectangle().getX();
+		final double oldY = getPreciseRectangle().getY();
 
-			AffineTransform transform = AffineTransform.getScaleInstance((double) width / getWidth(), 1);
+		transformation.scale(scaleFactor, 1);
 
-			transforming = transform.createTransformedShape(transforming);
-			bounds = resetTransform.createTransformedShape(transforming);
-		} else {
-			bounds = new Rectangle(getX(), getY(), width, getHeight());
-		}
+		final double newX = getPreciseRectangle().getX();
+		final double newY = getPreciseRectangle().getY();
+
+		final Vector2 newPosition = Vector2.apply((float) newX, (float) newY);
+		final Vector2 oldPosition = Vector2.apply((float) oldX, (float) oldY);
+		final Vector2 delta = newPosition.sub(oldPosition).negated();
+
+		// Truncate the result. Apparently, the JVM does rounding by it self.
+		transformation.translate((int) delta.x(), (int) delta.y());
+
 		onResize.apply(new Vector2(width, getHeight()));
 	}
 
@@ -418,28 +422,29 @@ public abstract class Component implements IComponent {
 	 * @return the height
 	 */
 	public int getHeight() {
-		return getSimplifiedBounds().height;
+		return (int) getPreciseRectangle().getHeight();
 	}
 
 	/**
 	 * @param height the height to set
 	 */
-	@Deprecated
 	public void setHeight(int height) {
-		if (getHeight() != 0) {
-			Shape old = bounds;
-			AffineTransform centerTransform = AffineTransform.getTranslateInstance(-getX(), -getY());
-			AffineTransform resetTransform = AffineTransform.getTranslateInstance(getX(), getY());
+		double scaleFactor = height / getPreciseRectangle().getHeight();
 
-			Shape transforming = centerTransform.createTransformedShape(old);
+		final double oldX = getPreciseRectangle().getX();
+		final double oldY = getPreciseRectangle().getY();
 
-			AffineTransform transform = AffineTransform.getScaleInstance(1, (double) height / getHeight());
+		transformation.scale(1, scaleFactor);
 
-			transforming = transform.createTransformedShape(transforming);
-			bounds = resetTransform.createTransformedShape(transforming);
-		} else {
-			bounds = new Rectangle(getX(), getY(), getWidth(), height);
-		}
+		final double newX = getPreciseRectangle().getX();
+		final double newY = getPreciseRectangle().getY();
+
+		final Vector2 newPosition = Vector2.apply((float) newX, (float) newY);
+		final Vector2 oldPosition = Vector2.apply((float) oldX, (float) oldY);
+		final Vector2 delta = newPosition.sub(oldPosition).negated();
+
+		transformation.translate((int) delta.x(), (int) delta.y());
+
 		onResize.apply(new Vector2(getWidth(), height));
 	}
 
@@ -471,8 +476,13 @@ public abstract class Component implements IComponent {
 	 *
 	 * @return Ein neues Rechteck mit der vereinfachten BoundingBox.
 	 */
+	@Deprecated
 	public Rectangle getSimplifiedBounds() {
 		return getBounds().getBounds();
+	}
+
+	public Rectangle2D getPreciseRectangle() {
+		return getBounds().getBounds2D();
 	}
 
 	/**

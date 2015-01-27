@@ -1,7 +1,10 @@
 package comp;
 
 import general.Converter;
+import general.JavaInterop;
 import gui.Screen;
+import scala.Function1;
+import scala.runtime.BoxedUnit;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -110,27 +113,29 @@ public class ComboBox extends Component {
             containerLabel.setHeight(height);
         }
 
-        addMouseListener(new MouseAdapter() {
+        clickButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mousePressed (MouseEvent e) {
-                // only if "clickButton" has been pressed for sure
-                if (clickButton.getSimplifiedBounds().contains(e.getPoint()) && isAcceptingInput()) {
-                    if (selectionList.isVisible()) {
-                        selectionList.setVisible(false);
-                        selectionList.declineInput();
-                    } else {
-                        selectionList.setVisible(true);
-                        selectionList.acceptInput();
-                    }
+            public void mouseReleased(MouseEvent e) {
+                if (selectionList.isVisible()) {
+                    selectionList.setVisible(false);
+                    selectionList.declineInput();
+                } else {
+                    selectionList.setVisible(true);
+                    selectionList.acceptInput();
                 }
             }
         });
-        selectionList.addMouseListener(new MouseAdapter() {
+
+        final Function1<Integer, BoxedUnit> changeTextCallback = JavaInterop.asScalaFunction((Integer boxedIndex) -> {
+            containerLabel.setText(values[getSelectedIndex()]);
+            return BoxedUnit.UNIT;
+        });
+
+        selectionList.onItemSelected.register(changeTextCallback);
+        selectionList.appendListenerToLabels(new MouseAdapter() {
             @Override
-            public void mousePressed (MouseEvent e) {
+            public void mouseReleased(MouseEvent e) {
                 selectionList.setVisible(false);
-                selectionList.triggerListeners(e);
-                containerLabel.setText(values[getSelectedIndex()]);
             }
         });
     }
