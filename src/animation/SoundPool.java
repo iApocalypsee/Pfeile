@@ -1,6 +1,7 @@
 package animation;
 
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 
 /** This class supports the playing of sounds. All Methods are public and static. Note, that the isPlaying...() methods
  * needs time to return true, because of the overhead. That's why a call directly after the play...() probably returns
@@ -34,9 +35,10 @@ public class SoundPool {
     static {
         // loading all melodies,
         titleMelodie = SoundLoader.load("resources/sfx/titleMelodie.wav");
-        mainThemeMelodie = SoundLoader.load("resources/sfx/mainThemeMelodie.wav");
-        tensionThemeMelodie = SoundLoader.load("resources/sfx/tensionThemeMelodie.wav");
-        gameOverMelodie = SoundLoader.load("resources/sfx/gameOverMelodie.wav");
+        mainThemeMelodie = SoundLoader.load("resources/sfx/mainThemeMelodie.wav", 7);
+        tensionThemeMelodie = SoundLoader.load("resources/sfx/tensionThemeMelodie.wav", 5);
+        // the gameOverMelodie should be slightly quieter, because of a smooth change from mainThemeMelodie [or whatever] to GameOverScreen
+        gameOverMelodie = SoundLoader.load("resources/sfx/gameOverMelodie.wav", -12);
     }
 
     // TITLE MELODIE

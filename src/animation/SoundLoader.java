@@ -47,4 +47,18 @@ public class SoundLoader {
         }
         return audioClip;
     }
+
+    /** this loads the clip with {@link animation.SoundLoader#load(java.lang.String)} and changes the volume by the
+     * the float: volumeChange. <code>volumeChange</code> is in "dB". Compare it with
+     *  <p><code>(FloatControl) (loadedClip.getControl(FloatControl.Type.MASTER_GAIN)).setVolume(volumeChange);
+     *
+     *  @return the loadedClip with the specified volume change in decibel
+     *  @see animation.SoundLoader#load(String)
+     * */
+    public static Clip load (String URL, float volumeChange) {
+        Clip loadedClip = SoundLoader.load(URL);
+        FloatControl volumeControl = (FloatControl) loadedClip.getControl(FloatControl.Type.MASTER_GAIN);
+        volumeControl.setValue(volumeChange);
+        return loadedClip;
+    }
 }
