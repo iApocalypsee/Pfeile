@@ -35,7 +35,7 @@ public class SoundPool {
     static {
         // loading all melodies,
         titleMelodie = SoundLoader.load("resources/sfx/titleMelodie.wav");
-        mainThemeMelodie = SoundLoader.load("resources/sfx/mainThemeMelodie.wav", 7);
+        mainThemeMelodie = SoundLoader.load("resources/sfx/mainThemeMelodie.wav", 6);
         tensionThemeMelodie = SoundLoader.load("resources/sfx/tensionThemeMelodie.wav", 5);
         // the gameOverMelodie should be slightly quieter, because of a smooth change from mainThemeMelodie [or whatever] to GameOverScreen
         gameOverMelodie = SoundLoader.load("resources/sfx/gameOverMelodie.wav", -12);

@@ -4,6 +4,7 @@ import comp.Button;
 import general.JavaInterop;
 import general.Main;
 import player.weapon.AttackDrawer;
+import player.weapon.ImpactDrawerHandler;
 import scala.runtime.BoxedUnit;
 import world.VisualMap;
 
@@ -140,6 +141,7 @@ public class GameScreen extends Screen implements FrameContainer {
 		// Drawing of the entities is done in VisualMap
 		//visualEntity.draw(g);
         attackDrawer.draw(g);
+        ImpactDrawerHandler.draw(g);
 		// Zeichnet die Welt und den UserInterface, der den Player dargestellt
 		endTurnButton.draw(g);
 		shootButton.draw(g);

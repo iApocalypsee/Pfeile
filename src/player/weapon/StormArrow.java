@@ -16,7 +16,7 @@ public class StormArrow extends AbstractArrow {
 	/** Name des Pfeils */
 	public static final String NAME = "Sturmpfeil";
 	
-	public static final Color UNIFIED_COLOR = new Color(141, 237, 195, 200);
+	public static final Color UNIFIED_COLOR = new Color(141, 237, 195);
 	
 	/** Bild des Pfeils */
 	private static BufferedImage img_Storm;

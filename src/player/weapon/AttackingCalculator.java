@@ -13,7 +13,7 @@ public class AttackingCalculator {
     private long milliSec;
     /** a time multiplier in milliseconds to calculate Tiles per turn to Tiles per (milli-)second. The higher TIME_MULTI, the longer the arrows will need to fly:
      * <p> <code>TIME_MULTI / attackingArrow.getSpeed()</code>*/
-    private static final int TIME_MULTI = 1200;
+    private static final int TIME_MULTI = 1500;
 
     private class Clock extends TimerTask {
         @Override
@@ -108,17 +108,20 @@ public class AttackingCalculator {
 
                 final ImageComponent movedComponent = attackingArrow.getComponent();
 
-                // TODO Replace the quadratic_easing_inOut with a Beziér curve?
+                // Replace the quadratic_easing_inOut with a Beziér curve?
                 // I don't understand the usage of quadratic_easing_inOut anymore, because I cannot
                 // imagine such complicated things.
-                // Here should be the bug with the arrow not flying in the right direction.
-                movedComponent.setX((int) (posXOld + Math.round(
-                        FunctionCollectionEasing.quadratic_easing_inOut(distanceToCover * accuracy, 0, attackingArrow.getAim().getPosXGui() - posXOld, distanceToCover)
-                                * progress)));
 
-                movedComponent.setY((int) (posYOld + Math.round(
-                        FunctionCollectionEasing.quadratic_easing_inOut(distanceToCover * accuracy, 0, attackingArrow.getAim().getPosYGui() - posYOld, distanceToCover)
-                                * progress)));
+                double normalizedChangeInX = FunctionCollectionEasing.quadratic_easing_inOut(
+                        distanceToCover * accuracy, 0, attackingArrow.getAim().getPosXGui() - posXOld, distanceToCover);
+                double changeInX = normalizedChangeInX * progress;
+
+                double normalizedChangeInY = FunctionCollectionEasing.quadratic_easing_inOut(
+                        distanceToCover * accuracy, 0, attackingArrow.getAim().getPosYGui() - posYOld, distanceToCover);
+                double changeInY = normalizedChangeInY * progress;
+
+                movedComponent.setX((int) (posXOld + Math.round(changeInX)));
+                movedComponent.setY((int) (posYOld + Math.round(changeInY)));
 
                  try {
                     Thread.sleep(15);

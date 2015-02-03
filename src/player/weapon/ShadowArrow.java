@@ -16,7 +16,7 @@ public class ShadowArrow extends AbstractArrow {
 	/** Name des Pfeils */
 	public static final String NAME = "Schattenpfeil";
 	
-	public static final Color UNIFIED_COLOR = new Color(0, 0, 0, 200);
+	public static final Color UNIFIED_COLOR = new Color(0, 0, 0);
 	
 	/** Bild des Pfeils */
 	private static BufferedImage img_Shadow;

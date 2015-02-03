@@ -50,10 +50,12 @@ public class Circle implements Shape {
         this.radius = radius;
     }
 
+    /** the x-coordinate of the middle of the circle */
 	public double getX() {
 		return x;
 	}
 
+    /** the y-coordianate of the middle of the circle */
 	public double getY() {
 		return y;
 	}

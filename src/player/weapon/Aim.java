@@ -97,6 +97,36 @@ public class Aim implements BoardPositionable {
         return damageRadius;
     }
 
+    /** the width and height of the damageRadius on Screen. It is similar to: <code>anyTile.component().getWidth() * getAim().getDamageRadius</code>
+     * for the width and <code>anyTile.component().getHeight() * getAim().getDamageRadius</code> for the height.
+     * @return the Dimension of the damageRadius in pixel for displaying the damageRadius on GUI-Elements
+     * @see Aim#getDamageRadius()
+     * @see Aim#getDamageRadiusGUIWidth()
+     * @see Aim#getDamageRadiusGUIHeight()
+     */
+    public Dimension getDamageRadiusGUI () {
+        TileLike anyTile = (TileLike) Main.getContext().getWorld().terrain().tileAt(0, 0);
+        return new Dimension((int) (anyTile.component().getWidth() * getDamageRadius()), (int) (anyTile.component().getHeight() * getDamageRadius()));
+    }
+
+    /** the width of the damageRadius on GUI applications
+     * @see Aim#getDamageRadius()
+     * @see Aim#getDamageRadiusGUIWidth()
+     * @see Aim#getDamageRadiusGUIHeight()  */
+    public double getDamageRadiusGUIWidth () {
+        TileLike anyTile = (TileLike) Main.getContext().getWorld().terrain().tileAt(0, 0);
+        return anyTile.component().getWidth() * getDamageRadius();
+    }
+
+    /** the height of the damageRadius in pixel for GUI applications
+     * @see Aim#getDamageRadius()
+     * @see Aim#getDamageRadiusGUIWidth()
+     * @see Aim#getDamageRadiusGUIHeight() */
+    public double getDamageRadiusGUIHeight () {
+        TileLike anyTile = (TileLike) Main.getContext().getWorld().terrain().tileAt(0, 0);
+        return anyTile.component().getHeight() * getDamageRadius();
+    }
+
     /** changes the radius of the attack, in which the attacks effects the surrounding area. <p>
      * That doesn't mean that the damage of {@link player.weapon.RangedWeapon} is in the whole area the same.
      * Maximum damage is made in the center (the tile at <code>getGridX(), getGridY()</code>).

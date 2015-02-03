@@ -16,7 +16,7 @@ public class IceArrow extends AbstractArrow {
 	/** Name des Pfeils */
 	public static final String NAME = "Eispfeil";
 	
-	public static final Color UNIFIED_COLOR = new Color(204, 228, 237, 200);
+	public static final Color UNIFIED_COLOR = new Color(204, 228, 237);
 	
 	
 	/** Bild des Pfeils */

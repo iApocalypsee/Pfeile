@@ -3,15 +3,11 @@ package world
 import java.awt.event.{MouseAdapter, MouseEvent}
 import java.awt.{Color, Graphics2D, Polygon}
 
-import comp.{Circle, Component, DisplayRepresentable}
-import java.awt.event.{MouseAdapter, MouseEvent}
-import java.awt.{Color, Graphics2D, Polygon}
-
 import comp.{Component, DisplayRepresentable}
 import general.Main
 import gui.{AdjustableDrawing, GameScreen}
 import newent.{AttackContainer, EntityLike}
-import player.weapon.AbstractArrow
+import player.weapon.{ImpactDrawerHandler, ImpactDrawer, AttackingCalculator, AbstractArrow}
 
 import scala.collection.{JavaConversions, mutable}
 
@@ -93,30 +89,16 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
   onImpact += { e =>
      // Every entity that is an attack container and is standing on THIS tile
      // If there is any weapon the entity needs to feel the attack only on this file
-     // If it is an arrow, there need to be a damage radius
+     // If it is an arrow, the damageRadius is calculated with the "damageAt" method by RangedWeapon/AbstractArrow. Every Entity has to take the attack.
 
-     var filteredEntityList = mutable.ListBuffer[EntityLike]()
+     val filteredEntityList = mutable.ListBuffer[EntityLike]()
 
      if (e.weapon.isInstanceOf[AbstractArrow]) {
 
-       /*
-        val maxList = terrain.world.entities.entityList
+       // The attack impacts and it is an AbstractArrow, so we can register a new ImpactDrawer
+       ImpactDrawerHandler.addImpactDrawer(e)
 
-        val aim = maxList.filter {
-           _.tileLocation == this
-        }.last
-
-        // the idea is that the position of every enemy should be in the area, which is the tile the arrow will impact
-        val radius = e.weapon.asInstanceOf[AbstractArrow].getAim.getDamageRadius
-        val area = new Circle(aim.tileLocation.getGridX, aim.tileLocation.getGridY, radius)
-
-        for (i <- 0 until maxList.size) {
-           if (area.contains(maxList.apply(i).tileLocation.getGridX, maxList.apply(i).tileLocation.getGridY)) {
-              // this should add the object at the position i in maxList to the filteredEntityList
-              filteredEntityList += maxList.apply(i)
-           }
-        } */
-       // Damage System doesn't need this check now. So every entity will take the Attack
+       // Every entity has to take the attack. The damage system will eventually calculate 0 damage, but the list doesn't need to be filtered
        terrain.world.entities.entityList.foreach {
          case x: AttackContainer => x.takeImmediately(e)
          case _ => takeImmediately(e)
@@ -163,7 +145,7 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
 
   /** The component that the representable object uses first. Method is called only once.
     *
-    * The start component must not be null at first, else it will throw a [[IllegalArgumentException]].
+    * The start component must not be null at first, else it will throw a [[java.lang.IllegalArgumentException]].
     * @return A component object which the representable object uses first.
     */
   override protected def startComponent = new Component with AdjustableDrawing {

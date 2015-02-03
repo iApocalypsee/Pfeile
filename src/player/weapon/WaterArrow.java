@@ -16,7 +16,7 @@ public class WaterArrow extends AbstractArrow {
 	/** Name des Pfeils */
 	public static final String NAME = "Wasserpfeil";
 	
-	public static final Color UNIFIED_COLOR = new Color(60, 166, 221, 200);
+	public static final Color UNIFIED_COLOR = new Color(60, 166, 221);
 	
 	/** Bild des Pfeils */
 	private static BufferedImage img_Water;

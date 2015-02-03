@@ -251,7 +251,7 @@ object Delegate {
 
   }
 
-  /** An implementation of an immutable delegate. Mixin trait for [[DelegateLike]].
+  /** An implementation of an immutable delegate. Mixin trait for [[general.Delegate.DelegateLike]].
     * <p>
     * Use this trait like so:
     * {{{
@@ -260,7 +260,7 @@ object Delegate {
     * <p>
     * Immutable delegates are delegates to which no callbacks can be registered.
     * The delegate only redirects to the functions it knows and does not accept any other functions.
-    * Using mutating methods of [[DelegateLike]] will cause a [[UnsupportedOperationException]] to be thrown.
+    * Using mutating methods of [[general.Delegate.DelegateLike]] will cause a [[java.lang.UnsupportedOperationException]] to be thrown.
     */
   trait ImmutableDelegate extends DelegateLike {
 

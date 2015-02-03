@@ -97,9 +97,8 @@ public class AimSelectionScreen extends Screen {
                 transparencyWarningMessage = 0.0f;
 
                 // a new Rectangle for a new arrow, because of different damageRadius
-                TileLike anyTile = (TileLike) Main.getContext().getWorld().terrain().tileAt(0, 0);
                 boundsOvalDamageRadius = new Rectangle(boundsOvalDamageRadius.x, boundsOvalDamageRadius.y,
-                        (int) (arrow.getAim().getDamageRadius() * anyTile.getComponent().getWidth()), (int) (arrow.getAim().getDamageRadius() * anyTile.getComponent().getWidth()));
+                        (int) arrow.getAim().getDamageRadiusGUIWidth(), (int) arrow.getAim().getDamageRadiusGUIWidth());
                 return BoxedUnit.UNIT;
             }
         });

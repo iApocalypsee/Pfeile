@@ -16,7 +16,7 @@ public class LightningArrow extends AbstractArrow {
 
 	public static final String NAME = "Blitzpfeil";
 	
-	public static final Color UNIFIED_COLOR = new Color(194, 198, 255, 200);
+	public static final Color UNIFIED_COLOR = new Color(194, 198, 255);
 
 	/** Bild des Pfeils */
 	private static BufferedImage img_Lightning;

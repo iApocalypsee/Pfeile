@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /** An object that can take attacks. <p>
   *
   * An attack container itself is not already an aggressor, and vice versa. The combination of those traits
-  * is done in [[Combatant]]. <p>
+  * is done in [[newent.Combatant]]. <p>
   *
   * Calculation of impact is not done in here. Instead, <b>you</b> do
   * {{{
