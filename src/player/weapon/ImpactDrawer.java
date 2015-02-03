@@ -16,14 +16,21 @@ class ImpactDrawer implements Drawable {
     /** this value increases every millisecond. It counts the time, after starting drawingProcess. */
     private long milliSec;
 
+    /** the current boundingBox of the explosion at the impact */
     private Rectangle bounding;
 
+    /** TODO: the boundingBox of the center of the explosion. When we draw with BufferedImage, this is no longer needed. */
+    private Rectangle boundingInner;
+
+    /** the boundingBox at the end of the explosion. [at its maximum size] */
     private Rectangle boundingEnd;
 
+    /** the color of the impact - equal to the UNIFIED_COLOR of the arrow, with changing Alpha-value */
     private Color damageColor;
 
-    private Timer timer;
-    
+    /** the color of the center of the impact. */
+    private Color damageColorInner;
+
     ImpactDrawer (AttackEvent event) {
         // the weapon need to be an AbstractArrow
         //assert event.weapon() instanceof AbstractArrow;
@@ -31,14 +38,16 @@ class ImpactDrawer implements Drawable {
         AbstractArrow arrow = (AbstractArrow) event.weapon();
 
         damageColor = ArrowHelper.getUnifiedColor(arrow.getName());
+        damageColorInner = damageColor;
 
-        bounding = new Rectangle((int) arrow.getComponent().getBounds().getBounds().getCenterX(), (int) arrow.getComponent().getBounds().getBounds().getCenterY());
+        bounding = new Rectangle((int) arrow.getComponent().getBounds().getBounds().getCenterX(), (int) arrow.getComponent().getBounds().getBounds().getCenterY(), 0, 0);
 
-        boundingEnd = new Rectangle((int) arrow.getAim().getPosXGui(), (int) arrow.getAim().getPosYGui(), (int) arrow.getAim().getDamageRadiusGUIWidth() * 2, (int) arrow.getAim().getDamageRadiusGUIWidth() * 2 );
+        boundingInner = new Rectangle(bounding.x, bounding.y, 0, 0);
 
-        milliSec = 0;
+        boundingEnd = new Rectangle((int) arrow.getAim().getPosXGui(), (int) arrow.getAim().getPosYGui(),
+                (int) arrow.getAim().getDamageRadiusGUIWidth(), (int) arrow.getAim().getDamageRadiusGUIWidth());
 
-        // TODO use amazing textures
+        // TODO use amazing textures :D
     }
 
     void startAnimation () {
@@ -55,7 +64,8 @@ class ImpactDrawer implements Drawable {
 
         @Override
         public void run () {
-            timer = new java.util.Timer("impactDrawerScheduler", true);
+            /* The timer is counting every milliSecond ["milliSec++;"] */
+            Timer timer = new Timer("impactDrawerScheduler", true);
             // every milliSec has to increase every millisecond
             timer.schedule(new Clock(), 0, 1);
 
@@ -70,13 +80,17 @@ class ImpactDrawer implements Drawable {
                 // the progress is between 0 and 1
                 double progress = milliSec / (double) MILLI_SEC;
                 bounding.setSize((int) (boundingEnd.width * progress),(int) (boundingEnd.height  * progress));
-                bounding.setLocation(oldLocationX - bounding.width / 2, oldLocationY - bounding.width / 2);
+                bounding.setLocation(oldLocationX - bounding.width / 2, oldLocationY - bounding.height / 2);
 
-                damageColor = new Color(damageColor.getRed(), damageColor.getGreen(), damageColor.getBlue(), (int) (200 * progress));
+                boundingInner.setSize((int) ((bounding.width / 4.0) * progress + 10), (int) ((bounding.height / 4.0) * progress + 10));
+                boundingInner.setLocation(oldLocationX - boundingInner.width / 2, oldLocationY - boundingInner.height / 2);
+
+                damageColor = new Color(damageColor.getRed(), damageColor.getGreen(), damageColor.getBlue(), (int) (240 * (1 - progress)));
+                damageColorInner = new Color(damageColorInner.getRed(), damageColorInner.getGreen(), damageColorInner.getBlue(), (int) (140 * (1 - progress)));
 
                 // it can't be drawn more often
                 try {
-                    Thread.sleep(12);
+                    Thread.sleep(10);
                 } catch (InterruptedException e) { e.printStackTrace(); }
             }
 
@@ -106,6 +120,8 @@ class ImpactDrawer implements Drawable {
     public void draw (Graphics2D g) {
         g.setColor(damageColor);
         g.fillOval(bounding.x, bounding.y, bounding.width, bounding.height);
+        g.setColor(damageColorInner);
+        g.fillOval(boundingInner.x, boundingInner.y, boundingInner.width, boundingInner.height);
 
         //System.out.println("DRAWING " + damageColor + "  " + bounding);
     }
