@@ -299,19 +299,21 @@ public class AimSelectionScreen extends Screen {
             final Color unifiedArrowColor = ArrowHelper.getUnifiedColor(arrow.getName());
             final TerrainLike terrain = Main.getContext().world().terrain();
 
-            containedObjects.clear();
+            synchronized (containedObjects) {
+                containedObjects.clear();
 
-            for (int x = 0; x < PfeileContext.WORLD_SIZE_X().get(); x++) {
-                for (int y = 0; y < PfeileContext.WORLD_SIZE_Y().get(); y++) {
-                    if (arrow.damageAt(x, y) != 0)
-                        containedObjects.add(new ContainedObject((TileLike) terrain.tileAt(x, y), arrow, unifiedArrowColor));
+                for (int x = 0; x < PfeileContext.WORLD_SIZE_X().get(); x++) {
+                    for (int y = 0; y < PfeileContext.WORLD_SIZE_Y().get(); y++) {
+                        if (arrow.damageAt(x, y) != 0)
+                            containedObjects.add(new ContainedObject((TileLike) terrain.tileAt(x, y), arrow, unifiedArrowColor));
+                    }
                 }
             }
         }
 
         private class ContainedObject implements Drawable {
-            private Color impactingColor;
-            private Shape bounds;
+            private volatile Color impactingColor;
+            private volatile Shape bounds;
 
             private ContainedObject (TileLike tile, AbstractArrow arrow, Color unifiedArrowColor) {
                 bounds = tile.getComponent().getBounds();

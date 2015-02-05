@@ -10,14 +10,16 @@ import java.util.LinkedList;
  * Every ImpactDrawer unregisters (<code>removeAttackDrawer(AttackDrawer)</code> itself, when the Thread ended. */
 public class ImpactDrawerHandler {
 
-    private static LinkedList<ImpactDrawer> impactDrawerList = new LinkedList<>();
+    private static final LinkedList<ImpactDrawer> impactDrawerList = new LinkedList<>();
 
     /** this adds a new ImpactDrawer. You need to add an ImpactDrawer, if you want to want to draw it.
      * This is equal to: {@link player.weapon.ImpactDrawerHandler#addImpactDrawer(ImpactDrawer)}. The animation is started automatically.*/
     public static void addImpactDrawer (AttackEvent attackEvent) {
-        ImpactDrawer impactDrawer = new ImpactDrawer(attackEvent);
-        impactDrawerList.add(impactDrawer);
-        impactDrawer.startAnimation();
+        synchronized (impactDrawerList) {
+            ImpactDrawer impactDrawer = new ImpactDrawer(attackEvent);
+            impactDrawerList.add(impactDrawer);
+            impactDrawer.startAnimation();
+        }
     }
 
     /** this adds the specified impactDrawer to an existing List of ImpactDrawers. Every ImpactDrawer need to be added,
@@ -26,12 +28,16 @@ public class ImpactDrawerHandler {
      * @see player.weapon.ImpactDrawerHandler#addImpactDrawer(newent.event.AttackEvent)
      */
     public static void addImpactDrawer (ImpactDrawer impactDrawer) {
-        impactDrawerList.add(impactDrawer);
+        synchronized (impactDrawerList) {
+            impactDrawerList.add(impactDrawer);
+        }
     }
 
     /** this removes an attackDrawer. Every AttackDrawer will not be drawn. */
     public static void removeImpactDrawer (ImpactDrawer attackDrawer) {
-        impactDrawerList.remove(attackDrawer);
+        synchronized (impactDrawerList) {
+            impactDrawerList.remove(attackDrawer);
+        }
     }
 
     /** nobody will instance this class */
