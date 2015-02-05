@@ -13,12 +13,15 @@ import scala.Option;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
+import world.IsometricPolygonTile;
 import world.TileLike;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.PathIterator;
+import java.util.List;
 
 
 public class AimSelectionScreen extends Screen {
@@ -34,6 +37,10 @@ public class AimSelectionScreen extends Screen {
 	/** Y-Position des Ausgewählten Feldes
 	 * (wenn noch nie auf <code> AimSelectionScreen </code> gecklickt wurde, ist der Wert -1) */
 	private volatile int posY_selectedField;
+
+    /** This contains and draws all tiles, which are affected by the damage radius, in different transparent
+     * UNIFIED_COLOURS (of the selected arrow) */
+    private FieldContainer fieldContainer;
 	
 	/** the button to confirm the decision to shoot an arrow at the selected field */
 	private Button confirm;
@@ -46,19 +53,7 @@ public class AimSelectionScreen extends Screen {
     /** the animated line from the player to the aim */
     private AnimatedLine animatedLine;
 
-    /** the Color of the border of the selectedField */
-    private static Color selectedTileOutLineColor = new Color(229, 217, 255, 161);
-
-    /*+ the Color with which the selectedField is drawn */
-    private static Color selectedTileInLineColor = new Color(255, 34, 0, 255);
-
     private static Color damageRadiusColor = new Color (255, 133, 0, 188);
-
-    /** the extended bounds of the selected field. It's 2px bigger then the normal one, to be able to draw an border */
-    private Polygon boundsSelectedTileExtended;
-
-    /** the bounds of the selected field. It's faster to save it instead of loading it with every draw call. */
-    private Shape boundsSelectedTile;
 
     /** the bounds of the oval, which is showing the damage radius. The oval fits in the Rectangle. This is why I've
      * chosen a Rectangle. */
@@ -79,9 +74,9 @@ public class AimSelectionScreen extends Screen {
         animatedLine = new AnimatedLine(0,0,0,0,Color.RED);
         animatedLine.setWidth(3.0f);
 
-        boundsSelectedTileExtended = new Polygon();
-        boundsSelectedTile = new Polygon();
         boundsOvalDamageRadius = new Rectangle (0, 0, 0, 0);
+
+        fieldContainer = new FieldContainer();
 
         onScreenEnter.register(new AbstractFunction0<BoxedUnit>() {
             @Override
@@ -217,19 +212,17 @@ public class AimSelectionScreen extends Screen {
 		                setPosX_selectedField(tileX);
 		                setPosY_selectedField(tileY);
 
-                        boundsSelectedTile = tileWrapper.getComponent().getBounds();
-                        Rectangle bounds = boundsSelectedTile.getBounds();
+                        Rectangle bounds = tileWrapper.getComponent().getBounds().getBounds();
 
 		                animatedLine.setEndX((int) bounds.getCenterX());
 		                animatedLine.setEndY((int) bounds.getCenterY());
 
-                        boundsSelectedTileExtended = new Polygon();
-                        boundsSelectedTileExtended.addPoint(bounds.x - 2, (int) (bounds.y + 0.5 * bounds.height));
-                        boundsSelectedTileExtended.addPoint((int) (bounds.x + 0.5 * bounds.width), (int) (bounds.y + 0.5 * bounds.height - 2));
-                        boundsSelectedTileExtended.addPoint(bounds.x + bounds.width + 2, (int) (bounds.y + 0.5 * bounds.width));
-                        boundsSelectedTileExtended.addPoint((int) (bounds.x + 0.5 * bounds.width), (int) (bounds.y + 0.5 * bounds.height + 2));
+
 
 		                boundsOvalDamageRadius.setLocation((int) (bounds.getCenterX() - boundsOvalDamageRadius.getWidth() / 2), (int) (bounds.getCenterY() - boundsOvalDamageRadius.getHeight() / 2));
+
+                        fieldContainer.updateFields(tileWrapper);
+
                         stopFlag = true;
 	                }
                 }
@@ -280,6 +273,53 @@ public class AimSelectionScreen extends Screen {
         }
 	}
 
+    private static class FieldContainer implements Drawable {
+
+        /** a list of all fields, on which the selected would make damage. The list is used to save all tiles (actually their bounds),
+         * so that they can be drawn quickly. */
+        private volatile List<TileLike> fieldsWithDamage;
+
+
+        /** the Color of the border of the selectedField */
+        private Color selectedTileOutLineColor = new Color(229, 217, 255, 174);
+
+        /*+ the Color with which the selectedField is drawn */
+        private Color selectedTileInLineColor = new Color(255, 0, 0, 255);
+
+        /** the extended bounds of the selected field. It's 2px bigger then the normal one, to be able to draw an border */
+        private Polygon boundsSelectedTileExtended;
+
+        /** the bounds of the selected field. It's faster to save it instead of loading it with every draw call. */
+        private Shape boundsSelectedTile;
+
+        FieldContainer () {
+            boundsSelectedTileExtended = new Polygon();
+            boundsSelectedTile = new Polygon();
+        }
+
+        synchronized void updateFields (TileLike tileWrapper) {
+            boundsSelectedTile = tileWrapper.getComponent().getBounds();
+            Rectangle bounds = boundsSelectedTile.getBounds();
+
+            boundsSelectedTileExtended = new Polygon();
+            boundsSelectedTileExtended.addPoint(bounds.x - 2, bounds.y + IsometricPolygonTile.TileHalfHeight());
+            boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileHalfWidth(), bounds.y - 2);
+            boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileWidth() + 2, bounds.y + IsometricPolygonTile.TileHalfHeight());
+            boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileHalfWidth(), bounds.y + IsometricPolygonTile.TileHeight() + 2);
+        }
+
+
+        @Override
+        public void draw (Graphics2D g) {
+
+
+            g.setColor(selectedTileOutLineColor);
+            g.fill(boundsSelectedTileExtended);
+            g.setColor(selectedTileInLineColor);
+            g.fill(boundsSelectedTile);
+        }
+    }
+
 
     @Override
     public void draw (Graphics2D g) {
@@ -292,10 +332,8 @@ public class AimSelectionScreen extends Screen {
 
         // draw the selected field and the damage radius
         if (posX_selectedField >= 0 && posY_selectedField >= 0) {
-            g.setColor(selectedTileOutLineColor);
-            g.fill(boundsSelectedTileExtended);
-            g.setColor(selectedTileInLineColor);
-            g.fill(boundsSelectedTile);
+            fieldContainer.draw(g);
+
             // drawing the damage radius twice, that the line is thicker
             g.setColor(damageRadiusColor);
             g.drawOval(boundsOvalDamageRadius.x, boundsOvalDamageRadius.y, boundsOvalDamageRadius.width, boundsOvalDamageRadius.height);

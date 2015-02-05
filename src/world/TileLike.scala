@@ -7,7 +7,7 @@ import comp.{Component, DisplayRepresentable}
 import general.Main
 import gui.{AdjustableDrawing, GameScreen}
 import newent.{AttackContainer, EntityLike}
-import player.weapon.{ImpactDrawerHandler, ImpactDrawer, AttackingCalculator, AbstractArrow}
+import player.weapon.{AbstractArrow, ImpactDrawerHandler}
 
 import scala.collection.{JavaConversions, mutable}
 
@@ -26,9 +26,6 @@ trait TileLike extends DisplayRepresentable with AttackContainer {
   val latticeY: Int
   /** The terrain to which the tile belongs to. */
   val terrain: TerrainLike
-
-  /** The (geographic) height of the tile. */
-  var tileHeight: Int
 
   /** The movement points that are required to get on this tile. */
   def requiredMovementPoints: Int
@@ -116,8 +113,6 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
        case _ =>
     }
   }
-
-  override var tileHeight: Int = 0
 
   override def north: TileLike = terrain.tileAt( latticeX - 1, latticeY + 1 )
 
