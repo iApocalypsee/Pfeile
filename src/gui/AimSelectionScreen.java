@@ -3,6 +3,7 @@ package gui;
 import animation.AnimatedLine;
 import comp.Button;
 import general.Main;
+import general.PfeileContext;
 import newent.Player;
 import newent.VisionStatus;
 import newent.event.AttackEvent;
@@ -14,13 +15,15 @@ import scala.runtime.AbstractFunction0;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
 import world.IsometricPolygonTile;
+import world.TerrainLike;
 import world.TileLike;
+import world.WorldLike;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.PathIterator;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -217,8 +220,6 @@ public class AimSelectionScreen extends Screen {
 		                animatedLine.setEndX((int) bounds.getCenterX());
 		                animatedLine.setEndY((int) bounds.getCenterY());
 
-
-
 		                boundsOvalDamageRadius.setLocation((int) (bounds.getCenterX() - boundsOvalDamageRadius.getWidth() / 2), (int) (bounds.getCenterY() - boundsOvalDamageRadius.getHeight() / 2));
 
                         fieldContainer.updateFields(tileWrapper);
@@ -275,16 +276,14 @@ public class AimSelectionScreen extends Screen {
 
     private static class FieldContainer implements Drawable {
 
-        /** a list of all fields, on which the selected would make damage. The list is used to save all tiles (actually their bounds),
-         * so that they can be drawn quickly. */
-        private volatile List<TileLike> fieldsWithDamage;
-
+        /** The list of all tile-shapes and their colors, that need to be drawn. */
+        private final List<ContainedObject> containedObjects;
 
         /** the Color of the border of the selectedField */
-        private Color selectedTileOutLineColor = new Color(229, 217, 255, 174);
+        private final Color selectedTileOutLineColor = new Color(229, 217, 255, 174);
 
         /*+ the Color with which the selectedField is drawn */
-        private Color selectedTileInLineColor = new Color(255, 0, 0, 255);
+        private final Color selectedTileInLineColor = new Color(255, 0, 0, 255);
 
         /** the extended bounds of the selected field. It's 2px bigger then the normal one, to be able to draw an border */
         private Polygon boundsSelectedTileExtended;
@@ -293,6 +292,7 @@ public class AimSelectionScreen extends Screen {
         private Shape boundsSelectedTile;
 
         FieldContainer () {
+            containedObjects = new ArrayList<>();
             boundsSelectedTileExtended = new Polygon();
             boundsSelectedTile = new Polygon();
         }
@@ -306,12 +306,47 @@ public class AimSelectionScreen extends Screen {
             boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileHalfWidth(), bounds.y - 2);
             boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileWidth() + 2, bounds.y + IsometricPolygonTile.TileHalfHeight());
             boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileHalfWidth(), bounds.y + IsometricPolygonTile.TileHeight() + 2);
+
+            containedObjects.clear();
+
+            final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
+            final Color unifiedArrowColor = ArrowHelper.getUnifiedColor(arrow.getName());
+            final TerrainLike terrain = Main.getContext().world().terrain();
+
+            synchronized (containedObjects) {
+                for (int x = 0; x < PfeileContext.WORLD_SIZE_X().get(); x++) {
+                    for (int y = 0; y < PfeileContext.WORLD_SIZE_Y().get(); y++) {
+                        if (arrow.damageAt(x, y) != 0)
+                            containedObjects.add(new ContainedObject((TileLike) terrain.tileAt(x, y), arrow, unifiedArrowColor));
+                    }
+                }
+            }
+        }
+
+        private class ContainedObject implements Drawable {
+            private Color impactingColor;
+            private Shape bounds;
+
+            private ContainedObject (TileLike tile, AbstractArrow arrow, Color unifiedArrowColor) {
+                bounds = tile.getComponent().getBounds();
+
+                // the color is unifiedArrowColor with the alpha value: damage [relative to the maximum damage]
+                impactingColor = new Color(unifiedArrowColor.getRed() / 255f, unifiedArrowColor.getGreen() / 255f, unifiedArrowColor.getBlue() / 255f,
+                        (float) (arrow.damageAt(tile.latticeX(), tile.latticeY()) / (arrow.getAttackValue() * PfeileContext.DAMAGE_MULTI().get())));
+            }
+
+            @Override
+            public void draw (Graphics2D g) {
+                g.setColor(impactingColor);
+                g.fill(bounds);
+            }
         }
 
 
         @Override
         public void draw (Graphics2D g) {
-
+            for (ContainedObject tileDrawer : containedObjects)
+                tileDrawer.draw(g);
 
             g.setColor(selectedTileOutLineColor);
             g.fill(boundsSelectedTileExtended);
