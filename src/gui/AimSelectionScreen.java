@@ -17,7 +17,6 @@ import scala.runtime.BoxedUnit;
 import world.IsometricPolygonTile;
 import world.TerrainLike;
 import world.TileLike;
-import world.WorldLike;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -35,11 +34,11 @@ public class AimSelectionScreen extends Screen {
 
 	/** X-Position des Ausgewählten Feldes
 	 * * (wenn noch nie auf <code> AimSelectionScreen </code> gecklickt wurde, ist der Wert -1)*/
-	private volatile int posX_selectedField;
+	private static volatile int posX_selectedField;
 	
 	/** Y-Position des Ausgewählten Feldes
 	 * (wenn noch nie auf <code> AimSelectionScreen </code> gecklickt wurde, ist der Wert -1) */
-	private volatile int posY_selectedField;
+	private static volatile int posY_selectedField;
 
     /** This contains and draws all tiles, which are affected by the damage radius, in different transparent
      * UNIFIED_COLOURS (of the selected arrow) */
@@ -69,8 +68,8 @@ public class AimSelectionScreen extends Screen {
 	public AimSelectionScreen() {
 		super (SCREEN_NAME, SCREEN_INDEX);
 		
-		setPosX_selectedField(-1);
-		setPosY_selectedField(-1);
+		posX_selectedField = -1;
+		posY_selectedField = -1;
 		
 		confirm = new Button ((int) (0.86 * Main.getWindowWidth()), (int) (0.36 * Main.getWindowHeight()), this, "Bestätigen");
 
@@ -86,8 +85,8 @@ public class AimSelectionScreen extends Screen {
             public BoxedUnit apply () {
                 final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
 
-                setPosX_selectedField(-1);
-                setPosY_selectedField(-1);
+                posX_selectedField = -1;
+                posY_selectedField = -1;
 
                 animatedLine.setStartX((int) Main.getContext().getActivePlayer().getComponent().getBounds().getBounds().getCenterX());
                 animatedLine.setStartY((int) Main.getContext().getActivePlayer().getComponent().getBounds().getBounds().getCenterY());
@@ -154,22 +153,8 @@ public class AimSelectionScreen extends Screen {
 	// ###############
 	// GETTER & SETTER
 	// ###############
-	
-	public int getPosX_selectedField() {
-		return posX_selectedField;
-	}
 
-	private void setPosX_selectedField(int posX) {
-		this.posX_selectedField = posX;
-	}
-
-	public int getPosY_selectedField() {
-		return posY_selectedField;
-	}
-
-	private void setPosY_selectedField(int posY) {
-		this.posY_selectedField = posY;
-	}
+    // empty for now
 
 	// #######
 	// THREADS
@@ -212,8 +197,8 @@ public class AimSelectionScreen extends Screen {
 		                // reveal that tile yet. That's why it's called Fog of War...
 		                return;
 	                } else {
-		                setPosX_selectedField(tileX);
-		                setPosY_selectedField(tileY);
+		                posX_selectedField = tileX;
+		                posY_selectedField = tileY;
 
                         Rectangle bounds = tileWrapper.getComponent().getBounds().getBounds();
 
@@ -241,7 +226,7 @@ public class AimSelectionScreen extends Screen {
 			super.run();
 
 			Player active = Main.getContext().activePlayer();
-			TileLike target = (TileLike) active.world().terrain().tileAt(getPosX_selectedField(), getPosY_selectedField());
+			TileLike target = (TileLike) active.world().terrain().tileAt(posX_selectedField, posY_selectedField);
 
 			final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
 
@@ -253,8 +238,8 @@ public class AimSelectionScreen extends Screen {
 			});
 
 			if(opt.isDefined()) {
-                arrow.getAim().setGridX(getPosX_selectedField());
-                arrow.getAim().setGridY(getPosY_selectedField());
+                arrow.getAim().setGridX(posX_selectedField);
+                arrow.getAim().setGridY(posY_selectedField);
 
                 arrow.setGridX(active.getGridX());
                 arrow.setGridY(active.getGridY());
@@ -307,18 +292,19 @@ public class AimSelectionScreen extends Screen {
             boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileWidth() + 2, bounds.y + IsometricPolygonTile.TileHalfHeight());
             boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileHalfWidth(), bounds.y + IsometricPolygonTile.TileHeight() + 2);
 
-            containedObjects.clear();
-
             final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
+            arrow.getAim().setGridX(posX_selectedField);
+            arrow.getAim().setGridY(posY_selectedField);
+
             final Color unifiedArrowColor = ArrowHelper.getUnifiedColor(arrow.getName());
             final TerrainLike terrain = Main.getContext().world().terrain();
 
-            synchronized (containedObjects) {
-                for (int x = 0; x < PfeileContext.WORLD_SIZE_X().get(); x++) {
-                    for (int y = 0; y < PfeileContext.WORLD_SIZE_Y().get(); y++) {
-                        if (arrow.damageAt(x, y) != 0)
-                            containedObjects.add(new ContainedObject((TileLike) terrain.tileAt(x, y), arrow, unifiedArrowColor));
-                    }
+            containedObjects.clear();
+
+            for (int x = 0; x < PfeileContext.WORLD_SIZE_X().get(); x++) {
+                for (int y = 0; y < PfeileContext.WORLD_SIZE_Y().get(); y++) {
+                    if (arrow.damageAt(x, y) != 0)
+                        containedObjects.add(new ContainedObject((TileLike) terrain.tileAt(x, y), arrow, unifiedArrowColor));
                 }
             }
         }
@@ -345,8 +331,10 @@ public class AimSelectionScreen extends Screen {
 
         @Override
         public void draw (Graphics2D g) {
-            for (ContainedObject tileDrawer : containedObjects)
-                tileDrawer.draw(g);
+            synchronized (containedObjects) {
+                for (ContainedObject tileDrawer : containedObjects)
+                    tileDrawer.draw(g);
+            }
 
             g.setColor(selectedTileOutLineColor);
             g.fill(boundsSelectedTileExtended);
