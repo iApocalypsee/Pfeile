@@ -3,6 +3,7 @@ package player.weapon;
 
 import general.Main;
 import player.BoardPositionable;
+import world.IsometricPolygonTile;
 import world.TileLike;
 
 import java.awt.*;
@@ -105,26 +106,23 @@ public class Aim implements BoardPositionable {
      * @see Aim#getDamageRadiusGUIHeight()
      */
     public Dimension getDamageRadiusGUI () {
-        TileLike anyTile = (TileLike) Main.getContext().getWorld().terrain().tileAt(0, 0);
-        return new Dimension((int) (anyTile.component().getWidth() * getDamageRadius()), (int) (anyTile.component().getHeight() * getDamageRadius()));
+        return new Dimension((int) getDamageRadiusGUIWidth(), (int) getDamageRadiusGUIHeight());
     }
 
-    /** the width of the damageRadius on GUI applications
+    /** the width of the damageRadius on GUI applications: The width of a tile multiplied with its damageRadius.
      * @see Aim#getDamageRadius()
      * @see Aim#getDamageRadiusGUIWidth()
      * @see Aim#getDamageRadiusGUIHeight()  */
     public double getDamageRadiusGUIWidth () {
-        TileLike anyTile = (TileLike) Main.getContext().getWorld().terrain().tileAt(0, 0);
-        return anyTile.component().getWidth() * getDamageRadius();
+        return IsometricPolygonTile.TileWidth() * getDamageRadius();
     }
 
-    /** the height of the damageRadius in pixel for GUI applications
+    /** the height of the damageRadius in pixel for GUI applications: The height of a tile multiplied with its damageRadius.
      * @see Aim#getDamageRadius()
      * @see Aim#getDamageRadiusGUIWidth()
      * @see Aim#getDamageRadiusGUIHeight() */
     public double getDamageRadiusGUIHeight () {
-        TileLike anyTile = (TileLike) Main.getContext().getWorld().terrain().tileAt(0, 0);
-        return anyTile.component().getHeight() * getDamageRadius();
+        return IsometricPolygonTile.TileHeight() * getDamageRadius();
     }
 
     /** changes the radius of the attack, in which the attacks effects the surrounding area. <p>

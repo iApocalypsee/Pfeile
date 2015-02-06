@@ -55,11 +55,14 @@ public class AimSelectionScreen extends Screen {
     /** the animated line from the player to the aim */
     private AnimatedLine animatedLine;
 
-    private static Color damageRadiusColor = new Color (255, 133, 0, 188);
+    private static Color damageRadiusColor = new Color (255, 42, 20, 150);
 
     /** the bounds of the oval, which is showing the damage radius. The oval fits in the Rectangle. This is why I've
      * chosen a Rectangle. */
     private Rectangle boundsOvalDamageRadius;
+
+    /** To draw the line of the damageRadius bigger than 1px, set the value of this basicStroke. Right now, it's 2.5f.*/
+    private BasicStroke strokeOvalDamageRadius;
 
     /** this is the font of the warning message. It's saved here for speeding up the draw method. */
     private static Font fontWarningMessage = new Font(comp.Component.STD_FONT.getFontName(), Font.BOLD, 26);
@@ -77,6 +80,7 @@ public class AimSelectionScreen extends Screen {
         animatedLine.setWidth(3.0f);
 
         boundsOvalDamageRadius = new Rectangle (0, 0, 0, 0);
+        strokeOvalDamageRadius = new BasicStroke(2.5f);
 
         fieldContainer = new FieldContainer();
 
@@ -95,7 +99,7 @@ public class AimSelectionScreen extends Screen {
 
                 // a new Rectangle for a new arrow, because of different damageRadius
                 boundsOvalDamageRadius = new Rectangle(boundsOvalDamageRadius.x, boundsOvalDamageRadius.y,
-                        (int) arrow.getAim().getDamageRadiusGUIWidth(), (int) arrow.getAim().getDamageRadiusGUIWidth());
+                        (int) arrow.getAim().getDamageRadiusGUIWidth(), (int) arrow.getAim().getDamageRadiusGUIHeight());
                 return BoxedUnit.UNIT;
             }
         });
@@ -146,6 +150,7 @@ public class AimSelectionScreen extends Screen {
 		// and let the thread save the computation in the variables
 		FieldSelectActor actor = new FieldSelectActor(e);
 		actor.setDaemon(true);
+        actor.setPriority(7);
 		actor.start();
 	}
 	
@@ -361,8 +366,9 @@ public class AimSelectionScreen extends Screen {
 
             // drawing the damage radius twice, that the line is thicker
             g.setColor(damageRadiusColor);
+            g.setStroke(strokeOvalDamageRadius);
             g.drawOval(boundsOvalDamageRadius.x, boundsOvalDamageRadius.y, boundsOvalDamageRadius.width, boundsOvalDamageRadius.height);
-            g.drawOval(boundsOvalDamageRadius.x + 1, boundsOvalDamageRadius.y + 1, boundsOvalDamageRadius.width - 1, boundsOvalDamageRadius.width - 1);
+
             animatedLine.updateOffset(- 0.5);
             animatedLine.draw(g);
         }

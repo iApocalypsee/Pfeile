@@ -45,7 +45,7 @@ class ImpactDrawer implements Drawable {
         boundingInner = new Rectangle(bounding.x, bounding.y, 0, 0);
 
         boundingEnd = new Rectangle((int) arrow.getAim().getPosXGui(), (int) arrow.getAim().getPosYGui(),
-                (int) arrow.getAim().getDamageRadiusGUIWidth(), (int) arrow.getAim().getDamageRadiusGUIWidth());
+                (int) arrow.getAim().getDamageRadiusGUIWidth(), (int) arrow.getAim().getDamageRadiusGUIHeight());
 
         // TODO use amazing textures :D
     }
