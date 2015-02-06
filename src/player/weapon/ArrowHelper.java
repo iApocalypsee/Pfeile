@@ -15,11 +15,11 @@ public final class ArrowHelper {
 	private static BufferedImage [] arrowImages;
 
     /**
-     * the number of diffrent typs of arrows. It's equal 8.
+     * the number of different types of arrows. It's equal 8.
      */
     public static final int NUMBER_OF_ARROW_TYPES = 8;
 
-    /** don't instance ArrowHelper, exept, if you want to initialize ArrowHelper at the beginning
+    /** Don't instance ArrowHelper, only if you want to initialize ArrowHelper at the beginning
      * (before using {@link player.weapon.ArrowHelper#getArrowImage(int)}
      */
     public ArrowHelper() {
@@ -41,25 +41,18 @@ public final class ArrowHelper {
 	 * @return A class object, or null, if no string matches.
 	 */
 	public static Class<? extends AbstractArrow> reformArrow(String selectedArrow) {
-		if (selectedArrow.equals(FireArrow.NAME)) {
-			return FireArrow.class;
-		} else if (selectedArrow.equals(WaterArrow.NAME)) {
-			return WaterArrow.class;
-		} else if (selectedArrow.equals(StormArrow.NAME)) {
-			return StormArrow.class;
-		} else if (selectedArrow.equals(StoneArrow.NAME)) {
-			return StoneArrow.class;
-		} else if (selectedArrow.equals(IceArrow.NAME)) {
-			return IceArrow.class;
-		} else if (selectedArrow.equals(LightningArrow.NAME)) {
-			return LightningArrow.class;
-		} else if (selectedArrow.equals(LightArrow.NAME)) {
-			return LightArrow.class;
-		} else if (selectedArrow.equals(ShadowArrow.NAME)) {
-			return ShadowArrow.class;
-		} else {
-			return null;
-		}
+        switch (selectedArrow) {
+            case FireArrow.NAME:     return FireArrow.class;
+            case WaterArrow.NAME:    return WaterArrow.class;
+            case StormArrow.NAME:    return StormArrow.class;
+            case StoneArrow.NAME:    return StoneArrow.class;
+            case IceArrow.NAME:      return IceArrow.class;
+            case LightningArrow.NAME:return LightningArrow.class;
+            case LightArrow.NAME:    return LightArrow.class;
+            case ShadowArrow.NAME:   return ShadowArrow.class;
+            default:
+                return null;
+        }
 	}
 
 	/** Methode vergleicht den �bergebenen int - Wert (der PfeilIndex)
@@ -152,24 +145,17 @@ public final class ArrowHelper {
      *  @see <code> reformArrow(String selectedArrow).newInstance() </code>
      *  @see <code> instanceArrow(String selectedArrow) </code>*/
     public static AbstractArrow instanceArrow (String selectedArrowName) {
-        if (selectedArrowName.equals(FireArrow.NAME)) {
-            return new FireArrow();
-        } else if (selectedArrowName.equals(WaterArrow.NAME)) {
-            return new WaterArrow();
-        } else if (selectedArrowName.equals(StormArrow.NAME)) {
-            return new StormArrow();
-        } else if (selectedArrowName.equals(StoneArrow.NAME)) {
-            return new StoneArrow();
-        } else if (selectedArrowName.equals(IceArrow.NAME)) {
-            return new IceArrow();
-        } else if (selectedArrowName.equals(LightningArrow.NAME)) {
-            return new LightningArrow();
-        } else if (selectedArrowName.equals(LightArrow.NAME)) {
-            return new LightArrow();
-        } else if (selectedArrowName.equals(ShadowArrow.NAME)) {
-            return new ShadowArrow();
-        } else {
-            return null;
+        switch (selectedArrowName) {
+            case FireArrow.NAME:     return new FireArrow();
+            case WaterArrow.NAME:    return new WaterArrow();
+            case StormArrow.NAME:    return new StormArrow();
+            case StoneArrow.NAME:    return new StoneArrow();
+            case IceArrow.NAME:      return new IceArrow();
+            case LightningArrow.NAME:return new LightningArrow();
+            case LightArrow.NAME:    return new LightArrow();
+            case ShadowArrow.NAME:   return new ShadowArrow();
+            default:
+                return null;
         }
     }
 
@@ -192,25 +178,18 @@ public final class ArrowHelper {
 	 *   wenn der Pfeilname nicht existiert: -1
 	 *  @see <code> arrowIndexToName (String selectedArrowIndex) </code>*/
 	public static int arrowNameToIndex(String selectedArrow) {
-		if (selectedArrow.equals(FireArrow.NAME)) {
-			return FireArrow.INDEX;
-		} else if (selectedArrow.equals(WaterArrow.NAME)) {
-			return WaterArrow.INDEX;
-		} else if (selectedArrow.equals(StormArrow.NAME)) {
-			return StormArrow.INDEX;
-		} else if (selectedArrow.equals(StoneArrow.NAME)) {
-			return StoneArrow.INDEX;
-		} else if (selectedArrow.equals(IceArrow.NAME)) {
-			return IceArrow.INDEX;
-		} else if (selectedArrow.equals(LightningArrow.NAME)) {
-			return LightningArrow.INDEX;
-		} else if (selectedArrow.equals(LightArrow.NAME)) {
-			return LightArrow.INDEX;
-		} else if (selectedArrow.equals(ShadowArrow.NAME)) {
-			return ShadowArrow.INDEX;
-		} else {
-			return -1;
-		}
+        switch (selectedArrow) {
+            case FireArrow.NAME:     return FireArrow.INDEX;
+            case WaterArrow.NAME:    return WaterArrow.INDEX;
+            case StormArrow.NAME:    return StormArrow.INDEX;
+            case StoneArrow.NAME:    return StoneArrow.INDEX;
+            case IceArrow.NAME:      return IceArrow.INDEX;
+            case LightningArrow.NAME:return LightningArrow.INDEX;
+            case LightArrow.NAME:    return LightArrow.INDEX;
+            case ShadowArrow.NAME:   return ShadowArrow.INDEX;
+            default:
+                return -1;
+        }
 	}
 
     /** If you want to know how much arrows per category are in the inventory of the ActivePlayer, use this method.
@@ -255,13 +234,13 @@ public final class ArrowHelper {
      */
     public static Color getUnifiedColor (int arrowIndex) {
         switch (arrowIndex) {
-            case FireArrow.INDEX: return FireArrow.UNIFIED_COLOR;
+            case FireArrow.INDEX:  return FireArrow.UNIFIED_COLOR;
             case WaterArrow.INDEX: return WaterArrow.UNIFIED_COLOR;
             case StoneArrow.INDEX: return StoneArrow.UNIFIED_COLOR;
             case StormArrow.INDEX: return StormArrow.UNIFIED_COLOR;
             case LightArrow.INDEX: return LightArrow.UNIFIED_COLOR;
-            case ShadowArrow.INDEX: return ShadowArrow.UNIFIED_COLOR;
-            case IceArrow.INDEX: return IceArrow.UNIFIED_COLOR;
+            case ShadowArrow.INDEX:return ShadowArrow.UNIFIED_COLOR;
+            case IceArrow.INDEX:   return IceArrow.UNIFIED_COLOR;
             case LightningArrow.INDEX: return LightningArrow.UNIFIED_COLOR;
             default:
                 return null;
@@ -270,7 +249,7 @@ public final class ArrowHelper {
 
     /** returns the unifiedColor of the arrow. That is similar to:
      * ...Arrow.UNIFIED_COLOR
-     * @param arrowClass
+     * @param arrowClass Any class extends AbstractArrow
      * @return UNIFIED_COLOR - the standard Color of an arrow
      */
     public static Color getUnifiedColor (Class <? extends AbstractArrow> arrowClass) {

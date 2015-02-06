@@ -5,6 +5,7 @@ import comp.Button;
 import general.Main;
 import general.PfeileContext;
 import newent.Player;
+import newent.VisionMap;
 import newent.VisionStatus;
 import newent.event.AttackEvent;
 import player.weapon.AbstractArrow;
@@ -194,14 +195,14 @@ public class AimSelectionScreen extends Screen {
 	                int playerY = Main.getContext().getActivePlayer().getGridY();
 	                VisionStatus status = Main.getContext().getActivePlayer().visionMap().visionStatusOf(tileX, tileY);
 
-	                if(playerX == tileWrapper.latticeX() && playerY == tileWrapper.latticeY()) {
-		                warningMessage = "Selbstangriff nicht möglich!";
-		                transparencyWarningMessage = 1f;
-	                } else if(status == VisionStatus.Hidden) {
+	                if(status == VisionStatus.Hidden) {
 		                // Don't do anything, the player should not even notice that he did not
 		                // reveal that tile yet. That's why it's called Fog of War...
 		                return;
-	                } else {
+	                } if(playerX == tileWrapper.latticeX() && playerY == tileWrapper.latticeY()) {
+                        warningMessage = "Selbstangriff nicht möglich!";
+                        transparencyWarningMessage = 1f;
+                    } else {
 		                posX_selectedField = tileX;
 		                posY_selectedField = tileY;
 
@@ -303,12 +304,15 @@ public class AimSelectionScreen extends Screen {
 
             final Color unifiedArrowColor = ArrowHelper.getUnifiedColor(arrow.getName());
             final TerrainLike terrain = Main.getContext().world().terrain();
+            final VisionMap visibleMap = Main.getContext().getActivePlayer().visionMap();
 
             synchronized (containedObjects) {
                 containedObjects.clear();
 
                 for (int x = 0; x < PfeileContext.WORLD_SIZE_X().get(); x++) {
                     for (int y = 0; y < PfeileContext.WORLD_SIZE_Y().get(); y++) {
+                        if (visibleMap.visionStatusOf(x, y) == VisionStatus.Hidden)
+                            continue;
                         if (arrow.damageAt(x, y) != 0)
                             containedObjects.add(new ContainedObject((TileLike) terrain.tileAt(x, y), arrow, unifiedArrowColor));
                     }
