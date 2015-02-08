@@ -217,10 +217,11 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 
     /** changes the rotation of the BufferedImage. With this value the image is drawn in the direction to the aim.
      * Basically it updates the the rotation with:
-     * <p> <code>rotation = FunctionCollection.angle(getPosX(), getPosY(), getAim().getPosXGui(), getAim().getPosYGui());</code>
+     * <p> <code>rotation = FunctionCollection.angle(...getCenterX(), ...getCenterY(), getAim().getPosXGui(), getAim().getPosYGui());</code>
      */
     public void calculateRotation () {
-        component.rotateDegree(Math.toDegrees(FunctionCollection.angle(getComponent().getX(), getComponent().getY(), getAim().getPosXGui(), getAim().getPosYGui())));
+        component.rotateDegree(Math.toDegrees(FunctionCollection.angle(
+                getComponent().getPreciseRectangle().getCenterX(), getComponent().getPreciseRectangle().getCenterY(), getAim().getPosXGui(), getAim().getPosYGui())));
     }
 
     /** returns the BufferedImage of this arrow.

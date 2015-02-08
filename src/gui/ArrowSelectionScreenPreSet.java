@@ -92,7 +92,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
         fontMiddle = new Font("Calligraphic", Font.PLAIN, 48);
 
         if (comp.Component.isFontInstalled(fontBig) == false)
-            fontBig = new Font("Viking", Font.BOLD, 105);
+            fontBig = new Font("Claudette aime le Chocolat", Font.BOLD, 105);
         if (comp.Component.isFontInstalled(fontMiddle) == false)
             fontMiddle = new Font("ShadowedGermanica", Font.PLAIN, 45);
 

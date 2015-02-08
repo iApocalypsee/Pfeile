@@ -265,7 +265,10 @@ public class AimSelectionScreen extends Screen {
         }
 	}
 
-    private static class FieldContainer implements Drawable {
+    /** The instance if this class contains all {@link gui.AimSelectionScreen.FieldContainer.ContainedObject} in an ArrayList.
+     * They are used to draw the damageRadius and the selectedTile. Use updateFields(TileLike selectedTile) to reset the damageRadius.
+     * Use the draw-method of FieldContainer to draw the damageRadius as well as the selectedTile. */
+    private class FieldContainer implements Drawable {
 
         /** The list of all tile-shapes and their colors, that need to be drawn. */
         private final List<ContainedObject> containedObjects;
@@ -288,16 +291,22 @@ public class AimSelectionScreen extends Screen {
             boundsSelectedTile = new Polygon();
         }
 
+        /** This updates the damageRadius triggered by {@link gui.AimSelectionScreen.FieldSelectActor}.
+         *  The specified TileLike tileWrapper is the selectedTile. This method is quite performance intensive, so
+         *  use it in an thread. The methods are already synchronized (over the field "containedObjects" from type List<ContainedObject>.*/
         synchronized void updateFields (TileLike tileWrapper) {
+            // the red inner bounds of the tile
             boundsSelectedTile = tileWrapper.getComponent().getBounds();
             Rectangle bounds = boundsSelectedTile.getBounds();
 
+            // the outer bounds of the selectedTile
             boundsSelectedTileExtended = new Polygon();
             boundsSelectedTileExtended.addPoint(bounds.x - 2, bounds.y + IsometricPolygonTile.TileHalfHeight());
             boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileHalfWidth(), bounds.y - 2);
             boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileWidth() + 2, bounds.y + IsometricPolygonTile.TileHalfHeight());
             boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileHalfWidth(), bounds.y + IsometricPolygonTile.TileHeight() + 2);
 
+            //  preparing... getting all values for later calculations in order to access these values faster and to be better clearly structured.
             final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
             arrow.getAim().setGridX(posX_selectedField);
             arrow.getAim().setGridY(posY_selectedField);
@@ -306,6 +315,8 @@ public class AimSelectionScreen extends Screen {
             final TerrainLike terrain = Main.getContext().world().terrain();
             final VisionMap visibleMap = Main.getContext().getActivePlayer().visionMap();
 
+            // controls all tiles and if they are visible and the arrow would make damage, a new ContainedObject is added to the list to be drawn.
+            // The list has to be cleared at the beginning.
             synchronized (containedObjects) {
                 containedObjects.clear();
 
@@ -320,6 +331,9 @@ public class AimSelectionScreen extends Screen {
             }
         }
 
+        /** The private class ContainedObject holds information of the bound and of the color
+         * (unifiedArrowColor with alpha-values from the percentage of damage). All ContainedObject are saved in an ArrayList
+         * at {@link gui.AimSelectionScreen.FieldContainer}, which also calls the draw-method for each ContainedObject. */
         private class ContainedObject implements Drawable {
             private volatile Color impactingColor;
             private volatile Shape bounds;

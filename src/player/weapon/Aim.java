@@ -56,7 +56,9 @@ public class Aim implements BoardPositionable {
         return posYGrid;
     }
 
-    /** this calculates the Position of the tile(<code>getGridX(), getGridY()</code>) for the Gui.
+    /** this calculates the Position of the center of the tile(<code>getGridX(), getGridY()</code>) for the Gui.
+     * Save this value, if you need to this method to draw something, because getPositionGui() isn't a standard getter,
+     * it first has to get the attackedTile and than it is able to return the point.
      *
      * @return the center of the attacked Tile
      */
@@ -66,7 +68,20 @@ public class Aim implements BoardPositionable {
         return new Point((int) rect.getCenterX(), (int) rect.getCenterY());
     }
 
-    /** This returns the more accurate x-position of the attacked Tile then the similar method <code>getPositionGui()</code>.
+    /** <code>return attackedTile.getComponent().getBounds()</code>. If you need this method for any drawing process (i.e. called frequently),
+     * you should save this value, as the attackedTile isn't saved in Aim (it is returned after a longer getter call).
+     *
+     * @return the bounds of the Tile at (<code>getAim().getGridX()</code>|<code>getAim().getGridY()</code>)
+     *
+     * @see player.weapon.Aim#getPositionGui()
+     * @see player.weapon.Aim#getPosXGui()
+     * @see player.weapon.Aim#getPosYGui() */
+    public Shape getBoundsOfAttackedTile () {
+        TileLike tile = (TileLike) Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
+        return tile.getComponent().getBounds();
+    }
+
+    /** This returns the more accurate x-position of the center of the attacked Tile then the similar method <code>getPositionGui()</code>.
      *
      * @return the accurate x position of the center of the attackedTile
      * @see player.weapon.Aim#getPosYGui()
@@ -78,7 +93,7 @@ public class Aim implements BoardPositionable {
         return attackedTile.getComponent().getBounds().getBounds2D().getCenterX();
     }
 
-    /** This returns the more accurate y-position of the attacked Tile then the similar method <code>getPositionGui()</code>.
+    /** This returns the more accurate y-position of the center of the attacked Tile then the similar method <code>getPositionGui()</code>.
      *
      * @return the accurate y position of the center of the attackedTile
      * @see player.weapon.Aim#getPosXGui()

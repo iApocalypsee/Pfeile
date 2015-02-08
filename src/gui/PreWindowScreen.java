@@ -193,7 +193,7 @@ public class PreWindowScreen extends Screen {
         fontSmall = new Font ("Aladdin", Font.ITALIC, 21);
 
         if (comp.Component.isFontInstalled(fontBig) == false)
-            fontBig = new Font("Viking", Font.BOLD, 105);
+            fontBig = new Font("Claudette aime le Chocolat", Font.BOLD, 105);
         if (comp.Component.isFontInstalled(fontMiddle) == false)
             fontMiddle = new Font("ShadowedGermanica", Font.PLAIN, 45);
         if (comp.Component.isFontInstalled(fontSmall) == false)

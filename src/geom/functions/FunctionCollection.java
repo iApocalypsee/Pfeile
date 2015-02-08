@@ -78,7 +78,7 @@ public class FunctionCollection {
      * @param x2 the x value of the second point
      * @param y2 the y value of the second point
      * @return the radiant angle between these points
-     * @throws java.lang.IllegalArgumentException if the points (x1|y1) (x2|y2) are the same <code>x1 == x2 && y1 == y2</code>
+     * @throws java.lang.IllegalArgumentException if the points (x1|y1) (x2|y2) are on the same position: <code>x1 == x2 && y1 == y2</code>
      */
     public static double angle (double x1, double y1, double x2, double y2) {
         if (x2 > x1 && y2 < y1) {
@@ -104,7 +104,7 @@ public class FunctionCollection {
         }
     }
 
-    /** this method rounds <code>number</code> to 25 */
+    /** this method rounds <code>number</code> to equivalents of 25 */
     public static long roundTo25 (long number) {
 
         // Hier ist es immer 0; ohne Aufruf, hat lastDigits = Integer.parseInt(....) probleme
@@ -117,9 +117,11 @@ public class FunctionCollection {
 
         number = Math.abs(number);
 
+        String stringNumber = String.valueOf(number);
+
         // Letzten beiden Ziffern
-        int lastDigits = Integer.parseInt(Character.toString(String.valueOf(number).charAt(String.valueOf(number).length() - 1))) +
-                Integer.parseInt(Character.toString(String.valueOf(number).charAt(String.valueOf(number).length() - 2))) * 10;
+        int lastDigits = Integer.parseInt(Character.toString(stringNumber.charAt(stringNumber.length() - 1))) +
+                Integer.parseInt(Character.toString(stringNumber.charAt(stringNumber.length() - 2))) * 10;
 
         // Letze beiden Stellen wegscheiden
         number = number / 100;
