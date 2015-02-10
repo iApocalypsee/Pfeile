@@ -50,14 +50,17 @@ class ImpactDrawer implements Drawable {
         // TODO use amazing textures :D
     }
 
+    /** This will start the animation of the impact. The duration will be <code>ImpactDrawer.ImpactAnimationThread.MILLI_SEC</code> (= 3000ms)*/
     void startAnimation () {
         Thread x = new ImpactAnimationThread();
         x.setDaemon(true);
         x.setPriority(7);
         x.start();
     }
-    
-    
+
+    /** This Thread draws the explosion of the impact, if <code>impactDrawer.startAnimation()</code> is called.
+     * The Thread scales the texture/bounds of the impact automatically.
+     */
     private class ImpactAnimationThread extends Thread {
         /** the maximum milliseconds till end of animation */
         private static final int MILLI_SEC = 3000;
@@ -122,7 +125,5 @@ class ImpactDrawer implements Drawable {
         g.fillOval(bounding.x, bounding.y, bounding.width, bounding.height);
         g.setColor(damageColorInner);
         g.fillOval(boundingInner.x, boundingInner.y, boundingInner.width, boundingInner.height);
-
-        //System.out.println("DRAWING " + damageColor + "  " + bounding);
     }
 }

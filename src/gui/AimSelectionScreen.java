@@ -15,7 +15,6 @@ import scala.Option;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
-import world.IsometricPolygonTile;
 import world.TerrainLike;
 import world.TileLike;
 
@@ -56,7 +55,7 @@ public class AimSelectionScreen extends Screen {
     /** the animated line from the player to the aim */
     private AnimatedLine animatedLine;
 
-    private static Color damageRadiusColor = new Color (255, 42, 20, 150);
+    private static final Color damageRadiusColor = new Color (255, 73, 15, 173);
 
     /** the bounds of the oval, which is showing the damage radius. The oval fits in the Rectangle. This is why I've
      * chosen a Rectangle. */
@@ -66,7 +65,7 @@ public class AimSelectionScreen extends Screen {
     private BasicStroke strokeOvalDamageRadius;
 
     /** this is the font of the warning message. It's saved here for speeding up the draw method. */
-    private static Font fontWarningMessage = new Font(comp.Component.STD_FONT.getFontName(), Font.BOLD, 26);
+    private static final Font fontWarningMessage = new Font(comp.Component.STD_FONT.getFontName(), Font.BOLD, 26);
 	
 	/** Konstrucktor von AimSelectionScreen: ruft super(...) auf und setzt die Variabelnwerte nach der Initialisierung; start den thread of <code> FieldSelector </code> */
 	public AimSelectionScreen() {
@@ -136,6 +135,7 @@ public class AimSelectionScreen extends Screen {
             // assuming that the thread is done updating the values
             DeliverShootThread msg = new DeliverShootThread();
             msg.setDaemon(true);
+            msg.setPriority(4);
             msg.start();
 
             transparencyWarningMessage = 1f;
@@ -151,7 +151,7 @@ public class AimSelectionScreen extends Screen {
 		// and let the thread save the computation in the variables
 		FieldSelectActor actor = new FieldSelectActor(e);
 		actor.setDaemon(true);
-        actor.setPriority(7);
+        actor.setPriority(8);
 		actor.start();
 	}
 	
@@ -274,37 +274,34 @@ public class AimSelectionScreen extends Screen {
         private final List<ContainedObject> containedObjects;
 
         /** the Color of the border of the selectedField */
-        private final Color selectedTileOutLineColor = new Color(229, 217, 255, 174);
+        private final Color selectedTileOutLineColor = new Color(255, 73, 15, 173);
 
-        /*+ the Color with which the selectedField is drawn */
-        private final Color selectedTileInLineColor = new Color(255, 0, 0, 255);
+        /** this allows to draw a line with the color {@link gui.AimSelectionScreen.FieldContainer#selectedTileOutLineColor}
+         * and with the width <code>strokeOfSelectedTile.getLineWidth()</code> around the bounds of the selectedTile. */
+        private final BasicStroke strokeOfSelectedTile = new BasicStroke(2f);
 
         /** the extended bounds of the selected field. It's 2px bigger then the normal one, to be able to draw an border */
-        private Polygon boundsSelectedTileExtended;
-
-        /** the bounds of the selected field. It's faster to save it instead of loading it with every draw call. */
-        private Shape boundsSelectedTile;
+        private Shape boundsSelectedTileExtended;
 
         FieldContainer () {
             containedObjects = new ArrayList<>();
             boundsSelectedTileExtended = new Polygon();
-            boundsSelectedTile = new Polygon();
         }
 
         /** This updates the damageRadius triggered by {@link gui.AimSelectionScreen.FieldSelectActor}.
          *  The specified TileLike tileWrapper is the selectedTile. This method is quite performance intensive, so
          *  use it in an thread. The methods are already synchronized (over the field "containedObjects" from type List<ContainedObject>.*/
         synchronized void updateFields (TileLike tileWrapper) {
-            // the red inner bounds of the tile
-            boundsSelectedTile = tileWrapper.getComponent().getBounds();
-            Rectangle bounds = boundsSelectedTile.getBounds();
+            //Rectangle bounds = tileWrapper.component().getBounds().getBounds();
+
+            //boundsSelectedTileExtended = new Polygon();
+            //boundsSelectedTileExtended.addPoint(bounds.x - 1, bounds.y + IsometricPolygonTile.TileHalfHeight());
+            //boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileHalfWidth(), bounds.y - 1);
+            //boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileWidth() + 1, bounds.y + IsometricPolygonTile.TileHalfHeight());
+            //boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileHalfWidth(), bounds.y + IsometricPolygonTile.TileHeight() + 1);
 
             // the outer bounds of the selectedTile
-            boundsSelectedTileExtended = new Polygon();
-            boundsSelectedTileExtended.addPoint(bounds.x - 2, bounds.y + IsometricPolygonTile.TileHalfHeight());
-            boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileHalfWidth(), bounds.y - 2);
-            boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileWidth() + 2, bounds.y + IsometricPolygonTile.TileHalfHeight());
-            boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileHalfWidth(), bounds.y + IsometricPolygonTile.TileHeight() + 2);
+            boundsSelectedTileExtended = tileWrapper.getComponent().getBounds();
 
             //  preparing... getting all values for later calculations in order to access these values faster and to be better clearly structured.
             final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
@@ -362,9 +359,8 @@ public class AimSelectionScreen extends Screen {
             }
 
             g.setColor(selectedTileOutLineColor);
-            g.fill(boundsSelectedTileExtended);
-            g.setColor(selectedTileInLineColor);
-            g.fill(boundsSelectedTile);
+            g.setStroke(strokeOfSelectedTile);
+            g.draw(boundsSelectedTileExtended);
         }
     }
 
@@ -376,7 +372,6 @@ public class AimSelectionScreen extends Screen {
 
         // Draw the world and the player
         GameScreen.getInstance().getMap().draw(g);
-        GameScreen.getInstance().getAttackDrawer().draw(g);
 
         // draw the selected field and the damage radius
         if (posX_selectedField >= 0 && posY_selectedField >= 0) {
@@ -389,6 +384,9 @@ public class AimSelectionScreen extends Screen {
 
             animatedLine.updateOffset(- 0.5);
             animatedLine.draw(g);
+        } else {
+            // when you've selected an arrow you don't need to see all the others
+            GameScreen.getInstance().getAttackDrawer().draw(g);
         }
 
         // TODO: inizalizise and create TimeLifeBox

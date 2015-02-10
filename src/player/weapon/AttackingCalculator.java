@@ -83,10 +83,6 @@ public class AttackingCalculator {
             // alpha (radiant) is the ankle between the position of the aim and the current Point
             // double alpha = FunctionCollection.angle(attackingArrow.getPosX(), attackingArrow.getPosY(), attackingArrow.getPosXAim(), attackingArrow.getPosYAim());
 
-            // radius = lengthGUI * (1 - the percentage of the progress);
-            // double radius = attackProgress.event().lengthGUI() * (1 - attackProgress.progress());
-
-            // radius = the length / (tileLength / speed in Tiles / Turn)
             double distanceToCover = attackProgress.event().lengthGUI() / attackProgress.event().travelSpeed();
 
             int posXOld = attackingArrow.getComponent().getX();
@@ -106,8 +102,6 @@ public class AttackingCalculator {
                 // The progress to stretch the normalized position to the real position
                 double progress = distanceToCover / attackProgress.event().lengthGUI();
 
-                final ImageComponent movedComponent = attackingArrow.getComponent();
-
                 // Replace the quadratic_easing_inOut with a Beziér curve?
                 // I don't understand the usage of quadratic_easing_inOut anymore, because I cannot
                 // imagine such complicated things.
@@ -119,6 +113,9 @@ public class AttackingCalculator {
                 double normalizedChangeInY = FunctionCollectionEasing.quadratic_easing_inOut(
                         distanceToCover * accuracy, 0, attackingArrow.getAim().getPosYGui() - posYOld, distanceToCover);
                 double changeInY = normalizedChangeInY * progress;
+
+
+                final ImageComponent movedComponent = attackingArrow.getComponent();
 
                 movedComponent.setX((int) (posXOld + Math.round(changeInX)));
                 movedComponent.setY((int) (posYOld + Math.round(changeInY)));
