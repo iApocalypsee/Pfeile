@@ -139,8 +139,10 @@ public class ArrowSelectionScreenPreSet extends Screen {
         buttonListArrows [6].iconify(ArrowHelper.getArrowImage(LightArrow.INDEX, 0.8f));
         buttonListArrows [7].iconify(ArrowHelper.getArrowImage(ShadowArrow.INDEX, 0.8f));
 
-        for (Button button : buttonListArrows)
+        for (Button button : buttonListArrows) {
+            button.setWidth(buttonListArrows[7].getWidth() + 14);
             button.addMouseListener(new ButtonHelper());
+        }
 
         confirmDialog = new ConfirmDialog(500, 300, this, "");
         confirmDialog.setVisible(false);

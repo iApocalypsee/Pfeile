@@ -1,6 +1,7 @@
 package player.weapon;
 
 import general.Main;
+import gui.ImageHelper;
 import newent.InventoryLike;
 
 import java.awt.*;
@@ -282,37 +283,22 @@ public final class ArrowHelper {
         return getUnifiedColor(ArrowHelper.arrowNameToIndex(arrowName));
     }
 
-	/** gibt ein Bild des Pfeils des Indexes <code> selectedArrow </code> zur�ck; */
+	/** gibt ein Bild des Pfeils des Indexes <code> selectedArrow </code> zur�ck;
+     * @see player.weapon.ArrowHelper#getArrowImage(int, float) */
 	public static BufferedImage getArrowImage (int selectedArrow) {
 		return arrowImages[selectedArrow];
 	}
 
-    /** Returns a the BufferedImage of the arrow with arrow.INDEX <code>selectedArrow</code>, the scaleFactor and the
-     * rendering algorithm scaleHints. The possible rendering algorithm are listed at {@link java.awt.Image}:
-     * {@link Image#SCALE_DEFAULT}, {@link Image#SCALE_AREA_AVERAGING}, {@link Image#SCALE_FAST}, {@link Image#SCALE_SMOOTH},
-     * {@link Image#SCALE_REPLICATE}.
-     * This method is quite slowly, so try not use it very often. The method operates like this: <p>
-     * <code>ArrowHelper.getArrowImage(selectedArrow).getScaledInstance(newWidth, newHeight, scaleHints)</code>
+    /** Returns the scaled version of a BufferedImage from the selected arrow. Compare with the methods in {@link gui.ImageHelper}, too.
+     * If you want to use this method regulary, save the returned BufferedImage somewhere, because scaling an image is no fast Operation or use
+     * {@link gui.ImageHelper#scaleBufferedImage(java.awt.image.BufferedImage, float, float, int)} with {@link java.awt.Image#SCALE_FAST}.
      *
-     * @return the scaled arrow image
-     * */
-    public static BufferedImage getArrowImage (int selectedArrow, float scaleFactorX, float scaleFactorY, int scaleHints) {
-        BufferedImage arrowImage = getArrowImage(selectedArrow);
-        return (BufferedImage) arrowImage.getScaledInstance((int) (scaleFactorX * arrowImage.getWidth()), (int) (scaleFactorY * arrowImage.getHeight()), scaleHints);
-    }
-
-    /** See the description of {@link player.weapon.ArrowHelper#getArrowImage(int, float, float, int)}.
-     * The scaling algorithm type is replaced with {@link java.awt.Image#SCALE_DEFAULT}.
-     * */
-    public static BufferedImage getArrowImage (int selectedArrow, float scaleFactorX, float scaleFactorY) {
-        return getArrowImage(selectedArrow, scaleFactorX, scaleFactorY, Image.SCALE_DEFAULT);
-    }
-
-    /** See the description of {@link player.weapon.ArrowHelper#getArrowImage(int, float, float, int)}.
-     * The scaling algorithm type is replaced with {@link java.awt.Image#SCALE_DEFAULT} and both the width and the height are
-     * scaled with the same factor <code>scaleFactor</code>.
-     * */
+     * @param selectedArrow the index of the selected arrow arrow.INDEX
+     * @param scaleFactor the scale Factor in x and in y direction
+     * @return the scaled image of the arrow.INDEX or use {@link player.weapon.ArrowHelper#arrowNameToIndex(String)} (ArrowHelper.arrowNameToIndex(arrow.getName()))
+     * @see player.weapon.ArrowHelper#getArrowImage(int)
+     */
     public static BufferedImage getArrowImage (int selectedArrow, float scaleFactor) {
-        return getArrowImage(selectedArrow, scaleFactor, scaleFactor, Image.SCALE_DEFAULT);
+        return ImageHelper.scaleBufferedImage(getArrowImage(selectedArrow), scaleFactor);
     }
 }

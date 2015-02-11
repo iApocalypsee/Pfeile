@@ -131,21 +131,21 @@ public class ArrowSelectionScreen extends Screen {
 				button.setX(button.getX() * Main.getWindowWidth() / 1366);
 			}
 
-            fireArrowButton.iconify(ArrowHelper.getArrowImage(FireArrow.INDEX));
-            waterArrowButton.iconify(ArrowHelper.getArrowImage(WaterArrow.INDEX));
-            stoneArrowButton.iconify(ArrowHelper.getArrowImage(StoneArrow.INDEX));
-            iceArrowButton.iconify(ArrowHelper.getArrowImage(IceArrow.INDEX));
-            stormArrowButton.iconify(ArrowHelper.getArrowImage(StormArrow.INDEX));
-            lightningArrowButton.iconify(ArrowHelper.getArrowImage(LightningArrow.INDEX));
-            lightArrowButton.iconify(ArrowHelper.getArrowImage(LightArrow.INDEX));
-            shadowArrowButton.iconify(ArrowHelper.getArrowImage(ShadowArrow.INDEX));
+            fireArrowButton.iconify(ArrowHelper.getArrowImage(FireArrow.INDEX, 0.8f));
+            waterArrowButton.iconify(ArrowHelper.getArrowImage(WaterArrow.INDEX, 0.8f));
+            stoneArrowButton.iconify(ArrowHelper.getArrowImage(StoneArrow.INDEX, 0.8f));
+            iceArrowButton.iconify(ArrowHelper.getArrowImage(IceArrow.INDEX, 0.8f));
+            stormArrowButton.iconify(ArrowHelper.getArrowImage(StormArrow.INDEX, 0.8f));
+            lightningArrowButton.iconify(ArrowHelper.getArrowImage(LightningArrow.INDEX, 0.8f));
+            lightArrowButton.iconify(ArrowHelper.getArrowImage(LightArrow.INDEX, 0.8f));
+            shadowArrowButton.iconify(ArrowHelper.getArrowImage(ShadowArrow.INDEX, 0.8f));
 
             pointWarningMessage = new Point(40, Main.getWindowHeight() - 105);
 
             MouseHandler mListener = new MouseHandler();
 
             for (int i = 0; i < ArrowHelper.NUMBER_OF_ARROW_TYPES; i++) {
-                buttonListArrows.get(i).setWidth(shadowArrowButton.getWidth() + 12);
+                buttonListArrows.get(i).setWidth(shadowArrowButton.getWidth() + 14);
                 buttonListArrows.get(i).addMouseListener (mListener);
             }
 
