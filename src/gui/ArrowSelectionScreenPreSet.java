@@ -1,11 +1,12 @@
 package gui;
 
+import comp.*;
 import comp.Button;
-import comp.ConfirmDialog;
 import comp.Label;
 import comp.List;
 import general.Main;
 import general.PfeileContext;
+import general.io.FontLoader;
 import player.weapon.*;
 
 import java.awt.*;
@@ -67,6 +68,15 @@ public class ArrowSelectionScreenPreSet extends Screen {
     /** Color of <code>g.drawString("Pfeile", fontBigPosition.x, fontBigPosition.y); </code> */
     private Color colorBig;
 
+    /** Font for "Josip Palavra und Daniel Schmaus" */
+    private Font fontSmall;
+
+    /** Color for "Josip Palavra und Daniel Schmaus" */
+    private Color colorSmall;
+
+    /** position of <code>g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y")</code> */
+    private Point fontSmallPosition;
+
     /**
      * Screen für die Pfeilauswahl für vorhersetzbaren Pfeilen.
      * äquivalent zu <code> ArrowSelection </code>.
@@ -87,18 +97,18 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
         colorBig = new Color (159, 30, 29);
         colorMiddle = new Color (213, 191, 131);
+        colorSmall = new Color (205, 212, 228, 100);
 
-        fontBig = new Font("Blade 2", Font.BOLD, 220);
-        fontMiddle = new Font("Calligraphic", Font.PLAIN, 48);
-
-        if (comp.Component.isFontInstalled(fontBig) == false)
-            fontBig = new Font("Claudette aime le Chocolat", Font.BOLD, 105);
-        if (comp.Component.isFontInstalled(fontMiddle) == false)
-            fontMiddle = new Font("ShadowedGermanica", Font.PLAIN, 45);
+        fontBig = FontLoader.loadFont("Augusta", 140, Font.BOLD, FontLoader.FontType.TTF);
+        fontMiddle = FontLoader.loadFont("Shadowed Germanica", 45, FontLoader.FontType.TTF);
+        fontSmall = FontLoader.loadFont("Berylium", 20, Font.ITALIC, FontLoader.FontType.TTF);
 
         // fontBigPosition.x = PreWindowScreen.fontBigPosition.x --> if you change the value there you have to change it here, too.
-        fontBigPosition = new Point(790, comp.Component.getTextBounds("Pfeile", fontBig).height + 15);
-        fontMiddlePosition = new Point(fontBigPosition.x + 43, fontBigPosition.y + comp.Component.getTextBounds("ein Strategiespiel", fontMiddle).height);
+        fontBigPosition = new Point(780, comp.Component.getTextBounds("Pfeile", fontBig).height + 50);
+        fontMiddlePosition = new Point(fontBigPosition.x + 43, fontBigPosition.y + comp.Component.getTextBounds("ein Strategiespiel", fontMiddle).height + 15);
+        fontSmallPosition = new Point(fontMiddlePosition.x,
+                fontMiddlePosition.y + comp.Component.getTextBounds("von Josip Palavra und Daniel Schmaus", fontSmall).height + 10);
+
 
         /** Y-Position des ersten Buttons (Bildschirm) */
         int posYButtons = 60;
@@ -301,6 +311,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
     @Override
     public void draw(Graphics2D g) {
+        // drawing the background and the "Pfeile"-slogan
         g.setColor(TRANSPARENT_BACKGROUND);
         g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
         g.setColor(colorBig);
@@ -309,6 +320,11 @@ public class ArrowSelectionScreenPreSet extends Screen {
         g.setColor(colorMiddle);
         g.setFont(fontMiddle);
         g.drawString("ein Strategiespiel", fontMiddlePosition.x, fontMiddlePosition.y);
+        g.setColor(colorSmall);
+        g.setFont(fontSmall);
+        g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y);
+
+        // resetting the font and draw the rest
         g.setFont(comp.Component.STD_FONT);
 
         for(Button arrowButton : buttonListArrows) {

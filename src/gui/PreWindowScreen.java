@@ -7,6 +7,7 @@ import comp.Label;
 import general.Main;
 import general.PfeileContext;
 import general.TimeClock;
+import general.io.FontLoader;
 import newent.Bot;
 import newent.BotStrength;
 import newent.EntityLike;
@@ -188,22 +189,15 @@ public class PreWindowScreen extends Screen {
         colorMiddle = new Color (213, 191, 131);
         colorSmall = new Color (205, 212, 228);
 
-        fontBig = new Font("Blade 2", Font.BOLD, 220);
-        fontMiddle = new Font("Calligraphic", Font.PLAIN, 48);
-        fontSmall = new Font ("Aladdin", Font.ITALIC, 21);
-
-        if (comp.Component.isFontInstalled(fontBig) == false)
-            fontBig = new Font("Claudette aime le Chocolat", Font.BOLD, 105);
-        if (comp.Component.isFontInstalled(fontMiddle) == false)
-            fontMiddle = new Font("ShadowedGermanica", Font.PLAIN, 45);
-        if (comp.Component.isFontInstalled(fontSmall) == false)
-            fontSmall = new Font("Berylium", Font.ITALIC, 15);
+        fontBig = FontLoader.loadFont("Augusta", 140, Font.BOLD, FontLoader.FontType.TTF);
+        fontMiddle = FontLoader.loadFont("Shadowed Germanica", 45, FontLoader.FontType.TTF);
+        fontSmall = FontLoader.loadFont("Berylium", 20, Font.ITALIC, FontLoader.FontType.TTF);
 
         // the position of all points should be the same like in ArrowSelectionScreenPreSet
-        fontBigPosition = new Point(confirmButton.getX() + 240, Component.getTextBounds("Pfeile", fontBig).height + 15);
-        fontMiddlePosition = new Point(fontBigPosition.x + 43, fontBigPosition.y + Component.getTextBounds("ein Strategiespiel", fontMiddle).height);
+        fontBigPosition = new Point(confirmButton.getX() + 230, Component.getTextBounds("Pfeile", fontBig).height + 50);
+        fontMiddlePosition = new Point(fontBigPosition.x + 43, fontBigPosition.y + Component.getTextBounds("ein Strategiespiel", fontMiddle).height + 15);
         fontSmallPosition = new Point(fontMiddlePosition.x,
-                   fontMiddlePosition.y + Component.getTextBounds("von Josip Palavra und Daniel Schmaus", fontSmall).height + 5);
+                   fontMiddlePosition.y + Component.getTextBounds("von Josip Palavra und Daniel Schmaus", fontSmall).height + 10);
 
         standardButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -737,7 +731,7 @@ public class PreWindowScreen extends Screen {
         g.drawString("ein Strategiespiel", fontMiddlePosition.x, fontMiddlePosition.y);
         g.setColor(colorSmall);
         g.setFont(fontSmall);
-        g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y );
+        g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y);
 
         g.setFont(Component.STD_FONT);
 
