@@ -502,7 +502,8 @@ public abstract class Component implements IComponent {
 	}
 
 	/**
-	 * Vergleicht, ob die gewählte Schriftart im System installiert ist
+	 * Vergleicht, ob die gewählte Schriftart im System installiert ist.
+     * Die Methode läuft sehr langsamm ab, also nur verwenden, wenn wirklich notwendig!
 	 *
 	 * @param fontName - Name der Schriftart
 	 */

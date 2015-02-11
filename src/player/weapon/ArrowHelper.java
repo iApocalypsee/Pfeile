@@ -286,4 +286,33 @@ public final class ArrowHelper {
 	public static BufferedImage getArrowImage (int selectedArrow) {
 		return arrowImages[selectedArrow];
 	}
+
+    /** Returns a the BufferedImage of the arrow with arrow.INDEX <code>selectedArrow</code>, the scaleFactor and the
+     * rendering algorithm scaleHints. The possible rendering algorithm are listed at {@link java.awt.Image}:
+     * {@link Image#SCALE_DEFAULT}, {@link Image#SCALE_AREA_AVERAGING}, {@link Image#SCALE_FAST}, {@link Image#SCALE_SMOOTH},
+     * {@link Image#SCALE_REPLICATE}.
+     * This method is quite slowly, so try not use it very often. The method operates like this: <p>
+     * <code>ArrowHelper.getArrowImage(selectedArrow).getScaledInstance(newWidth, newHeight, scaleHints)</code>
+     *
+     * @return the scaled arrow image
+     * */
+    public static BufferedImage getArrowImage (int selectedArrow, float scaleFactorX, float scaleFactorY, int scaleHints) {
+        BufferedImage arrowImage = getArrowImage(selectedArrow);
+        return (BufferedImage) arrowImage.getScaledInstance((int) (scaleFactorX * arrowImage.getWidth()), (int) (scaleFactorY * arrowImage.getHeight()), scaleHints);
+    }
+
+    /** See the description of {@link player.weapon.ArrowHelper#getArrowImage(int, float, float, int)}.
+     * The scaling algorithm type is replaced with {@link java.awt.Image#SCALE_DEFAULT}.
+     * */
+    public static BufferedImage getArrowImage (int selectedArrow, float scaleFactorX, float scaleFactorY) {
+        return getArrowImage(selectedArrow, scaleFactorX, scaleFactorY, Image.SCALE_DEFAULT);
+    }
+
+    /** See the description of {@link player.weapon.ArrowHelper#getArrowImage(int, float, float, int)}.
+     * The scaling algorithm type is replaced with {@link java.awt.Image#SCALE_DEFAULT} and both the width and the height are
+     * scaled with the same factor <code>scaleFactor</code>.
+     * */
+    public static BufferedImage getArrowImage (int selectedArrow, float scaleFactor) {
+        return getArrowImage(selectedArrow, scaleFactor, scaleFactor, Image.SCALE_DEFAULT);
+    }
 }

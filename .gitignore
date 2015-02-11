@@ -26,7 +26,6 @@ src/test/
 
 # and other stuff that we should not/do not need here
 src/resources/sfx/
-src/resources/font
 
 # Game data. Not needed in remote.
 savegames/

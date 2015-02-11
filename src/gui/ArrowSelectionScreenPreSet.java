@@ -130,14 +130,14 @@ public class ArrowSelectionScreenPreSet extends Screen {
             button.setX(button.getX() * Main.getWindowWidth() / 1366);
         }
 
-        buttonListArrows [0].iconify(ArrowHelper.getArrowImage(FireArrow.INDEX));
-        buttonListArrows [1].iconify(ArrowHelper.getArrowImage(WaterArrow.INDEX));
-        buttonListArrows [2].iconify(ArrowHelper.getArrowImage(StormArrow.INDEX));
-        buttonListArrows [3].iconify(ArrowHelper.getArrowImage(StoneArrow.INDEX));
-        buttonListArrows [4].iconify(ArrowHelper.getArrowImage(IceArrow.INDEX));
-        buttonListArrows [5].iconify(ArrowHelper.getArrowImage(LightningArrow.INDEX));
-        buttonListArrows [6].iconify(ArrowHelper.getArrowImage(LightArrow.INDEX));
-        buttonListArrows [7].iconify(ArrowHelper.getArrowImage(ShadowArrow.INDEX));
+        buttonListArrows [0].iconify(ArrowHelper.getArrowImage(FireArrow.INDEX, 0.8f));
+        buttonListArrows [1].iconify(ArrowHelper.getArrowImage(WaterArrow.INDEX, 0.8f));
+        buttonListArrows [2].iconify(ArrowHelper.getArrowImage(StormArrow.INDEX, 0.8f));
+        buttonListArrows [3].iconify(ArrowHelper.getArrowImage(StoneArrow.INDEX, 0.8f));
+        buttonListArrows [4].iconify(ArrowHelper.getArrowImage(IceArrow.INDEX, 0.8f));
+        buttonListArrows [5].iconify(ArrowHelper.getArrowImage(LightningArrow.INDEX, 0.8f));
+        buttonListArrows [6].iconify(ArrowHelper.getArrowImage(LightArrow.INDEX, 0.8f));
+        buttonListArrows [7].iconify(ArrowHelper.getArrowImage(ShadowArrow.INDEX, 0.8f));
 
         for (Button button : buttonListArrows)
             button.addMouseListener(new ButtonHelper());
