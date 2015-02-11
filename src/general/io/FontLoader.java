@@ -1,5 +1,7 @@
 package general.io;
 
+import general.LogFacility;
+
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,19 +34,30 @@ public class FontLoader {
      */
     public static Font loadFont (String fontName, float size, FontType fontType) {
         // if the font is already installed, it doesn't need to be registered/created
-        if (comp.Component.isFontInstalled(new Font(fontName, Font.PLAIN, (int) size)))
+        if (comp.Component.isFontInstalled(fontName))
             return new Font(fontName, Font.PLAIN, (int) size);
 
         Font customFont;
         InputStream inputStream = null;
         try {
             if (fontType == FontType.TTF)
-                inputStream = FontLoader.class.getResourceAsStream("resources\\data\\fonts\\" + fontName + ".ttf");
+                inputStream = FontLoader.class.getClassLoader().getResourceAsStream("resources\\data\\fonts\\" + fontName + ".ttf");
             else
-                inputStream = FontLoader.class.getResourceAsStream("resources\\data\\fonts\\" + fontName + ".otf");
+                inputStream = FontLoader.class.getClassLoader().getResourceAsStream("resources\\data\\fonts\\" + fontName + ".otf");
+
+            if (inputStream == null) {
+                if (fontType == FontType.TTF)
+                    LogFacility.log("Cannot find resource at: " + "resources\\data\\fonts\\" + fontName + ".ttf", LogFacility.LoggingLevel.Error);
+                else
+                    LogFacility.log("Cannot find resource at: " + "resources\\data\\fonts\\" + fontName + ".otf", LogFacility.LoggingLevel.Error);
+            }
 
             //create the font to use. Specify the size!
-            customFont = Font.createFont(Font.TRUETYPE_FONT, inputStream).deriveFont(size);
+            assert inputStream != null;
+            if (fontType == FontType.TTF)
+                customFont = Font.createFont(Font.TRUETYPE_FONT, inputStream).deriveFont(size);
+            else
+                customFont = Font.createFont(Font.TYPE1_FONT, inputStream).deriveFont(size);
 
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
@@ -52,14 +65,19 @@ public class FontLoader {
             ge.registerFont(customFont);
         } catch (IOException | FontFormatException e) {
             e.printStackTrace();
+            if (fontType == FontType.TTF)
+                LogFacility.log("Cannot find file: " + "resources\\data\\fonts\\" + fontName + ".ttf", LogFacility.LoggingLevel.Error);
+            else
+                LogFacility.log("Cannot find file: " + "resources\\data\\fonts\\" + fontName + ".otf", LogFacility.LoggingLevel.Error);
             customFont = comp.Component.STD_FONT.deriveFont(size);
-        } finally {
-            // actually this is useless, because "inputStream.close()" is an empty method.
-            assert inputStream != null;
-            try {
-                inputStream.close();
-            } catch (IOException e) { e.printStackTrace(); }
         }
+        //finally {
+            // actually this is useless, because "inputStream.close()" is an empty method.
+            //    assert inputStream != null;
+            //    try {
+            //        inputStream.close();
+            //    } catch (IOException e) { e.printStackTrace(); }
+        //}
         return customFont;
     }
 

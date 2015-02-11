@@ -503,15 +503,12 @@ public abstract class Component implements IComponent {
 
 	/**
 	 * Vergleicht, ob die gewählte Schriftart im System installiert ist
-	 * <p/>
-	 * Comment (Josip): This method is working fine, however, it does not look for fonts in custom
-	 * directories. I don't know how to fix that problem.
 	 *
-	 * @param f - Die Schriftart die verglichen werden soll
+	 * @param fontName - Name der Schriftart
 	 */
-	public static boolean isFontInstalled(Font f) {
+	public static boolean isFontInstalled(String fontName) {
 		for (Font font : GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts()) {
-			if (font.getFontName().equals(f.getFontName()))
+			if (font.getFamily().equals(fontName))
 				return true;
 		}
 		return false;

@@ -190,7 +190,7 @@ public class PreWindowScreen extends Screen {
         colorSmall = new Color (205, 212, 228);
 
         fontBig = FontLoader.loadFont("Augusta", 140, Font.BOLD, FontLoader.FontType.TTF);
-        fontMiddle = FontLoader.loadFont("Shadowed Germanica", 45, FontLoader.FontType.TTF);
+        fontMiddle = FontLoader.loadFont("ShadowedGermanica", 45, FontLoader.FontType.TTF);
         fontSmall = FontLoader.loadFont("Berylium", 20, Font.ITALIC, FontLoader.FontType.TTF);
 
         // the position of all points should be the same like in ArrowSelectionScreenPreSet

@@ -97,10 +97,10 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
         colorBig = new Color (159, 30, 29);
         colorMiddle = new Color (213, 191, 131);
-        colorSmall = new Color (205, 212, 228, 100);
+        colorSmall = new Color (205, 212, 228, 50);
 
         fontBig = FontLoader.loadFont("Augusta", 140, Font.BOLD, FontLoader.FontType.TTF);
-        fontMiddle = FontLoader.loadFont("Shadowed Germanica", 45, FontLoader.FontType.TTF);
+        fontMiddle = FontLoader.loadFont("ShadowedGermanica", 45, FontLoader.FontType.TTF);
         fontSmall = FontLoader.loadFont("Berylium", 20, Font.ITALIC, FontLoader.FontType.TTF);
 
         // fontBigPosition.x = PreWindowScreen.fontBigPosition.x --> if you change the value there you have to change it here, too.

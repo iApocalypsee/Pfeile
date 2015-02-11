@@ -4,6 +4,7 @@ import comp.Button;
 import comp.Component;
 import general.GameLoop;
 import general.Main;
+import general.io.FontLoader;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;
 
@@ -46,22 +47,11 @@ public class GameOverScreen extends Screen {
         gameOverColor = new Color(209, 15, 8, 0);
         scaleGameOver = 0.0025;
 
-        font_GameOver = new Font("28 Days Later", Font.PLAIN, 300);
-        if (comp.Component.isFontInstalled(font_GameOver) == false) {
-            font_GameOver = new Font("ShadowedGermanica", Font.BOLD, 310);
-            if (comp.Component.isFontInstalled(font_GameOver) == false)
-                font_GameOver = new Font(comp.Component.STD_FONT.getFontName(), Font.BOLD, 310);
-        }
+        font_GameOver = FontLoader.loadFont("18thCentury", 260, Font.BOLD, FontLoader.FontType.TTF);
+        font_YouLose = FontLoader.loadFont("PlainGermanica", 220, FontLoader.FontType.TTF);
 
-        font_YouLose = new Font("Aladdin", Font.BOLD, 260);
-        if (comp.Component.isFontInstalled(font_GameOver) == false) {
-            font_YouLose = new Font("18thCentury", Font.BOLD, 245);
-            if (comp.Component.isFontInstalled(font_GameOver) == false)
-                font_YouLose = new Font(comp.Component.STD_FONT.getFontName(), Font.BOLD, 245);
-        }
-
-        // x = 20; y = 300 von g.drawString("Game Over", 20, 300);
-        scaleCenter = new Point((int) (20 + 0.5 * comp.Component.getTextBounds("Game Over", font_GameOver).getWidth()), (int) (300 + 0.5 * Component.getTextBounds("Game Over", font_GameOver).getHeight()));
+        // von g.drawString("Game Over", 50 - scaleCenter.x, 300 - scaleCenter.y);
+        scaleCenter = new Point((int) (50 + 0.5 * comp.Component.getTextBounds("Game Over", font_GameOver).getWidth()), (int) (300 + 0.5 * Component.getTextBounds("Game Over", font_GameOver).getHeight()));
 
         closeGame = new Button(Main.getWindowWidth() - 150, Main.getWindowHeight() - 100, this, "Beenden");
 
@@ -181,7 +171,7 @@ public class GameOverScreen extends Screen {
         AffineTransform transform = g.getTransform();
         g.translate(scaleCenter.x, scaleCenter.y);
         g.scale(scaleGameOver, scaleGameOver);
-        g.drawString("Game Over", 20 - scaleCenter.x, 300 - scaleCenter.y);
+        g.drawString("Game Over", 50 - scaleCenter.x, 300 - scaleCenter.y);
 
         g.setTransform(transform);
         g.setColor(lastColorOfYouLose);
