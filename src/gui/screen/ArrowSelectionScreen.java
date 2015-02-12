@@ -8,7 +8,7 @@ import general.JavaInterop;
 import general.Main;
 import general.PfeileContext;
 import newent.InventoryLike;
-import player.weapon.*;
+import player.weapon.arrow.*;
 import scala.Function1;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;

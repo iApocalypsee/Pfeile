@@ -1,4 +1,4 @@
-package player.weapon;
+package player.weapon.arrow;
 
 import gui.Drawable;
 import newent.event.AttackEvent;
@@ -9,7 +9,7 @@ import java.util.TimerTask;
 
 /**
  * This class will draw an animation, when an arrow (<b>only Arrows!</b>)impacts. It is called by the Delegate <code>onImpact</code>, 
- * which is registered in TileLike. For Handling the draw-process use {@link player.weapon.ImpactDrawerHandler}.
+ * which is registered in TileLike. For Handling the draw-process use {@link ImpactDrawerHandler}.
  */
 class ImpactDrawer implements Drawable {
 
@@ -118,7 +118,7 @@ class ImpactDrawer implements Drawable {
     }
 
     /** Redirect: <b>This method is already called by class <code>ImpactDrawerHandler</code>. Use the static methods from
-    * {@link player.weapon.ImpactDrawerHandler}</b> */
+    * {@link ImpactDrawerHandler}</b> */
     @Override
     public void draw (Graphics2D g) {
         g.setColor(damageColor);

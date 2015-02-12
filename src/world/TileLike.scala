@@ -8,7 +8,7 @@ import general.Main
 import gui.AdjustableDrawing
 import gui.screen.GameScreen
 import newent.{AttackContainer, EntityLike}
-import player.weapon.{AbstractArrow, ImpactDrawerHandler}
+import player.weapon.arrow.{AbstractArrow, ImpactDrawerHandler}
 
 import scala.collection.{JavaConversions, mutable}
 

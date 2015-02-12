@@ -1,7 +1,7 @@
 package newent;
 
 import general.PfeileContext;
-import player.weapon.ArrowHelper;
+import player.weapon.arrow.ArrowHelper;
 
 import java.util.Random;
 

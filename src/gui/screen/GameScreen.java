@@ -6,7 +6,7 @@ import general.Main;
 import gui.FrameContainer;
 import gui.FrameContainerObject;
 import player.weapon.AttackDrawer;
-import player.weapon.ImpactDrawerHandler;
+import player.weapon.arrow.ImpactDrawerHandler;
 import scala.runtime.BoxedUnit;
 import world.VisualMap;
 

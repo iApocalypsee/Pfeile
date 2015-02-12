@@ -4,6 +4,7 @@ import gui.Drawable;
 import newent.AttackContainer;
 import newent.AttackContainer$;
 import newent.AttackProgress;
+import player.weapon.arrow.AbstractArrow;
 import scala.collection.JavaConversions;
 
 import java.awt.*;

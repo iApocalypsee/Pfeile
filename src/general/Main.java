@@ -5,7 +5,7 @@ import animation.SoundPool;
 import general.io.PreInitStage;
 import gui.screen.*;
 import newent.Player;
-import player.weapon.ArrowHelper;
+import player.weapon.arrow.ArrowHelper;
 import scala.collection.Seq;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
@@ -112,7 +112,7 @@ public class Main {
         gameWindow = new GameWindow();
         LogFacility.log("Game window instantiated.", "Info", "initprocess");
 
-        new player.weapon.ArrowHelper();
+        new ArrowHelper();
         LogFacility.log("Arrow images loaded.", "Info", "initprocess");
 
         gameWindow.initializeScreens();

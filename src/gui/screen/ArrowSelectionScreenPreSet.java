@@ -7,7 +7,7 @@ import comp.List;
 import general.Main;
 import general.PfeileContext;
 import general.io.FontLoader;
-import player.weapon.*;
+import player.weapon.arrow.*;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

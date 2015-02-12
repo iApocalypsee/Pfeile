@@ -3,6 +3,7 @@ package player.weapon;
 import comp.ImageComponent;
 import geom.functions.FunctionCollectionEasing;
 import newent.AttackProgress;
+import player.weapon.arrow.AbstractArrow;
 
 import java.util.LinkedList;
 import java.util.List;
