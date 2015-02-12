@@ -1,4 +1,4 @@
-package gui;
+package gui.screen;
 
 import comp.*;
 import comp.Button;
@@ -104,7 +104,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
         fontSmall = FontLoader.loadFont("Berylium", 20, Font.ITALIC, FontLoader.FontType.TTF);
 
         // fontBigPosition.x = PreWindowScreen.fontBigPosition.x --> if you change the value there you have to change it here, too.
-        fontBigPosition = new Point(780, comp.Component.getTextBounds("Pfeile", fontBig).height + 50);
+        fontBigPosition = new Point(780, comp.Component.getTextBounds("Pfeile", fontBig).height + 65);
         fontMiddlePosition = new Point(fontBigPosition.x + 43, fontBigPosition.y + comp.Component.getTextBounds("ein Strategiespiel", fontMiddle).height + 15);
         fontSmallPosition = new Point(fontMiddlePosition.x,
                 fontMiddlePosition.y + comp.Component.getTextBounds("von Josip Palavra und Daniel Schmaus", fontSmall).height + 10);

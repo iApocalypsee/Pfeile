@@ -1,7 +1,7 @@
 package comp;
 
 import general.Delegate;
-import gui.Screen;
+import gui.screen.Screen;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;

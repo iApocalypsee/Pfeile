@@ -5,6 +5,8 @@ import general.Delegate
 
 import java.awt.Graphics2D
 
+import gui.screen.Screen
+
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
 

@@ -5,7 +5,8 @@ import java.awt.{Color, Graphics2D, Polygon}
 
 import comp.{Component, DisplayRepresentable}
 import general.Main
-import gui.{AdjustableDrawing, GameScreen}
+import gui.AdjustableDrawing
+import gui.screen.GameScreen
 import newent.{AttackContainer, EntityLike}
 import player.weapon.{AbstractArrow, ImpactDrawerHandler}
 

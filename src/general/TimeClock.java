@@ -2,8 +2,10 @@ package general;
 
 import animation.SoundEffectTimeClock;
 import comp.Component;
-import gui.GameScreen;
-import gui.ScreenManager;
+import gui.screen.GameScreen;
+import gui.screen.ScreenManager;
+import gui.screen.AimSelectionScreen;
+import gui.screen.ArrowSelectionScreen;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.Duration$;
 import scala.concurrent.duration.FiniteDuration;
@@ -76,13 +78,13 @@ public class TimeClock extends Component implements Runnable {
         onTimeOver.register(new AbstractFunction0<BoxedUnit>() {
             @Override
             public BoxedUnit apply() {
-                if (sm.getActiveScreenIndex() == gui.GameScreen.SCREEN_INDEX) {
+                if (sm.getActiveScreenIndex() == GameScreen.SCREEN_INDEX) {
                     Main.getContext().getTurnSystem().increment();
-                } else if (sm.getActiveScreenIndex() == gui.ArrowSelectionScreen.SCREEN_INDEX) {
-                    sm.setActiveScreen(gui.GameScreen.SCREEN_INDEX);
+                } else if (sm.getActiveScreenIndex() == ArrowSelectionScreen.SCREEN_INDEX) {
+                    sm.setActiveScreen(GameScreen.SCREEN_INDEX);
                     Main.getContext().getTurnSystem().increment();
-                } else if (sm.getActiveScreenIndex() == gui.AimSelectionScreen.SCREEN_INDEX) {
-                    sm.setActiveScreen(gui.GameScreen.SCREEN_INDEX);
+                } else if (sm.getActiveScreenIndex() == AimSelectionScreen.SCREEN_INDEX) {
+                    sm.setActiveScreen(GameScreen.SCREEN_INDEX);
                     Main.getContext().getTurnSystem().increment();
                 } else
                     throw new java.lang.RuntimeException("Time is out. The active Screen is neither GameScreen nor Aim- or ArrowSelectionScreen. Register it! " +

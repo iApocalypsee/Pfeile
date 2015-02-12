@@ -1,7 +1,6 @@
 package animation;
 
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.FloatControl;
 
 /** This class supports the playing of sounds. All Methods are public and static. Note, that the isPlaying...() methods
  * needs time to return true, because of the overhead. That's why a call directly after the play...() probably returns
@@ -29,7 +28,7 @@ public class SoundPool {
     /** a music clip for playing parts with tension. Note, that it needs some time (~15s) to come to that point */
     private static Clip tensionThemeMelodie;
 
-    /** When the game enters {@link gui.GameOverScreen}, this clip is played as background music. It is sad.   */
+    /** When the game enters {@link gui.screen.GameOverScreen}, this clip is played as background music. It is sad.   */
     private static Clip gameOverMelodie;
 
     static {
@@ -140,7 +139,7 @@ public class SoundPool {
 
 
     // GAME OVER MELODIE
-    /** The gameOverMelodie is played at the end of the game, if player looses and {@link gui.GameOverScreen} has been
+    /** The gameOverMelodie is played at the end of the game, if player looses and {@link gui.screen.GameOverScreen} has been
      * entered.
      *
      * @see animation.SoundPool#playLoop_gameOverMelodie(int) */
@@ -150,7 +149,7 @@ public class SoundPool {
         gameOverMelodie.start();
     }
 
-    /** The gameOverMelodie is played at the end of the game, if player looses and {@link gui.GameOverScreen} has been
+    /** The gameOverMelodie is played at the end of the game, if player looses and {@link gui.screen.GameOverScreen} has been
      * entered. {@link SoundPool#stop_allMelodies()} is called within this method.
      * The melodie is continued <code>count</code> times. If you want to play this melodie until the end
      * of game use: {@link animation.SoundPool#LOOP_CONTINUOUSLY}.

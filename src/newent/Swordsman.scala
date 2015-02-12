@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 
 import comp.ImageComponent
-import gui.GameScreen
+import gui.screen.GameScreen
 import newent.pathfinding.AStarPathfinder
 import player.Life
 import world.{ SeaTile, WorldLike }

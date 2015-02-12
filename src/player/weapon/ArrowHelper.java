@@ -299,6 +299,6 @@ public final class ArrowHelper {
      * @see player.weapon.ArrowHelper#getArrowImage(int)
      */
     public static BufferedImage getArrowImage (int selectedArrow, float scaleFactor) {
-        return ImageHelper.scaleBufferedImage(getArrowImage(selectedArrow), scaleFactor);
+        return ImageHelper.scaleBufferedImage(getArrowImage(selectedArrow), scaleFactor, scaleFactor, Image.SCALE_SMOOTH);
     }
 }

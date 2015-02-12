@@ -1,4 +1,4 @@
-package gui;
+package gui.screen;
 
 import comp.Button;
 import comp.Component;

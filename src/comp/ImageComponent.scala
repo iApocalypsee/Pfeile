@@ -3,7 +3,7 @@ package comp
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 
-import gui.Screen
+import gui.screen.Screen
 
 /**
   * Component that just owns an image as a representation of itself

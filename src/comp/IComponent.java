@@ -1,7 +1,7 @@
 package comp;
 
 import gui.Drawable;
-import gui.Screen;
+import gui.screen.Screen;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

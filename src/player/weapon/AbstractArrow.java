@@ -6,7 +6,7 @@ import comp.Label;
 import general.PfeileContext;
 import geom.functions.FunctionCollection;
 import gui.FrameContainerObject;
-import gui.GameScreen;
+import gui.screen.GameScreen;
 import player.BoardPositionable;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;

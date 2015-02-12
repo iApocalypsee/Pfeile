@@ -4,7 +4,7 @@ import java.awt._
 import java.awt.event.{MouseAdapter, MouseEvent}
 
 import general.{Delegate, LogFacility}
-import gui.Screen
+import gui.screen.Screen
 
 import scala.collection.mutable
 

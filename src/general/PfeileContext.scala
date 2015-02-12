@@ -1,7 +1,7 @@
 package general
 
 import general.SeqOp._
-import gui.GameScreen
+import gui.screen.GameScreen
 import newent.Player
 import player.weapon.AttackingCalculator
 import world.WorldLike

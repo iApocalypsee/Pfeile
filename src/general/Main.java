@@ -3,7 +3,7 @@ package general;
 import akka.actor.ActorSystem;
 import animation.SoundPool;
 import general.io.PreInitStage;
-import gui.*;
+import gui.screen.*;
 import newent.Player;
 import player.weapon.ArrowHelper;
 import scala.collection.Seq;

@@ -1,5 +1,7 @@
 package comp;
 
+import gui.screen.Screen;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -9,7 +11,7 @@ public class ConfirmDialog extends comp.Component {
 	private String question;
 	private comp.Button ok, cancel;
 	
-	public ConfirmDialog(int posX, int posY, gui.Screen backing, String question) {
+	public ConfirmDialog(int posX, int posY, Screen backing, String question) {
 		super(posX, posY, Component.getTextBounds(question, STD_FONT).width * 2 + 50 + STD_INSETS.bottom, Component.getTextBounds(question, STD_FONT).height + 67, backing);
 		this.question = question;
 		declineInput();

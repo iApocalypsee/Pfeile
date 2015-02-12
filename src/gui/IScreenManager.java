@@ -1,5 +1,7 @@
 package gui;
 
+import gui.screen.Screen;
+
 import java.util.Date;
 
 /**

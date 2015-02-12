@@ -1,6 +1,6 @@
 package general;
 
-import gui.*;
+import gui.screen.*;
 
 import javax.swing.*;
 import java.awt.*;

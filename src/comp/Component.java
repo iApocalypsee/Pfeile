@@ -4,7 +4,7 @@ import general.Delegate;
 import general.JavaInterop;
 import general.Main;
 import geom.Vector2;
-import gui.Screen;
+import gui.screen.Screen;
 import scala.Function1;
 import scala.Unit;
 import scala.runtime.BoxedUnit;

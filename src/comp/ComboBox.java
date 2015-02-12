@@ -2,7 +2,7 @@ package comp;
 
 import general.Converter;
 import general.JavaInterop;
-import gui.Screen;
+import gui.screen.Screen;
 import scala.Function1;
 import scala.runtime.BoxedUnit;
 

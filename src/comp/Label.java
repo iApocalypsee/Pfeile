@@ -1,6 +1,6 @@
 package comp;
 
-import gui.Screen;
+import gui.screen.Screen;
 
 import java.awt.*;
 

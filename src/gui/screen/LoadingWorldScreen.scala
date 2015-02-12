@@ -1,11 +1,11 @@
-package gui
+package gui.screen
+
+import java.awt.Graphics2D
 
 import comp.Component.ComponentStatus
 import comp.Label
 import general.{Main, PfeileContext, Property}
 import world.ContextCreator
-
-import java.awt.Graphics2D
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -16,7 +16,7 @@ import scala.util.{Failure, Success}
  * @author Josip Palavra
  */
 object LoadingWorldScreen extends Screen("Loading screen", 222) {
-  
+
   lazy val getInstance = this
 
   private lazy val worldCreation = {
@@ -31,7 +31,7 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
   }
 
   private lazy val contextCreationFuture = Property[Future[PfeileContext]]()
-  
+
   onScreenEnter += { () =>
     val creationProcedure: Future[PfeileContext] = worldCreation().createWorld() andThen {
       // if the world has been computed successfully, change to the GameScreen immediately

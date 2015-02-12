@@ -2,6 +2,7 @@ package gui
 
 import comp.{Bar, Label}
 import geom.functions.FunctionCollectionEasing
+import gui.screen.GameScreen
 import player.Life
 
 import java.awt.{Color, Graphics2D}

@@ -7,6 +7,7 @@ import comp.Component
 import general.Main.getGameWindow
 import general.{Delegate, Main, PfeileContext, Property}
 import gui.LifeUI
+import gui.screen.GameOverScreen
 import newent.pathfinding.AStarPathfinder
 import player.Life
 import world.{TileLike, WorldLike}
@@ -59,7 +60,7 @@ class Player(world: WorldLike,
   // Delegate registration only valid after initialization of the actual life object.
   life.onDeath += { () =>
      general.Main.getContext.getTimeClock.stop()
-     getGameWindow.getScreenManager.getActiveScreen.onLeavingScreen(getGameWindow.getScreenManager.getActiveScreen, gui.GameOverScreen.SCREEN_INDEX)
+     getGameWindow.getScreenManager.getActiveScreen.onLeavingScreen(getGameWindow.getScreenManager.getActiveScreen, GameOverScreen.SCREEN_INDEX)
      SoundPool.playLoop_gameOverMelodie(SoundPool.LOOP_CONTINUOUSLY)
   }
 

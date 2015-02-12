@@ -1,5 +1,7 @@
 package general;
 
+import gui.screen.Screen;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -16,7 +18,7 @@ public class Keys implements KeyListener {
 		int keyCode = e.getKeyCode();
 		if (keyCode >= 0 && keyCode <= keys.length)
 			keys[keyCode] = true;
-		gui.Screen activeScreen = Main.getGameWindow().getScreenManager().getActiveScreen();
+		Screen activeScreen = Main.getGameWindow().getScreenManager().getActiveScreen();
 		activeScreen.keyDown(e);
 		activeScreen.keyPressed(e);
 	}
