@@ -1,5 +1,7 @@
 package player.weapon;
 
+import player.item.Item;
+
 public abstract class Weapon extends Item {
 	
 	/**

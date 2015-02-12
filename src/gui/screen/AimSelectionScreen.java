@@ -11,7 +11,7 @@ import newent.VisionStatus;
 import newent.event.AttackEvent;
 import player.weapon.arrow.AbstractArrow;
 import player.weapon.arrow.ArrowHelper;
-import player.weapon.Item;
+import player.item.Item;
 import scala.Option;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.AbstractFunction1;

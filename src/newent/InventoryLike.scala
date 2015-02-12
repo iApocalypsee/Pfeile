@@ -1,6 +1,7 @@
 package newent
 
-import player.weapon.Item
+
+import player.item.Item
 
 import scala.collection.{JavaConversions, mutable}
 

@@ -3,7 +3,7 @@ package player.weapon.arrow;
 import general.Main;
 import gui.ImageHelper;
 import newent.InventoryLike;
-import player.weapon.Item;
+import player.item.Item;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
