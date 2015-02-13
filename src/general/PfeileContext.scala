@@ -3,6 +3,7 @@ package general
 import general.SeqOp._
 import gui.screen.GameScreen
 import newent.Player
+import player.item.WorldLootList
 import player.weapon.AttackingCalculator
 import world.WorldLike
 
@@ -18,6 +19,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   private var _activePlayer: Player = null
   private var _world: WorldLike = null
   private var _stopwatchThread: Thread = null
+  private var _worldLootList: WorldLootList = new WorldLootList
 
   private lazy val _lazyTimeObj: TimeClock = {
     val ret = new TimeClock

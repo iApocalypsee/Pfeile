@@ -4,7 +4,7 @@ package player.item;
  * Weapons are items (and Arrows therefore, too), but they are placed in the package <code>player.weapon</code>.
  * Loots are items, which are handled in the package item.
  */
-public class Item {
+public abstract class Item {
 
 	private String name;
 

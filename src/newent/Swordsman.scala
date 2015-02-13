@@ -43,7 +43,7 @@ class Swordsman(world: WorldLike, spawnPosition: Point, team: Team)
   /**
     * The component that the representable object uses first. Method is called only once.
     *
-    * The start component must not be null at first, else it will throw a [[IllegalArgumentException]].
+    * The start component must not be null at first, else it will throw a [[java.lang.IllegalArgumentException]].
     * @return A component object which the representable object uses first.
     */
   override protected def startComponent = new ImageComponent(0, 0, Swordsman.swordsmanTexture, GameScreen.getInstance())
