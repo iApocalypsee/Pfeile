@@ -10,17 +10,17 @@ import java.util.List;
 /**
  * Anything dropped by enemies or every chest or treasure is extended from Loot. Loot is a subclass of {@link Item}.
  */
-public abstract class Loot extends Item implements BoardPositionable {
+public abstract class Loot extends Item implements BoardPositionable, Collectible {
 
-    private int gridX;
+    protected int gridX;
 
-    private int gridY;
+    protected int gridY;
 
     /** Subclasses must override this value */
-    private LootUI lootUI;
+    protected LootUI lootUI;
 
     /** everything, that is stored inside this loot and can be received by collecting this Loot. */
-    private List<Item> listOfContent;
+    protected List<Item> listOfContent;
 
     /** Creates a new loot with the given name.
      * The name is set in superclass Item.
@@ -34,12 +34,27 @@ public abstract class Loot extends Item implements BoardPositionable {
         listOfContent = new ArrayList<>(8);
     }
 
-    /** Creates a new Loot on the Tile at (gridX, gridY) with the specified name. */
+    /**
+     * <b>This replaces the <code>LootUI</code> with <code>null</code>.</b>
+     * You should initialize the LootUI later in the constructor (especially when {@link Collectible#getImage()} and
+     * {@link Loot#createUI()} have been indexed).
+     *
+     * @param gridX the x-position of tile where the loot should be placed
+     * @param gridY the y-position of the where the loot should be placed
+     * @param name the name of the item
+     * @see player.item.Loot#Loot(int, int, LootUI, String)
+     */
     public Loot (int gridX, int gridY, String name) {
+        this(gridX, gridY, null, name);
+    }
+
+    /** Creates a new Loot on the Tile at (gridX, gridY) with the specified name and the lootUI. */
+    public Loot (int gridX, int gridY, LootUI lootUI, String name) {
         super(name);
 
         this.gridX = gridX;
         this.gridY = gridY;
+        this.lootUI = lootUI;
 
         listOfContent = new ArrayList<>(8);
     }
@@ -104,5 +119,30 @@ public abstract class Loot extends Item implements BoardPositionable {
     /** the outward appearance of a Loot. Use the LootUI to draw an Loot or to change its Component. */
     public LootUI getLootUI () {
         return lootUI;
+    }
+
+    /**
+     * Replacing the LootUI with the specified new LootUI
+     *
+     * @param lootUI the new outward appearance
+     */
+    protected void setLootUI (LootUI lootUI) {
+        this.lootUI = lootUI;
+    }
+
+    public abstract LootUI createUI ();
+
+    @Override
+    public String toString () {
+        String toString = getName() + " [@Tile: " + gridX + "|" + gridY + "]" + " with {";
+
+        for (int i = 0; i < listOfContent.size() - 1; i++)
+            toString = toString + listOfContent.get(i).getName() + "; ";
+
+        if (listOfContent.get(listOfContent.size() - 1) != null)
+            toString = toString + listOfContent.get(listOfContent.size() - 1).getName();
+
+        toString = toString + "}";
+        return toString;
     }
 }

@@ -1,14 +1,89 @@
 package player.item;
 
+import comp.ImageComponent;
+import gui.screen.GameScreen;
+import newent.Bot;
 import newent.Entity;
+import newent.Player;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 /**
  * Loots dropped by dead enemies or creeps are BagOfLoots, no {@link player.item.Treasure}.
  */
 public class BagOfLoots extends Loot {
 
-    /** Creating a new BagOfLoots from a deadEntity. All values are taken from the deadEntity. */
+    /** the texture of a BagOfLoots */
+    private static BufferedImage image;
+
+    static {
+        try {
+            image = ImageIO.read(BagOfLoots.class.getClassLoader().getResourceAsStream(
+                        "resources/gfx/item textures/bagOfLoots.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /** Creating a new BagOfLoots from a deadEntity. All values are taken from the deadEntity.
+     * @param deadEntity the entity, which dropped a BagOfLoots (--> usually a dead Entity)
+     * @see player.item.Loot#Loot(int, int, LootUI, String)
+     * @see player.item.BagOfLoots#BagOfLoots(int, int) */
     public BagOfLoots (Entity deadEntity) {
-        super(deadEntity.getGridX(), deadEntity.getGridY(), "Bag Of Loots from " + deadEntity.name());
+        super(deadEntity.getGridX(), deadEntity.getGridY(), "BagOfLoots [from " + deadEntity.name() + "]");
+        setLootUI(createUI());
+
+    }
+
+    /**
+     * Creates a new BagOfLoots on the position(<code>gridX</code>|<code>gridY</code>).
+     *
+     * @param gridX the x-position of the tile, where the <code>BagOfLoots</code> should be placed
+     * @param gridY and the y-position
+     * @see player.item.Loot#Loot(int, int, String)
+     * @see player.item.BagOfLoots#BagOfLoots(newent.Entity)
+     */
+    public BagOfLoots (int gridX, int gridY) {
+        super(gridX, gridY, "BagOfLoots");
+        setLootUI(createUI());
+    }
+
+    @Override
+    public LootUI createUI () {
+        Rectangle2D tileBounds = getTile().getComponent().getPreciseRectangle();
+
+        ImageComponent component = new ImageComponent(
+                (int) (tileBounds.getCenterX() - 0.5 * getImage().getWidth()),
+                (int) (tileBounds.getCenterY() - 0.5 * getImage().getHeight()), getImage(), GameScreen.getInstance());
+
+        return new LootUI(component) {
+            @Override
+            public void draw (Graphics2D g) {
+                ImageComponent lootComponent = (ImageComponent) getComponent();
+                lootComponent.draw(g);
+            }
+        };
+    }
+
+    @Override
+    public boolean collect (Player activePlayer) {
+        throw new NotImplementedException();
+        //return false;
+    }
+
+    @Override
+    public boolean collect (Bot activeBot) {
+        throw new NotImplementedException();
+        //return false;
+    }
+
+    @Override
+    public BufferedImage getImage () {
+        return image;
     }
 }
