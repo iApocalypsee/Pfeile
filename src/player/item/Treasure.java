@@ -1,6 +1,7 @@
 package player.item;
 
 import comp.ImageComponent;
+import general.LogFacility;
 import gui.screen.GameScreen;
 import newent.Bot;
 import newent.Player;
@@ -26,10 +27,14 @@ public class Treasure extends Loot {
     private static BufferedImage image;
 
     static {
+        String path = "resources/gfx/item textures/treasure.png";
         try {
-            image = ImageIO.read(Treasure.class.getClassLoader().getResourceAsStream(
-                    "resources/gfx/item textures/treasure.png"));
-        } catch (IOException e) {e.printStackTrace();}
+            image = ImageIO.read(Treasure.class.getClassLoader().getResourceAsStream(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+            LogFacility.log("The BufferedImage of class Treasure couldn't be loaded! Path: " + path,
+                    LogFacility.LoggingLevel.Error);
+        }
     }
 
     /**
@@ -42,24 +47,6 @@ public class Treasure extends Loot {
      */
     public Treasure (int gridX, int gridY) {
         super(gridX, gridY, "Treasure");
-        setLootUI(createUI());
-    }
-
-    @Override
-    public LootUI createUI () {
-        Rectangle2D tileBounds = getTile().getComponent().getPreciseRectangle();
-
-        ImageComponent component = new ImageComponent(
-                (int) (tileBounds.getCenterX() - 0.5 * image.getWidth()),
-                (int) (tileBounds.getCenterY() - 0.5 * image.getHeight()), getImage(), GameScreen.getInstance());
-
-        return new LootUI(component) {
-            @Override
-            public void draw (Graphics2D g) {
-                ImageComponent lootComponent = (ImageComponent) getComponent();
-                lootComponent.draw(g);
-            }
-        };
     }
 
     @Override

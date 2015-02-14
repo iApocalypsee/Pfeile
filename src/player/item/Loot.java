@@ -1,9 +1,13 @@
 package player.item;
 
+import comp.ImageComponent;
 import general.Main;
+import gui.screen.GameScreen;
 import player.BoardPositionable;
 import world.TileLike;
 
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,20 +28,22 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
 
     /** Creates a new loot with the given name.
      * The name is set in superclass Item.
-     * <b>The position, where the Loot drops, is position of the activePlayer</b>*/
+     * <b>The position, where the Loot drops, is position of the activePlayer.</b>
+     * <b>The LootUI is created automatically with {@link Loot#createUI()}.</b> You may override it later.*/
     public Loot (String name) {
         super(name);
 
         this.gridX = Main.getContext().getActivePlayer().getGridX();
         this.gridY = Main.getContext().getActivePlayer().getGridY();
 
+        lootUI = createUI();
+
         listOfContent = new ArrayList<>(8);
     }
 
     /**
-     * <b>This replaces the <code>LootUI</code> with <code>null</code>.</b>
-     * You should initialize the LootUI later in the constructor (especially when {@link Collectible#getImage()} and
-     * {@link Loot#createUI()} have been indexed).
+     * The LootUI will be created automatically, based on {@link Loot#createUI()}
+     * You can override the lootUI later.
      *
      * @param gridX the x-position of tile where the loot should be placed
      * @param gridY the y-position of the where the loot should be placed
@@ -46,6 +52,7 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
      */
     public Loot (int gridX, int gridY, String name) {
         this(gridX, gridY, null, name);
+        lootUI = createUI();
     }
 
     /** Creates a new Loot on the Tile at (gridX, gridY) with the specified name and the lootUI. */
@@ -130,7 +137,27 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
         this.lootUI = lootUI;
     }
 
-    public abstract LootUI createUI ();
+    /**
+     * Creates a default LootUI, when {@link comp.ImageComponent} is used.
+     * Calling the draw method will draw the imageComponent.
+     *
+     * @return a LookUI object based on an ImageComponent
+     */
+    public LootUI createUI () {
+        Rectangle2D tileBounds = getTile().getComponent().getPreciseRectangle();
+
+        ImageComponent component = new ImageComponent(
+                (int) (tileBounds.getCenterX() - 0.5 * getImage().getWidth()),
+                (int) (tileBounds.getCenterY() - 0.5 * getImage().getHeight()), getImage(), GameScreen.getInstance());
+
+        return new LootUI(component) {
+            @Override
+            public void draw (Graphics2D g) {
+                ImageComponent lootComponent = (ImageComponent) getComponent();
+                lootComponent.draw(g);
+            }
+        };
+    }
 
     @Override
     public String toString () {

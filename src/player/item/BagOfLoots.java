@@ -1,15 +1,12 @@
 package player.item;
 
-import comp.ImageComponent;
-import gui.screen.GameScreen;
+import general.LogFacility;
 import newent.Bot;
 import newent.Entity;
 import newent.Player;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -22,11 +19,13 @@ public class BagOfLoots extends Loot {
     private static BufferedImage image;
 
     static {
+        String path = "resources/gfx/item textures/bagOfLoots.png";
         try {
-            image = ImageIO.read(BagOfLoots.class.getClassLoader().getResourceAsStream(
-                        "resources/gfx/item textures/bagOfLoots.png"));
+            image = ImageIO.read(BagOfLoots.class.getClassLoader().getResourceAsStream(path));
         } catch (IOException e) {
             e.printStackTrace();
+            LogFacility.log("The BufferedImage of class BagOfLoots couldn't be loaded! Path: " + path,
+                    LogFacility.LoggingLevel.Error);
         }
     }
 
@@ -36,7 +35,6 @@ public class BagOfLoots extends Loot {
      * @see player.item.BagOfLoots#BagOfLoots(int, int) */
     public BagOfLoots (Entity deadEntity) {
         super(deadEntity.getGridX(), deadEntity.getGridY(), "BagOfLoots [from " + deadEntity.name() + "]");
-        setLootUI(createUI());
 
     }
 
@@ -50,24 +48,6 @@ public class BagOfLoots extends Loot {
      */
     public BagOfLoots (int gridX, int gridY) {
         super(gridX, gridY, "BagOfLoots");
-        setLootUI(createUI());
-    }
-
-    @Override
-    public LootUI createUI () {
-        Rectangle2D tileBounds = getTile().getComponent().getPreciseRectangle();
-
-        ImageComponent component = new ImageComponent(
-                (int) (tileBounds.getCenterX() - 0.5 * getImage().getWidth()),
-                (int) (tileBounds.getCenterY() - 0.5 * getImage().getHeight()), getImage(), GameScreen.getInstance());
-
-        return new LootUI(component) {
-            @Override
-            public void draw (Graphics2D g) {
-                ImageComponent lootComponent = (ImageComponent) getComponent();
-                lootComponent.draw(g);
-            }
-        };
     }
 
     @Override

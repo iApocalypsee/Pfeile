@@ -1,14 +1,11 @@
 package player.item;
 
-import comp.ImageComponent;
-import gui.screen.GameScreen;
+import general.LogFacility;
 import newent.Bot;
 import newent.Player;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -23,35 +20,19 @@ public class RoundChest extends Chest {
     private static BufferedImage image;
 
     static {
+        String path = "resources/gfx/item textures/roundChest.png";
         try {
-            image = ImageIO.read(BagOfLoots.class.getClassLoader().getResourceAsStream(
-                    "resources/gfx/item textures/roundChest.png"));
+            image = ImageIO.read(BagOfLoots.class.getClassLoader().getResourceAsStream(path));
         } catch (IOException e) {
             e.printStackTrace();
+            LogFacility.log("The BufferedImage of class RoundChest couldn't be loaded! Path: " + path,
+                    LogFacility.LoggingLevel.Error);
         }
     }
 
-    public RoundChest (int gridX, int gridY, String name) {
+    public RoundChest (int gridX, int gridY) {
         super(gridX, gridY, "Round Chest");
-        setLootUI(createUI());
 
-    }
-
-    @Override
-    public LootUI createUI () {
-        Rectangle2D tileBounds = getTile().getComponent().getPreciseRectangle();
-
-        ImageComponent component = new ImageComponent(
-                (int) (tileBounds.getCenterX() - 0.5 * getImage().getWidth()),
-                (int) (tileBounds.getCenterY() - 0.5 * getImage().getHeight()), getImage(), GameScreen.getInstance());
-
-        return new LootUI(component) {
-            @Override
-            public void draw (Graphics2D g) {
-                ImageComponent lootComponent = (ImageComponent) getComponent();
-                lootComponent.draw(g);
-            }
-        };
     }
 
     @Override
