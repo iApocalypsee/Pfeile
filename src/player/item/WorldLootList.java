@@ -1,10 +1,14 @@
 package player.item;
 
+import general.JavaInterop;
 import general.Main;
-import general.PfeileContext;
 import gui.Drawable;
+import newent.Player;
 import newent.VisionMap;
 import newent.VisionStatus;
+import scala.collection.Seq;
+import scala.runtime.AbstractFunction1;
+import scala.runtime.BoxedUnit;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -22,10 +26,33 @@ public class WorldLootList implements Drawable {
     private final List<Loot> lootVisibleList;
 
     /** creating a new WorldLootList with the default size 18 [as java.util.ArrayList].
-     * It also creates a new List for every visible Loot (from the view of the activePlayer). */
+     * It also creates a new List for every visible Loot (from the view of the activePlayer) and registers
+     * the {@link WorldLootList#updateVisibleLoot()} to {@link newent.Entity#onLocationChanged()} and
+     * {@link general.TurnSystem#onTurnGet()}.
+     * */
     public WorldLootList () {
         lootList = new ArrayList<>(18);
         lootVisibleList = new ArrayList<>(12);
+
+        Main.getContext().turnSystem().onTurnGet().register(new AbstractFunction1<Player, BoxedUnit>() {
+            @Override
+            public BoxedUnit apply (Player v1) {
+                updateVisibleLoot();
+                return BoxedUnit.UNIT;
+            }
+        });
+
+        // every time, when the location of a player has changed, the list of every not-hidden loot must update itself.
+        // ==> {@link WorldLootList#updateVisibleLoot()} is registered to the "onLocationChanged"-Delegate of every Player.
+        final Seq<Player> playerSeq = Main.getContext().getTurnSystem().playerList().apply();
+        playerSeq.foreach(JavaInterop.asScalaFunction(player -> {
+            player.onLocationChanged().register(JavaInterop.asScalaFunction(locationChangedEvent -> {
+                updateVisibleLoot();
+                return BoxedUnit.UNIT;
+            }));
+            return BoxedUnit.UNIT;
+        }));
+
     }
 
     /**
