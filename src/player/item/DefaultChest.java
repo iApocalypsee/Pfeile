@@ -43,18 +43,6 @@ public class DefaultChest extends Chest {
     }
 
     @Override
-    public boolean collect (Player activePlayer) {
-        throw new NotImplementedException();
-        //return false;
-    }
-
-    @Override
-    public boolean collect (Bot activeBot) {
-        throw new NotImplementedException();
-        //return false;
-    }
-
-    @Override
     public BufferedImage getImage () {
         return image;
     }

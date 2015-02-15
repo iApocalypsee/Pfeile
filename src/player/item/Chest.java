@@ -1,8 +1,13 @@
 package player.item;
 
+import general.Main;
+import newent.Bot;
+import newent.InventoryEntity;
+import newent.Player;
+
 /**
  * The superclass for chests. To open a chest you need to give up something (arrows, gold, ...) or find a key
- * (maybe in the future).
+ * (maybe in the future). That's why only Players and Bots can open an Chest.
  */
 public abstract class Chest extends Loot {
 
@@ -38,4 +43,35 @@ public abstract class Chest extends Loot {
 
     /** you need to open a chest */
     //public abstract void open();
+
+
+    @Override
+    public boolean collect (Player activePlayer) {
+        // controlling if the inventory is full, is already done by "put(this)".
+        if (activePlayer.inventory().put(this)) {
+            // only remove "this" from the WorldLootList, if it has been added to inventory successfully.
+            Main.getContext().getWorldLootList().remove(this);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean collect (Bot activeBot) {
+        // controlling if the inventory is full, is already done by "put(this)".
+        if (activeBot.inventory().put(this)) {
+            // only remove "this" from the WorldLootList, if it has been added to inventory successfully.
+            Main.getContext().getWorldLootList().remove(this);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean collect (InventoryEntity entity) {
+        // they can't open a chest
+        return false;
+    }
 }

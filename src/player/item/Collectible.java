@@ -1,6 +1,9 @@
 package player.item;
 
+import general.Main;
 import newent.Bot;
+import newent.Entity;
+import newent.InventoryEntity;
 import newent.Player;
 
 import java.awt.image.BufferedImage;
@@ -22,6 +25,13 @@ public interface Collectible {
      * @return Has the loot been successfully added to the inventory?
      */
     boolean collect(Bot activeBot);
+
+    /**
+     *
+     * @param entity any Entity, which has an Inventory
+     * @return Has the loot been successfully added to the inventory?
+     */
+    boolean collect(InventoryEntity entity);
 
     /**
      * Everything, that is collectable must be seen, so this returns the texture.

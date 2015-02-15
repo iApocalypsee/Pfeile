@@ -19,7 +19,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   private var _activePlayer: Player = null
   private var _world: WorldLike = null
   private var _stopwatchThread: Thread = null
-  private var _worldLootList: WorldLootList = new WorldLootList
+  private var _worldLootList: WorldLootList = new WorldLootList;
 
   private lazy val _lazyTimeObj: TimeClock = {
     val ret = new TimeClock
@@ -109,6 +109,10 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   def setWorld(w: WorldLike) = world = w
 
   def getTimeClock = _lazyTimeObj
+
+  /** It's the list of every loot, which is placed somewhere in the world. Use it to draw all loots, or to get a Loot.
+   * @return the <code>WorldLootList</code> for the whole world. */
+  def getWorldLootList = _worldLootList
 
   /** it is called, when TimeClock needs to start to run, this means at leaving LoadingWorldScreen */
   val onStartRunningTimeClock = Delegate.createZeroArity

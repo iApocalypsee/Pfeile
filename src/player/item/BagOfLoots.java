@@ -1,8 +1,10 @@
 package player.item;
 
 import general.LogFacility;
+import general.Main;
 import newent.Bot;
 import newent.Entity;
+import newent.InventoryEntity;
 import newent.Player;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -52,14 +54,26 @@ public class BagOfLoots extends Loot {
 
     @Override
     public boolean collect (Player activePlayer) {
-        throw new NotImplementedException();
-        //return false;
+        // there is no difference between any entity and a player.
+        return collect((InventoryEntity) activePlayer);
     }
 
     @Override
     public boolean collect (Bot activeBot) {
-        throw new NotImplementedException();
-        //return false;
+        // there is no difference between any entity and a player.
+        return collect((InventoryEntity) activeBot);
+    }
+
+    @Override
+    public boolean collect (InventoryEntity entity) {
+        // controlling if the inventory is full, is already done by "put(this)".
+        if (entity.inventory().put(this)) {
+            // only remove "this" from the WorldLootList, if it has been added to inventory successfully.
+            Main.getContext().getWorldLootList().remove(this);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
