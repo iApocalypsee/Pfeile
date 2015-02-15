@@ -59,14 +59,7 @@ public class Treasure extends Loot {
 
     @Override
     public boolean collect (InventoryEntity entity) {
-        // controlling if the inventory is full, is already done by "put(this)".
-        if (entity.inventory().put(this)) {
-            // only remove "this" from the WorldLootList, if it has been added to inventory successfully.
-            Main.getContext().getWorldLootList().remove(this);
-            return true;
-        } else {
-            return false;
-        }
+        return Collectible.defaultCollect(entity.inventory(), this);
     }
 
     @Override

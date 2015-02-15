@@ -3,6 +3,7 @@ package player.item;
 import general.Main;
 import newent.Bot;
 import newent.InventoryEntity;
+import newent.InventoryLike;
 import newent.Player;
 
 /**
@@ -47,26 +48,12 @@ public abstract class Chest extends Loot {
 
     @Override
     public boolean collect (Player activePlayer) {
-        // controlling if the inventory is full, is already done by "put(this)".
-        if (activePlayer.inventory().put(this)) {
-            // only remove "this" from the WorldLootList, if it has been added to inventory successfully.
-            Main.getContext().getWorldLootList().remove(this);
-            return true;
-        } else {
-            return false;
-        }
+        return Collectible.defaultCollect(activePlayer.inventory(), this);
     }
 
     @Override
     public boolean collect (Bot activeBot) {
-        // controlling if the inventory is full, is already done by "put(this)".
-        if (activeBot.inventory().put(this)) {
-            // only remove "this" from the WorldLootList, if it has been added to inventory successfully.
-            Main.getContext().getWorldLootList().remove(this);
-            return true;
-        } else {
-            return false;
-        }
+        return Collectible.defaultCollect(activeBot.inventory(), this);
     }
 
     @Override

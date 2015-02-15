@@ -2,10 +2,7 @@ package player.item;
 
 import general.LogFacility;
 import general.Main;
-import newent.Bot;
-import newent.Entity;
-import newent.InventoryEntity;
-import newent.Player;
+import newent.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.imageio.ImageIO;
@@ -66,14 +63,7 @@ public class BagOfLoots extends Loot {
 
     @Override
     public boolean collect (InventoryEntity entity) {
-        // controlling if the inventory is full, is already done by "put(this)".
-        if (entity.inventory().put(this)) {
-            // only remove "this" from the WorldLootList, if it has been added to inventory successfully.
-            Main.getContext().getWorldLootList().remove(this);
-            return true;
-        } else {
-            return false;
-        }
+        return Collectible.defaultCollect(entity.inventory(), this);
     }
 
     @Override
