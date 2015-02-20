@@ -1,14 +1,16 @@
 package player.item.potion;
 
-import comp.ImageComponent;
 import general.Main;
-import gui.screen.GameScreen;
+import newent.InventoryLike;
 import player.Life;
+import player.item.Item;
+import player.item.Loot;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * a potion healing <code>25 * level</code> life.
@@ -31,7 +33,7 @@ public class PotionOfHealing extends Potion {
      */
     public PotionOfHealing () {
         super("Potion of Healing");
-        getPotionUI().component = new ImageComponent(0, 0, image, GameScreen.getInstance());
+        getPotionUI().createComponent(image);
     }
 
     /**
@@ -45,13 +47,14 @@ public class PotionOfHealing extends Potion {
 
     @Override
     public void triggerEffect () {
-        Life lifeOfActivePlayer = Main.getContext().getActivePlayer().getLife();
-        lifeOfActivePlayer.setLife(lifeOfActivePlayer.getLife() + 25 * level);
+        Life life = Main.getContext().getActivePlayer().getLife();
+        life.setLife(life.getLife() + 25 * level);
+        // after using the potion is should be removed at all.
         remove();
     }
 
     @Override
     public void remove () {
-
+        throw new NotImplementedException();
     }
 }

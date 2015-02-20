@@ -1,15 +1,8 @@
 package player.item;
 
-import comp.ImageComponent;
 import general.LogFacility;
-import gui.screen.GameScreen;
-import newent.Bot;
-import newent.Player;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 

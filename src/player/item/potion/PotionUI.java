@@ -2,31 +2,85 @@ package player.item.potion;
 
 import comp.ImageComponent;
 import gui.Drawable;
-
-import comp.Component;
+import gui.screen.GameScreen;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * The outward appearance of a potion
+ * The outward appearance of a potion. Use it's {@link comp.ImageComponent} to change the position of the PotionUI
+ * as well as the height and width.
  */
-public abstract class PotionUI implements Drawable {
+public class PotionUI implements Drawable {
 
-    protected ImageComponent component;
-
-    protected boolean isVisible;
+    private ImageComponent component;
 
     /**
-     * @return is the Potion visible on the screen.
+     * Creates a new PotionUI without specified BufferedImage, so a default BufferedImage as place-keeper is used.
+     * The visible value is <code>false</code> by default.
+     *
+     * @see player.item.potion.PotionUI#PotionUI(java.awt.image.BufferedImage)
+     */
+    public PotionUI () {
+        component = new ImageComponent(0, 0, new BufferedImage(15, 20, BufferedImage.TYPE_4BYTE_ABGR), GameScreen.getInstance());
+        component.setVisible(false);
+    }
+
+    /**
+     * Creates a new PotionUI with the specified BufferedImage
+     * ({@link player.item.potion.PotionUI#createComponent(java.awt.image.BufferedImage)} is used).
+     * The visible value of the PotionUI is <code>false</code> by default.
+     *
+     * @param image the BufferedImage, which is displayed as texture for the Potion
+     *
+     * @see PotionUI#PotionUI()
+     */
+    public PotionUI (BufferedImage image) {
+        createComponent(image);
+        component.setVisible(false);
+    }
+
+
+    /** Creates a default ImageComponent with the BufferedImage <code>image</code> at the position <code>(0|0)</code> with
+     * <code>GameScreen</code> as backing screen. The component
+     *
+     * @param image the image of the new component
+     */
+    public void createComponent (BufferedImage image) {
+        component = new ImageComponent(0, 0, image, GameScreen.getInstance());
+    }
+
+    /**
+     * Creates an {@link comp.ImageComponent} with the specified values to represent the look of a PotionUI on screen
+     * (backingScreen is <code>GameScreen</code>).
+     *
+     * @param image the BufferedImage (texture) of the PotionUI
+     * @param posX the x position on the screen
+     * @param posY the y position on the screen
+     */
+    public void createComponent (BufferedImage image, int posX, int posY) {
+        component = new ImageComponent(posX, posY, image, GameScreen.getInstance());
+    }
+
+    /**
+     * @return Is the Potion visible on the screen?
      */
     public boolean isVisible () {
-        return isVisible;
+        return component.isVisible();
+    }
+
+    /**
+     * Changes the visible value and therefore if the PotionUI is drawn or not.
+     *
+     * @param isVisible the new visible value
+     */
+    public void setVisible (boolean isVisible) {
+        component.setVisible(isVisible);
     }
 
     @Override
     public void draw (Graphics2D g) {
-        if (isVisible)
+        if (isVisible())
             component.draw(g);
     }
 }

@@ -88,9 +88,12 @@ public class Life {
 		return lifeRegen;
 	}
 
-	/** SETTER: set 'life' */
+	/** SETTER: set 'life'. If the <code>newLife</code> is higher than the <code>getMaxLife()</code> the life is set
+     * to maxLife*/
 	public void setLife(double newLife) {
-		this.life = newLife;
+        if (newLife > lifeMax)
+            newLife = lifeMax;
+        life = newLife;
 		onLifeChanged.call(new LifeChangedEvent(newLife));
 	}
 

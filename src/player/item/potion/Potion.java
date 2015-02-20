@@ -6,7 +6,7 @@ import player.item.Item;
 import java.awt.*;
 
 /**
- * Any Potion
+ * Any Potion. Override the PotionUI for the correct look.
  */
 public abstract class Potion extends Item implements Drawable {
 
@@ -50,7 +50,8 @@ public abstract class Potion extends Item implements Drawable {
     public abstract void remove ();
 
     /**
-     * The default constructor with the <code>name</code> and the <code>level = 1</code>.
+     * The default constructor with the <code>name</code> and the <code>level = 1</code> and with a
+     * default PotionUI {@link PotionUI#PotionUI()}
      *
      * @param name the name of the potion. (z.B. "<code>Potion of Healing</code>")
      * @see player.item.potion.Potion#Potion(byte, String)
@@ -58,10 +59,11 @@ public abstract class Potion extends Item implements Drawable {
     public Potion (String name) {
         super(name);
         level = 1;
+        potionUI = new PotionUI();
     }
 
     /**
-     * Creating a new potion with the defined values.
+     * Creating a new potion with the defined values and a default PotionUI {@link PotionUI#PotionUI()}
      *
      * @param level the level of the item
      * @param name the name like "<code>Potion of Healing</code>"
@@ -69,6 +71,7 @@ public abstract class Potion extends Item implements Drawable {
     public Potion (byte level, String name) {
         super(name);
         this.level = level;
+        potionUI = new PotionUI();
     }
 
     @Override

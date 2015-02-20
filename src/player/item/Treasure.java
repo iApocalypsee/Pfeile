@@ -1,11 +1,9 @@
 package player.item;
 
 import general.LogFacility;
-import general.Main;
 import newent.Bot;
 import newent.InventoryEntity;
 import newent.Player;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

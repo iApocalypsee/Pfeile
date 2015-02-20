@@ -1,9 +1,7 @@
 package player.item;
 
-import general.Main;
 import newent.Bot;
 import newent.InventoryEntity;
-import newent.InventoryLike;
 import newent.Player;
 
 /**
