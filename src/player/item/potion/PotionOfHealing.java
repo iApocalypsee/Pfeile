@@ -52,9 +52,4 @@ public class PotionOfHealing extends Potion {
         // after using the potion is should be removed at all.
         remove();
     }
-
-    @Override
-    public void remove () {
-        throw new NotImplementedException();
-    }
 }

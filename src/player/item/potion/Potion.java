@@ -1,9 +1,13 @@
 package player.item.potion;
 
+import general.Main;
 import gui.Drawable;
+import newent.InventoryLike;
 import player.item.Item;
+import player.item.Loot;
 
 import java.awt.*;
+import java.util.List;
 
 /**
  * Any Potion. Override the PotionUI for the correct look.
@@ -45,9 +49,33 @@ public abstract class Potion extends Item implements Drawable {
     public abstract void triggerEffect ();
 
     /**
-     * remove the potion from the inventory or from the loot
+     * Removes the potion from the inventory or from the loot by searching the inventory of
+     * <code>Main.getContext().getActivePlayer()</code> or loot <code>Main.getContext().getWorldLootList()</code>
+     * every <code>anyLoot.getStoredItems()</code>. The search for the Potion ends, if the Potion has been found
+     * (so a Potion in the inventory and in a loot would for example only be removed in the inventory).
+     *
+     * @return <code>true</code> - if the item has been successfully removed.
      */
-    public abstract void remove ();
+    public boolean remove () {
+        // first the inventory of the active player
+        InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
+        for (Item item : inventory.javaItems()) {
+            if (this.equals(item)) {
+                return inventory.javaItems().remove(item);
+            }
+        }
+
+        // secondly the loots
+        List<Loot> lootList = Main.getContext().getWorldLootList().getLoots();
+        for (Loot loot : lootList) {
+            for (Item item : loot.getStoredItems()) {
+                if (this.equals(item)) {
+                    return loot.getStoredItems().remove(item);
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * The default constructor with the <code>name</code> and the <code>level = 1</code> and with a

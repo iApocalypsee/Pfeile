@@ -88,7 +88,7 @@ public class WorldLootList implements Drawable {
      * @return the list
      * @see player.item.WorldLootList#getVisibleLoots()
      */
-    public List getLoots () {
+    public List<Loot> getLoots () {
         return lootList;
     }
 
@@ -99,7 +99,7 @@ public class WorldLootList implements Drawable {
      *
      * @return the list of every visible loot (by the {@link general.PfeileContext#getActivePlayer()})
      */
-    public List getVisibleLoots () {
+    public List<Loot> getVisibleLoots () {
         return lootVisibleList;
     }
 
