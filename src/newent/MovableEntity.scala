@@ -29,7 +29,7 @@ trait MovableEntity extends Entity with StatisticalEntity {
      *
      * @param additionalMovementPoints the number with which the <code>currentMovementPoints()</code> should be increased
      */
-  def addMovementPoints (additionalMovementPoints: Byte) = {
+  def addMovementPoints (additionalMovementPoints: Int) = {
       if (_currentMovementPoints + additionalMovementPoints < 0)
          _currentMovementPoints = 0
       else
