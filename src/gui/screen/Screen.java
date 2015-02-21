@@ -180,11 +180,10 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * Wird aufgerufen, wenn der Screen verlassen wird. Sollte man selbst aufrufen, wenn man 
 	 * den Screen verlassen will und zu einem anderen wechseln will. Der Index des Zielscreens
 	 * sollte in Screen.{@link #SCREEN_INDEX} gespeichert sein.
-	 * 
-	 * @param sender Das Objekt, das die Aktion initiiert hat
+     * 
 	 * @param toScreen Der Index des zu betretenden Screens
 	 */
-	public void onLeavingScreen(Object sender, int toScreen) {
+	public void onLeavingScreen(int toScreen) {
 		manager.setActiveScreen(toScreen);
 		manager.setLastScreenChange(new Date());
         onScreenLeft.callAsync(new ScreenChangedEvent(toScreen), ExecutionContext.Implicits$.MODULE$.global());

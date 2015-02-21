@@ -141,7 +141,7 @@ public class AimSelectionScreen extends Screen {
 
             transparencyWarningMessage = 1f;
 
-            onLeavingScreen(AimSelectionScreen.this, ArrowSelectionScreen.SCREEN_INDEX);
+            onLeavingScreen(ArrowSelectionScreen.SCREEN_INDEX);
         }
     }
 

@@ -59,7 +59,7 @@ public class PauseScreen extends Screen {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 //				if(toGame.getBounds().contains(e.getPoint())) {
-					onLeavingScreen(this, GameScreen.SCREEN_INDEX);
+					onLeavingScreen(GameScreen.SCREEN_INDEX);
 //				}
 			}
 		});
@@ -68,7 +68,7 @@ public class PauseScreen extends Screen {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 //				if(toMainMenu.getBounds().contains(e.getPoint())) {
-					onLeavingScreen(this, MainMenuScreen.SCREEN_INDEX);
+					onLeavingScreen(MainMenuScreen.SCREEN_INDEX);
 //				}
 			}
 		});

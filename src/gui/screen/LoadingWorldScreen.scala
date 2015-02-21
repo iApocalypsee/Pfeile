@@ -43,7 +43,7 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
 
         // Switch forward to the game screen immediately. The world has been generated and
         // populated now.
-        onLeavingScreen(LoadingWorldScreen.this, GameScreen.SCREEN_INDEX)
+        onLeavingScreen(GameScreen.SCREEN_INDEX)
       // if an exception has been thrown in the world creation thread, rethrow it in the main thread
       case f: Failure[_] => throw f.exception
     }

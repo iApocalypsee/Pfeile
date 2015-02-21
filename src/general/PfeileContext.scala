@@ -28,7 +28,6 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
     onStartRunningTimeClock += { () =>
       _stopwatchThread.start()
-      LogFacility.log("Stopwatch thread has been started.", "Debug")
     }
     ret
   }

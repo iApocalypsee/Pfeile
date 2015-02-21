@@ -90,12 +90,10 @@ public class Main {
         // FREEZES THE "GraphicsEnvironment.getLocalGraphicsEnvironment()" CALL!
         SoundPool.play_titleMelodie();
 
-        LogFacility.log("Running Pfeile on...", "Info");
-        LogFacility.log("====================", "Info");
-
-        new SystemProperties().printSystemProperties();
-
+        LogFacility.log("Running Pfeile on... " + SystemProperties.getComputerName(), "Info");
         LogFacility.putSeparationLine();
+
+        SystemProperties.printSystemProperties();
 
         LogFacility.log("Beginning initialization process...", "Info", "initprocess");
 
@@ -163,9 +161,10 @@ public class Main {
                 p.tightenComponentToTile((TileLike) p.tileLocation());
                 return BoxedUnit.UNIT;
             }));
-
             return BoxedUnit.UNIT;
         }));
+
+        LogFacility.log("GameWindow is ready.", "Info", "initprocess");
 
         // starten wir das Spiel
         main.runGame();

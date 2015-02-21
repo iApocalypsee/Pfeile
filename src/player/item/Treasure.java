@@ -57,7 +57,7 @@ public class Treasure extends Loot {
 
     @Override
     public boolean collect (InventoryEntity entity) {
-        return Collectible.defaultCollect(entity.inventory(), this);
+        return defaultCollect(entity.inventory(), this);
     }
 
     @Override

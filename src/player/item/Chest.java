@@ -46,12 +46,12 @@ public abstract class Chest extends Loot {
 
     @Override
     public boolean collect (Player activePlayer) {
-        return Collectible.defaultCollect(activePlayer.inventory(), this);
+        return defaultCollect(activePlayer.inventory(), this);
     }
 
     @Override
     public boolean collect (Bot activeBot) {
-        return Collectible.defaultCollect(activeBot.inventory(), this);
+        return defaultCollect(activeBot.inventory(), this);
     }
 
     @Override

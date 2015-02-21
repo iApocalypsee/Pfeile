@@ -314,11 +314,11 @@ public class ArrowSelectionScreen extends Screen {
 	@Override
 	public void keyDown (KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-			onLeavingScreen(this, PauseScreen.SCREEN_INDEX);
+			onLeavingScreen(PauseScreen.SCREEN_INDEX);
 		}
         // "abbrechen" --> KeyEvent.VK_A
 		if (e.getKeyCode() == KeyEvent.VK_A) {
-			onLeavingScreen(this, GameScreen.SCREEN_INDEX);
+			onLeavingScreen(GameScreen.SCREEN_INDEX);
 		}
 	}
 
@@ -366,14 +366,14 @@ public class ArrowSelectionScreen extends Screen {
 				selectedIndex = ShadowArrow.class;
 			}
 			if (cancelButton.getBounds().contains(e.getPoint())) {
-				onLeavingScreen(this, GameScreen.SCREEN_INDEX);
+				onLeavingScreen(GameScreen.SCREEN_INDEX);
 			} 
 			if (confirmButton.getBounds().contains(e.getPoint())) {
 				if (!selectedArrowBox.getEnteredText().equals(selectedArrowBox.getStdText())) {
                     for (int i = 0; i < inventory.currentSize(); i++) {
                         if (inventory.javaItems().get(i).getClass() == ArrowHelper.reformArrow(selectedArrowBox.getEnteredText())) {
                             selectedIndex = ArrowHelper.reformArrow(selectedArrowBox.getEnteredText());
-	                        onLeavingScreen(this, AimSelectionScreen.SCREEN_INDEX);
+	                        onLeavingScreen(AimSelectionScreen.SCREEN_INDEX);
 	                        break;
                         }
                     }

@@ -112,7 +112,7 @@ public class GameScreen extends Screen implements FrameContainer {
 		shootButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				onLeavingScreen(this, ArrowSelectionScreen.SCREEN_INDEX);
+				onLeavingScreen(ArrowSelectionScreen.SCREEN_INDEX);
 			}
 		});
 
@@ -160,10 +160,10 @@ public class GameScreen extends Screen implements FrameContainer {
 		super.keyDown(e);
 		switch(e.getKeyCode()) {
 			case KeyEvent.VK_ESCAPE:
-				onLeavingScreen(this, PauseScreen.SCREEN_INDEX);
+				onLeavingScreen(PauseScreen.SCREEN_INDEX);
 				break;
 			case KeyEvent.VK_S:
-				onLeavingScreen(this, ArrowSelectionScreen.SCREEN_INDEX);
+				onLeavingScreen(ArrowSelectionScreen.SCREEN_INDEX);
 				break;
 			case KeyEvent.VK_E:
 				Main.getContext().turnSystem().increment();
@@ -174,12 +174,11 @@ public class GameScreen extends Screen implements FrameContainer {
 			case KeyEvent.VK_PAGE_DOWN:
 				map.zoom(0.95f);
 				break;
+            case KeyEvent.VK_I:
+                onLeavingScreen(InventoryScreen.SCREEN_INDEX);
             // FIXME: remove this later
             case KeyEvent.VK_SPACE:
-                if (Main.getContext().getActivePlayer().life().getLife() - 20 < 0)
-                    Main.getContext().getActivePlayer().life().setLife(0);
-                else
-                    Main.getContext().getActivePlayer().life().setLife(Main.getContext().getActivePlayer().life().getLife() - 20);
+                Main.getContext().getActivePlayer().life().changeLife(-20);
 		}
 	}
 

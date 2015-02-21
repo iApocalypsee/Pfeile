@@ -31,7 +31,7 @@ public class MainMenuScreen extends Screen {
 		sp.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
-				onLeavingScreen(this, ArrowSelectionScreen.SCREEN_INDEX);
+				onLeavingScreen(ArrowSelectionScreen.SCREEN_INDEX);
 			}
 		});
 		

@@ -362,9 +362,9 @@ public class PreWindowScreen extends Screen {
 
         // If there aren't any {@link PfeileContext.ARROW_NUMBER_PRE_SET()} to set, the LoadingWorldScreen can be loaded */
         if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > 0)
-            onLeavingScreen(this, ArrowSelectionScreenPreSet.SCREEN_INDEX);
+            onLeavingScreen(ArrowSelectionScreenPreSet.SCREEN_INDEX);
         else
-            onLeavingScreen(this, LoadingWorldScreen$.MODULE$.SCREEN_INDEX);
+            onLeavingScreen(LoadingWorldScreen$.MODULE$.SCREEN_INDEX);
     }
 
     /** this method triggers the action which is produced by standardButton ("Standardeinstellungen") or pressing "s" */

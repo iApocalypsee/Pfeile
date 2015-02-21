@@ -51,7 +51,7 @@ public interface Collectible {
      * @see player.item.Collectible#collect(newent.Bot)
      * @see player.item.Collectible#collect(newent.InventoryEntity)
      */
-    static boolean defaultCollect (InventoryLike inventory, Loot loot) {
+    default boolean defaultCollect (InventoryLike inventory, Loot loot) {
         // controlling if the inventory is full, is already done by "put(this)".
         if (inventory.currentSize() + loot.getStoredItems().size() <= inventory.maximumSize()) {
 

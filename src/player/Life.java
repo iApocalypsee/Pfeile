@@ -89,13 +89,35 @@ public class Life {
 	}
 
 	/** SETTER: set 'life'. If the <code>newLife</code> is higher than the <code>getMaxLife()</code> the life is set
-     * to maxLife*/
+     * to maxLife. If the life is below <code>0</code>, the life will be 0.
+     *
+     * @param newLife the absolute number of the life
+     * @see player.Life#changeLife(double)
+     * */
 	public void setLife(double newLife) {
         if (newLife > lifeMax)
             newLife = lifeMax;
+        else if (newLife < 0)
+            newLife = 0;
         life = newLife;
 		onLifeChanged.call(new LifeChangedEvent(newLife));
 	}
+
+    /**
+     * <code>life = life + changeOfLife</code>. The absolute change of life. If the sum is below <code>0</code>, the life
+     * is 0; if the sum is higher than <code>getMaxLife()</code>, the life will be the maximum life.
+     *
+     * @param changeOfLife the delta value of the change of life
+     * @see player.Life#setLife(double)
+     */
+    public void changeLife (double changeOfLife) {
+        life = life + changeOfLife;
+        if (life < 0)
+            life = 0;
+        else if (life > lifeMax)
+            life = lifeMax;
+        onLifeChanged.call(new LifeChangedEvent(life));
+    }
 
 	/**
 	 * Fired when the life has been changed. <p></p>

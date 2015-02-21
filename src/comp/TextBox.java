@@ -170,8 +170,8 @@ public class TextBox extends Component {
 	}
 
 	/** setzt, ob das Rechteck rund ist oder nicht */
-	public void setRoundBorder(boolean isRoundRect) {
-		getBorder().setRoundedBorder(isRoundRect);
+	public void setRoundBorder(boolean isRound) {
+		getBorder().setRoundedBorder(isRound);
 	}
 	
 	/** gibt zur�ck, ob das Rechteck (Border) das gezeichnet werden soll, rund ist oder nicht */

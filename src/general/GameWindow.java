@@ -82,7 +82,7 @@ public class GameWindow extends JFrame {
         ArrowSelectionScreen.getInstance();
         ArrowSelectionScreenPreSet.getInstance();
         new GameOverScreen();
-		// NewWorldTestScreen$.MODULE$;
+        new InventoryScreen();
         screenManager.setActiveScreen(new PreWindowScreen());
 	}
 
