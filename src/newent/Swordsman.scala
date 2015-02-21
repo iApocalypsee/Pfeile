@@ -17,7 +17,7 @@ import world.{ SeaTile, WorldLike }
   * @param team The team to which it should belong.
   */
 class Swordsman(world: WorldLike, spawnPosition: Point, team: Team)
-  extends Entity(world, spawnPosition, null) with LivingEntity with VisionEntity with MoveableEntity with Combatant {
+  extends Entity(world, spawnPosition, null) with LivingEntity with VisionEntity with MovableEntity with Combatant {
 
   override val life = new Life(90, 0, 90)
 

@@ -1,30 +1,27 @@
 package player.item.potion;
 
+import general.LogFacility;
 import general.Main;
-import newent.InventoryLike;
 import player.Life;
-import player.item.Item;
-import player.item.Loot;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.List;
 
 /**
- * a potion healing <code>25 * level</code> life.
+ * a potion healing <code>10 * level + (10% * level) of life.getMaximumLife()</code> life.
  */
 public class PotionOfHealing extends Potion {
 
     private static BufferedImage image;
 
     static {
+        String path = "resources/gfx/item textures/potion textures/potionOfHealing.png";
         try {
-            image = ImageIO.read(PotionOfHealing.class.getClassLoader().getResourceAsStream(
-                    "resources/gfx/item textures/potion textures/potionOfHealing.png"));
+            image = ImageIO.read(PotionOfHealing.class.getClassLoader().getResourceAsStream(path));
         } catch (IOException e) {
             e.printStackTrace();
+            LogFacility.log("Image of PotionOfHealing could not be loaded: " + path);
         }
     }
 
@@ -33,7 +30,7 @@ public class PotionOfHealing extends Potion {
      */
     public PotionOfHealing () {
         super("Potion of Healing");
-        getPotionUI().createComponent(image);
+        potionUI.createComponent(image);
     }
 
     /**
@@ -48,7 +45,7 @@ public class PotionOfHealing extends Potion {
     @Override
     public void triggerEffect () {
         Life life = Main.getContext().getActivePlayer().getLife();
-        life.setLife(life.getLife() + 25 * level);
+        life.setLife(life.getLife() + 10 * level + life.getMaxLife() * 0.1 * level);
         // after using the potion is should be removed at all.
         remove();
     }

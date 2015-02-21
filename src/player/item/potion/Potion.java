@@ -20,7 +20,7 @@ public abstract class Potion extends Item implements Drawable {
     protected PotionUI potionUI;
 
     /**
-     * The level of the potion: 1, 2 or 3.
+     * The level (effectiveness) of the potion: 1, 2 or 3.
      */
     protected byte level;
 
@@ -109,6 +109,6 @@ public abstract class Potion extends Item implements Drawable {
 
     @Override
     public String toString () {
-        return getName();
+        return getName() + "[Level: " + level + "]";
     }
 }

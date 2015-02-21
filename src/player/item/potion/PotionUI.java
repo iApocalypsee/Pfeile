@@ -18,6 +18,8 @@ public class PotionUI implements Drawable {
     /**
      * Creates a new PotionUI without specified BufferedImage, so a default BufferedImage as place-keeper is used.
      * The visible value is <code>false</code> by default.
+     * <b>Use {@link player.item.potion.PotionUI#createComponent(java.awt.image.BufferedImage)} or
+     * {@link player.item.potion.PotionUI#createComponent(java.awt.image.BufferedImage, int, int)} to add an BufferedImage</b>
      *
      * @see player.item.potion.PotionUI#PotionUI(java.awt.image.BufferedImage)
      */
@@ -60,6 +62,14 @@ public class PotionUI implements Drawable {
      */
     public void createComponent (BufferedImage image, int posX, int posY) {
         component = new ImageComponent(posX, posY, image, GameScreen.getInstance());
+    }
+
+    /** the component of the PotionUI. Use it for example to change the x and y position of the component.
+     *
+     * @return the imageComponent, which is created with default values or after <code>createComponent(...)</code> is called.
+     */
+    public ImageComponent getComponent () {
+        return component;
     }
 
     /**

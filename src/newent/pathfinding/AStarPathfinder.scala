@@ -1,6 +1,6 @@
 package newent.pathfinding
 
-import newent.MoveableEntity
+import newent.MovableEntity
 import world.TileLike
 
 import scala.annotation.tailrec
@@ -23,7 +23,7 @@ class AStarPathfinder(val maxSearchDepth: Int, val excludes: (TileLike) => Boole
     * @param ty The target y position.
     * @return An optional path.
     */
-  override def findPath(moveable: MoveableEntity, tx: Int, ty: Int): Option[Path] = {
+  override def findPath(moveable: MovableEntity, tx: Int, ty: Int): Option[Path] = {
 
     import scala.util.control.Breaks.{break, breakable}
 

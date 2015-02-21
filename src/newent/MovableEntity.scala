@@ -6,9 +6,9 @@ import newent.pathfinding.{Path, Pathfinder}
 import scala.util.control.Breaks._
 
 /** Represents an entity that can move. */
-trait MoveableEntity extends Entity with StatisticalEntity {
+trait MovableEntity extends Entity with StatisticalEntity {
 
-  /** The pathfinder for the moveable entity. */
+  /** The pathfinder for the movable entity. */
   val pathfinderLogic: Pathfinder
 
   /** The default movement points that the entity has. */
@@ -21,6 +21,20 @@ trait MoveableEntity extends Entity with StatisticalEntity {
 
   /** The current movement points the entity has left in this turn. */
   def currentMovementPoints = _currentMovementPoints
+
+   /** Adding new movementPoints to the currentMovementPoints.
+     *  If <code>additionalMovementPoints + currentMovementPoints() < 0</code>, the currentMovementPoints() is set to <code>0</code>.
+     *  Only the current number of movement points is changed, so at the end of the turn the number is set to
+     *  <code>defaultMovementPoints()</code> again.
+     *
+     * @param additionalMovementPoints the number with which the <code>currentMovementPoints()</code> should be increased
+     */
+  def addMovementPoints (additionalMovementPoints: Byte) = {
+      if (_currentMovementPoints + additionalMovementPoints < 0)
+         _currentMovementPoints = 0
+      else
+         _currentMovementPoints = _currentMovementPoints + additionalMovementPoints
+  }
 
   /** Moves the entity.
     *

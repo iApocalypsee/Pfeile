@@ -13,7 +13,7 @@ import world.WorldLike
   * The KI is not implemented as a intelligent KI. It is just a basic construct, that is similar to the Player class.
   */
 class Bot(world: WorldLike, spawnPoint: Point, name: String)
-    extends Entity(world, spawnPoint, name) with MoveableEntity with TeleportableEntity with InventoryEntity with LivingEntity with VisionEntity with Combatant with IntelligentArrowSelectionBot {
+    extends Entity(world, spawnPoint, name) with MovableEntity with TeleportableEntity with InventoryEntity with LivingEntity with VisionEntity with Combatant with IntelligentArrowSelectionBot {
 
   /**
     * The component that the representable object uses first. Method is called only once.

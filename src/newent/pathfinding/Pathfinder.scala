@@ -1,6 +1,6 @@
 package newent.pathfinding
 
-import newent.MoveableEntity
+import newent.MovableEntity
 
 /**
  *
@@ -15,6 +15,6 @@ trait Pathfinder {
     * @param ty The target y position.
     * @return An optional path.
     */
-  def findPath(moveable: MoveableEntity, tx: Int, ty: Int): Option[Path]
+  def findPath(moveable: MovableEntity, tx: Int, ty: Int): Option[Path]
 
 }
