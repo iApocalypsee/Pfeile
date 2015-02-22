@@ -205,8 +205,8 @@ public class ArrowSelectionScreen extends Screen {
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     if (Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().get() > 0) {
-                        final InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
-                        if (!inventory.put(ArrowHelper.instanceArrow(selectedIndex))) {
+                        if (!(ArrowHelper.instanceArrow(selectedIndex).equip())) {
+                            final InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
                             if (inventory.maximumSize() - inventory.currentSize() <= 0) {
                                 warningMessage = "Das Inventar ist voll: Maximale Inventargröße " + inventory.maximumSize();
                             } else if (Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().get() <= 0){

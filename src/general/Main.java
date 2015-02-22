@@ -208,14 +208,14 @@ public class Main {
     // #########################################################
 
     /**
-     * Fuegt die Pfeile in das Inventar des Spielers ein
+     * Puts all selected arrows from <code>ArrowSelectionScreenPreSet.getInstance()</code> to the inventory of the
+     * Player by calling {@link player.weapon.Weapon#equip()}.
      */
     private void doArrowSelectionAddingArrows() {
         final ArrowSelectionScreenPreSet arrowSelection = ArrowSelectionScreenPreSet.getInstance();
 
         for (String selectedArrow : arrowSelection.selectedArrows) {
-            if (!Main.getContext().getActivePlayer().inventory().put(
-		            ArrowHelper.instanceArrow(selectedArrow)))
+            if (!ArrowHelper.instanceArrow(selectedArrow).equip())
                 System.err.println("Cannot add " + selectedArrow + " at Main.doArrowSelectionAddingArrows() - adding the arrowNumberPreSet");
         }
     }

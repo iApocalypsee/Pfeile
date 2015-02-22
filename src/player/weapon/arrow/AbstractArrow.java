@@ -7,6 +7,7 @@ import general.PfeileContext;
 import geom.functions.FunctionCollection;
 import gui.FrameContainerObject;
 import gui.screen.GameScreen;
+import newent.Player;
 import player.BoardPositionable;
 import player.weapon.RangedWeapon;
 import scala.runtime.AbstractFunction0;
@@ -88,6 +89,7 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 		setDamageLosingRate(damageLosingRate);
 		setSpeed(speed);
         getAim().setDamageRadius(damageRadius);
+
 		component = new ImageComponent(0, 0, getImage(), GameScreen.getInstance());
 		component.addMouseListener(new MouseAdapter() {
 			@Override
@@ -200,6 +202,11 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 
     /** this returns the Component of an Arrow. */
     public ImageComponent getComponent () { return component; }
+
+    @Override
+    public boolean equip (Player entity) {
+        return entity.inventory().put(this);
+    }
 
     @Override
     public double damageAt (int posX, int posY) {

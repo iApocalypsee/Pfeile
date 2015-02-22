@@ -82,6 +82,8 @@ public class Border implements Drawable {
 		na = Color.darkGray;
 		recalcHover();
 		stroke = new BasicStroke(2);
+        arcHeight = 3;
+        arcWidth = 4;
 	}
 	
 	public Color getOuterColor() {

@@ -47,7 +47,7 @@ public class GameScreen extends Screen implements FrameContainer {
 
 	private Button endTurnButton;
 	private Button shootButton;
-	private Button toggleStopwatch;
+	private Button inventoryButton;
 
 	private VisualMap map = null;
     private final AttackDrawer attackDrawer = new AttackDrawer();
@@ -88,16 +88,14 @@ public class GameScreen extends Screen implements FrameContainer {
 		// Initialisierung der Buttons
 		endTurnButton = new Button(30, Main.getWindowHeight() - 50, this,
 				"End turn");
-		shootButton = new Button(endTurnButton.getX()
-				+ endTurnButton.getWidth() + 20, Main.getWindowHeight() - 50,
-				this, "Shoot");
-		toggleStopwatch = new Button(endTurnButton.getX() + endTurnButton.getWidth()
-				+ shootButton.getX() + shootButton.getWidth() + 20,
-				Main.getWindowHeight() - 50, this, "Stopwatch");
+		shootButton = new Button(endTurnButton.getX() + endTurnButton.getWidth() + 20,
+                endTurnButton.getY(), this, "Shoot");
+		inventoryButton = new Button(shootButton.getX() + shootButton.getWidth() + 20,
+				shootButton.getY(), this, "Inventar");
 
 		endTurnButton.setName("End turn button");
 		shootButton.setName("Shoot button");
-		toggleStopwatch.setName("Stopwatch button");
+		inventoryButton.setName("Inventory button");
 
 
 		endTurnButton.addMouseListener(new MouseAdapter() {
@@ -116,20 +114,12 @@ public class GameScreen extends Screen implements FrameContainer {
 			}
 		});
 
-		toggleStopwatch.addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-//				if(toggleStopwatch.getBounds().contains(e.getPoint())) {
-				if(Main.getContext().getTimeClock().isRunning()) {
-					Main.getContext().getTimeClock().stop();
-				} else {
-					Main.getContext().getTimeClock().start();
-				}
-				System.out.println("Toggled stopwatch to " + Main.getContext().getTimeClock().isRunning());
-//				}
-			}
-		});
+		inventoryButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased (MouseEvent e) {
+                onLeavingScreen(InventoryScreen.SCREEN_INDEX);
+            }
+        });
 	}
 
 	@Override
@@ -147,7 +137,7 @@ public class GameScreen extends Screen implements FrameContainer {
 		// Zeichnet die Welt und den UserInterface, der den Player dargestellt
 		endTurnButton.draw(g);
 		shootButton.draw(g);
-		toggleStopwatch.draw(g);
+		inventoryButton.draw(g);
 		Main.getContext().getActivePlayer().drawLifeUI(g);
 
 		frameContainerObject.drawFrames(g);
@@ -176,6 +166,8 @@ public class GameScreen extends Screen implements FrameContainer {
 				break;
             case KeyEvent.VK_I:
                 onLeavingScreen(InventoryScreen.SCREEN_INDEX);
+                break;
+
             // FIXME: remove this later
             case KeyEvent.VK_SPACE:
                 Main.getContext().getActivePlayer().life().changeLife(-20);
@@ -185,13 +177,13 @@ public class GameScreen extends Screen implements FrameContainer {
     public void lockUI() {
 		endTurnButton.declineInput();
 		shootButton.declineInput();
-		toggleStopwatch.declineInput();
+		inventoryButton.declineInput();
 	}
 	
 	public void releaseUI() {
 		endTurnButton.acceptInput();
 		shootButton.acceptInput();
-		toggleStopwatch.acceptInput();
+		inventoryButton.acceptInput();
 	}
 
 	public VisualMap getMap() {

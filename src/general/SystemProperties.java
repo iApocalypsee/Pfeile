@@ -36,8 +36,7 @@ public class SystemProperties {
     public static String getComputerName () {
         String hostName = "Unknown";
         try {
-            InetAddress localHost = InetAddress.getLocalHost();
-            hostName = localHost.getHostName();
+            hostName = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException ex) {
             ex.printStackTrace();
         }

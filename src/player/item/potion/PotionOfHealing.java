@@ -43,10 +43,10 @@ public class PotionOfHealing extends Potion {
     }
 
     @Override
-    public void triggerEffect () {
+    public boolean triggerEffect () {
         Life life = Main.getContext().getActivePlayer().getLife();
         life.setLife(life.getLife() + 10 * level + life.getMaxLife() * 0.1 * level);
         // after using the potion is should be removed at all.
-        remove();
+        return remove();
     }
 }

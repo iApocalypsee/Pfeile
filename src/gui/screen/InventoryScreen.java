@@ -7,7 +7,9 @@ import general.JavaInterop;
 import general.Main;
 import newent.InventoryLike;
 import player.item.Item;
-import player.weapon.arrow.ArrowHelper;
+import player.item.potion.Potion;
+import player.weapon.Weapon;
+import player.weapon.arrow.AbstractArrow;
 import scala.Function1;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;
@@ -53,7 +55,7 @@ public class InventoryScreen extends Screen {
         java.util.List<String> itemList = new ArrayList<>(2);
         itemList.add("<keine Items>");
 
-        inventoryList = new List(50, 50, 150, 400, this, itemList);
+        inventoryList = new List(50, 70, 150, 300, this, itemList);
 
         cancelButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 180, this, "Abbrechen");
 
@@ -63,7 +65,10 @@ public class InventoryScreen extends Screen {
         inventoryList.setVisible(true);
 
         Function1<Integer, Object> listSelectCallback = JavaInterop.asScalaFunction((Integer selectedIndex) -> {
-            selectedItem.setEnteredText(getItems().get(selectedIndex));
+            String selectedName = getItems().get(selectedIndex);
+            if (selectedName.equals("<keine Items>"))
+                selectedName = "<Item auswählen>";
+            selectedItem.setEnteredText(selectedName);
             return BoxedUnit.UNIT;
         });
 
@@ -81,7 +86,25 @@ public class InventoryScreen extends Screen {
         confirmButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased (MouseEvent e) {
-                // TODO trigger the effect
+                // if nothing is selected yet, you don't need to trigger the rest
+                if (selectedItem.getEnteredText().equals(selectedItem.getStdText()))
+                    return;
+
+                InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
+                for (Item item : inventory.javaItems()) {
+                    if (selectedItem.getEnteredText().equals(item.getName())) {
+                        if (item instanceof Potion) {
+                            Potion potion = (Potion) item;
+                            potion.triggerEffect();
+
+                        } else if (item instanceof Weapon) {
+                            Weapon weapon = (Weapon) item;
+                            weapon.equip();
+                        }
+                        break;
+                    }
+                }
+
                 onLeavingScreen(GameScreen.SCREEN_INDEX);
             }
         });
@@ -110,7 +133,7 @@ public class InventoryScreen extends Screen {
         InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
         // filtering the inventory: only items, which aren't arrows should be added.
         for(Item item : inventory.javaItems()) {
-            if (ArrowHelper.arrowNameToIndex(item.getName()) == -1)
+            if (!(item instanceof AbstractArrow))
                 itemList.add(item.getName());
         }
         if (itemList.size() == 0)

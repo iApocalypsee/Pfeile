@@ -42,10 +42,10 @@ public class PotionOfMovement extends Potion {
     }
 
     @Override
-    public void triggerEffect () {
+    public boolean triggerEffect () {
         Main.getContext().getActivePlayer().addMovementPoints((byte) (level * 5));
 
         // removing the potion after the effect has been triggered.
-        remove();
+        return remove();
     }
 }

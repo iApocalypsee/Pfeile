@@ -1,5 +1,7 @@
 package animation;
 
+import general.LogFacility;
+
 import javax.sound.sampled.Clip;
 
 /** This class supports the playing of sounds. All Methods are public and static. Note, that the isPlaying...() methods

@@ -44,9 +44,11 @@ public abstract class Potion extends Item implements Drawable {
     }
 
     /**
-     * trigger the effects from the Potion
+     * trigger the effects from the Potion and finally <b>removes the Potions with {@link Potion#remove()}</b>.
+     *
+     * @return <code>true</code> - if the potion could be removed (return type of <code>potion.remove()</code>
      */
-    public abstract void triggerEffect ();
+    public abstract boolean triggerEffect ();
 
     /**
      * Removes the potion from the inventory or from the loot by searching the inventory of
