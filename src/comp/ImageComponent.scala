@@ -31,6 +31,15 @@ class ImageComponent(x: Int, y: Int, image: BufferedImage, screen: Screen) exten
   /** the rotation of this ImageComponent in Radians. To set this value use <code>rotateRadians</code> or <code>rotateDegree</code>.*/
   def getRotation = getTransformation.rotation
 
+   /**
+    * getting the image of the ImageComponent by this <code>synchronized</code> method. So only use it, if you can't avoid it.
+    *
+    * @return the image of the ImageComponent
+    */
+  def getBufferedImage: BufferedImage = synchronized {
+      image
+  }
+
   override def draw(g: Graphics2D): Unit = {
     val oldTransformation = g.getTransform
     val src_s = getSourceShape.getBounds

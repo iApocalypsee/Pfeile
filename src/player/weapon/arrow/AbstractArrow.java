@@ -3,12 +3,14 @@ package player.weapon.arrow;
 import comp.ImageComponent;
 import comp.InternalFrame;
 import comp.Label;
+import general.Main;
 import general.PfeileContext;
 import geom.functions.FunctionCollection;
 import gui.FrameContainerObject;
 import gui.screen.GameScreen;
-import newent.Player;
+import newent.Combatant;
 import player.BoardPositionable;
+import player.item.EquippableItem;
 import player.weapon.RangedWeapon;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;
@@ -203,9 +205,17 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
     /** this returns the Component of an Arrow. */
     public ImageComponent getComponent () { return component; }
 
+
+
     @Override
-    public boolean equip (Player entity) {
-        return entity.inventory().put(this);
+    public boolean equip (Combatant combatant) {
+        // no Combatant is able to shoot with arrow, only with players
+        return false;
+    }
+
+    @Override
+    public boolean equip () {
+        return Main.getContext().getActivePlayer().inventory().put(this);
     }
 
     @Override
@@ -231,8 +241,4 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
         component.rotateDegree(Math.toDegrees(FunctionCollection.angle(
                 getComponent().getPreciseRectangle().getCenterX(), getComponent().getPreciseRectangle().getCenterY(), getAim().getPosXGui(), getAim().getPosYGui())));
     }
-
-    /** returns the BufferedImage of this arrow.
-	 * @see <code> ArrowHelper.getArrowImage(int selectedIndex) </code> */
-	public abstract BufferedImage getImage();
 }

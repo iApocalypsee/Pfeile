@@ -6,6 +6,9 @@ import java.awt.image.BufferedImage;
 
 public class ImageHelper {
 
+    /** Don't instance it */
+    private ImageHelper () {}
+
     /**
      * Converts a given Image into a BufferedImage. Usually it should work with casting, but in some cases, it may cause
      * RuntimeExceptions. So use this method.

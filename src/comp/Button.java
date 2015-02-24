@@ -30,7 +30,7 @@ public class Button extends Component {
 
 	public Button(int x, int y, Screen backing, String text) {
 		super(x, y, Component.getTextBounds(text, Component.STD_FONT).width + 50,
-				Component.getTextBounds(text, Component.STD_FONT).height + 20,
+				Component.getTextBounds(text, Component.STD_FONT).height + 25,
 				backing);
 		this.text = text;
 	}

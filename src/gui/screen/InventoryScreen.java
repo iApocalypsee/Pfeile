@@ -2,10 +2,10 @@ package gui.screen;
 
 import comp.Button;
 import comp.List;
-import comp.TextBox;
 import general.JavaInterop;
 import general.Main;
 import newent.InventoryLike;
+import player.item.EquippableItem;
 import player.item.Item;
 import player.item.potion.Potion;
 import player.weapon.Weapon;
@@ -39,7 +39,7 @@ public class InventoryScreen extends Screen {
     private Button cancelButton;
 
     /** The name of the selected item is shown here */
-    private TextBox selectedItem;
+    private Button selectedItem;
 
     /**
      * Creates a new Instance of {@link gui.screen.InventoryScreen}.
@@ -47,7 +47,7 @@ public class InventoryScreen extends Screen {
     public InventoryScreen () {
         super(SCREEN_NAME, SCREEN_INDEX);
 
-        selectedItem = new TextBox(Main.getWindowWidth() - 300, Main.getWindowHeight() - 500, "<Item auswählen>", this);
+        selectedItem = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 400, this, "<Item auswählen>");
         selectedItem.declineInput();
         selectedItem.setRoundBorder(true);
 
@@ -57,7 +57,7 @@ public class InventoryScreen extends Screen {
 
         inventoryList = new List(50, 70, 150, 300, this, itemList);
 
-        cancelButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 180, this, "Abbrechen");
+        cancelButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 200, this, "Abbrechen");
 
         confirmButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 350, this, "Bestätigen");
 
@@ -68,7 +68,22 @@ public class InventoryScreen extends Screen {
             String selectedName = getItems().get(selectedIndex);
             if (selectedName.equals("<keine Items>"))
                 selectedName = "<Item auswählen>";
-            selectedItem.setEnteredText(selectedName);
+            selectedItem.setText(selectedName);
+
+            InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
+            for (Item item : inventory.javaItems()) {
+                if (selectedItem.getText().equals(item.getName())) {
+                    if (item instanceof Potion) {
+                        Potion potion = (Potion) item;
+                        selectedItem.iconify(potion.getPotionUI().getComponent().getBufferedImage());
+
+                    } else if (item instanceof EquippableItem) {
+                        EquippableItem equippableItem = (EquippableItem) item;
+                        selectedItem.iconify(equippableItem.getImage());
+                    }
+                    break;
+                }
+            }
             return BoxedUnit.UNIT;
         });
 
@@ -87,12 +102,12 @@ public class InventoryScreen extends Screen {
             @Override
             public void mouseReleased (MouseEvent e) {
                 // if nothing is selected yet, you don't need to trigger the rest
-                if (selectedItem.getEnteredText().equals(selectedItem.getStdText()))
+                if (selectedItem.getText().equals("<Item auswählen>"))
                     return;
 
                 InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
                 for (Item item : inventory.javaItems()) {
-                    if (selectedItem.getEnteredText().equals(item.getName())) {
+                    if (selectedItem.getText().equals(item.getName())) {
                         if (item instanceof Potion) {
                             Potion potion = (Potion) item;
                             potion.triggerEffect();
@@ -104,7 +119,6 @@ public class InventoryScreen extends Screen {
                         break;
                     }
                 }
-
                 onLeavingScreen(GameScreen.SCREEN_INDEX);
             }
         });
@@ -114,7 +128,8 @@ public class InventoryScreen extends Screen {
             public BoxedUnit apply () {
                 inventoryList = new List(inventoryList.getX(), inventoryList.getY(), inventoryList.getWidth(), inventoryList.getHeight(),
                             InventoryScreen.this, getItems());
-                selectedItem.setEnteredText(selectedItem.getStdText());
+                selectedItem.setText("<Item auswählen>");
+                selectedItem.iconify(null);
 
                 return BoxedUnit.UNIT;
             }
