@@ -1,7 +1,9 @@
 package gui.screen;
 
 import animation.AnimatedLine;
+import comp.*;
 import comp.Button;
+import comp.Component;
 import general.Main;
 import general.PfeileContext;
 import gui.Drawable;
@@ -49,9 +51,7 @@ public class AimSelectionScreen extends Screen {
 	private Button confirm;
 	
 	// These are only for the warning Message
-	private String warningMessage = "";
-	private float transparencyWarningMessage = 0;
-	private Point positionWarningMessage = new Point (40, Main.getWindowHeight() - 105);
+    private WarningMessage warningMessage;
 
     /** the animated line from the player to the aim */
     private AnimatedLine animatedLine;
@@ -64,9 +64,6 @@ public class AimSelectionScreen extends Screen {
 
     /** To draw the line of the damageRadius bigger than 1px, set the value of this basicStroke. Right now, it's 2.5f.*/
     private BasicStroke strokeOvalDamageRadius;
-
-    /** this is the font of the warning message. It's saved here for speeding up the draw method. */
-    private static final Font fontWarningMessage = new Font(comp.Component.STD_FONT.getFontName(), Font.BOLD, 26);
 	
 	/** Konstrucktor von AimSelectionScreen: ruft super(...) auf und setzt die Variabelnwerte nach der Initialisierung; start den thread of <code> FieldSelector </code> */
 	public AimSelectionScreen() {
@@ -83,6 +80,9 @@ public class AimSelectionScreen extends Screen {
         boundsOvalDamageRadius = new Rectangle (0, 0, 0, 0);
         strokeOvalDamageRadius = new BasicStroke(2.5f);
 
+        warningMessage = new WarningMessage("", 40, Main.getWindowHeight() - 105, this);
+        warningMessage.setFont(warningMessage.getFont().deriveFont(Component.STD_FONT.getSize2D() * 2));
+
         fieldContainer = new FieldContainer();
 
         onScreenEnter.register(new AbstractFunction0<BoxedUnit>() {
@@ -96,7 +96,7 @@ public class AimSelectionScreen extends Screen {
                 animatedLine.setStartX((int) Main.getContext().getActivePlayer().getComponent().getBounds().getBounds().getCenterX());
                 animatedLine.setStartY((int) Main.getContext().getActivePlayer().getComponent().getBounds().getBounds().getCenterY());
                 animatedLine.setColor(ArrowHelper.getUnifiedColor(ArrowSelectionScreen.getInstance().getSelectedIndex()));
-                transparencyWarningMessage = 0.0f;
+                warningMessage.setTransparency(0);
 
                 // a new Rectangle for a new arrow, because of different damageRadius
                 boundsOvalDamageRadius = new Rectangle(boundsOvalDamageRadius.x, boundsOvalDamageRadius.y,
@@ -129,8 +129,8 @@ public class AimSelectionScreen extends Screen {
 
     private void triggerConfirmButton () {
         if (posX_selectedField == -1|| posY_selectedField == -1) {
-            warningMessage = "Kein Zielfeld ausgewählt";
-            transparencyWarningMessage = 1f;
+            warningMessage.setMessage("Kein Zielfeld ausgewählt");
+            warningMessage.activateMessage();
         } else {
             // deliver the attack message to the specified tile
             // assuming that the thread is done updating the values
@@ -138,8 +138,6 @@ public class AimSelectionScreen extends Screen {
             msg.setDaemon(true);
             msg.setPriority(4);
             msg.start();
-
-            transparencyWarningMessage = 1f;
 
             onLeavingScreen(ArrowSelectionScreen.SCREEN_INDEX);
         }
@@ -201,8 +199,8 @@ public class AimSelectionScreen extends Screen {
 		                // reveal that tile yet. That's why it's called Fog of War...
 		                return;
 	                } if(playerX == tileWrapper.latticeX() && playerY == tileWrapper.latticeY()) {
-                        warningMessage = "Selbstangriff nicht möglich!";
-                        transparencyWarningMessage = 1f;
+                        warningMessage.setMessage("Selbstangriff nicht möglich!");
+                        warningMessage.activateMessage();
                     } else {
 		                posX_selectedField = tileX;
 		                posY_selectedField = tileY;
@@ -399,14 +397,6 @@ public class AimSelectionScreen extends Screen {
         confirm.draw(g);
 
         // Finally, draw the waringMessage
-        if (transparencyWarningMessage > 0) {
-            g.setColor(new Color(1f, 0f, 0f, transparencyWarningMessage));
-            g.setFont(fontWarningMessage);
-            g.drawString(warningMessage, positionWarningMessage.x, positionWarningMessage.y);
-
-            transparencyWarningMessage = transparencyWarningMessage - 0.013f;
-            if (transparencyWarningMessage < 0)
-                transparencyWarningMessage = 0;
-        }
+        warningMessage.draw(g);
     }
 }

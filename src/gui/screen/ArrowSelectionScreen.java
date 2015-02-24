@@ -1,9 +1,8 @@
 package gui.screen;
 
+import comp.*;
 import comp.Button;
 import comp.Component;
-import comp.ConfirmDialog;
-import comp.TextBox;
 import general.JavaInterop;
 import general.Main;
 import general.PfeileContext;
@@ -69,9 +68,6 @@ public class ArrowSelectionScreen extends Screen {
 
 	/** This is when the background need to be darkened. [an Dialog is open] */
 	private static final Color COLOR_IS_CONFIRM_DIALOG_VISIBLE = new Color(0, 0, 0, 0.17f);
-
-	/** the Color of warning message need to be red, bold and it's size need to be doubled (-> size 26/28) */
-	private static final Font FONT_WARNING_MESSAGE = new Font(Component.STD_FONT.getFontName(), Font.BOLD, Component.STD_FONT.getSize() * 2);
 	
 	private comp.List inventoryList;
 	
@@ -83,13 +79,9 @@ public class ArrowSelectionScreen extends Screen {
 
 	private int inventoryList_Height = 210;
 
-	private int inventoryList_Width; 
-	
-	private float transparencyWarningMessage = 0;
-	
-	private Point pointWarningMessage;
-	
-	private String warningMessage = "";
+	private int inventoryList_Width;
+
+    private WarningMessage warningMessage;
 	
 	private ConfirmDialog confirmDialog;
 
@@ -140,7 +132,9 @@ public class ArrowSelectionScreen extends Screen {
             lightArrowButton.iconify(ArrowHelper.getArrowImage(LightArrow.INDEX, 0.8f));
             shadowArrowButton.iconify(ArrowHelper.getArrowImage(ShadowArrow.INDEX, 0.8f));
 
-            pointWarningMessage = new Point(40, Main.getWindowHeight() - 105);
+
+            warningMessage = new WarningMessage("", 40, Main.getWindowHeight() - 105, this);
+            warningMessage.setFont(warningMessage.getFont().deriveFont(Component.STD_FONT.getSize() * 2f));
 
             MouseHandler mListener = new MouseHandler();
 
@@ -208,22 +202,22 @@ public class ArrowSelectionScreen extends Screen {
                         if (!(ArrowHelper.instanceArrow(selectedIndex).equip())) {
                             final InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
                             if (inventory.maximumSize() - inventory.currentSize() <= 0) {
-                                warningMessage = "Das Inventar ist voll: Maximale Inventargröße " + inventory.maximumSize();
+                                warningMessage.setMessage("Das Inventar ist voll: Maximale Inventargröße " + inventory.maximumSize());
                             } else if (Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().get() <= 0){
-                                warningMessage = "Es wurde bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + PfeileContext.ARROW_NUMBER_FREE_SET().get() + "";
+                                warningMessage.setMessage("Es wurde bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + PfeileContext.ARROW_NUMBER_FREE_SET().get());
 
                                 // Es können jetzt beliebig viele Pfeile eines Types ausgewählt werden
                                 // } else if (inventory.maxStack(selectedIndex) >= inventory.getItemCount(selecteddIndex)) {
-                                //    warningMessage = "Das Inventar kann maximal " + inventory.maxStack(selectedIndex) + " " +
-                                //                        selectedIndex.getSimpleName() + " Pfeile aufnehmen";
+                                //    warningMessage.setMessage("Das Inventar kann maximal " + inventory.maxStack(selectedIndex) + " " +
+                                //                        selectedIndex.getSimpleName() + " Pfeile aufnehmen!");
 
                             } else {
                                 System.err.println("Could not add arrow to inventory (with " +
                                         (inventory.maximumSize() - inventory.currentSize()) + " remaining space) arrow index: " + selectedIndex);
-                                warningMessage = "Could not add arrow to inventory (with " +
-                                        (inventory.maximumSize() - inventory.currentSize()) + " remaining space) arrow index: " + selectedIndex;
+                                warningMessage.setMessage("Could not add arrow to inventory (with " +
+                                        (inventory.maximumSize() - inventory.currentSize()) + " remaining space) arrow index: " + selectedIndex);
                             }
-                            transparencyWarningMessage = 1f;
+                            warningMessage.activateMessage();
                         } else {
                             Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().set(Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().get() - 1);
 							// when a new arrow is selected, it is usually also the arrow the user is going to use.
@@ -231,8 +225,8 @@ public class ArrowSelectionScreen extends Screen {
                             updateInventoryList();
                         }
                     } else {
-                        warningMessage = "Es wurde bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + PfeileContext.ARROW_NUMBER_FREE_SET().get();
-                        transparencyWarningMessage = 1f;
+                        warningMessage.setMessage("Es wurde bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + PfeileContext.ARROW_NUMBER_FREE_SET().get());
+                        warningMessage.activateMessage();
                     }
                     closeConfirmDialogQuestion();
                 }
@@ -249,7 +243,7 @@ public class ArrowSelectionScreen extends Screen {
                 @Override
                 public BoxedUnit apply () {
                     updateInventoryList();
-                    transparencyWarningMessage = 0;
+                    warningMessage.setTransparency(0);
                     return BoxedUnit.UNIT;
                 }
             });
@@ -297,16 +291,7 @@ public class ArrowSelectionScreen extends Screen {
 			confirmDialog.draw(g);
 		}
 
-		if (transparencyWarningMessage > 0) {
-			g.setColor(new Color(1f, 0f, 0f, transparencyWarningMessage));
-			g.setFont(FONT_WARNING_MESSAGE);
-			g.drawString(warningMessage, pointWarningMessage.x, pointWarningMessage.y);
-
-			transparencyWarningMessage = transparencyWarningMessage - 0.013f;
-
-			if (transparencyWarningMessage < 0)
-				transparencyWarningMessage = 0;
-		}
+        warningMessage.draw(g);
 	}
 
 	
@@ -378,13 +363,13 @@ public class ArrowSelectionScreen extends Screen {
                         }
                     }
 					if (getManager().getActiveScreen() == ArrowSelectionScreen.getInstance()) {
-						warningMessage = "Kein " + selectedArrowBox.getEnteredText() + " im Inventar.";
-						transparencyWarningMessage = 1f;
+						warningMessage.setMessage("Kein " + selectedArrowBox.getEnteredText() + " im Inventar.");
+						warningMessage.activateMessage();
 					} else
                         return;
 				} else {
-					warningMessage = "Kein Pfeil ausgewählt";
-					transparencyWarningMessage = 1f;
+					warningMessage.setMessage("Kein Pfeil ausgewählt");
+					warningMessage.activateMessage();
 				}				
 			}
 			

@@ -209,7 +209,7 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 
     @Override
     public boolean equip (Combatant combatant) {
-        // no Combatant is able to shoot with arrow, only with players
+        // no Combatant is able to shoot with arrow, only players
         return false;
     }
 

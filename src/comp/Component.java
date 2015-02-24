@@ -143,7 +143,7 @@ public abstract class Component implements IComponent {
 	/** The standard font, which is used if no special font has been set. Use it in Buttons, Lists,... */
 	public static final Font STD_FONT = getSTD_FONT();
 
-	public static final Insets STD_INSETS = new Insets(5, 5, 5, 5);
+	public static final Insets STD_INSETS = new Insets(7, 7, 10, 7);
 
 	/**
 	 * Erstellt eine Component, deren Daten nicht bekannt sind.

@@ -1,6 +1,8 @@
 package gui.screen;
 
+import comp.*;
 import comp.Button;
+import comp.Component;
 import comp.List;
 import general.JavaInterop;
 import general.Main;
@@ -8,7 +10,6 @@ import newent.InventoryLike;
 import player.item.EquippableItem;
 import player.item.Item;
 import player.item.potion.Potion;
-import player.weapon.Weapon;
 import player.weapon.arrow.AbstractArrow;
 import scala.Function1;
 import scala.runtime.AbstractFunction0;
@@ -41,13 +42,16 @@ public class InventoryScreen extends Screen {
     /** The name of the selected item is shown here */
     private Button selectedItem;
 
+    /** The warningMessage which is printed on the screen to say the user something */
+    WarningMessage warningMessage;
+
     /**
      * Creates a new Instance of {@link gui.screen.InventoryScreen}.
      */
     public InventoryScreen () {
         super(SCREEN_NAME, SCREEN_INDEX);
 
-        selectedItem = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 400, this, "<Item auswählen>");
+        selectedItem = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 380, this, "<Item auswählen>");
         selectedItem.declineInput();
         selectedItem.setRoundBorder(true);
 
@@ -57,9 +61,12 @@ public class InventoryScreen extends Screen {
 
         inventoryList = new List(50, 70, 150, 300, this, itemList);
 
-        cancelButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 200, this, "Abbrechen");
+        cancelButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 220, this, "Abbrechen");
 
-        confirmButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 350, this, "Bestätigen");
+        confirmButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 300, this, "Bestätigen");
+
+        warningMessage = new WarningMessage("null", 40, Main.getWindowHeight() - 105, this);
+        warningMessage.setFont(warningMessage.getFont().deriveFont(Component.STD_FONT.getSize2D() * 2));
 
         inventoryList.setRoundBorder(true);
         inventoryList.setVisible(true);
@@ -80,6 +87,9 @@ public class InventoryScreen extends Screen {
                     } else if (item instanceof EquippableItem) {
                         EquippableItem equippableItem = (EquippableItem) item;
                         selectedItem.iconify(equippableItem.getImage());
+                    } else {
+                        warningMessage.setMessage("Das Item " + item.getName() + " wurde nicht gefunden.");
+                        warningMessage.activateMessage();
                     }
                     break;
                 }
@@ -102,19 +112,32 @@ public class InventoryScreen extends Screen {
             @Override
             public void mouseReleased (MouseEvent e) {
                 // if nothing is selected yet, you don't need to trigger the rest
-                if (selectedItem.getText().equals("<Item auswählen>"))
+                if (selectedItem.getText().equals("<Item auswählen>")) {
+                    warningMessage.setMessage("Wähle erst ein Item aus!");
+                    warningMessage.activateMessage();
                     return;
+                }
 
                 InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
                 for (Item item : inventory.javaItems()) {
                     if (selectedItem.getText().equals(item.getName())) {
                         if (item instanceof Potion) {
                             Potion potion = (Potion) item;
-                            potion.triggerEffect();
+                            if (!potion.triggerEffect()) {
+                                warningMessage.setMessage("Die " + potion.getName() + " kann jetzt nicht verwendet werden.");
+                                warningMessage.activateMessage();
+                            }
 
-                        } else if (item instanceof Weapon) {
-                            Weapon weapon = (Weapon) item;
-                            weapon.equip();
+                        } else if (item instanceof EquippableItem) {
+                            EquippableItem equippableItem = (EquippableItem) item;
+                            if (!equippableItem.equip()) {
+                                warningMessage.setMessage("Die " + equippableItem.getName() + " kann nicht ausgerüstet werden.");
+                                warningMessage.activateMessage();
+                            }
+
+                        } else {
+                            warningMessage.setMessage("Das ausgewählte item " + item.getName() + " kann nicht verwendet werden.");
+                            warningMessage.activateMessage();
                         }
                         break;
                     }
@@ -130,6 +153,7 @@ public class InventoryScreen extends Screen {
                             InventoryScreen.this, getItems());
                 selectedItem.setText("<Item auswählen>");
                 selectedItem.iconify(null);
+                warningMessage.setTransparency(0);
 
                 return BoxedUnit.UNIT;
             }
