@@ -9,6 +9,8 @@ import general.Main;
 import newent.InventoryLike;
 import player.item.EquippableItem;
 import player.item.Item;
+import player.item.coin.Coin;
+import player.item.coin.CoinHelper;
 import player.item.potion.Potion;
 import player.weapon.arrow.AbstractArrow;
 import scala.Function1;
@@ -118,6 +120,8 @@ public class InventoryScreen extends Screen {
                     return;
                 }
 
+                boolean isLeavingScreen = true;
+
                 InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
                 for (Item item : inventory.javaItems()) {
                     if (selectedItem.getText().equals(item.getName())) {
@@ -126,6 +130,7 @@ public class InventoryScreen extends Screen {
                             if (!potion.triggerEffect()) {
                                 warningMessage.setMessage("Die " + potion.getName() + " kann jetzt nicht verwendet werden.");
                                 warningMessage.activateMessage();
+                                isLeavingScreen = false;
                             }
 
                         } else if (item instanceof EquippableItem) {
@@ -133,16 +138,19 @@ public class InventoryScreen extends Screen {
                             if (!equippableItem.equip()) {
                                 warningMessage.setMessage("Die " + equippableItem.getName() + " kann nicht ausgerüstet werden.");
                                 warningMessage.activateMessage();
+                                isLeavingScreen = false;
                             }
 
                         } else {
                             warningMessage.setMessage("Das ausgewählte item " + item.getName() + " kann nicht verwendet werden.");
                             warningMessage.activateMessage();
+                            isLeavingScreen = false;
                         }
                         break;
                     }
                 }
-                onLeavingScreen(GameScreen.SCREEN_INDEX);
+                if (isLeavingScreen)
+                    onLeavingScreen(GameScreen.SCREEN_INDEX);
             }
         });
 
@@ -150,7 +158,7 @@ public class InventoryScreen extends Screen {
             @Override
             public BoxedUnit apply () {
                 inventoryList = new List(inventoryList.getX(), inventoryList.getY(), inventoryList.getWidth(), inventoryList.getHeight(),
-                            InventoryScreen.this, getItems());
+                        InventoryScreen.this, getItems());
                 selectedItem.setText("<Item auswählen>");
                 selectedItem.iconify(null);
                 warningMessage.setTransparency(0);
@@ -159,7 +167,7 @@ public class InventoryScreen extends Screen {
             }
         });
 
-        setPreprocessedDrawingEnabled(true);
+        setPreprocessedDrawingEnabled(false);
     }
 
     /**
@@ -169,12 +177,27 @@ public class InventoryScreen extends Screen {
      */
     public java.util.List<String> getItems () {
         java.util.List<String> itemList = new LinkedList<>();
+        java.util.LinkedList<Coin> coins = new LinkedList<>();
+
         InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
         // filtering the inventory: only items, which aren't arrows should be added.
         for(Item item : inventory.javaItems()) {
-            if (!(item instanceof AbstractArrow))
-                itemList.add(item.getName());
+            if (!(item instanceof AbstractArrow)) {
+                if (!(item instanceof Coin))
+                    itemList.add(item.getName());
+                else
+                    coins.add((Coin) item);
+            }
         }
+
+        if (!coins.isEmpty()) {
+            java.util.List<Coin>[] coinList = CoinHelper.getSortedCoins(coins);
+            for (java.util.List<Coin> aCoinList : coinList) {
+                if (!aCoinList.isEmpty())
+                    itemList.add(aCoinList.get(0).getName() + ": " + aCoinList.size());
+            }
+        }
+
         if (itemList.size() == 0)
             itemList.add("<keine Items>");
         return itemList;
@@ -183,5 +206,11 @@ public class InventoryScreen extends Screen {
     @Override
     public void draw (Graphics2D g) {
         super.draw(g);
+
+        inventoryList.draw(g);
+        confirmButton.draw(g);
+        cancelButton.draw(g);
+        selectedItem.draw(g);
+        warningMessage.draw(g);
     }
 }

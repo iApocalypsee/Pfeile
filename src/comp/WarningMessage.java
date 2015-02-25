@@ -179,7 +179,6 @@ public class WarningMessage extends Component {
             g.setFont(font);
             g.drawString(message, getX(), getY());
             update();
-            g.setFont(STD_FONT);
         }
     }
 }

@@ -86,14 +86,14 @@ public class Main {
 
         GraphicsEnvironment environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
-        // Let's begin playing the title song (so the user knows, that something is done while loading the game)
-        // FREEZES THE "GraphicsEnvironment.getLocalGraphicsEnvironment()" CALL!
-        SoundPool.play_titleMelodie();
-
         LogFacility.log("Running Pfeile on... " + SystemProperties.getComputerName(), "Info");
         LogFacility.putSeparationLine();
 
         SystemProperties.printSystemProperties();
+
+        // Let's begin playing the title song (so the user knows, that something is done while loading the game)
+        // FREEZES THE "GraphicsEnvironment.getLocalGraphicsEnvironment()" CALL!
+        SoundPool.play_titleMelodie();
 
         LogFacility.log("Beginning initialization process...", "Info", "initprocess");
 
@@ -108,7 +108,7 @@ public class Main {
 
         graphicsDevice = environmentG.getDefaultScreenDevice();
         gameWindow = new GameWindow();
-        LogFacility.log("Game window instantiated.", "Info", "initprocess");
+        LogFacility.log("GameWindow instantiated.", "Info", "initprocess");
 
         new ArrowHelper();
         LogFacility.log("Arrow images loaded.", "Info", "initprocess");
@@ -164,7 +164,7 @@ public class Main {
             return BoxedUnit.UNIT;
         }));
 
-        LogFacility.log("GameWindow is ready.", "Info", "initprocess");
+        LogFacility.log("Pfeile is ready.", "Info", "initprocess");
 
         // starten wir das Spiel
         main.runGame();

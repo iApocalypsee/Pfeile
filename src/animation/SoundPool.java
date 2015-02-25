@@ -40,6 +40,8 @@ public class SoundPool {
         tensionThemeMelodie = SoundLoader.load("resources/sfx/tensionThemeMelodie.wav", 5);
         // the gameOverMelodie should be slightly quieter, because of a smooth change from mainThemeMelodie [or whatever] to GameOverScreen
         gameOverMelodie = SoundLoader.load("resources/sfx/gameOverMelodie.wav", -12);
+
+        LogFacility.log("Background music files loaded.", "Info", "initprocess");
     }
 
     // TITLE MELODIE

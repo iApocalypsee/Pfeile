@@ -1,5 +1,7 @@
 package general.io;
 
+import general.LogFacility;
+
 import java.io.File;
 
 /**
@@ -25,16 +27,14 @@ public class PreInitStage {
 			boolean isDirectoryMade = f.mkdir();
 
 			if (isDirectoryMade) {
-				System.out.println("Savegame directory created at " + f.getAbsolutePath());
+				LogFacility.log("Savegame directory created at: " + f.getAbsolutePath(), "Info", "initprocess");
 			} else {
 				throw new RuntimeException("Savegame directory could not be created!");
 			}
 		} else {
-			System.out.println("Savegame directory located at " + f.getAbsolutePath());
+			LogFacility.log("Savegame directory located at: " + f.getAbsolutePath(), "Info", "initprocess");
 		}
-		System.out.println();
 	}
-
 }
 
 /**

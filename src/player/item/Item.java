@@ -24,6 +24,6 @@ public abstract class Item {
 
     @Override
     public String toString () {
-        return getName() + " @Item";
+        return getName() + " [@Item]";
     }
 }
