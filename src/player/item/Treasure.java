@@ -13,7 +13,7 @@ import java.io.IOException;
  * The treasure contains some valuables and can be found by either Player or Bot. The difference to chests is, that
  * you don't need to open them (i.e. you need to do something). If a player or bot moves on the field the treasure is
  * placed, the treasure will be added to the inventory (after confirming the content). The Bounds of a treasure are saved
- * as {@link comp.ImageComponent} in {@link LootUI}.
+ * as {@link comp.ImageComponent} in {@link LootUI}. Treasures generally contain more Coins then Chest.
  *
  * @see player.item.Chest
  * @see player.item.DefaultChest

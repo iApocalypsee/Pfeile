@@ -33,7 +33,7 @@ trait InventoryLike {
     *
     * @param f The find function.
     * @return An item that satisfies a predicate, if any. If nothing has been found,
-    *         [[None]] is returned.
+    *         [[scala.None]] is returned.
     */
   def find(f: (Item) => Boolean): Option[Item]
 
@@ -44,6 +44,9 @@ trait InventoryLike {
   def maximumSize = Integer.MAX_VALUE
 
   def currentSize = items.size
+
+  /** Removes every item from the inventory. The inventory will be empty afterwards.  */
+  def clear() : Unit
 
 }
 
@@ -77,4 +80,9 @@ class DefaultInventory extends InventoryLike {
   override def find(f: (Item) => Boolean): Option[Item] = _list find f
 
   override def items = _list.toList
+
+   /** Removes every item from the inventory. The inventory will be empty afterwards.  */
+   override def clear(): Unit = {
+      _list.clear()
+   }
 }

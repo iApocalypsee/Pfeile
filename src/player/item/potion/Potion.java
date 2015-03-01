@@ -86,7 +86,7 @@ public abstract class Potion extends Item implements Drawable {
      * @param name the name of the potion. (z.B. "<code>Potion of Healing</code>")
      * @see player.item.potion.Potion#Potion(byte, String)
      */
-    public Potion (String name) {
+    protected Potion (String name) {
         super(name);
         level = 1;
         potionUI = new PotionUI();
@@ -98,7 +98,7 @@ public abstract class Potion extends Item implements Drawable {
      * @param level the level of the item
      * @param name the name like "<code>Potion of Healing</code>"
      */
-    public Potion (byte level, String name) {
+    protected Potion (byte level, String name) {
         super(name);
         this.level = level;
         potionUI = new PotionUI();

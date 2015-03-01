@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * The static methods of this class will help to change the coins into each other.
+ * Every toCoinType (expect toBronzeCoins) method returns the casted value. This means the rest money is neglected.
  */
 public class CoinHelper {
 
@@ -138,5 +139,19 @@ public class CoinHelper {
         }
 
         return sortedCoinsLength;
+    }
+
+    /**
+     *
+     *
+     * @param value the value of the Coin
+     * @return an Array of BronzeCoins the specifiedValue
+     */
+    public static BronzeCoin[] getCoins (int value) {
+        BronzeCoin[] coins = new BronzeCoin[value];
+        for (int i = 0; i < coins.length; i++)
+            coins[i] = new BronzeCoin();
+
+        return coins;
     }
 }

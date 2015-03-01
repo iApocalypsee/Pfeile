@@ -25,6 +25,9 @@ public class WorldLootList implements Drawable {
     /** The list is used to save every not {@link newent.VisionStatus#Hidden} Loot in order to speed up the drawing process */
     private final List<Loot> lootVisibleList;
 
+    /** this spawn the loot automatically. It registers the spawn calls to listener of turnSystem */
+    private final LootSpawner lootSpawner;
+
     /** creating a new WorldLootList with the default size 18 [as java.util.ArrayList].
      * It also creates a new List for every visible Loot (from the view of the activePlayer) and registers
      * the {@link WorldLootList#updateVisibleLoot()} to {@link newent.Entity#onLocationChanged()} and
@@ -33,6 +36,7 @@ public class WorldLootList implements Drawable {
     public WorldLootList () {
         lootList = new ArrayList<>(18);
         lootVisibleList = new ArrayList<>(12);
+        lootSpawner = new LootSpawner();
 
         Main.getContext().turnSystem().onTurnGet().register(new AbstractFunction1<Player, BoxedUnit>() {
             @Override

@@ -30,7 +30,7 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
      * The name is set in superclass Item.
      * <b>The position, where the Loot drops, is position of the activePlayer.</b>
      * <b>The LootUI is created automatically with {@link Loot#createUI()}.</b> You may override it later.*/
-    public Loot (String name) {
+    protected Loot (String name) {
         super(name);
 
         this.gridX = Main.getContext().getActivePlayer().getGridX();
@@ -50,13 +50,13 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
      * @param name the name of the item
      * @see player.item.Loot#Loot(int, int, LootUI, String)
      */
-    public Loot (int gridX, int gridY, String name) {
+    protected Loot (int gridX, int gridY, String name) {
         this(gridX, gridY, null, name);
         lootUI = createUI();
     }
 
     /** Creates a new Loot on the Tile at (gridX, gridY) with the specified name and the lootUI. */
-    public Loot (int gridX, int gridY, LootUI lootUI, String name) {
+    protected Loot (int gridX, int gridY, LootUI lootUI, String name) {
         super(name);
 
         this.gridX = gridX;

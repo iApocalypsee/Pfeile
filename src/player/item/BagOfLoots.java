@@ -1,10 +1,7 @@
 package player.item;
 
 import general.LogFacility;
-import newent.Bot;
-import newent.Entity;
-import newent.InventoryEntity;
-import newent.Player;
+import newent.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -30,12 +27,27 @@ public class BagOfLoots extends Loot {
     }
 
     /** Creating a new BagOfLoots from a deadEntity. All values are taken from the deadEntity.
+     * Everything the deadEntity carried (if it is an InventoryEntity) is added to BagOfLoots and everything
+     * the deadEntity was equipped with (if it is a Combatant) is added to BagOfLoots, too.
+     *
      * @param deadEntity the entity, which dropped a BagOfLoots (--> usually a dead Entity)
      * @see player.item.Loot#Loot(int, int, LootUI, String)
      * @see player.item.BagOfLoots#BagOfLoots(int, int) */
     public BagOfLoots (Entity deadEntity) {
         super(deadEntity.getGridX(), deadEntity.getGridY(), "BagOfLoots [from " + deadEntity.name() + "]");
 
+        if (deadEntity instanceof InventoryEntity) {
+            InventoryEntity entity = (InventoryEntity) deadEntity;
+            for (Item item : entity.inventory().javaItems()) {
+                add(item);
+            }
+            entity.inventory().clear();
+        }
+
+        if (deadEntity instanceof Combatant) {
+            Combatant combatant = (Combatant) deadEntity;
+            // TODO add the weapons in combatant to the inventory, when EquipStrategy is ready.
+        }
     }
 
     /**

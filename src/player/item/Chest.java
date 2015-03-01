@@ -6,7 +6,8 @@ import newent.Player;
 
 /**
  * The superclass for chests. To open a chest you need to give up something (arrows, gold, ...) or find a key
- * (maybe in the future). That's why only Players and Bots can open an Chest.
+ * (maybe in the future). That's why only Players and Bots can open an Chest. Generally Chest cointains more Potions than
+ * Treasures.
  */
 public abstract class Chest extends Loot {
 
@@ -21,7 +22,7 @@ public abstract class Chest extends Loot {
      * @see player.item.Loot#Loot(int, int, String)
      * @see player.item.Chest#Chest(int, int, String)
      */
-    public Chest (int gridX, int gridY, LootUI lootUI, String name) {
+    protected Chest (int gridX, int gridY, LootUI lootUI, String name) {
         super(gridX, gridY, lootUI, name);
     }
 
@@ -36,7 +37,7 @@ public abstract class Chest extends Loot {
      * @see player.item.Loot#Loot(int, int, String)
      * @see player.item.Chest#Chest(int, int, LootUI, String)
      * */
-    public Chest (int gridX, int gridY, String name) {
+    protected Chest (int gridX, int gridY, String name) {
         super(gridX, gridY, name);
     }
 
