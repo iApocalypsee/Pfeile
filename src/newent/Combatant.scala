@@ -6,4 +6,10 @@ package newent
   * This trait is just a standard.
   *
   */
-trait Combatant extends AttackContainer with Aggressor
+trait Combatant extends AttackContainer with HasEquipment with Aggressor {
+
+  // By default, every combatant incorporates a medieval equipment set.
+  // We decided to do so.
+  override val equipment = new MedievalEquipment
+
+}

@@ -1,7 +1,7 @@
 package general
 
-import java.util.function
-import java.util.function.{Predicate, Consumer, Supplier}
+import java.util.function.{Consumer, Predicate, Supplier}
+import java.util.{Optional, function}
 
 object JavaInterop {
 
@@ -24,5 +24,14 @@ object JavaInterop {
   implicit def asJavaFunction[A](x: A => Unit): function.Consumer[A] = new function.Consumer[A] {
     override def accept(t: A): Unit = x(t)
   }
+
+  def asJavaOptional[A](x: Option[A]): Optional[A] = x match {
+    case Some(x) => Optional.of(x)
+    case None => Optional.empty[A]()
+  }
+
+  def asScalaOption[A](x: Optional[A]): Option[A] = if(x.isPresent) Some(x.get) else None
+
+  def scalaNone = None
 
 }
