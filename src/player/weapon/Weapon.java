@@ -16,7 +16,27 @@ public abstract class Weapon extends EquippableItem {
 
 	public Weapon(String name) {
 		super(name);
+        attackVal = 0;
+        defenseVal = 0;
 	}
+
+    public Weapon(String name, float attackValue, float defenseValue) {
+        super(name);
+        attackVal = attackValue;
+        defenseVal = defenseValue;
+    }
+
+    /**
+     * the defence value is 0.
+     *
+     * @param attackValue the damage a weapon makes
+     * @param name the name of the weapon
+     */
+    public Weapon(String name, float attackValue) {
+        super(name);
+        attackVal = attackValue;
+        defenseVal = 0;
+    }
 	
 	public float getAttackValue() {
 		return attackVal;

@@ -12,23 +12,24 @@ public abstract class RangedWeapon extends Weapon {
      * <code>getAim().getGridX(), getAim().getGridY()</code> is effected by the attack.
      * The range is 0 as well as the x and y position of the Aim. */
  	public RangedWeapon(String name) {
-        super(name);
-        this.range = 0;
-        aim = new Aim(0, 0, 1);
+        this(name, 1, new Aim(0, 0, 1));
 	}
+
+    public RangedWeapon(String name, float attackValue) {
+        super(name, attackValue);
+        range = 1;
+        aim = new Aim(0, 0, 1);
+    }
+
     /** the damageRadius is going to be set to 1, this means only the tile at
      * <code>getAim().getGridX(), getAim().getGridY()</code> is effected by the attack */
     public RangedWeapon(String name, double range) {
-        super(name);
-        this.range = range;
-        aim = new Aim(0, 0, 1);
+        this(name, range, new Aim(0, 0, 1));
     }
 
     /** sets every Parameter without <code>getAim().getGridX()</code> and <code>getAim().getGridY()</code>. (both are 0) */
     public RangedWeapon(String name, double range, double damageRadius) {
-        super(name);
-        this.range = range;
-        aim = new Aim(0, 0, damageRadius);
+        this(name, range, new Aim(0, 0, damageRadius));
     }
 
     /**
@@ -38,7 +39,29 @@ public abstract class RangedWeapon extends Weapon {
      * @param aim where the attack is going to impact and how
      */
     public RangedWeapon(String name, double range, Aim aim) {
-        super(name);
+        this(name, 0, range, aim);
+    }
+
+    /**
+     *
+     * @param name the name
+     * @param attackValue the damage
+     * @param range the range of the weapon
+     * @param damageRadius the damageRadius for {@link player.weapon.Aim}
+     */
+    public RangedWeapon(String name, float attackValue, double range, double damageRadius) {
+        this(name, attackValue, range, new Aim(0, 0, damageRadius));
+    }
+
+    /**
+     *
+     * @param name the name of the weapon
+     * @param attackValue the damage
+     * @param range the range
+     * @param aim {@link player.weapon.Aim}
+     */
+    public RangedWeapon(String name, float attackValue, double range, Aim aim) {
+        super(name, attackValue);
         this.range = range;
         this.aim = aim;
     }
@@ -84,7 +107,21 @@ public abstract class RangedWeapon extends Weapon {
         this.aim = new Aim (posXGrid, posYGrid, damageRadius);
     }
 
+    /**
+     * The attack is aimed at (<code>posXGrid</code>|<code>posYGrid</code>).
+     *
+     * @see player.weapon.RangedWeapon#aiming(int, int, double)
+     * @see player.weapon.RangedWeapon#aiming(Aim)
+     * @param posXGrid x-position in tile, where the attack should impact now
+     * @param posYGrid and the y-position
+     */
+    public void aimingAt (int posXGrid, int posYGrid) {
+        aim.setGridX(posXGrid);
+        aim.setGridY(posYGrid);
+    }
+
     /** The attack is aimed at the new Aim.
+     * Sets the {@link player.weapon.Aim}.
      *
      * @see player.weapon.RangedWeapon#aiming(int, int, double)
      * @param aim the new Aim.

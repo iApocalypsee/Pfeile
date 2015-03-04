@@ -74,8 +74,7 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 	public AbstractArrow(float attackVal, float defenseVal, double rangeVal,
 			float selfHittingRate, float aimMissing, float aimMissingRate,
 			float damageLosingRate, double speed, float damageRadius, String name) {
-		super(name);
-		setAttackValue(attackVal);
+		super(name, attackVal);
 		setDefenseValue(defenseVal);
 		// Reichweite des Pfeils wird minimal (+/- 1 Tile) an die Entfernung angepasst
 		if (PfeileContext.WORLD_SIZE_X().get() <= 22) {
