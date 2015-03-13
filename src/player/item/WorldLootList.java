@@ -3,9 +3,7 @@ package player.item;
 import general.JavaInterop;
 import general.Main;
 import gui.Drawable;
-import newent.Player;
-import newent.VisionMap;
-import newent.VisionStatus;
+import newent.*;
 import scala.collection.Seq;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
@@ -18,6 +16,7 @@ import java.util.List;
  * The <code>WorldLootList</code> is saved in PfeileContext. This class provides the information need to store all loots,
  * that are placed in world. Calling the draw method here allows the user to draw every loot saved in the List by drawing
  * it's LootUI.
+ * TODO Use [[AbstractDisplayRepresentable]]. It's a better alternative.
  */
 public class WorldLootList implements Drawable {
     private final List<Loot> lootList;
@@ -48,8 +47,9 @@ public class WorldLootList implements Drawable {
 
         // every time, when the location of a player has changed, the list of every not-hidden loot must update itself.
         // ==> {@link WorldLootList#updateVisibleLoot()} is registered to the "onLocationChanged"-Delegate of every Player.
-        final Seq<Player> playerSeq = Main.getContext().getTurnSystem().playerList().apply();
-        playerSeq.foreach(JavaInterop.asScalaFunction(player -> {
+        final Seq<Team> playerSeq = Main.getContext().getTurnSystem().teams().apply();
+        playerSeq.foreach(JavaInterop.asScalaFunction(team -> {
+            Player player = ((CommandTeam) team).getHead();
             player.onLocationChanged().register(JavaInterop.asScalaFunction(locationChangedEvent -> {
                 updateVisibleLoot();
                 return BoxedUnit.UNIT;

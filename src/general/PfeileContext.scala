@@ -2,7 +2,7 @@ package general
 
 import general.SeqOp._
 import gui.screen.GameScreen
-import newent.Player
+import newent.{CommandTeam, Player}
 import player.item.WorldLootList
 import player.weapon.AttackingCalculator
 import world.WorldLike
@@ -49,7 +49,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   lazy val turnSystem = {
 
     // TODO Clear the initialization up a bit. Looks ugly.
-    val turnSystem = new TurnSystem(() => world.entities.entityList.filterType(classOf[Player]))
+    val turnSystem = new TurnSystem(() => for(player <- world.entities.entityList.filterType(classOf[Player])) yield player.belongsTo.team)
 
     // Notifies the entities in the world that a turn has been ended
     turnSystem.onTurnEnded += { _ =>
@@ -61,11 +61,12 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
       GameScreen.getInstance().releaseUI()
     }
 
-    turnSystem.onTurnGet += { p =>
-      activePlayer = p
+    turnSystem.onTurnGet += {
+      case playerTeam: CommandTeam => activePlayer = playerTeam.head
+      case _ => ???
     }
 
-    LogFacility.log(s"Players in turn system: ${turnSystem.playerList.apply()}")
+    LogFacility.log(s"Players in turn system: ${turnSystem.teams()}")
 
     turnSystem.onGlobalTurnCycleEnded += { () =>
        // Notify the tiles first that the turn cycle has been completed.
@@ -92,7 +93,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     _activePlayer = p
   }
 
-  def getActivePlayer = _activePlayer
+  def getActivePlayer = activePlayer
   def setActivePlayer(p: Player) = activePlayer = p
 
   def world = _world

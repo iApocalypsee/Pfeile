@@ -1,10 +1,11 @@
 package general;
 
 import akka.actor.ActorSystem;
-import animation.SoundPool;
 import general.io.PreInitStage;
 import gui.screen.*;
+import newent.CommandTeam;
 import newent.Player;
+import newent.Team;
 import player.weapon.arrow.ArrowHelper;
 import scala.collection.Seq;
 import scala.runtime.AbstractFunction1;
@@ -86,14 +87,14 @@ public class Main {
 
         GraphicsEnvironment environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
+        // Let's begin playing the title song (so the user knows, that something is done while loading the game)
+        // FREEZES THE "GraphicsEnvironment.getLocalGraphicsEnvironment()" CALL!
+        //SoundPool.play_titleMelodie();
+
         LogFacility.log("Running Pfeile on... " + SystemProperties.getComputerName(), "Info");
         LogFacility.putSeparationLine();
 
         SystemProperties.printSystemProperties();
-
-        // Let's begin playing the title song (so the user knows, that something is done while loading the game)
-        // FREEZES THE "GraphicsEnvironment.getLocalGraphicsEnvironment()" CALL!
-        SoundPool.play_titleMelodie();
 
         LogFacility.log("Beginning initialization process...", "Info", "initprocess");
 
@@ -147,8 +148,8 @@ public class Main {
 
 
                 // play the game sound, when the game begins
-                SoundPool.stop_titleMelodie();
-                SoundPool.playLoop_mainThemeMelodie(SoundPool.LOOP_CONTINUOUSLY);
+                //SoundPool.stop_titleMelodie();
+                //SoundPool.playLoop_mainThemeMelodie(SoundPool.LOOP_CONTINUOUSLY);
 
                 return BoxedUnit.UNIT;
             }
@@ -156,8 +157,9 @@ public class Main {
 
         GameScreen.getInstance().onScreenEnter.registerOnce(JavaInterop.asScalaFunctionSupplier(() -> {
 
-            final Seq<Player> playerSeq = Main.getContext().getTurnSystem().playerList().apply();
-            playerSeq.foreach(JavaInterop.asScalaFunction(p -> {
+            final Seq<Team> teamSeq = Main.getContext().getTurnSystem().teams().apply();
+            teamSeq.foreach(JavaInterop.asScalaFunction(team -> {
+                Player p = ((CommandTeam) team).getHead();
                 p.tightenComponentToTile((TileLike) p.tileLocation());
                 return BoxedUnit.UNIT;
             }));
@@ -179,7 +181,7 @@ public class Main {
         gameWindow.dispose();
 
         // stop all melodies
-        SoundPool.stop_allMelodies();
+        //SoundPool.stop_allMelodies();
 
         // There is no other way, that closes the games.
         // Some Threads were still running in background, that continued the game without seeing a screen.

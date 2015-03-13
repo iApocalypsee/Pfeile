@@ -39,3 +39,5 @@ trait DisplayRepresentable {
   protected def startComponent: Component
 
 }
+
+abstract class AbstractDisplayRepresentable extends DisplayRepresentable

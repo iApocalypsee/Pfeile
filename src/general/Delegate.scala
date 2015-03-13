@@ -20,8 +20,10 @@ object Delegate {
 
   @inline def createZeroArity = new Function0Delegate with ClearableDelegate
 
+  @deprecated("Use registerOnce() instead.")
   @inline def createOneCall[In] = new OnceCallDelegate[In]
 
+  @deprecated("Use registerOnce() instead.")
   @inline def createZeroArityOneCall = new OnceCallFunction0Delegate
 
   // Inner classes.
@@ -52,6 +54,8 @@ object Delegate {
       * @param f The function to register.
       */
     final def register(f: FunType): Handle = +=( f )
+
+    def registerOnce(f: FunType): Handle
 
     /** Unregisters a callback function from the delegate.
       *
@@ -125,7 +129,7 @@ object Delegate {
 
   trait ParameterizedDelegate[In] extends DelegateLike {
 
-    override type FunType = (In) => Any
+    override type FunType = (In) => Unit
 
     @inline def apply(arg: In): Unit = call( arg )
 
@@ -134,7 +138,7 @@ object Delegate {
       case reg_f: ((In) => Any) => reg_f( arg )
     }
 
-    def registerOnce(f: FunType): Handle = synchronized {
+    override def registerOnce(f: FunType): Handle = synchronized {
 
       var handle: Handle = null
 
@@ -159,7 +163,7 @@ object Delegate {
 
   trait NonParameterizedDelegate extends DelegateLike {
 
-    override type FunType = () => Any
+    override type FunType = () => Unit
 
     @inline def apply(): Unit = call( )
 
@@ -171,7 +175,7 @@ object Delegate {
       call( )
     }
 
-    def registerOnce(f: FunType): Handle = synchronized {
+    override def registerOnce(f: FunType): Handle = synchronized {
 
       var handle: Handle = null
 
@@ -184,6 +188,8 @@ object Delegate {
       _callbacks = _callbacks ++ List(handle)
       handle
     }
+
+    def registerOnce()
 
   }
 
@@ -206,7 +212,7 @@ object Delegate {
     *
     * @tparam In The input type of the function. For multiple values, use tuples or custom classes.
     */
-  class Delegate[In](callbackList: List[(In) => Any]) extends ParameterizedDelegate[In] {
+  class Delegate[In](callbackList: List[(In) => Unit]) extends ParameterizedDelegate[In] {
 
     // Auxiliary constructor for instantiating a clean delegate with no registered callbacks.
     def this() = this( List[(In) => Any]( ) )
@@ -230,7 +236,7 @@ object Delegate {
     * @tparam In The input type of the function. For multiple values, use tuples or custom classes.
     */
   @deprecated("Use registerOnce() instead.")
-  class OnceCallDelegate[In](callbackList: List[In => Any]) extends Delegate[In](callbackList) with ClearableDelegate {
+  class OnceCallDelegate[In](callbackList: List[In => Unit]) extends Delegate[In](callbackList) with ClearableDelegate {
 
     // Auxiliary constructor for instantiating a clean delegate with no registered callbacks.
     def this() = this( List[(In) => Any]( ) )
@@ -287,7 +293,7 @@ object Delegate {
     *   };
     * }}}
     */
-  class Function0Delegate(callbackList: List[() => Any]) extends NonParameterizedDelegate {
+  class Function0Delegate(callbackList: List[() => Unit]) extends NonParameterizedDelegate {
 
     def this() = this( List[() => Any]( ) )
 
@@ -302,7 +308,7 @@ object Delegate {
   }
 
   @deprecated("Use registerOnce() instead.")
-  class OnceCallFunction0Delegate(callbackList: List[() => Any]) extends Function0Delegate with ClearableDelegate {
+  class OnceCallFunction0Delegate(callbackList: List[() => Unit]) extends Function0Delegate with ClearableDelegate {
 
     def this() = this( List[() => Any]( ) )
 
