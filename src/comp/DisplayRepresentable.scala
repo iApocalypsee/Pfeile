@@ -2,7 +2,7 @@ package comp
 
 /** An object that can be represented by a [[comp.IComponent]] object.
   *
-  * The component of the [[DisplayRepresentable]] object can be changed easily by just calling
+  * The component of the [[comp.DisplayRepresentable]] object can be changed easily by just calling
   * the setter.
   */
 trait DisplayRepresentable {
@@ -33,7 +33,7 @@ trait DisplayRepresentable {
 
   /** The component that the representable object uses first. Method is called only once.
     *
-    * The start component must not be null at first, else it will throw a [[IllegalArgumentException]].
+    * The start component must not be null at first, else it will throw a [[java.lang.IllegalArgumentException]].
     * @return A component object which the representable object uses first.
     */
   protected def startComponent: Component

@@ -20,12 +20,6 @@ object Delegate {
 
   @inline def createZeroArity = new Function0Delegate with ClearableDelegate
 
-  @deprecated("Use registerOnce() instead.")
-  @inline def createOneCall[In] = new OnceCallDelegate[In]
-
-  @deprecated("Use registerOnce() instead.")
-  @inline def createZeroArityOneCall = new OnceCallFunction0Delegate
-
   // Inner classes.
   // I made them inner classes so that these classes don't float
   // in the class world like a space ship.
@@ -92,8 +86,6 @@ object Delegate {
       case e => e.function
     }.toList
 
-    def isOnceCall: Boolean
-
     /**
      * A handle which maps to the function.
      * '''Do not construct instances of this class on your own, it is considered internal to the delegate!'''
@@ -108,7 +100,7 @@ object Delegate {
 
       /** Removes the handle from the delegate. <p>
         * The function enables the caller to remove the function he once added to the delegate.
-        * If the function does not exist anymore or the [[dispose( )]] method has been called already,
+        * If the function does not exist anymore or the [[general.Delegate.Delegate#dispose( )]] method has been called already,
         * no action is done.
         */
       def dispose(): Unit = {
@@ -188,9 +180,6 @@ object Delegate {
       _callbacks = _callbacks ++ List(handle)
       handle
     }
-
-    def registerOnce()
-
   }
 
   /** A standard delegate that accepts an input type and an output type. <p>
@@ -215,46 +204,12 @@ object Delegate {
   class Delegate[In](callbackList: List[(In) => Unit]) extends ParameterizedDelegate[In] {
 
     // Auxiliary constructor for instantiating a clean delegate with no registered callbacks.
-    def this() = this( List[(In) => Any]( ) )
+    def this() = this( List[(In) => Unit]( ) )
 
     // The callbacks have to be registered
     callbackList foreach {
       register
     }
-
-    /** Creates a [[general.Delegate.OnceCallDelegate]] for this delegate. */
-    @deprecated("Use registerOnce() instead.")
-    def asOnceCall: OnceCallDelegate[In] = new OnceCallDelegate(callbacks)
-    @deprecated("Use registerOnce() instead.")
-    override def isOnceCall = false
-
-  }
-
-  /** Delegate that calls its callbacks only once before the callback list is cleared instantly.
-    *
-    * @param callbackList The list of functions to hand to the delegate.
-    * @tparam In The input type of the function. For multiple values, use tuples or custom classes.
-    */
-  @deprecated("Use registerOnce() instead.")
-  class OnceCallDelegate[In](callbackList: List[In => Unit]) extends Delegate[In](callbackList) with ClearableDelegate {
-
-    // Auxiliary constructor for instantiating a clean delegate with no registered callbacks.
-    def this() = this( List[(In) => Any]( ) )
-
-    @deprecated("Use registerOnce() instead.")
-    override def isOnceCall = true
-    @deprecated("Use registerOnce() instead.")
-    override def asOnceCall = this
-
-    override def call(arg: In) = {
-      super.call(arg)
-      clear()
-    }
-
-    /** Returns a normal delegate for every callback in this [[general.Delegate.OnceCallDelegate]]. */
-    @deprecated("Use registerOnce() instead.")
-    def asNormalDelegate = new Delegate(callbacks)
-
   }
 
   /** An implementation of an immutable delegate. Mixin trait for [[general.Delegate.DelegateLike]].
@@ -295,38 +250,10 @@ object Delegate {
     */
   class Function0Delegate(callbackList: List[() => Unit]) extends NonParameterizedDelegate {
 
-    def this() = this( List[() => Any]( ) )
+    def this() = this( List[() => Unit]( ) )
 
     callbackList foreach {
       register
     }
-
-    override def isOnceCall = false
-
-    def asOnceCall = new OnceCallFunction0Delegate(callbacks)
-
   }
-
-  @deprecated("Use registerOnce() instead.")
-  class OnceCallFunction0Delegate(callbackList: List[() => Unit]) extends Function0Delegate with ClearableDelegate {
-
-    def this() = this( List[() => Any]( ) )
-
-    @deprecated("Use registerOnce() instead.")
-    def asNormalDelegate = new Function0Delegate(callbacks)
-
-    @deprecated("Use registerOnce() instead.")
-    override def isOnceCall = true
-
-    @deprecated("Use registerOnce() instead.")
-    override def asOnceCall = this
-
-    @deprecated("Use registerOnce() instead.")
-    override def call() = {
-      super.call()
-      clear()
-    }
-  }
-
-
 }

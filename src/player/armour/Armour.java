@@ -6,8 +6,8 @@ import player.item.EquippableItem;
  * Every piece of armour, which physical (or magical) abilities serve protection (<code>getDefenceValue()</code>) and
  * can't attack enemies. Magical abilities may still increase the damage or provide other offensive skills.
  *
- * Further information of possible pieces of armour see at:
- * http://www.medievalwarfare.info/armour.htm
+ * <p>Further information of possible pieces of armour see at:
+ * See <a href="http://www.medievalwarfare.info/armour.htm">http://www.medievalwarfare.info/armour.htm</a>
  */
 public abstract class Armour extends EquippableItem {
 
