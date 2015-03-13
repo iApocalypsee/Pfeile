@@ -72,4 +72,26 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
     else (list(searchFromIndex + 1), false)
   }
 
+  private object TurnCycleOperations {
+
+    var count = 0
+
+    onGlobalTurnCycleEnded += { () =>
+      count += 1
+      if(count >= PfeileContext.TURNS_PER_ROUND()) {
+        onReachedTurnCycleThreshold()
+        reset()
+      }
+    }
+
+    private def reset() = {
+      count = 0
+    }
+
+    def onReachedTurnCycleThreshold(): Unit = {
+      // TODO Code to execute.
+    }
+
+  }
+
 }
