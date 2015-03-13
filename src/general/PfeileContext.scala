@@ -2,7 +2,7 @@ package general
 
 import general.SeqOp._
 import gui.screen.GameScreen
-import newent.{CommandTeam, Player}
+import newent.{CommandTeam, Entity, Player}
 import player.item.WorldLootList
 import player.weapon.AttackingCalculator
 import world.WorldLike
@@ -49,7 +49,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   lazy val turnSystem = {
 
     // TODO Clear the initialization up a bit. Looks ugly.
-    val turnSystem = new TurnSystem(() => for(player <- world.entities.entityList.filterType(classOf[Player])) yield player.belongsTo.team)
+    val turnSystem = new TurnSystem(() => for (player <- world.entities.entityList.filterType(classOf[Player])) yield player.belongsTo.team)
 
     // Notifies the entities in the world that a turn has been ended
     turnSystem.onTurnEnded += { _ =>
@@ -62,35 +62,38 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     }
 
     turnSystem.onTurnGet += {
-      case playerTeam: CommandTeam => activePlayer = playerTeam.head
+      case playerTeam: CommandTeam =>
+        activePlayer = playerTeam.head
       case _ => ???
     }
 
     LogFacility.log(s"Players in turn system: ${turnSystem.teams()}")
 
     turnSystem.onGlobalTurnCycleEnded += { () =>
-       // Notify the tiles first that the turn cycle has been completed.
-       // Primarily, this for loop is written to update the arrow queues of the tiles.
-       for (y <- 0 until _world.terrain.height) {
-          for (x <- 0 until _world.terrain.width) {
-            val tile = _world.terrain.tileAt(x, y)
-            tile.updateQueues()
-          }
-       }
-       // Then the entities.
-       world.entities.entityList.foreach { _.onTurnCycleEnded() }
+      // Notify the tiles first that the turn cycle has been completed.
+      // Primarily, this for loop is written to update the arrow queues of the tiles.
+      for (y <- 0 until _world.terrain.height) {
+        for (x <- 0 until _world.terrain.width) {
+          val tile = _world.terrain.tileAt(x, y)
+          tile.updateQueues()
+        }
+      }
+      // Then the entities.
+      world.entities.entityList.foreach { _.onTurnCycleEnded() }
 
-       values.turnCycleCount += 1
+      values.turnCycleCount += 1
     }
 
     turnSystem
   }
+
   def getTurnSystem = turnSystem
 
   def activePlayer = _activePlayer
   def activePlayerOption = optReturn(activePlayer _)
   def activePlayer_=(p: Player): Unit = {
     _activePlayer = p
+    entitySelection.selectedEntity = p
   }
 
   def getActivePlayer = activePlayer
@@ -112,12 +115,37 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   // need instance WorldLootList after TurnSystem initializing.
   private lazy val _worldLootList: WorldLootList = new WorldLootList
 
-  /** It's the list of every loot, which is placed somewhere in the world. Use it to draw all loots, or to get a Loot.
-   * @return the <code>WorldLootList</code> for the whole world. */
+  /**
+    * It's the list of every loot, which is placed somewhere in the world. Use it to draw all loots, or to get a Loot.
+    * @return the <code>WorldLootList</code> for the whole world.
+    */
   def getWorldLootList = _worldLootList
 
   /** it is called, when TimeClock needs to start to run, this means at leaving LoadingWorldScreen */
   val onStartRunningTimeClock = Delegate.createZeroArity
+
+  /**
+    * Access to the current selection of entities.
+    */
+  lazy val entitySelection = EntitySelection
+
+  object EntitySelection {
+
+    private var _selectedEntity: Entity = activePlayer
+
+    def selectedEntity = _selectedEntity
+    def selectedEntity_=(x: Entity): Unit = {
+      if (x == null) _selectedEntity = activePlayer
+      else _selectedEntity = x
+      LogFacility.log(s"$selectedEntity selected", "Debug")
+    }
+
+    def resetSelection(): Unit = {
+      selectedEntity = null
+    }
+
+  }
+
 }
 
 /**

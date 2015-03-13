@@ -7,7 +7,7 @@ import comp.{Component, DisplayRepresentable}
 import general.Main
 import gui.AdjustableDrawing
 import gui.screen.GameScreen
-import newent.{AttackContainer, EntityLike}
+import newent.{AttackContainer, EntityLike, MovableEntity}
 import player.weapon.arrow.{AbstractArrow, ImpactDrawerHandler}
 
 import scala.collection.{JavaConversions, mutable}
@@ -157,7 +157,10 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
     // When the user is clicking on the tile, the active player should move towards it.
     addMouseListener(new MouseAdapter {
       override def mouseReleased(e: MouseEvent): Unit = {
-        Main.getContext.activePlayer.moveTowards(latticeX, latticeY)
+        Main.getContext.entitySelection.selectedEntity match {
+          case move: MovableEntity => move.moveTowards(latticeX, latticeY)
+          case _ => ???
+        }
       }
     })
 

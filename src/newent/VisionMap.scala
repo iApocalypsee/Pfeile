@@ -2,7 +2,7 @@ package newent
 
 import comp.Circle
 import general.Delegate
-import newent.VisionMap.{ VisionEntry, VisionPromise }
+import newent.VisionMap.{VisionEntry, VisionPromise}
 import player.BoardPositionable
 import world.TileLike
 
@@ -116,7 +116,7 @@ object VisionMap {
     }
 
     /** Called when the vision has been released on this promise. */
-    private[VisionMap] val _onVisionReleased = Delegate.createZeroArityOneCall
+    private[VisionMap] val _onVisionReleased = Delegate.createZeroArity
 
     /**
       * Releases the promise from the vision, meaning that the vision point is no longer
