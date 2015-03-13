@@ -127,7 +127,5 @@ object VisionMap {
       // deleting this promise out of the vision.
       _onVisionReleased.call()
     }
-
   }
-
 }

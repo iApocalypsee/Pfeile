@@ -9,15 +9,14 @@ import geom.functions.FunctionCollection;
 import gui.FrameContainerObject;
 import gui.screen.GameScreen;
 import newent.Combatant;
+import player.ArmingType;
 import player.BoardPositionable;
-import player.item.EquippableItem;
 import player.weapon.RangedWeapon;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 
 /**
  * Die abstrakte Pfeil-Klasse, von der die Pfeilarten abgeleitet werden. Wenn
@@ -74,8 +73,8 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 	public AbstractArrow(float attackVal, float defenseVal, double rangeVal,
 			float selfHittingRate, float aimMissing, float aimMissingRate,
 			float damageLosingRate, double speed, float damageRadius, String name) {
-		super(name, attackVal);
-		setDefenseValue(defenseVal);
+		super(name, attackVal, ArmingType.MAGIC);
+		setDefence(defenseVal);
 		// Reichweite des Pfeils wird minimal (+/- 1 Tile) an die Entfernung angepasst
 		if (PfeileContext.WORLD_SIZE_X().get() <= 22) {
 			setRange(rangeVal - 1);
@@ -100,7 +99,7 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 				InternalFrame dataFrame = new InternalFrame(50, 50, 135, 125, GameScreen.getInstance());
 				String arrowType = "Arrow type: " + getName();
 				String damage = "Damage: " + getAttackValue();
-				String defense = "Defense: " + getDefenseValue();
+				String defense = "Defense: " + getAverageDefence();
 				String speed = "Speed: " + getSpeed();
 
 
