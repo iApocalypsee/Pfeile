@@ -1,7 +1,6 @@
 package newent
 
 import general.{LogFacility, PfeileContext}
-import gui.LifeUI
 import player.Life
 import player.weapon.RangedWeapon
 
@@ -38,12 +37,31 @@ trait LivingEntity extends Entity with AttackContainer {
   }
 
   onDamage += { event =>
-     LogFacility.log(s"Impacting attack: by ${event.aggressor} to " +
-           s"${event.destination.toString} with ${event.weapon.getName}", "Debug", "attack")
+     var damage: Double = 0
+     var defence: Double = 0
+
+     // counting every defence value of every piece of armour together and save it in defence
+     if (this.isInstanceOf[HasArmor]) {
+        val combatant: HasArmor = this.asInstanceOf[HasArmor]
+        combatant.armorParts.foreach { armorOption =>
+           defence = defence + armorOption.get.getDefence(event.weapon.getArmingType)
+        }
+     }
 
      if (event.weapon.isInstanceOf[RangedWeapon])
-        life.setLife(life.getLife - event.weapon.asInstanceOf[RangedWeapon].damageAt(getGridX, getGridY))
+        damage = event.weapon.asInstanceOf[RangedWeapon].damageAt(getGridX, getGridY)
      else
-        life.setLife(life.getLife - event.weapon.getAttackValue * PfeileContext.DAMAGE_MULTI.get)
+        damage = event.weapon.getAttackValue * PfeileContext.DAMAGE_MULTI.get
+
+     // prohibiting possible healing on attack
+     if (defence > damage)
+        damage = 0
+
+     // finally, the life need to be changed
+     life.changeLife(- damage + defence)
+
+     LogFacility.log(s"Impacting attack: by ${event.aggressor} to " +
+           s"${event.destination.toString} with ${event.weapon.getName}. " +
+           s"[Damage " + damage + " | Defence: " + defence + "]", "Debug", "Attack")
   }
 }

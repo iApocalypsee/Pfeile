@@ -86,14 +86,14 @@ trait HasWeapons extends EquipmentStrategy {
 
   /**
     * The primary weapon that the equipment has.
-    * '''Do not. Assign it null. I will shoot you.''' Assign it [[general.JavaInterop$#scalaNone()]]
+    * '''Do not. Assign it null. I will shoot you.''' Assign it [[general.JavaInterop#scalaNone()]]
     * if no primary weapon exists.
     */
   @BeanProperty var primaryWeapon: Option[Weapon] = None
 
   /**
     * The secondary weapon that the equipment has.
-    * '''Do not. Assign it null. I will shoot you.''' Assign it [[general.JavaInterop$#scalaNone()]]
+    * '''Do not. Assign it null. I will shoot you.''' Assign it [[general.JavaInterop#scalaNone()]]
     * if no secondary weapon exists.
     */
   @BeanProperty var secondaryWeapon: Option[Weapon] = None

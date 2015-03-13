@@ -167,6 +167,7 @@ public class Main {
         }));
 
         LogFacility.log("Pfeile is ready.", "Info", "initprocess");
+        LogFacility.putSeparationLine();
 
         // starten wir das Spiel
         main.runGame();

@@ -57,7 +57,8 @@ public abstract class RangedWeapon extends Weapon {
      * ({@link newent.LivingEntity} registers the damage function} <p>
      *     This method returns the damage at the tile (posX|posY), with the center of the attack at
      *     <code>getAim().getGridX(), getAim().getGridY()</code> within the borders of <code>getAim().getDamageRadius()</code>.
-     *     The damage is already multiplied with the damageMultiplier <code>PfeileContext.DAMAGE_MULTI</code> at {@link general.PfeileContext}.
+     *     <b>The damage is already multiplied with the damageMultiplier <code>PfeileContext.DAMAGE_MULTI</code> at
+     *     {@link general.PfeileContext}. </b>
      *
      * @param posX the x-position of the tile, where the damage should be calculated
      * @param posY the y-position of the tile, where the attack impacts
