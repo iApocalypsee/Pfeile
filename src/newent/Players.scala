@@ -61,7 +61,7 @@ class Player(world: WorldLike,
   life.onDeath += { () =>
      general.Main.getContext.getTimeClock.stop()
      getGameWindow.getScreenManager.getActiveScreen.onLeavingScreen(GameOverScreen.SCREEN_INDEX)
-     SoundPool.playLoop_gameOverMelodie(SoundPool.LOOP_CONTINUOUSLY)
+     SoundPool.play_gameOverMelodie(SoundPool.LOOP_CONTINUOUSLY)
   }
 
   /** Called when turn is assigned to the player. */
@@ -102,6 +102,7 @@ class Player(world: WorldLike,
     component.setY(endComponent.getY)
   }
 
+   override def toString: String = "Player: " + name
 }
 
 object Player {

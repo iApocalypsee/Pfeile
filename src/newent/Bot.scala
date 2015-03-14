@@ -18,7 +18,7 @@ class Bot(world: WorldLike, spawnPoint: Point, name: String)
   /**
     * The component that the representable object uses first. Method is called only once.
     *
-    * The start component must not be null at first, else it will throw a [[IllegalArgumentException]].
+    * The start component must not be null at first, else it will throw a [[java.lang.IllegalArgumentException]].
     * @return A component object which the representable object uses first.
     */
   override protected def startComponent = new Component {
@@ -107,6 +107,8 @@ class Bot(world: WorldLike, spawnPoint: Point, name: String)
     * <b> Compare with <code>BotStrength</code>
     */
   lazy val Strength: BotStrength = BotStrength.Strength
+
+   override def toString: String = "Bot: " + name
 }
 
 object Bot {

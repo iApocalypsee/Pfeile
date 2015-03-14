@@ -2,7 +2,8 @@ package newent
 
 import general.{LogFacility, PfeileContext}
 import player.Life
-import player.weapon.RangedWeapon
+import player.armour.Armour
+import player.weapon.{RangedWeapon, Weapon}
 
 /** An entity that has its own life status.
   *
@@ -40,13 +41,39 @@ trait LivingEntity extends Entity with AttackContainer {
      var damage: Double = 0
      var defence: Double = 0
 
-     // counting every defence value of every piece of armour together and save it in defence
-     if (this.isInstanceOf[HasArmor]) {
-        val combatant: HasArmor = this.asInstanceOf[HasArmor]
-        combatant.armorParts.foreach { armorOption =>
-           defence = defence + armorOption.get.getDefence(event.weapon.getArmingType)
+
+     // This counts the defence. The implementation under this part should be equal (but shorter and faster), but doesn't work
+     if (this.isInstanceOf[Combatant]) {
+        this.asInstanceOf[Combatant].getEquipment match {
+           case armour: HasArmor =>
+              armour.armorParts.foreach { armour: Option[Armour] =>
+                 if (armour != None)
+                    defence = defence + armour.get.getDefence(event.weapon.getArmingType)
+              }
+           case weapons: HasWeapons =>
+              weapons.weapons.foreach { weapon: Option[Weapon] =>
+                 if (weapon !=  None)
+                    defence = defence + weapon.get.getDefence(event.weapon.getArmingType)
+              }
+           case _ =>
         }
      }
+
+
+     // counting every defence value of every piece of armour together and save it in defence
+
+     /* FIXME Medieval Equipment and EquipmentStrategy cause an StackOverflowException
+     if (this.isInstanceOf[Combatant]) {
+        val combatant: Combatant = this.asInstanceOf[Combatant]
+        combatant.equipment.equippedItems.foreach { equippableItem: EquippableItem =>
+           equippableItem match {
+              case armour: Armour => defence = defence + armour.getDefence(event.weapon.getArmingType)
+              case weapon: Weapon => defence = defence + weapon.getDefence(event.weapon.getArmingType)
+              case _ =>
+           }
+        }
+     }
+     */
 
      if (event.weapon.isInstanceOf[RangedWeapon])
         damage = event.weapon.asInstanceOf[RangedWeapon].damageAt(getGridX, getGridY)

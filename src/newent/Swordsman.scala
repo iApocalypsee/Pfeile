@@ -53,6 +53,8 @@ class Swordsman(world: WorldLike, spawnPosition: Point, team: Team)
     * Can be overridden to join a different team in the beginning.
     */
   override protected def initialTeam = team
+
+   override def toString: String = "Swordsman: " + name
 }
 
 object Swordsman {

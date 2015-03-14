@@ -1,5 +1,6 @@
 package player.weapon.arrow;
 
+import general.LogFacility;
 import general.Main;
 import gui.ImageHelper;
 import newent.InventoryLike;
@@ -25,15 +26,37 @@ public final class ArrowHelper {
      * (before using {@link ArrowHelper#getArrowImage(int)}
      */
     public ArrowHelper() {
-		arrowImages = new BufferedImage[NUMBER_OF_ARROW_TYPES];
-		arrowImages[FireArrow.INDEX] = new FireArrow().getImage();
-		arrowImages[WaterArrow.INDEX] = new WaterArrow().getImage();
-		arrowImages[StormArrow.INDEX] = new StormArrow().getImage();
-		arrowImages[StoneArrow.INDEX] = new StoneArrow().getImage();
-		arrowImages[IceArrow.INDEX] = new IceArrow().getImage();
-		arrowImages[LightningArrow.INDEX] = new LightningArrow().getImage();
-		arrowImages[LightArrow.INDEX] = new LightArrow().getImage();
-		arrowImages[ShadowArrow.INDEX] = new ShadowArrow().getImage();
+        Thread x = new Thread("Arrow loading Thread") {
+
+            /**
+             * If this thread was constructed using a separate
+             * <code>Runnable</code> run object, then that
+             * <code>Runnable</code> object's <code>run</code> method is called;
+             * otherwise, this method does nothing and returns.
+             * <p>
+             * Subclasses of <code>Thread</code> should override this method.
+             *
+             * @see #start()
+             * @see #stop()
+             */
+            @Override
+            public void run () {
+                arrowImages = new BufferedImage[NUMBER_OF_ARROW_TYPES];
+                arrowImages[FireArrow.INDEX] = new FireArrow().getImage();
+                arrowImages[WaterArrow.INDEX] = new WaterArrow().getImage();
+                arrowImages[StormArrow.INDEX] = new StormArrow().getImage();
+                arrowImages[StoneArrow.INDEX] = new StoneArrow().getImage();
+                arrowImages[IceArrow.INDEX] = new IceArrow().getImage();
+                arrowImages[LightningArrow.INDEX] = new LightningArrow().getImage();
+                arrowImages[LightArrow.INDEX] = new LightArrow().getImage();
+                arrowImages[ShadowArrow.INDEX] = new ShadowArrow().getImage();
+
+                LogFacility.log("Arrow images loaded.", "Info", "initprocess");
+            }
+        };
+        x.setDaemon(true);
+        x.setPriority(Thread.MAX_PRIORITY);
+        x.start();
 	}
 	
 	/**

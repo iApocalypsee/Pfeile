@@ -1,6 +1,7 @@
 package general;
 
 import akka.actor.ActorSystem;
+import animation.SoundPool;
 import general.io.PreInitStage;
 import gui.screen.*;
 import newent.CommandTeam;
@@ -8,6 +9,7 @@ import newent.Player;
 import newent.Team;
 import player.weapon.arrow.ArrowHelper;
 import scala.collection.Seq;
+import scala.runtime.AbstractFunction0;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
 import world.TileLike;
@@ -87,9 +89,9 @@ public class Main {
 
         GraphicsEnvironment environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
-        // Let's begin playing the title song (so the user knows, that something is done while loading the game)
-        // FREEZES THE "GraphicsEnvironment.getLocalGraphicsEnvironment()" CALL!
-        //SoundPool.play_titleMelodie();
+        // This will load the background melodies of SoundPool and SoundEffectTimeClock in an Thread and start to play
+        // the main melodie, if it's ready.
+        SoundPool.isLoaded();
 
         LogFacility.log("Running Pfeile on... " + SystemProperties.getComputerName(), "Info");
         LogFacility.putSeparationLine();
@@ -99,7 +101,7 @@ public class Main {
         LogFacility.log("Beginning initialization process...", "Info", "initprocess");
 
         main = new Main();
-        user = new User("Just a user");
+        user = new User(SystemProperties.getComputerName());
 
         LogFacility.log("Attempting to execute PreInitStage...", "Info", "initprocess");
 
@@ -111,8 +113,8 @@ public class Main {
         gameWindow = new GameWindow();
         LogFacility.log("GameWindow instantiated.", "Info", "initprocess");
 
+        // loading the arrow images is threaded now
         new ArrowHelper();
-        LogFacility.log("Arrow images loaded.", "Info", "initprocess");
 
         gameWindow.initializeScreens();
         LogFacility.log("Screens initialized.", "Info", "initprocess");
