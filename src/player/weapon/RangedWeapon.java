@@ -1,5 +1,7 @@
 package player.weapon;
 
+import player.ArmingType;
+
 public abstract class RangedWeapon extends Weapon {
 	
 	/** der Grundwert der Reichweite der Waffe (ggf. innerhalb der ableitenden Klasse noch Wert 'rangeCurrent'*/
@@ -8,60 +10,43 @@ public abstract class RangedWeapon extends Weapon {
     /** the aim of of the RangedWeapon */
     private Aim aim;
 
-    /** the damageRadius is going to be set to 1, this means only the tile at
-     * <code>getAim().getGridX(), getAim().getGridY()</code> is effected by the attack.
-     * The range is 0 as well as the x and y position of the Aim. */
- 	public RangedWeapon(String name) {
-        this(name, 1, new Aim(0, 0, 1));
-	}
-
-    public RangedWeapon(String name, float attackValue) {
-        super(name, attackValue);
+    /**
+     * <code>aim = new Aim(0, 0, 1)</code>
+     * The attack will impact at (<code>0</code>|<code>0</code>) and has an damage radius of <code>1</code>. The range
+     * of the attack is <code>1</code>.
+     *
+     * @param name the name of the weapon
+     * @param attackValue the attack value
+     * @param armingType the type
+     */
+    public RangedWeapon(String name, float attackValue, ArmingType armingType) {
+        super(name, attackValue, armingType);
         range = 1;
         aim = new Aim(0, 0, 1);
-    }
-
-    /** the damageRadius is going to be set to 1, this means only the tile at
-     * <code>getAim().getGridX(), getAim().getGridY()</code> is effected by the attack */
-    public RangedWeapon(String name, double range) {
-        this(name, range, new Aim(0, 0, 1));
-    }
-
-    /** sets every Parameter without <code>getAim().getGridX()</code> and <code>getAim().getGridY()</code>. (both are 0) */
-    public RangedWeapon(String name, double range, double damageRadius) {
-        this(name, range, new Aim(0, 0, damageRadius));
-    }
-
-    /**
-     *
-     * @param name the name of the RangedWeapon, defined in Item
-     * @param range the range of the attack/weapon
-     * @param aim where the attack is going to impact and how
-     */
-    public RangedWeapon(String name, double range, Aim aim) {
-        this(name, 0, range, aim);
     }
 
     /**
      *
      * @param name the name
      * @param attackValue the damage
+     * @param armingType the type of the weapon
      * @param range the range of the weapon
      * @param damageRadius the damageRadius for {@link player.weapon.Aim}
      */
-    public RangedWeapon(String name, float attackValue, double range, double damageRadius) {
-        this(name, attackValue, range, new Aim(0, 0, damageRadius));
+    public RangedWeapon(String name, float attackValue, ArmingType armingType, double range, double damageRadius) {
+        this(name, attackValue, armingType, range, new Aim(0, 0, damageRadius));
     }
 
     /**
      *
      * @param name the name of the weapon
      * @param attackValue the damage
+     * @param armingType the type of the weapon
      * @param range the range
      * @param aim {@link player.weapon.Aim}
      */
-    public RangedWeapon(String name, float attackValue, double range, Aim aim) {
-        super(name, attackValue);
+    public RangedWeapon(String name, float attackValue, ArmingType armingType, double range, Aim aim) {
+        super(name, attackValue, armingType);
         this.range = range;
         this.aim = aim;
     }
@@ -72,7 +57,8 @@ public abstract class RangedWeapon extends Weapon {
      * ({@link newent.LivingEntity} registers the damage function} <p>
      *     This method returns the damage at the tile (posX|posY), with the center of the attack at
      *     <code>getAim().getGridX(), getAim().getGridY()</code> within the borders of <code>getAim().getDamageRadius()</code>.
-     *     The damage is already multiplied with the damageMultiplier <code>PfeileContext.DAMAGE_MULTI</code> at {@link general.PfeileContext}.
+     *     <b>The damage is already multiplied with the damageMultiplier <code>PfeileContext.DAMAGE_MULTI</code> at
+     *     {@link general.PfeileContext}. </b>
      *
      * @param posX the x-position of the tile, where the damage should be calculated
      * @param posY the y-position of the tile, where the attack impacts

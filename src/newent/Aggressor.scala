@@ -2,7 +2,7 @@ package newent
 
 import newent.event.AttackEvent
 
-/** An object that can operate attacks on a [[AttackContainer]].
+/** An object that can operate attacks on a [[newent.AttackContainer]].
   *
   * For now, the aggressor can just attack another attack container, but that is already the quintessence
   * of an aggressor in combat.

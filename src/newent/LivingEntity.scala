@@ -1,9 +1,9 @@
 package newent
 
 import general.{LogFacility, PfeileContext}
-import gui.LifeUI
 import player.Life
-import player.weapon.RangedWeapon
+import player.armour.Armour
+import player.weapon.{RangedWeapon, Weapon}
 
 /** An entity that has its own life status.
   *
@@ -38,12 +38,57 @@ trait LivingEntity extends Entity with AttackContainer {
   }
 
   onDamage += { event =>
-     LogFacility.log(s"Impacting attack: by ${event.aggressor} to " +
-           s"${event.destination.toString} with ${event.weapon.getName}", "Debug", "attack")
+     var damage: Double = 0
+     var defence: Double = 0
+
+
+     // This counts the defence. The implementation under this part should be equal (but shorter and faster), but doesn't work
+     if (this.isInstanceOf[Combatant]) {
+        this.asInstanceOf[Combatant].getEquipment match {
+           case armour: HasArmor =>
+              armour.armorParts.foreach { armour: Option[Armour] =>
+                 if (armour != None)
+                    defence = defence + armour.get.getDefence(event.weapon.getArmingType)
+              }
+           case weapons: HasWeapons =>
+              weapons.weapons.foreach { weapon: Option[Weapon] =>
+                 if (weapon !=  None)
+                    defence = defence + weapon.get.getDefence(event.weapon.getArmingType)
+              }
+           case _ =>
+        }
+     }
+
+
+     // counting every defence value of every piece of armour together and save it in defence
+
+     /* FIXME Medieval Equipment and EquipmentStrategy cause an StackOverflowException
+     if (this.isInstanceOf[Combatant]) {
+        val combatant: Combatant = this.asInstanceOf[Combatant]
+        combatant.equipment.equippedItems.foreach { equippableItem: EquippableItem =>
+           equippableItem match {
+              case armour: Armour => defence = defence + armour.getDefence(event.weapon.getArmingType)
+              case weapon: Weapon => defence = defence + weapon.getDefence(event.weapon.getArmingType)
+              case _ =>
+           }
+        }
+     }
+     */
 
      if (event.weapon.isInstanceOf[RangedWeapon])
-        life.setLife(life.getLife - event.weapon.asInstanceOf[RangedWeapon].damageAt(getGridX, getGridY))
+        damage = event.weapon.asInstanceOf[RangedWeapon].damageAt(getGridX, getGridY)
      else
-        life.setLife(life.getLife - event.weapon.getAttackValue * PfeileContext.DAMAGE_MULTI.get)
+        damage = event.weapon.getAttackValue * PfeileContext.DAMAGE_MULTI.get
+
+     // prohibiting possible healing on attack
+     if (defence > damage)
+        damage = 0
+
+     // finally, the life need to be changed
+     life.changeLife(- damage + defence)
+
+     LogFacility.log(s"Impacting attack: by ${event.aggressor} to " +
+           s"${event.destination.toString} with ${event.weapon.getName}. " +
+           s"[Damage " + damage + " | Defence: " + defence + "]", "Debug", "Attack")
   }
 }

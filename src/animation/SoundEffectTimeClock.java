@@ -1,5 +1,7 @@
 package animation;
 
+import general.LogFacility;
+
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 
@@ -16,6 +18,13 @@ public class SoundEffectTimeClock {
 
     /** If timeClock is below 3s, the user should notice it by playing this sound instead of {@link SoundEffectTimeClock#play_tickingNoise()}. */
     private static Clip tickingCriticalNoise;
+
+    private static boolean isLoaded = false;
+
+    /** <code>true</code> - if the sound effect files has been loaded. */
+    public static boolean isLoaded () {
+        return isLoaded;
+    }
 
     static {
         tickingNoise = SoundLoader.load("resources/sfx/soundEffects/clock sound effect.wav");
@@ -39,6 +48,10 @@ public class SoundEffectTimeClock {
         gainControlExplosion.setValue(+2); // + 2 db
         gainControlTickingCritical.setValue(-1);  // - 1 db
         // instead of using another sound file for criticalTickingNoise, I'm just increasing the volume of tickingCriticalNoise
+
+        isLoaded = true;
+
+        LogFacility.log("Sound effect files loaded.", "Info", "initprocess");
     }
 
 

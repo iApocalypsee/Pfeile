@@ -137,7 +137,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     def selectedEntity_=(x: Entity): Unit = {
       if (x == null) _selectedEntity = activePlayer
       else _selectedEntity = x
-      LogFacility.log(s"$selectedEntity selected", "Debug")
+      //LogFacility.log(s"$selectedEntity selected", "Debug")
     }
 
     def resetSelection(): Unit = {
