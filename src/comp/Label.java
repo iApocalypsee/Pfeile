@@ -3,6 +3,7 @@ package comp;
 import gui.screen.Screen;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Label extends Component {
 	
@@ -22,6 +23,8 @@ public class Label extends Component {
     private Color declineInputColor = Color.darkGray;
 
 	private Color backgroundColor = null;
+
+    private BufferedImage optImage;
 
 	public Label() {
 		declineInput();
@@ -73,8 +76,14 @@ public class Label extends Component {
 			} else {
 				g.setColor(declineInputColor);
 			}
-			
-			g.drawString(text, getX() + STD_INSET_X, getY() + STD_INSET_Y);
+
+            if(optImage == null) {
+                g.drawString(text, getX(), getY());
+            } else {
+                g.drawImage(optImage, getX(), getY(), optImage.getWidth(), optImage.getHeight(), null);
+                g.drawString(text, getX() + optImage.getWidth() + STD_INSETS.left,
+                        getY() + STD_INSETS.top + 20);
+            }
 		}
 	}
 
@@ -82,6 +91,42 @@ public class Label extends Component {
         this.text = text;
         setWidth(Component.getTextBounds(text, STD_FONT).width);
         setHeight(Component.getTextBounds(text, STD_FONT).height);
+    }
+
+    /**
+     * Setzt das Bild, das mit dem Text dargestellt werden soll, und
+     * passt gegebenenfalls die Breite und Höhe des Buttons an.
+     * @param optimg Das Bild.
+     */
+    public void iconify(BufferedImage optimg) {
+        this.optImage = optimg;
+        recalculateDimension();
+    }
+
+    /**
+     * Berechnet die Bounds des Buttons neu.
+     */
+    void recalculateDimension() {
+        Dimension d;
+        // leerer Text bei text == null
+        if(text != null) {
+            d = Component.getTextBounds(text, STD_FONT);
+        } else {
+            d = Component.getTextBounds("", STD_FONT);
+        }
+
+        if(optImage != null) {
+            setWidth(optImage.getWidth() +
+                    STD_INSETS.left + d.width);
+            if(optImage.getHeight() < d.height) {
+                setHeight(d.height);
+            } else {
+                setHeight(optImage.getHeight());
+            }
+        } else {
+            setWidth(d.width);
+            setHeight(d.height);
+        }
     }
 
     public String getText() {
