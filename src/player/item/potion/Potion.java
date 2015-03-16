@@ -5,12 +5,14 @@ import gui.Drawable;
 import newent.InventoryLike;
 import player.item.Item;
 import player.item.Loot;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 /**
- * Any Potion. Override the PotionUI for the correct look.
+ * Any Potion. Override the PotionUI for the correct look. To change the GUI-Position of an Potion use {@link player.item.potion.PotionUI}
  */
 public abstract class Potion extends Item implements Drawable {
 
@@ -20,9 +22,34 @@ public abstract class Potion extends Item implements Drawable {
     protected PotionUI potionUI;
 
     /**
-     * The level (effectiveness) of the potion: 1, 2 or 3.
+     * The level (effectiveness) of the potion: 0, 1 or 2.
      */
-    protected byte level;
+    private final byte level;
+
+    /**
+     * The default constructor with the <code>name</code> and the <code>level = 0</code> and with a
+     * default PotionUI {@link PotionUI#PotionUI()}
+     *
+     * @param name the name of the potion. (z.B. "<code>Potion of Healing</code>")
+     * @see player.item.potion.Potion#Potion(byte, String)
+     */
+    protected Potion (String name) {
+        this((byte) 0, name);
+    }
+
+    /**
+     * Creating a new potion with the defined values and a default PotionUI {@link PotionUI#PotionUI()}
+     *
+     * @param level the level of the item <code>level >= 0 && level <= 2</code>
+     * @param name the name like "<code>Potion of Healing</code>"
+     */
+    protected Potion (byte level, String name) {
+        super(name);
+        if (level < 0 && level > 2)
+            throw new IllegalArgumentException("The level (here: " + level + ") of a potion must be 0, 1 or 2.");
+        this.level = level;
+        potionUI = new PotionUI();
+    }
 
     /**
      * Every potion has it's own level.
@@ -77,31 +104,6 @@ public abstract class Potion extends Item implements Drawable {
             }
         }
         return false;
-    }
-
-    /**
-     * The default constructor with the <code>name</code> and the <code>level = 1</code> and with a
-     * default PotionUI {@link PotionUI#PotionUI()}
-     *
-     * @param name the name of the potion. (z.B. "<code>Potion of Healing</code>")
-     * @see player.item.potion.Potion#Potion(byte, String)
-     */
-    protected Potion (String name) {
-        super(name);
-        level = 1;
-        potionUI = new PotionUI();
-    }
-
-    /**
-     * Creating a new potion with the defined values and a default PotionUI {@link PotionUI#PotionUI()}
-     *
-     * @param level the level of the item
-     * @param name the name like "<code>Potion of Healing</code>"
-     */
-    protected Potion (byte level, String name) {
-        super(name);
-        this.level = level;
-        potionUI = new PotionUI();
     }
 
     @Override

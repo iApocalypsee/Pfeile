@@ -1,13 +1,13 @@
 package animation;
 
-import general.Delegate;
 import general.LogFacility;
 
 import javax.sound.sampled.Clip;
 
 /** This class supports the playing of sounds. All Methods are public and static. Note, that the isPlaying...() methods
  * needs time to return true, because of the overhead. That's why a call directly after the play...() probably returns
- * false.
+ * false. After every melodie has been loaded, it automatically begins to start playing the title melodie and loading
+ * {@link animation.SoundEffectTimeClock} as well.
  * <p>
  * <b>titleMelodie: </b>  This music clip should be played at the beginning of the game, during PreWindowScreen or ArrowSelectionScreenPreSet.
  * <p>

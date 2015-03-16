@@ -13,12 +13,22 @@ import java.io.IOException;
  */
 public class PotionOfHealing extends Potion {
 
-    private static BufferedImage image;
+    /** the possible images of a potion: length is 3 because of three possible levels */
+    private static BufferedImage[] images;
 
     static {
-        String path = "resources/gfx/item textures/potion textures/potionOfHealing.png";
+        images = new BufferedImage[3];
+
+        String generalPath = "resources/gfx/item textures/potion textures/potionOfHealing";
+        String path = "<No path selected>";
         try {
-            image = ImageIO.read(PotionOfHealing.class.getClassLoader().getResourceAsStream(path));
+            path = generalPath + "[0].png";
+            images[0] = ImageIO.read(PotionOfHealing.class.getClassLoader().getResourceAsStream(path));
+            path = generalPath + "[1].png";
+            images[1] = ImageIO.read(PotionOfHealing.class.getClassLoader().getResourceAsStream(path));
+            path = generalPath + "[2].png";
+            images[2] = ImageIO.read(PotionOfHealing.class.getClassLoader().getResourceAsStream(path));
+
         } catch (IOException e) {
             e.printStackTrace();
             LogFacility.log("Image of PotionOfHealing could not be loaded: " + path);
@@ -26,26 +36,37 @@ public class PotionOfHealing extends Potion {
     }
 
     /**
-     * Creating a new healing Potion requires nothing (the level of the healing potion is 1).
+     * Creating a new healing Potion requires nothing (the level of the healing potion is 0).
      */
     public PotionOfHealing () {
-        super("Potion of Healing");
-        potionUI.createComponent(image);
+        this((byte) 0);
     }
 
     /**
      * creating a new healing Potion
      *
-     * @param level the level (--> effectiveness) of the potion
+     * @param level the level (--> effectiveness) of the potion. Must be <code>0 <= level <= 2</code>
      */
     public PotionOfHealing (byte level) {
         super(level, "Potion of Healing");
+        potionUI.createComponent(images[getLevel()]);
+    }
+
+    /**
+     *
+     * @param level the level of the potion. Must be <code>0, 1 or 2</code>
+     * @param posX the X-position of the screen
+     * @param posY the Y-position of the screen
+     */
+    public PotionOfHealing (byte level, int posX, int posY) {
+        super(level, "Potion of Healing");
+        potionUI.createComponent(images[getLevel()], posX, posY);
     }
 
     @Override
     public boolean triggerEffect () {
         Life life = Main.getContext().getActivePlayer().getLife();
-        life.setLife(life.getLife() + 10 * level + life.getMaxLife() * 0.1 * level);
+        life.setLife(life.getLife() + 10 * (getLevel() + 1) + life.getMaxLife() * 0.1 * (getLevel() + 1));
         // after using the potion is should be removed at all.
         return remove();
     }

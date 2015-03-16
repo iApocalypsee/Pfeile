@@ -73,8 +73,8 @@ public class LootSpawner {
         RoundChest spawnedChest = new RoundChest(spawnPoint.x, spawnPoint.y);
 
         // adding something. Here from everything one.
-        spawnedChest.add(new PotionOfHealing((byte) (random.nextInt(3) + 1)));
-        spawnedChest.add(new PotionOfMovement((byte) (random.nextInt(3) + 1)));
+        spawnedChest.add(new PotionOfHealing((byte) (random.nextInt(3))));
+        spawnedChest.add(new PotionOfMovement((byte) (random.nextInt(3))));
         spawnedChest.add(new PlatinumCoin());
         spawnedChest.add(new GoldCoin());
         spawnedChest.add(new SilverCoin());
@@ -106,14 +106,14 @@ public class LootSpawner {
 
             // with the possibility of 15% a PotionOfMovement is added.
             if (random.nextDouble() < 0.15)
-                spawnedLoot.add(new PotionOfMovement((byte) (random.nextInt(3) + 1)));
+                spawnedLoot.add(new PotionOfMovement((byte) (random.nextInt(3))));
 
         // if it's a defaultChest add a potion and a little bit money
         } else {
             if (random.nextBoolean())
-                spawnedLoot.add(new PotionOfHealing((byte) (random.nextInt(3) + 1)));
+                spawnedLoot.add(new PotionOfHealing((byte) (random.nextInt(3))));
             else
-                spawnedLoot.add(new PotionOfMovement((byte) (random.nextInt(3) + 1)));
+                spawnedLoot.add(new PotionOfMovement((byte) (random.nextInt(3))));
 
             BronzeCoin[] coins = CoinHelper.getCoins(random.nextInt(50));
             for (BronzeCoin coin : coins)

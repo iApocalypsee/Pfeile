@@ -80,6 +80,8 @@ trait LivingEntity extends Entity with AttackContainer {
      else
         damage = event.weapon.getAttackValue * PfeileContext.DAMAGE_MULTI.get
 
+     // TODO other effects like PotionOfDamage must be calculated here
+
      // prohibiting possible healing on attack
      if (defence > damage)
         damage = 0

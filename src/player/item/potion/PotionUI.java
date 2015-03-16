@@ -23,7 +23,7 @@ public class PotionUI implements Drawable {
      *
      * @see player.item.potion.PotionUI#PotionUI(java.awt.image.BufferedImage)
      */
-    public PotionUI () {
+    protected PotionUI () {
         component = new ImageComponent(0, 0, new BufferedImage(15, 20, BufferedImage.TYPE_4BYTE_ABGR), GameScreen.getInstance());
         component.setVisible(false);
     }
@@ -37,18 +37,17 @@ public class PotionUI implements Drawable {
      *
      * @see PotionUI#PotionUI()
      */
-    public PotionUI (BufferedImage image) {
+    protected PotionUI (BufferedImage image) {
         createComponent(image);
         component.setVisible(false);
     }
-
 
     /** Creates a default ImageComponent with the BufferedImage <code>image</code> at the position <code>(0|0)</code> with
      * <code>GameScreen</code> as backing screen. The component
      *
      * @param image the image of the new component
      */
-    public void createComponent (BufferedImage image) {
+    protected void createComponent (BufferedImage image) {
         component = new ImageComponent(0, 0, image, GameScreen.getInstance());
     }
 
@@ -60,7 +59,7 @@ public class PotionUI implements Drawable {
      * @param posX the x position on the screen
      * @param posY the y position on the screen
      */
-    public void createComponent (BufferedImage image, int posX, int posY) {
+    protected void createComponent (BufferedImage image, int posX, int posY) {
         component = new ImageComponent(posX, posY, image, GameScreen.getInstance());
     }
 
