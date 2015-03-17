@@ -1,6 +1,10 @@
 package player.item.potion;
 
 import general.LogFacility;
+import general.Main;
+import newent.CommandTeam;
+import scala.runtime.AbstractFunction0;
+import scala.runtime.BoxedUnit;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -73,8 +77,20 @@ public class PotionOfDamage extends Potion {
      */
     @Override
     public boolean triggerEffect () {
+        CommandTeam team = Main.getContext().getTurnSystem().getTeamOfActivePlayer();
 
-        // TODO increasing the damage
+        final float extraDamage = (getLevel() + 1) * 0.1f;
+
+        team.setExtraDamage((team.getExtraDamage() - 1) + extraDamage);
+
+        // the next time the same player (activePlayer) gets the turn, the extra damage should be reset
+        Main.getContext().getActivePlayer().onTurnGet().registerOnce(new AbstractFunction0<BoxedUnit>() {
+            @Override
+            public BoxedUnit apply () {
+                team.setExtraDamage((team.getExtraDamage() - 1) - extraDamage);
+                return BoxedUnit.UNIT;
+            }
+        });
 
         return remove();
     }

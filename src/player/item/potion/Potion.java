@@ -5,10 +5,8 @@ import gui.Drawable;
 import newent.InventoryLike;
 import player.item.Item;
 import player.item.Loot;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.List;
 
 /**
@@ -81,7 +79,8 @@ public abstract class Potion extends Item implements Drawable {
      * Removes the potion from the inventory or from the loot by searching the inventory of
      * <code>Main.getContext().getActivePlayer()</code> or loot <code>Main.getContext().getWorldLootList()</code>
      * every <code>anyLoot.getStoredItems()</code>. The search for the Potion ends, if the Potion has been found
-     * (so a Potion in the inventory and in a loot would for example only be removed in the inventory).
+     * (so a Potion in the inventory and in a loot would for example only be removed in the inventory). Other players
+     * then the activePlayer aren't searched, because you can only use an potion, when it's your turn.
      *
      * @return <code>true</code> - if the item has been successfully removed.
      */

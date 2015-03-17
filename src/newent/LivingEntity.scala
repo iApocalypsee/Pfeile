@@ -1,6 +1,6 @@
 package newent
 
-import general.{LogFacility, PfeileContext}
+import general.{Main, LogFacility, PfeileContext}
 import player.Life
 import player.armour.Armour
 import player.weapon.{RangedWeapon, Weapon}
@@ -52,13 +52,12 @@ trait LivingEntity extends Entity with AttackContainer {
               }
            case weapons: HasWeapons =>
               weapons.weapons.foreach { weapon: Option[Weapon] =>
-                 if (weapon !=  None)
+                 if (weapon != None)
                     defence = defence + weapon.get.getDefence(event.weapon.getArmingType)
               }
            case _ =>
         }
      }
-
 
      // counting every defence value of every piece of armour together and save it in defence
 
@@ -80,7 +79,10 @@ trait LivingEntity extends Entity with AttackContainer {
      else
         damage = event.weapon.getAttackValue * PfeileContext.DAMAGE_MULTI.get
 
-     // TODO other effects like PotionOfDamage must be calculated here
+     Main.getContext.getTurnSystem.teams.apply().foreach { team: Team =>
+        if (team.isInTeam(event.aggressor))
+            damage = damage * team.getExtraDamage
+     }
 
      // prohibiting possible healing on attack
      if (defence > damage)

@@ -1,6 +1,8 @@
 package general
 
-import newent.Team
+import newent.{CommandTeam, Team}
+
+import scala.collection.JavaConversions
 
 /**
   * Takes care of that the turn mechanics apply correctly to the players.
@@ -19,6 +21,27 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
     * The player that is currently able to do actions.
     */
   private var _currentPlayer = teams().apply(teamToBeginIndex)
+
+   /**
+    * The list of all teams
+    *
+    * @return <code>JavaConversions.seqAsJavaList(teams().apply())</code>
+    */
+  def getTeams = JavaConversions.seqAsJavaList(teams.apply())
+
+   /**
+    * The list of teams is searched for the team of the active player.
+    *
+    * @return the CommandTeam of <code>Main.getContext().getActivePlayer()</code>
+    */
+  def getTeamOfActivePlayer: CommandTeam = {
+     val activePlayer = Main.getContext.getActivePlayer
+     teams.apply().foreach { team: Team =>
+        if (team.isInTeam(activePlayer))
+           return team.asInstanceOf[CommandTeam]
+     }
+     throw new RuntimeException("The team of the active player " + activePlayer.name + " could not be found!")
+  }
 
   /**
     * Called when a turn has been ended.

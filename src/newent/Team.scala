@@ -39,6 +39,33 @@ sealed abstract class Team protected {
   /** Returns true if this team is the barbarian one. */
   def isBarbarian: Boolean
 
+  /** the extra damage is added as multiplier to the damage */
+  private var extraDamage: Double = 1
+
+   /**
+    * The extra damage, that every member of this team does.
+    * <code>damage = damage * (extraDamage + 1)</code>
+    *
+    * Notice, that <code>team.setExtraDamage(team.getExtraDamage())</code> would increase the extra damage by <code>1</code>.
+    * So you changing the extra damage based on the old extra damage need to be coded like this:
+    * <code>team.setExtraDamage((team.getExtraDamage - 1) + newExtraDamage)</code>
+    *
+    * @param extraDamage the relative extra damage like: 0.2 --> damage * 1.2
+    */
+  def setExtraDamage(extraDamage: Double) = {
+     if (extraDamage < - 1)
+        throw new IllegalArgumentException("Extra damage [" + extraDamage + "] must be higher than -1 to prohibit healing on attack")
+     this.extraDamage = extraDamage + 1
+  }
+
+   /**
+    * Every team can make extra damage because of special effects. This is the multiplier: <code>damage = damage * getExtraDamage() </code>
+    *
+    * @return the multiplier for the damage
+    */
+  def getExtraDamage: Double = {
+     extraDamage
+  }
 }
 
 /**
