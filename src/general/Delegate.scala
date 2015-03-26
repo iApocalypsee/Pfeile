@@ -1,5 +1,7 @@
 package general
 
+import java.util.function.Consumer
+
 import scala.concurrent.{ExecutionContext, Future}
 
 /** An implementation of the observer pattern.
@@ -15,6 +17,15 @@ import scala.concurrent.{ExecutionContext, Future}
   * traits, go ahead and call the constructors for the [[general.Delegate.DelegateLike]] types directly.
   */
 object Delegate {
+
+  @FunctionalInterface
+  trait ProcFun0 {
+    def call(): Unit
+  }
+
+  object ProcFun0 {
+    private[Delegate] def toScalaFunction(procFun0: ProcFun0) = () => procFun0.call()
+  }
 
   @inline def create[In] = new Delegate[In] with ClearableDelegate
 
@@ -130,6 +141,8 @@ object Delegate {
       case reg_f: ((In) => Any) => reg_f( arg )
     }
 
+    def registerJava(jf: Consumer[In]) = this += (x => jf.accept(x))
+
     override def registerOnce(f: FunType): Handle = synchronized {
 
       var handle: Handle = null
@@ -166,6 +179,8 @@ object Delegate {
     def callAsync()(implicit ec: ExecutionContext): Future[Unit] = Future {
       call( )
     }
+
+    def registerJava(jf: ProcFun0): Unit = this += ProcFun0.toScalaFunction(jf)
 
     override def registerOnce(f: FunType): Handle = synchronized {
 

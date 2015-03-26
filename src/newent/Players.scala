@@ -20,8 +20,7 @@ import world.{TileLike, WorldLike}
   */
 class Player(world: WorldLike,
              spawnpoint: Point,
-             name: String) extends Entity(world, spawnpoint, name) with MovableEntity with TeleportableEntity with
-                                   InventoryEntity with LivingEntity with VisionEntity with Combatant {
+             name: String) extends Entity(world, spawnpoint, name) with CombatUnit {
 
   // Game section.
 
