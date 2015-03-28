@@ -1,11 +1,11 @@
 package newent
 
-
-import player.item.Item
+import player.item.{Item, PutItemAmount}
 
 import scala.collection.{JavaConversions, mutable}
 
-/** Base trait for all inventory classes.
+/**
+  * Base trait for all inventory classes.
   *
   * @author Josip Palavra
   */
@@ -13,14 +13,26 @@ trait InventoryLike {
 
   def put(i: Item): Boolean
 
-  /** Removes one item that satisfies given predicate, if any.
+  def put(putItemAmount: PutItemAmount): Unit = putItemAmount.putInto(this)
+
+  /**
+    * Removes one item that satisfies given predicate, if any.
     *
     * @param f The selector function.
     * @return The item that satisfied the predicate, if any.
     */
-  def remove(f: (Item) => Boolean): Option[Item]
+  def remove(f: (Item) => Boolean): Option[Item] = remove(f, 1).headOption
 
-  /** Removes all items that satisfy a predicate out of the inventory.
+  /**
+    * Removes given items with an amount.
+    * @param f The selector function.
+    * @param amount How many items be removed from the inventory.
+    * @return
+    */
+  def remove(f: Item => Boolean, amount: Int): Seq[Item]
+
+  /**
+    * Removes all items that satisfy a predicate out of the inventory.
     *
     * The items that are in the collection are removed from the inventory.
     *
@@ -29,7 +41,8 @@ trait InventoryLike {
     */
   def removeAll(f: (Item) => Boolean): Seq[Item]
 
-  /** Tries to find a specified item that satisfies given predicate.
+  /**
+    * Tries to find a specified item that satisfies given predicate.
     *
     * @param f The find function.
     * @return An item that satisfies a predicate, if any. If nothing has been found,
@@ -46,7 +59,7 @@ trait InventoryLike {
   def currentSize = items.size
 
   /** Removes every item from the inventory. The inventory will be empty afterwards.  */
-  def clear() : Unit
+  def clear(): Unit
 
 }
 
@@ -56,33 +69,36 @@ class DefaultInventory extends InventoryLike {
 
   override def put(i: Item): Boolean = {
     if (maximumSize > currentSize) {
-       _list += i
-       true
-    } else {
-       System.err.println("Inventory.maximumSize reached. Cannot put Item " + i.getClass.getName)
-       false
+      _list += i
+      true
+    }
+    else {
+      System.err.println("Inventory.maximumSize reached. Cannot put Item "+i.getClass.getName)
+      false
     }
   }
 
-  override def remove(f: (Item) => Boolean): Option[Item] = {
-    val opt_find = find(f)
-    val index_opt = opt_find map { i => _list.indexOf(i) }
-    if(index_opt.isDefined) _list.remove(index_opt.get)
-    opt_find
+  override def remove(f: (Item) => Boolean, amount: Int): Seq[Item] = {
+    var removeCount = 0
+    val filtered = _list.filterNot(item => {
+      if (removeCount < amount && f(item)) {
+        removeCount += 1
+        true
+      }
+      else false
+    })
+    _list = filtered
+    _list diff filtered
   }
 
-  override def removeAll(f: (Item) => Boolean): Seq[Item] = {
-    val ret = _list filter f
-    _list = _list filterNot f
-    ret
-  }
+  override def removeAll(f: (Item) => Boolean): Seq[Item] = remove(f, Int.MaxValue)
 
   override def find(f: (Item) => Boolean): Option[Item] = _list find f
 
   override def items = _list.toList
 
-   /** Removes every item from the inventory. The inventory will be empty afterwards.  */
-   override def clear(): Unit = {
-      _list.clear()
-   }
+  /** Removes every item from the inventory. The inventory will be empty afterwards.  */
+  override def clear(): Unit = {
+    _list.clear()
+  }
 }

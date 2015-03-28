@@ -1,9 +1,9 @@
 package gui.screen;
 
 import animation.AnimatedLine;
-import comp.*;
 import comp.Button;
 import comp.Component;
+import comp.WarningMessage;
 import general.Main;
 import general.PfeileContext;
 import gui.Drawable;
@@ -11,9 +11,9 @@ import newent.Player;
 import newent.VisionMap;
 import newent.VisionStatus;
 import newent.event.AttackEvent;
+import player.item.Item;
 import player.weapon.arrow.AbstractArrow;
 import player.weapon.arrow.ArrowHelper;
-import player.item.Item;
 import scala.Option;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.AbstractFunction1;
@@ -80,7 +80,7 @@ public class AimSelectionScreen extends Screen {
         boundsOvalDamageRadius = new Rectangle (0, 0, 0, 0);
         strokeOvalDamageRadius = new BasicStroke(2.5f);
 
-        warningMessage = new WarningMessage("", 40, Main.getWindowHeight() - 105, this);
+        warningMessage = new WarningMessage("No warning yet", 40, Main.getWindowHeight() - 105, this);
         warningMessage.setFont(warningMessage.getFont().deriveFont(Component.STD_FONT.getSize2D() * 2));
 
         fieldContainer = new FieldContainer();

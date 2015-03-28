@@ -3,8 +3,6 @@ package player.item;
 import comp.Component;
 import gui.Drawable;
 
-import java.awt.*;
-
 /**
  * Every Loot can be seen somehow, so this is the abstract class for any LootUI.
  * Override the drawMethod and it's done.

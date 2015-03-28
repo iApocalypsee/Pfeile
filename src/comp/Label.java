@@ -31,15 +31,13 @@ public class Label extends Component {
 
     public Label(int x, int y, Screen backing, String text) {
         super(0, 0, 0, 0, backing);
-
-        // Every time the label is transforming, the values have to be updated as well.
-        onTransformed.registerJava(this::recalculateDimension);
+        this.text = text;
 
         Dimension text_bounds = Component.getTextBounds(text, STD_FONT);
         setSourceShape(new Rectangle(-text_bounds.width / 2, -text_bounds.height / 2, text_bounds.width, text_bounds.height));
         getTransformation().translate(x, y);
 
-        this.text = text;
+
         declineInput();
         setName("Label " + hashCode());
     }
@@ -114,7 +112,7 @@ public class Label extends Component {
         if (text != null) {
             d = Component.getTextBounds(text, STD_FONT);
         } else {
-            d = Component.getTextBounds("", STD_FONT);
+            d = Component.getTextBounds(" ", STD_FONT);
         }
 
         if (optImage != null) {
@@ -134,10 +132,20 @@ public class Label extends Component {
                 setHeight(imageDrawScale.y);
             }
         } else {
-            setWidth(d.width);
-            setHeight(d.height);
+            if(d.width != getWidth()) {
+                setWidth(d.width);
+            }
+            if(d.height != getHeight()) {
+                setHeight(d.height);
+            }
+
             textDrawLocation = new Point(getX(), getY());
         }
+    }
+
+    @Override
+    public void setWidth(int width) {
+        super.setWidth(width);
     }
 
     public String getText() {

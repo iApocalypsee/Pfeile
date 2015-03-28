@@ -397,6 +397,7 @@ public abstract class Component implements IComponent {
 	 * @param width the width to set
 	 */
 	public void setWidth(int width) {
+        if(width == 0) throw new IllegalArgumentException("Illegal width of 0: Shape implosion");
 		double scaleFactor = width / getPreciseRectangle().getWidth();
 		//int oldWidth = (int) (srcShape.getBounds().width * transformation.scale().x());
 
@@ -429,6 +430,7 @@ public abstract class Component implements IComponent {
 	 * @param height the height to set
 	 */
 	public void setHeight(int height) {
+        if(height == 0) throw new IllegalArgumentException("Illegal height of 0: Shape implosion");
 		double scaleFactor = height / getPreciseRectangle().getHeight();
 
 		final double oldX = getPreciseRectangle().getX();
