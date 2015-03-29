@@ -26,7 +26,7 @@ object Path {
   /** A step in a more longer path. */
   case class Step(x: Int, y: Int, reqMovementPoints: Int) {
 
-    override def hashCode() = x * y
+    override def hashCode() = x * y + x
 
     override def equals(obj: scala.Any): Boolean = obj match {
       case s: Step => s.x == x && s.y == y

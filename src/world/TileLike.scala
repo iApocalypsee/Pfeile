@@ -1,18 +1,22 @@
 package world
 
 import java.awt.event.{MouseAdapter, MouseEvent}
-import java.awt.{Color, Graphics2D, Polygon}
+import java.awt.{BasicStroke, Color, Graphics2D, Polygon}
 
 import comp.{Component, DisplayRepresentable}
 import general.Main
 import gui.AdjustableDrawing
 import gui.screen.GameScreen
+import newent.pathfinding.Path
 import newent.{AttackContainer, EntityLike, MovableEntity}
 import player.weapon.arrow.{AbstractArrow, ImpactDrawerHandler}
 
 import scala.collection.{JavaConversions, mutable}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-/** Base trait for all tiles.
+/**
+  * Base trait for all tiles.
   *
   * I am knowingly not implementing [[comp.IComponent]] here, because if the
   * Component framework changes, it would be easier to adapt the changes with a base trait
@@ -59,12 +63,13 @@ trait TileLike extends DisplayRepresentable with AttackContainer {
   def entities: Seq[EntityLike]
 
   /** Java interop method for the entity list. */
-  def javaEntities = JavaConversions.seqAsJavaList( entities )
+  def javaEntities = JavaConversions.seqAsJavaList(entities)
 
   override def toString = s"(x=$latticeX|y=$latticeY) - ${getClass.getName}"
 }
 
-/** A tile implementation that displays itself isometrically.
+/**
+  * A tile implementation that displays itself isometrically.
   *
   * The entities are not stored locally on the tile, instead they are retrieved from the EntityManager
   * instance. Why? Because I don't want to reference a tile from the entity.
@@ -73,63 +78,63 @@ trait TileLike extends DisplayRepresentable with AttackContainer {
   * @param latticeY The y grid coordinate.
   * @param terrain The terrain to which the tile is linked.
   */
-abstract class IsometricPolygonTile protected(override val latticeX: Int,
-                                              override val latticeY: Int,
-                                              override val terrain: DefaultTerrain) extends TileLike with
-                                                                                            OnDemandEntitiesStrategy {
+abstract class IsometricPolygonTile protected (override val latticeX: Int,
+    override val latticeY: Int,
+    override val terrain: DefaultTerrain) extends TileLike with OnDemandEntitiesStrategy {
 
   import world.IsometricPolygonTile._
 
-  require( terrain ne null )
+  require(terrain ne null)
 
-  IsometricPolygonTile.appendToTileTypeList( this.getClass )
+  IsometricPolygonTile.appendToTileTypeList(this.getClass)
 
   onImpact += { e =>
-     // Every entity that is an attack container and is standing on THIS tile
-     // If there is any weapon the entity needs to feel the attack only on this file
-     // If it is an arrow, the damageRadius is calculated with the "damageAt" method by RangedWeapon/AbstractArrow. Every Entity has to take the attack.
+    // Every entity that is an attack container and is standing on THIS tile
+    // If there is any weapon the entity needs to feel the attack only on this file
+    // If it is an arrow, the damageRadius is calculated with the "damageAt" method by RangedWeapon/AbstractArrow. Every Entity has to take the attack.
 
-     val filteredEntityList = mutable.ListBuffer[EntityLike]()
+    val filteredEntityList = mutable.ListBuffer[EntityLike]()
 
-     if (e.weapon.isInstanceOf[AbstractArrow]) {
+    if (e.weapon.isInstanceOf[AbstractArrow]) {
 
-       // The attack impacts and it is an AbstractArrow, so we can register a new ImpactDrawer
-       ImpactDrawerHandler.addImpactDrawer(e)
+      // The attack impacts and it is an AbstractArrow, so we can register a new ImpactDrawer
+      ImpactDrawerHandler.addImpactDrawer(e)
 
-       // Every entity has to take the attack. The damage system will eventually calculate 0 damage, but the list doesn't need to be filtered
-       terrain.world.entities.entityList.foreach {
-         case x: AttackContainer => x.takeImmediately(e)
-         case _ => takeImmediately(e)
-       }
+      // Every entity has to take the attack. The damage system will eventually calculate 0 damage, but the list doesn't need to be filtered
+      terrain.world.entities.entityList.foreach {
+        case x: AttackContainer => x.takeImmediately(e)
+        case _ => takeImmediately(e)
+      }
 
-     } else {
-        filteredEntityList ++= terrain.world.entities.entityList.filter {
-           _.tileLocation == this
-        }
-     }
+    }
+    else {
+      filteredEntityList ++= terrain.world.entities.entityList.filter {
+        _.tileLocation == this
+      }
+    }
 
-     // Splitting for easier use
-     filteredEntityList.foreach {
-       case x: AttackContainer => x.takeImmediately( e )
-       case _ =>
+    // Splitting for easier use
+    filteredEntityList.foreach {
+      case x: AttackContainer => x.takeImmediately(e)
+      case _ =>
     }
   }
 
-  override def north: TileLike = terrain.tileAt( latticeX - 1, latticeY + 1 )
+  override def north: TileLike = terrain.tileAt(latticeX - 1, latticeY + 1)
 
-  override def northEast: TileLike = terrain.tileAt( latticeX, latticeY + 1 )
+  override def northEast: TileLike = terrain.tileAt(latticeX, latticeY + 1)
 
-  override def east: TileLike = terrain.tileAt( latticeX + 1, latticeY + 1 )
+  override def east: TileLike = terrain.tileAt(latticeX + 1, latticeY + 1)
 
-  override def southEast: TileLike = terrain.tileAt( latticeX + 1, latticeY )
+  override def southEast: TileLike = terrain.tileAt(latticeX + 1, latticeY)
 
-  override def south: TileLike = terrain.tileAt( latticeX + 1, latticeY - 1 )
+  override def south: TileLike = terrain.tileAt(latticeX + 1, latticeY - 1)
 
-  override def southWest: TileLike = terrain.tileAt( latticeX, latticeY - 1 )
+  override def southWest: TileLike = terrain.tileAt(latticeX, latticeY - 1)
 
-  override def west: TileLike = terrain.tileAt( latticeX - 1, latticeY - 1 )
+  override def west: TileLike = terrain.tileAt(latticeX - 1, latticeY - 1)
 
-  override def northWest: TileLike = terrain.tileAt( latticeX - 1, latticeY )
+  override def northWest: TileLike = terrain.tileAt(latticeX - 1, latticeY)
 
   /** Ditto. */
   override val getGridY = latticeX
@@ -139,16 +144,97 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
   /** Returns the color that is used to represent the isometric tile. */
   def color: Color
 
-  /** The component that the representable object uses first. Method is called only once.
+  /**
+    * The component that the representable object uses first. Method is called only once.
     *
     * The start component must not be null at first, else it will throw a [[java.lang.IllegalArgumentException]].
     * @return A component object which the representable object uses first.
     */
-  override protected def startComponent = new Component with AdjustableDrawing {
+  override protected def startComponent = new IsometricPolygonTileComponent
 
-    // Make the call to the method here, because the initialization of the attributes above
-    // has to finish before they get set to another value...
-    //recalculateOriginalPoints( )
+  class IsometricPolygonTileComponent private[IsometricPolygonTile] extends Component with AdjustableDrawing {
+
+    //////////////////// Visual path prediction ////////////////////
+
+    private var targeted = false
+    private var predictedPath: Option[Seq[IsometricPolygonTileComponent]] = None
+
+    addMouseListener(new MouseAdapter {
+      override def mousePressed(e: MouseEvent) = if (e.getButton == MouseEvent.BUTTON3) {
+        onGainedMoveTargetFocus()
+      }
+
+      override def mouseReleased(e: MouseEvent) = if (e.getButton == MouseEvent.BUTTON3) {
+        onLostMoveTargetFocus()
+      }
+
+      override def mouseEntered(e: MouseEvent): Unit = if (e.getButton == MouseEvent.BUTTON3) {
+        onGainedMoveTargetFocus()
+      }
+
+      override def mouseExited(e: MouseEvent): Unit = if (e.getButton == MouseEvent.BUTTON3) {
+        onLostMoveTargetFocus()
+      }
+    })
+
+    private def onLostMoveTargetFocus() = {
+      predictedPath.map {
+        for (x <- _) {
+          x.targeted = false
+        }
+      }
+    }
+
+    /**
+      * Executes when the tile is selected by an entity for being its next movement target.
+      */
+    private def onGainedMoveTargetFocus() = {
+      // The entity to calculate the path for
+      val entity = Main.getContext.entitySelection.selectedEntity
+
+      /**
+        * Actual prediction logic. This code is not written inside the future or match statement
+        * on purpose.
+        * @param x The path to predict the path to this tile for.
+        * @return Ditto.
+        */
+      def predictWith(x: MovableEntity): Option[Path] = {
+        x.pathfinderLogic.findPath(x, latticeX, latticeY)
+      }
+
+      def mapStep(step: Path.Step) = terrain.tileAt(step.x, step.y)
+
+      val prediction = Future {
+        entity match {
+          case entity: MovableEntity => predictWith(entity)
+          case _ => throw new RuntimeException("Current entity selection is no [[MovableEntity]]")
+        }
+      }
+
+      prediction.map { pathOption =>
+
+        val path: Path = pathOption getOrElse ???
+        val tileSteps = path.steps.map(x => mapStep(x).component.asInstanceOf[IsometricPolygonTileComponent])
+
+        for (tile <- tileSteps) {
+          tile.targeted = true
+        }
+
+        predictedPath = Some(tileSteps)
+
+      }
+    }
+
+    // Only draw a prediction if the tile is actually being targeted
+    handle { g =>
+      if (targeted) {
+        g.setStroke(MoveTargetStroke)
+        g.setColor(MoveTargetColor)
+        g.draw(getBounds)
+      }
+    }
+
+    //////////////////// Other unrelated code ////////////////////
 
     // When the mouse moves over the tile, it should be marked in a grayish style.
     handle({ g => g.setColor(Color.GRAY); g.fill(getBounds) }, { isMouseFocused })
@@ -169,36 +255,6 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
     // Translate so that the tile fits into the grid again.
     getTransformation.translate(latticeX * TileHalfWidth + latticeY * TileHalfWidth, latticeX * TileHalfHeight - latticeY * TileHalfHeight)
 
-    /** Recalculates the original points for the isometric tile.
-      *
-      * The original points can change by moving the geometry of the map, so every time the map geometry
-      * changes, this method should be called in order to keep visuals.
-      */
-    /*
-    def recalculateOriginalPoints(): Unit = {
-      import world.IsometricPolygonTile._
-
-      // Why do I subtract for the y coordinate?
-      // Because the screen coordinate system's y axis goes downwards, not upwards...
-      _originalWest.setLocation( latticeX * TileHalfWidth + latticeY * TileHalfWidth,
-        latticeX * TileHalfHeight - latticeY * TileHalfHeight )
-
-      // Again the y coordinate system axis goes down, not up. In OpenGL it's the other way around...
-      _originalNorth.setLocation( _originalWest.getX + TileHalfWidth, _originalWest.getY - TileHalfHeight )
-      _originalEast.setLocation( _originalWest.getX + TileWidth, _originalWest.getY )
-      _originalSouth.setLocation( _originalWest.getX + TileHalfWidth, _originalWest.getY + TileHalfHeight )
-
-      // Discard the old polygon instance since it is no more...
-      val _polygon = new Polygon
-      _polygon.addPoint( _originalWest.getX.asInstanceOf[Int], _originalWest.getY.asInstanceOf[Int] )
-      _polygon.addPoint( _originalSouth.getX.asInstanceOf[Int], _originalSouth.getY.asInstanceOf[Int] )
-      _polygon.addPoint( _originalEast.getX.asInstanceOf[Int], _originalEast.getY.asInstanceOf[Int] )
-      _polygon.addPoint( _originalNorth.getX.asInstanceOf[Int], _originalNorth.getY.asInstanceOf[Int] )
-
-      setBounds(_polygon)
-    }
-    */
-
     override def draw(g: Graphics2D): Unit = {
       g.setColor(color)
       g.fill(getBounds)
@@ -206,17 +262,16 @@ abstract class IsometricPolygonTile protected(override val latticeX: Int,
     }
   }
 
-
 }
 
 object IsometricPolygonTile {
 
   import scala.math._
 
-  private[this] val _tileTypeList = mutable.MutableList[Class[_ <: IsometricPolygonTile]]( )
+  private[this] val _tileTypeList = mutable.MutableList[Class[_ <: IsometricPolygonTile]]()
 
   private def appendToTileTypeList(t: Class[_ <: IsometricPolygonTile]): Unit = {
-    if (!_tileTypeList.contains( t )) _tileTypeList += t
+    if (!_tileTypeList.contains(t)) _tileTypeList += t
   }
 
   def tileTypeList = _tileTypeList.toList
@@ -225,7 +280,7 @@ object IsometricPolygonTile {
   lazy val TileWidth = TileHalfWidth * 2
   lazy val TileHalfHeight = 10
   lazy val TileHeight = TileHalfHeight * 2
-  lazy val TileDiagonalLength = sqrt( pow( TileHalfWidth, 2 ) + pow( TileHalfHeight, 2 ) )
+  lazy val TileDiagonalLength = sqrt(pow(TileHalfWidth, 2) + pow(TileHalfHeight, 2))
 
   lazy val ComponentShape = {
     val polygon = new Polygon
@@ -236,10 +291,21 @@ object IsometricPolygonTile {
     polygon
   }
 
+  /**
+    * The color being used when the tile is on a path predicted by a pathfinder for an entity.
+    */
+  lazy val MoveTargetColor = new Color(75, 75, 75, 125)
+
+  /**
+    * The line stroke used to clarify that the tile is lying on a certain path calculated
+    * by the pathfinder.
+    */
+  lazy val MoveTargetStroke = new BasicStroke(5)
+
 }
 
-class GrassTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends IsometricPolygonTile( latticeX,
-  latticeY, terrain ) {
+class GrassTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends IsometricPolygonTile(latticeX,
+  latticeY, terrain) {
 
   override def color = GrassTile.TileColor
 
@@ -248,11 +314,11 @@ class GrassTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends I
 
 object GrassTile {
 
-  lazy val TileColor = new Color( 0x1C9618 )
+  lazy val TileColor = new Color(0x1C9618)
 }
 
-class SeaTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends IsometricPolygonTile( latticeX,
-  latticeY, terrain ) {
+class SeaTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends IsometricPolygonTile(latticeX,
+  latticeY, terrain) {
 
   override def color = SeaTile.TileColor
 
@@ -261,5 +327,5 @@ class SeaTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends Iso
 
 object SeaTile {
 
-  lazy val TileColor = new Color( 0x3555DB )
+  lazy val TileColor = new Color(0x3555DB)
 }
