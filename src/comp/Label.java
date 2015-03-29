@@ -18,11 +18,13 @@ public class Label extends Component {
 
     private Color backgroundColor = null;
 
-    private BufferedImage optImage;
+    private BufferedImage optImage = null;
 
     private Point textDrawLocation = new Point(getX(), getY());
     private Point imageDrawLocation;
     private Point imageDrawScale;
+
+    private int imageTextInset = STD_INSETS.left;
 
     public Label() {
         declineInput();
@@ -33,10 +35,13 @@ public class Label extends Component {
         super(0, 0, 0, 0, backing);
         this.text = text;
 
+
+
         Dimension text_bounds = Component.getTextBounds(text, STD_FONT);
         setSourceShape(new Rectangle(-text_bounds.width / 2, -text_bounds.height / 2, text_bounds.width, text_bounds.height));
         getTransformation().translate(x, y);
 
+        onTransformed.registerJava(this::recalculateDimension);
 
         declineInput();
         setName("Label " + hashCode());
@@ -78,7 +83,7 @@ public class Label extends Component {
             }
 
             if (optImage == null) {
-                g.drawString(text, getX(), getY());
+                g.drawString(text, textDrawLocation.x, textDrawLocation.y);
             } else {
                 g.drawImage(optImage, imageDrawLocation.x, imageDrawLocation.y, imageDrawScale.x, imageDrawScale.y, null);
                 g.drawString(text, textDrawLocation.x, textDrawLocation.y);
@@ -122,34 +127,45 @@ public class Label extends Component {
 
             // Position the text so that it appears right next to the image, centered around about the half-height of
             // the given image.
-            textDrawLocation = new Point(imageDrawLocation.x + imageDrawScale.x + STD_INSETS.left,
-                    imageDrawLocation.y + imageDrawScale.y / 2 - d.height / 2);
-
+            // FIXME Causes text to be pushed upwards a little bit.
+            textDrawLocation = new Point(imageDrawLocation.x + imageDrawScale.x + imageTextInset,
+                    imageDrawLocation.y + imageDrawScale.y / 2 - d.height / 2 + d.height);
+//            textDrawLocation = new Point(imageDrawLocation.x + imageDrawScale.x + imageTextInset,
+//                    imageDrawLocation.y + imageDrawScale.y / 2);
+            /*
+            // Causes stack overflow...
             setWidth(imageDrawScale.x + STD_INSETS.left + d.width);
             if (imageDrawScale.y < d.height) {
                 setHeight(d.height);
             } else {
                 setHeight(imageDrawScale.y);
             }
+            */
         } else {
+            /*
+            // Causes stack overflow...
             if(d.width != getWidth()) {
                 setWidth(d.width);
             }
             if(d.height != getHeight()) {
                 setHeight(d.height);
             }
+            */
 
-            textDrawLocation = new Point(getX(), getY());
+            textDrawLocation = new Point(getX(), getY() + d.height);
         }
-    }
-
-    @Override
-    public void setWidth(int width) {
-        super.setWidth(width);
     }
 
     public String getText() {
         return text;
+    }
+
+    public int getImageTextInset() {
+        return imageTextInset;
+    }
+
+    public void setImageTextInset(int imageTextInset) {
+        this.imageTextInset = imageTextInset;
     }
 
     /**

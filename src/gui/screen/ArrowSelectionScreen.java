@@ -1,8 +1,8 @@
 package gui.screen;
 
-import comp.*;
 import comp.Button;
 import comp.Component;
+import comp.*;
 import general.JavaInterop;
 import general.Main;
 import general.PfeileContext;
@@ -17,6 +17,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.List;
 
 public class ArrowSelectionScreen extends Screen {
@@ -133,7 +134,7 @@ public class ArrowSelectionScreen extends Screen {
             shadowArrowButton.iconify(ArrowHelper.getArrowImage(ShadowArrow.INDEX, 0.8f));
 
 
-            warningMessage = new WarningMessage("", 40, Main.getWindowHeight() - 105, this);
+            warningMessage = new WarningMessage("No warning yet", 40, Main.getWindowHeight() - 105, this);
             warningMessage.setFont(warningMessage.getFont().deriveFont(Component.STD_FONT.getSize() * 2f));
 
             MouseHandler mListener = new MouseHandler();
