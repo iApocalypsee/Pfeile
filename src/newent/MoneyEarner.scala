@@ -2,7 +2,6 @@ package newent
 
 import general.LogFacility
 import general.LogFacility.LoggingLevel
-import player.item._
 import player.item.coin._
 
 import scala.collection.JavaConversions
@@ -21,34 +20,35 @@ trait MoneyEarner extends Entity with InventoryEntity {
     require(initialMoneyPerTurn >= 0, s"@[[MoneyEarner]]: Cannot start off with negative income of $initialMoneyPerTurn")
 
     /**
-     *
+      *
       * Calculates the total worth of the purse (all coins' values added together).
       * @return How much money the purse is worth.
       */
-    def numericValue = CoinHelper.getValue(getMoney)
+    def numericValue = CoinHelper.getValue(getCoins)
 
     private var _gpt = initialMoneyPerTurn
     private var _money = initialMoney
 
     /** The amount of gold that the earner gets every turn. */
     def moneyPerTurn = _gpt
+    def getMoneyPerTurn = moneyPerTurn
 
     /**
       * Sets how much money the money earner gets per turn.
       * @param x The amount of money the earner gets per turn.
       */
-    def setMoneyPerTurn(x: Int): Unit = {
+    def moneyPerTurn_=(x: Int) = {
       _gpt = x
       LogFacility.log(s"${this} earning ${_gpt} money per turn now", "Debug")
     }
+    def setMoneyPerTurn(x: Int): Unit = moneyPerTurn_=(x)
 
     /** The amount of gold that the earner has. */
-    def money: Seq[Coin] = inventory.items.collect {
+    def coins: Seq[Coin] = inventory.items.collect {
       case c: Coin => c
     }
 
-    def getMoneyPerTurn = moneyPerTurn
-    def getMoney = JavaConversions.seqAsJavaList(money)
+    def getCoins = JavaConversions.seqAsJavaList(coins)
 
     /**
       * Spends the specified amount of money (what it really does is it is just subtracting
@@ -57,72 +57,80 @@ trait MoneyEarner extends Entity with InventoryEntity {
       * @return A boolean value indicating whether the amount could be spent or not.
       */
     def spend(amount: Int): Boolean = {
-       if (numericValue - amount < 0)
-          false
-       else {
-          var leftToSpend = amount
+      if (numericValue - amount < 0)
+        false
+      else {
+        var leftToSpend = amount
 
-          inventory.items.foreach {item: Item =>
-             if (item.isInstanceOf[Coin]) {
-                if (item.asInstanceOf[Coin].getValue <= leftToSpend) {
-                   if (inventory.javaItems.remove(item)) {
-                      leftToSpend = leftToSpend - item.asInstanceOf[Coin].getValue
-                   } else
-                      LogFacility.log("Cannot remove " + item.asInstanceOf[Coin] + " from the inventory of " + this, LoggingLevel.Error)
-                }
-             }
+        coins.foreach { coin =>
+          if (coin.getValue <= leftToSpend) {
+            if (inventory.javaItems.remove(coin)) {
+              leftToSpend = leftToSpend - coin.getValue
+            }
+            else
+              LogFacility.log("Cannot remove "+coin+" from the inventory of "+this, LoggingLevel.Error)
           }
-          if (leftToSpend == 0)
-             return true
+        }
 
-          // if you still need to spend a small amount, but you only have large coins, you need to exchange these coins
+        if (leftToSpend == 0)
+          return true
 
-          // this is the coin, that need to be exchanged to BronzeCoins
-          var coin: Coin = null
+        // if you still need to spend a small amount, but you only have large coins, you need to exchange these coins
 
-          inventory.items.foreach{item: Item =>
-             if (item.isInstanceOf[Coin]) {
-                // That's what I mean
-                if (item.asInstanceOf[Coin].getValue > leftToSpend) {
-                   coin = item.asInstanceOf[Coin]
-                }
-             }
+        // this is the coin, that need to be exchanged to BronzeCoins
+        var coin: Coin = null
+
+        coins.foreach { iterCoin =>
+          // That's what I mean
+          if (iterCoin.getValue > leftToSpend) {
+            coin = iterCoin
           }
+        }
 
-          if (inventory.javaItems.remove(coin)) {
-             leftToSpend = leftToSpend - coin.getValue
-          } else
-             LogFacility.log("Cannot remove " + coin + " from the inventory of " + this, LoggingLevel.Error)
+        if (inventory.javaItems.remove(coin)) {
+          leftToSpend = leftToSpend - coin.getValue
+        }
+        else LogFacility.log("Cannot remove "+coin+" from the inventory of "+this, LoggingLevel.Error)
 
-          // leftToSpend is negative now. This amount need to be added to the inventory again.
-          CoinHelper.getCoins(-leftToSpend).foreach { coin: BronzeCoin =>
-             if(!inventory.put(coin)) {
-                if (!inventory.put(new BronzeCoin()))
-                   LogFacility.log("Cannot put a " + coin + " into the inventory. " + this + " lost " + coin.getValue + " money.", LoggingLevel.Error)
-             }
+        // leftToSpend is negative now. This amount need to be added to the inventory again.
+        CoinHelper.getCoins(-leftToSpend).foreach { coin: BronzeCoin =>
+          if (!inventory.put(coin)) {
+            if (!inventory.put(new BronzeCoin()))
+              LogFacility.log("Cannot put a "+coin+" into the inventory. "+this+" lost "+coin.getValue+" money.", LoggingLevel.Error)
           }
+        }
 
-          true
-       }
+        true
+      }
     }
 
-    def give(amount: Int): Unit = {
-      inventory.put(amount of new BronzeCoin)
-      LogFacility.log(s"Gave $amount money to $this", LoggingLevel.Info)
+    /**
+      * Gives a list of coins to the money earner.
+      * @param coins The list of coins to give to the money earner.
+      */
+    def give(coins: scala.Iterable[Coin]): Unit = {
+      for (coin <- coins) inventory.put(coin)
+      LogFacility.log("Gave "+CoinHelper.getValue(coins)+" money to "+this, LoggingLevel.Info)
     }
 
-    def give (coins: java.util.List[Coin]): Unit = {
-       for (i <- 0 until coins.size())
-          inventory.put(coins.get(i))
-       LogFacility.log("Gave " + CoinHelper.getValue(coins) + " money to " + this, LoggingLevel.Info)
-    }
+    /**
+      * Gives `amount` bronze coins to the money earner.
+      * @param amount The amount of bronze coins to give the earner.
+      */
+    def give(amount: Int) = give(List.fill(amount)(new BronzeCoin))
 
-    def give (coins: Array[Coin]): Unit = {
-       for(i <- 0 until coins.length)
-          inventory.put(coins.apply(i))
+    /**
+      * Gives a java collection of coins to the earner. Java-interop.
+      * @param coins The list of coins to give to the earner.
+      */
+    def give(coins: java.util.Collection[Coin]) = give(JavaConversions.collectionAsScalaIterable(coins))
 
-       LogFacility.log("Gave " + CoinHelper.getValue(coins) + " money to " + this, LoggingLevel.Info)
-    }
+    /**
+      * Gives an array of coins to the earner. Since Array is not bound into the Java collection type hierarchy,
+      * this method exists for interop.
+      * @param coins The array of coins to give to the earner.
+      */
+    def give(coins: Array[Coin]) = give(coins.toIterable)
 
     // Adds the promised gold per turn to the earner's purse
     private def mineAssets(): Unit = {

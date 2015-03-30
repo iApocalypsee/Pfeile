@@ -1,6 +1,7 @@
 package player.item.coin;
 
 import scala.Tuple2;
+import scala.collection.JavaConversions;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -197,6 +198,22 @@ public class CoinHelper {
         for (Object obj : list) {
             if (obj instanceof Coin)
                 value = value + ((Coin) obj).getValue();
+        }
+        return value;
+    }
+
+    /**
+     * Scala interop.
+     * @param seq The scala seq to calculate the value for.
+     * @param <A> Type parameter.
+     * @return The value of the seq, if any. Defaults to 0.
+     */
+    public static <A> int getValue(scala.collection.Iterable<A> seq) {
+        int value = 0;
+        for(A a : JavaConversions.asJavaIterable(seq)) {
+            if(a instanceof Coin) {
+                value += ((Coin) a).getValue();
+            }
         }
         return value;
     }
