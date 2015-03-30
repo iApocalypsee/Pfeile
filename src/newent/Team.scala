@@ -52,9 +52,9 @@ sealed abstract class Team protected {
     *
     * @param extraDamage the relative extra damage like: 0.2 --> damage * 1.2
     */
+   // TODO I don't understand __why__ you are adding 1 to the extraDamage parameter...?
   def setExtraDamage(extraDamage: Double) = {
-     if (extraDamage < - 1)
-        throw new IllegalArgumentException("Extra damage [" + extraDamage + "] must be higher than -1 to prohibit healing on attack")
+     require(extraDamage >= -1, "Extra damage [" + extraDamage + "] must be higher than -1 to prohibit healing on attack")
      this.extraDamage = extraDamage + 1
   }
 

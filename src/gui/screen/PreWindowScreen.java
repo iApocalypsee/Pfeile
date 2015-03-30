@@ -64,7 +64,7 @@ public class PreWindowScreen extends Screen {
     private ConfirmDialog confirmDialog;
 
     /** The Spinner for selecting the amount of arrows. */
-    private Spinner spinner;
+    private Spinner<Integer> spinner;
 
     /** SpinnerModel for choosing <code>PfeileContext.ARROW_NUMBER_FREE_SET</code> - "Pfeilanzahl [frei wählbar]" */
     private SpinnerModel spinnerModelPreSet;
@@ -182,7 +182,7 @@ public class PreWindowScreen extends Screen {
         spinnerModelPreSet = new SpinnerModel(15, 0, 50, 1);
         spinnerModelFreeSet = new SpinnerModel(4, 0, 20, 1);
         spinnerModelTurnsPerRound = new SpinnerModel(7, 1, 40, 1);
-        spinner = new Spinner(boxSelectHigh.getX(), selectorComboBox.getY(), this, spinnerModelPreSet);
+        spinner = new Spinner<Integer>(boxSelectHigh.getX(), selectorComboBox.getY(), this, spinnerModelPreSet);
         spinner.setVisible(false);
 
         colorBig = new Color (159, 30, 29);

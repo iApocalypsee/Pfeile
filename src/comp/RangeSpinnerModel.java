@@ -26,11 +26,13 @@ public class RangeSpinnerModel implements ISpinnerModel<Integer> {
 		current = oldModel.getValue();
 	}
 
-	public int getMinimum() {
+    @Override
+	public Integer getMinimum() {
 		return minimum;
 	}
 
-	public int getMaximum() {
+    @Override
+	public Integer getMaximum() {
 		return maximum;
 	}
 

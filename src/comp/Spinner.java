@@ -11,38 +11,44 @@ import java.io.IOException;
 /**
  * Spinner
  */
-public class Spinner extends Component {
+public class Spinner<T> extends Component {
 
-    private RangeSpinnerModel spinnerModel;
+    private ISpinnerModel<T> spinnerModel;
     private Rectangle downButton, upButton;
     private TextBox valueBox;
     private KeyListener keyListener;
 
     private static BufferedImage img_downButton, img_upButton;
+
     static {
         try {
             img_downButton = ImageIO.read(Spinner.class.getClassLoader().
                     getResourceAsStream("resources/gfx/comp/Spinner_downButton.png"));
             img_upButton = ImageIO.read(Spinner.class.getClassLoader().
                     getResourceAsStream("resources/gfx/comp/Spinner_upButton.png"));
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    /** this constructs a Spinner with automatically chosen width and height and with
+    /**
+     * this constructs a Spinner with automatically chosen width and height and with
      *
-     * @param x the x position on the screen
-     * @param y the y position on the screen
-     * @param backingScreen the Screen the Spinner will be shown (usually this)
+     * @param x                  the x position on the screen
+     * @param y                  the y position on the screen
+     * @param backingScreen      the Screen the Spinner will be shown (usually this)
      * @param spinnerNumberModel the spinnerModel this Spinner will work with
      */
-    public Spinner (int x, int y, Screen backingScreen, SpinnerModel spinnerNumberModel) {
+    public Spinner(int x, int y, Screen backingScreen, SpinnerModel spinnerNumberModel) {
+        this(x, y, backingScreen, (ISpinnerModel<T>) new RangeSpinnerModel(spinnerNumberModel));
+    }
+
+    public Spinner(int x, int y, Screen backingScreen, ISpinnerModel<T> spinnerModel) {
         super(x, y, 90, 50, backingScreen);
 
-        spinnerModel = new RangeSpinnerModel(spinnerNumberModel);
-        if (Math.abs(spinnerModel.getMinimum()) < Math.abs(spinnerModel.getMaximum()))
-            valueBox = new TextBox(x + 1, y + 1, String.valueOf(spinnerModel.getMaximum()), backingScreen);
-        else
-            valueBox = new TextBox(x + 1, y + 1, String.valueOf(spinnerModel.getMinimum()), backingScreen);
+        this.spinnerModel = spinnerModel;
+
+        valueBox = new TextBox(x + 1, y + 1, String.valueOf(spinnerModel.getMinimum()), backingScreen);
         valueBox.setHeight(img_downButton.getHeight() + img_upButton.getHeight());
 
         upButton = new Rectangle(valueBox.getX() + valueBox.getWidth(), y + 1,
@@ -60,12 +66,12 @@ public class Spinner extends Component {
 
         addMouseListener(new MouseAdapter() {
             @Override
-            public void mousePressed (MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 if (isAcceptingInput()) {
                     if (downButton.contains(e.getPoint())) {
-	                    spinnerModel.previous();
+                        spinnerModel.previous();
                     } else if (upButton.contains(e.getPoint()))
-	                    spinnerModel.next();
+                        spinnerModel.next();
                     valueBox.setEnteredText(spinnerModel.getCurrent().toString());
                 }
             }
@@ -77,7 +83,7 @@ public class Spinner extends Component {
 
         keyListener = new KeyAdapter() {
             @Override
-            public void keyTyped (KeyEvent e) {
+            public void keyTyped(KeyEvent e) {
                 if (isAcceptingInput()) {
                     if (Character.isDigit(e.getKeyCode()))
                         valueBox.enterText(e);
@@ -87,7 +93,7 @@ public class Spinner extends Component {
     }
 
     @Override
-    public void setX (int x) {
+    public void setX(int x) {
         super.setX(x);
         valueBox.setX(x);
         upButton.x = x + valueBox.getWidth();
@@ -95,7 +101,7 @@ public class Spinner extends Component {
     }
 
     @Override
-    public void setY (int y) {
+    public void setY(int y) {
         super.setY(y);
         valueBox.setY(y);
         upButton.y = y;
@@ -103,7 +109,7 @@ public class Spinner extends Component {
     }
 
     @Override
-    public void setWidth (int width) {
+    public void setWidth(int width) {
         if (width < upButton.width)
             width = upButton.width;
         super.setWidth(width);
@@ -111,19 +117,19 @@ public class Spinner extends Component {
     }
 
     @Override
-    public void acceptInput () {
+    public void acceptInput() {
         super.acceptInput();
         valueBox.acceptInput();
     }
 
     @Override
-    public void declineInput () {
+    public void declineInput() {
         super.declineInput();
         valueBox.declineInput();
     }
 
     @Override
-    public void setVisible (boolean vvvvvv) {
+    public void setVisible(boolean vvvvvv) {
         super.setVisible(vvvvvv);
         if (vvvvvv)
             valueBox.acceptInput();
@@ -132,24 +138,30 @@ public class Spinner extends Component {
     }
 
 
-    /** returns the SpinnerModel */
-    public ISpinnerModel<Integer> getSpinnerModel () {
+    /**
+     * returns the SpinnerModel
+     */
+    public ISpinnerModel<T> getSpinnerModel() {
         return spinnerModel;
     }
 
-    /** the old spinnerModel will be replaced by the new <code>spinnerModel</code>.
-     *  the value, which could be seen in the textBox changes to the currentValue of the <code>spinnerModel</code>*/
-    public void setSpinnerModel (SpinnerModel spinnerModel) {
-        this.spinnerModel = new RangeSpinnerModel(spinnerModel);
+    /**
+     * the old spinnerModel will be replaced by the new <code>spinnerModel</code>.
+     * the value, which could be seen in the textBox changes to the currentValue of the <code>spinnerModel</code>
+     */
+
+    @Deprecated
+    public void setSpinnerModel(SpinnerModel spinnerModel) {
+        this.spinnerModel = (ISpinnerModel<T>) new RangeSpinnerModel(spinnerModel);
         valueBox.setEnteredText(String.valueOf(this.spinnerModel.getCurrent()));
         valueBox.setStdText(String.valueOf(this.spinnerModel.getCurrent()));
     }
 
-	public void setSpinnerModel(RangeSpinnerModel model) {
-		this.spinnerModel = model;
-		valueBox.setEnteredText(String.valueOf(spinnerModel.getCurrent()));
-		valueBox.setStdText(String.valueOf(spinnerModel.getCurrent()));
-	}
+    public void setSpinnerModel(ISpinnerModel<T> model) {
+        this.spinnerModel = model;
+        valueBox.setEnteredText(String.valueOf(spinnerModel.getCurrent()));
+        valueBox.setStdText(String.valueOf(spinnerModel.getCurrent()));
+    }
 
     @Override
     public void draw(Graphics2D g) {
@@ -157,7 +169,7 @@ public class Spinner extends Component {
             getBorder().draw(g);
             valueBox.draw(g);
 
-            switch(getStatus()) {
+            switch (getStatus()) {
                 case NO_MOUSE:
                     g.setColor(getBorder().getOuterColor());
                     break;

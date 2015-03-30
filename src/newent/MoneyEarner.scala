@@ -56,7 +56,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
       */
     def spend(amount: Int): Boolean = {
       if (numericValue - amount < 0) false
-      else ???
+      else throw new NotImplementedError("@Request01: How to remove coins from inventory? I'm clueless.")
     }
 
     def give(amount: Int): Unit = {

@@ -84,9 +84,11 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
 
   import world.IsometricPolygonTile._
 
-  require(terrain ne null)
+  require(terrain != null)
 
   IsometricPolygonTile.appendToTileTypeList(this.getClass)
+
+  //<editor-fold desc='Attack impact logic'>
 
   onImpact += { e =>
     // Every entity that is an attack container and is standing on THIS tile
@@ -120,6 +122,10 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
     }
   }
 
+  //</editor-fold>
+  
+  //<editor-fold desc='Directions (north, east, west, south, etc.)'>
+
   override def north: TileLike = terrain.tileAt(latticeX - 1, latticeY + 1)
 
   override def northEast: TileLike = terrain.tileAt(latticeX, latticeY + 1)
@@ -136,6 +142,8 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
 
   override def northWest: TileLike = terrain.tileAt(latticeX - 1, latticeY)
 
+  //</editor-fold>
+
   /** Ditto. */
   override val getGridY = latticeX
   /** Ditto. */
@@ -150,11 +158,19 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
     * The start component must not be null at first, else it will throw a [[java.lang.IllegalArgumentException]].
     * @return A component object which the representable object uses first.
     */
-  override protected def startComponent = new IsometricPolygonTileComponent
+  override protected def startComponent: Component = new IsometricPolygonTileComponent
 
-  class IsometricPolygonTileComponent private[IsometricPolygonTile] extends Component with AdjustableDrawing {
+  private class IsometricPolygonTileComponent private[IsometricPolygonTile] extends Component with AdjustableDrawing {
 
-    //////////////////// Visual path prediction ////////////////////
+    //<editor-fold desc='Initialization code'>
+    setBackingScreen(GameScreen.getInstance())
+    setSourceShape(IsometricPolygonTile.ComponentShape)
+
+    // Translate so that the tile fits into the grid again.
+    getTransformation.translate(latticeX * TileHalfWidth + latticeY * TileHalfWidth, latticeX * TileHalfHeight - latticeY * TileHalfHeight)
+    //</editor-fold>
+
+    //<editor-fold desc='Visual path prediction'>
 
     private var targeted = false
     private var predictedPath: Option[Seq[IsometricPolygonTileComponent]] = None
@@ -186,18 +202,18 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
     }
 
     /**
-      * Executes when the tile is selected by an entity for being its next movement target.
-      */
+     * Executes when the tile is selected by an entity for being its next movement target.
+     */
     private def onGainedMoveTargetFocus() = {
       // The entity to calculate the path for
       val entity = Main.getContext.entitySelection.selectedEntity
 
       /**
-        * Actual prediction logic. This code is not written inside the future or match statement
-        * on purpose.
-        * @param x The path to predict the path to this tile for.
-        * @return Ditto.
-        */
+       * Actual prediction logic. This code is not written inside the future or match statement
+       * on purpose.
+       * @param x The path to predict the path to this tile for.
+       * @return Ditto.
+       */
       def predictWith(x: MovableEntity): Option[Path] = {
         x.pathfinderLogic.findPath(x, latticeX, latticeY)
       }
@@ -234,15 +250,13 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
       }
     }
 
-    //////////////////// Other unrelated code ////////////////////
-
-    // When the mouse moves over the tile, it should be marked in a grayish style.
-    handle({ g => g.setColor(Color.GRAY); g.fill(getBounds) }, { isMouseFocused })
-    setBackingScreen(GameScreen.getInstance())
+    //</editor-fold>
+    
+    //<editor-fold desc='Entity movement'>
 
     // When the user is clicking on the tile, the active player should move towards it.
     addMouseListener(new MouseAdapter {
-      override def mouseReleased(e: MouseEvent): Unit = {
+      override def mouseReleased(e: MouseEvent): Unit = if(e.getButton == MouseEvent.BUTTON3) {
         Main.getContext.entitySelection.selectedEntity match {
           case move: MovableEntity => move.moveTowards(latticeX, latticeY)
           case _ => ???
@@ -250,10 +264,10 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
       }
     })
 
-    setSourceShape(IsometricPolygonTile.ComponentShape)
-
-    // Translate so that the tile fits into the grid again.
-    getTransformation.translate(latticeX * TileHalfWidth + latticeY * TileHalfWidth, latticeX * TileHalfHeight - latticeY * TileHalfHeight)
+    // When the mouse moves over the tile, it should be marked in a grayish style.
+    handle({ g => g.setColor(MouseFocusColor); g.fill(getBounds) }, { isMouseFocused })
+    
+    //</editor-fold>
 
     override def draw(g: Graphics2D): Unit = {
       g.setColor(color)
@@ -267,7 +281,12 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
 object IsometricPolygonTile {
 
   import scala.math._
-
+  
+  // Tile type list is used in world generation.
+  // Every subclass of IsometricPolygonTile puts a java.lang.Class
+  // object of itself into this list.
+  //<editor-fold desc='Tile type list'>
+  
   private[this] val _tileTypeList = mutable.MutableList[Class[_ <: IsometricPolygonTile]]()
 
   private def appendToTileTypeList(t: Class[_ <: IsometricPolygonTile]): Unit = {
@@ -275,6 +294,10 @@ object IsometricPolygonTile {
   }
 
   def tileTypeList = _tileTypeList.toList
+  
+  //</editor-fold>
+  
+  //<editor-fold desc='Visual appearance'>
 
   lazy val TileHalfWidth = 18
   lazy val TileWidth = TileHalfWidth * 2
@@ -292,15 +315,22 @@ object IsometricPolygonTile {
   }
 
   /**
-    * The color being used when the tile is on a path predicted by a pathfinder for an entity.
-    */
+   * The color used when the mouse is pointing at the tile.
+   */
+  lazy val MouseFocusColor = new Color(175, 175, 175, 50)
+
+  /**
+   * The color being used when the tile is on a path predicted by a pathfinder for an entity.
+   */
   lazy val MoveTargetColor = new Color(75, 75, 75, 125)
 
   /**
-    * The line stroke used to clarify that the tile is lying on a certain path calculated
-    * by the pathfinder.
-    */
+   * The line stroke used to clarify that the tile is lying on a certain path calculated
+   * by the pathfinder.
+   */
   lazy val MoveTargetStroke = new BasicStroke(5)
+  
+  //</editor-fold>
 
 }
 
