@@ -203,23 +203,23 @@ public abstract class Component implements IComponent {
 		this.status = ComponentStatus.NO_MOUSE;
 		this.name = Integer.toString(this.hashCode());
 
-		transformation.onTranslated().register(JavaInterop.asScalaFunction((TranslationChange t) -> {
-			isTransformationChangedSince = true;
-			onTransformed.apply();
-			return BoxedUnit.UNIT;
-		}));
+		transformation.onTranslated().register(JavaInterop.asScalaFunctionFun((TranslationChange t) -> {
+            isTransformationChangedSince = true;
+            onTransformed.apply();
+            return BoxedUnit.UNIT;
+        }));
 
-		transformation.onScaled().register(JavaInterop.asScalaFunction((ScaleChange t) -> {
-			isTransformationChangedSince = true;
-			onTransformed.apply();
-			return BoxedUnit.UNIT;
-		}));
+		transformation.onScaled().register(JavaInterop.asScalaFunctionFun((ScaleChange t) -> {
+            isTransformationChangedSince = true;
+            onTransformed.apply();
+            return BoxedUnit.UNIT;
+        }));
 
-		transformation.onRotated().register(JavaInterop.asScalaFunction((RotationChange t) -> {
-			isTransformationChangedSince = true;
-			onTransformed.apply();
-			return BoxedUnit.UNIT;
-		}));
+		transformation.onRotated().register(JavaInterop.asScalaFunctionFun((RotationChange t) -> {
+            isTransformationChangedSince = true;
+            onTransformed.apply();
+            return BoxedUnit.UNIT;
+        }));
 	}
 
 	/**

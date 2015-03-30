@@ -126,7 +126,7 @@ public class ComboBox extends Component {
             }
         });
 
-        final Function1<Integer, BoxedUnit> changeTextCallback = JavaInterop.asScalaFunction((Integer boxedIndex) -> {
+        final Function1<Integer, BoxedUnit> changeTextCallback = JavaInterop.asScalaFunctionFun((Integer boxedIndex) -> {
             containerLabel.setText(values[getSelectedIndex()]);
             return BoxedUnit.UNIT;
         });

@@ -64,13 +64,13 @@ public class GameScreen extends Screen implements FrameContainer {
 	private GameScreen() {
 		super(GameScreen.SCREEN_NAME, GameScreen.SCREEN_INDEX);
 
-		onScreenEnter.register(JavaInterop.asScalaFunctionSupplier(() -> {
-			if(map == null) {
-				map = new VisualMap(Main.getContext().getWorld());
-				map.moveMap(120, 470);
-			}
-			return BoxedUnit.UNIT;
-		}));
+		onScreenEnter.register(JavaInterop.asScalaFunction(() -> {
+            if (map == null) {
+                map = new VisualMap(Main.getContext().getWorld());
+                map.moveMap(120, 470);
+            }
+            return BoxedUnit.UNIT;
+        }));
 	}
 
 	/** This method must be called just once!

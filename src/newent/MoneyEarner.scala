@@ -117,20 +117,20 @@ trait MoneyEarner extends Entity with InventoryEntity {
       * Gives `amount` bronze coins to the money earner.
       * @param amount The amount of bronze coins to give the earner.
       */
-    def give(amount: Int) = give(List.fill(amount)(new BronzeCoin))
+    def give(amount: Int): Unit = give(List.fill(amount)(new BronzeCoin))
 
     /**
       * Gives a java collection of coins to the earner. Java-interop.
       * @param coins The list of coins to give to the earner.
       */
-    def give(coins: java.util.Collection[Coin]) = give(JavaConversions.collectionAsScalaIterable(coins))
+    def give(coins: java.util.Collection[Coin]): Unit = give(JavaConversions.collectionAsScalaIterable(coins))
 
     /**
       * Gives an array of coins to the earner. Since Array is not bound into the Java collection type hierarchy,
       * this method exists for interop.
       * @param coins The array of coins to give to the earner.
       */
-    def give(coins: Array[Coin]) = give(coins.toIterable)
+    def give(coins: Array[Coin]): Unit = give(coins.toIterable)
 
     // Adds the promised gold per turn to the earner's purse
     private def mineAssets(): Unit = {

@@ -50,13 +50,10 @@ public class WorldLootList implements Drawable {
         final Seq<Team> playerSeq = Main.getContext().getTurnSystem().teams().apply();
         playerSeq.foreach(JavaInterop.asScalaFunction(team -> {
             Player player = ((CommandTeam) team).getHead();
-            player.onLocationChanged().register(JavaInterop.asScalaFunction(locationChangedEvent -> {
+            player.onLocationChanged().registerJava(locationChangedEvent -> {
                 updateVisibleLoot();
-                return BoxedUnit.UNIT;
-            }));
-            return BoxedUnit.UNIT;
+            });
         }));
-
     }
 
     /**

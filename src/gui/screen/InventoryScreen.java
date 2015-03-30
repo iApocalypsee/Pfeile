@@ -1,9 +1,9 @@
 package gui.screen;
 
-import comp.*;
 import comp.Button;
 import comp.Component;
 import comp.List;
+import comp.WarningMessage;
 import general.JavaInterop;
 import general.Main;
 import newent.InventoryLike;
@@ -35,7 +35,7 @@ public class InventoryScreen extends Screen {
     /** the List where the items (excluded arrows) are saved */
     private List inventoryList;
 
-    /** "Bestätigen" */
+    /** "Bestï¿½tigen" */
     private Button confirmButton;
 
     /** "Abbrechen" */
@@ -53,7 +53,7 @@ public class InventoryScreen extends Screen {
     public InventoryScreen () {
         super(SCREEN_NAME, SCREEN_INDEX);
 
-        selectedItem = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 380, this, "<Item auswählen>");
+        selectedItem = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 380, this, "<Item auswï¿½hlen>");
         selectedItem.declineInput();
         selectedItem.setRoundBorder(true);
 
@@ -65,7 +65,7 @@ public class InventoryScreen extends Screen {
 
         cancelButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 220, this, "Abbrechen");
 
-        confirmButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 300, this, "Bestätigen");
+        confirmButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 300, this, "Bestï¿½tigen");
 
         warningMessage = new WarningMessage("null", 40, Main.getWindowHeight() - 105, this);
         warningMessage.setFont(warningMessage.getFont().deriveFont(Component.STD_FONT.getSize2D() * 2));
@@ -73,10 +73,10 @@ public class InventoryScreen extends Screen {
         inventoryList.setRoundBorder(true);
         inventoryList.setVisible(true);
 
-        Function1<Integer, Object> listSelectCallback = JavaInterop.asScalaFunction((Integer selectedIndex) -> {
+        Function1<Integer, Object> listSelectCallback = JavaInterop.asScalaFunctionFun((Integer selectedIndex) -> {
             String selectedName = getItems().get(selectedIndex);
             if (selectedName.equals("<keine Items>"))
-                selectedName = "<Item auswählen>";
+                selectedName = "<Item auswï¿½hlen>";
             selectedItem.setText(selectedName);
 
             InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
@@ -114,8 +114,8 @@ public class InventoryScreen extends Screen {
             @Override
             public void mouseReleased (MouseEvent e) {
                 // if nothing is selected yet, you don't need to trigger the rest
-                if (selectedItem.getText().equals("<Item auswählen>")) {
-                    warningMessage.setMessage("Wähle erst ein Item aus!");
+                if (selectedItem.getText().equals("<Item auswï¿½hlen>")) {
+                    warningMessage.setMessage("Wï¿½hle erst ein Item aus!");
                     warningMessage.activateMessage();
                     return;
                 }
@@ -136,13 +136,13 @@ public class InventoryScreen extends Screen {
                         } else if (item instanceof EquippableItem) {
                             EquippableItem equippableItem = (EquippableItem) item;
                             if (!equippableItem.equip()) {
-                                warningMessage.setMessage("Die " + equippableItem.getName() + " kann nicht ausgerüstet werden.");
+                                warningMessage.setMessage("Die " + equippableItem.getName() + " kann nicht ausgerï¿½stet werden.");
                                 warningMessage.activateMessage();
                                 isLeavingScreen = false;
                             }
 
                         } else {
-                            warningMessage.setMessage("Das ausgewählte item " + item.getName() + " kann nicht verwendet werden.");
+                            warningMessage.setMessage("Das ausgewï¿½hlte item " + item.getName() + " kann nicht verwendet werden.");
                             warningMessage.activateMessage();
                             isLeavingScreen = false;
                         }
@@ -159,7 +159,7 @@ public class InventoryScreen extends Screen {
             public BoxedUnit apply () {
                 inventoryList = new List(inventoryList.getX(), inventoryList.getY(), inventoryList.getWidth(), inventoryList.getHeight(),
                         InventoryScreen.this, getItems());
-                selectedItem.setText("<Item auswählen>");
+                selectedItem.setText("<Item auswï¿½hlen>");
                 selectedItem.iconify(null);
                 warningMessage.setTransparency(0);
 

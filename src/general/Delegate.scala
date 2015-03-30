@@ -157,6 +157,8 @@ object Delegate {
       handle
     }
 
+    def registerOnceJava(jf: Consumer[In]): Unit = registerOnce(x => jf.accept(x))
+
     /** Code in java zum ausführen der gethreaden Version:
       *
     <code> delegate.callAsync(<In>, scala.concurrent.ExecutionContext.Implicits$.MODULE$.global()); </code> */
@@ -195,6 +197,8 @@ object Delegate {
       _callbacks = _callbacks ++ List(handle)
       handle
     }
+
+    def registerOnceJava(jf: ProcFun0): Unit = registerOnce(ProcFun0.toScalaFunction(jf))
   }
 
   /** A standard delegate that accepts an input type and an output type. <p>

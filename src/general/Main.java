@@ -9,7 +9,6 @@ import newent.Player;
 import newent.Team;
 import player.weapon.arrow.ArrowHelper;
 import scala.collection.Seq;
-import scala.runtime.AbstractFunction0;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
 import world.TileLike;
@@ -157,16 +156,14 @@ public class Main {
             }
         });
 
-        GameScreen.getInstance().onScreenEnter.registerOnce(JavaInterop.asScalaFunctionSupplier(() -> {
+        GameScreen.getInstance().onScreenEnter.registerOnceJava(() -> {
 
             final Seq<Team> teamSeq = Main.getContext().getTurnSystem().teams().apply();
             teamSeq.foreach(JavaInterop.asScalaFunction(team -> {
                 Player p = ((CommandTeam) team).getHead();
                 p.tightenComponentToTile((TileLike) p.tileLocation());
-                return BoxedUnit.UNIT;
             }));
-            return BoxedUnit.UNIT;
-        }));
+        });
 
         LogFacility.log("Pfeile is ready.", "Info", "initprocess");
         LogFacility.putSeparationLine();

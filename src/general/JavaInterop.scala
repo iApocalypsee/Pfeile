@@ -5,13 +5,22 @@ import java.util.{Optional, function}
 
 object JavaInterop {
 
-  implicit def asScalaFunctionSupplier[A](x: Supplier[A]): () => A = () => x.get()
+  implicit def asScalaFunction[A](x: Supplier[A]): () => A = () => x.get()
 
-  implicit def asScalaFunctionConsumer[A](x: Consumer[A]): A => Unit = i => x.accept(i)
+  implicit def asScalaFunction[A](x: Consumer[A]): A => Unit = i => x.accept(i)
 
-  implicit def asScalaFunctionPredicate[A](x: Predicate[A]): A => Boolean = i => x.test(i)
+  implicit def asScalaFunction[A](x: Predicate[A]): A => Boolean = i => x.test(i)
 
-  implicit def asScalaFunction[A, R](x: function.Function[A, R]): A => R = i => x(i)
+  /**
+    * This method has a different name from the other `asScalaFunction` methods, because it would
+    * cause ambiguity when using Java lambda notation.
+    * This method converts a Java regular function to a Scala regular `Function1`
+    * @param x The Java function to convert to a Scala function.
+    * @tparam A The input type.
+    * @tparam R The return type.
+    * @return The converted scala `Function1`.
+    */
+  implicit def asScalaFunctionFun[A, R](x: function.Function[A, R]): A => R = i => x(i)
 
   implicit def asJavaFunction[A, R](x: A => R): function.Function[A, R] = new function.Function[A, R] {
     override def apply(t: A) = x(t)
@@ -26,11 +35,11 @@ object JavaInterop {
   }
 
   def asJavaOptional[A](x: Option[A]): Optional[A] = x match {
-    case Some(x) => Optional.of(x)
+    case Some(y) => Optional.of(y)
     case None => Optional.empty[A]()
   }
 
-  def asScalaOption[A](x: Optional[A]): Option[A] = if(x.isPresent) Some(x.get) else None
+  def asScalaOption[A](x: Optional[A]): Option[A] = if (x.isPresent) Some(x.get) else None
 
   def scalaNone = None
 

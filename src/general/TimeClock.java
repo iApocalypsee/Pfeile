@@ -2,10 +2,10 @@ package general;
 
 import animation.SoundEffectTimeClock;
 import comp.Component;
-import gui.screen.GameScreen;
-import gui.screen.ScreenManager;
 import gui.screen.AimSelectionScreen;
 import gui.screen.ArrowSelectionScreen;
+import gui.screen.GameScreen;
+import gui.screen.ScreenManager;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.Duration$;
 import scala.concurrent.duration.FiniteDuration;
@@ -95,15 +95,13 @@ public class TimeClock extends Component implements Runnable {
         });
 
         final TurnSystem turnSystem = Main.getContext().getTurnSystem();
-        turnSystem.onTurnGet().register(JavaInterop.asScalaFunction(p -> {
+        turnSystem.onTurnGet().registerJava(p -> {
             reset();
             start();
-            return BoxedUnit.UNIT;
-        }));
-        turnSystem.onTurnEnded().register(JavaInterop.asScalaFunction(p -> {
+        });
+        turnSystem.onTurnEnded().registerJava(p -> {
             stop();
-            return BoxedUnit.UNIT;
-        }));
+        });
     }
 	
 	/** �bernimmt timeSinceLastFrame + Aufruf durch 'Main'
