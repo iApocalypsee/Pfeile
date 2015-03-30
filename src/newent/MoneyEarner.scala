@@ -16,14 +16,14 @@ trait MoneyEarner extends Entity with InventoryEntity {
 
   object Purse {
 
-    require(initialMoney >= 0, s"@[[GoldEarner]]: Cannot start with debt of $initialMoney")
-    require(initialMoneyPerTurn >= 0, s"@[[GoldEarner]]: Cannot start off with negative income of $initialMoneyPerTurn")
+    require(initialMoney >= 0, s"@[[MoneyEarner]]: Cannot start with debt of $initialMoney")
+    require(initialMoneyPerTurn >= 0, s"@[[MoneyEarner]]: Cannot start off with negative income of $initialMoneyPerTurn")
 
     /**
       * Calculates the total worth of the purse (all coins' values added together).
       * @return How much money the purse is worth.
       */
-    def numericValue = money.foldLeft(0)((value, coin) => value + coin.getValue)
+    def numericValue = CoinHelper.getValue(getMoney)
 
     private var _gpt = initialMoneyPerTurn
     private var _money = initialMoney
@@ -55,8 +55,13 @@ trait MoneyEarner extends Entity with InventoryEntity {
       * @return A boolean value indicating whether the amount could be spent or not.
       */
     def spend(amount: Int): Boolean = {
-      if (numericValue - amount < 0) false
-      else throw new NotImplementedError("@Request01: How to remove coins from inventory? I'm clueless.")
+       if (numericValue - amount < 0)
+          false
+       else {
+          ???
+
+
+       }
     }
 
     def give(amount: Int): Unit = {

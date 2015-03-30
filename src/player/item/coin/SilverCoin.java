@@ -8,8 +8,11 @@ public class SilverCoin extends Coin {
         super("Silver Coin");
     }
 
+    /** The value of a silver coin measured in number of BronzeCoins */
+    public static final int VALUE = 10;
+
     @Override
     public int getValue () {
-        return 10;
+        return VALUE;
     }
 }

@@ -1,5 +1,7 @@
 package player.item.coin;
 
+import scala.Tuple2;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,56 +26,80 @@ public class CoinHelper {
         return bronzeCoins;
     }
 
-    public static SilverCoin[] toSilver (List<Coin> coins) {
+    /**
+     * The value of the coins are measured ({@link player.item.coin.CoinHelper#getValue(java.util.List)}) and an array of
+     * SilverCoins is created with the value of measured before. As there may be some BronzeCoins, which sum of values is
+     * below the value of {@link player.item.coin.SilverCoin#VALUE}, a second array is created witch BronzeCoins.
+     * The bronzeCoin array contains the rest. The silverCoin-Array and bronzeCoin-Array are put into a Tuple to be returned.
+     *
+     * @param coins a list of coins
+     * @return a <code>scala.Tuple2< SilverCoin[], BronzeCoin[]></code>
+     */
+    public static Tuple2<SilverCoin[], BronzeCoin[]> toSilver (List<Coin> coins) {
         if (coins.isEmpty())
-            return new SilverCoin[0];
+            return new Tuple2<>(new SilverCoin[0], new BronzeCoin[0]);
 
-        int value = 0;
-        for (Coin coin : coins)
-            value = value + coin.getValue();
 
-        int amount = value / new SilverCoin().getValue();
+        int value = CoinHelper.getValue(coins);
+
+        int amount = value / SilverCoin.VALUE;
+        int amountOfBronze = value % SilverCoin.VALUE;
 
         SilverCoin[] silverCoins = new SilverCoin[amount];
         for (int i = 0; i < silverCoins.length; i++)
             silverCoins[i] = new SilverCoin();
 
-        return silverCoins;
+        BronzeCoin[] bronzeCoins = CoinHelper.getCoins(amountOfBronze);
+
+        return new Tuple2<>(silverCoins, bronzeCoins);
     }
 
-    public static GoldCoin[] toGold (List<Coin> coins) {
+    /**
+     * For further description read: {@link player.item.coin.CoinHelper#toSilver(java.util.List)}
+     * - just replace the word Silver with Gold
+     * @param coins any list of coins
+     * @return a scala.Tuple2 < GoldCoin[], BronzeCoin[] > --> the value in gold coins, the rest of the value in bronzeCoins
+     */
+    public static Tuple2<GoldCoin[], BronzeCoin[]> toGold (List<Coin> coins) {
         if (coins.isEmpty())
-            return new GoldCoin[0];
+            return new Tuple2<>(new GoldCoin[0], new BronzeCoin[0]);
 
-        int value = 0;
-        for (Coin coin : coins)
-            value = value + coin.getValue();
+        int value = CoinHelper.getValue(coins);
 
-        int amount = value / new GoldCoin().getValue();
+        int amount = value / GoldCoin.VALUE;
+        int amountOfBronze = value % GoldCoin.VALUE;
 
         GoldCoin[] goldCoins = new GoldCoin[amount];
         for (int i = 0; i < goldCoins.length; i++)
             goldCoins[i] = new GoldCoin();
 
-        return goldCoins;
+        BronzeCoin[] bronzeCoins = CoinHelper.getCoins(amountOfBronze);
+
+        return new Tuple2<>(goldCoins, bronzeCoins);
     }
 
-    public static PlatinumCoin[] toPlatinum (List<Coin> coins) {
+    /**
+     * For further description read: {@link player.item.coin.CoinHelper#toSilver(java.util.List)}
+     * - just replace the word Silver with Platinum
+     * @param coins any list of coins
+     * @return a scala.Tuple2 < PlatinumCoin[], BronzeCoin[] > --> the value in PlatinumCoins, the rest of the value in bronzeCoins
+     */
+    public static Tuple2<PlatinumCoin[], BronzeCoin[]> toPlatinum (List<Coin> coins) {
         if (coins.isEmpty())
-            return new PlatinumCoin[0];
+            return new Tuple2<>(new PlatinumCoin[0], new BronzeCoin[0]);
 
-        int value = 0;
-        for (Coin coin : coins)
-            value = value + coin.getValue();
+        int value = CoinHelper.getValue(coins);
 
-        int amount = value / new PlatinumCoin().getValue();
+        int amount = value / PlatinumCoin.VALUE;
+        int amountOfBronze = value % PlatinumCoin.VALUE;
 
-        PlatinumCoin[] platinumCoins = new PlatinumCoin[amount];
-        for (int i = 0; i < platinumCoins.length; i++)
-            platinumCoins[i] = new PlatinumCoin();
+        PlatinumCoin[] platinumCoin = new PlatinumCoin[amount];
+        for (int i = 0; i < platinumCoin.length; i++)
+            platinumCoin[i] = new PlatinumCoin();
 
-        return platinumCoins;
+        BronzeCoin[] bronzeCoins = CoinHelper.getCoins(amountOfBronze);
 
+        return new Tuple2<>(platinumCoin, bronzeCoins);
     }
 
     /**
@@ -153,5 +179,39 @@ public class CoinHelper {
             coins[i] = new BronzeCoin();
 
         return coins;
+    }
+
+    /**
+     * It searches the list for coins, adding the value of each coin together.
+     *
+     * @param list any list which may contain coins.
+     * @return the sum of the values in the list
+     *
+     * @see player.item.coin.CoinHelper#getValue(Object[])
+     */
+    public static int getValue (List list) {
+        int value = 0;
+        for (Object obj : list) {
+            if (obj instanceof Coin)
+                value = value + ((Coin) obj).getValue();
+        }
+        return value;
+    }
+
+    /**
+     * By iterating the array, every the value of the array is measured.
+     *
+     * @param array an array which may or may not contain coins.
+     * @return the sum of the values of each coin.
+     *
+     * @see player.item.coin.CoinHelper#getValue(java.util.List)
+     */
+    public static int getValue (Object[] array) {
+        int value = 0;
+        for (Object obj : array) {
+            if (obj instanceof Coin)
+                value = value + ((Coin) obj).getValue();
+        }
+        return value;
     }
 }

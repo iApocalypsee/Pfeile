@@ -8,8 +8,11 @@ public class BronzeCoin extends Coin {
         super("Bronze Coin");
     }
 
+    /** the value of a bronze coin is <code>1</code> */
+    public final static int VALUE = 1;
+
     @Override
     public int getValue () {
-        return 1;
+        return VALUE;
     }
 }
