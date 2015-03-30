@@ -174,6 +174,9 @@ public class CoinHelper {
      * @return an Array of BronzeCoins the specifiedValue
      */
     public static BronzeCoin[] getCoins (int value) {
+        if (value < 0)
+            throw new IllegalArgumentException("the value " + value + " must be higher than 0.");
+
         BronzeCoin[] coins = new BronzeCoin[value];
         for (int i = 0; i < coins.length; i++)
             coins[i] = new BronzeCoin();
