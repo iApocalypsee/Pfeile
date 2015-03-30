@@ -209,7 +209,7 @@ public class CoinHelper {
      *
      * @see player.item.coin.CoinHelper#getValue(java.util.List)
      */
-    public static int getValue (Object[] array) {
+    public static <A> int getValue (A[] array) {
         int value = 0;
         for (Object obj : array) {
             if (obj instanceof Coin)

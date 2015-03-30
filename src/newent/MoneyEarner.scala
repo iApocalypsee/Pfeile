@@ -121,8 +121,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
        for(i <- 0 until coins.length)
           inventory.put(coins.apply(i))
 
-       // FIXME @iApocalypsee: the line below works in java, but not in scala
-       // LogFacility.log("Gave " + CoinHelper.getValue(coins) + " money to " + this, LoggingLevel.Info)
+       LogFacility.log("Gave " + CoinHelper.getValue(coins) + " money to " + this, LoggingLevel.Info)
     }
 
     // Adds the promised gold per turn to the earner's purse
