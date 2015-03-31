@@ -4,7 +4,7 @@ import general.LogFacility
 import general.LogFacility.LoggingLevel
 import player.item.coin._
 
-import scala.collection.JavaConversions
+import scala.collection.{JavaConversions, mutable}
 
 /**
   * Every entity that can earn gold should inherit from this trait.
@@ -12,9 +12,22 @@ import scala.collection.JavaConversions
   */
 trait MoneyEarner extends Entity with InventoryEntity {
 
-  val purse = Purse
+  /**
+    * Money manager of this object.
+    */
+  val purse = new Purse
 
-  object Purse {
+  /**
+    * Transaction manager of this object.
+    */
+  val account = new Transactions
+
+  //<editor-fold desc='Money holding'>
+
+  /**
+    * Singleton managing the money of this object.
+    */
+  class Purse {
 
     require(initialMoney >= 0, s"@[[MoneyEarner]]: Cannot start with debt of $initialMoney")
     require(initialMoneyPerTurn >= 0, s"@[[MoneyEarner]]: Cannot start off with negative income of $initialMoneyPerTurn")
@@ -64,7 +77,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
 
         coins.foreach { coin =>
           if (coin.getValue <= leftToSpend) {
-            if (inventory.javaItems.remove(coin)) {
+            if (inventory.remove(_ == coin).isDefined) {
               leftToSpend = leftToSpend - coin.getValue
             }
             else
@@ -144,9 +157,77 @@ trait MoneyEarner extends Entity with InventoryEntity {
 
   }
 
+  //</editor-fold>
+
+  //<editor-fold desc='Monetary obligation system'>
+
+  /**
+    * Class that keeps track of the money earner's spendings and savings.
+    */
+  class Transactions {
+
+    private[this] def emptyBuffer = mutable.ArrayBuffer[Transaction]()
+
+    /**
+      * Internal method for registering a transaction to the buffer.
+      * @param transaction Ditto.
+      */
+    private[MoneyEarner] def register(transaction: Transaction): Unit = {
+      emptyBuffer += transaction
+    }
+
+    /**
+      * Actual logic for a successful transaction.
+      * This method assumes that the payer has enough coins to fulfill the transaction.
+      * @param transaction The transaction to execute.
+      */
+    private def handshake(transaction: Transaction): Unit = {
+      assume(transaction.sender.purse.numericValue >= transaction.amount)
+
+      register(transaction)
+
+      transaction.sender.purse.spend(transaction.amount)
+      transaction.receiver.purse.give(transaction.amount)
+    }
+
+    /**
+      * Actual logic for a transaction which cannot be made by the payer right now.
+      * This method assumes that the payer has not enough coins to participate in the transaction.
+      * @param transaction The transaction which cannot be made.
+      */
+    // TODO Implement this method.
+    private def debtObligation(transaction: Transaction): Unit = ???
+
+    /**
+      * Pays an amount of coins to the receiver.
+      * @param amount The numeric value of coins to transfer to the receiver.
+      * @param receiver Ditto.
+      * @return Was the transaction successful?
+      */
+    def pay(amount: Int, receiver: MoneyEarner): Boolean = {
+      val moneyEarner: MoneyEarner = MoneyEarner.this
+      val transaction = Transaction(moneyEarner, receiver, amount)
+      val isAffordable = moneyEarner.purse.numericValue >= amount
+
+      isAffordable match {
+        case true => handshake(transaction)
+        case false => debtObligation(transaction)
+      }
+
+      isAffordable
+    }
+
+  }
+
+  //</editor-fold>
+
+  //<editor-fold desc='MoneyEarner trait arguments'>
+
   /** The initial gold per turn amount that the earner gets. __Must not be below 0__. */
   protected def initialMoneyPerTurn: Int
   /** The initial amount of gold that the earner gets. __Must not be below 0__. */
   protected def initialMoney: Int
+
+  //</editor-fold>
 
 }
