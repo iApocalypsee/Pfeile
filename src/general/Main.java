@@ -108,12 +108,12 @@ public class Main {
 
         LogFacility.log("PreInitStage done!", "Info", "initprocess");
 
+        // loading the arrow images is threaded now
+        new ArrowHelper();
+
         graphicsDevice = environmentG.getDefaultScreenDevice();
         gameWindow = new GameWindow();
         LogFacility.log("GameWindow instantiated.", "Info", "initprocess");
-
-        // loading the arrow images is threaded now
-        new ArrowHelper();
 
         gameWindow.initializeScreens();
         LogFacility.log("Screens initialized.", "Info", "initprocess");

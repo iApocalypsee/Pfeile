@@ -31,7 +31,7 @@ public class GameScreen extends Screen implements FrameContainer {
 	private static GameScreen instance = null;
 	
 	/**
-	 * Singleton-Methode.
+	 * Singleton-method.
 	 * @return The object.
 	 */
 	public static GameScreen getInstance() {
@@ -81,10 +81,6 @@ public class GameScreen extends Screen implements FrameContainer {
 	 * So construct it first, then do all the initialization afterwards.
 	 */
 	private void postInit() {
-
-		// später DAS HIER auskommentieren
-		ScreenManager.ref_gameScreen = this;
-
 		// Initialisierung der Buttons
 		endTurnButton = new Button(30, Main.getWindowHeight() - 50, this,
 				"End turn");

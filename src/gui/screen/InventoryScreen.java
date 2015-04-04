@@ -14,12 +14,14 @@ import player.item.coin.CoinHelper;
 import player.item.potion.Potion;
 import player.weapon.arrow.AbstractArrow;
 import scala.Function1;
+import scala.Tuple2;
 import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -74,9 +76,9 @@ public class InventoryScreen extends Screen {
         inventoryList.setVisible(true);
 
         Function1<Integer, Object> listSelectCallback = JavaInterop.asScalaFunctionFun((Integer selectedIndex) -> {
-            String selectedName = getItems().get(selectedIndex);
+            String selectedName = getItems()._1().get(selectedIndex);
             if (selectedName.equals("<keine Items>"))
-                selectedName = "<Item ausw�hlen>";
+                selectedName = "<Item auswählen>";
             selectedItem.setText(selectedName);
 
             InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
@@ -157,9 +159,19 @@ public class InventoryScreen extends Screen {
         onScreenEnter.register(new AbstractFunction0<BoxedUnit>() {
             @Override
             public BoxedUnit apply () {
+                Tuple2<java.util.List<String>, java.util.List<BufferedImage>> items = getItems();
+
+                // creating a new List the
                 inventoryList = new List(inventoryList.getX(), inventoryList.getY(), inventoryList.getWidth(), inventoryList.getHeight(),
-                        InventoryScreen.this, getItems());
-                selectedItem.setText("<Item ausw�hlen>");
+                        InventoryScreen.this, items._1());
+
+                // iconify the list
+                for (int i = 0; i < items._1().size(); i++) {
+                    if (items._2().get(i) != null)
+                        inventoryList.iconify(i, items._2().get(i));
+                }
+
+                selectedItem.setText("<Item auswählen>");
                 selectedItem.iconify(null);
                 warningMessage.setTransparency(0);
 
@@ -171,36 +183,53 @@ public class InventoryScreen extends Screen {
     }
 
     /**
-     * No arrows are added.
+     * Returns a tuple with the list of Strings containing every name and a list of BufferedImage containg the image
+     * of the items.
+     * No arrows are added to the list.
      *
-     * @return a <code>LinkedList</code> containing a String for every name of an item.
+     * @return a <code>scala.Tuple2</code> containing a <code></coe>LinkedList<String></code> for every name of an item
+     *              and a <code>LinkedList<BufferedImage></code> containing the equivalent images of the items.
      */
-    public java.util.List<String> getItems () {
+    public scala.Tuple2<java.util.List<String>, java.util.List<BufferedImage>> getItems () {
         java.util.List<String> itemList = new LinkedList<>();
+        java.util.List<BufferedImage> imageList = new LinkedList<>();
         java.util.LinkedList<Coin> coins = new LinkedList<>();
 
         InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
         // filtering the inventory: only items, which aren't arrows should be added.
         for(Item item : inventory.javaItems()) {
             if (!(item instanceof AbstractArrow)) {
-                if (!(item instanceof Coin))
+                if (!(item instanceof Coin)) {
+                    // the name
                     itemList.add(item.getName());
-                else
+                    // the image
+                    if (item instanceof EquippableItem)
+                        imageList.add(((EquippableItem) item).getImage());
+                    else if (item instanceof Potion)
+                        imageList.add(((Potion) item).getPotionUI().getComponent().getBufferedImage());
+                    else // if the item is based on an not yet defined subclass
+                        imageList.add(null);
+                } else {
+                    // coins are added to the list later
                     coins.add((Coin) item);
+                }
             }
         }
 
         if (!coins.isEmpty()) {
             java.util.List<Coin>[] coinList = CoinHelper.getSortedCoins(coins);
             for (java.util.List<Coin> aCoinList : coinList) {
-                if (!aCoinList.isEmpty())
+                if (!aCoinList.isEmpty()) {
                     itemList.add(aCoinList.get(0).getName() + ": " + aCoinList.size());
+                    imageList.add(aCoinList.get(0).getImage());
+                }
             }
         }
 
         if (itemList.size() == 0)
             itemList.add("<keine Items>");
-        return itemList;
+
+        return new Tuple2<>(itemList, imageList);
     }
 
     @Override

@@ -31,6 +31,16 @@ trait InventoryLike {
     */
   def remove(f: Item => Boolean, amount: Int): Seq[Item]
 
+  /** Removes the item f. If it has been found, it will be removed from the inventory and returned. If the item is
+    * listed several times only the first one is removed.
+    * @param f any item
+    * @return the removed item or <code>null</code> if the item doesn't exist
+    */
+  def remove(f: Item): Item
+
+  /* Removes every item from the list, which is from the same instance as <code>Item f</code>. */
+  //def removeAllInstanceOf(f: Item): Unit
+
   /**
     * Removes all items that satisfy a predicate out of the inventory.
     *
@@ -73,10 +83,31 @@ class DefaultInventory extends InventoryLike {
       true
     }
     else {
-      System.err.println("Inventory.maximumSize reached. Cannot put Item "+i.getClass.getName)
+      System.err.println("Inventory.maximumSize reached. Cannot put Item " + i.getName)
       false
     }
   }
+
+  override def remove(f: Item): Item = {
+     for (i <- 0 until _list.size) {
+        if (_list.apply(i) == f) {
+           return _list.remove(i)
+        }
+     }
+     // if the element hasn't been found
+     null
+  }
+
+  /*
+   DOES THE FOLLOWING CODE WORK?
+
+  override def removeAllInstanceOf(f: Item): Unit = {
+     for (i <- 0 until _list.size) {
+        if (_list.apply(i).isInstanceOf[f.type])
+           _list.remove(i)
+     }
+  }
+  */
 
   override def remove(f: (Item) => Boolean, amount: Int): Seq[Item] = {
     var removeCount = 0

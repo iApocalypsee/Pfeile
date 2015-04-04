@@ -1,12 +1,15 @@
 package player.item;
 
+import general.Delegate;
 import newent.Bot;
 import newent.InventoryEntity;
 import newent.Player;
 
+import java.awt.image.BufferedImage;
+
 /**
  * The superclass for chests. To open a chest you need to give up something (arrows, gold, ...) or find a key
- * (maybe in the future). That's why only Players and Bots can open an Chest. Generally Chest cointains more Potions than
+ * (maybe in the future). That's why only Players and Bots can open an Chest. Generally Chest contains more Potions than
  * Treasures.
  */
 public abstract class Chest extends Loot {
@@ -41,9 +44,18 @@ public abstract class Chest extends Loot {
         super(gridX, gridY, name);
     }
 
-    /** you need to open a chest */
-    //public abstract void open();
+    /** you need to open a chest.
+     * <p>
+     * <b>Call {@link player.item.Chest#changeUIforOpenedChest(java.awt.image.BufferedImage)} at the end. </b>*/
+    public abstract void open();
 
+    /** If the chest has been opened, the image of the chest must change.
+     *
+     * @param imgOfOpenChest the BufferedImage of the opened chest
+     */
+    public void changeUIforOpenedChest (BufferedImage imgOfOpenChest) {
+        setLootUI(createUI(imgOfOpenChest));
+    }
 
     @Override
     public boolean collect (Player activePlayer) {

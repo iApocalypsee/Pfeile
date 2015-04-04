@@ -78,11 +78,12 @@ public class GameWindow extends JFrame {
 		new MainMenuScreen();
 		new PauseScreen();
 		new AimSelectionScreen();
-		GameScreen.getInstance();
-        ArrowSelectionScreen.getInstance();
-        ArrowSelectionScreenPreSet.getInstance();
         new GameOverScreen();
         new InventoryScreen();
+        GameScreen.getInstance();
+        ArrowSelectionScreen.getInstance();
+        ArrowSelectionScreenPreSet.getInstance();
+
         screenManager.setActiveScreen(new PreWindowScreen());
 	}
 

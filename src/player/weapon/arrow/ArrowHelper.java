@@ -314,7 +314,7 @@ public final class ArrowHelper {
 	}
 
     /** Returns the scaled version of a BufferedImage from the selected arrow. Compare with the methods in {@link gui.ImageHelper}, too.
-     * If you want to use this method regulary, save the returned BufferedImage somewhere, because scaling an image is no fast Operation or use
+     * If you want to use this method frequently, save the returned BufferedImage somewhere, because scaling an image is no fast Operation or use
      * {@link gui.ImageHelper#scaleBufferedImage(java.awt.image.BufferedImage, float, float, int)} with {@link java.awt.Image#SCALE_FAST}.
      *
      * @param selectedArrow the index of the selected arrow arrow.INDEX

@@ -40,9 +40,6 @@ public final class ScreenManager implements Drawable {
 	public int getActiveScreenIndex() {
 		return activeScreen.SCREEN_INDEX;
 	}
-	
-	// sp�ter DAS HIER AUSKOMMENTIEREN
-	static GameScreen ref_gameScreen;
 
 	/**
 	 * @param activeScreen the activeScreen to set
@@ -79,7 +76,6 @@ public final class ScreenManager implements Drawable {
 	 */
 	void setScreens(Hashtable<Integer, Screen> screens) {
 		this.screens = screens;
-		ref_gameScreen = (GameScreen) screens.get(GameScreen.SCREEN_INDEX);
 	}
 
 	/**
