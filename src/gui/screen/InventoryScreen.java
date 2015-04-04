@@ -166,7 +166,7 @@ public class InventoryScreen extends Screen {
                         InventoryScreen.this, items._1());
 
                 // iconify the list
-                for (int i = 0; i < items._1().size(); i++) {
+                for (int i = 0; i < items._2().size(); i++) {
                     if (items._2().get(i) != null)
                         inventoryList.iconify(i, items._2().get(i));
                 }
