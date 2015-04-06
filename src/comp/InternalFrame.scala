@@ -8,7 +8,8 @@ import gui.screen.Screen
 
 import scala.collection.mutable
 
-/** An internal frame capable of containing components in order to make a more "cleaner" UI.
+/**
+  * An internal frame capable of containing components in order to make a more "cleaner" UI.
   * The coordinates of components are given in absolute coordinates (not relative to the frame's
   * upper left corner), but this is still a WIP.
   *
@@ -36,6 +37,8 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
   val onClosed = Delegate.createZeroArity
 
   this << ToplineBar
+  ToplineBar.setRelativeLocation(x, y)
+  this.setVisible(false)
 
   /** The close button of the frame. */
   private lazy val closeButton = {
@@ -81,7 +84,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     }
     ret.addMouseListener(new MouseAdapter {
       override def mouseReleased(e: MouseEvent): Unit = {
-        InternalFrame.this.setVisible(v = false)
+        InternalFrame.this.setVisible(false)
         onClosed()
       }
     })
@@ -89,19 +92,20 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
   }
 
   override def draw(g: Graphics2D) = {
-    if (isVisible) {
-      g.setColor(FrameStyle.InnerColor)
-      g.fillRect(getX, getY, getWidth, getHeight)
+    g.setColor(FrameStyle.InnerColor)
+    g.fillRect(getX, getY, getWidth, getHeight)
 
-      comps.foreach(e => {
-        if (getBounds.intersects(e.getBounds.getBounds2D)) {
-          e.draw(g)
-        }
-      })
-    }
+    comps.foreach(e => {
+      if (getBounds.intersects(e.getBounds.getBounds2D)) {
+        e.draw(g)
+      }
+    })
+
+    ToplineBar.draw(g)
   }
 
-  /** Adds a component to the internal frame.
+  /**
+    * Adds a component to the internal frame.
     *
     * @param c The component.
     * @return Nothing.
@@ -111,7 +115,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     c.setParent(this)
     c.onMoved += { _ =>
       if (!c.getBounds.intersects(this.getBounds.getBounds2D)) {
-        LogFacility.log("Component \"" + c.getName + "\" is not intersecting bounds of frame \"" + getName + "\" " +
+        LogFacility.log("Component \""+c.getName+"\" is not intersecting bounds of frame \""+getName+"\" "+
           "anymore. Ignoring component in drawing process...", "Warning")
       }
     }
@@ -123,14 +127,6 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
   /** The containers that are contained by the frame. */
   def containedComponents = comps.toList
 
-  // Sets the visibility of not only itself, but every component that is registered to the frame.
-  override def setVisible(v: Boolean): Unit = {
-    super.setVisible(v)
-    comps foreach {
-      _.setVisible(v)
-    }
-  }
-
   // Singleton instance object, represents the top bar which "holds" the close button.
   private object ToplineBar extends Component with MouseDragDetector {
 
@@ -139,19 +135,17 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
 
     setSourceShape(new Rectangle(-InternalFrame.this.getWidth / 2, -InternalFrame.this.getHeight / 2, InternalFrame.this.getWidth, FrameStyle.CommonInset * 2 + closeButton.getHeight))
     setParent(InternalFrame.this)
+    setRelativeLocation(0, 0)
     setBackingScreen(InternalFrame.this.getBackingScreen)
-    setVisible(true)
 
     onMouseDragDetected += { vec =>
       val frame = InternalFrame.this
       frame.setLocation((frame.getX + vec.x).asInstanceOf[Int], (frame.getY + vec.y).asInstanceOf[Int])
     }
 
-    override protected def draw(g: Graphics2D): Unit = {
-      //if (isVisible) {
-        g.setColor(FrameStyle.TopBarColor)
-        g.fill(getBounds)
-      //}
+    override def draw(g: Graphics2D): Unit = {
+      g.setColor(FrameStyle.TopBarColor)
+      g.fill(getBounds)
     }
   }
 
@@ -177,11 +171,12 @@ object InternalFrame {
     lazy val CloseButton_DrawStroke = new BasicStroke(2.5f)
 
     /** Grayish color with more opaque style, specially picked for the top bar. */
-    lazy val TopBarColor = new Color(87, 87, 87, 95)
+    lazy val TopBarColor = new Color(255, 255, 255)
 
     lazy val CommonInset = 2
 
-    /** The dimensions of the close button.
+    /**
+      * The dimensions of the close button.
       * On the basis of this value the height of the top line bar is calculated.
       */
     lazy val CloseButtonDimension = new Dimension(15, 15)

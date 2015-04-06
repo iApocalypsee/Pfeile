@@ -5,6 +5,7 @@ import general.JavaInterop;
 import general.Main;
 import gui.FrameContainer;
 import gui.FrameContainerObject;
+import player.shop.ShopWindow;
 import player.weapon.AttackDrawer;
 import player.weapon.arrow.ImpactDrawerHandler;
 import scala.runtime.BoxedUnit;
@@ -48,6 +49,9 @@ public class GameScreen extends Screen implements FrameContainer {
 	private Button endTurnButton;
 	private Button shootButton;
 	private Button inventoryButton;
+    private Button shopWindowButton;
+
+    private ShopWindow shopWindow;
 
 	private VisualMap map = null;
     private final AttackDrawer attackDrawer = new AttackDrawer();
@@ -85,6 +89,8 @@ public class GameScreen extends Screen implements FrameContainer {
 		// später DAS HIER auskommentieren
 		ScreenManager.ref_gameScreen = this;
 
+        shopWindow = new ShopWindow();
+
 		// Initialisierung der Buttons
 		endTurnButton = new Button(30, Main.getWindowHeight() - 50, this,
 				"End turn");
@@ -92,11 +98,15 @@ public class GameScreen extends Screen implements FrameContainer {
                 endTurnButton.getY(), this, "Shoot");
 		inventoryButton = new Button(shootButton.getX() + shootButton.getWidth() + 20,
 				shootButton.getY(), this, "Inventar");
+        shopWindowButton = new Button(inventoryButton.getX() + inventoryButton.getWidth() + 20,
+                inventoryButton.getY(), this, "Shop");
 
 		endTurnButton.setName("End turn button");
 		shootButton.setName("Shoot button");
 		inventoryButton.setName("Inventory button");
+        shopWindowButton.setName("Shop button");
 
+        frameContainerObject.addFrame(shopWindow.getWindow());
 
 		endTurnButton.addMouseListener(new MouseAdapter() {
 
@@ -120,6 +130,13 @@ public class GameScreen extends Screen implements FrameContainer {
                 onLeavingScreen(InventoryScreen.SCREEN_INDEX);
             }
         });
+
+        shopWindowButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                shopWindow.parentComponent().setVisible(!shopWindow.parentComponent().isVisible());
+            }
+        });
 	}
 
 	@Override
@@ -138,6 +155,7 @@ public class GameScreen extends Screen implements FrameContainer {
 		endTurnButton.draw(g);
 		shootButton.draw(g);
 		inventoryButton.draw(g);
+        shopWindowButton.draw(g);
 		Main.getContext().getActivePlayer().drawLifeUI(g);
 
 		frameContainerObject.drawFrames(g);

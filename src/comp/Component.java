@@ -201,7 +201,7 @@ public abstract class Component implements IComponent {
 		});
 
 		this.status = ComponentStatus.NO_MOUSE;
-		this.name = Integer.toString(this.hashCode());
+		setName(Integer.toString(this.hashCode()));
 
 		transformation.onTranslated().register(JavaInterop.asScalaFunctionFun((TranslationChange t) -> {
             isTransformationChangedSince = true;
@@ -250,6 +250,12 @@ public abstract class Component implements IComponent {
 		transformation.translate(initialPosition.x(), initialPosition.y());
 		setBackingScreen(backing);
 	}
+
+    public final void drawChecked(Graphics2D g) {
+        if(isVisible()) {
+            draw(g);
+        }
+    }
 
 	/**
 	 * @return the status
@@ -332,8 +338,7 @@ public abstract class Component implements IComponent {
 	 * @param x Die neue x Position des Steuerelements.
 	 */
 	public void setX(int x) {
-		final Vector2 oldPosition = transformation.translation();
-		transformation.translate(x - oldPosition.x() + getPreciseRectangle().getWidth() / 2, 0);
+        setLocation(x, getY());
 	}
 
 	public void setRelativeX(int x) {
@@ -359,8 +364,7 @@ public abstract class Component implements IComponent {
 	 * @param y Die neue y Position des Steuerelements.
 	 */
 	public void setY(int y) {
-		final Vector2 oldPosition = transformation.translation();
-		transformation.translate(0, y - oldPosition.y() + getPreciseRectangle().getHeight() / 2);
+        setLocation(getX(), y);
 	}
 
 	public void setRelativeY(int y) {
@@ -561,6 +565,7 @@ public abstract class Component implements IComponent {
 	 */
 	public void setVisible(boolean vvvvvv) {
 		visible = vvvvvv;
+        children.values().forEach(component -> component.setVisible(vvvvvv));
 		if (vvvvvv) {
 			acceptInput();
 		} else {
@@ -578,7 +583,7 @@ public abstract class Component implements IComponent {
 	 * @param name Der neue Name der Component.
 	 */
 	public void setName(String name) {
-		this.name = name;
+		this.name = getClass().getName() + ": \"" + name + "\"";
 	}
 
 	/**
@@ -614,10 +619,12 @@ public abstract class Component implements IComponent {
 	public void setParent(Component parent) {
 		if(this.parent != null) {
 			transformation.translate(-this.parent.getX(), -this.parent.getY());
+            this.parent.children.remove(this.name);
 		}
 		this.parent = parent;
 		if(this.parent != null) {
 			transformation.translate(this.parent.getX(), this.parent.getY());
+            this.parent.children.put(this.name, this);
 		}
 	}
 

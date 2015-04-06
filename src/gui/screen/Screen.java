@@ -159,11 +159,7 @@ public abstract class Screen implements Drawable, MouseListener,
 		if(preprocessedDrawingEnabled) {
 			for (Component c : getComponents()) {
 				if(c != null) {
-					if(c.isVisible()) {
-	                    if(c.getBounds().intersects(0, 0, Main.getWindowWidth(), Main.getWindowHeight())) {
-	                        c.draw(g);
-	                    }
-					}
+                    c.drawChecked(g);
 				}
 			}
 		}

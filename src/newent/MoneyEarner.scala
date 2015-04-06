@@ -184,10 +184,17 @@ trait MoneyEarner extends Entity with InventoryEntity {
     private def handshake(transaction: Transaction): Unit = {
       assume(transaction.sender.purse.numericValue >= transaction.amount)
 
-      register(transaction)
+      val sender = transaction.sender
+      val receiver = transaction.receiver
 
-      transaction.sender.purse.spend(transaction.amount)
-      transaction.receiver.purse.give(transaction.amount)
+      sender.account.register(transaction)
+      receiver.account.register(transaction)
+
+      sender.purse.spend(transaction.amount)
+      receiver.purse.give(transaction.amount)
+
+
+
     }
 
     /**

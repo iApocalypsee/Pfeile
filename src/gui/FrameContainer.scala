@@ -1,10 +1,9 @@
 package gui
 
-import comp.InternalFrame
-import general.Delegate
-
 import java.awt.Graphics2D
 
+import comp.InternalFrame
+import general.Delegate
 import gui.screen.Screen
 
 import scala.collection.mutable
@@ -54,7 +53,7 @@ class FrameContainerObject private[gui] {
   def removeFrame(f: InternalFrame): Unit = removeFrame { _ == f }
 
   /** Draws all the frames added to the container with the graphics object. */
-  def drawFrames(g: Graphics2D) = frames foreach { _.draw(g) }
+  def drawFrames(g: Graphics2D) = frames foreach { _.drawChecked(g) }
 
   /** All frames that have been added to the container. */
   def frames = _frames.toList
