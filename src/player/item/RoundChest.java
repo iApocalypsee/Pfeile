@@ -16,10 +16,15 @@ public class RoundChest extends Chest {
     /** the texture of a RoundChest */
     private static BufferedImage image;
 
+    private static BufferedImage imageOpenChest;
+
     static {
         String path = "resources/gfx/item textures/roundChest.png";
         try {
-            image = ImageIO.read(BagOfLoots.class.getClassLoader().getResourceAsStream(path));
+            image = ImageIO.read(RoundChest.class.getClassLoader().getResourceAsStream(path));
+
+            path = "resources/gfx/item textures/roundChestOpen.png";
+            imageOpenChest = ImageIO.read(RoundChest.class.getClassLoader().getResourceAsStream(path));
         } catch (IOException e) {
             e.printStackTrace();
             LogFacility.log("The BufferedImage of class RoundChest couldn't be loaded! Path: " + path,
@@ -35,5 +40,16 @@ public class RoundChest extends Chest {
     @Override
     public BufferedImage getImage () {
         return image;
+    }
+
+    /**
+     * you need to open a chest.
+     * <p>
+     * <b>Call {@link player.item.Chest#changeUIforOpenedChest(java.awt.image.BufferedImage)} at the end. </b>
+     */
+    @Override
+    public void open () {
+        // TODO the opening process
+        changeUIforOpenedChest(imageOpenChest);
     }
 }

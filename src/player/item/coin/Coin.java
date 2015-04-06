@@ -2,6 +2,8 @@ package player.item.coin;
 
 import player.item.Item;
 
+import java.awt.image.BufferedImage;
+
 /**
  * Any coin is part of it.
  */
@@ -17,6 +19,9 @@ public abstract class Coin extends Item {
      * @return the value of the coin.
      */
     public abstract int getValue ();
+
+    /** The basic appearance of a coin overwritten by it's subclasses helps to draw it (for example at InventoryScreen). */
+    public abstract BufferedImage getImage ();
 
     @Override
     public String toString () {

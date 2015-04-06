@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
 /**
@@ -232,4 +233,44 @@ public class List extends Component {
 			label.addMouseListener(listener);
 		}
 	}
+
+    /**
+     * Sets <code>image</code> to the label with the index <code>index</code> and recalculates the bounds of the list.
+     *
+     * @param index the index of the entry. You may use {@link comp.List#getIndex(String)} to find the index.
+     * @param image the image to iconify the label.
+     */
+    public void iconify (int index, BufferedImage image) {
+        listItems.get(index).iconify(image);
+
+        Dimension bounds = tfits();
+        setWidth(bounds.width);
+        setHeight(bounds.height);
+    }
+
+    /** Returns the size [= length] of the list. The last index is <code>getIndexSize() - 1</code> as the index is 0-based.*/
+    public int getIndexSize () {
+        return items.size();
+    }
+
+    /**
+     * Returns the index of the first occurrence of the specified element in this list, or -1 if this list
+     * does not contain the element.
+     *
+     * @param element the name of label to search for
+     * @return the index or -1
+     * */
+    public int getIndex (String element) {
+        return items.indexOf(element);
+    }
+
+    /**
+     * Returns true if this list contains the specified element.
+     *
+     * @param element the element to search for
+     * @return <code>true</code> - if one of the labels' name is <code>element</code>
+     */
+    public boolean contains (String element) {
+        return items.contains(element);
+    }
 }

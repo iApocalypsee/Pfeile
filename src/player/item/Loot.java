@@ -8,6 +8,7 @@ import world.TileLike;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,12 +144,28 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
      *
      * @return a LookUI object based on an ImageComponent
      */
-    public LootUI createUI () {
+    protected LootUI createUI () {
         Rectangle2D tileBounds = getTile().getComponent().getPreciseRectangle();
 
         ImageComponent component = new ImageComponent(
                 (int) (tileBounds.getCenterX() - 0.5 * getImage().getWidth()),
                 (int) (tileBounds.getCenterY() - 0.5 * getImage().getHeight()), getImage(), GameScreen.getInstance());
+
+        return new LootUI(component) {
+            @Override
+            public void draw (Graphics2D g) {
+                ImageComponent lootComponent = (ImageComponent) getComponent();
+                lootComponent.draw(g);
+            }
+        };
+    }
+
+    protected LootUI createUI (BufferedImage image) {
+        Rectangle2D tileBounds = getTile().getComponent().getPreciseRectangle();
+
+        ImageComponent component = new ImageComponent(
+                (int) (tileBounds.getCenterX() - 0.5 * image.getWidth()),
+                (int) (tileBounds.getCenterY() - 0.5 * image.getHeight()), image, GameScreen.getInstance());
 
         return new LootUI(component) {
             @Override

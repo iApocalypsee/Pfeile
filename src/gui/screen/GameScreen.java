@@ -32,7 +32,7 @@ public class GameScreen extends Screen implements FrameContainer {
 	private static GameScreen instance = null;
 	
 	/**
-	 * Singleton-Methode.
+	 * Singleton-method.
 	 * @return The object.
 	 */
 	public static GameScreen getInstance() {
