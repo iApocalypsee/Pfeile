@@ -7,7 +7,9 @@ import player.item.coin.BronzeCoin;
 import player.item.coin.GoldCoin;
 import player.item.coin.PlatinumCoin;
 import player.item.coin.SilverCoin;
+import player.item.potion.PotionOfDamage;
 import player.item.potion.PotionOfHealing;
+import player.item.potion.PotionOfMovement;
 
 /**
  * By calling {@link ItemInitialization#initialize()} the BufferedImage of every kind of <code>Coin</code>,
@@ -49,6 +51,8 @@ public class ItemInitialization {
 
     private static void initializePotions () {
         new PotionOfHealing();
+        new PotionOfMovement();
+        new PotionOfDamage();
     }
 
     private static void initializeLoots () {
