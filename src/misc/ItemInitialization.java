@@ -1,10 +1,13 @@
 package misc;
 
 import general.LogFacility;
+import player.item.BagOfLoots;
+import player.item.Treasure;
 import player.item.coin.BronzeCoin;
 import player.item.coin.GoldCoin;
 import player.item.coin.PlatinumCoin;
 import player.item.coin.SilverCoin;
+import player.item.potion.PotionOfHealing;
 
 /**
  * By calling {@link ItemInitialization#initialize()} the BufferedImage of every kind of <code>Coin</code>,
@@ -27,8 +30,9 @@ public class ItemInitialization {
             initializePotions();
             LogFacility.log("Potion images loaded.", "Info", "initprocess");
 
-            initializeLoots();
-            LogFacility.log("Loot images loaded.", "Info", "initprocess");
+            // FIXME Loots can't be initialized so early, because their LootUI refers to the Tiles-System, which isn't loaded yet.
+            //initializeLoots();
+            //LogFacility.log("Loot images loaded.", "Info", "initprocess");
         });
         x.setDaemon(true);
         x.setPriority(2);
@@ -44,11 +48,12 @@ public class ItemInitialization {
     }
 
     private static void initializePotions () {
-
+        new PotionOfHealing();
     }
 
     private static void initializeLoots () {
-
+        new BagOfLoots(0, 0);
+        new Treasure(0, 0);
     }
 
 }
