@@ -1,8 +1,6 @@
 package misc;
 
 import general.LogFacility;
-import player.item.BagOfLoots;
-import player.item.Treasure;
 import player.item.coin.BronzeCoin;
 import player.item.coin.GoldCoin;
 import player.item.coin.PlatinumCoin;
@@ -20,9 +18,11 @@ import player.item.potion.PotionOfMovement;
  */
 public class ItemInitialization {
 
-    /** Creates a single instance for each <code>Coin</code>, <code>Potion</code> and <code>Loot</code>.
+    /** Creates a single instance for each <code>Coin</code> and <code>Potion</code>.
      *  This method is threaded. The priority is lower then {@link Thread#NORM_PRIORITY}, because the initialization
-     *  doesn't need to be ready before using Coins, Potions or Loots.
+     *  doesn't need to be ready before using Coins and Potions.
+     *  <b><code>Loot</code> can't be loaded during Initialization process due to references to the not-yet-existing
+     *  Tile-System</b>. Loots are loaded later in the game during creating WorldLootList/LootSpawner.
      */
     public static void initialize () {
         Thread x = new Thread(() -> {
@@ -31,10 +31,6 @@ public class ItemInitialization {
 
             initializePotions();
             LogFacility.log("Potion images loaded.", "Info", "initprocess");
-
-            // FIXME Loots can't be initialized so early, because their LootUI refers to the Tiles-System, which isn't loaded yet.
-            //initializeLoots();
-            //LogFacility.log("Loot images loaded.", "Info", "initprocess");
         });
         x.setDaemon(true);
         x.setPriority(2);
@@ -54,10 +50,4 @@ public class ItemInitialization {
         new PotionOfMovement();
         new PotionOfDamage();
     }
-
-    private static void initializeLoots () {
-        new BagOfLoots(0, 0);
-        new Treasure(0, 0);
-    }
-
 }

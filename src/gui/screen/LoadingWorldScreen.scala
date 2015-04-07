@@ -41,6 +41,9 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
 
         ArrowSelectionScreen.getInstance().init()
 
+        // Finally, updating the visible loots. It also ensures WorldLootList and LootSpawner are initialized.
+        Main.getContext.getWorldLootList.updateVisibleLoot()
+
         // Switch forward to the game screen immediately. The world has been generated and
         // populated now.
         onLeavingScreen(GameScreen.SCREEN_INDEX)

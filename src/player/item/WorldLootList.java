@@ -37,9 +37,9 @@ public class WorldLootList implements Drawable {
         lootVisibleList = new ArrayList<>(12);
         lootSpawner = new LootSpawner();
 
-        Main.getContext().turnSystem().onTurnGet().register(new AbstractFunction1<Player, BoxedUnit>() {
+        Main.getContext().turnSystem().onTurnGet().register(new AbstractFunction1<CommandTeam, BoxedUnit>() {
             @Override
-            public BoxedUnit apply (Player v1) {
+            public BoxedUnit apply (CommandTeam team) {
                 updateVisibleLoot();
                 return BoxedUnit.UNIT;
             }
@@ -47,8 +47,8 @@ public class WorldLootList implements Drawable {
 
         // every time, when the location of a player has changed, the list of every not-hidden loot must update itself.
         // ==> {@link WorldLootList#updateVisibleLoot()} is registered to the "onLocationChanged"-Delegate of every Player.
-        final Seq<Team> playerSeq = Main.getContext().getTurnSystem().teams().apply();
-        playerSeq.foreach(JavaInterop.asScalaFunction(team -> {
+        final Seq<Team> teamSeq = Main.getContext().getTurnSystem().teams().apply();
+        teamSeq.foreach(JavaInterop.asScalaFunction(team -> {
             Player player = ((CommandTeam) team).getHead();
             player.onLocationChanged().registerJava(locationChangedEvent -> {
                 updateVisibleLoot();

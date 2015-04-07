@@ -9,6 +9,7 @@ import newent.Bot;
 import newent.EntityLike;
 import newent.Player;
 import player.item.coin.*;
+import player.item.potion.PotionOfDamage;
 import player.item.potion.PotionOfHealing;
 import player.item.potion.PotionOfMovement;
 import player.weapon.arrow.ArrowHelper;
@@ -104,9 +105,9 @@ public class LootSpawner {
             for (BronzeCoin coin : coins)
                 spawnedLoot.add(coin);
 
-            // with the possibility of 15% a PotionOfMovement is added.
+            // with the possibility of 15% a PotionOfDamage is added.
             if (random.nextDouble() < 0.15)
-                spawnedLoot.add(new PotionOfMovement((byte) (random.nextInt(3))));
+                spawnedLoot.add(new PotionOfDamage((byte) (random.nextInt(3))));
 
         // if it's a defaultChest add a potion and a little bit money
         } else {
