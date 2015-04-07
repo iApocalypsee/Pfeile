@@ -16,7 +16,7 @@ public class BagOfLoots extends Loot {
     private static BufferedImage image;
 
     static {
-        String path = "resources/gfx/item textures/bagOfLoots.png";
+        String path = "resources/gfx/item textures/loot textures/bagOfLoots.png";
         try {
             image = ImageIO.read(BagOfLoots.class.getClassLoader().getResourceAsStream(path));
         } catch (IOException e) {

@@ -4,6 +4,8 @@ import akka.actor.ActorSystem;
 import animation.SoundPool;
 import general.io.PreInitStage;
 import gui.screen.*;
+import misc.ArmingInitialization;
+import misc.ItemInitialization;
 import newent.CommandTeam;
 import newent.Player;
 import newent.Team;
@@ -92,8 +94,8 @@ public class Main {
         GraphicsEnvironment environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
         // TODO Remove that later. This definitely does not belong here and is just for testing purposes.
-        ShopCentral.addArticle(JavaInterop.asScalaFunction(() -> new PotionOfHealing((byte) 2)), 50);
-        ShopCentral.addArticle(JavaInterop.asScalaFunction(() -> new PotionOfDamage((byte) 2)), 35);
+        //ShopCentral.addArticle(JavaInterop.asScalaFunction(() -> new PotionOfHealing((byte) 2)), 50);
+        //ShopCentral.addArticle(JavaInterop.asScalaFunction(() -> new PotionOfDamage((byte) 2)), 35);
 
         // This will load the background melodies of SoundPool and SoundEffectTimeClock in an Thread and start to play
         // the main melodie, if it's ready.
@@ -115,8 +117,11 @@ public class Main {
 
         LogFacility.log("PreInitStage done!", "Info", "initprocess");
 
-        // loading the arrow images is threaded now
-        new ArrowHelper();
+        // initialize Weapons and Armours (internally threaded)
+        ArmingInitialization.initialize();
+
+        // initialize Loots, Coins and Potions (internally threaded)
+        ItemInitialization.initialize();
 
         graphicsDevice = environmentG.getDefaultScreenDevice();
         gameWindow = new GameWindow();

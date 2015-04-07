@@ -1,4 +1,4 @@
-package gui;
+package misc;
 
 
 import java.awt.*;
@@ -45,7 +45,7 @@ public class ImageHelper {
         return ImageHelper.toBufferedImage(scaledImg);
     }
 
-    /** See the description of {@link gui.ImageHelper#scaleBufferedImage(java.awt.image.BufferedImage, float, float, int)} (java.awt.image.BufferedImage, float, float, int)}.
+    /** See the description of {@link ImageHelper#scaleBufferedImage(java.awt.image.BufferedImage, float, float, int)} (java.awt.image.BufferedImage, float, float, int)}.
      * The scaling algorithm type is replaced with {@link java.awt.Image#SCALE_DEFAULT}.
      *
      * @param image the image to be scaled
@@ -57,7 +57,7 @@ public class ImageHelper {
         return scaleBufferedImage(image, scaleFactorX, scaleFactorY, Image.SCALE_DEFAULT);
     }
 
-    /** See the description of {@link gui.ImageHelper#scaleBufferedImage(java.awt.image.BufferedImage, float, float, int)}.
+    /** See the description of {@link ImageHelper#scaleBufferedImage(java.awt.image.BufferedImage, float, float, int)}.
      * The scaling algorithm type is replaced with {@link java.awt.Image#SCALE_DEFAULT} and both the width and the height are
      * scaled with the same factor <code>scaleFactor</code>.
      * */
@@ -65,7 +65,7 @@ public class ImageHelper {
         return scaleBufferedImage(image, scaleFactor, scaleFactor, Image.SCALE_DEFAULT);
     }
 
-    /** See the description of {@link gui.ImageHelper#scaleBufferedImage(java.awt.image.BufferedImage, float, float, int)}
+    /** See the description of {@link ImageHelper#scaleBufferedImage(java.awt.image.BufferedImage, float, float, int)}
      * The x and y direction are both scaled with <code>scaleFactor</code>. */
     public static BufferedImage scaleBufferedImage (BufferedImage image, float scaleFactor, int scaleHint) {
         return scaleBufferedImage(image, scaleFactor, scaleFactor, scaleHint);

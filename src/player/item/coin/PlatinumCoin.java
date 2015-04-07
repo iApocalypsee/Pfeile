@@ -29,7 +29,7 @@ public class PlatinumCoin extends Coin {
         super("Platinum Coin");
     }
 
-    /** the value of a platnumCoin is equal to 400 BronzeCoins */
+    /** the value of a PlatinumCoin is equal to 400 BronzeCoins */
     public static final int VALUE = 400;
 
     @Override

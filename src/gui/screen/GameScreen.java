@@ -85,10 +85,6 @@ public class GameScreen extends Screen implements FrameContainer {
 	 * So construct it first, then do all the initialization afterwards.
 	 */
 	private void postInit() {
-
-		// später DAS HIER auskommentieren
-		ScreenManager.ref_gameScreen = this;
-
         shopWindow = new ShopWindow();
 
 		// Initialisierung der Buttons

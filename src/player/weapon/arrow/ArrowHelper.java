@@ -2,7 +2,7 @@ package player.weapon.arrow;
 
 import general.LogFacility;
 import general.Main;
-import gui.ImageHelper;
+import misc.ImageHelper;
 import newent.InventoryLike;
 import player.item.Item;
 
@@ -313,9 +313,9 @@ public final class ArrowHelper {
 		return arrowImages[selectedArrow];
 	}
 
-    /** Returns the scaled version of a BufferedImage from the selected arrow. Compare with the methods in {@link gui.ImageHelper}, too.
+    /** Returns the scaled version of a BufferedImage from the selected arrow. Compare with the methods in {@link misc.ImageHelper}, too.
      * If you want to use this method frequently, save the returned BufferedImage somewhere, because scaling an image is no fast Operation or use
-     * {@link gui.ImageHelper#scaleBufferedImage(java.awt.image.BufferedImage, float, float, int)} with {@link java.awt.Image#SCALE_FAST}.
+     * {@link misc.ImageHelper#scaleBufferedImage(java.awt.image.BufferedImage, float, float, int)} with {@link java.awt.Image#SCALE_FAST}.
      *
      * @param selectedArrow the index of the selected arrow arrow.INDEX
      * @param scaleFactor the scale Factor in x and in y direction

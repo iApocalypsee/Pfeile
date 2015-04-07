@@ -23,7 +23,7 @@ public class Treasure extends Loot {
     private static BufferedImage image;
 
     static {
-        String path = "resources/gfx/item textures/treasure.png";
+        String path = "resources/gfx/item textures/loot textures/treasure.png";
         try {
             image = ImageIO.read(Treasure.class.getClassLoader().getResourceAsStream(path));
         } catch (IOException e) {
