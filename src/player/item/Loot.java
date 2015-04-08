@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -64,7 +65,7 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
         this.gridY = gridY;
         this.lootUI = lootUI;
 
-        listOfContent = new ArrayList<>(8);
+        listOfContent = new LinkedList<>();
     }
 
     /**
@@ -178,15 +179,6 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
 
     @Override
     public String toString () {
-        String toString = getName() + " [@Tile: " + gridX + "|" + gridY + "]" + " with {";
-
-        for (int i = 0; i < listOfContent.size() - 1; i++)
-            toString = toString + listOfContent.get(i).getName() + "; ";
-
-        if (listOfContent.get(listOfContent.size() - 1) != null)
-            toString = toString + listOfContent.get(listOfContent.size() - 1).getName();
-
-        toString = toString + "}";
-        return toString;
+        return getName() + " [@Tile: " + gridX + "|" + gridY + "]" + "-{ " + getStoredItems().size() + " stored items}";
     }
 }

@@ -4,7 +4,7 @@ import comp.Circle;
 import general.Main;
 import general.PfeileContext;
 import gui.screen.ArrowSelectionScreenPreSet;
-import gui.screen.Screen;
+import gui.screen.LoadingWorldScreen;
 import newent.Bot;
 import newent.EntityLike;
 import newent.Player;
@@ -13,9 +13,6 @@ import player.item.potion.PotionOfDamage;
 import player.item.potion.PotionOfHealing;
 import player.item.potion.PotionOfMovement;
 import player.weapon.arrow.ArrowHelper;
-import scala.runtime.AbstractFunction0;
-import scala.runtime.AbstractFunction1;
-import scala.runtime.BoxedUnit;
 import world.SeaTile;
 import world.TerrainLike;
 
@@ -24,42 +21,43 @@ import java.util.Random;
 
 /**
  * Every Loot spawns by this class. The loot is automatically added to {@link player.item.WorldLootList}.
+ * LootSpawner is created in WorldLootList. Do not create it twice.
  */
-public class LootSpawner {
+class LootSpawner {
     private Random random;
 
     public LootSpawner () {
         random = new Random();
 
-        ArrowSelectionScreenPreSet.getInstance().onScreenLeft.register(new AbstractFunction1<Screen.ScreenChangedEvent, BoxedUnit>() {
-            @Override
-            public BoxedUnit apply (Screen.ScreenChangedEvent v1) {
+        LoadingWorldScreen.getInstance().onScreenLeft.registerOnceJava(screenChangedEvent -> {
 
-                spawningRoundChest();
+            // LoadingWorldScreen appears after ArrowSelectionScreenPreSet; so the first time LootSpawner is entered
+            // [from WorldLootList] the RoundChest must spawn manually.
+            spawningRoundChest();
 
-                // Spawn 0 to 5 loots with the possible of 50% for more fun at the beginning
-                for (int i = 0; i < random.nextInt(6); i++) {
-                    if (random.nextBoolean())
-                        spawningAnyLoot();
-                }
-
-                return BoxedUnit.UNIT;
+            // Spawn 0 to 13 loots with the possibility of 50% for more fun at the beginning
+            for (int i = 0; i < random.nextInt(13); i++) {
+                if (random.nextBoolean())
+                    spawningAnyLoot();
             }
         });
 
-        Main.getContext().getTurnSystem().onGlobalTurnCycleEnded().register(new AbstractFunction0<BoxedUnit>() {
+        ArrowSelectionScreenPreSet.getInstance().onScreenLeft.registerJava(screenChangedEvent -> {
+            spawningRoundChest();
 
-            @Override
-            public BoxedUnit apply () {
-
-                // Just spawn 0 to 3 loots with the possible of 50%.
-                for (int i = 0; i < random.nextInt(4); i++) {
-                    if (random.nextBoolean())
-                        spawningAnyLoot();
-                }
-
-                return BoxedUnit.UNIT;
+            // Spawn 0 to 5 loots with the possibility of 50% for more fun at the beginning
+            for (int i = 0; i < random.nextInt(5); i++) {
+                if (random.nextBoolean())
+                    spawningAnyLoot();
             }
+        });
+
+        Main.getContext().getTurnSystem().onGlobalTurnCycleEnded().registerJava(() -> {
+            // Just spawn one or two loots with a possibility of 50% each.
+            if (random.nextBoolean())
+                spawningAnyLoot();
+            if (random.nextBoolean())
+                spawningAnyLoot();
         });
 
     }
@@ -69,7 +67,7 @@ public class LootSpawner {
      * is left. The position is set by {@link player.item.LootSpawner#spawnLoot(int, int)} with <code>4</code> and <code>5</code>.
      */
     private void spawningRoundChest () {
-        Point spawnPoint = spawnLoot(4, 6);
+        Point spawnPoint = spawnLoot(5, 7);
 
         RoundChest spawnedChest = new RoundChest(spawnPoint.x, spawnPoint.y);
 

@@ -5,6 +5,7 @@ import java.awt.Graphics2D
 import comp.Component.ComponentStatus
 import comp.Label
 import general.{Main, PfeileContext, Property}
+import misc.ItemInitialization
 import world.ContextCreator
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,9 +40,14 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
         // Hand the newly created world to the PfeileContext object.
         Main.setContext(s.get)
 
+        // the loots gets initialized before WorldLootList (--> LootSpawner) uses them. The Main-Thread should not need
+        // to wait for loading images.
+        ItemInitialization.initializeLoots()
+
         ArrowSelectionScreen.getInstance().init()
 
-        // Finally, updating the visible loots. It also ensures WorldLootList and LootSpawner are initialized.
+        // Finally, I need to ensure that WorldLootList and LootSpawner are initialized to register their methods.
+        // (scala lazy val WorldLootList). Furthermore, it's save, that the activePlayer can see loots around him.
         Main.getContext.getWorldLootList.updateVisibleLoot()
 
         // Switch forward to the game screen immediately. The world has been generated and

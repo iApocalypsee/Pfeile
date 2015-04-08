@@ -5,8 +5,6 @@ import general.Main;
 import gui.Drawable;
 import newent.*;
 import scala.collection.Seq;
-import scala.runtime.AbstractFunction1;
-import scala.runtime.BoxedUnit;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -33,16 +31,12 @@ public class WorldLootList implements Drawable {
      * {@link general.TurnSystem#onTurnGet()}.
      * */
     public WorldLootList () {
-        lootList = new ArrayList<>(18);
+        lootList = new ArrayList<>(20);
         lootVisibleList = new ArrayList<>(12);
         lootSpawner = new LootSpawner();
 
-        Main.getContext().turnSystem().onTurnGet().register(new AbstractFunction1<CommandTeam, BoxedUnit>() {
-            @Override
-            public BoxedUnit apply (CommandTeam team) {
-                updateVisibleLoot();
-                return BoxedUnit.UNIT;
-            }
+        Main.getContext().turnSystem().onTurnGet().registerJava(team -> {
+            updateVisibleLoot();
         });
 
         // every time, when the location of a player has changed, the list of every not-hidden loot must update itself.

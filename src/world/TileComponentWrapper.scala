@@ -72,31 +72,40 @@ class VisualMap(world: WorldLike) extends Drawable {
     protected[VisualMap] def draw(g: Graphics2D): Unit
   }
 
-  /** Draws the map with the currently active player's vision map. */
+  /** Draws the map with the currently active player's vision map and the visible loots in WorldLootList. */
   object VisionSightType extends SightType {
-    protected[VisualMap] override def draw(g: Graphics2D): Unit = _displayWorld.terrain.tiles foreach { tile =>
-      // Only draw the tile if the active player has actually revealed the tile.
-      val status = Main.getContext.activePlayer.visionMap.visionStatusOf(tile.latticeX, tile.latticeY)
+    protected[VisualMap] override def draw(g: Graphics2D): Unit = {
+       _displayWorld.terrain.tiles foreach { tile =>
+          // Only draw the tile if the active player has actually revealed the tile.
+          val status = Main.getContext.activePlayer.visionMap.visionStatusOf(tile.latticeX, tile.latticeY)
 
-      if(status != VisionStatus.Hidden) {
-        tile.component.draw(g)
-        if(status == VisionStatus.Revealed) {
-          g.setColor(_revealedTileColor)
-          g.fill(tile.component.getBounds)
-        }
-        if(status == VisionStatus.Visible) {
-          tile.entities foreach { e => e.component.draw(g) }
-        }
-      }
+          if(status != VisionStatus.Hidden) {
+             tile.component.draw(g)
+             if(status == VisionStatus.Revealed) {
+                g.setColor(_revealedTileColor)
+                g.fill(tile.component.getBounds)
+             }
+             if(status == VisionStatus.Visible) {
+                tile.entities foreach { e => e.component.draw(g) }
+             }
+          }
+       }
+       Main.getContext.getWorldLootList.draw(g)
     }
   }
 
-  /** Draws the map with no vision system included. So this is the full map. */
+  /** Draws the map with no vision system included. So this is the full map with every Loot. */
   object FullSightType extends SightType {
-    protected[VisualMap] override def draw(g: Graphics2D): Unit = {
+    import scala.collection.JavaConversions._
+
+     protected[VisualMap] override def draw(g: Graphics2D): Unit = {
       _displayWorld.terrain.tiles foreach { tile =>
         tile.component.draw(g)
       }
+
+      Main.getContext.getWorldLootList.getLoots.foreach(loot =>
+         loot.getLootUI.draw(g)
+      )
     }
   }
 }

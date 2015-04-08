@@ -1,6 +1,10 @@
 package misc;
 
 import general.LogFacility;
+import player.item.BagOfLoots;
+import player.item.DefaultChest;
+import player.item.RoundChest;
+import player.item.Treasure;
 import player.item.coin.BronzeCoin;
 import player.item.coin.GoldCoin;
 import player.item.coin.PlatinumCoin;
@@ -49,5 +53,25 @@ public class ItemInitialization {
         new PotionOfHealing();
         new PotionOfMovement();
         new PotionOfDamage();
+    }
+
+    /**
+     * If the World has been created, this method has to be called to initialize the images of the Loots. The method is
+     * threaded with a high priority (There is not much time until this method needs to be ready due to the code in
+     * LoadingWorldScreen#onScreenEnter#+=).
+     */
+    public static void initializeLoots () {
+        Thread x = new Thread("Loot initialization Thread") {
+            @Override
+            public void run () {
+                new RoundChest(0, 0);
+                new DefaultChest(0, 0);
+                new BagOfLoots(0, 0);
+                new Treasure(0, 0);
+            }
+        };
+        x.setDaemon(true);
+        x.setPriority(Thread.MAX_PRIORITY);
+        x.start();
     }
 }
