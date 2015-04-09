@@ -20,6 +20,11 @@ public class Label extends Component {
 
     private BufferedImage optImage = null;
 
+    private Font font = Component.STD_FONT;
+
+    /** null: The Color of the border is used */
+    private Color fontColor = null;
+
     private Point textDrawLocation = new Point(getX(), getY());
     private Point imageDrawLocation;
     private Point imageDrawScale;
@@ -35,9 +40,7 @@ public class Label extends Component {
         super(0, 0, 0, 0, backing);
         this.text = text;
 
-
-
-        Dimension text_bounds = Component.getTextBounds(text, STD_FONT);
+        Dimension text_bounds = Component.getTextBounds(text, font);
         setSourceShape(new Rectangle(-text_bounds.width / 2, -text_bounds.height / 2, text_bounds.width, text_bounds.height));
         getTransformation().translate(x, y);
 
@@ -59,33 +62,48 @@ public class Label extends Component {
             }
 
             if (isAcceptingInput()) {
-
                 switch (getStatus()) {
                     case NO_MOUSE:
-                        g.setColor(getBorder().getOuterColor());
+                        if (fontColor == null)
+                            g.setColor(getBorder().getOuterColor());
+                        else
+                            g.setColor(fontColor);
                         break;
                     case MOUSE:
-                        g.setColor(getBorder().getHoverColor());
+                        if (fontColor == null)
+                            g.setColor(getBorder().getHoverColor());
+                        else
+                            g.setColor(getColorDiff(fontColor, getBorder().getHoverColor()));
                         break;
                     case CLICK:
-                        g.setColor(getBorder().getClickColor());
+                        if (fontColor == null)
+                            g.setColor(getBorder().getClickColor());
+                        else
+                            g.setColor(getColorDiff(fontColor, getBorder().getClickColor()));
                         break;
                     case NOT_AVAILABLE:
-                        g.setColor(getBorder().getNotAvailableColor());
+                        if (fontColor == null)
+                            g.setColor(getBorder().getNotAvailableColor());
+                        else
+                            g.setColor(getColorDiff(fontColor, getBorder().getNotAvailableColor()));
                         break;
                     default:
                         System.out.println("Status not defined.");
                         System.exit(1);
                 }
-
             } else {
-                g.setColor(declineInputColor);
+                if (fontColor == null)
+                    g.setColor(declineInputColor);
+                else
+                    g.setColor(getColorDiff(declineInputColor, fontColor));
             }
 
             if (optImage == null) {
+                g.setFont(font);
                 g.drawString(text, textDrawLocation.x, textDrawLocation.y);
             } else {
                 g.drawImage(optImage, imageDrawLocation.x, imageDrawLocation.y, imageDrawScale.x, imageDrawScale.y, null);
+                g.setFont(font);
                 g.drawString(text, textDrawLocation.x, textDrawLocation.y);
             }
         }
@@ -93,8 +111,8 @@ public class Label extends Component {
 
     public void setText(String text) {
         this.text = text;
-        setWidth(Component.getTextBounds(text, STD_FONT).width);
-        setHeight(Component.getTextBounds(text, STD_FONT).height);
+        setWidth(Component.getTextBounds(text, font).width);
+        setHeight(Component.getTextBounds(text, font).height);
     }
 
     /**
@@ -109,15 +127,30 @@ public class Label extends Component {
     }
 
     /**
+     * Returns a new Color, which is the half of color c1 and c2.
+     *
+     * @param c1 the first color
+     * @param c2 the second color
+     * @return a new color with the half of each color
+     */
+    private Color getColorDiff (Color c1, Color c2) {
+        int red = (int) ((c1.getRed() + c2.getRed()) * 0.5);
+        int green = (int) ((c1.getGreen() + c2.getGreen()) * 0.5);
+        int blue = (int) ((c1.getBlue() + c2.getBlue()) * 0.5);
+        int alpha = (int) ((c1.getAlpha() + c2.getAlpha()) * 0.5);
+        return new Color(red, green, blue, alpha);
+    }
+
+    /**
      * Berechnet die Bounds des Buttons neu.
      */
     void recalculateDimension() {
         Dimension d;
         // leerer Text bei text == null
         if (text != null) {
-            d = Component.getTextBounds(text, STD_FONT);
+            d = Component.getTextBounds(text, font);
         } else {
-            d = Component.getTextBounds(" ", STD_FONT);
+            d = Component.getTextBounds(" ", font);
         }
 
         if (optImage != null) {
@@ -127,7 +160,7 @@ public class Label extends Component {
 
             // Position the text so that it appears right next to the image, centered around about the half-height of
             // the given image.
-            // FIXME Causes text to be pushed upwards a little bit.
+            // FIXME Causes text to be pushed upwards a little bit. A little bit? :P :D
             textDrawLocation = new Point(imageDrawLocation.x + imageDrawScale.x + imageTextInset,
                     imageDrawLocation.y + imageDrawScale.y / 2 - d.height / 2 + d.height);
 //            textDrawLocation = new Point(imageDrawLocation.x + imageDrawScale.x + imageTextInset,
@@ -159,6 +192,36 @@ public class Label extends Component {
     public String getText() {
         return text;
     }
+
+    public Font getFont () {
+        return font;
+    }
+
+    public void setFont (Font font) {
+        this.font = font;
+        recalculateDimension();
+    }
+
+    /**
+     * If <code>fontColor</code> is <code>null</code>, the color of the border is used. The standard setting is null.
+     * If fontColor is used, either fontColor itself, or the difference of fontColor and the border.
+     *
+     * @return the color of the font of this label
+     */
+    public Color getFontColor () {
+        return fontColor;
+    }
+
+    /**
+     * If <code>fontColor</code> is <code>null</code>, the color of the border is used. The standard setting is null.
+     * If fontColor is used, either fontColor itself, or the difference of fontColor and the border.
+     *
+     * @param fontColor the new color
+     */
+    public void setFontColor (Color fontColor) {
+        this.fontColor = fontColor;
+    }
+
 
     public int getImageTextInset() {
         return imageTextInset;
