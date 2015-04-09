@@ -37,7 +37,7 @@ public class InventoryScreen extends Screen {
     /** the List where the items (excluded arrows) are saved */
     private List inventoryList;
 
-    /** "Best�tigen" */
+    /** "Bestätigen" */
     private Button confirmButton;
 
     /** "Abbrechen" */
@@ -55,7 +55,7 @@ public class InventoryScreen extends Screen {
     public InventoryScreen () {
         super(SCREEN_NAME, SCREEN_INDEX);
 
-        selectedItem = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 380, this, "<Item ausw�hlen>");
+        selectedItem = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 380, this, "<Item auswählen>");
         selectedItem.declineInput();
         selectedItem.setRoundBorder(true);
 
@@ -67,7 +67,7 @@ public class InventoryScreen extends Screen {
 
         cancelButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 220, this, "Abbrechen");
 
-        confirmButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 300, this, "Best�tigen");
+        confirmButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 300, this, "Bestätigen");
 
         warningMessage = new WarningMessage("null", 40, Main.getWindowHeight() - 105, this);
         warningMessage.setFont(warningMessage.getFont().deriveFont(Component.STD_FONT.getSize2D() * 2));
@@ -84,17 +84,7 @@ public class InventoryScreen extends Screen {
             InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
             for (Item item : inventory.javaItems()) {
                 if (selectedItem.getText().equals(item.getName())) {
-                    if (item instanceof Potion) {
-                        Potion potion = (Potion) item;
-                        selectedItem.iconify(potion.getPotionUI().getComponent().getBufferedImage());
-
-                    } else if (item instanceof EquippableItem) {
-                        EquippableItem equippableItem = (EquippableItem) item;
-                        selectedItem.iconify(equippableItem.getImage());
-                    } else {
-                        warningMessage.setMessage("Das Item " + item.getName() + " wurde nicht gefunden.");
-                        warningMessage.activateMessage();
-                    }
+                    selectedItem.iconify(item.getImage());
                     break;
                 }
             }
@@ -116,8 +106,8 @@ public class InventoryScreen extends Screen {
             @Override
             public void mouseReleased (MouseEvent e) {
                 // if nothing is selected yet, you don't need to trigger the rest
-                if (selectedItem.getText().equals("<Item ausw�hlen>")) {
-                    warningMessage.setMessage("W�hle erst ein Item aus!");
+                if (selectedItem.getText().equals("<Item auswählen>")) {
+                    warningMessage.setMessage("Wähle erst ein Item aus!");
                     warningMessage.activateMessage();
                     return;
                 }
@@ -138,13 +128,13 @@ public class InventoryScreen extends Screen {
                         } else if (item instanceof EquippableItem) {
                             EquippableItem equippableItem = (EquippableItem) item;
                             if (!equippableItem.equip()) {
-                                warningMessage.setMessage("Die " + equippableItem.getName() + " kann nicht ausger�stet werden.");
+                                warningMessage.setMessage("Die " + equippableItem.getName() + " kann nicht ausgerüstet werden.");
                                 warningMessage.activateMessage();
                                 isLeavingScreen = false;
                             }
 
                         } else {
-                            warningMessage.setMessage("Das ausgew�hlte item " + item.getName() + " kann nicht verwendet werden.");
+                            warningMessage.setMessage("Das ausgewählte item " + item.getName() + " kann nicht verwendet werden.");
                             warningMessage.activateMessage();
                             isLeavingScreen = false;
                         }
@@ -203,12 +193,7 @@ public class InventoryScreen extends Screen {
                     // the name
                     itemList.add(item.getName());
                     // the image
-                    if (item instanceof EquippableItem)
-                        imageList.add(((EquippableItem) item).getImage());
-                    else if (item instanceof Potion)
-                        imageList.add(((Potion) item).getPotionUI().getComponent().getBufferedImage());
-                    else // if the item is based on an not yet defined subclass
-                        imageList.add(null);
+                    imageList.add(item.getImage());
                 } else {
                     // coins are added to the list later
                     coins.add((Coin) item);

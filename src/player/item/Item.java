@@ -24,6 +24,12 @@ public abstract class Item {
 		this.name = name;
 	}
 
+    /**
+     * Every item can be drawn, so it must have a BufferedImage. Override this call with
+     * a link to the component or a loaded static BufferedImage.
+     *
+     * @return the {@link java.awt.image.BufferedImage} of the item
+     */
     public abstract BufferedImage getImage();
 
     @Override

@@ -51,8 +51,7 @@ public class PotionOfDamage extends Potion {
      * @param level the level of the item (must be: <code>level >= 0 && level <= 2</code>)
      */
     public PotionOfDamage (byte level) {
-        super(level, "Potion of Damage");
-        potionUI.createComponent(images[level]);
+        super(level, images[level], "Potion of Damage");
     }
 
     /**
@@ -88,5 +87,10 @@ public class PotionOfDamage extends Potion {
         );
 
         return remove();
+    }
+
+    @Override
+    public BufferedImage getImage () {
+        return images[getLevel()];
     }
 }

@@ -9,9 +9,6 @@ import misc.ItemInitialization;
 import newent.CommandTeam;
 import newent.Player;
 import newent.Team;
-import player.item.potion.PotionOfDamage;
-import player.item.potion.PotionOfHealing;
-import player.shop.ShopCentral;
 import player.weapon.arrow.ArrowHelper;
 import scala.collection.Seq;
 import scala.runtime.AbstractFunction1;
@@ -117,15 +114,15 @@ public class Main {
 
         LogFacility.log("PreInitStage done!", "Info", "initprocess");
 
+        graphicsDevice = environmentG.getDefaultScreenDevice();
+        gameWindow = new GameWindow();
+        LogFacility.log("GameWindow instantiated.", "Info", "initprocess");
+
         // initialize Weapons and Armours (internally threaded)
         ArmingInitialization.initialize();
 
         // initialize Loots, Coins and Potions (internally threaded)
         ItemInitialization.initialize();
-
-        graphicsDevice = environmentG.getDefaultScreenDevice();
-        gameWindow = new GameWindow();
-        LogFacility.log("GameWindow instantiated.", "Info", "initprocess");
 
         gameWindow.initializeScreens();
         LogFacility.log("Screens initialized.", "Info", "initprocess");

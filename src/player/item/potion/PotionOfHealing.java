@@ -48,8 +48,7 @@ public class PotionOfHealing extends Potion {
      * @param level the level (--> effectiveness) of the potion. Must be <code>0 <= level <= 2</code>
      */
     public PotionOfHealing (byte level) {
-        super(level, "Potion of Healing");
-        potionUI.createComponent(images[getLevel()]);
+        super(level, images[level], "Potion of Healing");
     }
 
     /**
@@ -69,5 +68,10 @@ public class PotionOfHealing extends Potion {
         life.setLife(life.getLife() + 10 * (getLevel() + 1) + life.getMaxLife() * 0.1 * (getLevel() + 1));
         // after using the potion is should be removed at all.
         return remove();
+    }
+
+    @Override
+    public BufferedImage getImage () {
+        return images[getLevel()];
     }
 }

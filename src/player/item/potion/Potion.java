@@ -7,6 +7,7 @@ import player.item.Item;
 import player.item.Loot;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 /**
@@ -47,6 +48,14 @@ public abstract class Potion extends Item implements Drawable {
             throw new IllegalArgumentException("The level (here: " + level + ") of a potion must be 0, 1 or 2.");
         this.level = level;
         potionUI = new PotionUI();
+    }
+
+    protected Potion (byte level, BufferedImage image, String name) {
+        super(name);
+        if (level < 0 && level > 2)
+            throw new IllegalArgumentException("The level (here: " + level + ") of a potion must be 0, 1 or 2.");
+        this.level = level;
+        potionUI = new PotionUI(image);
     }
 
     /**
@@ -108,6 +117,12 @@ public abstract class Potion extends Item implements Drawable {
     @Override
     public void draw (Graphics2D g) {
         potionUI.draw(g);
+    }
+
+
+    @Override
+    public BufferedImage getImage () {
+        return potionUI.getComponent().getBufferedImage();
     }
 
     @Override

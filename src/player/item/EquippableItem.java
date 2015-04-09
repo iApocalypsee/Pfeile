@@ -33,12 +33,4 @@ public abstract class EquippableItem extends Item {
     public boolean equip () {
         return equip(Main.getContext().getActivePlayer());
     }
-
-    /**
-     * Every item, which is can be equipped can also be drawn, so it must have a BufferedImage. Override this call with
-     * a link to the component or a loaded static BufferedImage.
-     *
-     * @return the {@link java.awt.image.BufferedImage} of the item
-     */
-    public abstract BufferedImage getImage ();
 }

@@ -20,9 +20,6 @@ public abstract class Coin extends Item {
      */
     public abstract int getValue ();
 
-    /** The basic appearance of a coin overwritten by it's subclasses helps to draw it (for example at InventoryScreen). */
-    public abstract BufferedImage getImage ();
-
     @Override
     public String toString () {
         return getName();

@@ -47,8 +47,7 @@ public class PotionOfMovement extends Potion {
      * @param level the level of the potion (the number of additional MovementPoints is multiplied with the level)
      */
     public PotionOfMovement (byte level) {
-        super(level, "Potion of Movement");
-        potionUI.createComponent(images[level]);
+        super(level, images[level], "Potion of Movement");
     }
 
     /**
@@ -68,5 +67,10 @@ public class PotionOfMovement extends Potion {
 
         // removing the potion after the effect has been triggered.
         return remove();
+    }
+
+    @Override
+    public BufferedImage getImage () {
+        return images[getLevel()];
     }
 }
