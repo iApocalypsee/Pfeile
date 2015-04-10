@@ -203,11 +203,14 @@ public abstract class Component implements IComponent {
 		this.status = ComponentStatus.NO_MOUSE;
 		setName(Integer.toString(this.hashCode()));
 
-		transformation.onTranslated().register(JavaInterop.asScalaFunctionFun((TranslationChange t) -> {
+		transformation.onTranslated().registerJava((TranslationChange t) -> {
             isTransformationChangedSince = true;
+            children.values().forEach(component -> {
+                final Vector2 diffTranslation = t.newTranslation().sub(t.oldTranslation());
+                component.move(((int) diffTranslation.x()), ((int) diffTranslation.y()));
+            });
             onTransformed.apply();
-            return BoxedUnit.UNIT;
-        }));
+        });
 
 		transformation.onScaled().register(JavaInterop.asScalaFunctionFun((ScaleChange t) -> {
             isTransformationChangedSince = true;
@@ -220,6 +223,10 @@ public abstract class Component implements IComponent {
             onTransformed.apply();
             return BoxedUnit.UNIT;
         }));
+
+        onMoved.registerJava(moveAmount -> {
+            isTransformationChangedSince = true;
+        });
 	}
 
 	/**
@@ -254,6 +261,10 @@ public abstract class Component implements IComponent {
     public final void drawChecked(Graphics2D g) {
         if(isVisible()) {
             draw(g);
+
+            if(additionalDrawing != null) {
+                additionalDrawing.apply(g);
+            }
         }
     }
 
@@ -329,7 +340,7 @@ public abstract class Component implements IComponent {
 	}
 
 	public int getRelativeX() {
-		return (int) transformation.translation().x() - (parent != null ? parent.getX() : 0);
+		return getX() - (parent != null ? parent.getX() : 0);
 	}
 
 	/**
@@ -355,7 +366,7 @@ public abstract class Component implements IComponent {
 	}
 
 	public int getRelativeY() {
-		return (int) transformation.translation().y() - (parent != null ? parent.getY() : 0);
+		return getY() - (parent != null ? parent.getY() : 0);
 	}
 
 	/**
@@ -372,10 +383,22 @@ public abstract class Component implements IComponent {
 		setY(y + parent.getY());
 	}
 
+    public Vector2 getLocation() {
+        return Vector2.apply(getX(), getY());
+    }
+
 	public void setLocation(int x, int y) {
 		int xTranslation = x - getX(), yTranslation = y - getY();
+        /*
 		AffineTransform transform = AffineTransform.getTranslateInstance(xTranslation, yTranslation);
 		bounds = transform.createTransformedShape(bounds);
+		*/
+        transformation.translate(xTranslation, yTranslation);
+
+        children.values().forEach(component -> {
+            component.setLocation(x + component.getRelativeX(), y + component.getRelativeY());
+        });
+
 		if (xTranslation != 0 || yTranslation != 0) {
 			onMoved.apply(new Vector2(xTranslation, yTranslation));
 		}
@@ -618,12 +641,12 @@ public abstract class Component implements IComponent {
 
 	public void setParent(Component parent) {
 		if(this.parent != null) {
-			transformation.translate(-this.parent.getX(), -this.parent.getY());
+			move(-this.parent.getX(), -this.parent.getY());
             this.parent.children.remove(this.name);
 		}
 		this.parent = parent;
 		if(this.parent != null) {
-			transformation.translate(this.parent.getX(), this.parent.getY());
+			move(this.parent.getX(), this.parent.getY());
             this.parent.children.put(this.name, this);
 		}
 	}

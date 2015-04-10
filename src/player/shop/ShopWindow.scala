@@ -1,6 +1,6 @@
 package player.shop
 
-import java.awt.{Graphics2D, Insets, Point}
+import java.awt.{Graphics2D, Insets}
 
 import comp._
 import general.Main
@@ -13,7 +13,7 @@ class ShopWindow extends DisplayRepresentable {
 
   import player.shop.ShopWindow._
 
-  lazy val parentComponent: Region = new Region(ShopWindow.x, ShopWindow.y, ShopWindow.Width, ShopWindow.Height, ShopWindow.BackingScreen) {
+  val parentComponent: Region = new Region(ShopWindow.x, ShopWindow.y, ShopWindow.Width, ShopWindow.Height, ShopWindow.BackingScreen) {
 
     override def draw(g: Graphics2D): Unit = {
       super.draw(g)
@@ -22,18 +22,28 @@ class ShopWindow extends DisplayRepresentable {
 
   }
 
-  lazy val window: InternalFrame = new InternalFrame(0, 0, parentComponent.getWidth, parentComponent.getHeight, parentComponent.getBackingScreen)
-  lazy val articleComponents = articleComponentCollection(ShopCentral.articles)
+  parentComponent.setName("parent: ShopWindow")
+
+  val window: InternalFrame = {
+    val frame = new InternalFrame(0, 0, parentComponent.getWidth, parentComponent.getHeight, parentComponent.getBackingScreen)
+    frame.setParent(parentComponent)
+    frame.onClosed += { () =>
+      parentComponent.setVisible(false)
+    }
+    frame
+  }
+
+  window.setName("frame: ShopWindow")
+
+  val articleComponents: Seq[Component] = {
+    val components = articleComponentCollection(ShopCentral.articles)
+    for(component <- components) window add component
+    components
+  }
 
   def getWindow = window
   def getParentComponent = parentComponent
   def getArticleComponent = articleComponents
-
-  window setParent parentComponent
-  window.onClosed += { () =>
-    parentComponent.setVisible(false)
-  }
-  articleComponents foreach { x => window.add(x) }
 
   parentComponent setVisible false
 
@@ -42,58 +52,8 @@ class ShopWindow extends DisplayRepresentable {
     * in the shop window.
     */
   private def articleComponentCollection(articles: Seq[Article]): Seq[Component] = {
-
-    // Some methods that can be adjusted for later use.
-    // These are extracted from the implementation further below so that I can tweak behaviour later on.
-
-    /**
-      * Calculates the upper left point for the item at `row = rowIndex` and `column = articleColumnIndex`
-      * @param rowIndex The row in which the given article is located.
-      * @param articleColumnIndex The index of the article in the row (= column).
-      * @return The position of the article button.
-      */
-    def calculatePosition(rowIndex: Int, articleColumnIndex: Int) = new Point(
-      ButtonsInsetsInsideWindow.left + articleColumnIndex * (ButtonsFixedWidth + ButtonsInsetsBetween.left + ButtonsInsetsBetween.right),
-      ButtonsInsetsInsideWindow.top + rowIndex * (ButtonsFixedHeight + ButtonsInsetsBetween.top + ButtonsInsetsBetween.bottom))
-
-    /**
-      * Constructs a string that is going to be the button representation for the given article.
-      * @param article The article for which to construct a button string.
-      * @return A string representation for the button.
-      */
-    def buttonText(article: Article): String = s"${article.item().getName}: ${article.price} Money Units"
-
-    //////////////////// From this point: Implementation ////////////////////
-
-    // TODO Buttons not iconified yet.
-
-    val sortRanges = for (i <- 0 to articles.size / ShopWindow.ButtonRowCount) yield {
-      val startIndex = i * ShopWindow.ButtonRowCount
-      startIndex until startIndex + ShopWindow.ButtonRowCount
-    }
-
-    val sortedArticles = for (range <- sortRanges) yield range.collect(articles)
-
-    // Collections are nested in this variable, as you can see from the specified type. A nested Seq.
-    val nestedArticleComponents: Seq[Seq[Button]] = (0 until sortedArticles.size).map { rowIndex =>
-      val rowArticles = sortedArticles(rowIndex)
-
-      for (articleIndex <- 0 until rowArticles.size) yield {
-        val article = rowArticles(articleIndex)
-
-        val buttonPosition = calculatePosition(rowIndex, articleIndex)
-        val button = new Button(buttonPosition.x, buttonPosition.y, ShopWindow.BackingScreen, buttonText(article))
-        button.setWidth(ShopWindow.ButtonsFixedWidth)
-        button.setHeight(ShopWindow.ButtonsFixedHeight)
-        button
-      }
-    }
-
-    // Here, the buttons are all in one seq, as opposed to the upper one.
-    // Totally contrasting the upper seq, because the buttons are not scattered around in a seq.
-    val flattenedArticleComponents: Seq[Button] = nestedArticleComponents.flatMap(identity)
-
-    flattenedArticleComponents
+    def rowToTable(index: Int) = (index % ButtonRowCount, index / ButtonRowCount)
+    for(i <- 0 until articles.size) yield ShopButton.create(rowToTable(i)._1, rowToTable(i)._2, articles(i), this)
   }
 
   /**
@@ -110,8 +70,8 @@ object ShopWindow {
 
   //<editor-fold desc='Window position and dimensions'>
 
-  lazy val x = 20
-  lazy val y = 20
+  lazy val x = 150
+  lazy val y = 200
   lazy val Width = Main.getWindowWidth - 2 * x
   lazy val Height = Main.getWindowHeight - 2 * y
   lazy val BackingScreen = GameScreen.getInstance()

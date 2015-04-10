@@ -7,10 +7,11 @@ import java.awt.image.BufferedImage;
  * @author Josip
  * @version 2/10/14
  */
-public class Animation {
+public class Animation implements ImageHolder {
 
     private int keyframes;
     private BufferedImage[] animationData;
+    private int currentFrame = 0;
 
     public Animation(BufferedImage srcImg, int framesAmt) {
         // assigning instance vars and creating the image array
@@ -45,8 +46,12 @@ public class Animation {
      * relatively to time.
      * @return The frame being displayed currently.
      */
-    public BufferedImage getFrame() {
-        int index = (int) (System.currentTimeMillis() % keyframes);
-        return animationData[index];
+    @Override
+    public BufferedImage getImage() {
+        return animationData[currentFrame];
+    }
+
+    public void update() {
+        currentFrame++;
     }
 }

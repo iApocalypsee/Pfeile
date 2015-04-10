@@ -14,16 +14,16 @@ public class ArmingInitialization {
 
     /** For further information see: {@link misc.ArmingInitialization} */
     public static void initialize () {
-        Thread x = new Thread (() -> {
+        //Thread x = new Thread (() -> {
             initializeWeapon();
             LogFacility.log("Weapon images loaded.", "Info", "initprocess");
 
             initializeArmour();
             LogFacility.log("Armour images loaded.", "Info", "initprocess");
-        });
-        x.setDaemon(true);
-        x.setPriority(2);
-        x.start();
+        //});
+        //x.setDaemon(true);
+        //x.setPriority(2);
+        //x.start();
     }
 
     private static void initializeWeapon () {

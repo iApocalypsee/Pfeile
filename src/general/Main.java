@@ -9,6 +9,9 @@ import misc.ItemInitialization;
 import newent.CommandTeam;
 import newent.Player;
 import newent.Team;
+import player.item.potion.PotionOfDamage;
+import player.item.potion.PotionOfHealing;
+import player.shop.ShopCentral;
 import player.weapon.arrow.ArrowHelper;
 import scala.collection.Seq;
 import scala.runtime.AbstractFunction1;
@@ -91,8 +94,8 @@ public class Main {
         GraphicsEnvironment environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
         // TODO Remove that later. This definitely does not belong here and is just for testing purposes.
-        //ShopCentral.addArticle(JavaInterop.asScalaFunction(() -> new PotionOfHealing((byte) 2)), 50);
-        //ShopCentral.addArticle(JavaInterop.asScalaFunction(() -> new PotionOfDamage((byte) 2)), 35);
+        ShopCentral.addArticle(JavaInterop.asScalaFunction(() -> new PotionOfHealing((byte) 2)), 50);
+        ShopCentral.addArticle(JavaInterop.asScalaFunction(() -> new PotionOfDamage((byte) 2)), 35);
 
         // This will load the background melodies of SoundPool and SoundEffectTimeClock in an Thread and start to play
         // the main melodie, if it's ready.
