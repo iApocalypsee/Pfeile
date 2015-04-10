@@ -37,8 +37,6 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
   val onClosed = Delegate.createZeroArity
 
   this << ToplineBar
-  ToplineBar.setRelativeLocation(x, y)
-  this.setVisible(false)
 
   /** The close button of the frame. */
   private lazy val closeButton = {
@@ -48,17 +46,19 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     val widthInBounds = FrameStyle.CloseButtonDimension.width
     val heightInBounds = FrameStyle.CloseButtonDimension.height
 
+    // Set the close button up according to the rules specified in [[FrameStyle]].
+    ret.setSourceShape(new Rectangle(-widthInBounds / 2, -heightInBounds / 2, widthInBounds, heightInBounds))
+
     // Add the new button to the frame so that it receives (positional) changes.
     this << ret
 
-    // Set the close button up according to the rules specified in [[FrameStyle]].
-    ret.setSourceShape(new Rectangle(-widthInBounds / 2, -heightInBounds / 2, widthInBounds, heightInBounds))
+    ret.setLocation(xInBounds, yInBounds)
 
     // Add the width to x and height to y because:
     //    The new transform system allows bounds to define custom anchor middle points.
     //    The best way of handling certain transformations is to put the anchor middle point
     //    in the center of the component.
-    ret.getTransformation.translate(widthInBounds + xInBounds, heightInBounds + yInBounds)
+    //ret.getTransformation.translate(widthInBounds + xInBounds, heightInBounds + yInBounds)
 
     ret.getBorder.setInnerColor(FrameStyle.CloseButtonColor_Inner)
     ret.setAdditionalDrawing { (g: Graphics2D) =>
@@ -88,6 +88,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
         onClosed()
       }
     })
+    ret.setName("frame: closeButton")
     ret
   }
 
@@ -101,7 +102,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
       }
     })
 
-    ToplineBar.draw(g)
+    closeButton.draw(g)
   }
 
   /**
@@ -114,7 +115,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     comps += c
     c.setParent(this)
     c.onMoved += { _ =>
-      if (!c.getBounds.intersects(this.getBounds.getBounds2D)) {
+      if (!this.getBounds.intersects(c.getBounds.getBounds2D)) {
         LogFacility.log("Component \""+c.getName+"\" is not intersecting bounds of frame \""+getName+"\" "+
           "anymore. Ignoring component in drawing process...", "Warning")
       }
@@ -130,13 +131,10 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
   // Singleton instance object, represents the top bar which "holds" the close button.
   private object ToplineBar extends Component with MouseDragDetector {
 
-    // 0, 0, getWidth, FrameStyle.CommonInset * 2 + closeButton
-    //.getHeight, backingScreen
-
-    setSourceShape(new Rectangle(-InternalFrame.this.getWidth / 2, -InternalFrame.this.getHeight / 2, InternalFrame.this.getWidth, FrameStyle.CommonInset * 2 + closeButton.getHeight))
-    setParent(InternalFrame.this)
-    setRelativeLocation(0, 0)
+    private val defaultBarHeight = FrameStyle.CommonInset * 2 + closeButton.getHeight
+    setSourceShape(new Rectangle(-InternalFrame.this.getWidth / 2, -defaultBarHeight / 2, InternalFrame.this.getWidth, defaultBarHeight))
     setBackingScreen(InternalFrame.this.getBackingScreen)
+    setName(InternalFrame.this.getName + ": toplinebar")
 
     onMouseDragDetected += { vec =>
       val frame = InternalFrame.this
@@ -147,7 +145,10 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
       g.setColor(FrameStyle.TopBarColor)
       g.fill(getBounds)
     }
+
   }
+
+  this.setVisible(false)
 
 }
 
@@ -171,7 +172,7 @@ object InternalFrame {
     lazy val CloseButton_DrawStroke = new BasicStroke(2.5f)
 
     /** Grayish color with more opaque style, specially picked for the top bar. */
-    lazy val TopBarColor = new Color(255, 255, 255)
+    lazy val TopBarColor = new Color(87, 87, 87, 95)
 
     lazy val CommonInset = 2
 

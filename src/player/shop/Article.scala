@@ -1,7 +1,12 @@
 package player.shop
 
+import java.awt.Color
+
+import general.Property
 import newent.Entity
 import player.item.Item
+
+import scala.beans.BeanProperty
 
 /**
   * Collects information essential to an article in the shop.
@@ -22,5 +27,16 @@ case class Article(item: () => Item, price: Int, availableWhen: Entity => Boolea
   // for Java interop.
   def this(item: () => Item, price: Int, availableWhen: Entity => Boolean, visibleWhen: Entity => Boolean,
     keywords: Array[String]) = this(item, price, availableWhen, visibleWhen, keywords.toSeq)
+
+  @BeanProperty lazy val shopButtonAttributes = new VisualArticleAttributes
+
+}
+
+class VisualArticleAttributes private[shop] {
+
+  /**
+    * The color being used for drawing the name of the article in the shop button.
+    */
+  lazy val textColor = Property(Color.white)
 
 }

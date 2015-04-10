@@ -1,6 +1,6 @@
 package geom
 
-import java.awt.Point
+import java.awt.{Dimension, Point}
 
 import scala.math._
 
@@ -36,6 +36,8 @@ case class Vector2(x: Float, y: Float) extends FloatVector {
   }
 
   def round = new Point(math.round(x), math.round(y))
+  def toPoint = new Point(x.asInstanceOf[Int], y.asInstanceOf[Int])
+  def toDimension = new Dimension(x.asInstanceOf[Int], y.asInstanceOf[Int])
 
   override def asList = List(x, y)
 
