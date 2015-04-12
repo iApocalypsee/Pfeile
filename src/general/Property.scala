@@ -192,4 +192,6 @@ object Property {
     ret
   }
 
+  implicit def toUnderlyingValue[A](property: Property[A]): A = property.get
+
 }

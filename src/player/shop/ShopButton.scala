@@ -9,7 +9,11 @@ import general._
 import scala.collection.mutable
 
 /**
-  * Created by jolecaric on 08/04/15.
+  * GUI representation of the shop button.
+  * @param gridX The x position in the grid of listed shop buttons.
+  * @param gridY The y position in the grid of listed shop buttons.
+  * @param article The article to display.
+  * @param shopWindow The shop window to which the shop button belongs.
   */
 private[shop] class ShopButton private (gridX: Int, gridY: Int, article: Article, shopWindow: ShopWindow) extends Component(0, 0, 1, 1, shopWindow.component.getBackingScreen) {
 
@@ -26,10 +30,10 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, article: Article
   private var textDrawDimension: Dimension = null
   private var text = ""
 
-  private lazy val cachedItem = article.item()
+  private val cachedItem = article.cachedItem
 
   private def positionalsUpdate(moveDiff: Vector2): Unit = {
-    if(imageDrawLocation != null && textDrawLocation != null) {
+    if (imageDrawLocation != null && textDrawLocation != null) {
       imageDrawLocation.x += moveDiff.x.asInstanceOf[Int]
       imageDrawLocation.y += moveDiff.y.asInstanceOf[Int]
       textDrawLocation.x += moveDiff.x.asInstanceOf[Int]
@@ -123,41 +127,41 @@ private[shop] object ShopButton {
 
     //<editor-fold desc='In relation to the button itself'>
 
-    lazy val fixedWidth = commonProperty(75)
+    val fixedWidth = commonProperty(75)
 
-    lazy val fixedHeight = commonProperty(150)
+    val fixedHeight = commonProperty(100)
 
-    lazy val imageInsets = commonProperty(new Insets(10, 10, 10, 10))
+    val imageInsets = commonProperty(new Insets(10, 10, 10, 10))
 
-    lazy val textLeftInset = commonProperty(10)
+    val textLeftInset = commonProperty(10)
 
-    lazy val textTopInset = commonProperty(0)
+    val textTopInset = commonProperty(0)
 
-    lazy val textGridCellHeight = commonProperty(15)
+    val textGridCellHeight = commonProperty(15)
 
-    lazy val textOrientation = commonProperty(new Orientation(HorizontalOrientation.Centered, VerticalOrientation.Top))
+    val textOrientation = commonProperty(new Orientation(HorizontalOrientation.Centered, VerticalOrientation.Top))
 
     //</editor-fold>
 
     //<editor-fold desc='Common values'>
 
-    lazy val font = commonProperty(Component.STD_FONT)
+    val font = commonProperty(Component.STD_FONT)
 
-    lazy val insetsBetweenEach = commonProperty(new Insets(5, 150, 5, 150))
+    val insetsBetweenEach = commonProperty(new Insets(5, 150, 5, 150))
 
     /**
       * Calculates the size of the image contained by the shop button and returns it
       * as a Vector2.
       * @return A vector representing the image size inside the button.
       */
-    def imageSize = Vector2(fixedWidth() - imageInsets().left - imageInsets().right,
-      fixedHeight() - imageInsets().top - imageInsets().bottom)
+    def imageSize = Vector2(fixedWidth - imageInsets.left - imageInsets.right,
+      fixedHeight - imageInsets.top - imageInsets.bottom - textGridCellHeight - textTopInset)
 
     /**
       * Returns the position of the image relative to the top left corner of the button.
       * @return the position of the image relative to the top left corner of the button.
       */
-    def imagePosition = Vector2(imageInsets().left, imageInsets().top)
+    def imagePosition = Vector2(imageInsets.left, imageInsets.top)
 
     //</editor-fold>
 

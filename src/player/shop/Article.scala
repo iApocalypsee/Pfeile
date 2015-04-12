@@ -3,7 +3,6 @@ package player.shop
 import java.awt.Color
 
 import general.Property
-import newent.Entity
 import player.item.Item
 
 import scala.beans.BeanProperty
@@ -20,13 +19,15 @@ import scala.beans.BeanProperty
   *                    This is not as important as the other parameters.
   * @param keywords Optional keywords with which this article can be found easier.
   */
-case class Article(item: () => Item, price: Int, availableWhen: Entity => Boolean, visibleWhen: Entity => Boolean,
-    keywords: Seq[String] = Seq()) {
+case class Article(private[shop] val item: () => Item, price: Int, keywords: Seq[String] = Seq()) {
+
+  private[shop] def cachedItem = item()
 
   // This constructor's only difference to the previous one is the last argument: it's an array,
   // for Java interop.
-  def this(item: () => Item, price: Int, availableWhen: Entity => Boolean, visibleWhen: Entity => Boolean,
-    keywords: Array[String]) = this(item, price, availableWhen, visibleWhen, keywords.toSeq)
+  def this(item: () => Item, price: Int, keywords: Array[String]) = this(item, price, keywords.toSeq)
+
+  def name = cachedItem.getName
 
   @BeanProperty lazy val shopButtonAttributes = new VisualArticleAttributes
 

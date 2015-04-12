@@ -121,7 +121,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
       * Gives a list of coins to the money earner.
       * @param coins The list of coins to give to the money earner.
       */
-    def give(coins: scala.Iterable[Coin]): Unit = {
+    def give(coins: scala.Iterable[Coin]): Unit = if(coins.nonEmpty) {
       for (coin <- coins) inventory.put(coin)
       LogFacility.log("Gave "+CoinHelper.getValue(coins)+" money to "+this, LoggingLevel.Info)
     }

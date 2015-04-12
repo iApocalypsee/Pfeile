@@ -7,7 +7,7 @@ import player.item.Item
   */
 object ShopCentral {
 
-  def addArticle(item: () => Item, price: Int): Unit = addArticle(Article(item, price, _ => true, _ => true))
+  def addArticle(item: () => Item, price: Int): Unit = addArticle(Article(item, price))
   def addArticle(article: Article): Unit = {
     ArticleCollection.addArticle(article)
   }
