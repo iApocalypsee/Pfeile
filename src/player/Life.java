@@ -36,7 +36,7 @@ public class Life {
 			@Override
 			public BoxedUnit apply(LifeChangedEvent v1) {
 				if(v1.getNewLife() <= 0) {
-					onDeath.call();
+					onDeath.apply();
 				}
 				return BoxedUnit.UNIT;
 			}
@@ -100,7 +100,7 @@ public class Life {
         else if (newLife < 0)
             newLife = 0;
         life = newLife;
-		onLifeChanged.call(new LifeChangedEvent(newLife));
+		onLifeChanged.apply(new LifeChangedEvent(newLife));
 	}
 
     /**
@@ -116,7 +116,7 @@ public class Life {
             life = 0;
         else if (life > lifeMax)
             life = lifeMax;
-        onLifeChanged.call(new LifeChangedEvent(life));
+        onLifeChanged.apply(new LifeChangedEvent(life));
     }
 
 	/**

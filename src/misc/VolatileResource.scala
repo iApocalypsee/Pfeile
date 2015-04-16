@@ -55,7 +55,7 @@ class VolatileResource[A <: AnyRef](x: A, deallocTime: FiniteDuration = 5.second
 
   private def deallocCancellableObject = Main.getActorSystem.scheduler.scheduleOnce(deallocCountdown) {
     // If the _x option has a value, make a call to the dealloc delegate.
-    if(_x.isDefined) onDispose call _x.get
+    if(_x.isDefined) onDispose apply _x.get
 
     _x = None
     _deallocThread = null

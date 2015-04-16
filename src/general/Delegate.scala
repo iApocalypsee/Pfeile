@@ -134,9 +134,7 @@ object Delegate {
 
     override type FunType = (In) => Unit
 
-    @inline def apply(arg: In): Unit = call( arg )
-
-    def call(arg: In): Unit = callbacks foreach {
+    def apply(arg: In): Unit = callbacks foreach {
       case pf: PartialFunction[In, Any] => if (pf.isDefinedAt( arg )) pf( arg ) else throw new MatchError( this )
       case reg_f: ((In) => Any) => reg_f( arg )
     }
@@ -162,8 +160,8 @@ object Delegate {
     /** Code in java zum ausführen der gethreaden Version:
       *
     <code> delegate.callAsync(<In>, scala.concurrent.ExecutionContext.Implicits$.MODULE$.global()); </code> */
-    def callAsync(arg: In)(implicit ec: ExecutionContext): Future[Unit] = Future {
-      call( arg )
+    @deprecated def callAsync(arg: In)(implicit ec: ExecutionContext): Future[Unit] = Future {
+      apply( arg )
     }
 
   }
@@ -172,14 +170,12 @@ object Delegate {
 
     override type FunType = () => Unit
 
-    @inline def apply(): Unit = call( )
-
-    def call(): Unit = callbacks foreach {
+    def apply(): Unit = callbacks foreach {
       _( )
     }
 
-    def callAsync()(implicit ec: ExecutionContext): Future[Unit] = Future {
-      call( )
+    @deprecated def callAsync()(implicit ec: ExecutionContext): Future[Unit] = Future {
+      apply()
     }
 
     def registerJava(jf: ProcFun0): Unit = this += ProcFun0.toScalaFunction(jf)

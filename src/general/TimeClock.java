@@ -125,7 +125,7 @@ public class TimeClock extends Component implements Runnable {
                     SoundEffectTimeClock.play_explosion();
                     isRunning = false;
                     timePrintString = timeFormatter(0);
-					onTimeOver.call();
+					onTimeOver.apply();
 				} else {
                     timePrintString = timeFormatter (timeLeft);
 

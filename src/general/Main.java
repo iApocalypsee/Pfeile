@@ -150,14 +150,14 @@ public class Main {
             public BoxedUnit apply (Screen.ScreenChangedEvent v1) {
                 final TimeClock timeClock = getContext().getTimeClock();
                 main.doArrowSelectionAddingArrows();
-                getContext().onStartRunningTimeClock().call();
+                getContext().onStartRunningTimeClock().apply();
                 // the players have been added to entityList, so this call is valid now
                 PreWindowScreen.correctArrowNumber();
 
                 // Notify the first player of the player list that it's his turn now.
                 // The delegate has to be called somehow...
                 final TurnSystem turnSystem = getContext().getTurnSystem();
-                turnSystem.onTurnGet().call(turnSystem.getCurrentPlayer());
+                turnSystem.onTurnGet().apply(turnSystem.getCurrentPlayer());
 
 
                 // play the game sound, when the game begins

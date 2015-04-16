@@ -183,7 +183,7 @@ public abstract class Screen implements Drawable, MouseListener,
 		manager.setActiveScreen(toScreen);
 		manager.setLastScreenChange(new Date());
         onScreenLeft.callAsync(new ScreenChangedEvent(toScreen), ExecutionContext.Implicits$.MODULE$.global());
-        manager.getActiveScreen().onScreenEnter.call();
+        manager.getActiveScreen().onScreenEnter.apply();
 	}
 
 	public void mousePressed(MouseEvent e) {

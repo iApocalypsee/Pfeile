@@ -125,7 +125,7 @@ object VisionMap {
     def releaseVision() = {
       // I know in advance that the VisionMap class registered a callback on the delegate for
       // deleting this promise out of the vision.
-      _onVisionReleased.call()
+      _onVisionReleased.apply()
     }
   }
 }
