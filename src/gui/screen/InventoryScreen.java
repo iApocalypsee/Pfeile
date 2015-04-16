@@ -75,7 +75,7 @@ public class InventoryScreen extends Screen {
         inventoryList.setRoundBorder(true);
         inventoryList.setVisible(true);
 
-        Function1<Integer, Object> listSelectCallback = JavaInterop.asScalaFunctionFun((Integer selectedIndex) -> {
+        Function1<Integer, Object> listSelectCallback = JavaInterop.asScala((Integer selectedIndex) -> {
             String selectedName = getItems()._1().get(selectedIndex);
             if (selectedName.equals("<keine Items>"))
                 selectedName = "<Item auswählen>";

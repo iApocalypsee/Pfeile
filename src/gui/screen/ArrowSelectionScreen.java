@@ -162,7 +162,7 @@ public class ArrowSelectionScreen extends Screen {
             inventoryList.setRoundBorder(true);
             inventoryList.setVisible(true);
 
-			final Function1<Integer, Object> listSelectCallback = JavaInterop.asScalaFunctionFun((Integer selectedIndex) -> {
+			final Function1<Integer, Object> listSelectCallback = JavaInterop.asScala((Integer selectedIndex) -> {
                 String selectedArrowName = ArrowHelper.arrowIndexToName(selectedIndex);
                 selectedArrowBox.setEnteredText(selectedArrowName);
                 return BoxedUnit.UNIT;

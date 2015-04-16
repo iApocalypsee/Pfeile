@@ -59,7 +59,8 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, article: Article
     val rawY = gridY * (buttonStyle.fixedHeight() + buttonStyle.insetsBetweenEach().top + buttonStyle.insetsBetweenEach().bottom)
     val position = Vector2(xInset + rawX, yInset + rawY)
 
-    setLocation(position.x.asInstanceOf[Int], position.y.asInstanceOf[Int])
+    //setLocation(position.x.asInstanceOf[Int], position.y.asInstanceOf[Int])
+    setLocation(rawX, rawY)
 
     val absolutePosition = Vector2(getX, getY)
 

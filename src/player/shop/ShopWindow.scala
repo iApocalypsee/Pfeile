@@ -1,17 +1,25 @@
 package player.shop
 
 import java.awt.{Graphics2D, Insets}
+import java.util
 
 import comp._
-import general.Main
+import general.{ImmutableObjectManagerFacade, LogFacility, Main, ObjectManager}
 import gui.screen.GameScreen
 
 import scala.beans.BeanProperty
+import scala.collection.JavaConversions
 
 /**
   * The main shop window through which every input is directed while shopping.
   */
-class ShopWindow extends DisplayRepresentable {
+class ShopWindow(articles: Seq[Article]) extends DisplayRepresentable {
+
+  /**
+    * Additional constructor for Java lists.
+    * @param javaArticles The list of articles to display. Java-form.
+    */
+  def this(javaArticles: util.List[Article]) = this(JavaConversions.asScalaBuffer(javaArticles))
 
   import player.shop.ShopWindow._
 
@@ -35,23 +43,55 @@ class ShopWindow extends DisplayRepresentable {
     frame
   }
 
-  window.setName("frame: ShopWindow")
+  window.setName(FrameName)
 
-  @BeanProperty val articleComponents: Seq[Component] = {
-    val components = articleComponentCollection(ShopCentral.articles)
-    for(component <- components) window add component
-    components
+  @volatile private var tempArticleComponents: Seq[Component] = null
+
+  // Every time the window opens, the article buttons should be recomputed again.
+  // Who knows if something has changed?
+  // See VisualArticleAttributes.filterArticlesFunction(...)
+  window.onOpened += { () =>
+    rebuildArticleComponents()
   }
 
-  parentComponent setVisible false
+  def articleComponents = tempArticleComponents
+  def getArticleComponents = articleComponents
 
   /**
     * Maps given articles to a collection of components that can be used to display the articles
     * in the shop window.
     */
   private def articleComponentCollection(articles: Seq[Article]): Seq[Component] = {
+
+    // Returns a tuple with the x and y coordinates in the grid
     def rowToTable(index: Int) = (index % ButtonRowCount, index / ButtonRowCount)
-    for(i <- 0 until articles.size) yield ShopButton.create(rowToTable(i)._1, rowToTable(i)._2, articles(i), this)
+
+    // What player to determine the button layout for?
+    val forWho = Main.getContext.activePlayer
+
+    val filteredArticles = articles.filter(VisualArticleAttributes.filterArticlesFunction(forWho))
+
+    for (i <- 0 until filteredArticles.size) yield {
+      val (x_grid, y_grid) = rowToTable(i)
+      ShopButton.create(x_grid, y_grid, filteredArticles(i), this)
+    }
+  }
+
+  private def rebuildArticleComponents(): Unit = {
+    clearOldArticleGUI()
+    tempArticleComponents = articleComponentCollection(articles)
+    for(component <- tempArticleComponents) {
+      component.setName(articleComponentName(component.hashCode()))
+      window.add(component)
+    }
+  }
+
+  private def clearOldArticleGUI(): Unit = {
+    if(tempArticleComponents != null) {
+      for(component <- tempArticleComponents) component.unparent()
+      LogFacility.log("@[[ShopWindow]]: Cleared article GUI", "Debug", "gui")
+      tempArticleComponents = null
+    }
   }
 
   /**
@@ -62,9 +102,19 @@ class ShopWindow extends DisplayRepresentable {
     */
   override protected def startComponent: Component = parentComponent
 
+  parentComponent.setVisible(false)
+  accessObjectManagement.manage(this)
+
 }
 
 object ShopWindow {
+
+  //<editor-fold desc='ShopWindow object management.'>
+
+  private val accessObjectManagement = new ObjectManager[ShopWindow]
+  val objectManagement = new ImmutableObjectManagerFacade(accessObjectManagement)
+
+  //</editor-fold>
 
   //<editor-fold desc='Window position and dimensions'>
 
@@ -87,6 +137,13 @@ object ShopWindow {
     * How many buttons can fit in one row?
     */
   @transient private lazy val ButtonRowCount = 6
+
+  //</editor-fold>
+
+  //<editor-fold desc='Component names'>
+
+  private val FrameName = "@[[ShopWindow]]: frame"
+  private def articleComponentName(hash: Int) = s"@[[ShopWindow]]: articleComponent id=$hash"
 
   //</editor-fold>
 

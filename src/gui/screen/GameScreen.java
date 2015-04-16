@@ -5,6 +5,7 @@ import general.JavaInterop;
 import general.Main;
 import gui.FrameContainer;
 import gui.FrameContainerObject;
+import player.shop.ShopCentral;
 import player.shop.ShopWindow;
 import player.weapon.AttackDrawer;
 import player.weapon.arrow.ImpactDrawerHandler;
@@ -68,7 +69,7 @@ public class GameScreen extends Screen implements FrameContainer {
 	private GameScreen() {
 		super(GameScreen.SCREEN_NAME, GameScreen.SCREEN_INDEX);
 
-		onScreenEnter.register(JavaInterop.asScalaFunction(() -> {
+		onScreenEnter.register(JavaInterop.asScala(() -> {
             if (map == null) {
                 map = new VisualMap(Main.getContext().getWorld());
                 map.moveMap(120, 470);
@@ -85,7 +86,7 @@ public class GameScreen extends Screen implements FrameContainer {
 	 * So construct it first, then do all the initialization afterwards.
 	 */
 	private void postInit() {
-        shopWindow = new ShopWindow();
+        shopWindow = new ShopWindow(ShopCentral.articles());
 
 		// Initialisierung der Buttons
 		endTurnButton = new Button(30, Main.getWindowHeight() - 50, this,

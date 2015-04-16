@@ -6,7 +6,7 @@ import java.awt.event.{MouseAdapter, MouseEvent}
 import general.{Delegate, LogFacility}
 import gui.screen.Screen
 
-import scala.collection.mutable
+import scala.collection.JavaConversions
 
 /**
   * An internal frame capable of containing components in order to make a more "cleaner" UI.
@@ -24,17 +24,25 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
 
   import comp.InternalFrame._
 
-  // Every time the frame is moved, the contained components have to be moved as well.
-  onMoved += { vec =>
-    // Move every component by the vector
-    comps foreach { _.move(vec.x.asInstanceOf[Int], vec.y.asInstanceOf[Int]) }
+  onChildAdded += { component =>
+    component.onMoved += { _ =>
+      if (!this.getBounds.intersects(component.getBounds.getBounds2D)) {
+        LogFacility.log("Component \""+component.getName+"\" is not intersecting bounds of frame \""+getName+"\" "+
+          "anymore. Ignoring component in drawing process...", "Warning")
+      }
+    }
+    comps = JavaConversions.collectionAsScalaIterable(getChildren.values())
   }
 
-  /** The components that the frame is managing. */
-  private val comps = mutable.MutableList[Component]()
+  private var comps: Iterable[Component] = null
 
   /** Called when the internal frame's close button has been pressed. */
   val onClosed = Delegate.createZeroArity
+
+  /**
+    * Called when the internal frame has been opened again.
+    */
+  val onOpened = Delegate.createZeroArity
 
   this << ToplineBar
 
@@ -85,7 +93,6 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     ret.addMouseListener(new MouseAdapter {
       override def mouseReleased(e: MouseEvent): Unit = {
         InternalFrame.this.setVisible(false)
-        onClosed()
       }
     })
     ret.setName("frame: closeButton")
@@ -105,6 +112,14 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     closeButton.draw(g)
   }
 
+  // Adds a few more lines in which the delegates for opening and closing are called.
+  override def setVisible(vvvvvv: Boolean): Unit = {
+    val wasVisible = isVisible
+    super.setVisible(vvvvvv)
+    if (vvvvvv && !wasVisible) onOpened()
+    else if(!vvvvvv && wasVisible) onClosed()
+  }
+
   /**
     * Adds a component to the internal frame.
     *
@@ -112,14 +127,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     * @return Nothing.
     */
   def <<(c: Component) = {
-    comps += c
     c.setParent(this)
-    c.onMoved += { _ =>
-      if (!this.getBounds.intersects(c.getBounds.getBounds2D)) {
-        LogFacility.log("Component \""+c.getName+"\" is not intersecting bounds of frame \""+getName+"\" "+
-          "anymore. Ignoring component in drawing process...", "Warning")
-      }
-    }
   }
 
   /** Ditto. */
@@ -134,11 +142,12 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     private val defaultBarHeight = FrameStyle.CommonInset * 2 + closeButton.getHeight
     setSourceShape(new Rectangle(-InternalFrame.this.getWidth / 2, -defaultBarHeight / 2, InternalFrame.this.getWidth, defaultBarHeight))
     setBackingScreen(InternalFrame.this.getBackingScreen)
-    setName(InternalFrame.this.getName + ": toplinebar")
+    setName(InternalFrame.this.getName+": toplinebar")
+    setLocation(0, 0)
 
     onMouseDragDetected += { vec =>
       val frame = InternalFrame.this
-      frame.setLocation((frame.getX + vec.x).asInstanceOf[Int], (frame.getY + vec.y).asInstanceOf[Int])
+      frame.move(vec.x.asInstanceOf[Int], vec.y.asInstanceOf[Int])
     }
 
     override def draw(g: Graphics2D): Unit = {

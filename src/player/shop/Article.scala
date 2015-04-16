@@ -3,6 +3,7 @@ package player.shop
 import java.awt.Color
 
 import general.Property
+import newent.{Entity, Player}
 import player.item.Item
 
 import scala.beans.BeanProperty
@@ -38,6 +39,47 @@ class VisualArticleAttributes private[shop] {
   /**
     * The color being used for drawing the name of the article in the shop button.
     */
-  lazy val textColor = Property(Color.white)
+  val textColor = Property(Color.white)
+
+  /**
+    * Defines a function which can return a string describing why the given entity
+    * cannot buy this article.
+    * If this function returns a [[scala.Some]], then the article is assumed to be not buyable.
+    * For Java, if you want to return [[scala.None]], use [[general.JavaInterop#scalaNone]].
+    *
+    * In ShopWindow, if this article is not available (meaning this function returns a Some), the corresponding
+    * shop button is grayed out, but still visible to the entity.
+    */
+  val notAvailableReason: Property[Entity => Option[String]] = Property(_ => None)
+
+  /**
+    * Defines a function which can return a boolean describing if the given article should be seen
+    * by the given player.
+    * In practice, this only affects the ShopWindow GUI.
+    */
+  val isVisibleToEntity: Property[Player => Boolean] = Property(_ => true)
+
+  /**
+    * Returns true if this article is available for the given entity.
+    * @param forWho Explanatory.
+    * @return A boolean value.
+    * @see [[player.shop.VisualArticleAttributes#notAvailableReason()]]
+    */
+  def isAvailable(forWho: Entity): Boolean = notAvailableReason()(forWho).isEmpty
+
+}
+
+object VisualArticleAttributes {
+
+  /**
+   * Returns a function that is used to determine whether the shop button correspondent to this article
+   * is visible in the shop window.
+   * @param forWho For who to check.
+   * @return A function for a filter call.
+   */
+  private[shop] def filterArticlesFunction(forWho: Entity) = (x: Article) => {
+    val attribs = x.shopButtonAttributes
+    attribs.isAvailable(forWho)
+  }
 
 }

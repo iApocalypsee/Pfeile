@@ -15,8 +15,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
-import java.util.Hashtable;
-import java.util.LinkedList;
+import java.util.*;
 
 /**
  * A standard implementation of a component.
@@ -86,7 +85,7 @@ public abstract class Component implements IComponent {
 	 * Die Steuerelemente, die von diesem hier abhängen. Die Koordinatenangaben der
 	 * untergeordneten Elemente werden relativ zu diesem hier angegeben.
 	 */
-	private Hashtable<String, Component> children = new Hashtable<>();
+	private Map<String, Component> children = new HashMap<>();
 
 	/**
 	 * Die Farbgebung innen und außen.
@@ -120,6 +119,11 @@ public abstract class Component implements IComponent {
 	 * Called when any transformation has been done to the component.
 	 */
 	public final Delegate.Function0Delegate onTransformed = new Delegate.Function0Delegate();
+
+    /**
+     * Called when a child has been added to this component.
+     */
+    public final Delegate.Delegate<Component> onChildAdded = new Delegate.Delegate<>();
 
 	/**
 	 * Indicates whether the mouse is inside the components' bounds or not.
@@ -212,13 +216,13 @@ public abstract class Component implements IComponent {
             onTransformed.apply();
         });
 
-		transformation.onScaled().register(JavaInterop.asScalaFunctionFun((ScaleChange t) -> {
+		transformation.onScaled().register(JavaInterop.asScala((ScaleChange t) -> {
             isTransformationChangedSince = true;
             onTransformed.apply();
             return BoxedUnit.UNIT;
         }));
 
-		transformation.onRotated().register(JavaInterop.asScalaFunctionFun((RotationChange t) -> {
+		transformation.onRotated().register(JavaInterop.asScala((RotationChange t) -> {
             isTransformationChangedSince = true;
             onTransformed.apply();
             return BoxedUnit.UNIT;
@@ -567,7 +571,7 @@ public abstract class Component implements IComponent {
 	public void remove(Component c) {
 		if (children.containsKey(c.getName()) && children.containsValue(c)) {
 			children.remove(c.getName());
-		}
+		} else throw new NoSuchElementException("No such element " + c);
 	}
 
 	/**
@@ -596,7 +600,11 @@ public abstract class Component implements IComponent {
 		}
 	}
 
-	public String getName() {
+    public Map<String, Component> getChildren() {
+        return Collections.unmodifiableMap(children);
+    }
+
+    public String getName() {
 		return name;
 	}
 
@@ -635,19 +643,25 @@ public abstract class Component implements IComponent {
 		return mouseFocused;
 	}
 
+    private void addChild(Component component) {
+        children.put(component.name, component);
+        onChildAdded.apply(component);
+    }
+
 	public Component getParent() {
 		return parent;
 	}
 
 	public void setParent(Component parent) {
+        if(this.parent == parent) return;
 		if(this.parent != null) {
 			move(-this.parent.getX(), -this.parent.getY());
-            this.parent.children.remove(this.name);
+            this.parent.remove(this);
 		}
 		this.parent = parent;
 		if(this.parent != null) {
 			move(this.parent.getX(), this.parent.getY());
-            this.parent.children.put(this.name, this);
+            this.parent.addChild(this);
 		}
 	}
 
@@ -658,6 +672,12 @@ public abstract class Component implements IComponent {
 	public void resetPosition() {
 		transformation.setTranslation(srcShape.getBounds().width / 2, srcShape.getBounds().height / 2);
 	}
+
+    public void unparent() {
+        if(parent == null) throw new NoSuchElementException("Component has no parent to unparent from");
+        parent.children.remove(getName());
+        this.parent = null;
+    }
 
 	/**
 	 * Triggers all registered listeners to be executed with a specified mouse event.
