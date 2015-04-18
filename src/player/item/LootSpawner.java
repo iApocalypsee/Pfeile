@@ -91,7 +91,7 @@ class LootSpawner {
 
         Loot spawnedLoot;
 
-        if (random.nextBoolean())
+        if (random.nextDouble() > 0.7)
             spawnedLoot = new Treasure(spawnPoint.x, spawnPoint.y);
         else
             spawnedLoot = new DefaultChest(spawnPoint.x, spawnPoint.y);

@@ -46,16 +46,6 @@ public class Treasure extends Loot {
     }
 
     @Override
-    public boolean collect (Player activePlayer) {
-        return collect((InventoryEntity) activePlayer);
-    }
-
-    @Override
-    public boolean collect (Bot activeBot) {
-        return collect((InventoryEntity) activeBot);
-    }
-
-    @Override
     public boolean collect (InventoryEntity entity) {
         return defaultCollect(entity.inventory(), this);
     }

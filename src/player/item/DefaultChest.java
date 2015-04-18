@@ -51,7 +51,7 @@ public class DefaultChest extends Chest {
      */
     @Override
     public void open () {
-        // TODO the opening process
         changeUIforOpenedChest(imageOpenChest);
+        isOpen = true;
     }
 }

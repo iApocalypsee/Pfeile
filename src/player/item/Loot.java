@@ -3,10 +3,8 @@ package player.item;
 import comp.ImageComponent;
 import general.Main;
 import gui.screen.GameScreen;
-import newent.Bot;
 import newent.Entity;
 import newent.InventoryEntity;
-import newent.Player;
 import player.BoardPositionable;
 import player.item.coin.Coin;
 import world.TileLike;
@@ -94,13 +92,8 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
                     Entity selectedEntity = Main.getContext().entitySelection().selectedEntity();
                     // only trigger collect, when the selectedEntity is on the same tile as the loot
                     if (Loot.this.getGridX() == selectedEntity.getGridX() && Loot.this.getGridX() == selectedEntity.getGridY()) {
-                        if (selectedEntity instanceof Player)
-                            collect((Player) selectedEntity);
-                        else if (selectedEntity instanceof Bot) {
-                            collect((Bot) selectedEntity);
-                        } else if (selectedEntity instanceof InventoryEntity) {
+                        if (selectedEntity instanceof InventoryEntity)
                             collect((InventoryEntity) selectedEntity);
-                        }
                     }
                 });
 

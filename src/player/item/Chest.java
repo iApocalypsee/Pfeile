@@ -1,10 +1,14 @@
 package player.item;
 
 import general.Delegate;
+import general.Main;
 import newent.Bot;
+import newent.Entity;
 import newent.InventoryEntity;
 import newent.Player;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 /**
@@ -13,6 +17,7 @@ import java.awt.image.BufferedImage;
  * Treasures.
  */
 public abstract class Chest extends Loot {
+    protected boolean isOpen;
 
     /**
      * Create a new Chest with the given parameter. Look to {@link player.item.Loot} for further information.
@@ -27,6 +32,7 @@ public abstract class Chest extends Loot {
      */
     protected Chest (int gridX, int gridY, LootUI lootUI, String name) {
         super(gridX, gridY, lootUI, name);
+        isOpen = false;
     }
 
     /**
@@ -42,6 +48,7 @@ public abstract class Chest extends Loot {
      * */
     protected Chest (int gridX, int gridY, String name) {
         super(gridX, gridY, name);
+        isOpen = false;
     }
 
     /** you need to open a chest.
@@ -58,18 +65,53 @@ public abstract class Chest extends Loot {
     }
 
     @Override
-    public boolean collect (Player activePlayer) {
-        return defaultCollect(activePlayer.inventory(), this);
-    }
-
-    @Override
-    public boolean collect (Bot activeBot) {
-        return defaultCollect(activeBot.inventory(), this);
-    }
-
-    @Override
     public boolean collect (InventoryEntity entity) {
-        // they can't open a chest
-        return false;
+        return defaultCollect(entity.inventory(), this);
+    }
+
+    /**
+     * This adds a MouseListener [mouseReleased] to the loot, which registers a click at the component. After triggering
+     * this mouseListener, a Thread is created, which controls that the selectedEntity and the loot are placed on the same
+     * tile. The same Thread calls the <code>collect</code> method from {@link player.item.Collectible}, which also removes
+     * the loot from being drawn anymore (if it has been successfully collect).
+     * <p>
+     * If the <code>lootUI</code>/<code>getLootUI()</code> is <code>null</code>, the method returns doing nothing.
+     * <p>
+     * I must override it to control, that the chest is open, before collecting items.
+     */
+    @Override
+    protected void addCollectListener () {
+        if (getLootUI() == null)
+            return;
+
+        getLootUI().component.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased (MouseEvent e) {
+
+                Thread x = new Thread(() -> {
+                    Entity selectedEntity = Main.getContext().entitySelection().selectedEntity();
+
+                    if (isOpen) {
+                        // only trigger collect, when the selectedEntity is on the same tile as the loot
+                        if (Chest.this.getGridX() == selectedEntity.getGridX() && Chest.this.getGridX() == selectedEntity.getGridY()) {
+                            if (selectedEntity instanceof InventoryEntity)
+                                collect((InventoryEntity) selectedEntity);
+                        }
+                    } else {
+                        // if the chest isn't open, it will be opened now, if the chest and the player are on the tile.
+                        // It can only be opened by players, but collected by every InventoryEntity.
+                        if (selectedEntity instanceof Player || selectedEntity instanceof Bot) {
+                            if (Chest.this.getGridX() == selectedEntity.getGridX() && Chest.this.getGridY() == selectedEntity.getGridY())
+                                open();
+                        }
+                    }
+
+                });
+
+                x.setDaemon(true);
+                x.setName("Collect Loot Listener");
+                x.start();
+            }
+        });
     }
 }

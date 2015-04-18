@@ -112,5 +112,7 @@ class CommandTeam(val head: Player, val name: String) extends Team {
 
   def getHead = head
   def getName = name
+
+   override def toString: String = "CommandTeam[Head: " + head.name + "]"
 }
 

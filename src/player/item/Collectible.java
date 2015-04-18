@@ -12,19 +12,6 @@ import newent.Player;
  * but their {@link player.item.Loot#getStoredItems()}.
  */
 public interface Collectible {
-    /**
-     *
-     * @param activePlayer The player, which collects the loot
-     * @return Has the loot been successfully added to the inventory?
-     */
-    boolean collect(Player activePlayer);
-
-    /**
-     *
-     * @param activeBot the bot, which collects the loot
-     * @return Has the loot been successfully added to the inventory?
-     */
-    boolean collect(Bot activeBot);
 
     /**
      *

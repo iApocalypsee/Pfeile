@@ -65,18 +65,6 @@ public class BagOfLoots extends Loot {
     }
 
     @Override
-    public boolean collect (Player activePlayer) {
-        // there is no difference between any entity and a player.
-        return collect((InventoryEntity) activePlayer);
-    }
-
-    @Override
-    public boolean collect (Bot activeBot) {
-        // there is no difference between any entity and a player.
-        return collect((InventoryEntity) activeBot);
-    }
-
-    @Override
     public boolean collect (InventoryEntity entity) {
         return defaultCollect(entity.inventory(), this);
     }
