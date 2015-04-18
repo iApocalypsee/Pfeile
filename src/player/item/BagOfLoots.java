@@ -45,8 +45,10 @@ public class BagOfLoots extends Loot {
         }
 
         if (deadEntity instanceof Combatant) {
-            Combatant combatant = (Combatant) deadEntity;
-            // TODO add the weapons in combatant to the inventory, when EquipStrategy is ready.
+            EquipmentStrategy equipment = ((Combatant) deadEntity).getEquipment();
+            for (EquippableItem item : equipment.getEquippedItems())
+                add(item);
+            equipment.getEquippedItems().clear();
         }
     }
 

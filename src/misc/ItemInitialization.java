@@ -37,6 +37,7 @@ public class ItemInitialization {
             LogFacility.log("Potion images loaded.", "Info", "initprocess");
         });
         x.setDaemon(true);
+        x.setName("Item Initialization");
         x.setPriority(1);
         x.start();
     }

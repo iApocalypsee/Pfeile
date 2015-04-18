@@ -148,8 +148,11 @@ public class Main {
 	    LoadingWorldScreen.getInstance().onScreenLeft.register(new AbstractFunction1<Screen.ScreenChangedEvent, BoxedUnit>() {
             @Override
             public BoxedUnit apply (Screen.ScreenChangedEvent v1) {
-                final TimeClock timeClock = getContext().getTimeClock();
+                // initialize TimeClock
+                getContext().getTimeClock();
+
                 main.doArrowSelectionAddingArrows();
+
                 getContext().onStartRunningTimeClock().apply();
                 // the players have been added to entityList, so this call is valid now
                 PreWindowScreen.correctArrowNumber();

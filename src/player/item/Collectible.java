@@ -1,9 +1,10 @@
 package player.item;
 
 import general.Main;
-import newent.*;
-
-import java.awt.image.BufferedImage;
+import newent.Bot;
+import newent.InventoryEntity;
+import newent.InventoryLike;
+import newent.Player;
 
 /**
  * Any Loot is collectible. So it has to be removed from the world and added to the inventory of the player.
@@ -33,13 +34,6 @@ public interface Collectible {
     boolean collect(InventoryEntity entity);
 
     /**
-     * Everything, that is collectable must be seen, so this returns the texture.
-     *
-     * @return the BufferedImage of the Loot
-     */
-    BufferedImage getImage();
-
-    /**
      * The default "collect" method. If the inventory would be full with the stored items from the loot, the method
      * doesn't add the loot to the inventory and returns false. It is a default implementation, so use the usual <code>collect</code>.
      *
@@ -61,8 +55,7 @@ public interface Collectible {
             }
 
             // only remove "this" from the WorldLootList, if it has been added to inventory successfully.
-            Main.getContext().getWorldLootList().remove(loot);
-            return true;
+            return Main.getContext().getWorldLootList().remove(loot);
         } else {
             return false;
         }

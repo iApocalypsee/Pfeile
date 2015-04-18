@@ -2,6 +2,9 @@ package player.item;
 
 import comp.Component;
 import gui.Drawable;
+import world.TileLike;
+
+import java.awt.*;
 
 /**
  * Every Loot can be seen somehow, so this is the abstract class for any LootUI.
@@ -13,6 +16,17 @@ public abstract class LootUI implements Drawable {
 
     public LootUI (Component component) {
         this.component = component;
+    }
+
+    /**
+     * Sets the LootUI on the new Tile. It does not change the position (gridX|gridY), it only affects GUI elements.
+     * The center point of the tile component must be set upon the center point of the lootUI component.
+     *
+     * @param tile the new tile
+     */
+    protected void setOnTile (TileLike tile) {
+        Point centerPoint = tile.component().center();
+        component.setLocation(centerPoint.x - component.getWidth() / 2, centerPoint.y - component.getHeight() / 2);
     }
 
     /**

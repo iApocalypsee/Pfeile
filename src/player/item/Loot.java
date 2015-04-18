@@ -3,10 +3,17 @@ package player.item;
 import comp.ImageComponent;
 import general.Main;
 import gui.screen.GameScreen;
+import newent.Bot;
+import newent.Entity;
+import newent.InventoryEntity;
+import newent.Player;
 import player.BoardPositionable;
+import player.item.coin.Coin;
 import world.TileLike;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -28,21 +35,6 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
     /** everything, that is stored inside this loot and can be received by collecting this Loot. */
     protected List<Item> listOfContent;
 
-    /** Creates a new loot with the given name.
-     * The name is set in superclass Item.
-     * <b>The position, where the Loot drops, is position of the activePlayer.</b>
-     * <b>The LootUI is created automatically with {@link Loot#createUI()}.</b> You may override it later.*/
-    protected Loot (String name) {
-        super(name);
-
-        this.gridX = Main.getContext().getActivePlayer().getGridX();
-        this.gridY = Main.getContext().getActivePlayer().getGridY();
-
-        lootUI = createUI();
-
-        listOfContent = new ArrayList<>(8);
-    }
-
     /**
      * The LootUI will be created automatically, based on {@link Loot#createUI()}
      * You can override the lootUI later.
@@ -55,6 +47,9 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
     protected Loot (int gridX, int gridY, String name) {
         this(gridX, gridY, null, name);
         lootUI = createUI();
+
+        // Only after LootUI has been created, the mouseListener for collecting the Loot can be added.
+        addCollectListener();
     }
 
     /** Creates a new Loot on the Tile at (gridX, gridY) with the specified name and the lootUI. */
@@ -64,8 +59,9 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
         this.gridX = gridX;
         this.gridY = gridY;
         this.lootUI = lootUI;
-
         listOfContent = new LinkedList<>();
+
+        addCollectListener();
     }
 
     /**
@@ -76,6 +72,43 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
      */
     public void add (Item item) {
         listOfContent.add(item);
+    }
+
+    /**
+     * This adds a MouseListener [mouseReleased] to the loot, which registers a click at the component. After triggering
+     * this mouseListener, a Thread is created, which controls that the selectedEntity and the loot are placed on the same
+     * tile. The same Thread calls the <code>collect</code> method from {@link player.item.Collectible}, which also removes
+     * the loot from being drawn anymore (if it has been successfully collect).
+     * <p>
+     * If the <code>lootUI</code>/<code>getLootUI()</code> is <code>null</code>, the method returns doing nothing.
+     */
+    protected void addCollectListener () {
+        if (getLootUI() == null)
+            return;
+
+        getLootUI().component.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased (MouseEvent e) {
+
+                Thread x = new Thread(() -> {
+                    Entity selectedEntity = Main.getContext().entitySelection().selectedEntity();
+                    // only trigger collect, when the selectedEntity is on the same tile as the loot
+                    if (Loot.this.getGridX() == selectedEntity.getGridX() && Loot.this.getGridX() == selectedEntity.getGridY()) {
+                        if (selectedEntity instanceof Player)
+                            collect((Player) selectedEntity);
+                        else if (selectedEntity instanceof Bot) {
+                            collect((Bot) selectedEntity);
+                        } else if (selectedEntity instanceof InventoryEntity) {
+                            collect((InventoryEntity) selectedEntity);
+                        }
+                    }
+                });
+
+                x.setDaemon(true);
+                x.setName("Collect Loot Listener");
+                x.start();
+            }
+        });
     }
 
     /** The list of everything, that is possible to get, if the loot is collected.
@@ -98,20 +131,30 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
         return gridY;
     }
 
-    /** Setter for the x position
+    /** Setter for the x position. Changes the GUI position based on the new tile as well.
      *
      * @param gridX the new x position of the tile, where the Loot is placed
      */
     public void setGridX (int gridX) {
         this.gridX = gridX;
+
+        // changing GUI elements
+        if (lootUI != null) {
+            lootUI.setOnTile(getTile());
+        }
     }
 
-    /** Setter for the y position
+    /** Setter for the y position. Changes the GUI position as well.
      *
      * @param gridY the new y position of the tile, where the Loot is placed
      */
     public void setGridY (int gridY) {
         this.gridY = gridY;
+
+        // changing GUI elements
+        if (lootUI != null) {
+            lootUI.setOnTile(getTile());
+        }
     }
 
     /** Returns the tile on which the Loot is placed.
@@ -179,6 +222,16 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
 
     @Override
     public String toString () {
-        return getName() + " [@Tile: " + gridX + "|" + gridY + "]" + "-{ " + getStoredItems().size() + " stored items}";
+        int money = 0;
+        List<Item> otherItems = new ArrayList<>(7);
+
+        for (Item item : getStoredItems()) {
+            if (item instanceof Coin)
+                money = money + ((Coin) item).getValue();
+            else
+                otherItems.add(item);
+        }
+
+        return getName() + " [@Tile: " + gridX + "|" + gridY + "]" + "-{Money: " + money + " | Items: " + otherItems + "}";
     }
 }

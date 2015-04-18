@@ -31,11 +31,6 @@ public class Label extends Component {
 
     private int imageTextInset = STD_INSETS.left;
 
-    public Label() {
-        declineInput();
-        setName("Label " + hashCode());
-    }
-
     public Label(int x, int y, Screen backing, String text) {
         super(0, 0, 0, 0, backing);
         this.text = text;

@@ -68,7 +68,12 @@ public class WorldLootList implements Drawable {
      * @return <code>true</code> - if the list contained the <code>collectedLoot</code>
      */
     public boolean remove (Loot collectedLoot) {
-        boolean removed = lootList.remove(collectedLoot);
+        boolean removed = false;
+
+        synchronized (lootList) {
+            removed = lootList.remove(collectedLoot);
+        }
+
         if (removed) {
             updateVisibleLoot();
             return true;
@@ -103,15 +108,18 @@ public class WorldLootList implements Drawable {
      * If the visibleRadius of the activePlayer changes, or when the activePlayer's turn changes, this method has to be triggered
      * by a Delegate.
      * */
-    public synchronized void updateVisibleLoot () {
+    public void updateVisibleLoot () {
         final VisionMap visibleMap = Main.getContext().getActivePlayer().visionMap();
-        lootVisibleList.clear();
 
-        for(Loot loot : lootList) {
-            // only the loot to the visibleList, when the VisionStatus isn't Hidden
-            if (visibleMap.visionStatusOf(loot.getGridX(), loot.getGridY()) != VisionStatus.Hidden)
-                lootVisibleList.add(loot);
+        synchronized (lootVisibleList) {
+            lootVisibleList.clear();
 
+            for(Loot loot : lootList) {
+                // only the loot to the visibleList, when the VisionStatus isn't Hidden
+                if (visibleMap.visionStatusOf(loot.getGridX(), loot.getGridY()) != VisionStatus.Hidden)
+                    lootVisibleList.add(loot);
+
+            }
         }
     }
 

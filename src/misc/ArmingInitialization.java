@@ -22,6 +22,7 @@ public class ArmingInitialization {
             LogFacility.log("Armour images loaded.", "Info", "initprocess");
         //});
         //x.setDaemon(true);
+        //x.setName("Arming Initialization");
         //x.setPriority(2);
         //x.start();
     }

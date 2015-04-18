@@ -39,6 +39,9 @@ public final class ArrowHelper {
 
             LogFacility.log("Arrow images loaded.", "Info", "initprocess");
         //}, "Arrow loading Thread");
+        //x.setDemon(true);
+        //x.setPriority(Thread.MAX_PRIORITY);
+        //x.start();
     }
 	
 	/**
