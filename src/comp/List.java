@@ -12,25 +12,20 @@ import java.util.LinkedList;
 
 /**
  * Eine Liste, die gezeichnet werden und mit Einträgen versehen werden kann.
- * 
- * <b>17.1.2014:</b> Die List ist jetzt funktionsfähig, die Elemente von Listen können jetzt
- * eigene Strings enthalten. Das Scrolling ist aber noch nicht implementiert, deswegen mit
- * Version 17.1.2014 keine langen Listen machen.
- * 
- * @version 17.1.2014
- * @tag.requires Component: 17.1.2014 oder höher; 
+ *
+ * @version compare with GitHub for further details.
  */
 public class List extends Component {
 	
 	/**
 	 * Die Auflistung aller Items in der Liste.
 	 */
-	private java.util.List<String> items = new LinkedList<String>();
+	private java.util.List<String> items = new LinkedList<>();
 	
 	/**
 	 * Die Auflistung der Labels zur leicheren Handhabung.
 	 */
-	private java.util.List<Label> listItems = new LinkedList<Label>();
+	private java.util.List<Label> listItems = new LinkedList<>();
 	
 	/**
 	 * Der (nullbasierte!) Index des Items, der gerade ganz oben angezeigt wird. Beim Runter-/Raufscrollen kann sich dieser
@@ -93,33 +88,45 @@ public class List extends Component {
 	}
 	
 	/**
-	 * Berechnet die Höhe und Breite der Liste.
+	 * Returns a Dimension with the bounds of the list calculated from the labels with STD_INSETS.
+     * The bounds returned by this list should always be equal or smaller to current bounds.
+     *
+     * @see comp.List#tfits_static(java.util.List)
 	 */
     protected Dimension tfits() {
 		int width = 0, height = 0;
-		for (String s : items) {
-			Dimension bounds = new Dimension(getTextBounds(s, STD_FONT).width + 1, getTextBounds(s, STD_FONT).height + 1);
+		for (Label label : listItems) {
+			Dimension bounds = new Dimension(label.getWidth(), label.getHeight());
 			if (width < bounds.width)
                 width = bounds.width;
-            height = height + bounds.height;
+            height = height + bounds.height + 1;
 		}
+        width = width + STD_INSETS.right + STD_INSETS.left;
+        height = height + STD_INSETS.bottom + STD_INSETS.top;
+
 		return new Dimension(width, height);
 	}
 
+    /**
+     * Notice the difference to {@link List#tfits()}: No STD_INSETS are added, a list of strings is used instead of labels,
+     * which only allows the {@link comp.Component#STD_FONT} to be used without BufferedImage.
+     *
+     * @param elems the list
+     * @return a dimension, which would contain the list [as labels] without {@link comp.List#STD_INSETS}.
+     */
 	static Dimension tfits_static(java.util.List<String> elems) {
 		int width = 0, height = 0;
 		for (String s : elems) {
 			Dimension bounds = new Dimension(getTextBounds(s, STD_FONT).width + 1, getTextBounds(s, STD_FONT).height + 1);
 			if (width < bounds.width)
 				width = bounds.width;
-			height = height + bounds.height;
+			height = height + bounds.height + 1;
 		}
 		return new Dimension(width, height);
 	}
 	
 	/**
-	 * Gibt den Index zur�ck, der noch dargestellt werden kann.
-	 * @return
+	 * @return the last index which can be displayed.
 	 */
 	int getLastDisplayIndex() {
 		
@@ -133,12 +140,10 @@ public class List extends Component {
 		}
 		
 		return ldi;
-		
 	}
 	
 	/**
-	 * Das Gegenteil von {@link List#getLastDisplayIndex()}
-	 * @return
+	 * @return the opposite of {@link List#getLastDisplayIndex()}
 	 */
 	int getFirstDisplayIndex() {
 		int fdi = 0;
@@ -244,8 +249,10 @@ public class List extends Component {
         listItems.get(index).iconify(image);
 
         Dimension bounds = tfits();
-        setWidth(bounds.width);
-        setHeight(bounds.height);
+        if (getWidth() < bounds.width)
+            setWidth(bounds.width);
+        if (getHeight() < bounds.height)
+            setHeight(bounds.height);
     }
 
     /** Returns the size [= length] of the list. The last index is <code>getIndexSize() - 1</code> as the index is 0-based.*/

@@ -145,7 +145,7 @@ public class Label extends Component {
         if (text != null) {
             d = Component.getTextBounds(text, font);
         } else {
-            d = Component.getTextBounds(" ", font);
+            d = Component.getTextBounds("   ", font);
         }
 
         if (optImage != null) {

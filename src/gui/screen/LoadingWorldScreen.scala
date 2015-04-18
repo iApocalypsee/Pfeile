@@ -1,6 +1,6 @@
 package gui.screen
 
-import java.awt.{Color, Graphics2D}
+import java.awt.{Font, Color, Graphics2D}
 
 import comp.Component.ComponentStatus
 import comp.{Component, Label}
@@ -69,7 +69,7 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
 
     lazy val stageLabel = new Label(20, 20, LoadingWorldScreen, "Begin")
     stageLabel.setStatus(ComponentStatus.NO_MOUSE)
-    stageLabel.setFont(Component.STD_FONT.deriveFont(20))
-    stageLabel.setFontColor(new Color(192, 57, 57))
+    stageLabel.setFont(new Font(Component.STD_FONT.getFontName, Font.ITALIC, 25))
+    stageLabel.setFontColor(new Color(240, 100, 110))
   }
 }
