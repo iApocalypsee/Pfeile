@@ -1,17 +1,9 @@
 package misc;
 
 import general.LogFacility;
-import player.item.BagOfLoots;
-import player.item.DefaultChest;
-import player.item.RoundChest;
-import player.item.Treasure;
-import player.item.coin.BronzeCoin;
-import player.item.coin.GoldCoin;
-import player.item.coin.PlatinumCoin;
-import player.item.coin.SilverCoin;
-import player.item.potion.PotionOfDamage;
-import player.item.potion.PotionOfHealing;
-import player.item.potion.PotionOfMovement;
+import player.item.*;
+import player.item.coin.*;
+import player.item.potion.*;
 
 /**
  * By calling {@link ItemInitialization#initialize()} the BufferedImage of every kind of <code>Coin</code>,
@@ -30,11 +22,12 @@ public class ItemInitialization {
      */
     public static void initialize () {
         Thread x = new Thread(() -> {
-            initializeCoins();
-            LogFacility.log("Coin images loaded.", "Info", "initprocess");
 
+            initializeCoins();
             initializePotions();
-            LogFacility.log("Potion images loaded.", "Info", "initprocess");
+            initializeItems();
+
+            LogFacility.log("Item images loaded.", "Info", "initprocess");
         });
         x.setDaemon(true);
         x.setName("Item Initialization");
@@ -54,6 +47,12 @@ public class ItemInitialization {
         new PotionOfHealing();
         new PotionOfMovement();
         new PotionOfDamage();
+    }
+
+    /** Initialization of other items, not listed yet. */
+    private static void initializeItems () {
+        new KeyDefaultChest();
+        new KeyRoundChest();
     }
 
     /**

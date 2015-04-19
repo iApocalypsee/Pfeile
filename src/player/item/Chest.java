@@ -1,6 +1,5 @@
 package player.item;
 
-import general.Delegate;
 import general.Main;
 import newent.Bot;
 import newent.Entity;
@@ -98,6 +97,8 @@ public abstract class Chest extends Loot {
                                 collect((InventoryEntity) selectedEntity);
                         }
                     } else {
+                        // TODO remove the key
+
                         // if the chest isn't open, it will be opened now, if the chest and the player are on the tile.
                         // It can only be opened by players, but collected by every InventoryEntity.
                         if (selectedEntity instanceof Player || selectedEntity instanceof Bot) {
