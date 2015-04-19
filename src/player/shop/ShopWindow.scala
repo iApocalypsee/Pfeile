@@ -13,13 +13,13 @@ import scala.collection.JavaConversions
 /**
   * The main shop window through which every input is directed while shopping.
   */
-class ShopWindow(articles: Seq[Article]) extends DisplayRepresentable {
+class ShopWindow(articles: Seq[Article], val representing: TraderLike) extends DisplayRepresentable {
 
   /**
     * Additional constructor for Java lists.
     * @param javaArticles The list of articles to display. Java-form.
     */
-  def this(javaArticles: util.List[Article]) = this(JavaConversions.asScalaBuffer(javaArticles))
+  def this(javaArticles: util.List[Article], representing: TraderLike) = this(JavaConversions.asScalaBuffer(javaArticles), representing)
 
   import player.shop.ShopWindow._
 

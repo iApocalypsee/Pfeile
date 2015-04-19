@@ -2,12 +2,10 @@ package player.item.coin;
 
 import player.item.Item;
 
-import java.awt.image.BufferedImage;
-
 /**
  * Any coin is part of it.
  */
-public abstract class Coin extends Item {
+public abstract class Coin extends Item implements Cloneable {
 
     public Coin (String name) {
         super(name);
@@ -23,5 +21,14 @@ public abstract class Coin extends Item {
     @Override
     public String toString () {
         return getName();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Coin) {
+            return ((Coin) obj).getValue() == this.getValue();
+        } else {
+            return super.equals(obj);
+        }
     }
 }

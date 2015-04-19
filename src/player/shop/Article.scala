@@ -30,9 +30,13 @@ case class Article(private[shop] val item: () => Item, price: Int, keywords: Seq
 
   def name = cachedItem.getName
 
+  private[shop] def toDefiniteArticle = DefiniteArticle(item(), price, keywords)
+
   @BeanProperty lazy val shopButtonAttributes = new VisualArticleAttributes
 
 }
+
+private case class DefiniteArticle(initializedItem: Item, price: Int, keywords: Seq[String])
 
 class VisualArticleAttributes private[shop] {
 

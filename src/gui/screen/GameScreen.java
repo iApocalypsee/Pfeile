@@ -6,6 +6,7 @@ import general.Main;
 import gui.FrameContainer;
 import gui.FrameContainerObject;
 import player.shop.ShopCentral;
+import player.shop.ShopCentral$;
 import player.shop.ShopWindow;
 import player.weapon.AttackDrawer;
 import player.weapon.arrow.ImpactDrawerHandler;
@@ -135,7 +136,7 @@ public class GameScreen extends Screen implements FrameContainer {
 
     ShopWindow getShopWindow() {
         if(shopWindow == null) {
-            shopWindow = new ShopWindow(ShopCentral.articles());
+            shopWindow = new ShopWindow(ShopCentral.articles(), ShopCentral$.MODULE$);
         }
         return shopWindow;
     }

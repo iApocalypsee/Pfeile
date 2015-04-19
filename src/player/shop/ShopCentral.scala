@@ -2,7 +2,7 @@ package player.shop
 
 import java.awt.event.{MouseAdapter, MouseEvent}
 
-import general.LogFacility
+import general.{LogFacility, Main}
 import newent.MoneyEarner
 import player.item.Item
 
@@ -11,19 +11,21 @@ import player.item.Item
   */
 object ShopCentral extends TraderLike {
 
+  ShopWindow.objectManagement.applyOnEnter {
+    // Only execute for that window if that window is representing the ShopCentral.
+    case window if window.representing == this =>
 
-  ShopWindow.objectManagement.applyOnEnter { window =>
-    window.articleComponents.collect {
-      case shopButton: ShopButton =>
-        shopButton.addMouseListener(new MouseAdapter {
-          override def mouseReleased(e: MouseEvent): Unit = {
-            LogFacility.log("Selling mechanism not implemented yet...", "Error", "shop")
-            ???
-          }
-        })
-    }
+      window.articleComponents.collect {
+        case shopButton: ShopButton =>
+          shopButton.addMouseListener(new MouseAdapter {
+            override def mouseReleased(e: MouseEvent): Unit = {
+              ShopCentral.sell(Main.getContext.activePlayer, _ == shopButton.article)
+            }
+          })
+      }
+
+    case _ =>
   }
-
 
   def addArticle(item: () => Item, price: Int): Unit = addArticle(Article(item, price))
   def addArticle(article: Article): Unit = {
@@ -65,18 +67,18 @@ object ShopCentral extends TraderLike {
     //<editor-fold desc='Failure cases'>
 
     /**
-     * Called when the client has not enough money to pay for queried items.
-     * @return False, definitely.
-     */
-    def onNotSufficientClientMoney(): Boolean = {
-      LogFacility.log(s"Client $to has not enough money for paying ${amount}x of $article", "Info", "shop")
+      * Called when the client has not enough money to pay for queried items.
+      * @return False, definitely.
+      */
+    def onNotSufficientClientMoney(wishlist: Seq[Article]): Boolean = {
+      LogFacility.log(s"Client $to has not enough money for paying ${amount}x of ${wishlist.map { _.toDefiniteArticle }}", "Info", "shop")
       false
     }
 
     /**
-     * Called when the given article does not exist in the shop central.
-     * @return False, definitely.
-     */
+      * Called when the given article does not exist in the shop central.
+      * @return False, definitely.
+      */
     def onNotAvailable(): Boolean = {
       LogFacility.log(s"No such article in [[ShopCentral]]: $article", "Info", "shop")
       false
@@ -85,24 +87,24 @@ object ShopCentral extends TraderLike {
     //</editor-fold>
 
     /**
-     * Called when given item is available.
-     * @return Depends.
-     */
+      * Called when given item is available.
+      * @return Depends.
+      */
     def onAvailable(): Boolean = {
       val sortedArticles = articles.sorted
       val queriedArticles = for (i <- 0 until amount) yield sortedArticles.find(article).get
       val totalTransactionValue = queriedArticles.foldRight(0) { _.price + _ }
-      if (to.purse.numericValue < totalTransactionValue) onNotSufficientClientMoney()
+      if (to.purse.numericValue < totalTransactionValue) onNotSufficientClientMoney(queriedArticles)
       else onSuccess(totalTransactionValue, queriedArticles)
     }
 
     /**
-     * Called when everything has been processed and nothing is in between the handshake anymore.
-     * @return True, definitely.
-     */
+      * Called when everything has been processed and nothing is in between the handshake anymore.
+      * @return True, definitely.
+      */
     def onSuccess(transactionValue: Int, articles: Seq[Article]): Boolean = {
-      receive(to, amount)
-      for(article <- articles) to.inventory.put(article.item())
+      receive(to, transactionValue)
+      for (article <- articles) to.inventory.put(article.item())
       true
     }
 
@@ -111,12 +113,13 @@ object ShopCentral extends TraderLike {
   }
 
   /**
-   * Abstraction method for receiving money.
-   * @param from Who is paying?
-   * @param moneyAmount The money to receive.
-   */
+    * Abstraction method for receiving money.
+    * @param from Who is paying?
+    * @param moneyAmount The money to receive.
+    */
   override protected def receive(from: MoneyEarner, moneyAmount: Int): Unit = {
     // Do nothing, the central shop is assumed to have no money pockets.
     // Infinitely rich maybe?
+    from.purse.spend(moneyAmount)
   }
 }

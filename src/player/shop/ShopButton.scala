@@ -15,7 +15,7 @@ import scala.collection.mutable
   * @param article The article to display.
   * @param shopWindow The shop window to which the shop button belongs.
   */
-private[shop] class ShopButton private (gridX: Int, gridY: Int, article: Article, shopWindow: ShopWindow) extends Component(0, 0, 1, 1, shopWindow.component.getBackingScreen) {
+private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Article, shopWindow: ShopWindow) extends Component(0, 0, 1, 1, shopWindow.component.getBackingScreen) {
 
   private[this] def w = ShopButton.Style.fixedWidth()
   private[this] def h = ShopButton.Style.fixedHeight()
@@ -147,7 +147,7 @@ private[shop] object ShopButton {
 
     val font = commonProperty(Component.STD_FONT)
 
-    val insetsBetweenEach = commonProperty(new Insets(5, 150, 5, 150))
+    val insetsBetweenEach = commonProperty(new Insets(5, 20, 5, 20))
 
     /**
       * Calculates the size of the image contained by the shop button and returns it

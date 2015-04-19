@@ -1,6 +1,7 @@
 package general
 
-/** An object that can store metadata for its object lifetime.
+/**
+  * An object that can store metadata for its object lifetime.
   *
   * Metadata can be quite useful in some situations; for example when an instance variable is needed
   * and it is not declared in that particular class.
@@ -12,3 +13,9 @@ trait Metadatable {
   val metadata = Property(new Metadata)
 
 }
+
+/**
+  * A class that can be used in Java. Since traits cannot be mixed into Java classes,
+  * I need to have a class for compatibility reasons.
+  */
+class MetadatableClass extends Metadatable

@@ -2,8 +2,11 @@ package newent
 
 import general.LogFacility
 import general.LogFacility.LoggingLevel
+import player.item._
 import player.item.coin._
 
+import scala.annotation.tailrec
+import scala.collection.JavaConversions._
 import scala.collection.{JavaConversions, mutable}
 
 /**
@@ -17,6 +20,11 @@ trait MoneyEarner extends Entity with InventoryEntity {
     */
   val purse = new Purse
 
+  require(initialMoney >= 0, s"@[[MoneyEarner]]: Cannot start with debt of $initialMoney")
+  require(initialMoneyPerTurn >= 0, s"@[[MoneyEarner]]: Cannot start off with negative income of $initialMoneyPerTurn")
+
+  purse.give(initialMoney)
+
   /**
     * Transaction manager of this object.
     */
@@ -28,9 +36,6 @@ trait MoneyEarner extends Entity with InventoryEntity {
     * Singleton managing the money of this object.
     */
   class Purse {
-
-    require(initialMoney >= 0, s"@[[MoneyEarner]]: Cannot start with debt of $initialMoney")
-    require(initialMoneyPerTurn >= 0, s"@[[MoneyEarner]]: Cannot start off with negative income of $initialMoneyPerTurn")
 
     /**
       *
@@ -73,45 +78,52 @@ trait MoneyEarner extends Entity with InventoryEntity {
       if (numericValue - amount < 0)
         false
       else {
-        var leftToSpend = amount
 
-        coins.foreach { coin =>
-          if (coin.getValue <= leftToSpend) {
-            if (inventory.remove(_ == coin).isDefined) {
-              leftToSpend = leftToSpend - coin.getValue
+        @tailrec
+        def recur(moneyLeft: Int): Unit = {
+          if(moneyLeft <= 0) return
+
+          val sortedCoins = CoinHelper.getSortedCoins(inventory.javaItems)
+          val bronzes = sortedCoins(0).toList
+          val silvers = sortedCoins(1).toList
+          val golds = sortedCoins(2).toList
+          val platins = sortedCoins(3).toList
+
+          val bronzePayable = bronzes.size
+
+          def cascade() = {
+            if(bronzes.size == 0) {
+              // Switch to silver coins
+              if(silvers.size == 0) {
+                // Switch to golds
+                if(golds.size == 0) {
+                  // Switch to platins
+                  if(platins.size == 0) {
+                    throw new RuntimeException("Not enough money but check still passed. New type of coin?")
+                  } else {
+                    val convertedGoldAmount = PlatinumCoin.VALUE / GoldCoin.VALUE
+                    inventory.remove(_ == platins(0), 1)
+                    inventory.put(convertedGoldAmount of new GoldCoin)
+                  }
+                } else {
+                  val convertedSilverAmount = GoldCoin.VALUE / SilverCoin.VALUE
+                  inventory.remove(_ == golds(0), 1)
+                  inventory.put(convertedSilverAmount of new GoldCoin)
+                }
+              } else {
+                val convertedBronzeAmount = SilverCoin.VALUE / BronzeCoin.VALUE
+                inventory.remove(_ == silvers(0), 1)
+                inventory.put(convertedBronzeAmount of new BronzeCoin)
+              }
             }
-            else
-              LogFacility.log("Cannot remove "+coin+" from the inventory of "+this, LoggingLevel.Error)
           }
+
+          cascade()
+          inventory.remove(_.isInstanceOf[BronzeCoin], bronzePayable)
+          recur(moneyLeft - bronzePayable)
         }
 
-        if (leftToSpend == 0)
-          return true
-
-        // if you still need to spend a small amount, but you only have large coins, you need to exchange these coins
-
-        // this is the coin, that need to be exchanged to BronzeCoins
-        var coin: Coin = null
-
-        coins.foreach { iterCoin =>
-          // That's what I mean
-          if (iterCoin.getValue > leftToSpend) {
-            coin = iterCoin
-          }
-        }
-
-        if (inventory.javaItems.remove(coin)) {
-          leftToSpend = leftToSpend - coin.getValue
-        }
-        else LogFacility.log("Cannot remove "+coin+" from the inventory of "+this, LoggingLevel.Error)
-
-        // leftToSpend is negative now. This amount need to be added to the inventory again.
-        CoinHelper.getCoins(-leftToSpend).foreach { coin: BronzeCoin =>
-          if (!inventory.put(coin)) {
-            if (!inventory.put(new BronzeCoin()))
-              LogFacility.log("Cannot put a "+coin+" into the inventory. "+this+" lost "+coin.getValue+" money.", LoggingLevel.Error)
-          }
-        }
+        recur(amount)
 
         true
       }

@@ -117,7 +117,7 @@ public class CoinHelper {
      *
      * @see player.item.coin.CoinHelper#getSortedCoinsLength(java.util.List)
      */
-    public static List<Coin>[] getSortedCoins (List items) {
+    public static List<Coin>[] getSortedCoins (List<?> items) {
         List<Coin>[] sortedCoins = new List[4];
         sortedCoins[0] = new LinkedList<>();
         sortedCoins[1] = new LinkedList<>();
