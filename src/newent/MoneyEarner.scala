@@ -92,7 +92,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
           val golds = sortedCoins(2).toList
           val platins = sortedCoins(3).toList
 
-          val bronzePayable = bronzes.size
+          val bronzePayable = if(moneyLeft < bronzes.size) moneyLeft else bronzes.size
 
           def cascade() = {
             if(bronzes.size == 0) {
