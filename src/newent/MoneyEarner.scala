@@ -6,6 +6,7 @@ import player.item._
 import player.item.coin._
 
 import scala.annotation.tailrec
+import scala.beans.BeanProperty
 import scala.collection.JavaConversions._
 import scala.collection.{JavaConversions, mutable}
 
@@ -28,7 +29,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
   /**
     * Transaction manager of this object.
     */
-  @BeanProperty account = new Transactions
+  @BeanProperty val account = new Transactions
   
   val onMoneyChanged = Delegate.createZeroArity
   
