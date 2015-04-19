@@ -1,7 +1,7 @@
 package newent
 
-import general.{Delegate, LogFacility}
 import general.LogFacility.LoggingLevel
+import general.{Delegate, LogFacility}
 import player.item._
 import player.item.coin._
 
@@ -110,7 +110,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
                 } else {
                   val convertedSilverAmount = GoldCoin.VALUE / SilverCoin.VALUE
                   inventory.remove(_ == golds(0), 1)
-                  inventory.put(convertedSilverAmount of new GoldCoin)
+                  inventory.put(convertedSilverAmount of new SilverCoin)
                 }
               } else {
                 val convertedBronzeAmount = SilverCoin.VALUE / BronzeCoin.VALUE
