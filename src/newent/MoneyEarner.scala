@@ -1,7 +1,6 @@
 package newent
 
-import general.LogFacility.LoggingLevel
-import general.{Delegate, LogFacility}
+import general.Delegate
 import player.item._
 import player.item.coin._
 
@@ -60,7 +59,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
       */
     def moneyPerTurn_=(x: Int) = {
       _gpt = x
-      LogFacility.log(s"${this} earning ${_gpt} money per turn now", "Debug")
+      //LogFacility.log(s"${this} earning ${_gpt} money per turn now", "Debug")
     }
     def setMoneyPerTurn(x: Int): Unit = moneyPerTurn_=(x)
 
@@ -139,7 +138,6 @@ trait MoneyEarner extends Entity with InventoryEntity {
     def give(coins: scala.Iterable[Coin]): Unit = if(coins.nonEmpty) {
       for (coin <- coins) inventory.put(coin)
       onMoneyChanged()
-      LogFacility.log("Gave "+CoinHelper.getValue(coins)+" money to "+this, LoggingLevel.Info)
     }
 
     /**
@@ -163,7 +161,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
 
     // Adds the promised gold per turn to the earner's purse
     private def mineAssets(): Unit = {
-      LogFacility.log(s"Mining money for $this...")
+      //LogFacility.log(s"Mining money for $this...")
       give(_gpt)
     }
 
@@ -171,6 +169,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
       mineAssets()
     }
 
+     override def toString: String = "Purse (of " + name + ")"
   }
 
   //</editor-fold>
@@ -240,13 +239,18 @@ trait MoneyEarner extends Entity with InventoryEntity {
       isAffordable
     }
 
+     override def toString: String = "Transaction (by " + name + ")"
   }
+
+
 
   //</editor-fold>
 
   //<editor-fold desc='MoneyEarner trait arguments'>
 
-  /** The initial gold per turn amount that the earner gets. __Must not be below 0__. */
+   override def toString: String = "MoneyEarner: " + name
+
+   /** The initial gold per turn amount that the earner gets. __Must not be below 0__. */
   protected def initialMoneyPerTurn: Int
   /** The initial amount of gold that the earner gets. __Must not be below 0__. */
   protected def initialMoney: Int

@@ -48,6 +48,10 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
 
         ArrowSelectionScreen.getInstance().init()
 
+        // These Delegates, that need to be registered in MoneyDisplay can only run without NullPointerException, once
+        // the world and the players have been initialized
+        GameScreen.getInstance().getMoneyDisplay.registerRefreshing()
+
         // Finally, I need to ensure that WorldLootList and LootSpawner are initialized to register their methods.
         // (scala lazy val WorldLootList). Furthermore, it's save, that the activePlayer can see loots around him.
         Main.getContext.getWorldLootList.updateVisibleLoot()

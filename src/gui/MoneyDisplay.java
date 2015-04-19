@@ -5,6 +5,8 @@ import general.LogFacility;
 import general.Main;
 import general.PfeileContext;
 import gui.screen.Screen;
+import newent.EntityLike;
+import newent.Player;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -19,6 +21,8 @@ public class MoneyDisplay extends Component {
     private static BufferedImage image;
 
     private String money;
+
+    private Font font;
 
     static {
         String path = "resources/gfx/comp/moneyDisplay.png";
@@ -37,27 +41,36 @@ public class MoneyDisplay extends Component {
         getBorder().setInnerColor(new Color(228, 238, 236));
         getBorder().setClickColor(new Color(175, 0, 235));
         getBorder().setStroke(new BasicStroke(3.2f));
-        PfeileContext context = Main.getContext();
 
         money = "0";
+        font = new Font(STD_FONT.getFontName(), Font.ITALIC, 14);
+    }
 
-        /*
-        TODO: during initialization this causes a NullPointerException because of activePlayer
+    /**
+     * Once you called this method, this method shall not be used anymore. It registers functions for refreshing the
+     * numeric value to <code>onMoneyChanged()</code> (MoneyEarner) and <code>onTurnGet()</code>. It must be called
+     * creating the world and players (i.e. <code>LoadingWorldScreen#onLeaving()</code>
+     */
+    public void registerRefreshing () {
+        PfeileContext context = Main.getContext();
 
-        context.getActivePlayer().onMoneyChanged().registerJava(() ->
-                money = "" + context.getActivePlayer().getPurse().numericValue());
+        for (EntityLike entity : context.getWorld().entities().javaEntityList()) {
+            if (entity instanceof Player) {
+                ((Player) entity).onMoneyChanged().registerJava(() ->
+                        money = "" + context.getActivePlayer().getPurse().numericValue());
+            }
+        }
 
         context.getTurnSystem().onTurnGet().registerJava(team ->
                 money = "" + context.getActivePlayer().getPurse().numericValue());
-        */
     }
-
 
     @Override
     public void draw (Graphics2D g) {
         getBorder().draw(g);
         g.drawImage(image, getX() + 5, getY() + 7, null);
 
+        g.setFont(font);
         if (getStatus() != ComponentStatus.CLICK)
             g.setColor(Color.BLACK);
 

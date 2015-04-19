@@ -243,6 +243,13 @@ public class GameScreen extends Screen implements FrameContainer {
 		return map;
 	}
 
+    /**
+     * @return the small box, which shows the current money of the player.
+     */
+    MoneyDisplay getMoneyDisplay () {
+        return moneyDisplay;
+    }
+
 	/**
 	 * The object managing the internal frames for the screen.
 	 */
