@@ -1,5 +1,7 @@
 package player.shop
 
+import java.awt.event.{MouseAdapter, MouseEvent}
+
 import general.LogFacility
 import newent.MoneyEarner
 import player.item.Item
@@ -9,7 +11,7 @@ import player.item.Item
   */
 object ShopCentral extends TraderLike {
 
-  /*
+
   ShopWindow.objectManagement.applyOnEnter { window =>
     window.articleComponents.collect {
       case shopButton: ShopButton =>
@@ -21,7 +23,7 @@ object ShopCentral extends TraderLike {
         })
     }
   }
-  */
+
 
   def addArticle(item: () => Item, price: Int): Unit = addArticle(Article(item, price))
   def addArticle(article: Article): Unit = {

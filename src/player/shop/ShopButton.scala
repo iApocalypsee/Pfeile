@@ -55,9 +55,8 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, article: Article
     val xInset = shopWindow.getWindow.getX
     val yInset = shopWindow.getWindow.getY
 
-    val rawX = gridX * (buttonStyle.fixedWidth() + buttonStyle.insetsBetweenEach().left + buttonStyle.insetsBetweenEach().right)
-    val rawY = gridY * (buttonStyle.fixedHeight() + buttonStyle.insetsBetweenEach().top + buttonStyle.insetsBetweenEach().bottom)
-    val position = Vector2(xInset + rawX, yInset + rawY)
+    val rawX = gridX * (buttonStyle.fixedWidth() + buttonStyle.insetsBetweenEach().left + buttonStyle.insetsBetweenEach().right) + ShopWindow.ButtonsInsetsInsideWindow.left
+    val rawY = gridY * (buttonStyle.fixedHeight() + buttonStyle.insetsBetweenEach().top + buttonStyle.insetsBetweenEach().bottom) + ShopWindow.ButtonsInsetsInsideWindow.top
 
     //setLocation(position.x.asInstanceOf[Int], position.y.asInstanceOf[Int])
     setLocation(rawX, rawY)
@@ -128,7 +127,7 @@ private[shop] object ShopButton {
 
     //<editor-fold desc='In relation to the button itself'>
 
-    val fixedWidth = commonProperty(75)
+    val fixedWidth = commonProperty(125)
 
     val fixedHeight = commonProperty(100)
 

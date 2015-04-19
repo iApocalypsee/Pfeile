@@ -86,7 +86,6 @@ public class GameScreen extends Screen implements FrameContainer {
 	 * So construct it first, then do all the initialization afterwards.
 	 */
 	private void postInit() {
-        shopWindow = new ShopWindow(ShopCentral.articles());
 
 		// Initialisierung der Buttons
 		endTurnButton = new Button(30, Main.getWindowHeight() - 50, this,
@@ -102,8 +101,6 @@ public class GameScreen extends Screen implements FrameContainer {
 		shootButton.setName("Shoot button");
 		inventoryButton.setName("Inventory button");
         shopWindowButton.setName("Shop button");
-
-        frameContainerObject.addFrame(shopWindow.getWindow());
 
 		endTurnButton.addMouseListener(new MouseAdapter() {
 
@@ -131,12 +128,19 @@ public class GameScreen extends Screen implements FrameContainer {
         shopWindowButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-                shopWindow.parentComponent().setVisible(!shopWindow.parentComponent().isVisible());
+                getShopWindow().parentComponent().setVisible(!shopWindow.parentComponent().isVisible());
             }
         });
 	}
 
-	@Override
+    ShopWindow getShopWindow() {
+        if(shopWindow == null) {
+            shopWindow = new ShopWindow(ShopCentral.articles());
+        }
+        return shopWindow;
+    }
+
+    @Override
 	public void draw(Graphics2D g) {
 		super.draw(g);
 		if(map != null) {

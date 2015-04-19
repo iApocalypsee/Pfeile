@@ -54,7 +54,10 @@ class ShopWindow(articles: Seq[Article]) extends DisplayRepresentable {
     rebuildArticleComponents()
   }
 
-  def articleComponents = tempArticleComponents
+  def articleComponents: Seq[Component] = {
+    rebuildArticleComponents()
+    tempArticleComponents
+  }
   def getArticleComponents = articleComponents
 
   /**
@@ -131,12 +134,12 @@ object ShopWindow {
   /**
     * The insets for the area in which the article buttons are being placed.
     */
-  lazy val ButtonsInsetsInsideWindow = new Insets(20, 40, 20, 40)
+  val ButtonsInsetsInsideWindow = new Insets(20, 40, 20, 40)
 
   /**
     * How many buttons can fit in one row?
     */
-  @transient private lazy val ButtonRowCount = 6
+  @transient private val ButtonRowCount = 6
 
   //</editor-fold>
 

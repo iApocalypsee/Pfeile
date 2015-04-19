@@ -4,6 +4,7 @@ import java.awt._
 import java.awt.event.{MouseAdapter, MouseEvent}
 
 import general.{Delegate, LogFacility}
+import gui.FrameContainer
 import gui.screen.Screen
 
 import scala.collection.JavaConversions
@@ -31,10 +32,16 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
           "anymore. Ignoring component in drawing process...", "Warning")
       }
     }
-    comps = JavaConversions.collectionAsScalaIterable(getChildren.values())
+    comps = JavaConversions.collectionAsScalaIterable(getChildren.values()).toSeq
   }
 
-  private var comps: Iterable[Component] = null
+  backingScreen match {
+    case frameContainer: FrameContainer =>
+      frameContainer.frameContainer.addFrame(this)
+    case _ => LogFacility.log("Frame cannot be added to screen; not a [[FrameContainer]] instance", "Warning")
+  }
+
+  @volatile private var comps = Seq.empty[Component]
 
   /** Called when the internal frame's close button has been pressed. */
   val onClosed = Delegate.createZeroArity
