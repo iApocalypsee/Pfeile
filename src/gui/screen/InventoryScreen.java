@@ -15,7 +15,6 @@ import player.item.potion.Potion;
 import player.weapon.arrow.AbstractArrow;
 import scala.Function1;
 import scala.Tuple2;
-import scala.runtime.AbstractFunction0;
 import scala.runtime.BoxedUnit;
 
 import java.awt.*;
@@ -146,27 +145,22 @@ public class InventoryScreen extends Screen {
             }
         });
 
-        onScreenEnter.register(new AbstractFunction0<BoxedUnit>() {
-            @Override
-            public BoxedUnit apply () {
-                Tuple2<java.util.List<String>, java.util.List<BufferedImage>> items = getItems();
+        onScreenEnter.registerJava(() -> {
+            Tuple2<java.util.List<String>, java.util.List<BufferedImage>> items = getItems();
 
-                // creating a new List the
-                inventoryList = new List(inventoryList.getX(), inventoryList.getY(), inventoryList.getWidth(), inventoryList.getHeight(),
-                        InventoryScreen.this, items._1());
+            // creating a new List the
+            inventoryList = new List(inventoryList.getX(), inventoryList.getY(), inventoryList.getWidth(), inventoryList.getHeight(),
+                    InventoryScreen.this, items._1());
 
-                // iconify the list
-                for (int i = 0; i < items._2().size(); i++) {
-                    if (items._2().get(i) != null)
-                        inventoryList.iconify(i, items._2().get(i));
-                }
-
-                selectedItem.setText("<Item auswählen>");
-                selectedItem.iconify(null);
-                warningMessage.setTransparency(0);
-
-                return BoxedUnit.UNIT;
+            // iconify the list
+            for (int i = 0; i < items._2().size(); i++) {
+                if (items._2().get(i) != null)
+                    inventoryList.iconify(i, items._2().get(i));
             }
+
+            selectedItem.setText("<Item auswählen>");
+            selectedItem.iconify(null);
+            warningMessage.setTransparency(0);
         });
 
         setPreprocessedDrawingEnabled(false);

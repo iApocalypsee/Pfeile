@@ -91,7 +91,7 @@ class LootSpawner {
 
         Loot spawnedLoot;
 
-        if (random.nextDouble() > 0.7)
+        if (random.nextDouble() < 0.7)
             spawnedLoot = new Treasure(spawnPoint.x, spawnPoint.y);
         else
             spawnedLoot = new DefaultChest(spawnPoint.x, spawnPoint.y);
@@ -118,9 +118,12 @@ class LootSpawner {
             for (BronzeCoin coin : coins)
                 spawnedLoot.add(coin);
 
+            if (random.nextDouble() < 0.2)
+                spawnedLoot.add(new PotionOfDamage((byte) (random.nextInt(3))));
+
             // with the possibility of 10% an arrow
             if (random.nextDouble() < 0.1)
-                spawnedLoot.add(ArrowHelper.instanceArrow(random.nextInt()));
+                spawnedLoot.add(ArrowHelper.instanceArrow(random.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES)));
         }
 
         Main.getContext().getWorldLootList().add(spawnedLoot);

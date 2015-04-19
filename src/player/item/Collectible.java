@@ -1,10 +1,9 @@
 package player.item;
 
 import general.Main;
-import newent.Bot;
+import gui.screen.GameScreen;
 import newent.InventoryEntity;
 import newent.InventoryLike;
-import newent.Player;
 
 /**
  * Any Loot is collectible. So it has to be removed from the world and added to the inventory of the player.
@@ -28,8 +27,6 @@ public interface Collectible {
      * @param loot the loot
      * @return <code>true</code> - if loot could be successfully added to the inventory and the loot removed from {@link player.item.WorldLootList}
      *
-     * @see player.item.Collectible#collect(newent.Player)
-     * @see player.item.Collectible#collect(newent.Bot)
      * @see player.item.Collectible#collect(newent.InventoryEntity)
      */
     default boolean defaultCollect (InventoryLike inventory, Loot loot) {
@@ -42,7 +39,12 @@ public interface Collectible {
             }
 
             // only remove "this" from the WorldLootList, if it has been added to inventory successfully.
-            return Main.getContext().getWorldLootList().remove(loot);
+            boolean removed = Main.getContext().getWorldLootList().remove(loot);
+
+            GameScreen.getInstance().setWarningMessage(loot.toString());
+            GameScreen.getInstance().activateWarningMessage();
+
+            return removed;
         } else {
             return false;
         }
