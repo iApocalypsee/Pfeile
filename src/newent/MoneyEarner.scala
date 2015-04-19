@@ -16,6 +16,8 @@ import scala.collection.{JavaConversions, mutable}
   */
 trait MoneyEarner extends Entity with InventoryEntity {
 
+  val onMoneyChanged = Delegate.createZeroArity
+
   /**
     * Money manager of this object.
     */
@@ -30,8 +32,6 @@ trait MoneyEarner extends Entity with InventoryEntity {
     * Transaction manager of this object.
     */
   @BeanProperty val account = new Transactions
-  
-  val onMoneyChanged = Delegate.createZeroArity
   
   //<editor-fold desc='Money holding'>
 
