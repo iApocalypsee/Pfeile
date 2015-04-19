@@ -7,8 +7,8 @@ import scala.concurrent.duration.FiniteDuration
  */
 package object general {
 
-  def identityWith[A](f: () => Unit): A => A = { x =>
-    f()
+  def identityWith[A](f: A => Unit): A => A = { x =>
+    f(x)
     x
   }
 

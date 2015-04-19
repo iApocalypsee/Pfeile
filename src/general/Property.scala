@@ -10,18 +10,10 @@ case class Property[A] private (private var value: Option[A]) {
   private var _setter: A => A = identity[A]
 
   /**
-    * Called when the underlying value of the property object is being returned
-    * to the called by the [[general.Property# g e t]] method.
+    * A validator function which can return [[scala.None]] for a good value
+    * or a [[scala.Some]] with a message why the value is not accepted.
     */
-  @deprecated val onGet = Delegate.createZeroArity
-
-  /**
-    * Called when the underlying value of the property object is swapped with
-    * a new value.
-    *
-    * Delegate is called inside the [[general.Property# s e t]] method.
-    */
-  @deprecated val onSet = Delegate.create[SetChange]
+  private var _validation: A => Option[String] = x => None
 
   /**
     * Returns the underlying value directly.
@@ -33,7 +25,7 @@ case class Property[A] private (private var value: Option[A]) {
     * @return The underlying value that the property holds.
     * @see [[scala.Option]]
     */
-  @inline def get = synchronized { _getter(option.get) }
+  @inline def get = synchronized { option.get }
 
   /**
     * Returns the option containing the possible value of the property.
@@ -43,10 +35,7 @@ case class Property[A] private (private var value: Option[A]) {
     *
     * @return The option holding the possible property value.
     */
-  def option = {
-    onGet()
-    value.map(_getter)
-  }
+  def option = value map _getter
 
   def getter = _getter
   def getter_=(x: A => A) = {
@@ -64,6 +53,12 @@ case class Property[A] private (private var value: Option[A]) {
 
   def appendSetter(x: A => A) = setter_=(_setter andThen x)
 
+  def validation = _validation
+  def validation_=(x: A => Option[String]): Unit = {
+    require(x != null)
+    _validation = x
+  }
+
   /**
     * Instructs this property to set itself to the value the other property gets every time the other
     * property is set to another value.
@@ -75,9 +70,8 @@ case class Property[A] private (private var value: Option[A]) {
     * @param another The other property to listen to.
     */
   def complyWith(another: Property[A]): Unit = {
-    another appendSetter { x =>
+    another appendSetter identityWith { x =>
       this set x
-      x
     }
     LogFacility.log(s"Property $this complying now to $another")
   }
@@ -107,9 +101,9 @@ case class Property[A] private (private var value: Option[A]) {
     * @param x The new value of the property.
     */
   def set(x: A): Unit = synchronized {
-    val change = new SetChange(value, _setter(x))
-    onSet(change)
-    value = change.newVal
+    val validationCheck = _validation(x)
+    require(validationCheck.isEmpty, s"Property validation failed: ${validationCheck.get}")
+    value = Some(_setter(x))
   }
 
   @inline def filterNot(p: (A) => Boolean) = value.filterNot(p)
@@ -141,22 +135,6 @@ case class Property[A] private (private var value: Option[A]) {
 
   def apply() = get
 
-  @deprecated @inline def <==(x: A): Unit = set(x)
-
-  def update(x: A) = set(x)
-
-  /**
-    * Holds the data being swapped out in the [[general.Property# s e t]] method.
-    *
-    * @param oldVal The old value (to be replaced)
-    * @param initNewVal The new value (to be set). If that parameter is null, `SetChange.newVal` is assigned
-    *                   [[scala.None]].
-    */
-  class SetChange private[Property] (val oldVal: Option[A], initNewVal: A) {
-
-    val newVal: Option[A] = if (initNewVal == null) None else Some(initNewVal)
-  }
-
 }
 
 object Property {
@@ -172,9 +150,9 @@ object Property {
     * @tparam A The type of the underlying value.
     * @return The property with validation check.
     */
-  @deprecated def withValidation[A](): Property[A] = {
+  def withValidation[A](): Property[A] = {
     val ret = Property[A]()
-    ret.onSet += { c => require(c.newVal.isDefined) }
+    ret appendSetter identityWith { x => require(x != null) }
     ret
   }
 
@@ -186,9 +164,9 @@ object Property {
     * @param x The initial value to set the property to.
     * @return The property with validation check.
     */
-  @deprecated def withValidation[A](x: A): Property[A] = {
+  def withValidation[A](x: A): Property[A] = {
     val ret = withValidation[A]()
-    ret <== x
+    ret set x
     ret
   }
 

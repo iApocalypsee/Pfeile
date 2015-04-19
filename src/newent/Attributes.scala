@@ -1,6 +1,6 @@
 package newent
 
-import general.{Metadatable, Property}
+import general._
 
 /** Represents the current state of the entity. */
 abstract class Attributes {
@@ -25,8 +25,8 @@ abstract class Attributes {
   lazy val lastingDataCheck = Property.withValidation[Lasting => Boolean] { _: Lasting => true }
 
   // Pass the new set object to the currentDataCheck function to validate it.
-  current.onSet += { _.newVal.map { x => require(currentDataCheck.get.apply(x)) } }
-  lasting.onSet += { _.newVal.map { x => require(lastingDataCheck.get.apply(x)) } }
+  current appendSetter identityWith { x => require(currentDataCheck.get.apply(x)) }
+  lasting appendSetter identityWith { x => require(lastingDataCheck.get.apply(x)) }
 
   protected def initialCurrent(initObject: Current): Current
 

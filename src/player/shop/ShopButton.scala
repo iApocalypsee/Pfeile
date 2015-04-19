@@ -107,7 +107,7 @@ private[shop] object ShopButton {
       * @tparam A The datatype the setter is expecting.
       * @return A setter with side effects special to the ShopButtons.
       */
-    private def commonSetSideEffect[A] = identityWith[A] { () =>
+    private def commonSetSideEffect[A] = identityWith[A] { _ =>
       issueRecalculation()
     }
 
@@ -127,7 +127,7 @@ private[shop] object ShopButton {
 
     //<editor-fold desc='In relation to the button itself'>
 
-    val fixedWidth = commonProperty(125)
+    val fixedWidth = commonProperty(75)
 
     val fixedHeight = commonProperty(100)
 

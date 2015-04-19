@@ -27,13 +27,13 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
 
   private def instantiateWorld(): PfeileContext = {
     val instantiator = new Instantiator
-    currentStage() = instantiator
+    currentStage set instantiator
     instantiator.executeStage()
   }
 
   private def populateWorld(context: PfeileContext): PfeileContext = {
     val populator = new Populator(context)
-    currentStage() = populator
+    currentStage set populator
     populator.executeStage()
   }
 

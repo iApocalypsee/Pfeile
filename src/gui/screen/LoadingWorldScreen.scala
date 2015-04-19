@@ -1,10 +1,10 @@
 package gui.screen
 
-import java.awt.{Font, Color, Graphics2D}
+import java.awt.{Color, Font, Graphics2D}
 
 import comp.Component.ComponentStatus
 import comp.{Component, Label}
-import general.{Main, PfeileContext, Property}
+import general._
 import misc.ItemInitialization
 import world.ContextCreator
 
@@ -26,7 +26,9 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
     val creator = new ContextCreator(worldWidth, worldHeight)
 
     // Every time the stage changes, the label has to be changed as well.
-    creator.currentStage.onSet += { _.newVal.map { stage => GUI.stageLabel.setText(stage.stageName) } }
+    creator.currentStage.appendSetter(identityWith { stage =>
+      GUI.stageLabel.setText(stage.stageName)
+    })
     // Return the creator as a property.
     Property.withValidation(creator)
   }
@@ -56,7 +58,7 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
       // if an exception has been thrown in the world creation thread, rethrow it in the main thread
       case f: Failure[_] => throw f.exception
     }
-    contextCreationFuture() = creationProcedure
+    contextCreationFuture set creationProcedure
   }
 
   override def draw(g: Graphics2D) = {
