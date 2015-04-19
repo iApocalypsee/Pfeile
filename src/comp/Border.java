@@ -119,6 +119,7 @@ public class Border implements Drawable {
 	
 	public void setClickColor(Color clickColor) {
 		this.click = clickColor;
+        recalcHover();
 	}
 	
 	public Color getNotAvailableColor() {

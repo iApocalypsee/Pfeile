@@ -6,6 +6,7 @@ import general.JavaInterop;
 import general.Main;
 import gui.FrameContainer;
 import gui.FrameContainerObject;
+import gui.MoneyDisplay;
 import player.shop.ShopCentral;
 import player.shop.ShopWindow;
 import player.weapon.AttackDrawer;
@@ -54,6 +55,8 @@ public class GameScreen extends Screen implements FrameContainer {
     private Button shopWindowButton;
 
     private WarningMessage message;
+
+    private MoneyDisplay moneyDisplay;
 
     private ShopWindow shopWindow;
 
@@ -107,6 +110,8 @@ public class GameScreen extends Screen implements FrameContainer {
 
         message = new WarningMessage("          ", 80, Main.getWindowHeight() - 95, this);
         message.setWarningColor(new Color(221, 49, 77));
+
+        moneyDisplay = new MoneyDisplay(Main.getWindowWidth() - 192, Main.getWindowHeight() - 250, this);
         
 		endTurnButton.addMouseListener(new MouseAdapter() {
 
@@ -163,6 +168,7 @@ public class GameScreen extends Screen implements FrameContainer {
 		shootButton.draw(g);
 		inventoryButton.draw(g);
         shopWindowButton.draw(g);
+        moneyDisplay.draw(g);
 		Main.getContext().getActivePlayer().drawLifeUI(g);
 
 		frameContainerObject.drawFrames(g);

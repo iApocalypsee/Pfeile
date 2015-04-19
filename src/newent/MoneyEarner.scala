@@ -1,6 +1,6 @@
 package newent
 
-import general.LogFacility
+import general.{Delegate, LogFacility}
 import general.LogFacility.LoggingLevel
 import player.item.coin._
 
@@ -17,10 +17,23 @@ trait MoneyEarner extends Entity with InventoryEntity {
     */
   val purse = new Purse
 
+   /**
+    * @return kind of Money manager
+    */
+  def getPurse = purse
+
   /**
     * Transaction manager of this object.
     */
   val account = new Transactions
+
+   /**
+    * @return transaction manager
+    */
+  def getAccount = account
+
+  /** <b>Call this delegate</v> */
+  val onMoneyChanged = Delegate.createZeroArity
 
   //<editor-fold desc='Money holding'>
 
@@ -85,8 +98,11 @@ trait MoneyEarner extends Entity with InventoryEntity {
           }
         }
 
-        if (leftToSpend == 0)
-          return true
+        if (leftToSpend == 0) {
+           onMoneyChanged.apply()
+           return true
+        }
+
 
         // if you still need to spend a small amount, but you only have large coins, you need to exchange these coins
 
@@ -112,7 +128,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
               LogFacility.log("Cannot put a "+coin+" into the inventory. "+this+" lost "+coin.getValue+" money.", LoggingLevel.Error)
           }
         }
-
+        onMoneyChanged.apply()
         true
       }
     }
@@ -123,6 +139,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
       */
     def give(coins: scala.Iterable[Coin]): Unit = if(coins.nonEmpty) {
       for (coin <- coins) inventory.put(coin)
+      onMoneyChanged.apply()
       LogFacility.log("Gave "+CoinHelper.getValue(coins)+" money to "+this, LoggingLevel.Info)
     }
 
@@ -149,6 +166,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
     private def mineAssets(): Unit = {
       LogFacility.log(s"Mining money for $this...")
       give(_gpt)
+      onMoneyChanged.apply()
     }
 
     onTurnCycleEnded += { () =>
