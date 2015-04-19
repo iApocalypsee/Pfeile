@@ -20,8 +20,8 @@ import world.{TileLike, WorldLike}
   * @param name The name. If null, a name based on the hash code will be generated.
   */
 class Player(world: WorldLike,
-    spawnpoint: Point,
-    name: String) extends Entity(world, spawnpoint, name) with CombatUnit with MoneyEarner {
+             spawnpoint: Point,
+             name: String) extends Entity(world, spawnpoint, name) with CombatUnit with MoneyEarner {
 
   // Game section.
 
@@ -106,13 +106,13 @@ class Player(world: WorldLike,
     component.setY(endComponent.getY)
   }
 
-  /** The initial amount of gold that the earner gets. __Must not be below 0__. */
-  override protected def initialMoney: Int = 100
+   override def toString: String = "Player: " + name
 
-  /** The initial gold per turn amount that the earner gets. __Must not be below 0__. */
-  override protected def initialMoneyPerTurn: Int = 5
+   /** The initial gold per turn amount that the earner gets. __Must not be below 0__. */
+   override protected def initialMoneyPerTurn: Int = 5
 
-  override def toString: String = "Player: "+name
+   /** The initial amount of gold that the earner gets. __Must not be below 0__. */
+   override protected def initialMoney: Int = 200
 }
 
 object Player {

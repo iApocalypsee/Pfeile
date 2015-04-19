@@ -70,8 +70,8 @@ public class WarningMessage extends Component {
 
     /** the method is called, if the current frame has been drawn. It changes the transparency value of warningColor */
     private void update () {
-        if (getTransparency() - 0.012f > 0)
-            setTransparency(getTransparency() - 0.012f);
+        if (getTransparency() - 0.011f > 0)
+            setTransparency(getTransparency() - 0.011f);
         else
             setTransparency(0);
     }
@@ -120,7 +120,7 @@ public class WarningMessage extends Component {
         recalculateBounds();
     }
 
-    /** changes the color the warning message is printed with */
+    /** Changes the color, the warning message is printed with. */
     public void setWarningColor (Color warningColor) {
         this.warningColor = warningColor;
     }

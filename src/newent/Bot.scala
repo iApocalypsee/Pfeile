@@ -13,7 +13,7 @@ import world.WorldLike
   * The KI is not implemented as a intelligent KI. It is just a basic construct, that is similar to the Player class.
   */
 class Bot(world: WorldLike, spawnPoint: Point, name: String)
-    extends Entity(world, spawnPoint, name) with CombatUnit with IntelligentArrowSelectionBot {
+    extends Entity(world, spawnPoint, name) with CombatUnit with IntelligentArrowSelectionBot with MoneyEarner {
 
   /**
     * The component that the representable object uses first. Method is called only once.
@@ -109,6 +109,12 @@ class Bot(world: WorldLike, spawnPoint: Point, name: String)
   lazy val Strength: BotStrength = BotStrength.Strength
 
    override def toString: String = "Bot: " + name
+
+   /** The initial gold per turn amount that the earner gets. __Must not be below 0__. */
+   override protected def initialMoneyPerTurn: Int = 5
+
+   /** The initial amount of gold that the earner gets. __Must not be below 0__. */
+   override protected def initialMoney: Int = 200
 }
 
 object Bot {

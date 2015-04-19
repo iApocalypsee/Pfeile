@@ -1,10 +1,12 @@
 package gui.screen;
 
 import comp.Button;
+import comp.WarningMessage;
 import general.JavaInterop;
 import general.Main;
 import gui.FrameContainer;
 import gui.FrameContainerObject;
+import gui.MoneyDisplay;
 import player.shop.ShopCentral;
 import player.shop.ShopCentral$;
 import player.shop.ShopWindow;
@@ -52,6 +54,10 @@ public class GameScreen extends Screen implements FrameContainer {
 	private Button shootButton;
 	private Button inventoryButton;
     private Button shopWindowButton;
+
+    private WarningMessage message;
+
+    private MoneyDisplay moneyDisplay;
 
     private ShopWindow shopWindow;
 
@@ -103,6 +109,11 @@ public class GameScreen extends Screen implements FrameContainer {
 		inventoryButton.setName("Inventory button");
         shopWindowButton.setName("Shop button");
 
+        message = new WarningMessage("          ", 80, Main.getWindowHeight() - 95, this);
+        message.setWarningColor(new Color(221, 49, 77));
+
+        moneyDisplay = new MoneyDisplay(Main.getWindowWidth() - 192, Main.getWindowHeight() - 250, this);
+        
 		endTurnButton.addMouseListener(new MouseAdapter() {
 
 			@Override
@@ -158,11 +169,14 @@ public class GameScreen extends Screen implements FrameContainer {
 		shootButton.draw(g);
 		inventoryButton.draw(g);
         shopWindowButton.draw(g);
+        moneyDisplay.draw(g);
 		Main.getContext().getActivePlayer().drawLifeUI(g);
 
 		frameContainerObject.drawFrames(g);
 
 		Main.getContext().getTimeClock().draw(g);
+
+        message.draw(g);
 	}
 
 	@Override
@@ -198,13 +212,32 @@ public class GameScreen extends Screen implements FrameContainer {
 		endTurnButton.declineInput();
 		shootButton.declineInput();
 		inventoryButton.declineInput();
+        message.declineInput();
 	}
 	
 	public void releaseUI() {
 		endTurnButton.acceptInput();
 		shootButton.acceptInput();
 		inventoryButton.acceptInput();
+        message.acceptInput();
 	}
+
+    /** Sets the WarningMessage printed on the screen. <p>
+     * Use <code>GameScreen.getInstance().activateWarningMessage()</code> to enable the message.
+     *
+     * @param message the message, the user has to now
+     */
+    public void setWarningMessage (String message) {
+        this.message.setMessage(message);
+    }
+
+    /**
+     * Activates the message, so that it is printed on the screen. The message can be set with
+     * <code>GameScreen.getInstance().setWarningMessage("bla bla bla...");</code>
+     */
+    public void activateWarningMessage () {
+        message.activateMessage();
+    }
 
 	public VisualMap getMap() {
 		return map;

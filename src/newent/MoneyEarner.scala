@@ -1,6 +1,6 @@
 package newent
 
-import general.LogFacility
+import general.{Delegate, LogFacility}
 import general.LogFacility.LoggingLevel
 import player.item._
 import player.item.coin._
@@ -18,7 +18,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
   /**
     * Money manager of this object.
     */
-  val purse = new Purse
+  @BeanProperty val purse = new Purse
 
   require(initialMoney >= 0, s"@[[MoneyEarner]]: Cannot start with debt of $initialMoney")
   require(initialMoneyPerTurn >= 0, s"@[[MoneyEarner]]: Cannot start off with negative income of $initialMoneyPerTurn")
@@ -28,8 +28,10 @@ trait MoneyEarner extends Entity with InventoryEntity {
   /**
     * Transaction manager of this object.
     */
-  val account = new Transactions
-
+  @BeanProperty account = new Transactions
+  
+  val onMoneyChanged = Delegate.createZeroArity
+  
   //<editor-fold desc='Money holding'>
 
   /**
@@ -124,7 +126,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
         }
 
         recur(amount)
-
+        onMoneyChanged()
         true
       }
     }
@@ -135,6 +137,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
       */
     def give(coins: scala.Iterable[Coin]): Unit = if(coins.nonEmpty) {
       for (coin <- coins) inventory.put(coin)
+      onMoneyChanged()
       LogFacility.log("Gave "+CoinHelper.getValue(coins)+" money to "+this, LoggingLevel.Info)
     }
 
