@@ -12,8 +12,6 @@ public class WorldViewport implements Serializable {
 	private float shiftX = 0;
     private float shiftY = 0;
 
-	private float zoom = 1f;
-
     public WorldViewport() {
     }
 
@@ -32,12 +30,4 @@ public class WorldViewport implements Serializable {
     public void setShiftY(float shiftY) {
         this.shiftY = shiftY;
     }
-
-	public float getZoom() {
-		return zoom;
-	}
-
-	public void setZoom(float zoom) {
-		this.zoom = zoom;
-	}
 }

@@ -98,7 +98,7 @@ public abstract class Potion extends Item implements Drawable {
         InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
         for (Item item : inventory.javaItems()) {
             if (this.equals(item)) {
-                return inventory.javaItems().remove(item);
+                return inventory.remove(item).isDefined();
             }
         }
 

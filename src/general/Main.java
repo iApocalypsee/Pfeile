@@ -122,10 +122,17 @@ public class Main {
         LogFacility.log("GameWindow instantiated.", "Info", "initprocess");
 
         // initialize Weapons and Armours (internally threaded)
-        ArmingInitialization.initialize();
+        Thread arrowInitializationThread = ArmingInitialization.initialize();
 
         // initialize Loots, Coins and Potions (internally threaded)
         ItemInitialization.initialize();
+
+        // waiting for loading arrow images
+        try {
+            arrowInitializationThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         gameWindow.initializeScreens();
         LogFacility.log("Screens initialized.", "Info", "initprocess");

@@ -19,6 +19,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 
 /**
  * <b>4.1.2014 (Josip):</b> Konstruktor braucht keine ScreenManager-Instanz mehr. <br><br>
@@ -85,7 +86,13 @@ public class GameScreen extends Screen implements FrameContainer {
         }));
 	}
 
-	/** This method must be called just once!
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        super.mouseWheelMoved(e);
+        map.zoom(1 + (e.getWheelRotation() * 0.08f));
+    }
+
+    /** This method must be called just once!
 	 *
 	 * With postInit() I am avoiding problems that the GameScreen.getInstance() reference is still null.
 	 * I know, complicated to explain, but every time I call GameScreen.getInstance() in the GameScreen constructor,

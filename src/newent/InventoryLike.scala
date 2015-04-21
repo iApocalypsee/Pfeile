@@ -36,7 +36,7 @@ trait InventoryLike {
     * @param f any item
     * @return the removed item or <code>null</code> if the item doesn't exist
     */
-  def remove(f: Item): Item
+  def remove(f: Item): Option[Item] = remove(_ == f)
 
   /* Removes every item from the list, which is from the same instance as <code>Item f</code>. */
   //def removeAllInstanceOf(f: Item): Unit
@@ -87,16 +87,19 @@ class DefaultInventory extends InventoryLike {
       false
     }
   }
-
+  /*
   override def remove(f: Item): Item = {
      for (i <- 0 until _list.size) {
-        if (_list.apply(i) == f) {
+        if (_list(i) == f) {
            return _list.remove(i)
         }
      }
      // if the element hasn't been found
      null
   }
+  */
+
+
 
   /*
    DOES THE FOLLOWING CODE WORK?

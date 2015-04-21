@@ -65,6 +65,8 @@ trait TerrainLike {
     ret.toList
   }
 
+  def indexOf(x: Int, y: Int): Int = tiles.indexOf(tileAt(x, y))
+
   /** Ditto. */
   def javaTiles = {
     val ret = mutable.ArrayBuffer[TileLike]()

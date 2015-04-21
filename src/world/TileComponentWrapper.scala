@@ -27,6 +27,8 @@ class VisualMap(world: WorldLike) extends Drawable {
   /** The world that is being displayed currently. */
   private val _displayWorld = world
 
+  private val zoom = new ZoomBehavior(world.terrain)
+
   /** Returns the current shifting of the map in the x direction. */
   def getShiftY: Float = _vp.getShiftY
   /** Returns the current shifting of the map in the y direction. */
@@ -55,7 +57,9 @@ class VisualMap(world: WorldLike) extends Drawable {
     }
   }
 
-  def zoom(factor: Float): Unit = ???
+  def zoom(factor: Float): Unit = {
+    zoom.zoomFrom(Main.getContext.activePlayer.getGridX, Main.getContext.activePlayer.getGridY, factor)
+  }
 
   /** Draws the whole map. */
   override def draw(g: Graphics2D): Unit = {

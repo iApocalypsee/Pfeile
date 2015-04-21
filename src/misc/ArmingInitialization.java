@@ -13,22 +13,33 @@ import player.weapon.arrow.ArrowHelper;
 public class ArmingInitialization {
 
     /** For further information see: {@link misc.ArmingInitialization} */
-    public static void initialize () {
-        //Thread x = new Thread (() -> {
+    public static Thread initialize () {
+        Thread returnThread = initializeArrows();
+        returnThread.setDaemon(true);
+        returnThread.setPriority(7);
+        returnThread.start();
+
+        Thread x = new Thread (() -> {
             initializeWeapon();
             LogFacility.log("Weapon images loaded.", "Info", "initprocess");
 
             initializeArmour();
             LogFacility.log("Armour images loaded.", "Info", "initprocess");
-        //});
-        //x.setDaemon(true);
-        //x.setName("Arming Initialization");
-        //x.setPriority(2);
-        //x.start();
+        });
+        x.setDaemon(true);
+        x.setName("Arming Initialization");
+        x.setPriority(2);
+        x.start();
+
+        return returnThread;
+    }
+
+    private static Thread initializeArrows () {
+          return new Thread (ArrowHelper::new, "ArrowInititializationThread.");
     }
 
     private static void initializeWeapon () {
-        new ArrowHelper();
+
     }
 
     private static void initializeArmour () {

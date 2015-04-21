@@ -43,6 +43,8 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
 
   @volatile private var comps = Seq.empty[Component]
 
+  private def syncComps = synchronized(comps)
+
   /** Called when the internal frame's close button has been pressed. */
   val onClosed = Delegate.createZeroArity
 
@@ -110,7 +112,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     g.setColor(FrameStyle.InnerColor)
     g.fillRect(getX, getY, getWidth, getHeight)
 
-    comps.foreach(e => {
+    syncComps.foreach(e => {
       if (getBounds.intersects(e.getBounds.getBounds2D)) {
         e.draw(g)
       }

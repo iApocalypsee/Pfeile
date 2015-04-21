@@ -145,9 +145,9 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
   //</editor-fold>
 
   /** Ditto. */
-  override val getGridY = latticeX
+  override val getGridY = latticeY
   /** Ditto. */
-  override val getGridX = latticeY
+  override val getGridX = latticeX
 
   /** Returns the color that is used to represent the isometric tile. */
   def color: Color
@@ -270,6 +270,8 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
     //</editor-fold>
 
     override def draw(g: Graphics2D): Unit = {
+      g.setColor(Color.black)
+      g.draw(getBounds)
       g.setColor(color)
       g.fill(getBounds)
       drawAll(g)
@@ -329,6 +331,8 @@ object IsometricPolygonTile {
    * by the pathfinder.
    */
   lazy val MoveTargetStroke = new BasicStroke(5)
+
+  val StandardDrawStroke = new BasicStroke(7)
   
   //</editor-fold>
 
