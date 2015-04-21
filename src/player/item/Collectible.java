@@ -1,9 +1,14 @@
 package player.item;
 
+import general.LogFacility;
 import general.Main;
 import gui.screen.GameScreen;
 import newent.InventoryEntity;
 import newent.InventoryLike;
+import player.item.coin.Coin;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Any Loot is collectible. So it has to be removed from the world and added to the inventory of the player.
@@ -41,10 +46,30 @@ public interface Collectible {
             // only remove "this" from the WorldLootList, if it has been added to inventory successfully.
             boolean removed = Main.getContext().getWorldLootList().remove(loot);
 
-            GameScreen.getInstance().setWarningMessage(loot.toString());
-            GameScreen.getInstance().activateWarningMessage();
+            if (removed) {
+                // The user must now, what he/she just got.
+                int money = 0;
+                List<Item> otherItems = new ArrayList<>(7);
+
+                for (Item item : loot.getStoredItems()) {
+                    if (item instanceof Coin)
+                        money = money + ((Coin) item).getValue();
+                    else
+                        otherItems.add(item);
+                }
+                GameScreen.getInstance().setWarningMessage(loot.getName() + ": {Geld: " + money + " | Items: " + otherItems + "}");
+                GameScreen.getInstance().activateWarningMessage();
+
+                // secure, that no item remains
+                loot.getStoredItems().clear();
+            } else {
+                GameScreen.getInstance().setWarningMessage(loot.getName() + " konnte nicht entfernt werden.");
+                GameScreen.getInstance().activateWarningMessage();
+                LogFacility.log(loot.toString() + " konnte nicht entfernt werden", LogFacility.LoggingLevel.Error);
+            }
 
             return removed;
+
         } else {
             return false;
         }

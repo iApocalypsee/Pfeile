@@ -1,6 +1,7 @@
 package general.langsupport
 
 import scala.languageFeature.dynamics
+import scala.language.dynamics
 
 /**
  * This class aims to resolve the English-German language problem.

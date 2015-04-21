@@ -25,21 +25,27 @@ public class Label extends Component {
     /** null: The Color of the border is used */
     private Color fontColor = null;
 
-    private Point textDrawLocation = new Point(getX(), getY());
+    private Point textDrawLocation;
     private Point imageDrawLocation;
-    private Point imageDrawScale;
+    private Dimension imageDrawScale;
 
-    private int imageTextInset = STD_INSETS.left;
+    public static final Insets STD_INSETS = new Insets(5, 5, 5, 6);
+
+    /** The gap between the picture and the text */
+    private int imageTextInset = Component.STD_INSETS.left;
 
     public Label(int x, int y, Screen backing, String text) {
-        super(0, 0, 0, 0, backing);
+        super(x, y, 0, 0, backing);
         this.text = text;
+        textDrawLocation = new Point(getX() + STD_INSETS.right, getY() + STD_INSETS.top);
+        imageDrawScale = new Dimension();
 
-        Dimension text_bounds = Component.getTextBounds(text, font);
+        Dimension text_bounds = recalculateBounds();
         setSourceShape(new Rectangle(-text_bounds.width / 2, -text_bounds.height / 2, text_bounds.width, text_bounds.height));
         getTransformation().translate(x, y);
 
-        onTransformed.registerJava(this::recalculateDimension);
+        //setWidth(text_bounds.width);
+        //setHeight(text_bounds.height);
 
         declineInput();
         setName("Label " + hashCode());
@@ -97,7 +103,7 @@ public class Label extends Component {
                 g.setFont(font);
                 g.drawString(text, textDrawLocation.x, textDrawLocation.y);
             } else {
-                g.drawImage(optImage, imageDrawLocation.x, imageDrawLocation.y, imageDrawScale.x, imageDrawScale.y, null);
+                g.drawImage(optImage, imageDrawLocation.x, imageDrawLocation.y, imageDrawScale.width, imageDrawScale.height, null);
                 g.setFont(font);
                 g.drawString(text, textDrawLocation.x, textDrawLocation.y);
             }
@@ -106,18 +112,26 @@ public class Label extends Component {
 
     public void setText(String text) {
         this.text = text;
-        setWidth(Component.getTextBounds(text, font).width);
-        setHeight(Component.getTextBounds(text, font).height);
+        recalculateDimension();
     }
 
     /**
-     * Setzt das Bild, das mit dem Text dargestellt werden soll, und
-     * passt gegebenenfalls die Breite und Höhe des Buttons an.
+     * Adds the BufferedImage to the label on the right-hand side of the text. The bounds are recalculated and the
+     * imageDrawScale is reseted.
      *
-     * @param optimg Das Bild.
+     * @param optimg the picture
      */
     public void iconify(BufferedImage optimg) {
         this.optImage = optimg;
+
+        if (optimg != null) {
+            imageDrawScale.width = optimg.getWidth();
+            imageDrawScale.height = optimg.getHeight();
+        } else {
+            imageDrawScale.width = 0;
+            imageDrawScale.height = 0;
+        }
+
         recalculateDimension();
     }
 
@@ -136,10 +150,19 @@ public class Label extends Component {
         return new Color(red, green, blue, alpha);
     }
 
+    /** Resets the width and the height of a label, if the labels' content has changed. */
+    protected void recalculateDimension () {
+        Dimension dimension = recalculateBounds();
+        if (dimension.width > getWidth())
+            setWidth(dimension.width);
+        if (dimension.height > getHeight())
+            setHeight(dimension.height);
+    }
+
     /**
-     * Berechnet die Bounds des Buttons neu.
+     * Returns a dimension with new suitable bounds.
      */
-    void recalculateDimension() {
+    private Dimension recalculateBounds () {
         Dimension d;
         // leerer Text bei text == null
         if (text != null) {
@@ -150,38 +173,20 @@ public class Label extends Component {
 
         if (optImage != null) {
 
-            imageDrawLocation = new Point(getX(), getY());
-            imageDrawScale = new Point(optImage.getWidth(), optImage.getHeight());
+            imageDrawLocation = new Point(getX() + STD_INSETS.right, getY() + STD_INSETS.top);
+            textDrawLocation = new Point(imageDrawLocation.x + imageTextInset + imageDrawScale.width, getY() + d.height + STD_INSETS.top);
 
-            // Position the text so that it appears right next to the image, centered around about the half-height of
-            // the given image.
-            // FIXME Causes text to be pushed upwards a little bit. A little bit? :P :D
-            textDrawLocation = new Point(imageDrawLocation.x + imageDrawScale.x + imageTextInset,
-                    imageDrawLocation.y + imageDrawScale.y / 2 - d.height / 2 + d.height);
-//            textDrawLocation = new Point(imageDrawLocation.x + imageDrawScale.x + imageTextInset,
-//                    imageDrawLocation.y + imageDrawScale.y / 2);
-            /*
-            // Causes stack overflow...
-            setWidth(imageDrawScale.x + STD_INSETS.left + d.width);
-            if (imageDrawScale.y < d.height) {
-                setHeight(d.height);
-            } else {
-                setHeight(imageDrawScale.y);
-            }
-            */
+            if (d.height > imageDrawScale.height)
+                d.setSize(d.width + imageDrawScale.width + imageTextInset, d.height);
+            else
+                d.setSize(d.width + imageDrawScale.width + imageTextInset, imageDrawScale.height);
+
         } else {
-            /*
-            // Causes stack overflow...
-            if(d.width != getWidth()) {
-                setWidth(d.width);
-            }
-            if(d.height != getHeight()) {
-                setHeight(d.height);
-            }
-            */
-
-            textDrawLocation = new Point(getX(), getY() + d.height);
+            textDrawLocation = new Point(getX() + STD_INSETS.right, getY() + d.height + STD_INSETS.top);
         }
+        // adding STD_INSETS
+        d.setSize(d.getWidth() + STD_INSETS.right + STD_INSETS.left, d.getHeight() + STD_INSETS.top + STD_INSETS.bottom);
+        return d;
     }
 
     public String getText() {

@@ -70,8 +70,8 @@ public class WarningMessage extends Component {
 
     /** the method is called, if the current frame has been drawn. It changes the transparency value of warningColor */
     private void update () {
-        if (getTransparency() - 0.011f > 0)
-            setTransparency(getTransparency() - 0.011f);
+        if (getTransparency() - 0.009f > 0)
+            setTransparency(getTransparency() - 0.009f);
         else
             setTransparency(0);
     }
@@ -178,6 +178,7 @@ public class WarningMessage extends Component {
             g.setColor(warningColor);
             g.setFont(font);
             g.drawString(message, getX(), getY());
+
             update();
         }
     }

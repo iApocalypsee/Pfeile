@@ -6,6 +6,7 @@ import newent.Entity;
 import newent.InventoryEntity;
 import newent.Player;
 
+import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -87,31 +88,33 @@ public abstract class Chest extends Loot {
             @Override
             public void mouseReleased (MouseEvent e) {
 
-                Thread x = new Thread(() -> {
-                    Entity selectedEntity = Main.getContext().entitySelection().selectedEntity();
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    Thread x = new Thread(() -> {
+                        Entity selectedEntity = Main.getContext().entitySelection().selectedEntity();
 
-                    if (isOpen) {
-                        // only trigger collect, when the selectedEntity is on the same tile as the loot
-                        if (Chest.this.getGridX() == selectedEntity.getGridX() && Chest.this.getGridX() == selectedEntity.getGridY()) {
-                            if (selectedEntity instanceof InventoryEntity)
-                                collect((InventoryEntity) selectedEntity);
+                        if (isOpen) {
+                            // only trigger collect, when the selectedEntity is on the same tile as the loot
+                            if (Chest.this.getGridX() == selectedEntity.getGridX() && Chest.this.getGridY() == selectedEntity.getGridY()) {
+                                if (selectedEntity instanceof InventoryEntity)
+                                    collect((InventoryEntity) selectedEntity);
+                            }
+                        } else {
+                            // TODO remove the key
+
+                            // if the chest isn't open, it will be opened now, if the chest and the player are on the tile.
+                            // It can only be opened by players, but collected by every InventoryEntity.
+                            if (selectedEntity instanceof Player || selectedEntity instanceof Bot) {
+                                if (Chest.this.getGridX() == selectedEntity.getGridX() && Chest.this.getGridY() == selectedEntity.getGridY())
+                                    open();
+                            }
                         }
-                    } else {
-                        // TODO remove the key
 
-                        // if the chest isn't open, it will be opened now, if the chest and the player are on the tile.
-                        // It can only be opened by players, but collected by every InventoryEntity.
-                        if (selectedEntity instanceof Player || selectedEntity instanceof Bot) {
-                            if (Chest.this.getGridX() == selectedEntity.getGridX() && Chest.this.getGridY() == selectedEntity.getGridY())
-                                open();
-                        }
-                    }
+                    });
 
-                });
-
-                x.setDaemon(true);
-                x.setName("Collect Loot Listener");
-                x.start();
+                    x.setDaemon(true);
+                    x.setName("Collect Loot Listener");
+                    x.start();
+                }
             }
         });
     }

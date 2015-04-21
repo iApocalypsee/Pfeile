@@ -85,6 +85,8 @@ public class ArrowSelectionScreenPreSet extends Screen {
         super(SCREEN_NAME, SCREEN_INDEX);
 
         selectedArrows = new LinkedList<>();
+        selectedArrows.add("<keine Pfeile>");
+
         arrowListSelected = new List(50, 200, 200, 350, this, selectedArrows);
 
         if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > 1) {
@@ -179,9 +181,6 @@ public class ArrowSelectionScreenPreSet extends Screen {
                 }
             }
         });
-
-        selectedArrows.add("<keine Pfeile>");
-        setArrowListSelected(selectedArrows);
 
         // Mouselistener f�r 'arrowListSelected'
         arrowListSelected.addMouseListener(new MouseAdapter() {

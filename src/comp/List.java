@@ -40,7 +40,7 @@ public class List extends Component {
 
 	public final Delegate.Delegate<Integer> onItemSelected = new Delegate.Delegate<>();
 
-	static final Insets STD_INSETS = new Insets(5, 8, 6, 8);
+	static final Insets STD_INSETS = new Insets(5, 5, 7, 8);
 
 	public List(int x, int y, int width, int height, Screen backing, java.util.List<String> items) {
 		super(x, y, width, height, backing);
@@ -51,7 +51,7 @@ public class List extends Component {
 			final Label build = new Label(x, y, backing, items.get(i));
 
 			// I need to set the position in the correct order.
-			build.setY(build.getY() + (build.getHeight() + 1) * i);
+			build.setY(build.getY() + build.getHeight() * i);
             // The loop wants that.
 
 			// If the label is inside the boundaries of the list, then it should be visible...
@@ -71,7 +71,7 @@ public class List extends Component {
 	}
 
     public List(int x, int y, Screen backing, java.util.List<String> items) {
-        this(x, y, tfits_static(items).width + STD_INSETS.left + STD_INSETS.right, tfits_static(items).height + STD_INSETS.bottom + STD_INSETS.top, backing, items);
+        this(x, y, tfits_static(items).width, tfits_static(items).height, backing, items);
     }
 
 	@Override
@@ -96,10 +96,9 @@ public class List extends Component {
     protected Dimension tfits() {
 		int width = 0, height = 0;
 		for (Label label : listItems) {
-			Dimension bounds = new Dimension(label.getWidth(), label.getHeight());
-			if (width < bounds.width)
-                width = bounds.width;
-            height = height + bounds.height + 1;
+			if (width < label.getWidth())
+                width = label.getWidth();
+            height = height + label.getHeight();
 		}
         width = width + STD_INSETS.right + STD_INSETS.left;
         height = height + STD_INSETS.bottom + STD_INSETS.top;
@@ -112,16 +111,27 @@ public class List extends Component {
      * which only allows the {@link comp.Component#STD_FONT} to be used without BufferedImage.
      *
      * @param elems the list
-     * @return a dimension, which would contain the list [as labels] without {@link comp.List#STD_INSETS}.
+     * @return a dimension, which would contain the list [as labels] with {@link comp.List#STD_INSETS}.
      */
 	static Dimension tfits_static(java.util.List<String> elems) {
 		int width = 0, height = 0;
+        if (elems.isEmpty()) {
+            Dimension bounds = new Dimension(Component.getTextBounds("   ", STD_FONT));
+            return new Dimension(bounds.width + Component.STD_INSETS.right + Component.STD_INSETS.left,
+                    bounds.height + Component.STD_INSETS.top + Component.STD_INSETS.bottom);
+        }
+
 		for (String s : elems) {
-			Dimension bounds = new Dimension(getTextBounds(s, STD_FONT).width + 1, getTextBounds(s, STD_FONT).height + 1);
+			Dimension bounds = getTextBounds(s, STD_FONT);
+            bounds = new Dimension(bounds.width + Component.STD_INSETS.right + Component.STD_INSETS.left,
+                                   bounds.height + Component.STD_INSETS.top + Component.STD_INSETS.bottom);
 			if (width < bounds.width)
 				width = bounds.width;
-			height = height + bounds.height + 1;
+			height = height + bounds.height;
 		}
+        width = width + STD_INSETS.right + STD_INSETS.left;
+        height = height + STD_INSETS.top + STD_INSETS.bottom;
+
 		return new Dimension(width, height);
 	}
 	

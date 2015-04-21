@@ -117,18 +117,18 @@ public class PreWindowScreen extends Screen {
         readyButton.setWidth(standardButton.getWidth());
 
         int labelPosX = 100;
-        int labelPosY = 480;
+        int labelPosY = 370;
         labels[0] = new Label(labelPosX, labelPosY, this, "Computerstärke: ");
-        labels[1] = new Label(labelPosX, labelPosY + labels[0].getHeight() + 3, this, "Pfeilanzahl [frei wählbar]: ");
-        labels[2] = new Label(labelPosX, labels[1].getY() + labels[1].getHeight() + 3, this, "Pfeilanzahl [vorher wählbar]: ");
-        labels[3] = new Label(labelPosX, labels[2].getY() + labels[2].getHeight() + 3, this, "maximales Leben: ");
-        labels[4] = new Label(labelPosX, labels[3].getY() + labels[3].getHeight() + 3, this, "Lebensregeneration: ");
-        labels[5] = new Label(labelPosX, labels[4].getY() + labels[4].getHeight() + 3, this, "Schadensmultiplikator: ");
-        labels[6] = new Label(labelPosX, labels[5].getY() + labels[5].getHeight() + 3, this, "Züge pro Runde: ");
-        labels[7] = new Label(labelPosX, labels[6].getY() + labels[6].getHeight() + 3, this, "Zeit pro Zug: ");
-        labels[8] = new Label(labelPosX, labels[7].getY() + labels[7].getHeight() + 3, this, "Handicap [Spieler]: ");
-        labels[9] = new Label(labelPosX, labels[8].getY() + labels[8].getHeight() + 3, this, "Handicap [Computer]: ");
-        labels[10] = new Label(labelPosX, labels[9].getY() + labels[9].getHeight() + 3, this, "Weltgröße: ");
+        labels[1] = new Label(labelPosX, labelPosY + labels[0].getHeight(), this, "Pfeilanzahl [frei wählbar]: ");
+        labels[2] = new Label(labelPosX, labels[1].getY() + labels[1].getHeight(), this, "Pfeilanzahl [vorher wählbar]: ");
+        labels[3] = new Label(labelPosX, labels[2].getY() + labels[2].getHeight(), this, "maximales Leben: ");
+        labels[4] = new Label(labelPosX, labels[3].getY() + labels[3].getHeight(), this, "Lebensregeneration: ");
+        labels[5] = new Label(labelPosX, labels[4].getY() + labels[4].getHeight(), this, "Schadensmultiplikator: ");
+        labels[6] = new Label(labelPosX, labels[5].getY() + labels[5].getHeight(), this, "Züge pro Runde: ");
+        labels[7] = new Label(labelPosX, labels[6].getY() + labels[6].getHeight(), this, "Zeit pro Zug: ");
+        labels[8] = new Label(labelPosX, labels[7].getY() + labels[7].getHeight(), this, "Handicap [Spieler]: ");
+        labels[9] = new Label(labelPosX, labels[8].getY() + labels[8].getHeight(), this, "Handicap [Computer]: ");
+        labels[10] = new Label(labelPosX, labels[9].getY() + labels[9].getHeight(), this, "Weltgröße: ");
         for (Label label : labels) {
             label.declineInput();
             label.setDeclineInputColor(new Color(202, 199, 246));
@@ -182,7 +182,7 @@ public class PreWindowScreen extends Screen {
         spinnerModelPreSet = new SpinnerModel(15, 0, 50, 1);
         spinnerModelFreeSet = new SpinnerModel(4, 0, 20, 1);
         spinnerModelTurnsPerRound = new SpinnerModel(7, 1, 40, 1);
-        spinner = new Spinner<Integer>(boxSelectHigh.getX(), selectorComboBox.getY(), this, spinnerModelPreSet);
+        spinner = new Spinner<>(boxSelectHigh.getX(), selectorComboBox.getY(), this, spinnerModelPreSet);
         spinner.setVisible(false);
 
         colorBig = new Color (159, 30, 29);

@@ -9,6 +9,7 @@ import player.BoardPositionable;
 import player.item.coin.Coin;
 import world.TileLike;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -87,19 +88,22 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
         getLootUI().component.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased (MouseEvent e) {
+                // only register it at left-click
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    Thread x = new Thread(() -> {
+                        Entity selectedEntity = Main.getContext().entitySelection().selectedEntity();
+                        // only trigger collect, when the selectedEntity is on the same tile as the loot
+                        if (Loot.this.getGridX() == selectedEntity.getGridX() && Loot.this.getGridY() == selectedEntity.getGridY()) {
+                            if (selectedEntity instanceof InventoryEntity)
+                                collect((InventoryEntity) selectedEntity);
+                        }
+                    });
 
-                Thread x = new Thread(() -> {
-                    Entity selectedEntity = Main.getContext().entitySelection().selectedEntity();
-                    // only trigger collect, when the selectedEntity is on the same tile as the loot
-                    if (Loot.this.getGridX() == selectedEntity.getGridX() && Loot.this.getGridX() == selectedEntity.getGridY()) {
-                        if (selectedEntity instanceof InventoryEntity)
-                            collect((InventoryEntity) selectedEntity);
-                    }
-                });
+                    x.setDaemon(true);
+                    x.setName("Collect Loot Listener");
+                    x.start();
+                }
 
-                x.setDaemon(true);
-                x.setName("Collect Loot Listener");
-                x.start();
             }
         });
     }

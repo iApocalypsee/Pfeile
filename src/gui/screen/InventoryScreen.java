@@ -62,7 +62,7 @@ public class InventoryScreen extends Screen {
         java.util.List<String> itemList = new ArrayList<>(2);
         itemList.add("<keine Items>");
 
-        inventoryList = new List(50, 70, 150, 300, this, itemList);
+        inventoryList = new List(50, 70, 200, 350, this, itemList);
 
         cancelButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 220, this, "Abbrechen");
 
@@ -71,7 +71,7 @@ public class InventoryScreen extends Screen {
         warningMessage = new WarningMessage("null", 40, Main.getWindowHeight() - 105, this);
         warningMessage.setFont(warningMessage.getFont().deriveFont(Component.STD_FONT.getSize2D() * 2));
 
-        inventoryList.setRoundBorder(true);
+        //inventoryList.setRoundBorder(true);
         inventoryList.setVisible(true);
 
         Function1<Integer, Object> listSelectCallback = JavaInterop.asScala((Integer selectedIndex) -> {

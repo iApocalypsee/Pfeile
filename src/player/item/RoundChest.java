@@ -1,6 +1,7 @@
 package player.item;
 
 import general.LogFacility;
+import gui.screen.GameScreen;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -51,5 +52,7 @@ public class RoundChest extends Chest {
     public void open () {
         changeUIforOpenedChest(imageOpenChest);
         isOpen = true;
+        GameScreen.getInstance().setWarningMessage("Rundenkiste geöffnet.");
+        GameScreen.getInstance().activateWarningMessage();
     }
 }

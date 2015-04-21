@@ -56,7 +56,9 @@ public class WorldLootList implements Drawable {
      * @param droppedLoot the loot to be added to the list
      */
     public void add (Loot droppedLoot) {
-        lootList.add(droppedLoot);
+        synchronized (lootList) {
+            lootList.add(droppedLoot);
+        }
         updateVisibleLoot();
     }
 
@@ -68,7 +70,7 @@ public class WorldLootList implements Drawable {
      * @return <code>true</code> - if the list contained the <code>collectedLoot</code>
      */
     public boolean remove (Loot collectedLoot) {
-        boolean removed = false;
+        boolean removed;
 
         synchronized (lootList) {
             removed = lootList.remove(collectedLoot);
