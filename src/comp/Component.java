@@ -417,6 +417,10 @@ public abstract class Component implements IComponent {
 		setLocation(getX() + x, getY() + y);
 	}
 
+	public void move(Point p) {
+		move(p.x, p.y);
+	}
+
 	/**
 	 * @return the width
 	 */
@@ -501,9 +505,13 @@ public abstract class Component implements IComponent {
 
 	public void setSourceShape(Shape srcShape) {
 		if(srcShape == null) throw new NullPointerException();
+
 		this.srcShape = srcShape;
 		transformation.resetTransformation();
-		transformation.translate(srcShape.getBounds().width / 2, srcShape.getBounds().height / 2);
+		transformation.translate(srcShape.getBounds2D().getWidth() / 2, srcShape.getBounds2D().getHeight() / 2);
+
+		// Invalidate old bounds, could be wrong now.
+		bounds = null;
 	}
 
 	/**

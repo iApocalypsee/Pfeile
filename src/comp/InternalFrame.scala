@@ -112,10 +112,14 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     g.setColor(FrameStyle.InnerColor)
     g.fillRect(getX, getY, getWidth, getHeight)
 
-    syncComps.foreach(e => {
-      if (getBounds.intersects(e.getBounds.getBounds2D)) {
-        e.draw(g)
-      }
+//    syncComps.foreach(e => synchronized {
+//      if (getBounds.intersects(e.getBounds.getBounds2D)) {
+//        e.draw(g)
+//      }
+//    })
+
+    synchronized(for(comp <- syncComps) {
+      comp.drawChecked(g)
     })
 
     closeButton.draw(g)

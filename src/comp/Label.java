@@ -1,16 +1,19 @@
 package comp;
 
+import gui.Drawable;
 import gui.screen.Screen;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
+import java.util.Optional;
 
 public class Label extends Component {
 
     /**
      * Der Text, der vom Label dargestellt werden soll.
      */
-    private String text;
+    private TextSequence textSequence;
 
     private Color noMouseColor = Color.lightGray;
 
@@ -28,6 +31,8 @@ public class Label extends Component {
     private Point textDrawLocation;
     private Point imageDrawLocation;
     private Dimension imageDrawScale;
+    // ATTENTION: Considers only ONE LINE OF TEXT FOR WIDTH AND HEIGHT. NOT MORE.
+    private Dimension textDrawScale;
 
     public static final Insets STD_INSETS = new Insets(5, 5, 5, 6);
 
@@ -36,13 +41,16 @@ public class Label extends Component {
 
     public Label(int x, int y, Screen backing, String text) {
         super(x, y, 0, 0, backing);
-        this.text = text;
-        textDrawLocation = new Point(getX() + STD_INSETS.right, getY() + STD_INSETS.top);
+        this.textSequence = new TextSequence(text);
+        textDrawLocation = new Point(getX(), getY());
         imageDrawScale = new Dimension();
 
         Dimension text_bounds = recalculateBounds();
         setSourceShape(new Rectangle(-text_bounds.width / 2, -text_bounds.height / 2, text_bounds.width, text_bounds.height));
+
         getTransformation().translate(x, y);
+
+        onMoved.registerJava(vector2 -> recalculateDimension());
 
         //setWidth(text_bounds.width);
         //setHeight(text_bounds.height);
@@ -101,17 +109,17 @@ public class Label extends Component {
 
             if (optImage == null) {
                 g.setFont(font);
-                g.drawString(text, textDrawLocation.x, textDrawLocation.y);
+                textSequence.draw(g);
             } else {
                 g.drawImage(optImage, imageDrawLocation.x, imageDrawLocation.y, imageDrawScale.width, imageDrawScale.height, null);
                 g.setFont(font);
-                g.drawString(text, textDrawLocation.x, textDrawLocation.y);
+                textSequence.draw(g);
             }
         }
     }
 
     public void setText(String text) {
-        this.text = text;
+        this.textSequence = new TextSequence(text);
         recalculateDimension();
     }
 
@@ -163,17 +171,12 @@ public class Label extends Component {
      * Returns a dimension with new suitable bounds.
      */
     private Dimension recalculateBounds () {
-        Dimension d;
-        // leerer Text bei text == null
-        if (text != null) {
-            d = Component.getTextBounds(text, font);
-        } else {
-            d = Component.getTextBounds("   ", font);
-        }
+        String text = getText();
+        Dimension d = new TextSequence(text).formattedDimension();
 
         if (optImage != null) {
 
-            imageDrawLocation = new Point(getX() + STD_INSETS.right, getY() + STD_INSETS.top);
+            imageDrawLocation = new Point(getX(), getY());
             textDrawLocation = new Point(imageDrawLocation.x + imageTextInset + imageDrawScale.width, getY() + d.height + STD_INSETS.top);
 
             if (d.height > imageDrawScale.height)
@@ -182,15 +185,18 @@ public class Label extends Component {
                 d.setSize(d.width + imageDrawScale.width + imageTextInset, imageDrawScale.height);
 
         } else {
-            textDrawLocation = new Point(getX() + STD_INSETS.right, getY() + d.height + STD_INSETS.top);
+            textDrawLocation = new Point(getX(), getY() + d.height);
         }
-        // adding STD_INSETS
-        d.setSize(d.getWidth() + STD_INSETS.right + STD_INSETS.left, d.getHeight() + STD_INSETS.top + STD_INSETS.bottom);
+
+        textDrawScale = d;
+
+//        // adding STD_INSETS
+//        d.setSize(d.getWidth() + STD_INSETS.right + STD_INSETS.left, d.getHeight() + STD_INSETS.top + STD_INSETS.bottom);
         return d;
     }
 
     public String getText() {
-        return text;
+        return textSequence.getSourceString();
     }
 
     public Font getFont () {
@@ -260,4 +266,46 @@ public class Label extends Component {
     public void setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
     }
+
+    class TextSequence implements Drawable {
+
+        private java.util.List<String> textTokens;
+        private String sourceString;
+
+        public TextSequence(String text) {
+            sourceString = text;
+            textTokens = Arrays.asList(text.split("\n"));
+        }
+
+        @Override
+        public void draw(Graphics2D g) {
+            for(int i = 0; i < textTokens.size(); i++) {
+                int yInset = i * textDrawScale.height;
+                g.drawString(textTokens.get(i), textDrawLocation.x, textDrawLocation.y + yInset);
+            }
+        }
+
+        public String getSourceString() {
+            return sourceString;
+        }
+
+        private String longestString() {
+            String longest = null;
+            int longestWidth = 0;
+            for(String s : textTokens) {
+                final Dimension textBounds = Component.getTextBounds(s, getFont());
+                if(textBounds.width > longestWidth) longest = s;
+            }
+            return longest;
+        }
+
+        public Dimension formattedDimension() {
+            final String longest = longestString();
+            final int widthOfLongest = Component.getTextBounds(longest, getFont()).width;
+            final Optional<Integer> accumulatedHeight = textTokens.stream().map(string -> Component.getTextBounds(string, getFont()).height)
+                                                                           .reduce((c, e) -> c + e);
+            return new Dimension(widthOfLongest, accumulatedHeight.get());
+        }
+    }
+
 }

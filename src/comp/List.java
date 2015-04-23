@@ -1,6 +1,7 @@
 package comp;
 
 import general.Delegate;
+import general.LogFacility;
 import gui.screen.Screen;
 
 import java.awt.*;
@@ -8,6 +9,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.util.Collections;
 import java.util.LinkedList;
 
 /**
@@ -46,28 +48,7 @@ public class List extends Component {
 		super(x, y, width, height, backing);
 		
 		this.items = items;
-
-		for (int i = 0; i < items.size(); i++) {
-			final Label build = new Label(x, y, backing, items.get(i));
-
-			// I need to set the position in the correct order.
-			build.setY(build.getY() + build.getHeight() * i);
-            // The loop wants that.
-
-			// If the label is inside the boundaries of the list, then it should be visible...
-			build.setVisible((build.getY() + build.getHeight()) < (this.getY() + this.getHeight()));
-
-			// Every appended label should have a listener attached to it so that I know
-			// when a list element has been pressed.
-			build.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseReleased(MouseEvent e) {
-					selectedIndex = listItems.indexOf(build);
-					onItemSelected.apply(selectedIndex);
-				}
-			});
-			listItems.add(build);
-		}
+		this.listItems = mapToLabels(items);
 	}
 
     public List(int x, int y, Screen backing, java.util.List<String> items) {
@@ -85,6 +66,97 @@ public class List extends Component {
 				listItems.get(i).draw(g);
 			}
 		}
+	}
+
+	public java.util.List<String> getItems() {
+		return Collections.unmodifiableList(items);
+	}
+
+	/**
+	 * Puts the specified text entry at the given index.
+	 * @param text The text to add to the list as a new entry.
+	 * @param atIndex The index to insert the text at. Zero-based.
+	 */
+	public void putListEntry(String text, int atIndex) {
+		items.add(atIndex, text);
+		listItems = mapToLabels(items);
+	}
+
+	/**
+	 * Transforms a list of strings to labels which fit in the list.
+	 * @param stringList The strings to create the labels for.
+	 * @return A list full of labels ready for use.
+	 */
+	private java.util.List<Label> mapToLabels(java.util.List<String> stringList) {
+		java.util.List<Label> labels = new LinkedList<>();
+		for (int i = 0; i < stringList.size(); i++) {
+			final Label build = new Label(getX(), getY(), getBackingScreen(), stringList.get(i));
+
+			// I need to set the position in the correct order.
+			build.move(0, build.getHeight() * i);
+
+			// The loop wants that.
+
+			// If the label is inside the boundaries of the list, then it should be visible...
+			build.setVisible((build.getY() + build.getHeight()) < (this.getY() + this.getHeight()));
+
+			// Every appended label should have a listener attached to it so that I know
+			// when a list element has been pressed.
+			build.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					selectedIndex = labels.indexOf(build);
+					onItemSelected.apply(selectedIndex);
+				}
+			});
+
+			labels.add(build);
+		}
+
+		// Label checks
+		boolean isEvenHeighted = false;
+		for(int i = 1; i < labels.size(); i++) {
+			isEvenHeighted = labels.get(i).getY() == labels.get(i - 1).getY();
+		}
+
+		if(isEvenHeighted) {
+			LogFacility.log("Labels in list " + getName() + " have even y positions!", "Warning");
+		}
+
+		return labels;
+	}
+
+	/**
+	 * Puts a new list label entry at the end of the list with the given text.
+	 * @param text The text to append.
+	 */
+	public void appendListEntry(String text) {
+		putListEntry(text, items.size() - 1);
+	}
+
+	/**
+	 * Puts a new list label entry at the beginning of the list with the given text.
+	 * @param text The text to prepend.
+	 */
+	public void prependListEntry(String text) {
+		putListEntry(text, 0);
+	}
+
+	/**
+	 * Removes the entry containing the given text.
+	 * @param text The text to remove from the list.
+	 */
+	public void removeListEntry(String text) {
+		removeListEntry(items.indexOf(text));
+	}
+
+	/**
+	 * Removes a label at given index from the list.
+	 * @param index The index of the label to remove.
+	 */
+	public void removeListEntry(int index) {
+		items.remove(index);
+		listItems = mapToLabels(items);
 	}
 	
 	/**

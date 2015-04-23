@@ -86,6 +86,15 @@ class Transformation2D {
     this
   }
 
+  def copy = {
+    val cpy = new Transformation2D
+    cpy._translationMatrix = this.translationMatrix
+    cpy._rotationMatrix = this.rotationMatrix
+    cpy._scaleMatrix = this.scaleMatrix
+    cpy._rotation = this.rotation
+    cpy
+  }
+
   /**
    * Sets the absolute scale of this transformation.
    * @param sx The scale in x-direction.

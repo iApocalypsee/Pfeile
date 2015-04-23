@@ -26,18 +26,17 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Art
 
   private var imageDrawLocation: Point = null
   private var imageDrawDimension: Dimension = null
-  private var textDrawLocation: Point = null
-  private var textDrawDimension: Dimension = null
-  private var text = ""
 
   private val cachedItem = article.cachedItem
 
+  private val textLabel = new comp.Label(0, 0, getBackingScreen, constructText(article))
+  textLabel.setParent(this)
+
   private def positionalsUpdate(moveDiff: Vector2): Unit = {
-    if (imageDrawLocation != null && textDrawLocation != null) {
-      imageDrawLocation.x += moveDiff.x.asInstanceOf[Int]
-      imageDrawLocation.y += moveDiff.y.asInstanceOf[Int]
-      textDrawLocation.x += moveDiff.x.asInstanceOf[Int]
-      textDrawLocation.y += moveDiff.y.asInstanceOf[Int]
+    val movPt = moveDiff.toPoint
+    if(imageDrawLocation != null) {
+      imageDrawLocation.x += movPt.x
+      imageDrawLocation.y += movPt.y
     }
   }
 
@@ -46,7 +45,7 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Art
 
   private def recalculateStyle(): Unit = recalculateStyleWithArgs(gridX, gridY)
 
-  private def constructText(article: Article) = s"${cachedItem.getName}: ${article.price} Money Units"
+  private def constructText(article: Article) = s"${cachedItem.getName}:\n${article.price} Money Units"
 
   private[this] def recalculateStyleWithArgs(gridX: Int, gridY: Int): Unit = {
 
@@ -79,18 +78,15 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Art
 
     val textPosition = rawTextPosition + absolutePosition
 
-    textDrawLocation = textPosition.toPoint
-    textDrawDimension = textBounds
-
-    this.text = constructText(article)
+    textLabel.setLocation(textPosition.toPoint.x, textPosition.toPoint.y)
 
   }
 
   override def draw(g: Graphics2D): Unit = {
     getBorder.draw(g)
 
-    g.setColor(article.shopButtonAttributes.textColor())
-    g.drawString(text, textDrawLocation.x, textDrawLocation.y)
+    textLabel.setFontColor(article.shopButtonAttributes.textColor)
+    textLabel.draw(g)
 
     g.drawImage(cachedItem.getImage, imageDrawLocation.x, imageDrawLocation.y, imageDrawDimension.width, imageDrawDimension.height, null)
   }
@@ -147,7 +143,7 @@ private[shop] object ShopButton {
 
     val font = commonProperty(Component.STD_FONT)
 
-    val insetsBetweenEach = commonProperty(new Insets(5, 20, 5, 20))
+    val insetsBetweenEach = commonProperty(new Insets(5, 35, 5, 35))
 
     /**
       * Calculates the size of the image contained by the shop button and returns it
