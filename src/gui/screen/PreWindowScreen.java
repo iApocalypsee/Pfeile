@@ -118,17 +118,20 @@ public class PreWindowScreen extends Screen {
 
         int labelPosX = 100;
         int labelPosY = 370;
+        int labelYGap = 4;
+
         labels[0] = new Label(labelPosX, labelPosY, this, "Computerstärke: ");
-        labels[1] = new Label(labelPosX, labelPosY + labels[0].getHeight(), this, "Pfeilanzahl [frei wählbar]: ");
-        labels[2] = new Label(labelPosX, labels[1].getY() + labels[1].getHeight(), this, "Pfeilanzahl [vorher wählbar]: ");
-        labels[3] = new Label(labelPosX, labels[2].getY() + labels[2].getHeight(), this, "maximales Leben: ");
-        labels[4] = new Label(labelPosX, labels[3].getY() + labels[3].getHeight(), this, "Lebensregeneration: ");
-        labels[5] = new Label(labelPosX, labels[4].getY() + labels[4].getHeight(), this, "Schadensmultiplikator: ");
-        labels[6] = new Label(labelPosX, labels[5].getY() + labels[5].getHeight(), this, "Züge pro Runde: ");
-        labels[7] = new Label(labelPosX, labels[6].getY() + labels[6].getHeight(), this, "Zeit pro Zug: ");
-        labels[8] = new Label(labelPosX, labels[7].getY() + labels[7].getHeight(), this, "Handicap [Spieler]: ");
-        labels[9] = new Label(labelPosX, labels[8].getY() + labels[8].getHeight(), this, "Handicap [Computer]: ");
-        labels[10] = new Label(labelPosX, labels[9].getY() + labels[9].getHeight(), this, "Weltgröße: ");
+        labels[1] = new Label(labelPosX, labelPosY + labels[0].getHeight() + labelYGap, this, "Pfeilanzahl [frei wählbar]: ");
+        labels[2] = new Label(labelPosX, labels[1].getY() + labels[1].getHeight() + labelYGap, this, "Pfeilanzahl [vorher wählbar]: ");
+        labels[3] = new Label(labelPosX, labels[2].getY() + labels[2].getHeight() + labelYGap, this, "maximales Leben: ");
+        labels[4] = new Label(labelPosX, labels[3].getY() + labels[3].getHeight() + labelYGap, this, "Lebensregeneration: ");
+        labels[5] = new Label(labelPosX, labels[4].getY() + labels[4].getHeight() + labelYGap, this, "Schadensmultiplikator: ");
+        labels[6] = new Label(labelPosX, labels[5].getY() + labels[5].getHeight() + labelYGap, this, "Züge pro Runde: ");
+        labels[7] = new Label(labelPosX, labels[6].getY() + labels[6].getHeight() + labelYGap, this, "Zeit pro Zug: ");
+        labels[8] = new Label(labelPosX, labels[7].getY() + labels[7].getHeight() + labelYGap, this, "Handicap [Spieler]: ");
+        labels[9] = new Label(labelPosX, labels[8].getY() + labels[8].getHeight() + labelYGap, this, "Handicap [Computer]: ");
+        labels[10] = new Label(labelPosX, labels[9].getY() + labels[9].getHeight() + labelYGap, this, "Weltgröße: ");
+
         for (Label label : labels) {
             label.declineInput();
             label.setDeclineInputColor(new Color(202, 199, 246));

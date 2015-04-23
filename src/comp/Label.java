@@ -294,7 +294,8 @@ public class Label extends Component {
             int longestWidth = 0;
             for(String s : textTokens) {
                 final Dimension textBounds = Component.getTextBounds(s, getFont());
-                if(textBounds.width > longestWidth) longest = s;
+                if(textBounds.width > longestWidth)
+                    longest = s;
             }
             return longest;
         }

@@ -119,7 +119,7 @@ public class InventoryScreen extends Screen {
                         if (item instanceof Potion) {
                             Potion potion = (Potion) item;
                             if (!potion.triggerEffect()) {
-                                warningMessage.setMessage("Die " + potion.getName() + " kann jetzt nicht verwendet werden.");
+                                warningMessage.setMessage("Die " + potion.getName() + " konnte nicht entfernt werden.");
                                 warningMessage.activateMessage();
                                 isLeavingScreen = false;
                             }
@@ -133,7 +133,7 @@ public class InventoryScreen extends Screen {
                             }
 
                         } else {
-                            warningMessage.setMessage("Das ausgewählte item " + item.getName() + " kann nicht verwendet werden.");
+                            warningMessage.setMessage("Das ausgewählte Item " + item.getName() + " kann nicht verwendet werden.");
                             warningMessage.activateMessage();
                             isLeavingScreen = false;
                         }
