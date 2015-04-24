@@ -3,6 +3,7 @@ package general;
 import akka.actor.ActorSystem;
 import animation.SoundPool;
 import general.io.PreInitStage;
+import general.langsupport.LangInitialization;
 import gui.screen.*;
 import misc.ArmingInitialization;
 import misc.ItemInitialization;
@@ -108,6 +109,10 @@ public class Main {
 
         LogFacility.log("Beginning initialization process...", "Info", "initprocess");
 
+        LogFacility.log("Initializating languages...", "Info", "initprocess");
+        LangInitialization.apply();
+        LogFacility.log("[[LangInitialization]] done", "Info", "initprocess");
+
         main = new Main();
         user = new User(SystemProperties.getComputerName());
 
@@ -204,6 +209,8 @@ public class Main {
 
         // stop all melodies
         //SoundPool.stop_allMelodies();
+
+        actorSystem.shutdown();
 
         // There is no other way, that closes the games.
         // Some Threads were still running in background, that continued the game without seeing a screen.

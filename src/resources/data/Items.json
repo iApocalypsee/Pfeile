@@ -1,0 +1,46 @@
+{
+
+  "bronzeCoin": {
+    "en_EN": "Bronze coin",
+    "de_DE": "Bronzemünze"
+  },
+  "silverCoin": {
+    "en_EN": "Silver coin",
+    "de_DE": "Silbermünze"
+  },
+  "goldCoin": {
+    "en_EN": "Gold coin",
+    "de_DE": "Goldmünze"
+  },
+  "platinumCoin": {
+    "en_EN": "Platinum coin",
+    "de_DE": "Platinmünze"
+  },
+
+  "lootBag": {
+    "en_EN": "Loot bag",
+    "de_DE": "Warensack"
+  },
+  "chest": {
+    "en_EN": "Chest",
+    "de_DE": "Truhe"
+  },
+  "treasure": {
+    "en_EN": "Treasure",
+    "de_DE": "Schatztruhe"
+  },
+
+  "damagePotion": {
+    "en_EN": "Damage potion",
+    "de_DE": "Trank des Schadens"
+  },
+  "movementPotion": {
+    "en_EN": "Agility potion",
+    "de_DE": "Trank der Beweglichkeit"
+  },
+  "healPotion": {
+    "en_EN": "Healing potion",
+    "de_DE": "Heiltrank"
+  }
+
+}

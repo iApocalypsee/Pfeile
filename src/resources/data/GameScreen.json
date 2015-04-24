@@ -1,0 +1,21 @@
+{
+  "endTurnButton": {
+    "en_EN": "End turn",
+    "de_DE": "Runde beenden"
+  },
+
+  "shootButton": {
+    "en_EN": "Shoot arrow",
+    "de_DE": "Pfeil schießen"
+  },
+
+  "inventoryButton": {
+    "en_EN": "Inventory",
+    "de_DE": "Inventar"
+  },
+
+  "shopButton": {
+    "en_EN": "Shop",
+    "de_DE": "Shop"
+  }
+}

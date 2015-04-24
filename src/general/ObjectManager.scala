@@ -12,20 +12,20 @@ import scala.collection.mutable
   */
 class ObjectManager[A] {
 
-  private val objects = mutable.ArrayBuffer[WeakReference[A]]()
+  private val _objects = mutable.ArrayBuffer[WeakReference[A]]()
   private val onEnter = mutable.ArrayBuffer[WeakReference[A] => Unit]()
 
   def manage(x: A): Unit = {
     if (!exists(_ == x)) {
       val weakref = new WeakReference(x)
-      objects += weakref
+      _objects += weakref
       for (fun <- onEnter) fun(weakref)
     }
   }
 
-  def exists(f: A => Boolean): Boolean = objects.exists(asWeakAppl(f))
+  def exists(f: A => Boolean): Boolean = _objects.exists(asWeakAppl(f))
 
-  def applyForEvery(f: A => Unit): Unit = objects.foreach(asWeakAppl(f))
+  def applyForEvery(f: A => Unit): Unit = _objects.foreach(asWeakAppl(f))
 
   def applyOnEnter(f: A => Unit): Unit = onEnter += asWeakAppl(f)
 
@@ -37,6 +37,9 @@ class ObjectManager[A] {
     * @return The transformed function accepting a weak reference.
     */
   private def asWeakAppl[R](f: A => R) = f.compose[WeakReference[A]](_.get())
+  
+  def weakRefObjects = _objects.toSeq
+  def objects = _objects.map(_.get()).toSeq
 
 }
 
@@ -57,4 +60,8 @@ class ImmutableObjectManagerFacade[A](private val objectManager: ObjectManager[A
   def exists(f: (A) => Boolean): Boolean = x.exists(f)
 
   def applyOnEnter(f: (A) => Unit): Unit = x.applyOnEnter(f)
+
+  def weakRefObjects: Seq[WeakReference[A]] = x.weakRefObjects
+
+  def objects: Seq[A] = x.objects
 }
