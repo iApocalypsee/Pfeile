@@ -42,7 +42,7 @@ public class List extends Component {
 
 	public final Delegate.Delegate<Integer> onItemSelected = new Delegate.Delegate<>();
 
-	static final Insets STD_INSETS = new Insets(5, 5, 7, 8);
+	static final Insets STD_INSETS = new Insets(4, 4, 7, 8);
 
 	public List(int x, int y, int width, int height, Screen backing, java.util.List<String> items) {
 		super(x, y, width, height, backing);
@@ -93,7 +93,7 @@ public class List extends Component {
 			final Label build = new Label(getX(), getY(), getBackingScreen(), stringList.get(i));
 
 			// I need to set the position in the correct order.
-			build.move(0, build.getHeight() * i);
+			build.move(STD_INSETS.right, STD_INSETS.top + (build.getHeight() + 1) * i);
 
 			// The loop wants that.
 
@@ -158,6 +158,14 @@ public class List extends Component {
 		items.remove(index);
 		listItems = mapToLabels(items);
 	}
+
+    /**
+     * Removes every label from the list. The list will be empty afterwards.
+     */
+    public void removeAllListEntries () {
+        items.clear();
+        listItems = mapToLabels(items);
+    }
 	
 	/**
 	 * Returns a Dimension with the bounds of the list calculated from the labels with STD_INSETS.
@@ -330,11 +338,28 @@ public class List extends Component {
     public void iconify (int index, BufferedImage image) {
         listItems.get(index).iconify(image);
 
+        // resetting the bounds of the list
         Dimension bounds = tfits();
         if (getWidth() < bounds.width)
             setWidth(bounds.width);
         if (getHeight() < bounds.height)
             setHeight(bounds.height);
+
+        // resetting the bounds of the labels. Implementation vastly resembles "mapToLabels".
+        for (int i = 0; i < listItems.size(); i++) {
+            final Label build = listItems.get(i);
+
+            // Resetting the location of label
+            build.setLocation(getX(), getY());
+
+            // and moving it to its new position in the correct order.
+            build.move(STD_INSETS.right, STD_INSETS.top + (build.getHeight() + 1) * i);
+
+            // The loop wants that.
+
+            // If the label is inside the boundaries of the list, then it should be visible...
+            build.setVisible((build.getY() + build.getHeight()) < (this.getY() + this.getHeight()));
+        }
     }
 
     /** Returns the size [= length] of the list. The last index is <code>getIndexSize() - 1</code> as the index is 0-based.*/

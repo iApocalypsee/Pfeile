@@ -150,7 +150,8 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
 /**
   * It some values, that are very important for the whole game, not just for a single class. It is partly similar to
-  * previous <code>general.Mechanics</code>
+  * previous <code>general.Mechanics</code>.
+  * Further Values are defined in MoneyEarner.scala: <code>MoneyValues</code>, <code>Player</code> or <code>Bot</code>.
   */
 object PfeileContext {
 

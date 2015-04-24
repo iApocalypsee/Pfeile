@@ -68,6 +68,9 @@ public interface Collectible {
                 LogFacility.log(loot.toString() + " konnte nicht entfernt werden", LogFacility.LoggingLevel.Error);
             }
 
+            // the money has changed probably
+            Main.getContext().getActivePlayer().onMoneyChanged().apply();
+
             return removed;
 
         } else {

@@ -1,6 +1,6 @@
 package newent
 
-import general.Delegate
+import general.{Property, Delegate}
 import player.item._
 import player.item.coin._
 
@@ -257,4 +257,16 @@ trait MoneyEarner extends Entity with InventoryEntity {
 
   //</editor-fold>
 
+}
+
+/**
+ * Contains static final Properties defined by <code>PreWindowScreen</code> dealing with money.
+ */
+object MoneyValues {
+
+   /** The money a Player earns at the beginning of the game. Set by <code>PreWindowScreen</code>.*/
+   val START_MONEY = Property.apply[java.lang.Integer](-1)
+
+   /** The money a Player earns after each TurnCycle. Set by <code>PreWindowScreen</code>.*/
+   val MONEY_PER_TURN = Property.apply[java.lang.Integer](-1)
 }

@@ -108,19 +108,21 @@ class Player(world: WorldLike,
 
    override def toString: String = "Player: " + name
 
-   /** The initial gold per turn amount that the earner gets. __Must not be below 0__. */
-   override protected def initialMoneyPerTurn: Int = 5
+   /** The initial gold per turn amount that the earner gets. __Must not be below 0__.
+     * <code> Defined as MoneyValues.START_MONEY</code>.*/
+   override protected def initialMoneyPerTurn: Int = MoneyValues.MONEY_PER_TURN()
 
-   /** The initial amount of gold that the earner gets. __Must not be below 0__. */
-   override protected def initialMoney: Int = 200
+   /** The initial amount of gold that the earner gets. __Must not be below 0__.
+     * <code> Defined as MoneyValues.START_MONEY</code>.*/
+   override protected def initialMoney: Int = MoneyValues.START_MONEY()
 }
 
 object Player {
 
-  /** the maximum life, which a player can have. It is initalized by PreWindowScreen (notice, that the value will be -1.0 before it) */
+  /** the maximum life, which a player can have. It is initialized by PreWindowScreen (notice, that the value will be -1.0 before it) */
   lazy val MAXIMUM_LIFE = Property.apply[java.lang.Double](-1.0)
 
-  /** the life regeneration of a player. It is initalized by PreWindowScreen (before that the value will be -1.0) */
+  /** the life regeneration of a player. It is initialized by PreWindowScreen (before that the value will be -1.0) */
   lazy val LIFE_REGENERATION = Property.apply[java.lang.Double](-1.0)
 
 }
