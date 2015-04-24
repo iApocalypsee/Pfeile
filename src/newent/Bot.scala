@@ -110,11 +110,13 @@ class Bot(world: WorldLike, spawnPoint: Point, name: String)
 
    override def toString: String = "Bot: " + name
 
-   /** The initial gold per turn amount that the earner gets. __Must not be below 0__. */
-   override protected def initialMoneyPerTurn: Int = 5
+   /** The initial gold per turn amount that the earner gets. __Must not be below 0__.
+     * <code> Defined as MoneyValues.START_MONEY</code>.*/
+   override protected def initialMoneyPerTurn: Int = MoneyValues.MONEY_PER_TURN()
 
-   /** The initial amount of gold that the earner gets. __Must not be below 0__. */
-   override protected def initialMoney: Int = 200
+   /** The initial amount of gold that the earner gets. __Must not be below 0__.
+     * <code> Defined as MoneyValues.START_MONEY</code>. */
+   override protected def initialMoney: Int = MoneyValues.START_MONEY()
 }
 
 object Bot {

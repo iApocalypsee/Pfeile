@@ -8,10 +8,7 @@ import general.Main;
 import general.PfeileContext;
 import general.TimeClock;
 import general.io.FontLoader;
-import newent.Bot;
-import newent.BotStrength;
-import newent.EntityLike;
-import newent.Player;
+import newent.*;
 import scala.concurrent.duration.FiniteDuration;
 
 import java.awt.*;
@@ -31,7 +28,7 @@ public class PreWindowScreen extends Screen {
     private ComboBox selectorComboBox;
 
     /** These are Labels that show the values, that are selected right now */
-    private comp.Label[] labels = new comp.Label [11];
+    private comp.Label[] labels = new comp.Label [13];
 
     /** The StandardSettingButton on the right down corner */
     private comp.Button standardButton;
@@ -75,6 +72,12 @@ public class PreWindowScreen extends Screen {
     /** SpinnerModel for choosing <code>PfeileContext.TURNS_PER_ROUND</code> - "Züge pro Runde" */
     private SpinnerModel spinnerModelTurnsPerRound;
 
+    /** SpinnerModel for choosing "Startgold" */
+    private SpinnerModel spinnerModelStartGold;
+
+    /** SpinnerModel for choosing "Gold pro Zug" */
+    private SpinnerModel spinnerModelGoldPerTurn;
+
     /** backgroundColor */
     private static final Color TRANSPARENT_BACKGROUND = new Color(39, 47, 69, 204);
 
@@ -116,28 +119,27 @@ public class PreWindowScreen extends Screen {
         standardButton = new Button(readyButton.getX(), readyButton.getY() - 100, this, "Standardeinstellung");
         readyButton.setWidth(standardButton.getWidth());
 
+        final String[] labelValues = {
+                "Computerstärke", "Startgeld", "Geld pro Zug",
+                "Pfeilanzahl [frei wählbar]", "Pfeilanzahl [vorher wählbar]",
+                "maximales Leben", "Lebensregeneration", "Schadensmultiplikator",
+                "Züge pro Runde", "Zeit pro Zug", "Handicap [Spieler 1]", "Handicap [Spieler 2]", "Weltgröße"};
+
         int labelPosX = 100;
         int labelPosY = 370;
         int labelYGap = 4;
 
-        labels[0] = new Label(labelPosX, labelPosY, this, "Computerstärke: ");
-        labels[1] = new Label(labelPosX, labelPosY + labels[0].getHeight() + labelYGap, this, "Pfeilanzahl [frei wählbar]: ");
-        labels[2] = new Label(labelPosX, labels[1].getY() + labels[1].getHeight() + labelYGap, this, "Pfeilanzahl [vorher wählbar]: ");
-        labels[3] = new Label(labelPosX, labels[2].getY() + labels[2].getHeight() + labelYGap, this, "maximales Leben: ");
-        labels[4] = new Label(labelPosX, labels[3].getY() + labels[3].getHeight() + labelYGap, this, "Lebensregeneration: ");
-        labels[5] = new Label(labelPosX, labels[4].getY() + labels[4].getHeight() + labelYGap, this, "Schadensmultiplikator: ");
-        labels[6] = new Label(labelPosX, labels[5].getY() + labels[5].getHeight() + labelYGap, this, "Züge pro Runde: ");
-        labels[7] = new Label(labelPosX, labels[6].getY() + labels[6].getHeight() + labelYGap, this, "Zeit pro Zug: ");
-        labels[8] = new Label(labelPosX, labels[7].getY() + labels[7].getHeight() + labelYGap, this, "Handicap [Spieler]: ");
-        labels[9] = new Label(labelPosX, labels[8].getY() + labels[8].getHeight() + labelYGap, this, "Handicap [Computer]: ");
-        labels[10] = new Label(labelPosX, labels[9].getY() + labels[9].getHeight() + labelYGap, this, "Weltgröße: ");
+        labels[0] = new Label(labelPosX, labelPosY, this, labelValues[0] + " :");
+        for (int i = 1; i < labels.length; i++)
+            labels[i] = new Label(labelPosX, labels[i-1].getY() + labels[i-1].getHeight() + labelYGap, this, labelValues[i] + " :");
 
         for (Label label : labels) {
             label.declineInput();
             label.setDeclineInputColor(new Color(202, 199, 246));
         }
 
-        final String[] comboBoxValuesSelector = { "Computerstärke", "Pfeilanzahl [frei wählbar]", "Pfeilanzahl [vorher wählbar]",
+        final String[] comboBoxValuesSelector = { "Computerstärke", "Startgeld", "Geld pro Zug",
+                "Pfeilanzahl [frei wählbar]", "Pfeilanzahl [vorher wählbar]",
                 "maximales Leben", "Lebensregeneration", "Schadensmultiplikator", "Züge pro Runde", "Zeit pro Zug",
                 "Handicap", "Weltgröße"};
 
@@ -182,9 +184,13 @@ public class PreWindowScreen extends Screen {
         confirmDialog.addMouseListener(new MouseAdapterConfirmDialog());
         confirmDialog.setVisible(false);
 
+
+        spinnerModelStartGold = new SpinnerModel(250, 0, 1200, 15);
+        spinnerModelGoldPerTurn = new SpinnerModel(10, 0, 150, 3);
         spinnerModelPreSet = new SpinnerModel(15, 0, 50, 1);
         spinnerModelFreeSet = new SpinnerModel(4, 0, 20, 1);
         spinnerModelTurnsPerRound = new SpinnerModel(7, 1, 40, 1);
+
         spinner = new Spinner<>(boxSelectHigh.getX(), selectorComboBox.getY(), this, spinnerModelPreSet);
         spinner.setVisible(false);
 
@@ -322,6 +328,14 @@ public class PreWindowScreen extends Screen {
             return;
         }
         */
+        if (MoneyValues.START_MONEY().get() == -1) {
+            openConfirmDialog("Select unselected Selections: Startgeld");
+            return;
+        }
+        if (MoneyValues.MONEY_PER_TURN().get() == -1) {
+            openConfirmDialog("Select unselected Selections: Geld pro Zug");
+            return;
+        }
         if (PfeileContext.ARROW_NUMBER_FREE_SET().get() == -1) {
             openConfirmDialog("Select unselected Selections: Pfeilanzahl [frei wählbar]");
             return;
@@ -361,7 +375,6 @@ public class PreWindowScreen extends Screen {
 
         // If it's correctly initialized, the next Screen can be loaded.
         correctInits();
-        ArrowSelectionScreenPreSet.getInstance();
 
         // If there aren't any {@link PfeileContext.ARROW_NUMBER_PRE_SET()} to set, the LoadingWorldScreen can be loaded */
         if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > 0)
@@ -375,36 +388,42 @@ public class PreWindowScreen extends Screen {
         BotStrength.Strength = BotStrength.NORMAL;
         labels[0].setText("Computerstärke: " + "normal");
 
+        MoneyValues.START_MONEY().set(250);
+        labels[1].setText("Startgeld: " + MoneyValues.START_MONEY().get());
+
+        MoneyValues.MONEY_PER_TURN().set(10);
+        labels[2].setText("Geld pro Zug: " + MoneyValues.MONEY_PER_TURN().get());
+
         PfeileContext.ARROW_NUMBER_FREE_SET().set(4);
-        labels[1].setText("Pfeilanzahl [frei wählbar]: " + PfeileContext.ARROW_NUMBER_FREE_SET().get());
+        labels[3].setText("Pfeilanzahl [frei wählbar]: " + PfeileContext.ARROW_NUMBER_FREE_SET().get());
 
         PfeileContext.ARROW_NUMBER_PRE_SET().set(15);
-        labels[2].setText("Pfeilanzahl [vorher wählbar]: " + PfeileContext.ARROW_NUMBER_PRE_SET().get());
+        labels[4].setText("Pfeilanzahl [vorher wählbar]: " + PfeileContext.ARROW_NUMBER_PRE_SET().get());
 
         Player.MAXIMUM_LIFE().set(400.);
-        labels[3].setText("maximales Leben: " + "mittel");
+        labels[5].setText("maximales Leben: " + "mittel");
 
         Player.LIFE_REGENERATION().set(3.);
-        labels[4].setText("Lebensregeneration: " + "mittel");
+        labels[6].setText("Lebensregeneration: " + "mittel");
 
         PfeileContext.DAMAGE_MULTI().set(1.0f);
-        labels[5].setText("Schadensmultiplikator: " + "mittel");
+        labels[7].setText("Schadensmultiplikator: " + "mittel");
 
         PfeileContext.TURNS_PER_ROUND().set(7);
-        labels[6].setText("Züge pro Runde: " + PfeileContext.TURNS_PER_ROUND().get());
+        labels[8].setText("Züge pro Runde: " + PfeileContext.TURNS_PER_ROUND().get());
 
         TimeClock.setTurnTime(new FiniteDuration(2, TimeUnit.MINUTES));
-        labels[7].setText("Zeit pro Zug: " + "2 min");
+        labels[9].setText("Zeit pro Zug: " + "2 min");
 
         PfeileContext.HANDICAP_PLAYER().set((byte) 0);
-        labels[8].setText("Handicap [Spieler]: " + "0%");
+        labels[10].setText("Handicap [Spieler]: " + "0%");
 
         PfeileContext.HANDICAP_KI().set((byte) 0);
-        labels[9].setText("Handicap [Computer]: " + "0%");
+        labels[11].setText("Handicap [Computer]: " + "0%");
 
         PfeileContext.WORLD_SIZE_X().set(28);
         PfeileContext.WORLD_SIZE_Y().set(25);
-        labels[10].setText("Weltgröße: " + "normal");
+        labels[12].setText("Weltgröße: " + "normal");
     }
 
     /** this triggers all action of confirmButton ("Bestätigen"), which also happens by pressing at "b". The usage of a
@@ -429,19 +448,29 @@ public class PreWindowScreen extends Screen {
                 labels[0].setText("Computerstärke: " + boxSelectKI.getSelectedValue());
                 return;
             }
-            case 1 : {
-                // Pfeilanzahl [frei wählbar]
-                PfeileContext.ARROW_NUMBER_FREE_SET().set(spinnerModelFreeSet.getValue());
-                labels[1].setText("Pfeilanzahl [frei wählbar]: " + PfeileContext.ARROW_NUMBER_FREE_SET().get());
+            case 1 : { // Startgold
+                MoneyValues.START_MONEY().set(spinnerModelStartGold.getValue());
+                labels[1].setText("Startgeld: " + spinnerModelStartGold.getValue());
                 return;
             }
-            case 2 : {
-                // Pfeilanzahl [vorher wählbar]
-                PfeileContext.ARROW_NUMBER_PRE_SET().set(spinnerModelPreSet.getValue());
-                labels[2].setText("Pfeilanzahl [vorher wählbar]: " + PfeileContext.ARROW_NUMBER_PRE_SET().get());
+            case 2 : { // Gold pro Zug
+                MoneyValues.MONEY_PER_TURN().set(spinnerModelGoldPerTurn.getValue());
+                labels[2].setText("Geld pro Zug: " + spinnerModelGoldPerTurn.getValue());
                 return;
             }
             case 3 : {
+                // Pfeilanzahl [frei wählbar]
+                PfeileContext.ARROW_NUMBER_FREE_SET().set(spinnerModelFreeSet.getValue());
+                labels[3].setText("Pfeilanzahl [frei wählbar]: " + PfeileContext.ARROW_NUMBER_FREE_SET().get());
+                return;
+            }
+            case 4 : {
+                // Pfeilanzahl [vorher wählbar]
+                PfeileContext.ARROW_NUMBER_PRE_SET().set(spinnerModelPreSet.getValue());
+                labels[4].setText("Pfeilanzahl [vorher wählbar]: " + PfeileContext.ARROW_NUMBER_PRE_SET().get());
+                return;
+            }
+            case 5 : {
                 // maximales Leben
                 if (e != null)
                     boxSelectHigh.triggerListeners(e);
@@ -452,10 +481,10 @@ public class PreWindowScreen extends Screen {
                     case 4: Player.MAXIMUM_LIFE().set(270.0); break;
                     default: Player.MAXIMUM_LIFE().set(400.0);
                 }
-                labels[3].setText("maximales Leben: " + boxSelectHigh.getSelectedValue());
+                labels[5].setText("maximales Leben: " + boxSelectHigh.getSelectedValue());
                 return;
             }
-            case 4 : {
+            case 6 : {
                 // Lebensregeneration
                 if (e != null)
                     boxSelectHigh.triggerListeners(e);
@@ -466,10 +495,10 @@ public class PreWindowScreen extends Screen {
                     case 4: Player.LIFE_REGENERATION().set(1.0); break; // niedrig
                     default: Player.LIFE_REGENERATION().set(3.0); // mittel
                 }
-                labels[4].setText("Lebensregeneration: " + boxSelectHigh.getSelectedValue());
+                labels[6].setText("Lebensregeneration: " + boxSelectHigh.getSelectedValue());
                 return;
             }
-            case 5 : {
+            case 7 : {
                 // Schadensmuliplikator
                 if (e != null)
                     boxSelectHigh.triggerListeners(e);
@@ -480,16 +509,16 @@ public class PreWindowScreen extends Screen {
                     case 4: PfeileContext.DAMAGE_MULTI().set(0.65f); break; // niedrig
                     default: PfeileContext.DAMAGE_MULTI().set(1.0f);       // mittel
                 }
-                labels[5].setText("Schadensmultiplikator: " + boxSelectHigh.getSelectedValue());
+                labels[7].setText("Schadensmultiplikator: " + boxSelectHigh.getSelectedValue());
                 return;
             }
-            case 6 : {
+            case 8 : {
                 // Züge pro Runde
                 PfeileContext.TURNS_PER_ROUND().set(spinnerModelTurnsPerRound.getValue());
-                labels[6].setText("Züge pro Runde: " + spinnerModelTurnsPerRound.getValue());
+                labels[8].setText("Züge pro Runde: " + spinnerModelTurnsPerRound.getValue());
                 return;
             }
-            case 7 : {
+            case 9 : {
                 // Zeit pro Zug: "10min", "5 min", "3 min", "2 min", "1 min", "40sec"
                 if (e != null)
                     boxSelectTime.triggerListeners(e);
@@ -501,10 +530,10 @@ public class PreWindowScreen extends Screen {
                     case 5: TimeClock.setTurnTime(new FiniteDuration(40, TimeUnit.SECONDS)); break;
                     default: TimeClock.setTurnTime(new FiniteDuration(2, TimeUnit.MINUTES));
                 }
-                labels[7].setText("Zeit pro Zug: " + boxSelectTime.getSelectedValue());
+                labels[9].setText("Zeit pro Zug: " + boxSelectTime.getSelectedValue());
                 return;
             }
-            case 8 : {
+            case 10 : {
                 // Handicap
                 if (e != null)
                     boxSelectHandicapPlayer.triggerListeners(e);
@@ -521,7 +550,7 @@ public class PreWindowScreen extends Screen {
                     case 10: PfeileContext.HANDICAP_PLAYER().set((byte) -25); break;
                     default: PfeileContext.HANDICAP_PLAYER().set((byte) 0);
                 }
-                labels[8].setText("Handicap [Spieler]: " + boxSelectHandicapPlayer.getSelectedValue());
+                labels[10].setText("Handicap [Spieler]: " + boxSelectHandicapPlayer.getSelectedValue());
 
                 if (e != null)
                     boxSelectHandicapKI.triggerListeners(e);
@@ -538,10 +567,10 @@ public class PreWindowScreen extends Screen {
                     case 10: PfeileContext.HANDICAP_KI().set((byte) -25); break;
                     default: PfeileContext.HANDICAP_KI().set((byte) 0);
                 }
-                labels[9].setText("Handicap [Computer]: " + boxSelectHandicapKI.getSelectedValue());
+                labels[11].setText("Handicap [Computer]: " + boxSelectHandicapKI.getSelectedValue());
                 return;
             }
-            case 9: {
+            case 11: {
                 // Weltgröße
                 if (e != null)
                     boxSelectSize.triggerListeners(e);
@@ -552,7 +581,7 @@ public class PreWindowScreen extends Screen {
                     case 4: PfeileContext.WORLD_SIZE_X().set(15); PfeileContext.WORLD_SIZE_Y().set(12); break;
                     default: PfeileContext.WORLD_SIZE_X().set(28); PfeileContext.WORLD_SIZE_Y().set(25);
                 }
-                labels[10].setText("Weltgröße: " + boxSelectSize.getSelectedValue());
+                labels[12].setText("Weltgröße: " + boxSelectSize.getSelectedValue());
                 return;
             }
             default: {
@@ -568,106 +597,69 @@ public class PreWindowScreen extends Screen {
     private void triggerSelectorComboBox () {
         switch (selectorComboBox.getSelectedIndex()) {
             case 0: { // Computerstärke
+                setSelectingComponentsNotVisible();
                 boxSelectKI.setVisible(true);
-                spinner.setVisible(false);
-                boxSelectHandicapKI.setVisible(false);
-                boxSelectHandicapPlayer.setVisible(false);
-                boxSelectHigh.setVisible(false);
-                boxSelectSize.setVisible(false);
-                boxSelectTime.setVisible(false);
                 break;
             }
-            case 1: { // Pfeilanzahl [frei wählbar]
+            case 1: { // Startgeld
+                setSelectingComponentsNotVisible();
+                spinner.setSpinnerModel(spinnerModelStartGold);
                 spinner.setVisible(true);
-                spinner.setSpinnerModel(spinnerModelFreeSet);
-                boxSelectHandicapKI.setVisible(false);
-                boxSelectHandicapPlayer.setVisible(false);
-                boxSelectHigh.setVisible(false);
-                boxSelectKI.setVisible(false);
-                boxSelectSize.setVisible(false);
-                boxSelectTime.setVisible(false);
                 break;
             }
-            case 2: { // Pfeilanzahl [vorher wählbar]
+            case 2: { // Geld pro Zug
+                setSelectingComponentsNotVisible();
+                spinner.setSpinnerModel(spinnerModelGoldPerTurn);
+                spinner.setVisible(true);
+                break;
+            }
+            case 3: { // Pfeilanzahl [frei wählbar]
+                setSelectingComponentsNotVisible();
+                spinner.setSpinnerModel(spinnerModelFreeSet);
+                spinner.setVisible(true);
+                break;
+            }
+            case 4: { // Pfeilanzahl [vorher wählbar]
+                setSelectingComponentsNotVisible();
                 spinner.setVisible(true);
                 spinner.setSpinnerModel(spinnerModelPreSet);
-                boxSelectHandicapKI.setVisible(false);
-                boxSelectHandicapPlayer.setVisible(false);
-                boxSelectHigh.setVisible(false);
-                boxSelectKI.setVisible(false);
-                boxSelectSize.setVisible(false);
-                boxSelectTime.setVisible(false);
                 break;
             }
-            case 3: { // maximales Leben
+            case 5: { // maximales Leben
+                setSelectingComponentsNotVisible();
                 boxSelectHigh.setVisible(true);
-                spinner.setVisible(false);
-                boxSelectHandicapKI.setVisible(false);
-                boxSelectHandicapPlayer.setVisible(false);
-                boxSelectKI.setVisible(false);
-                boxSelectSize.setVisible(false);
-                boxSelectTime.setVisible(false);
                 break;
             }
-            case 4: { // Lebensregeneration
+            case 6: { // Lebensregeneration
+                setSelectingComponentsNotVisible();
                 boxSelectHigh.setVisible(true);
-                spinner.setVisible(false);
-                boxSelectHandicapKI.setVisible(false);
-                boxSelectHandicapPlayer.setVisible(false);
-                boxSelectKI.setVisible(false);
-                boxSelectSize.setVisible(false);
-                boxSelectTime.setVisible(false);
                 break;
             }
-            case 5: { // Schadensmultiplikator
+            case 7: { // Schadensmultiplikator
+                setSelectingComponentsNotVisible();
                 boxSelectHigh.setVisible(true);
-                spinner.setVisible(false);
-                boxSelectHandicapKI.setVisible(false);
-                boxSelectHandicapPlayer.setVisible(false);
-                boxSelectKI.setVisible(false);
-                boxSelectSize.setVisible(false);
-                boxSelectTime.setVisible(false);
                 break;
             }
-            case 6: { // Züge pro Runde
+            case 8: { // Züge pro Runde
+                setSelectingComponentsNotVisible();
                 spinner.setVisible(true);
                 spinner.setSpinnerModel(spinnerModelTurnsPerRound);
-                boxSelectHandicapKI.setVisible(false);
-                boxSelectHandicapPlayer.setVisible(false);
-                boxSelectHigh.setVisible(false);
-                boxSelectKI.setVisible(false);
-                boxSelectSize.setVisible(false);
-                boxSelectTime.setVisible(false);
                 break;
             }
-            case 7: { // Zeit pro Zug
+            case 9: { // Zeit pro Zug
+                setSelectingComponentsNotVisible();
                 boxSelectTime.setVisible(true);
-                spinner.setVisible(false);
-                boxSelectHandicapKI.setVisible(false);
-                boxSelectHandicapPlayer.setVisible(false);
-                boxSelectHigh.setVisible(false);
-                boxSelectKI.setVisible(false);
-                boxSelectSize.setVisible(false);
                 break;
             }
-            case 8: { // Handicap
+            case 10: { // Handicap
+                setSelectingComponentsNotVisible();
                 boxSelectHandicapKI.setVisible(true);
-                spinner.setVisible(false);
                 boxSelectHandicapPlayer.setVisible(true);
-                boxSelectHigh.setVisible(false);
-                boxSelectKI.setVisible(false);
-                boxSelectSize.setVisible(false);
-                boxSelectTime.setVisible(false);
                 break;
             }
-            case 9: { // Weltgröße
+            case 11: { // Weltgröße
+                setSelectingComponentsNotVisible();
                 boxSelectSize.setVisible(true);
-                spinner.setVisible(false);
-                boxSelectHandicapKI.setVisible(false);
-                boxSelectHandicapPlayer.setVisible(false);
-                boxSelectHigh.setVisible(false);
-                boxSelectKI.setVisible(false);
-                boxSelectTime.setVisible(false);
                 break;
             }
             default: {
@@ -680,6 +672,18 @@ public class PreWindowScreen extends Screen {
         }
     }
 
+    /** This method should only be used by triggerSelectorComboBox(). It sets every box/spinner .setVisible(false), so
+     * that triggerSelectorComboBox() can set visible, whatever it needs.
+     */
+    private void setSelectingComponentsNotVisible () {
+        spinner.setVisible(false);
+        boxSelectHandicapPlayer.setVisible(false);
+        boxSelectHandicapKI.setVisible(false);
+        boxSelectHigh.setVisible(false);
+        boxSelectKI.setVisible(false);
+        boxSelectSize.setVisible(false);
+        boxSelectTime.setVisible(false);
+    }
 
 
 
