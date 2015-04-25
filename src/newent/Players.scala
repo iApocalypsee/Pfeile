@@ -120,9 +120,9 @@ class Player(world: WorldLike,
 object Player {
 
   /** the maximum life, which a player can have. It is initialized by PreWindowScreen (notice, that the value will be -1.0 before it) */
-  val maximumLife = Property(-1.0)
+  val maximumLife = Property.apply[java.lang.Double](-1.0)
 
   /** the life regeneration of a player. It is initialized by PreWindowScreen (before that the value will be -1.0) */
-  lazy val lifeRegeneration = Property(-1.0)
+  val lifeRegeneration = Property.apply[java.lang.Double](-1.0)
 
 }

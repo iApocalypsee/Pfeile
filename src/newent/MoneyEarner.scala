@@ -265,8 +265,8 @@ trait MoneyEarner extends Entity with InventoryEntity {
 object MoneyValues {
 
    /** The money a Player earns at the beginning of the game. Set by <code>PreWindowScreen</code>.*/
-   val startMoney = Property(-1)
+   val startMoney = Property.apply[java.lang.Integer](-1)
 
    /** The money a Player earns after each TurnCycle. Set by <code>PreWindowScreen</code>.*/
-   val moneyPerTurn = Property(-1)
+   val moneyPerTurn = Property.apply[java.lang.Integer](-1)
 }
