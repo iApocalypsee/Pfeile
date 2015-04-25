@@ -43,7 +43,7 @@ class Player(world: WorldLike,
   override def defaultMovementPoints = 4
   override val pathfinderLogic = new AStarPathfinder(20, { t => true })
   /** The life of the player. Use the getter <code>getLife()</code> (defined in LivingEntity) */
-  override protected lazy val life = new Life(Player.MAXIMUM_LIFE.get, Player.LIFE_REGENERATION.get, Player.MAXIMUM_LIFE.get)
+  override protected lazy val life = new Life(Player.maximumLife.get, Player.lifeRegeneration.get, Player.maximumLife.get)
   private lazy val lifeUI = new LifeUI(Main.getWindowWidth - 200, Main.getWindowHeight - 150, life)
   /** This draws the life (lifeBar and values) to the right-hand corner */
   def drawLifeUI(g: Graphics2D) = {
@@ -110,19 +110,19 @@ class Player(world: WorldLike,
 
    /** The initial gold per turn amount that the earner gets. __Must not be below 0__.
      * <code> Defined as MoneyValues.START_MONEY</code>.*/
-   override protected def initialMoneyPerTurn: Int = MoneyValues.MONEY_PER_TURN()
+   override protected def initialMoneyPerTurn: Int = MoneyValues.moneyPerTurn()
 
    /** The initial amount of gold that the earner gets. __Must not be below 0__.
      * <code> Defined as MoneyValues.START_MONEY</code>.*/
-   override protected def initialMoney: Int = MoneyValues.START_MONEY()
+   override protected def initialMoney: Int = MoneyValues.startMoney()
 }
 
 object Player {
 
   /** the maximum life, which a player can have. It is initialized by PreWindowScreen (notice, that the value will be -1.0 before it) */
-  lazy val MAXIMUM_LIFE = Property.apply[java.lang.Double](-1.0)
+  val maximumLife = Property(-1.0)
 
   /** the life regeneration of a player. It is initialized by PreWindowScreen (before that the value will be -1.0) */
-  lazy val LIFE_REGENERATION = Property.apply[java.lang.Double](-1.0)
+  lazy val lifeRegeneration = Property(-1.0)
 
 }

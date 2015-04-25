@@ -328,11 +328,11 @@ public class PreWindowScreen extends Screen {
             return;
         }
         */
-        if (MoneyValues.START_MONEY().get() == -1) {
+        if (MoneyValues.startMoney().get() == -1) {
             openConfirmDialog("Select unselected Selections: Startgeld");
             return;
         }
-        if (MoneyValues.MONEY_PER_TURN().get() == -1) {
+        if (MoneyValues.moneyPerTurn().get() == -1) {
             openConfirmDialog("Select unselected Selections: Geld pro Zug");
             return;
         }
@@ -348,11 +348,11 @@ public class PreWindowScreen extends Screen {
             openConfirmDialog("Select unselected Selections: Züge pro Runde");
             return;
         }
-        if (Player.MAXIMUM_LIFE().get() == -1) {
+        if (Player.maximumLife().get() == -1) {
             openConfirmDialog("Select unselected Selections: maximales Leben");
             return;
         }
-        if (Player.LIFE_REGENERATION().get() == -1) {
+        if (Player.lifeRegeneration().get() == -1) {
             openConfirmDialog("Select unselected Selections: Lebensregeneration");
             return;
         }
@@ -388,11 +388,11 @@ public class PreWindowScreen extends Screen {
         BotStrength.Strength = BotStrength.NORMAL;
         labels[0].setText("Computerstärke: " + "normal");
 
-        MoneyValues.START_MONEY().set(250);
-        labels[1].setText("Startgeld: " + MoneyValues.START_MONEY().get());
+        MoneyValues.startMoney().set(250);
+        labels[1].setText("Startgeld: " + MoneyValues.startMoney().get());
 
-        MoneyValues.MONEY_PER_TURN().set(10);
-        labels[2].setText("Geld pro Zug: " + MoneyValues.MONEY_PER_TURN().get());
+        MoneyValues.moneyPerTurn().set(10);
+        labels[2].setText("Geld pro Zug: " + MoneyValues.moneyPerTurn().get());
 
         PfeileContext.ARROW_NUMBER_FREE_SET().set(4);
         labels[3].setText("Pfeilanzahl [frei wählbar]: " + PfeileContext.ARROW_NUMBER_FREE_SET().get());
@@ -400,10 +400,10 @@ public class PreWindowScreen extends Screen {
         PfeileContext.ARROW_NUMBER_PRE_SET().set(15);
         labels[4].setText("Pfeilanzahl [vorher wählbar]: " + PfeileContext.ARROW_NUMBER_PRE_SET().get());
 
-        Player.MAXIMUM_LIFE().set(400.);
+        Player.maximumLife().set(400.);
         labels[5].setText("maximales Leben: " + "mittel");
 
-        Player.LIFE_REGENERATION().set(3.);
+        Player.lifeRegeneration().set(3.);
         labels[6].setText("Lebensregeneration: " + "mittel");
 
         PfeileContext.DAMAGE_MULTI().set(1.0f);
@@ -449,12 +449,12 @@ public class PreWindowScreen extends Screen {
                 return;
             }
             case 1 : { // Startgold
-                MoneyValues.START_MONEY().set(spinnerModelStartGold.getValue());
+                MoneyValues.startMoney().set(spinnerModelStartGold.getValue());
                 labels[1].setText("Startgeld: " + spinnerModelStartGold.getValue());
                 return;
             }
             case 2 : { // Gold pro Zug
-                MoneyValues.MONEY_PER_TURN().set(spinnerModelGoldPerTurn.getValue());
+                MoneyValues.moneyPerTurn().set(spinnerModelGoldPerTurn.getValue());
                 labels[2].setText("Geld pro Zug: " + spinnerModelGoldPerTurn.getValue());
                 return;
             }
@@ -475,11 +475,11 @@ public class PreWindowScreen extends Screen {
                 if (e != null)
                     boxSelectHigh.triggerListeners(e);
                 switch (boxSelectHigh.getSelectedIndex()) {
-                    case 0: Player.MAXIMUM_LIFE().set(600.0); break;
-                    case 1: Player.MAXIMUM_LIFE().set(480.0); break;
-                    case 3: Player.MAXIMUM_LIFE().set(320.0); break;
-                    case 4: Player.MAXIMUM_LIFE().set(270.0); break;
-                    default: Player.MAXIMUM_LIFE().set(400.0);
+                    case 0: Player.maximumLife().set(600.0); break;
+                    case 1: Player.maximumLife().set(480.0); break;
+                    case 3: Player.maximumLife().set(320.0); break;
+                    case 4: Player.maximumLife().set(270.0); break;
+                    default: Player.maximumLife().set(400.0);
                 }
                 labels[5].setText("maximales Leben: " + boxSelectHigh.getSelectedValue());
                 return;
@@ -489,11 +489,11 @@ public class PreWindowScreen extends Screen {
                 if (e != null)
                     boxSelectHigh.triggerListeners(e);
                 switch (boxSelectHigh.getSelectedIndex()) {
-                    case 0: Player.LIFE_REGENERATION().set(5.0); break; // hoch
-                    case 1: Player.LIFE_REGENERATION().set(4.0); break;
-                    case 3: Player.LIFE_REGENERATION().set(2.0); break;
-                    case 4: Player.LIFE_REGENERATION().set(1.0); break; // niedrig
-                    default: Player.LIFE_REGENERATION().set(3.0); // mittel
+                    case 0: Player.lifeRegeneration().set(5.0); break; // hoch
+                    case 1: Player.lifeRegeneration().set(4.0); break;
+                    case 3: Player.lifeRegeneration().set(2.0); break;
+                    case 4: Player.lifeRegeneration().set(1.0); break; // niedrig
+                    default: Player.lifeRegeneration().set(3.0); // mittel
                 }
                 labels[6].setText("Lebensregeneration: " + boxSelectHigh.getSelectedValue());
                 return;
@@ -692,19 +692,19 @@ public class PreWindowScreen extends Screen {
      * i.e.<code> Player.LifeRegeneration().get() </code>
      */
     public static void correctInits() {
-        if (Player.LIFE_REGENERATION().get() == 1) { // 5 = hoch; 1 == niedrig
-            Player.LIFE_REGENERATION().set((0.5 * (Player.MAXIMUM_LIFE().get() * 0.008 + 2)));
-        } else if (Player.LIFE_REGENERATION().get() == 2) {
-            Player.LIFE_REGENERATION().set(0.5 * (Player.MAXIMUM_LIFE().get() * 0.001 + 3));
-        } else if (Player.LIFE_REGENERATION().get() == 4) {
-            Player.LIFE_REGENERATION().set(0.5 * (Player.MAXIMUM_LIFE().get() * 0.02 + 4.5));
-        } else if (Player.LIFE_REGENERATION().get() == 5) {
-            Player.LIFE_REGENERATION().set(0.5 * (Player.MAXIMUM_LIFE().get() * 0.025 + 7));
+        if (Player.lifeRegeneration().get() == 1) { // 5 = hoch; 1 == niedrig
+            Player.lifeRegeneration().set((0.5 * (Player.maximumLife().get() * 0.008 + 2)));
+        } else if (Player.lifeRegeneration().get() == 2) {
+            Player.lifeRegeneration().set(0.5 * (Player.maximumLife().get() * 0.001 + 3));
+        } else if (Player.lifeRegeneration().get() == 4) {
+            Player.lifeRegeneration().set(0.5 * (Player.maximumLife().get() * 0.02 + 4.5));
+        } else if (Player.lifeRegeneration().get() == 5) {
+            Player.lifeRegeneration().set(0.5 * (Player.maximumLife().get() * 0.025 + 7));
         } else { // Standard: lifeRegeneration: normal
-            Player.LIFE_REGENERATION().set(0.5 * (Player.MAXIMUM_LIFE().get() * 0.015 + 3.5));
+            Player.lifeRegeneration().set(0.5 * (Player.maximumLife().get() * 0.015 + 3.5));
         }
-        Bot.MAXIMUM_LIFE().set(Player.MAXIMUM_LIFE().get());
-        Bot.LIFE_REGENERATION().set(Player.LIFE_REGENERATION().get());
+        Bot.maximumLife().set(Player.maximumLife().get());
+        Bot.lifeRegeneration().set(Player.lifeRegeneration().get());
     }
 
     /** this updates arrowNumberFreeSetUsable (from Player and Bot)

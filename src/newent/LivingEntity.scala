@@ -1,6 +1,6 @@
 package newent
 
-import general.{Main, LogFacility, PfeileContext}
+import general.{LogFacility, Main, PfeileContext}
 import player.Life
 import player.armour.Armour
 import player.weapon.{RangedWeapon, Weapon}
@@ -24,16 +24,16 @@ trait LivingEntity extends Entity with AttackContainer {
   onTurnCycleEnded += { () =>
      updateQueues()
      if (this.isInstanceOf[Player]) {
-         if (life.getLife + life.getLifeRegeneration > Player.MAXIMUM_LIFE.get)
-            life.setLife(Player.MAXIMUM_LIFE.get)
+         if (life.getLife + life.getLifeRegeneration > Player.maximumLife.get)
+            life.setLife(Player.maximumLife.get)
          else
-             life.setLife(life.getLife + Player.LIFE_REGENERATION.get)
+             life.setLife(life.getLife + Player.lifeRegeneration.get)
      }
      if (this.isInstanceOf[Bot]) {
-        if (life.getLife + life.getLifeRegeneration > Bot.MAXIMUM_LIFE.get)
-           life.setLife(Bot.MAXIMUM_LIFE.get)
+        if (life.getLife + life.getLifeRegeneration > Bot.maximumLife.get)
+           life.setLife(Bot.maximumLife.get)
         else
-           life.setLife(life.getLife + Bot.LIFE_REGENERATION.get)
+           life.setLife(life.getLife + Bot.lifeRegeneration.get)
      }
   }
 

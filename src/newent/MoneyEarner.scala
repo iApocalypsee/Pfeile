@@ -1,6 +1,6 @@
 package newent
 
-import general.{Property, Delegate}
+import general.{Delegate, Property}
 import player.item._
 import player.item.coin._
 
@@ -265,8 +265,8 @@ trait MoneyEarner extends Entity with InventoryEntity {
 object MoneyValues {
 
    /** The money a Player earns at the beginning of the game. Set by <code>PreWindowScreen</code>.*/
-   val START_MONEY = Property.apply[java.lang.Integer](-1)
+   val startMoney = Property(-1)
 
    /** The money a Player earns after each TurnCycle. Set by <code>PreWindowScreen</code>.*/
-   val MONEY_PER_TURN = Property.apply[java.lang.Integer](-1)
+   val moneyPerTurn = Property(-1)
 }

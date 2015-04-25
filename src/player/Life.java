@@ -51,20 +51,20 @@ public class Life {
      */
     @Deprecated
     public Life () {
-        if (Player.MAXIMUM_LIFE().get() <= 0)
-            lifeMax = Player.MAXIMUM_LIFE().get();
+        if (Player.maximumLife().get() <= 0)
+            lifeMax = Player.maximumLife().get();
         else {
             System.err.println("The value for Player.LifeMax().get() is not valid. It might be unset. Life is \"maximales Leben: normal\"");
             lifeMax = 400;
         }
-        if (Player.LIFE_REGENERATION().get() <= 0)
-            lifeRegen = Player.LIFE_REGENERATION().get();
+        if (Player.lifeRegeneration().get() <= 0)
+            lifeRegen = Player.lifeRegeneration().get();
         else {
             System.err.println("The value for Player.LifeRegeneration().get() is not valid. It maight be unset. \"Lebensregeneration: normal\"");
-            if (Player.MAXIMUM_LIFE().get() <= 0)
+            if (Player.maximumLife().get() <= 0)
                 lifeRegen = (int) Math.round(0.5 * (400 * 0.02) + 4.5);
             else
-                lifeRegen = (int) Math.round(0.5 * (Player.LIFE_REGENERATION().get() * 0.02 + 4.5));
+                lifeRegen = (int) Math.round(0.5 * (Player.lifeRegeneration().get() * 0.02 + 4.5));
         }
         life = lifeMax;
     }

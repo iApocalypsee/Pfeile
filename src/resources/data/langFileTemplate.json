@@ -1,0 +1,11 @@
+{
+  "identifier": {
+    "en_EN": "Translation",
+    "de_DE": "Übersetzung",
+    "hr_HR": "Prevod",
+    "unknown_langcode": "you get it..."
+  },
+  "second identifier": {
+    "langcode": "Some other translation"
+  }
+}

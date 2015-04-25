@@ -50,7 +50,7 @@ class Bot(world: WorldLike, spawnPoint: Point, name: String)
   }
 
   /** the life of the bot is introduced with standard values */
-  override protected lazy val life = new Life(Bot.MAXIMUM_LIFE.get, Bot.LIFE_REGENERATION.get, Bot.MAXIMUM_LIFE.get)
+  override protected lazy val life = new Life(Bot.maximumLife.get, Bot.lifeRegeneration.get, Bot.maximumLife.get)
 
   private lazy val lifeUI = new LifeUI(Main.getWindowWidth - 200, Main.getWindowHeight - 150, Main.getContext.getActivePlayer.getLife)
   life.onDeath += { () =>
@@ -100,7 +100,7 @@ class Bot(world: WorldLike, spawnPoint: Point, name: String)
   }
 
   /** the number of arrows the player an still use from this his/her selected usable <code> PfeileContext.ARROW_NUMBER_FREE_SET </code> inventory */
-  val arrowNumberFreeSetUsable = Property.apply[java.lang.Integer](PfeileContext.ARROW_NUMBER_FREE_SET.get)
+  val arrowNumberFreeSetUsable = Property(PfeileContext.ARROW_NUMBER_FREE_SET.get)
 
   /**
     * the power of this KI: <p>
@@ -112,17 +112,17 @@ class Bot(world: WorldLike, spawnPoint: Point, name: String)
 
    /** The initial gold per turn amount that the earner gets. __Must not be below 0__.
      * <code> Defined as MoneyValues.START_MONEY</code>.*/
-   override protected def initialMoneyPerTurn: Int = MoneyValues.MONEY_PER_TURN()
+   override protected def initialMoneyPerTurn: Int = MoneyValues.moneyPerTurn()
 
    /** The initial amount of gold that the earner gets. __Must not be below 0__.
      * <code> Defined as MoneyValues.START_MONEY</code>. */
-   override protected def initialMoney: Int = MoneyValues.START_MONEY()
+   override protected def initialMoney: Int = MoneyValues.startMoney()
 }
 
 object Bot {
   /** The standard maximum life of a bot */
-  lazy val MAXIMUM_LIFE = Property.apply[java.lang.Double](-1.0)
+  val maximumLife = Property(-1.0)
 
   /** The standard life regeneration a bot has */
-  lazy val LIFE_REGENERATION = Property.apply[java.lang.Double](-1.0)
+  val lifeRegeneration = Property(-1.0)
 }
