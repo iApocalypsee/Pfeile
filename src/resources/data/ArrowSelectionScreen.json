@@ -1,0 +1,30 @@
+{
+
+  "ownership": "Pfeile team",
+
+  "arrowsLeftSingular": {
+    "en_EN": "You have one free arrow slot, choose.",
+    "de_DE": "Du hast einen Pfeil übrig, wähle ihn aus."
+  },
+
+  "arrowsLeftPlural": {
+    "en_EN": "You have some free arrow slots, fill them up.",
+    "de_DE": "Du hast Pfeile zum Auswählen übrig, wähle aus!"
+  },
+
+  "remainingArrows": {
+    "en_EN": "Remaining arrows: ",
+    "de_DE": "Übrige Pfeile: "
+  },
+
+  "randomArrow": {
+    "en_EN": "Pick random arrow",
+    "de_DE": "Zufälliger Pfeile"
+  },
+
+  "confirm": {
+    "en_EN": "Confirm",
+    "de_DE": "Bestätigen"
+  }
+
+}

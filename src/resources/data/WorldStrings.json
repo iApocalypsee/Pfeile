@@ -1,0 +1,53 @@
+{
+  "ownership": "Pfeile team",
+
+  "grass": {
+    "en_EN": "Grass",
+    "de_DE": "Gras"
+  },
+
+  "desert": {
+    "en_EN": "Desert",
+    "de_DE": "Wüste"
+  },
+
+  "sea": {
+    "en_EN": "Sea",
+    "de_DE": "Meer"
+  },
+
+  "coast": {
+    "en_EN": "Coast",
+    "de_DE": "Küste"
+  },
+
+  "ocean": {
+    "en_EN": "Ocean",
+    "de_DE": "Ozean"
+  },
+
+  "grassTile": {
+    "en_EN": "Grass tile",
+    "de_DE": "Grasfeld"
+  },
+
+  "seaTile": {
+    "en_EN": "Sea tile",
+    "de_DE": "Meerfeld"
+  },
+
+  "coastTile": {
+    "en_EN": "Coast tile",
+    "de_DE": "Küstenfeld"
+  },
+
+  "oceanTile": {
+    "en_EN": "Ocean tile",
+    "de_DE": "Ozeanfeld"
+  },
+  
+  "desertTile": {
+    "en_EN": "Desert tile",
+    "de_DE": "Wüstenfeld"
+  }
+}
