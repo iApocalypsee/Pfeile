@@ -21,8 +21,8 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
   lazy val getInstance = this
 
   private lazy val worldCreation = {
-    val worldWidth = PfeileContext.WORLD_SIZE_X()
-    val worldHeight = PfeileContext.WORLD_SIZE_Y()
+    val worldWidth = PfeileContext.worldSizeX()
+    val worldHeight = PfeileContext.worldSizeY()
     val creator = new ContextCreator(worldWidth, worldHeight)
 
     // Every time the stage changes, the label has to be changed as well.

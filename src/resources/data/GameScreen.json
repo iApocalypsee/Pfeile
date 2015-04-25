@@ -1,4 +1,7 @@
 {
+
+  "ownership": "Pfeile team",
+
   "endTurnButton": {
     "en_EN": "End turn",
     "de_DE": "Runde beenden"

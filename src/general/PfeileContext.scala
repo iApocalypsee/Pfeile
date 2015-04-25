@@ -155,6 +155,16 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   */
 object PfeileContext {
 
+  /**
+   * Default width of the world.
+   */
+  val DefaultWorldSizeX = 28
+
+  /**
+   * Default height of the world.
+   */
+  val DefaultWorldSizeY = 25
+
   // TODO Not good, static variables which are not exchangeable.
   // It is better to have these variables in a special "Values" class, which we can
   // swap out to provide different values for different games.
@@ -163,25 +173,25 @@ object PfeileContext {
     * this is the number of players (Humans and Bots) in the games.
     * Right now, its always 2.
     */
-  val PLAYER_NUMBER = Property.apply[java.lang.Byte](2 toByte)
+  val playerNumber = Property.apply[java.lang.Integer](2)
 
   /**
     * this is the damage multiplier. Every damage will be multiplied with this value.
     * It is set by PreWindowScreen.
     */
-  val DAMAGE_MULTI = Property.apply[java.lang.Float](-1f)
+  val damageMultiplicator = Property.apply[java.lang.Float]()
 
-  /** the number of arrows, which need to be set before the start of a round. Don't mix it up with <code>ARROW_NUMBER_FREE_SET</code>.*/
-  val ARROW_NUMBER_PRE_SET = Property.apply[java.lang.Integer](-1)
+  /** the number of arrows, which need to be set before the start of a round. Don't mix it up with <code>arrowNumberFreeSet</code>.*/
+  val arrowNumberPreSet = Property.apply[java.lang.Integer]()
 
   /**
     * this is the number of arrow, which can be selected during the round. That's why they can be chosen for a
-    * special purpose. Don't mix it up with <code>ARROW_NUMBER_PRE_SET</code>
+    * special purpose. Don't mix it up with <code>arrowNumberPreSet</code>
     */
-  val ARROW_NUMBER_FREE_SET = Property.apply[java.lang.Integer](-1)
+  val arrowNumberFreeSet = Property.apply[java.lang.Integer]()
 
-  /** this is the total number of arrows. It's <code>ARROW_NUMBER_FREE_SET + ARROW_NUMBER_PRE_SET </code>*/
-  def ARROW_NUMBER_TOTAL = ARROW_NUMBER_FREE_SET.get + ARROW_NUMBER_PRE_SET.get
+  /** this is the total number of arrows. It's <code>arrowNumberFreeSet + arrowNumberPreSet</code>*/
+  def arrowNumberTotal = arrowNumberFreeSet.get + arrowNumberPreSet.get
 
   /**
     * The number of turns per round. A turn of a player ends when the user presses the endTurn-Button;
@@ -189,33 +199,31 @@ object PfeileContext {
     * A new round allows the player to chose from some (3?) possible rewards and the player is able to select new
     * arrowsPreSet. Moreover, the player is allowed to use all arrowsFreeSet again (after selecting, of course).
     */
-  val TURNS_PER_ROUND = Property.apply[java.lang.Integer](-1)
+  val turnsPerRound = Property.apply[java.lang.Integer]()
 
   /**
-    * the handicap of the player.
-    * The value is percentage of support/deterioration saved as java Byte, because their is no use in wasting free memory.
-    * Compare to <code>HANDICAP_KI</code>
+    * How much the player is handicapped.
+    * The value is percentage of support/deterioration.
+    * Compare to <code>handicapAI</code>
     */
-  val HANDICAP_PLAYER = Property.apply[java.lang.Byte](0 toByte)
+  val handicapPlayer = Property.apply[java.lang.Integer](0)
 
   /**
-    * the handicap value of the bot.
-    * Basically, it is the percentage of support/deterioration saved as java Byte, because their is no use in wasting free memory.
-    * Compare to <code>HANDICAP_PLAYER</code>
+    * How much the bot is handicapped.
+    * Basically, it is the percentage of support/deterioration.
+    * Compare to <code>handicapPlayer</code>
     */
-  val HANDICAP_KI = Property.apply[java.lang.Byte](0 toByte)
+  val handicapAI = Property.apply[java.lang.Integer](0)
 
   /**
     * the size of the world in x direction, calculated in Tiles.
-    * The default value is 28.
     */
-  val WORLD_SIZE_X = Property.apply[java.lang.Integer](28)
+  val worldSizeX = Property.apply[java.lang.Integer](DefaultWorldSizeX)
 
   /**
     * the size of the world in y-direction; in Tiles
-    * the default value is 25.
     */
-  val WORLD_SIZE_Y = Property.apply[java.lang.Integer](25)
+  val worldSizeY = Property.apply[java.lang.Integer](DefaultWorldSizeY)
 
   /**
     * Class holding all value information about the game. <p>
@@ -240,4 +248,5 @@ object PfeileContext {
     if (f_result eq null) None
     else Some(f_result)
   }
+
 }

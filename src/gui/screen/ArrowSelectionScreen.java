@@ -205,7 +205,7 @@ public class ArrowSelectionScreen extends Screen {
                             if (inventory.maximumSize() - inventory.currentSize() <= 0) {
                                 warningMessage.setMessage("Das Inventar ist voll: Maximale Inventargröße " + inventory.maximumSize());
                             } else if (Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().get() <= 0){
-                                warningMessage.setMessage("Es wurde bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + PfeileContext.ARROW_NUMBER_FREE_SET().get());
+                                warningMessage.setMessage("Es wurde bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + PfeileContext.arrowNumberFreeSet().get());
 
                                 // Es können jetzt beliebig viele Pfeile eines Types ausgewählt werden
                                 // } else if (inventory.maxStack(selectedIndex) >= inventory.getItemCount(selecteddIndex)) {
@@ -226,7 +226,7 @@ public class ArrowSelectionScreen extends Screen {
                             updateInventoryList();
                         }
                     } else {
-                        warningMessage.setMessage("Es wurde bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + PfeileContext.ARROW_NUMBER_FREE_SET().get());
+                        warningMessage.setMessage("Es wurde bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Sie beträgt: " + PfeileContext.arrowNumberFreeSet().get());
                         warningMessage.activateMessage();
                     }
                     closeConfirmDialogQuestion();

@@ -120,9 +120,22 @@ case class Property[A] private (private var value: Option[A]) {
 
   @inline def map[B](f: (A) => B) = value.map(f)
 
-  @inline def isDefined = value.isDefined
+  /**
+    * Checks if the property has a value associated with it yet.
+    * If this method returns false, the [[general.Property#get()]] method will throw an exception.
+    * Furthermore, the [[general.Property#option()]] method will return [[scala.None]].
+    * @return Value indicating whether the underlying property value is defined.
+    */
+  def isDefined = value.isDefined
 
-  @inline def isEmpty = value.isEmpty
+  /**
+    * Checks if the property has no value associated with it yet.
+    * If this method return true, see [[general.Property#isDefined()]] to study the case in which isDefined()
+    * returns false to see what could happen.
+    * @return Value indicating whether the underlying property value not defined.
+    *         If `true`, then no value has been initialized yet.
+    */
+  def isEmpty = value.isEmpty
 
   /**
     * Applies a custom function to the property without mutating it.

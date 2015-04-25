@@ -57,7 +57,7 @@ class Player(world: WorldLike,
   override protected def initialTeam = new CommandTeam(this, "Team of "+this.name)
 
   /** the number of arrows the player an still use from this his/her selected usable <code> PfeileContext.ARROW_NUMBER_FREE_SET </code> inventory */
-  lazy val arrowNumberFreeSetUsable = Property.apply[java.lang.Integer](PfeileContext.ARROW_NUMBER_FREE_SET.get)
+  lazy val arrowNumberFreeSetUsable = Property.apply[java.lang.Integer](PfeileContext.arrowNumberFreeSet.get)
 
   // Delegate registration only valid after initialization of the actual life object.
   life.onDeath += { () =>
@@ -120,9 +120,9 @@ class Player(world: WorldLike,
 object Player {
 
   /** the maximum life, which a player can have. It is initialized by PreWindowScreen (notice, that the value will be -1.0 before it) */
-  val maximumLife = Property.apply[java.lang.Double](-1.0)
+  val maximumLife = Property.apply[java.lang.Double]()
 
   /** the life regeneration of a player. It is initialized by PreWindowScreen (before that the value will be -1.0) */
-  val lifeRegeneration = Property.apply[java.lang.Double](-1.0)
+  val lifeRegeneration = Property.apply[java.lang.Double]()
 
 }

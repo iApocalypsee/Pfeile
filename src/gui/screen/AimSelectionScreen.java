@@ -316,8 +316,8 @@ public class AimSelectionScreen extends Screen {
             synchronized (containedObjects) {
                 containedObjects.clear();
 
-                for (int x = 0; x < PfeileContext.WORLD_SIZE_X().get(); x++) {
-                    for (int y = 0; y < PfeileContext.WORLD_SIZE_Y().get(); y++) {
+                for (int x = 0; x < PfeileContext.worldSizeX().get(); x++) {
+                    for (int y = 0; y < PfeileContext.worldSizeY().get(); y++) {
                         if (visibleMap.visionStatusOf(x, y) == VisionStatus.Hidden)
                             continue;
                         if (arrow.damageAt(x, y) != 0)
@@ -339,7 +339,7 @@ public class AimSelectionScreen extends Screen {
 
                 // the color is unifiedArrowColor with the alpha value: damage [relative to the maximum damage]
                 impactingColor = new Color(unifiedArrowColor.getRed() / 255f, unifiedArrowColor.getGreen() / 255f, unifiedArrowColor.getBlue() / 255f,
-                        (float) (arrow.damageAt(tile.latticeX(), tile.latticeY()) / (arrow.getAttackValue() * PfeileContext.DAMAGE_MULTI().get())));
+                        (float) (arrow.damageAt(tile.latticeX(), tile.latticeY()) / (arrow.getAttackValue() * PfeileContext.damageMultiplicator().get())));
             }
 
             @Override

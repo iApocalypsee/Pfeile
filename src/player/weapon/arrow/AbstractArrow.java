@@ -76,9 +76,9 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 		super(name, attackVal, ArmingType.MAGIC);
 		setDefence(defenseVal);
 		// Reichweite des Pfeils wird minimal (+/- 1 Tile) an die Entfernung angepasst
-		if (PfeileContext.WORLD_SIZE_X().get() <= 22) {
+		if (PfeileContext.worldSizeX().get() <= 22) {
 			setRange(rangeVal - 1);
-		} else if (PfeileContext.WORLD_SIZE_X().get() < 40) {
+		} else if (PfeileContext.worldSizeX().get() < 40) {
 			setRange(rangeVal);
 		} else {
 			setRange(rangeVal + 1);
@@ -227,7 +227,7 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
             // this the normalized cos (cos(x * 0.5 * Math.PI) of the ratio from the distance from center
             double distanceRatio = Math.cos((currentDistance / getAim().getDamageRadius()) * 0.5 * Math.PI);
             // distanceRatio * distanceRatio: because the curve is more smoothly at the edges.
-            return distanceRatio * distanceRatio * getAttackValue() * PfeileContext.DAMAGE_MULTI().get();
+            return distanceRatio * distanceRatio * getAttackValue() * PfeileContext.damageMultiplicator().get();
         }
     }
 

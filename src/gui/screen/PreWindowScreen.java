@@ -328,35 +328,35 @@ public class PreWindowScreen extends Screen {
             return;
         }
         */
-        if (MoneyValues.startMoney().get() == -1) {
+        if (MoneyValues.startMoney().isEmpty()) {
             openConfirmDialog("Select unselected Selections: Startgeld");
             return;
         }
-        if (MoneyValues.moneyPerTurn().get() == -1) {
+        if (MoneyValues.moneyPerTurn().isEmpty()) {
             openConfirmDialog("Select unselected Selections: Geld pro Zug");
             return;
         }
-        if (PfeileContext.ARROW_NUMBER_FREE_SET().get() == -1) {
+        if (PfeileContext.arrowNumberFreeSet().isEmpty()) {
             openConfirmDialog("Select unselected Selections: Pfeilanzahl [frei wählbar]");
             return;
         }
-        if (PfeileContext.ARROW_NUMBER_PRE_SET().get() == -1) {
+        if (PfeileContext.arrowNumberPreSet().isEmpty()) {
             openConfirmDialog("Select unselected Selections: Pfeilanzahl [vorher wählbar]");
             return;
         }
-        if (PfeileContext.TURNS_PER_ROUND().get() == -1) {
+        if (PfeileContext.turnsPerRound().isEmpty()) {
             openConfirmDialog("Select unselected Selections: Züge pro Runde");
             return;
         }
-        if (Player.maximumLife().get() == -1) {
+        if (Player.maximumLife().isEmpty()) {
             openConfirmDialog("Select unselected Selections: maximales Leben");
             return;
         }
-        if (Player.lifeRegeneration().get() == -1) {
+        if (Player.lifeRegeneration().isEmpty()) {
             openConfirmDialog("Select unselected Selections: Lebensregeneration");
             return;
         }
-        if (PfeileContext.DAMAGE_MULTI().get() == -1f) {
+        if (PfeileContext.damageMultiplicator().isEmpty()) {
             openConfirmDialog("Select unselected Selections: Schadensmultiplikator");
             return;
         }
@@ -364,11 +364,11 @@ public class PreWindowScreen extends Screen {
             openConfirmDialog("Select unselected Selections: Zeit pro Zug");
             return;
         }
-        if (PfeileContext.WORLD_SIZE_X().get() == -1 || PfeileContext.WORLD_SIZE_Y().get() == -1) {
+        if (PfeileContext.worldSizeX().isEmpty() || PfeileContext.worldSizeY().isEmpty()) {
             openConfirmDialog("Select unselected Selections: Weltgröße");
             return;
         }
-        if (PfeileContext.HANDICAP_PLAYER().get() == -1 || PfeileContext.HANDICAP_KI().get() == -1) {
+        if (PfeileContext.handicapPlayer().isEmpty() || PfeileContext.handicapAI().isEmpty()) {
             openConfirmDialog("Select unselected Selections: Handicap");
             return;
         }
@@ -377,7 +377,7 @@ public class PreWindowScreen extends Screen {
         correctInits();
 
         // If there aren't any {@link PfeileContext.ARROW_NUMBER_PRE_SET()} to set, the LoadingWorldScreen can be loaded */
-        if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > 0)
+        if (PfeileContext.arrowNumberPreSet().get() > 0)
             onLeavingScreen(ArrowSelectionScreenPreSet.SCREEN_INDEX);
         else
             onLeavingScreen(LoadingWorldScreen$.MODULE$.SCREEN_INDEX);
@@ -394,11 +394,11 @@ public class PreWindowScreen extends Screen {
         MoneyValues.moneyPerTurn().set(10);
         labels[2].setText("Geld pro Zug: " + MoneyValues.moneyPerTurn().get());
 
-        PfeileContext.ARROW_NUMBER_FREE_SET().set(4);
-        labels[3].setText("Pfeilanzahl [frei wählbar]: " + PfeileContext.ARROW_NUMBER_FREE_SET().get());
+        PfeileContext.arrowNumberFreeSet().set(4);
+        labels[3].setText("Pfeilanzahl [frei wählbar]: " + PfeileContext.arrowNumberFreeSet().get());
 
-        PfeileContext.ARROW_NUMBER_PRE_SET().set(15);
-        labels[4].setText("Pfeilanzahl [vorher wählbar]: " + PfeileContext.ARROW_NUMBER_PRE_SET().get());
+        PfeileContext.arrowNumberPreSet().set(15);
+        labels[4].setText("Pfeilanzahl [vorher wählbar]: " + PfeileContext.arrowNumberPreSet().get());
 
         Player.maximumLife().set(400.);
         labels[5].setText("maximales Leben: " + "mittel");
@@ -406,23 +406,23 @@ public class PreWindowScreen extends Screen {
         Player.lifeRegeneration().set(3.);
         labels[6].setText("Lebensregeneration: " + "mittel");
 
-        PfeileContext.DAMAGE_MULTI().set(1.0f);
+        PfeileContext.damageMultiplicator().set(1.0f);
         labels[7].setText("Schadensmultiplikator: " + "mittel");
 
-        PfeileContext.TURNS_PER_ROUND().set(7);
-        labels[8].setText("Züge pro Runde: " + PfeileContext.TURNS_PER_ROUND().get());
+        PfeileContext.turnsPerRound().set(7);
+        labels[8].setText("Züge pro Runde: " + PfeileContext.turnsPerRound().get());
 
         TimeClock.setTurnTime(new FiniteDuration(2, TimeUnit.MINUTES));
         labels[9].setText("Zeit pro Zug: " + "2 min");
 
-        PfeileContext.HANDICAP_PLAYER().set((byte) 0);
+        PfeileContext.handicapPlayer().set(0);
         labels[10].setText("Handicap [Spieler]: " + "0%");
 
-        PfeileContext.HANDICAP_KI().set((byte) 0);
+        PfeileContext.handicapAI().set(0);
         labels[11].setText("Handicap [Computer]: " + "0%");
 
-        PfeileContext.WORLD_SIZE_X().set(28);
-        PfeileContext.WORLD_SIZE_Y().set(25);
+        PfeileContext.worldSizeX().set(28);
+        PfeileContext.worldSizeY().set(25);
         labels[12].setText("Weltgröße: " + "normal");
     }
 
@@ -460,14 +460,14 @@ public class PreWindowScreen extends Screen {
             }
             case 3 : {
                 // Pfeilanzahl [frei wählbar]
-                PfeileContext.ARROW_NUMBER_FREE_SET().set(spinnerModelFreeSet.getValue());
-                labels[3].setText("Pfeilanzahl [frei wählbar]: " + PfeileContext.ARROW_NUMBER_FREE_SET().get());
+                PfeileContext.arrowNumberFreeSet().set(spinnerModelFreeSet.getValue());
+                labels[3].setText("Pfeilanzahl [frei wählbar]: " + PfeileContext.arrowNumberFreeSet().get());
                 return;
             }
             case 4 : {
                 // Pfeilanzahl [vorher wählbar]
-                PfeileContext.ARROW_NUMBER_PRE_SET().set(spinnerModelPreSet.getValue());
-                labels[4].setText("Pfeilanzahl [vorher wählbar]: " + PfeileContext.ARROW_NUMBER_PRE_SET().get());
+                PfeileContext.arrowNumberPreSet().set(spinnerModelPreSet.getValue());
+                labels[4].setText("Pfeilanzahl [vorher wählbar]: " + PfeileContext.arrowNumberPreSet().get());
                 return;
             }
             case 5 : {
@@ -503,18 +503,18 @@ public class PreWindowScreen extends Screen {
                 if (e != null)
                     boxSelectHigh.triggerListeners(e);
                 switch (boxSelectHigh.getSelectedIndex()) {
-                    case 0: PfeileContext.DAMAGE_MULTI().set(1.9f); break; // hoch
-                    case 1: PfeileContext.DAMAGE_MULTI().set(1.35f); break;
-                    case 3: PfeileContext.DAMAGE_MULTI().set(0.85f); break;
-                    case 4: PfeileContext.DAMAGE_MULTI().set(0.65f); break; // niedrig
-                    default: PfeileContext.DAMAGE_MULTI().set(1.0f);       // mittel
+                    case 0: PfeileContext.damageMultiplicator().set(1.9f); break; // hoch
+                    case 1: PfeileContext.damageMultiplicator().set(1.35f); break;
+                    case 3: PfeileContext.damageMultiplicator().set(0.85f); break;
+                    case 4: PfeileContext.damageMultiplicator().set(0.65f); break; // niedrig
+                    default: PfeileContext.damageMultiplicator().set(1.0f);       // mittel
                 }
                 labels[7].setText("Schadensmultiplikator: " + boxSelectHigh.getSelectedValue());
                 return;
             }
             case 8 : {
                 // Züge pro Runde
-                PfeileContext.TURNS_PER_ROUND().set(spinnerModelTurnsPerRound.getValue());
+                PfeileContext.turnsPerRound().set(spinnerModelTurnsPerRound.getValue());
                 labels[8].setText("Züge pro Runde: " + spinnerModelTurnsPerRound.getValue());
                 return;
             }
@@ -538,34 +538,34 @@ public class PreWindowScreen extends Screen {
                 if (e != null)
                     boxSelectHandicapPlayer.triggerListeners(e);
                 switch (boxSelectHandicapPlayer.getSelectedIndex()) {
-                    case 0: PfeileContext.HANDICAP_PLAYER().set((byte) +25); break;
-                    case 1: PfeileContext.HANDICAP_PLAYER().set((byte) +20); break;
-                    case 2: PfeileContext.HANDICAP_PLAYER().set((byte) +15); break;
-                    case 3: PfeileContext.HANDICAP_PLAYER().set((byte) +10); break;
-                    case 4: PfeileContext.HANDICAP_PLAYER().set((byte) + 5); break;
-                    case 6: PfeileContext.HANDICAP_PLAYER().set((byte) - 5); break;
-                    case 7: PfeileContext.HANDICAP_PLAYER().set((byte) -10); break;
-                    case 8: PfeileContext.HANDICAP_PLAYER().set((byte) -15); break;
-                    case 9: PfeileContext.HANDICAP_PLAYER().set((byte) -20); break;
-                    case 10: PfeileContext.HANDICAP_PLAYER().set((byte) -25); break;
-                    default: PfeileContext.HANDICAP_PLAYER().set((byte) 0);
+                    case 0: PfeileContext.handicapPlayer().set(+25); break;
+                    case 1: PfeileContext.handicapPlayer().set(+20); break;
+                    case 2: PfeileContext.handicapPlayer().set(+15); break;
+                    case 3: PfeileContext.handicapPlayer().set(+10); break;
+                    case 4: PfeileContext.handicapPlayer().set(+ 5); break;
+                    case 6: PfeileContext.handicapPlayer().set(- 5); break;
+                    case 7: PfeileContext.handicapPlayer().set(-10); break;
+                    case 8: PfeileContext.handicapPlayer().set(-15); break;
+                    case 9: PfeileContext.handicapPlayer().set(-20); break;
+                    case 10: PfeileContext.handicapPlayer().set(-25); break;
+                    default: PfeileContext.handicapPlayer().set(0);
                 }
                 labels[10].setText("Handicap [Spieler]: " + boxSelectHandicapPlayer.getSelectedValue());
 
                 if (e != null)
                     boxSelectHandicapKI.triggerListeners(e);
                 switch (boxSelectHandicapKI.getSelectedIndex()) {
-                    case 0: PfeileContext.HANDICAP_KI().set((byte) +25); break;
-                    case 1: PfeileContext.HANDICAP_KI().set((byte) +20); break;
-                    case 2: PfeileContext.HANDICAP_KI().set((byte) +15); break;
-                    case 3: PfeileContext.HANDICAP_KI().set((byte) +10); break;
-                    case 4: PfeileContext.HANDICAP_KI().set((byte) + 5); break;
-                    case 6: PfeileContext.HANDICAP_KI().set((byte) - 5); break;
-                    case 7: PfeileContext.HANDICAP_KI().set((byte) -10); break;
-                    case 8: PfeileContext.HANDICAP_KI().set((byte) -15); break;
-                    case 9: PfeileContext.HANDICAP_KI().set((byte) -20); break;
-                    case 10: PfeileContext.HANDICAP_KI().set((byte) -25); break;
-                    default: PfeileContext.HANDICAP_KI().set((byte) 0);
+                    case 0: PfeileContext.handicapAI().set(+25); break;
+                    case 1: PfeileContext.handicapAI().set(+20); break;
+                    case 2: PfeileContext.handicapAI().set(+15); break;
+                    case 3: PfeileContext.handicapAI().set(+10); break;
+                    case 4: PfeileContext.handicapAI().set(+ 5); break;
+                    case 6: PfeileContext.handicapAI().set(- 5); break;
+                    case 7: PfeileContext.handicapAI().set(-10); break;
+                    case 8: PfeileContext.handicapAI().set(-15); break;
+                    case 9: PfeileContext.handicapAI().set(-20); break;
+                    case 10: PfeileContext.handicapAI().set(-25); break;
+                    default: PfeileContext.handicapAI().set(0);
                 }
                 labels[11].setText("Handicap [Computer]: " + boxSelectHandicapKI.getSelectedValue());
                 return;
@@ -575,11 +575,11 @@ public class PreWindowScreen extends Screen {
                 if (e != null)
                     boxSelectSize.triggerListeners(e);
                 switch (boxSelectSize.getSelectedIndex()) {
-                    case 0: PfeileContext.WORLD_SIZE_X().set(55); PfeileContext.WORLD_SIZE_Y().set(48); break;
-                    case 1: PfeileContext.WORLD_SIZE_X().set(35); PfeileContext.WORLD_SIZE_Y().set(30); break;
-                    case 3: PfeileContext.WORLD_SIZE_X().set(22); PfeileContext.WORLD_SIZE_Y().set(18); break;
-                    case 4: PfeileContext.WORLD_SIZE_X().set(15); PfeileContext.WORLD_SIZE_Y().set(12); break;
-                    default: PfeileContext.WORLD_SIZE_X().set(28); PfeileContext.WORLD_SIZE_Y().set(25);
+                    case 0: PfeileContext.worldSizeX().set(55); PfeileContext.worldSizeY().set(48); break;
+                    case 1: PfeileContext.worldSizeX().set(35); PfeileContext.worldSizeY().set(30); break;
+                    case 3: PfeileContext.worldSizeX().set(22); PfeileContext.worldSizeY().set(18); break;
+                    case 4: PfeileContext.worldSizeX().set(15); PfeileContext.worldSizeY().set(12); break;
+                    default: PfeileContext.worldSizeX().set(28); PfeileContext.worldSizeY().set(25);
                 }
                 labels[12].setText("Weltgröße: " + boxSelectSize.getSelectedValue());
                 return;
@@ -713,12 +713,12 @@ public class PreWindowScreen extends Screen {
 	    for(EntityLike e : Main.getContext().getWorld().entities().javaEntityList()) {
 		    if(e instanceof Player) {
 			    Player player = (Player) e;
-			    player.arrowNumberFreeSetUsable().set(PfeileContext.ARROW_NUMBER_FREE_SET().get());
+			    player.arrowNumberFreeSetUsable().set(PfeileContext.arrowNumberFreeSet().get());
 		    }
 		    else if (e instanceof Bot) {
                 Bot bot = (Bot) e;
                 bot.selectArrowsPreSet();
-                bot.arrowNumberFreeSetUsable().set(PfeileContext.ARROW_NUMBER_FREE_SET().get());
+                bot.arrowNumberFreeSetUsable().set(PfeileContext.arrowNumberFreeSet().get());
             }
 	    }
     }

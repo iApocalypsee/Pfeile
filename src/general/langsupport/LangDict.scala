@@ -144,6 +144,69 @@ class LangDict private (@BeanProperty val owner: String) extends Dynamic {
 object LangDict {
 
   /**
+    * The JSON identifier under which to find the owner's name.
+    */
+  val JsonOwnershipIdentifier = "ownership"
+
+  /**
+    * The string used to denote that the dictionary's JSON does not provide an "ownership" field.
+    */
+  val UnidentifiableOwnerString = "unknown"
+
+  /**
+    * Constructs a [[general.langsupport.LangDict]] by taking a valid JSON string in.
+    * Note that directly after this call returns a new instance of LangDict, that object is not ready for use at once.
+    * Especially large JSON strings take more time to add the translations to the LangDict map.
+    *
+    * Use this method if you want to construct a LangDict object; it's a convenient factory method.
+    * @param json Valid JSON with translation data.
+    * @return A lang dict object.
+    */
+  def fromJson(json: String): LangDict = {
+
+    val jsonDocument = parse(json)
+
+    val extractedActorMessages: Seq[RememberTranslation] = for (
+      JObject(langItemSeq) <- jsonDocument;
+      JField(langItem, translationsList) <- langItemSeq if !langItem.equals(JsonOwnershipIdentifier);
+      JObject(translations) <- translationsList;
+      JField(langCode, JString(translation)) <- translations
+    ) yield {
+      RememberTranslation(langItem, Translation(Language.findLanguage(langCode).get, translation))
+    }
+
+    val jsonDocumentOwner = jsonDocument \ JsonOwnershipIdentifier match {
+      case JString(owner) => owner
+      case _ => UnidentifiableOwnerString
+    }
+
+    val dictionary = new LangDict(jsonDocumentOwner)
+
+    for (message <- extractedActorMessages) dictionary.actor ! message
+
+    dictionary
+  }
+
+  /**
+    * A test string that can be used for testing, obviously...
+    * @return A valid JSON test string, without those pipe characters at the beginning of each line.
+    */
+  def testJson =
+    """
+      |{
+      |  "ownership": "Pfeile team",
+      |  "singleplayer" : {
+      |    "en_EN" : "Singleplayer",
+      |    "de_DE" : "Einzelspieler"
+      |  },
+      |  "multiplayer" : {
+      |    "en_EN" : "Multiplayer",
+      |    "de_DE" : "Mehrspieler"
+      |  }
+      |}
+    """.stripMargin
+
+  /**
     * Message to the [[general.langsupport.LangDict.TranslationProvider]] actor to
     * spit out the translation in given language to the given identifier.
     * @param identifier The identifier to look for.
@@ -160,61 +223,6 @@ object LangDict {
   private[LangDict] case class RememberTranslation(identifier: String, translation: Translation)
 
   class AmbiguousEntryException[A, B](oldKv: (A, B), newKv: (A, B)) extends Exception(s"Ambiguity: old=$oldKv; new=$newKv")
-
-  /**
-    * Constructs a [[general.langsupport.LangDict]] by taking a valid JSON string in.
-    * Note that directly after this call returns a new instance of LangDict, that object is not ready for use at once.
-    * Especially large JSON strings take more time to add the translations to the LangDict map.
-    *
-    * Use this method if you want to construct a LangDict object; it's a convenient factory method.
-    * @param json Valid JSON with translation data.
-    * @return A lang dict object.
-    */
-  def fromJson(owner: String)(json: String): LangDict = {
-
-    val jsonDocument = parse(json)
-    val dictionary = new LangDict(owner)
-
-    val extractedActorMessages: Seq[RememberTranslation] = for (
-      JObject(langItemSeq) <- jsonDocument;
-      JField(langItem, translationsList) <- langItemSeq;
-      JObject(translations) <- translationsList;
-      JField(langCode, JString(translation)) <- translations
-    ) yield RememberTranslation(langItem, Translation(Language.findLanguage(langCode).get, translation))
-
-    for (message <- extractedActorMessages) dictionary.actor ! message
-
-    dictionary
-  }
-
-  /**
-    * Constructs a lang dict with the JSON translation content with ownership signed to the original
-    * Pfeile team.
-    * @param json The JSON data to parse.
-    * @return A lang dict.
-    * @see [[general.langsupport.LangDict#fromJson(java.lang.String, java.lang.String)]]
-    */
-  def byOriginalCreators(json: String) = fromJson(OriginalPfeileCreatorsSign)
-
-  /**
-    * A test string that can be used for testing, obviously...
-    * @return A valid JSON test string, without those pipe characters at the beginning of each line.
-    */
-  def testJson =
-    """
-      |{
-      |  "singleplayer" : {
-      |    "en_EN" : "Singleplayer",
-      |    "de_DE" : "Einzelspieler"
-      |  },
-      |  "multiplayer" : {
-      |    "en_EN" : "Multiplayer",
-      |    "de_DE" : "Mehrspieler"
-      |  }
-      |}
-    """.stripMargin
-
-  val OriginalPfeileCreatorsSign = "Pfeile team"
 
 }
 

@@ -145,14 +145,14 @@ class LootSpawner {
         TerrainLike terrain = Main.getContext().getWorld().terrain();
 
         int count = 0;
-        int maxCount = PfeileContext.WORLD_SIZE_X().get() * PfeileContext.WORLD_SIZE_Y().get();
+        int maxCount = PfeileContext.worldSizeX().get() * PfeileContext.worldSizeY().get();
         int distanceTroops = 0;
         int distancePlayers = 0;
 
 
         do {
-            int spawnX = random.nextInt(PfeileContext.WORLD_SIZE_X().get());
-            int spawnY = random.nextInt(PfeileContext.WORLD_SIZE_Y().get());
+            int spawnX = random.nextInt(PfeileContext.worldSizeX().get());
+            int spawnY = random.nextInt(PfeileContext.worldSizeY().get());
 
             if (terrain.tileAt(spawnX, spawnY) instanceof SeaTile)
                 continue;

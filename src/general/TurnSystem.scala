@@ -101,7 +101,7 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
 
     onGlobalTurnCycleEnded += { () =>
       count += 1
-      if(count >= PfeileContext.TURNS_PER_ROUND()) {
+      if(count >= PfeileContext.turnsPerRound()) {
         onReachedTurnCycleThreshold()
         reset()
       }

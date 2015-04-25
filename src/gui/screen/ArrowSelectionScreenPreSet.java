@@ -90,11 +90,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
         arrowListSelected = new List(50, 200, 200, 350, this, selectedArrows);
         arrowListSelected.setName("arrowListSelected");
 
-        if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > 1) {
-            remainingArrows = new Label(Main.getWindowWidth() - 232, Main.getWindowHeight() - 200, this, "Verfügbare Pfeile definieren!");
-        } else {
-            remainingArrows = new Label(Main.getWindowWidth() - 232, Main.getWindowHeight() - 200, this, "Verfügbaren Pfeil definieren!");
-        }
+        remainingArrows = new Label(Main.getWindowWidth() - 232, Main.getWindowHeight() - 200, this, "Verfügbare Pfeile definieren!");
 
         remainingArrows.setDeclineInputColor(new Color(202, 199, 246));
 
@@ -195,7 +191,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
                         selectedArrows.add("<keine Pfeile>");
                         setArrowListSelected(selectedArrows);
 
-                        if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > 1)
+                        if (PfeileContext.arrowNumberPreSet().get() > 1)
                             remainingArrows.setText("Verfügbare Pfeile auswählen!");
                         else
                             remainingArrows.setText("Verfügbaren Pfeil auswählen!");
@@ -203,10 +199,16 @@ public class ArrowSelectionScreenPreSet extends Screen {
                     } else {
                         setArrowListSelected(selectedArrows);
                         remainingArrows.setText("Übrige Pfeile: "
-                                + (PfeileContext.ARROW_NUMBER_PRE_SET().get() - selectedArrows
+                                + (PfeileContext.arrowNumberPreSet().get() - selectedArrows
                                 .size()));
                     }
                 }
+            }
+        });
+
+        onScreenEnter.registerJava(() -> {
+            if(PfeileContext.arrowNumberPreSet().get() == 1) {
+                remainingArrows.setText("Verfügbaren Pfeil definieren!");
             }
         });
     }
@@ -246,12 +248,12 @@ public class ArrowSelectionScreenPreSet extends Screen {
         public void mouseReleased (MouseEvent e) {
             for (Button buttonListArrow : buttonListArrows) {
                 if (buttonListArrow.getPreciseRectangle().contains(e.getPoint())) {
-                    if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > selectedArrows.size()) {
+                    if (PfeileContext.arrowNumberPreSet().get() > selectedArrows.size()) {
                         if (selectedArrows.get(0).equals("<keine Pfeile>")) {
                             selectedArrows.remove(0);
                         }
                         selectedArrows.add(buttonListArrow.getText());
-                        remainingArrows.setText("Übrige Pfeile: " + (PfeileContext.ARROW_NUMBER_PRE_SET().get() - selectedArrows.size()));
+                        remainingArrows.setText("Übrige Pfeile: " + (PfeileContext.arrowNumberPreSet().get() - selectedArrows.size()));
                         setArrowListSelected(selectedArrows);
                     }
                 }
@@ -261,12 +263,12 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
     /** this will execute all effects the readyButton or pressing at "" will have */
     private void triggerReadyButton () {
-        if (selectedArrows.size() > PfeileContext.ARROW_NUMBER_PRE_SET().get()) {
+        if (selectedArrows.size() > PfeileContext.arrowNumberPreSet().get()) {
             throw new IllegalStateException("To many arrows added: They can't be more than "
-                    + PfeileContext.ARROW_NUMBER_PRE_SET().get());
+                    + PfeileContext.arrowNumberPreSet().get());
         }
 
-        if (selectedArrows.size() < PfeileContext.ARROW_NUMBER_PRE_SET().get()) {
+        if (selectedArrows.size() < PfeileContext.arrowNumberPreSet().get()) {
             openConfirmQuestion("Bitten wählen sie alle Pfeile aus!");
         } else {
             onLeavingScreen(LoadingWorldScreen.getInstance().SCREEN_INDEX);
@@ -278,12 +280,12 @@ public class ArrowSelectionScreenPreSet extends Screen {
         java.util.Random randomGen = new Random();
         String arrow = ArrowHelper.arrowIndexToName(randomGen.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES));
 
-        if (PfeileContext.ARROW_NUMBER_PRE_SET().get() > selectedArrows.size()) {
+        if (PfeileContext.arrowNumberPreSet().get() > selectedArrows.size()) {
             if (selectedArrows.get(0).equals("<keine Pfeile>")) {
                 selectedArrows.remove(0);
             }
             selectedArrows.add(arrow);
-            remainingArrows.setText("Übrige Pfeile: " + (PfeileContext.ARROW_NUMBER_PRE_SET().get() - selectedArrows.size()));
+            remainingArrows.setText("Übrige Pfeile: " + (PfeileContext.arrowNumberPreSet().get() - selectedArrows.size()));
             setArrowListSelected(selectedArrows);
         }
     }
@@ -303,10 +305,10 @@ public class ArrowSelectionScreenPreSet extends Screen {
             if (selectedArrows.get(0).equals("<keine Pfeile>")) {
                 selectedArrows.remove(0);
             }
-            while (selectedArrows.size() < PfeileContext.ARROW_NUMBER_PRE_SET().get()) {
+            while (selectedArrows.size() < PfeileContext.arrowNumberPreSet().get()) {
                 selectedArrows.add(ArrowHelper.arrowIndexToName(randomGen.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES)));
             }
-            remainingArrows.setText("Übrige Pfeile: " + (PfeileContext.ARROW_NUMBER_PRE_SET().get() - selectedArrows.size()));
+            remainingArrows.setText("Übrige Pfeile: " + (PfeileContext.arrowNumberPreSet().get() - selectedArrows.size()));
             setArrowListSelected(selectedArrows);
         }
     }

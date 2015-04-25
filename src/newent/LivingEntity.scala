@@ -77,7 +77,7 @@ trait LivingEntity extends Entity with AttackContainer {
      if (event.weapon.isInstanceOf[RangedWeapon])
         damage = event.weapon.asInstanceOf[RangedWeapon].damageAt(getGridX, getGridY)
      else
-        damage = event.weapon.getAttackValue * PfeileContext.DAMAGE_MULTI.get
+        damage = event.weapon.getAttackValue * PfeileContext.damageMultiplicator.get
 
      Main.getContext.getTurnSystem.teams.apply().foreach { team: Team =>
         if (team.isInTeam(event.aggressor))

@@ -100,7 +100,7 @@ class Bot(world: WorldLike, spawnPoint: Point, name: String)
   }
 
   /** the number of arrows the player an still use from this his/her selected usable <code> PfeileContext.ARROW_NUMBER_FREE_SET </code> inventory */
-  val arrowNumberFreeSetUsable = Property(PfeileContext.ARROW_NUMBER_FREE_SET.get)
+  val arrowNumberFreeSetUsable = Property(PfeileContext.arrowNumberFreeSet.get)
 
   /**
     * the power of this KI: <p>
@@ -121,8 +121,8 @@ class Bot(world: WorldLike, spawnPoint: Point, name: String)
 
 object Bot {
   /** The standard maximum life of a bot */
-  val maximumLife = Property(-1.0)
+  val maximumLife = Property.apply[java.lang.Double]()
 
   /** The standard life regeneration a bot has */
-  val lifeRegeneration = Property(-1.0)
+  val lifeRegeneration = Property.apply[java.lang.Double]()
 }
