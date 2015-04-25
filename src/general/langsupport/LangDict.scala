@@ -7,6 +7,7 @@ import general._
 import org.json4s._
 import org.json4s.native.JsonMethods._
 
+import scala.beans.BeanProperty
 import scala.collection.mutable
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -19,9 +20,12 @@ import scala.languageFeature.dynamics
   *
   * The whole language dictionary structure is threaded, so responses should come up very fast and asynchronously
   * with the help of futures.
+  *
+  * @param owner The person (or group) to which the underlying data of the language dictionary belongs to.
+  *              Use this to avoid collision between multiple authors of translations.
   * @author iApocalypsee
   */
-class LangDict private extends Dynamic {
+class LangDict private (@BeanProperty val owner: String) extends Dynamic {
 
   import LangDict._
 
@@ -112,11 +116,15 @@ class LangDict private extends Dynamic {
     *   import scala.concurrent.Await
     *   import scala.concurrent.duration._
     *
+    *   // Scala way of obtaining the translation of some identifier in a certain language
     *   val translationFuture = getTranslation("someIdentifier", English)
+    *   // Java way of doing that
+    *   scala.concurrent.Future<String> translationFuture = getTranslation("someIdentifier", English$.MODULE$);
+    *
     *   // Either this way, if you are using Scala's implicit conversions
-    *   Await.result(translationFuture, 5.seconds)
+    *   val actualTranslation = Await.result(translationFuture, 5.seconds)
     *   // Or this way, if you use "Java-style"
-    *   Await.result(translationFuture, new FiniteDuration(5, TimeUnit.SECONDS)
+    *   String actualTranslation = Await.result(translationFuture, new FiniteDuration(5, TimeUnit.SECONDS)
     * }}}
     *
     * Time units are not limited to this example: milliseconds, nanoseconds, minutes and days are also valid.
@@ -162,10 +170,10 @@ object LangDict {
     * @param json Valid JSON with translation data.
     * @return A lang dict object.
     */
-  def fromJson(json: String): LangDict = {
+  def fromJson(owner: String)(json: String): LangDict = {
 
     val jsonDocument = parse(json)
-    val dictionary = new LangDict
+    val dictionary = new LangDict(owner)
 
     val extractedActorMessages: Seq[RememberTranslation] = for (
       JObject(langItemSeq) <- jsonDocument;
@@ -178,6 +186,15 @@ object LangDict {
 
     dictionary
   }
+
+  /**
+    * Constructs a lang dict with the JSON translation content with ownership signed to the original
+    * Pfeile team.
+    * @param json The JSON data to parse.
+    * @return A lang dict.
+    * @see [[general.langsupport.LangDict#fromJson(java.lang.String, java.lang.String)]]
+    */
+  def byOriginalCreators(json: String) = fromJson(OriginalPfeileCreatorsSign)
 
   /**
     * A test string that can be used for testing, obviously...
@@ -196,6 +213,8 @@ object LangDict {
       |  }
       |}
     """.stripMargin
+
+  val OriginalPfeileCreatorsSign = "Pfeile team"
 
 }
 
