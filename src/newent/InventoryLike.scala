@@ -71,6 +71,10 @@ trait InventoryLike {
   /** Removes every item from the inventory. The inventory will be empty afterwards.  */
   def clear(): Unit
 
+  override def toString: String = {
+    "Inventory [size: " + currentSize + "/" + maximumSize + "]"
+  }
+
 }
 
 class DefaultInventory extends InventoryLike {

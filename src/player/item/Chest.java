@@ -95,8 +95,10 @@ public abstract class Chest extends Loot {
                         if (isOpen) {
                             // only trigger collect, when the selectedEntity is on the same tile as the loot
                             if (Chest.this.getGridX() == selectedEntity.getGridX() && Chest.this.getGridY() == selectedEntity.getGridY()) {
-                                if (selectedEntity instanceof InventoryEntity)
-                                    collect((InventoryEntity) selectedEntity);
+                                if (selectedEntity instanceof InventoryEntity) {
+                                    if (collect((InventoryEntity) selectedEntity))
+                                        getLootUI().component.removeMouseListener(this);
+                                }
                             }
                         } else {
                             // TODO remove the key

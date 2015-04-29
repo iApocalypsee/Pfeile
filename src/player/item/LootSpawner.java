@@ -74,11 +74,16 @@ class LootSpawner {
         // adding something. Here from everything one.
         spawnedChest.add(new PotionOfHealing((byte) (random.nextInt(3))));
         spawnedChest.add(new PotionOfMovement((byte) (random.nextInt(3))));
-        spawnedChest.add(new PlatinumCoin());
+        if (random.nextFloat() < 0.2f)
+            spawnedChest.add(new PlatinumCoin());
         spawnedChest.add(new GoldCoin());
         spawnedChest.add(new SilverCoin());
         spawnedChest.add(new BronzeCoin());
-        spawnedChest.add(ArrowHelper.instanceArrow(random.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES)));
+
+        for (int i = 0; i < 6; i++) {
+            if (random.nextBoolean())
+                spawnedChest.add(ArrowHelper.instanceArrow(random.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES)));
+        }
 
         Main.getContext().getWorldLootList().add(spawnedChest);
     }
@@ -102,6 +107,9 @@ class LootSpawner {
             BronzeCoin[] coins = CoinHelper.getCoins(random.nextInt(250) + 1);
             for (BronzeCoin coin : coins)
                 spawnedLoot.add(coin);
+
+            if (random.nextFloat() < 0.05)
+                spawnedLoot.add(new SilverCoin());
 
             // with the possibility of 15% a PotionOfDamage is added.
             if (random.nextDouble() < 0.15)

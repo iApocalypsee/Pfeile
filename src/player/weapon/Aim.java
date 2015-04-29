@@ -90,7 +90,7 @@ public class Aim implements BoardPositionable {
      */
     public double getPosXGui () {
         TileLike attackedTile = (TileLike) Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
-        return attackedTile.getComponent().getBounds().getBounds2D().getCenterX();
+        return attackedTile.getComponent().getPreciseRectangle().getCenterX();
     }
 
     /** This returns the more accurate y-position of the center of the attacked Tile then the similar method <code>getPositionGui()</code>.
@@ -101,7 +101,7 @@ public class Aim implements BoardPositionable {
      */
     public double getPosYGui () {
         TileLike attackedTile = (TileLike) Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
-        return attackedTile.getComponent().getBounds().getBounds2D().getCenterY();
+        return attackedTile.getComponent().getPreciseRectangle().getCenterY();
     }
 
     /** The radius of the attack, in which the attacks effects the surrounding area. <p>

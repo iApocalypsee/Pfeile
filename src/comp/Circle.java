@@ -27,8 +27,6 @@ public class Circle implements Shape {
 	 */
 	private double radius;
 
-	private double radiusSq;
-
 	/**
 	 * Constructs a new circle object.
 	 */
@@ -74,8 +72,12 @@ public class Circle implements Shape {
 
 	public void setRadius(double radius) {
 		this.radius = radius;
-		radiusSq = radius * radius;
 	}
+
+    /** returns radius * radius */
+    private double getRadiusSq() {
+        return radius * radius;
+    }
 
 	/**
 	 * Returns an integer {@link java.awt.Rectangle} that completely encloses the
@@ -197,7 +199,7 @@ public class Circle implements Shape {
 		// use the pythagorean theorem to calculate the triangle between xlen, ylen and the middle point
 		double res = Math.pow(xlen, 2) + Math.pow(ylen, 2);
 		// and return the check
-		return res < radiusSq;
+		return res < getRadiusSq();
 	}
 
 	/**

@@ -8,6 +8,7 @@ import player.weapon.arrow.AbstractArrow;
 import scala.collection.JavaConversions;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,6 +40,19 @@ public class AttackDrawer implements Drawable {
             }
         }
         return filteredProgresses;
+    }
+
+    /** Returns an list, which contains every AbstractArrow, which is right somewhere on the world attacking.
+     * Basically, it's {@link AttackDrawer#getAttackProgressesOfArrows()} filtered for AbstractArrows.
+     *
+     * @return list of every attacking arrow
+     */
+    public static List<AbstractArrow> getAttackingArrows () {
+        List<AttackProgress> filteredAttacks = getAttackProgressesOfArrows();
+        List<AbstractArrow> arrowList = new ArrayList<>(filteredAttacks.size());
+        for (AttackProgress process : filteredAttacks)
+            arrowList.add((AbstractArrow) process.event().weapon());
+        return arrowList;
     }
 
     @Override

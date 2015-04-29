@@ -1,17 +1,21 @@
 package player.weapon;
 
 import comp.ImageComponent;
+import general.Main;
 import geom.functions.FunctionCollectionEasing;
 import newent.AttackProgress;
 import player.weapon.arrow.AbstractArrow;
+import world.TileLike;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TimerTask;
 
 public class AttackingCalculator {
+
     /** this value increases every millisecond. It counts the time, after starting the flying process */
     private long milliSec;
+
     /** a time multiplier in milliseconds to calculate Tiles per turn to Tiles per (milli-)second. The higher TIME_MULTI, the longer the arrows will need to fly:
      * <p> <code>TIME_MULTI / attackingArrow.getSpeed()</code>*/
     private static final int TIME_MULTI = 1500;
@@ -27,14 +31,10 @@ public class AttackingCalculator {
         List<AttackProgress> filteredProgresses = AttackDrawer.getAttackProgressesOfArrows();
 
         // if there aren't any arrows to shot, there's nothing to do.
-        if (filteredProgresses.size() <= 0)
+        if (filteredProgresses.isEmpty())
             return;
 
-        List<AbstractArrow> attackingArrows = new LinkedList<>();
-
-        for (AttackProgress filteredProgress : filteredProgresses) {
-            attackingArrows.add((AbstractArrow) filteredProgress.event().weapon());
-        }
+        List<AbstractArrow> attackingArrows = AttackDrawer.getAttackingArrows();
 
         java.util.Timer timer = new java.util.Timer("attackCalculatorScheduler", true);
         // every milliSec has to increase every millisecond
@@ -84,10 +84,12 @@ public class AttackingCalculator {
             // alpha (radiant) is the ankle between the position of the aim and the current Point
             // double alpha = FunctionCollection.angle(attackingArrow.getPosX(), attackingArrow.getPosY(), attackingArrow.getPosXAim(), attackingArrow.getPosYAim());
 
-            double distanceToCover = attackProgress.event().lengthGUI() / attackProgress.event().travelSpeed();
+            double distanceToCover = attackProgress.event().lengthGUI();
 
             int posXOld = attackingArrow.getComponent().getX();
             int posYOld = attackingArrow.getComponent().getY();
+            double posXAimGui = attackingArrow.getAim().getPosXGui();
+            double posYAimGui = attackingArrow.getAim().getPosYGui();
 
             // System.out.println("\nRadius: " + radius + "\tDistance: " + attackProgress.event().lengthGUI() + "\tDistance/Radius: " + (attackProgress.event().lengthGUI() / radius));
             // System.out.println("countRounds: " + attackProgress.event().lengthPerTurn());
@@ -99,33 +101,38 @@ public class AttackingCalculator {
                 //LogFacility.log("MilliSec: " + milliSec + "\tx_current (radius reached): " +
                 //        ((int) ((radius * accuracy) * 1000) / 1000.0) + "\t(x|y): ( " + attackingArrow.getPosX() + " | " + attackingArrow.getPosY() + " )", LogFacility.LoggingLevel.Debug);
 
-
-                // The progress to stretch the normalized position to the real position
-                double progress = distanceToCover / attackProgress.event().lengthGUI();
-
                 // Replace the quadratic_easing_inOut with a Beziér curve?
                 // I don't understand the usage of quadratic_easing_inOut anymore, because I cannot
                 // imagine such complicated things.
 
-                double normalizedChangeInX = FunctionCollectionEasing.quadratic_easing_inOut(
-                        distanceToCover * accuracy, 0, attackingArrow.getAim().getPosXGui() - posXOld, distanceToCover);
-                double changeInX = normalizedChangeInX * progress;
+                double changeInX = FunctionCollectionEasing.quadratic_easing_inOut(
+                        distanceToCover * accuracy, 0, posXAimGui - posXOld, distanceToCover);
 
-                double normalizedChangeInY = FunctionCollectionEasing.quadratic_easing_inOut(
-                        distanceToCover * accuracy, 0, attackingArrow.getAim().getPosYGui() - posYOld, distanceToCover);
-                double changeInY = normalizedChangeInY * progress;
+                double changeInY = FunctionCollectionEasing.quadratic_easing_inOut(
+                        distanceToCover * accuracy, 0, posYAimGui - posYOld, distanceToCover);
 
 
-                final ImageComponent movedComponent = attackingArrow.getComponent();
+                final ImageComponent component = attackingArrow.getComponent();
 
-                movedComponent.setX((int) (posXOld + Math.round(changeInX)));
-                movedComponent.setY((int) (posYOld + Math.round(changeInY)));
+                // refreshing the screen-position
+                component.setX((int) (posXOld + Math.round(changeInX)));
+                component.setY((int) (posYOld + Math.round(changeInY)));
 
-                 try {
+                try {
                     Thread.sleep(15);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+            }
+
+            // refreshing the tile-position
+            TileLike newTile = Main.getContext().getWorld().terrain().findTileJava(
+                    attackingArrow.getComponent().getPreciseRectangle().getCenterX(),
+                    attackingArrow.getComponent().getPreciseRectangle().getCenterY());
+
+            if (newTile != null) {
+                attackingArrow.setGridX(newTile.getGridX());
+                attackingArrow.setGridY(newTile.getGridY());
             }
         }
     }

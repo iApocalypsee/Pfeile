@@ -94,8 +94,10 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
                         Entity selectedEntity = Main.getContext().entitySelection().selectedEntity();
                         // only trigger collect, when the selectedEntity is on the same tile as the loot
                         if (Loot.this.getGridX() == selectedEntity.getGridX() && Loot.this.getGridY() == selectedEntity.getGridY()) {
-                            if (selectedEntity instanceof InventoryEntity)
-                                collect((InventoryEntity) selectedEntity);
+                            if (selectedEntity instanceof InventoryEntity) {
+                                if (collect((InventoryEntity) selectedEntity))
+                                    getLootUI().component.removeMouseListener(this);
+                            }
                         }
                     });
 
@@ -103,7 +105,6 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
                     x.setName("Collect Loot Listener");
                     x.start();
                 }
-
             }
         });
     }
