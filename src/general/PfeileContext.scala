@@ -116,7 +116,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   def getTimeClock = _lazyTimeObj
 
   // need instance WorldLootList after TurnSystem initializing.
-  private lazy val _worldLootList: WorldLootList = new WorldLootList
+  private lazy val _worldLootList: WorldLootList = new WorldLootList(this)
 
   /**
     * It's the list of every loot, which is placed somewhere in the world. Use it to draw all loots, or to get a Loot.

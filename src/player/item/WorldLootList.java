@@ -1,8 +1,7 @@
 package player.item;
 
-import comp.AbstractDisplayRepresentable;
 import general.JavaInterop;
-import general.Main;
+import general.PfeileContext;
 import gui.Drawable;
 import newent.*;
 import scala.collection.Seq;
@@ -25,23 +24,30 @@ public class WorldLootList implements Drawable {
     /** this spawn the loot automatically. It registers the spawn calls to listener of turnSystem */
     private final LootSpawner lootSpawner;
 
+    /**
+     * The context on which this world loot list is operating on.
+     * For decoupling reasons. Previous implementations relied too much on initialization of global variables.
+     */
+    private final PfeileContext context;
+
     /** creating a new WorldLootList with the default size 18 [as java.util.ArrayList].
      * It also creates a new List for every visible Loot (from the view of the activePlayer) and registers
      * the {@link WorldLootList#updateVisibleLoot()} to {@link newent.Entity#onLocationChanged()} and
      * {@link general.TurnSystem#onTurnGet()}.
      * */
-    public WorldLootList () {
+    public WorldLootList (PfeileContext context) {
+        this.context = context;
         lootList = new ArrayList<>(20);
         lootVisibleList = new ArrayList<>(12);
-        lootSpawner = new LootSpawner();
+        lootSpawner = new LootSpawner(context);
 
-        Main.getContext().turnSystem().onTurnGet().registerJava(team -> {
+        context.turnSystem().onTurnGet().registerJava(team -> {
             updateVisibleLoot();
         });
 
         // every time, when the location of a player has changed, the list of every not-hidden loot must update itself.
         // ==> {@link WorldLootList#updateVisibleLoot()} is registered to the "onLocationChanged"-Delegate of every Player.
-        final Seq<Team> teamSeq = Main.getContext().getTurnSystem().teams().apply();
+        final Seq<Team> teamSeq = context.getTurnSystem().teams().apply();
         teamSeq.foreach(JavaInterop.asScala(team -> {
             Player player = ((CommandTeam) team).getHead();
             player.onLocationChanged().registerJava(locationChangedEvent -> {
@@ -110,7 +116,7 @@ public class WorldLootList implements Drawable {
      * by a Delegate.
      * */
     public void updateVisibleLoot () {
-        final VisionMap visibleMap = Main.getContext().getActivePlayer().visionMap();
+        final VisionMap visibleMap = context.getActivePlayer().visionMap();
 
         synchronized (lootVisibleList) {
             lootVisibleList.clear();

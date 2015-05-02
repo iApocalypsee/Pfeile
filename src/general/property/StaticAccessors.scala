@@ -26,12 +26,12 @@ trait StaticAccessors[A] extends PropertyBase[A] with AccessorStyle[StaticAccess
     * Ditto.
     * @return A possibly transformed value of the property. Depends on the static getter.
     */
-  override final def get = staticGetter(super.get)
+  override def get = staticGetter(super.get)
 
   /**
     * Overrides the set method so that it uses the static setter to transform the value.
     * @param x The value to set the property to.
     */
-  override final def set(x: A) = super.set(staticSetter(x))
+  override def set(x: A) = super.set(staticSetter(x))
 
 }

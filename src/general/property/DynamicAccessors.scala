@@ -46,7 +46,7 @@ trait DynamicAccessors[A] extends PropertyBase[A] with AccessorStyle[DynamicAcce
   def appendGetterJava(x: Function[A, A]): Unit = appendGetter(JavaInterop.asScala(x))
   def appendSetterJava(x: Function[A, A]): Unit = appendSetter(JavaInterop.asScala(x))
 
-  override final def get = dynamicGetter(super.get)
+  override def get = dynamicGetter(super.get)
 
-  override final def set(x: A) = super.set(dynamicSetter(x))
+  override def set(x: A) = super.set(dynamicSetter(x))
 }

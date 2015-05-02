@@ -24,9 +24,17 @@ import java.util.Random;
  * LootSpawner is created in WorldLootList. Do not create it twice.
  */
 class LootSpawner {
+
+    /**
+     * The context on which this loot spawner. is operating on.
+     * For decoupling reasons. Previous implementations relied too much on initialization of global variables.
+     */
+    private final PfeileContext context;
+
     private Random random;
 
-    public LootSpawner () {
+    public LootSpawner(PfeileContext context) {
+        this.context = context;
         random = new Random();
 
         LoadingWorldScreen.getInstance().onScreenLeft.registerOnceJava(screenChangedEvent -> {
@@ -52,7 +60,7 @@ class LootSpawner {
             }
         });
 
-        Main.getContext().getTurnSystem().onGlobalTurnCycleEnded().registerJava(() -> {
+        context.getTurnSystem().onGlobalTurnCycleEnded().registerJava(() -> {
             // Just spawn one or two loots with a possibility of 50% each.
             if (random.nextBoolean())
                 spawningAnyLoot();
@@ -85,7 +93,7 @@ class LootSpawner {
                 spawnedChest.add(ArrowHelper.instanceArrow(random.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES)));
         }
 
-        Main.getContext().getWorldLootList().add(spawnedChest);
+        context.getWorldLootList().add(spawnedChest);
     }
 
     /**
@@ -134,7 +142,7 @@ class LootSpawner {
                 spawnedLoot.add(ArrowHelper.instanceArrow(random.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES)));
         }
 
-        Main.getContext().getWorldLootList().add(spawnedLoot);
+        context.getWorldLootList().add(spawnedLoot);
     }
 
     /**
@@ -193,7 +201,7 @@ class LootSpawner {
      * @return <code>true</code> - if there is any entity near the position (<code>posX</code>|<code>posY</code>) in the radius
      */
     private boolean isEntityNear (int posX, int posY, int radiusTroops, int radiusPlayers) {
-        java.util.List<EntityLike> entityList = Main.getContext().getWorld().entities().javaEntityList();
+        java.util.List<EntityLike> entityList = context.getWorld().entities().javaEntityList();
 
         for (EntityLike entity : entityList) {
             if (entity instanceof Player || entity instanceof Bot) {
