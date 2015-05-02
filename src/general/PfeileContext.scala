@@ -55,9 +55,6 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     turnSystem.onTurnEnded += { team =>
       GameScreen.getInstance().lockUI()
 
-      // looks weird, but with a static method I can't manage the thread
-      new AttackingCalculator().arrowsFlying()
-
       GameScreen.getInstance().releaseUI()
 
     }
@@ -72,6 +69,10 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     LogFacility.log(s"Players in turn system: ${turnSystem.teams()}")
 
     turnSystem.onGlobalTurnCycleEnded += { () =>
+
+      // looks weird, but with a static method I can't manage the thread
+      new AttackingCalculator().arrowsFlying()
+
       // Notify the tiles first that the turn cycle has been completed.
       // Primarily, this for loop is written to update the arrow queues of the tiles.
       for (y <- 0 until _world.terrain.height) {

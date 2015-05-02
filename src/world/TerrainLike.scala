@@ -2,7 +2,7 @@ package world
 
 import world.brush.TileTypeBrush
 
-import scala.collection.{JavaConversions, mutable}
+import scala.collection.mutable
 import scala.util.Random
 
 /** Base trait for all terrain types.
@@ -69,13 +69,52 @@ trait TerrainLike {
 
   /** Ditto. */
   def javaTiles = {
-    val ret = mutable.ArrayBuffer[TileLike]()
+    val ret = new java.util.ArrayList[TileLike](height * width)
     for(y <- 0 until height) {
       for(x <- 0 until width) {
-        ret += tileAt(x, y)
+        ret.add(tileAt(x, y))
       }
     }
-    JavaConversions.bufferAsJavaList(ret)
+    ret
+  }
+
+  /**
+   * Finds the tile at the gui-position (posX|posY).
+   * <p>
+   * <code>val ret = tiles.filter(tile =>
+      tile.component.getBounds.contains(posX, posY))
+   * </code>
+   * <p>
+   *   <code> if (ret.isEmpty()) null
+   *      <p> else null
+   *   </code>
+   *
+   *
+   * @param posX the x-position on the screen / of a component
+   * @param posY the y-position on the screen / of a component
+   * @return the tile, or null if the position out of the map ends
+   */
+  def findTile(posX: Double, posY: Double): TileType = {
+    val ret = tiles.filter(tile => {
+      tile.component.getBounds.contains(posX, posY)
+    })
+
+    if (ret.isEmpty)
+      null.asInstanceOf[TileType]
+    else
+      ret.head
+  }
+
+  /**
+   * <b> Description in TileLike#findTile(posX, posY). </b>
+   * <p>
+   * Java-Compiler has Problems with <code>TileType</code>, so if you don't want to cast, this method will return a
+   * TileLike.
+   *
+   * @return TerrainLike#findTile(posX, posY)
+   */
+  def findTileJava(posX: Double, posY: Double): TileLike = {
+    findTile(posX, posY)
   }
 
   def generate(r: Random = new Random)(seed: Long = r.nextLong( )): Unit

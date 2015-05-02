@@ -66,6 +66,9 @@ public interface Collectible {
                 GameScreen.getInstance().setWarningMessage(loot.getName() + " konnte nicht entfernt werden.");
                 GameScreen.getInstance().activateWarningMessage();
                 LogFacility.log(loot.toString() + " konnte nicht entfernt werden", LogFacility.LoggingLevel.Error);
+
+                if(loot.getStoredItems().isEmpty())
+                    removed = true;
             }
 
             // the money has changed probably
@@ -74,6 +77,10 @@ public interface Collectible {
             return removed;
 
         } else {
+            GameScreen.getInstance().setWarningMessage("Das Inventar ist voll! Maximal Größe: " + inventory.maximumSize()
+                    + " | Aktuelle Größe: " + inventory.currentSize());
+            GameScreen.getInstance().activateWarningMessage();
+            LogFacility.log("The inventory is full: " + inventory.toString() + " at adding: " + loot.toString(), LogFacility.LoggingLevel.Info);
             return false;
         }
     }

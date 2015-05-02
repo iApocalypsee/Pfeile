@@ -1,5 +1,6 @@
 package player.item;
 
+import comp.AbstractDisplayRepresentable;
 import general.JavaInterop;
 import general.Main;
 import gui.Drawable;
@@ -14,7 +15,6 @@ import java.util.List;
  * The <code>WorldLootList</code> is saved in PfeileContext. This class provides the information need to store all loots,
  * that are placed in world. Calling the draw method here allows the user to draw every loot saved in the List by drawing
  * it's LootUI.
- * TODO Use [[AbstractDisplayRepresentable]]. It's a better alternative.
  */
 public class WorldLootList implements Drawable {
     private final List<Loot> lootList;
@@ -76,12 +76,10 @@ public class WorldLootList implements Drawable {
             removed = lootList.remove(collectedLoot);
         }
 
-        if (removed) {
+        if (removed)
             updateVisibleLoot();
-            return true;
-        } else {
-            return false;
-        }
+
+        return removed;
     }
 
     /**
@@ -98,6 +96,7 @@ public class WorldLootList implements Drawable {
      * Returns the ArrayList of Loots, which are visible ({@link newent.VisionStatus#Revealed} or {@link newent.VisionStatus#Visible})
      * by the activePlayer. Don't change the returned lootList itself, only the loots inside.
      * Use, whenever possible the methods of WorldLootList itself.
+     * <b>Don't forget to synchronize changes in visibleLoots</b>
      *
      * @return the list of every visible loot (by the {@link general.PfeileContext#getActivePlayer()})
      */

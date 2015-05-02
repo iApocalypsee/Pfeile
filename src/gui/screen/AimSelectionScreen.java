@@ -2,6 +2,7 @@ package gui.screen;
 
 import animation.AnimatedLine;
 import comp.Button;
+import comp.Circle;
 import comp.Component;
 import comp.WarningMessage;
 import general.Main;
@@ -179,6 +180,12 @@ public class AimSelectionScreen extends Screen {
 			this.evt = evt;
 		}
 
+        boolean isTileInRangeOfArrow (TileLike tile, int gridXPlayer, int gridYPlayer) {
+            AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
+            Circle circleAroundPlayer = new Circle(gridXPlayer, gridYPlayer, arrow.getRange());
+            return circleAroundPlayer.contains(tile.getGridX(), tile.getGridY());
+        }
+
 		@Override
 		public void run() {
 			super.run();
@@ -200,6 +207,9 @@ public class AimSelectionScreen extends Screen {
 		                return;
 	                } if(playerX == tileWrapper.latticeX() && playerY == tileWrapper.latticeY()) {
                         warningMessage.setMessage("Selbstangriff nicht möglich!");
+                        warningMessage.activateMessage();
+                    } else if (!isTileInRangeOfArrow(tileWrapper, playerX, playerY)) {
+                        warningMessage.setMessage("Dieses Feld ist außerhalb der Reichweite des Pfeils!");
                         warningMessage.activateMessage();
                     } else {
 		                posX_selectedField = tileX;

@@ -66,12 +66,12 @@ public abstract class RangedWeapon extends Weapon {
      */
     public abstract double damageAt (int posX, int posY);
 	
-	/** Die Grundreichweite der Waffe (ggf. innerhalb der ableitenden Klasse noch Wert 'rangeCurrent') */
+	/** The range of the weapon in Tiles. May be 'rangeCurrent' from previous implementations (This is correct one). */
 	public double getRange() {
 		return range;
 	}
-	
-	/** Die Grundreichweite der Waffe (ggf. innerhalb der ableitenden Klasse noch Wert 'rangeCurrent') */
+
+    /** The range of the weapon in Tiles. May be 'rangeCurrent' from previous implementations (This is correct one). */
 	public void setRange(double range) {
 		this.range = range;
 	}
