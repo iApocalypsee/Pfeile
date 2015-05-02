@@ -52,18 +52,20 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     val turnSystem = new TurnSystem(() => for (player <- world.entities.entityList.filterType(classOf[Player])) yield player.belongsTo.team)
 
     // Notifies the entities in the world that a turn has been ended
-    turnSystem.onTurnEnded += { _ =>
+    turnSystem.onTurnEnded += { team =>
       GameScreen.getInstance().lockUI()
 
       // looks weird, but with a static method I can't manage the thread
       new AttackingCalculator().arrowsFlying()
 
       GameScreen.getInstance().releaseUI()
+
     }
 
     turnSystem.onTurnGet += {
       case playerTeam: CommandTeam =>
         activePlayer = playerTeam.head
+        GameScreen.getInstance().getMoneyDisplay.retrieveDataFrom(playerTeam.head)
       case _ => ???
     }
 

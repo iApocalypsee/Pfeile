@@ -253,7 +253,7 @@ public class GameScreen extends Screen implements FrameContainer {
     /**
      * @return the small box, which shows the current money of the player.
      */
-    MoneyDisplay getMoneyDisplay () {
+    public MoneyDisplay getMoneyDisplay () {
         return moneyDisplay;
     }
 

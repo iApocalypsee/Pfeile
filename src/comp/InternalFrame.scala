@@ -3,7 +3,7 @@ package comp
 import java.awt._
 import java.awt.event.{MouseAdapter, MouseEvent}
 
-import general.{Delegate, LogFacility}
+import general.{Delegate, LogFacility, Property}
 import gui.FrameContainer
 import gui.screen.Screen
 
@@ -40,6 +40,15 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
       frameContainer.frameContainer.addFrame(this)
     case _ => LogFacility.log("Frame cannot be added to screen; not a [[FrameContainer]] instance", "Warning")
   }
+
+  /**
+    * The color that the top bar is using.
+    * Don't put null in there.
+    */
+  val topBarColor = Property(FrameStyle.DefaultTopBarColor)
+  topBarColor.appendSetter { color => require(color != null); color }
+
+  val background: Property[ImageLike] = Property(new SolidColor(FrameStyle.DefaultBackgroundColor))
 
   @volatile private var comps = Seq.empty[Component]
 
@@ -109,16 +118,10 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
   }
 
   override def draw(g: Graphics2D) = {
-    g.setColor(FrameStyle.InnerColor)
-    g.fillRect(getX, getY, getWidth, getHeight)
 
-//    syncComps.foreach(e => synchronized {
-//      if (getBounds.intersects(e.getBounds.getBounds2D)) {
-//        e.draw(g)
-//      }
-//    })
+    background.get.drawImage(g, getX, getY, getWidth, getHeight)
 
-    synchronized(for(comp <- syncComps) {
+    synchronized(for (comp <- syncComps) {
       comp.drawChecked(g)
     })
 
@@ -130,7 +133,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     val wasVisible = isVisible
     super.setVisible(vvvvvv)
     if (vvvvvv && !wasVisible) onOpened()
-    else if(!vvvvvv && wasVisible) onClosed()
+    else if (!vvvvvv && wasVisible) onClosed()
   }
 
   /**
@@ -164,7 +167,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     }
 
     override def draw(g: Graphics2D): Unit = {
-      g.setColor(FrameStyle.TopBarColor)
+      g.setColor(FrameStyle.DefaultTopBarColor)
       g.fill(getBounds)
     }
 
@@ -185,7 +188,7 @@ object InternalFrame {
     /** A grayish-turquoise color. Without transparency yet. */
     lazy val MouseColor_Outer = new Color(0x77B595)
 
-    lazy val InnerColor = new Color(45, 45, 45, 75)
+    lazy val DefaultBackgroundColor = new Color(45, 45, 45, 75)
 
     /** Standard red. Nearly standard red. */
     lazy val CloseButtonColor_Inner = new Color(0xFF672B)
@@ -194,7 +197,7 @@ object InternalFrame {
     lazy val CloseButton_DrawStroke = new BasicStroke(2.5f)
 
     /** Grayish color with more opaque style, specially picked for the top bar. */
-    lazy val TopBarColor = new Color(87, 87, 87, 95)
+    lazy val DefaultTopBarColor = new Color(87, 87, 87, 95)
 
     lazy val CommonInset = 2
 

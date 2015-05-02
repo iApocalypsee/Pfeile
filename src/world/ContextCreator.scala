@@ -4,6 +4,8 @@ import java.awt.Point
 
 import general.io.StageDescriptable
 import general.{Main, PfeileContext, Property, StageOrganized}
+import gui.screen.ArrowSelectionScreen
+import misc.ItemInitialization
 import newent.Player
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -20,34 +22,23 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
   lazy val sizeY = Property(initHeight)
   
   def createWorld(): Future[PfeileContext] = Future {
-    val world = instantiateWorld()
-    populateWorld(world)
+    val world = execute(new InstantiatorStage)
+    execute(new PopulatorStage(world))
+    execute(new OtherStuffStage(world))
     world
-  }
-
-  private def instantiateWorld(): PfeileContext = {
-    val instantiator = new Instantiator
-    currentStage set instantiator
-    instantiator.executeStage()
-  }
-
-  private def populateWorld(context: PfeileContext): PfeileContext = {
-    val populator = new Populator(context)
-    currentStage set populator
-    populator.executeStage()
   }
 
   /** Populates the world.
     *
     * TODO The implementation is a whole mess; I am going through the code in the next time.
     */
-  private[ContextCreator] class Populator(val context: PfeileContext) extends StageDescriptable[PfeileContext] {
+  private[ContextCreator] class PopulatorStage(val context: PfeileContext) extends StageDescriptable[Unit] {
 
     override def stageName = "Populating..."
 
     /** The implementation of the stage. */
     override protected def executeStageImpl() = {
-      // TODO This stage does not look nice.
+      // TODO This stage does not look nice. Very imperative and ugly.
       var spawnPoint: Point = null
       var spawnPointEnemy: Point = null
       val randomGen: Random = new Random
@@ -82,29 +73,11 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
 
       context.world.entities += act
       context.world.entities += opponent
-
-      /*
-      // gui position of player "act"
-      var endComponent = context.getWorld.terrain.tileAt(spawnPoint.x, spawnPoint.y).component
-      act.component.setSourceShape(endComponent.getSourceShape)
-      act.component.resetPosition()
-      act.component.setX(endComponent.getX)
-      act.component.setY(endComponent.getY)
-
-      // setting gui position of player "opponent"
-      endComponent = context.getWorld.terrain.tileAt(spawnPointEnemy.x, spawnPointEnemy.y).component
-      opponent.component.setSourceShape(endComponent.getSourceShape)
-      opponent.component.resetPosition()
-      opponent.component.setX(endComponent.getX)
-      opponent.component.setY(endComponent.getY)
-      */
-
-      context
     }
   }
 
   /** Instantiates the world with its terrain. */
-  private[ContextCreator] class Instantiator extends StageDescriptable[PfeileContext] {
+  private[ContextCreator] class InstantiatorStage extends StageDescriptable[PfeileContext] {
 
     /** The name of the stage. */
     override def stageName = "Creating world..."
@@ -119,6 +92,24 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       context.world = world
       context
     }
+  }
+  
+  private[ContextCreator] class OtherStuffStage(val context: PfeileContext) extends StageDescriptable[Unit] {
+    /** The implementation of the stage. */
+    override protected def executeStageImpl() = {
+      // the loot gets initialized before WorldLootList (--> LootSpawner) uses them. The Main-Thread should not need
+      // to wait for the images to load.
+      ItemInitialization.initializeLoots()
+
+      ArrowSelectionScreen.getInstance().init()
+
+      // Finally, I need to ensure that WorldLootList and LootSpawner are initialized to register their methods.
+      // (scala lazy val WorldLootList). Furthermore, it's save, that the activePlayer can see loots around him.
+      context.getWorldLootList.updateVisibleLoot()
+    }
+
+    /** The name of the stage. */
+    override def stageName = "Applying other stuff..."
   }
 
 }

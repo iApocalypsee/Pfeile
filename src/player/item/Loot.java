@@ -2,6 +2,8 @@ package player.item;
 
 import comp.ImageComponent;
 import general.Main;
+import general.Property;
+import general.PropertyWorkaround;
 import gui.screen.GameScreen;
 import newent.Entity;
 import newent.InventoryEntity;
@@ -29,7 +31,7 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
     protected int gridY;
 
     /** Subclasses must override this value */
-    protected LootUI lootUI;
+    private Property<LootUI> lootUI = PropertyWorkaround.apply();
 
     /** everything, that is stored inside this loot and can be received by collecting this Loot. */
     protected List<Item> listOfContent;
@@ -45,10 +47,13 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
      */
     protected Loot (int gridX, int gridY, String name) {
         this(gridX, gridY, null, name);
-        lootUI = createUI();
 
-        // Only after LootUI has been created, the mouseListener for collecting the Loot can be added.
-        addCollectListener();
+        lootUI.setLazyInit(() -> {
+            final LootUI returnedUI = createUI();
+            // Only after LootUI has been created, the mouseListener for collecting the Loot can be added.
+            addCollectListener(returnedUI);
+            return returnedUI;
+        });
     }
 
     /** Creates a new Loot on the Tile at (gridX, gridY) with the specified name and the lootUI. */
@@ -57,10 +62,13 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
 
         this.gridX = gridX;
         this.gridY = gridY;
-        this.lootUI = lootUI;
         listOfContent = new LinkedList<>();
 
-        addCollectListener();
+        // Property mechanism would not be happy about null values given to it.
+        if(lootUI != null) {
+            this.lootUI.set(lootUI);
+            addCollectListener(this.lootUI.get());
+        }
     }
 
     /**
@@ -81,11 +89,9 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
      * <p>
      * If the <code>lootUI</code>/<code>getLootUI()</code> is <code>null</code>, the method returns doing nothing.
      */
-    protected void addCollectListener () {
-        if (getLootUI() == null)
-            return;
-
-        getLootUI().component.addMouseListener(new MouseAdapter() {
+    protected void addCollectListener (LootUI lootUI) {
+        if(lootUI == null) throw new NullPointerException();
+        lootUI.component.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased (MouseEvent e) {
                 // only register it at left-click
@@ -136,9 +142,9 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
         this.gridX = gridX;
 
         // changing GUI elements
-        if (lootUI != null) {
-            lootUI.setOnTile(getTile());
-        }
+        lootUI.ifdef(definedUI -> {
+            definedUI.setOnTile(getTile());
+        });
     }
 
     /** Setter for the y position. Changes the GUI position as well.
@@ -149,9 +155,9 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
         this.gridY = gridY;
 
         // changing GUI elements
-        if (lootUI != null) {
-            lootUI.setOnTile(getTile());
-        }
+        lootUI.ifdef(definedUI -> {
+            definedUI.setOnTile(getTile());
+        });
     }
 
     /** Returns the tile on which the Loot is placed.
@@ -167,7 +173,7 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
 
     /** the outward appearance of a Loot. Use the LootUI to draw an Loot or to change its Component. */
     public LootUI getLootUI () {
-        return lootUI;
+        return lootUI.get();
     }
 
     /**
@@ -176,7 +182,7 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
      * @param lootUI the new outward appearance
      */
     protected void setLootUI (LootUI lootUI) {
-        this.lootUI = lootUI;
+        this.lootUI.set(lootUI);
     }
 
     /**

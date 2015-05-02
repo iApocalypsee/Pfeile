@@ -1,16 +1,20 @@
 package geom.functions
 
+import java.awt.geom.CubicCurve2D
+
 import geom.Vector2
 
 /**
   * Implementation of a cubic Beziér curve.
   *
-  * These curves are capable of replacing our (um...) FunctionCollectionEasingTripleQuadraticInOutAndThenAgainOnlyInBlablabla
+  * These curves are capable of replacing our (um...)
+  * FunctionCollectionEasingTripleQuadraticInOutAndThenAgainOnlyInBlablabla
   * (too complicated for me to express that...) stuff if used correctly.
   * What I want to say with this is that Beziér curves can imitate complicated functions.
   * Use them, you can model Beziér curves in a program like GIMP.
   *
-  * <a href="http://devmag.org.za/2011/04/05/bzier-curves-a-tutorial/">A good source for learning how Beziér curves work.</a>
+  * <a href="http://devmag.org.za/2011/04/05/bzier-curves-a-tutorial/">A good source for learning how Beziér curves
+  * work.</a>
   *
   * @param startPoint The point where the curve starts.
   * @param c1 The first control point.
@@ -32,5 +36,12 @@ case class BezierCurve(startPoint: Vector2, c1: Vector2, c2: Vector2, endPoint: 
     p = p.+(endPoint * ttt)
     p
   }
+
+}
+
+object BezierCurve {
+
+  implicit def augmentCubicCurve(cubicCurve: CubicCurve2D): BezierCurve = BezierCurve(Vector2(cubicCurve.getP1),
+    Vector2(cubicCurve.getCtrlP1), Vector2(cubicCurve.getCtrlP2), Vector2(cubicCurve.getP2))
 
 }

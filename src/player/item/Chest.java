@@ -80,11 +80,10 @@ public abstract class Chest extends Loot {
      * I must override it to control, that the chest is open, before collecting items.
      */
     @Override
-    protected void addCollectListener () {
-        if (getLootUI() == null)
-            return;
+    protected void addCollectListener(LootUI lootUI) {
+        if(lootUI == null) throw new NullPointerException();
 
-        getLootUI().component.addMouseListener(new MouseAdapter() {
+        lootUI.component.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased (MouseEvent e) {
 

@@ -25,8 +25,8 @@ abstract class Attributes {
   lazy val lastingDataCheck = Property.withValidation[Lasting => Boolean] { _: Lasting => true }
 
   // Pass the new set object to the currentDataCheck function to validate it.
-  current appendSetter identityWith { x => require(currentDataCheck.get.apply(x)) }
-  lasting appendSetter identityWith { x => require(lastingDataCheck.get.apply(x)) }
+  current appendSetter { x => require(currentDataCheck.get.apply(x)); x }
+  lasting appendSetter { x => require(lastingDataCheck.get.apply(x)); x }
 
   protected def initialCurrent(initObject: Current): Current
 

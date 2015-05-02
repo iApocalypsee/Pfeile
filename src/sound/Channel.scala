@@ -1,9 +1,9 @@
 package sound
 
+import javax.sound.sampled.{LineEvent, LineListener}
+
 import general.Delegate.Function0Delegate
 import sound.Channel.Playing
-
-import javax.sound.sampled.{LineEvent, LineListener}
 
 /**
  *
@@ -43,11 +43,10 @@ object Channel {
 
     soundtrack.underlying.addLineListener(new LineListener {
       override def update(event: LineEvent): Unit = {
-        import scala.concurrent.ExecutionContext.Implicits.global
         // If the end of the media has been reached, notify all callbacks about that.
         // I don't want the clumsy Java-style listener system.
         if(event.getType == LineEvent.Type.STOP) {
-          onDonePlaying.callAsync()
+          onDonePlaying()
         }
       }
     })

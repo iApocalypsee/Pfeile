@@ -103,8 +103,9 @@ private[shop] object ShopButton {
       * @tparam A The datatype the setter is expecting.
       * @return A setter with side effects special to the ShopButtons.
       */
-    private def commonSetSideEffect[A] = identityWith[A] { _ =>
+    private def commonSetSideEffect[A] = { (x: A) =>
       issueRecalculation()
+      x
     }
 
     /**
@@ -115,7 +116,7 @@ private[shop] object ShopButton {
       */
     private def commonProperty[A](startValue: A) = {
       val prop = Property(startValue)
-      prop.setter = commonSetSideEffect
+      prop appendSetter commonSetSideEffect[A]
       prop
     }
 

@@ -1,5 +1,7 @@
 package general
 
+import java.util.function._
+
 /**
   *
   * @author Josip Palavra
@@ -7,6 +9,11 @@ package general
 case class Property[A] private (private var value: Option[A]) {
 
   private var _getter: A => A = identity[A]
+
+  /**
+    * The setter function that is able to transform the input value or create some side-effects.
+    * For rejecting the new input value, consider using [[general.Property#validation()]] instead.
+    */
   private var _setter: A => A = identity[A]
 
   /**
@@ -14,6 +21,13 @@ case class Property[A] private (private var value: Option[A]) {
     * or a [[scala.Some]] with a message why the value is not accepted.
     */
   private var _validation: A => Option[String] = x => None
+
+  /**
+    * A function which can provide lazy initialization defaults when
+    */
+  private var _lazyInit: () => A = failLazyInit
+
+  private def failLazyInit = () => throw new ExceptionInInitializerError("No lazy init given or already used.")
 
   /**
     * Returns the underlying value directly.
@@ -25,7 +39,14 @@ case class Property[A] private (private var value: Option[A]) {
     * @return The underlying value that the property holds.
     * @see [[scala.Option]]
     */
-  @inline def get = synchronized { option.get }
+  def get: A = synchronized {
+    option getOrElse {
+      val lazyCompute = lazyInit()
+      value = Some(lazyCompute)
+      lazyInit = failLazyInit
+      lazyCompute
+    }
+  }
 
   /**
     * Returns the option containing the possible value of the property.
@@ -35,29 +56,57 @@ case class Property[A] private (private var value: Option[A]) {
     *
     * @return The option holding the possible property value.
     */
-  def option = value map _getter
+  def option: Option[A] = value map _getter
 
   def getter = _getter
-  def getter_=(x: A => A) = {
+  def getGetter = JavaInterop.asJavaFun(getter)
+  private def getter_=(x: A => A) = {
     require(x != null)
     _getter = x
   }
 
-  def appendGetter(x: A => A) = getter_=(_getter andThen x)
+  def appendGetter(x: A => A): Property[A] = {
+    getter_=(_getter andThen x)
+    this
+  }
+
+  def appendGetter(javafun: Function[A, A]): Property[A] = {
+    appendGetter(x => javafun(x))
+    this
+  }
 
   def setter = _setter
-  def setter_=(x: A => A) = {
+  def getSetter = JavaInterop.asJavaFun(setter)
+  private def setter_=(x: A => A) = {
     require(x != null)
     _setter = x
   }
 
-  def appendSetter(x: A => A) = setter_=(_setter andThen x)
+  def appendSetter(x: A => A): Property[A] = {
+    setter_=(_setter andThen x)
+    this
+  }
+  def appendSetter(javafun: Function[A, A]): Property[A] = {
+    appendSetter(x => javafun(x))
+    this
+  }
 
   def validation = _validation
   def validation_=(x: A => Option[String]): Unit = {
     require(x != null)
     _validation = x
   }
+
+  def setValidation(x: Function[A, Option[String]]) = this.validation = in => x(in)
+
+  def lazyInit = _lazyInit
+  def lazyInit_=(x: () => A): Unit = {
+    require(x != null)
+    _lazyInit = x
+  }
+
+  def getLazyInit = JavaInterop.asJava(lazyInit)
+  def setLazyInit(x: Supplier[A]): Unit = this.lazyInit = () => x.get()
 
   /**
     * Instructs this property to set itself to the value the other property gets every time the other
@@ -70,8 +119,9 @@ case class Property[A] private (private var value: Option[A]) {
     * @param another The other property to listen to.
     */
   def complyWith(another: Property[A]): Unit = {
-    another appendSetter identityWith { x =>
+    another appendSetter { x =>
       this set x
+      x
     }
     LogFacility.log(s"Property $this complying now to $another")
   }
@@ -103,7 +153,12 @@ case class Property[A] private (private var value: Option[A]) {
   def set(x: A): Unit = synchronized {
     val validationCheck = _validation(x)
     require(validationCheck.isEmpty, s"Property validation failed: ${validationCheck.get}")
-    value = Some(_setter(x))
+    val transformedValue = _setter(x)
+    x match {
+      case ref: AnyRef => require(ref eq transformedValue.asInstanceOf[AnyRef], "")
+      case _ =>
+    }
+    value = Some(transformedValue)
   }
 
   @inline def filterNot(p: (A) => Boolean) = value.filterNot(p)
@@ -118,7 +173,11 @@ case class Property[A] private (private var value: Option[A]) {
 
   @inline def flatMap[B](f: (A) => Option[B]) = value.flatMap(f)
 
-  @inline def map[B](f: (A) => B) = value.map(f)
+  def map[B](f: (A) => B): Option[B] = value.map(f)
+  def map[B](javafun: Function[A, B]): Option[B] = map(JavaInterop.asScala(javafun))
+
+  def ifdef(f: A => Unit): Unit = value.foreach(f)
+  def ifdef(javafun: Consumer[A]): Unit = ifdef(JavaInterop.asScala(javafun))
 
   /**
     * Checks if the property has a value associated with it yet.
@@ -138,6 +197,16 @@ case class Property[A] private (private var value: Option[A]) {
   def isEmpty = value.isEmpty
 
   /**
+    * Resets the property to hold no value.
+    * After this call, the propertys get method will throw an exception until another valid value
+    * is set through the set method.
+    */
+  private[general] def undef(): Property[A] = {
+    value = None
+    this
+  }
+
+  /**
     * Applies a custom function to the property without mutating it.
     *
     * @param f The function with which to mutate the result of the function.
@@ -147,6 +216,8 @@ case class Property[A] private (private var value: Option[A]) {
   def apply[B](f: A => B) = if (f != null) f(get) else get
 
   def apply() = get
+
+  def update(x: A) = this set x
 
 }
 
@@ -165,7 +236,7 @@ object Property {
     */
   def withValidation[A](): Property[A] = {
     val ret = Property[A]()
-    ret appendSetter identityWith { x => require(x != null) }
+    ret appendSetter { x => require(x != null); x }
     ret
   }
 
@@ -183,6 +254,6 @@ object Property {
     ret
   }
 
-  implicit def toUnderlyingValue[A](property: Property[A]): A = property.get
+  @inline @deprecated implicit def toUnderlyingValue[A](property: Property[A]): A = property.get
 
 }

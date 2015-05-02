@@ -1,5 +1,6 @@
 package geom
 
+import java.awt.geom.Point2D
 import java.awt.{Dimension, Point}
 
 import scala.math._
@@ -53,3 +54,7 @@ case class Vector2(x: Float, y: Float) extends FloatVector {
   def negated = Vector2(-x, -y)
 }
 
+object Vector2 {
+  def apply(point: Point2D): Vector2 = Vector2(point.getX.asInstanceOf[Float], point.getY.asInstanceOf[Float])
+  def apply(point: Point): Vector2 = Vector2(point.x, point.y)
+}

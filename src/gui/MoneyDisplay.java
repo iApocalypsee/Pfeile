@@ -2,11 +2,8 @@ package gui;
 
 import comp.Component;
 import general.LogFacility;
-import general.Main;
-import general.PfeileContext;
 import gui.screen.Screen;
-import newent.EntityLike;
-import newent.Player;
+import newent.MoneyEarner;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -21,6 +18,8 @@ public class MoneyDisplay extends Component {
     private static BufferedImage image;
 
     private String money;
+
+    private MoneyEarner data;
 
     private Font font;
 
@@ -46,23 +45,9 @@ public class MoneyDisplay extends Component {
         font = new Font(STD_FONT.getFontName(), Font.ITALIC, 14);
     }
 
-    /**
-     * Once you called this method, this method shall not be used anymore. It registers functions for refreshing the
-     * numeric value to <code>onMoneyChanged()</code> (MoneyEarner) and <code>onTurnGet()</code>. It must be called
-     * creating the world and players (i.e. <code>LoadingWorldScreen#onLeaving()</code>
-     */
-    public void registerRefreshing () {
-        PfeileContext context = Main.getContext();
-
-        for (EntityLike entity : context.getWorld().entities().javaEntityList()) {
-            if (entity instanceof Player) {
-                ((Player) entity).onMoneyChanged().registerJava(() ->
-                        money = "" + context.getActivePlayer().getPurse().numericValue());
-            }
-        }
-
-        context.getTurnSystem().onTurnGet().registerJava(team ->
-                money = "" + context.getActivePlayer().getPurse().numericValue());
+    public void retrieveDataFrom(MoneyEarner earner) {
+        data = earner;
+        money = Integer.toString(data.getPurse().numericValue());
     }
 
     @Override

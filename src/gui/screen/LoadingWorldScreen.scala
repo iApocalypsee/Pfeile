@@ -5,7 +5,6 @@ import java.awt.{Color, Font, Graphics2D}
 import comp.Component.ComponentStatus
 import comp.{Component, Label}
 import general._
-import misc.ItemInitialization
 import world.ContextCreator
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -26,9 +25,7 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
     val creator = new ContextCreator(worldWidth, worldHeight)
 
     // Every time the stage changes, the label has to be changed as well.
-    creator.currentStage.appendSetter(identityWith { stage =>
-      GUI.stageLabel.setText(stage.stageName)
-    })
+    creator.onStageDone += { stage => GUI.stageLabel.setText(stage.stageName) }
     // Return the creator as a property.
     Property.withValidation(creator)
   }
@@ -41,20 +38,6 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
       case s: Success[PfeileContext] =>
         // Hand the newly created world to the PfeileContext object.
         Main.setContext(s.get)
-
-        // the loots gets initialized before WorldLootList (--> LootSpawner) uses them. The Main-Thread should not need
-        // to wait for loading images.
-        ItemInitialization.initializeLoots()
-
-        ArrowSelectionScreen.getInstance().init()
-
-        // These Delegates, that need to be registered in MoneyDisplay can only run without NullPointerException, once
-        // the world and the players have been initialized
-        GameScreen.getInstance().getMoneyDisplay.registerRefreshing()
-
-        // Finally, I need to ensure that WorldLootList and LootSpawner are initialized to register their methods.
-        // (scala lazy val WorldLootList). Furthermore, it's save, that the activePlayer can see loots around him.
-        Main.getContext.getWorldLootList.updateVisibleLoot()
 
         // Switch forward to the game screen immediately. The world has been generated and
         // populated now.

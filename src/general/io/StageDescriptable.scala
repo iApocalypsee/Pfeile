@@ -2,14 +2,16 @@ package general.io
 
 import general.Delegate
 
-/** An object which can be associated with a "stage name".
+/**
+  * An object which can be associated with a "stage name".
   *
-  * For example, if a class does just loading, the class can give itself a name
-  * for this particular stage of loading, e.g. "Loading world".
+  * The use of StageDescriptable is this:
   *
+  * The StageDescriptable object can be used to get executed by a [[general.StageOrganized]] instance. In most
+ * cases, you are going to subclass StageOrganized
   */
 trait StageDescriptable[A] {
-  
+
   /** The name of the stage. */
   def stageName: String
 
@@ -22,7 +24,7 @@ trait StageDescriptable[A] {
 
   /** The implementation of the stage. */
   protected def executeStageImpl(): A
-  
+
   /** Called when the stage execution has been completed. */
   val onStageExecuted = Delegate.createZeroArity
 
