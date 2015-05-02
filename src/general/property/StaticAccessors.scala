@@ -11,12 +11,14 @@ trait StaticAccessors[A] extends PropertyBase[A] with AccessorStyle[StaticAccess
   /**
     * The getter that is never going to change for the property.
     * Just like writing a get method, which can never change as well.
+    * Override this method to create customized getter.
     */
   def staticGetter(x: A): A = x
 
   /**
     * The setter that is never going to change for the property.
     * Just like writing a set method, which can never change as well.
+    * Override this method to create customized setter.
     */
   def staticSetter(x: A): A = x
 
