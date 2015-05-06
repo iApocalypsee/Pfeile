@@ -107,7 +107,9 @@ public abstract class Component implements IComponent {
 
 	/**
 	 * Called when the bounds have been moved.
+	 * @deprecated Use {@link Transformation2D#onTranslated()} instead.
 	 */
+	@Deprecated
 	public final Delegate.Delegate<Vector2> onMoved = new Delegate.Delegate<>();
 
 	/**
@@ -118,7 +120,7 @@ public abstract class Component implements IComponent {
 	/**
 	 * Called when any transformation has been done to the component.
 	 */
-	public final Delegate.Function0Delegate onTransformed = new Delegate.Function0Delegate();
+	public final Delegate.Delegate<TransformationEvent> onTransformed = new Delegate.Delegate<>();
 
     /**
      * Called when a child has been added to this component.
@@ -208,29 +210,25 @@ public abstract class Component implements IComponent {
 		setName(Integer.toString(this.hashCode()));
 
 		transformation.onTranslated().registerJava((TranslationChange t) -> {
-            isTransformationChangedSince = true;
-            children.values().forEach(component -> {
-                final Vector2 diffTranslation = t.newTranslation().sub(t.oldTranslation());
-                component.move(((int) diffTranslation.x()), ((int) diffTranslation.y()));
-            });
-            onTransformed.apply();
-        });
+			isTransformationChangedSince = true;
+			children.values().forEach(component -> {
+				final Vector2 diffTranslation = t.newTranslation().sub(t.oldTranslation());
+				component.move(((int) diffTranslation.x()), ((int) diffTranslation.y()));
+			});
+			onTransformed.apply(t);
+		});
 
 		transformation.onScaled().register(JavaInterop.asScala((ScaleChange t) -> {
-            isTransformationChangedSince = true;
-            onTransformed.apply();
-            return BoxedUnit.UNIT;
-        }));
+			isTransformationChangedSince = true;
+			onTransformed.apply(t);
+			return BoxedUnit.UNIT;
+		}));
 
 		transformation.onRotated().register(JavaInterop.asScala((RotationChange t) -> {
-            isTransformationChangedSince = true;
-            onTransformed.apply();
-            return BoxedUnit.UNIT;
-        }));
-
-        onMoved.registerJava(moveAmount -> {
-            isTransformationChangedSince = true;
-        });
+			isTransformationChangedSince = true;
+			onTransformed.apply(t);
+			return BoxedUnit.UNIT;
+		}));
 	}
 
 	/**
@@ -393,19 +391,14 @@ public abstract class Component implements IComponent {
 
 	public void setLocation(int x, int y) {
 		int xTranslation = x - getX(), yTranslation = y - getY();
-        /*
-		AffineTransform transform = AffineTransform.getTranslateInstance(xTranslation, yTranslation);
-		bounds = transform.createTransformedShape(bounds);
-		*/
-        transformation.translate(xTranslation, yTranslation);
+
+		if(xTranslation != 0 || yTranslation != 0) {
+			transformation.translate(xTranslation, yTranslation);
+		}
 
         children.values().forEach(component -> {
-            component.setLocation(x + component.getRelativeX(), y + component.getRelativeY());
-        });
-
-		if (xTranslation != 0 || yTranslation != 0) {
-			onMoved.apply(new Vector2(xTranslation, yTranslation));
-		}
+			component.setLocation(x + component.getRelativeX(), y + component.getRelativeY());
+		});
 	}
 
 	public void setRelativeLocation(int x, int y) {
@@ -507,11 +500,12 @@ public abstract class Component implements IComponent {
 		if(srcShape == null) throw new NullPointerException();
 
 		this.srcShape = srcShape;
-		transformation.resetTransformation();
-		transformation.translate(srcShape.getBounds2D().getWidth() / 2, srcShape.getBounds2D().getHeight() / 2);
 
-		// Invalidate old bounds, could be wrong now.
+		// Invalidate old bounds, very likely to be wrong now.
 		bounds = null;
+
+		transformation.resetTransformation();
+		transformation.setTranslationWithoutSideEffect(srcShape.getBounds2D().getWidth() / 2, srcShape.getBounds2D().getHeight() / 2);
 	}
 
 	/**
@@ -677,6 +671,11 @@ public abstract class Component implements IComponent {
 		return transformation;
 	}
 
+	protected void reproduceTransformation(Transformation2D transformation) {
+		Transformation2D.applySilently(this, transformation);
+		isTransformationChangedSince = true;
+	}
+
 	public void resetPosition() {
 		transformation.setTranslation(srcShape.getBounds().width / 2, srcShape.getBounds().height / 2);
 	}
@@ -755,16 +754,4 @@ public abstract class Component implements IComponent {
 		mouseWheelListeners.add(mouseWheelListener);
 	}
 
-	/**
-	 * Applies the given transformation to the bounds of the component. <p>
-	 * This call is essentially equivalent to the call
-	 * {@code setBounds(transformation.createTransformedShape(getBounds()))}.
-	 *
-	 * @param transformation The transformation to apply to the bounds.
-	 */
-	@Deprecated
-	public void applyTransformation(AffineTransform transformation) {
-		bounds = transformation.createTransformedShape(bounds);
-		onTransformed.apply();
-	}
 }

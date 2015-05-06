@@ -32,15 +32,15 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Art
   private val textLabel = new comp.Label(0, 0, getBackingScreen, constructText(article))
   textLabel.setParent(this)
 
-  private def positionalsUpdate(moveDiff: Vector2): Unit = {
-    val movPt = moveDiff.toPoint
+  private def positionalsUpdate(t: TranslationChange): Unit = {
+    val movPt = t.delta.toPoint
     if(imageDrawLocation != null) {
       imageDrawLocation.x += movPt.x
       imageDrawLocation.y += movPt.y
     }
   }
 
-  onMoved += positionalsUpdate
+  getTransformation.onTranslated += positionalsUpdate
   recalculateStyle()
 
   private def recalculateStyle(): Unit = recalculateStyleWithArgs(gridX, gridY)

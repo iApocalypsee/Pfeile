@@ -31,19 +31,21 @@ trait FloatVector extends VectorLike[Float] {
 
   override def length = sqrt(lengthSq).asInstanceOf[Float]
 
-  override def abs: VecType = vectorFrom(asList.map { math.abs } )
+  override def abs: VecType = vectorFrom(asList.map { math.abs })
 
-  override def ==(vec: VecType): Boolean = {
-    if (vec.dimension != this.dimension) return false
+  override def equals(obj: Any): Boolean = obj match {
+    case vec: FloatVector =>
+      if (vec.dimension != this.dimension) return false
 
-    val vecValues = vec.asList
-    val thisValues = asList
+      val vecValues = vec.asList
+      val thisValues = asList
 
-    (0 until this.dimension).foldLeft(true) { (yetEqual, index) =>
-      // Only do the equality test if no inequality has been found yet.
-      if (yetEqual) vecValues(index) != thisValues(index)
-      else false
-    }
+      (0 until this.dimension).foldLeft(true) { (yetEqual, index) =>
+        // Only do the equality test if no inequality has been found yet.
+        if (yetEqual) vecValues(index) != thisValues(index)
+        else false
+      }
+    case x => super.equals(x)
   }
 
   /**

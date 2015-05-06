@@ -6,4 +6,6 @@ package general.property
   * be able to compile.
   * @tparam SelfType The subclassing class/trait itself.
   */
+// Lazy property accessor styles should not trigger computation of set argument! So I need another
+// accessor style hierarchy for lazy evaluation.
 trait AccessorStyle[SelfType]

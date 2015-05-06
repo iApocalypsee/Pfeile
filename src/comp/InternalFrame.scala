@@ -26,7 +26,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
   import comp.InternalFrame._
 
   onChildAdded += { component =>
-    component.onMoved += { _ =>
+    component.getTransformation.onTranslated += { _ =>
       if (!this.getBounds.intersects(component.getBounds.getBounds2D)) {
         LogFacility.log("Component \""+component.getName+"\" is not intersecting bounds of frame \""+getName+"\" "+
           "anymore. Ignoring component in drawing process...", "Warning")

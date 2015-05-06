@@ -41,8 +41,6 @@ trait VectorLike[NumberType <: AnyVal] {
   def /(f: NumberType): VecType
 
   def abs: VecType
-
-  def ==(vec: VecType): Boolean
   
   def unifiedVector(factor: NumberType): VecType
   

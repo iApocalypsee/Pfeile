@@ -1,10 +1,11 @@
 package world
 
+import java.awt._
 import java.awt.event.{MouseAdapter, MouseEvent}
-import java.awt.{BasicStroke, Color, Graphics2D, Polygon}
 
-import comp.{Component, DisplayRepresentable}
+import comp.{Component, DisplayRepresentable, RotationChange}
 import general.Main
+import general.property.{PropertyBase, StaticProperty}
 import gui.AdjustableDrawing
 import gui.screen.GameScreen
 import newent.pathfinding.Path
@@ -86,7 +87,41 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
 
   require(terrain != null)
 
+  // Add this particular class object to the tile type list if not in list yet
   IsometricPolygonTile.appendToTileTypeList(this.getClass)
+
+  /** Returns the color that is used to represent the isometric tile. */
+  def color: Color
+
+  /**
+    * Paints all border lines of the tile in the corresponding color.
+    * @param x The color to paint the borders.
+    */
+  def paintBorderLines(x: Color): Unit = for (colorProp <- borderColorProps) colorProp set x
+
+  def clearBorderLines(): Unit = for (colorProp <- borderColorProps) colorProp set null
+
+  //<editor-fold desc='Instance variables'>
+
+  /**
+    * The color with which the tile object gets filled as the mouse points on it.
+    */
+  val mouseFocusColor = new StaticProperty(DefaultMouseFocusColor)
+
+  /**
+    * The stroke with which the borders are drawn.
+    */
+  val borderStroke = new StaticProperty(StandardDrawStroke)
+
+  // All black by default
+  val northEastBorderColor = new StaticProperty[Color](null)
+  val northWestBorderColor = new StaticProperty[Color](null)
+  val southWestBorderColor = new StaticProperty[Color](null)
+  val southEastBorderColor = new StaticProperty[Color](null)
+
+  private def borderColorProps = Seq(northEastBorderColor, northWestBorderColor, southWestBorderColor, southEastBorderColor)
+
+  //</editor-fold>
 
   //<editor-fold desc='Attack impact logic'>
 
@@ -115,15 +150,10 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
       }
     }
 
-    // Splitting for easier use
-    filteredEntityList.foreach {
-      case x: AttackContainer => x.takeImmediately(e)
-      case _ =>
-    }
   }
 
   //</editor-fold>
-  
+
   //<editor-fold desc='Directions (north, east, west, south, etc.)'>
 
   override def north: TileLike = terrain.tileAt(latticeX - 1, latticeY + 1)
@@ -144,13 +174,12 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
 
   //</editor-fold>
 
+  //<editor-fold desc='Overrides'>
+
   /** Ditto. */
   override val getGridY = latticeY
   /** Ditto. */
   override val getGridX = latticeX
-
-  /** Returns the color that is used to represent the isometric tile. */
-  def color: Color
 
   /**
     * The component that the representable object uses first. Method is called only once.
@@ -160,14 +189,78 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
     */
   override protected def startComponent: Component = new IsometricPolygonTileComponent
 
+  //</editor-fold>
+
+  /**
+    * The component that is responsible for drawing the isometric shape of the tile.
+    * Note that this component is not able to rotate! If you attempt a rotation, the component
+    * will throw a UnsupportedOperationException, stating that rotation is not supported.
+    */
   private class IsometricPolygonTileComponent private[IsometricPolygonTile] extends Component with AdjustableDrawing {
 
+    // Just make sure that the isometric tile is not being rotated.
+    onTransformed += {
+      case rotation: RotationChange => throw new UnsupportedOperationException("Rotation not supported on isometric tiles")
+      case _ =>
+    }
+
+    //<editor-fold desc='Visual appearance'>
+
+    /**
+     * The shape from which the component is going to retrieve the corner points.
+     * The corner points are needed to draw border lines on seperate sides.
+     */
+    private val cornerPoints = new {
+
+      var north: Point = null
+      var east: Point = null
+      var south: Point = null
+      var west: Point = null
+
+      def use(x: IsometricTileAbsoluteShape) = {
+        north = x.north
+        east = x.east
+        south = x.south
+        west = x.west
+      }
+
+    }
+
+    /**
+      * The shape of the tile.
+      *
+      * On setting this property, the component is trying to calculate the new corner points of the isometric shape.
+      */
+    // Lazy because I am using this property currently somewhere before in the code...
+    val tileShape = new StaticProperty(IsometricPolygonTile.TileShape) {
+      override def staticSetter(x: IsometricPolygonTile.IsometricTileRelativeShape) = {
+        cornerRecalculation(x, getX, getY, getWidth, getHeight)
+        x
+      }
+    }
+
+    private def cornerRecalculation(relativeShape: IsometricTileRelativeShape, x: Int, y: Int, width: Int, height: Int): Unit = {
+
+      val absoluteShape = relativeShape.construct(x, y, width, height)
+      cornerPoints.use(absoluteShape)
+
+    }
+
+    onTransformed += { _ =>
+      cornerRecalculation(tileShape.get, getX, getY, getWidth, getHeight)
+    }
+
+    //</editor-fold>
+
     //<editor-fold desc='Initialization code'>
+
     setBackingScreen(GameScreen.getInstance())
-    setSourceShape(IsometricPolygonTile.ComponentShape)
+    setSourceShape(tileShape.get.construct(-TileHalfWidth / 2, -TileHalfHeight / 2, TileWidth, TileHeight).polygon)
+    setName((getGridX, getGridY).toString())
 
     // Translate so that the tile fits into the grid again.
     getTransformation.translate(latticeX * TileHalfWidth + latticeY * TileHalfWidth, latticeX * TileHalfHeight - latticeY * TileHalfHeight)
+
     //</editor-fold>
 
     //<editor-fold desc='Visual path prediction'>
@@ -194,7 +287,7 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
     })
 
     private def onLostMoveTargetFocus() = {
-      predictedPath.map {
+      predictedPath.foreach {
         for (x <- _) {
           x.targeted = false
         }
@@ -202,18 +295,18 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
     }
 
     /**
-     * Executes when the tile is selected by an entity for being its next movement target.
-     */
+      * Executes when the tile is selected by an entity for being its next movement target.
+      */
     private def onGainedMoveTargetFocus() = {
       // The entity to calculate the path for
       val entity = Main.getContext.entitySelection.selectedEntity
 
       /**
-       * Actual prediction logic. This code is not written inside the future or match statement
-       * on purpose.
-       * @param x The path to predict the path to this tile for.
-       * @return Ditto.
-       */
+        * Actual prediction logic. This code is not written inside the future or match statement
+        * on purpose.
+        * @param x The path to predict the path to this tile for.
+        * @return Ditto.
+        */
       def predictWith(x: MovableEntity): Option[Path] = {
         x.pathfinderLogic.findPath(x, latticeX, latticeY)
       }
@@ -251,12 +344,12 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
     }
 
     //</editor-fold>
-    
+
     //<editor-fold desc='Entity movement'>
 
     // When the user is clicking on the tile, the active player should move towards it.
     addMouseListener(new MouseAdapter {
-      override def mouseReleased(e: MouseEvent): Unit = if(e.getButton == MouseEvent.BUTTON3) {
+      override def mouseReleased(e: MouseEvent): Unit = if (e.getButton == MouseEvent.BUTTON3) {
         Main.getContext.entitySelection.selectedEntity match {
           case move: MovableEntity => move.moveTowards(latticeX, latticeY)
           case _ => ???
@@ -265,8 +358,27 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
     })
 
     // When the mouse moves over the tile, it should be marked in a grayish style.
-    handle({ g => g.setColor(MouseFocusColor); g.fill(getBounds) }, { isMouseFocused })
-    
+    handle({ g => g.setColor(mouseFocusColor.get); g.fill(getBounds) }, { isMouseFocused })
+
+    //</editor-fold>
+
+    //<editor-fold desc='Border line drawing'>
+
+    private def drawBorders(g: Graphics2D) = {
+      val tile: IsometricPolygonTile = IsometricPolygonTile.this
+
+      def drawRoutine(colorProperty: PropertyBase[Color], begin: Point, end: Point) = colorProperty ifdef { color =>
+        g.setStroke(tile.borderStroke.get)
+        g.setColor(color)
+        g.drawLine(begin.x, begin.y, end.x, end.y)
+      }
+
+      drawRoutine(tile.northWestBorderColor, cornerPoints.west, cornerPoints.north)
+      drawRoutine(tile.northEastBorderColor, cornerPoints.north, cornerPoints.east)
+      drawRoutine(tile.southWestBorderColor, cornerPoints.west, cornerPoints.south)
+      drawRoutine(tile.southEastBorderColor, cornerPoints.south, cornerPoints.east)
+    }
+
     //</editor-fold>
 
     override def draw(g: Graphics2D): Unit = {
@@ -275,6 +387,7 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
       g.setColor(color)
       g.fill(getBounds)
       drawAll(g)
+      drawBorders(g)
     }
   }
 
@@ -283,12 +396,12 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
 object IsometricPolygonTile {
 
   import scala.math._
-  
+
   // Tile type list is used in world generation.
   // Every subclass of IsometricPolygonTile puts a java.lang.Class
   // object of itself into this list.
   //<editor-fold desc='Tile type list'>
-  
+
   private[this] val _tileTypeList = mutable.MutableList[Class[_ <: IsometricPolygonTile]]()
 
   private def appendToTileTypeList(t: Class[_ <: IsometricPolygonTile]): Unit = {
@@ -296,17 +409,18 @@ object IsometricPolygonTile {
   }
 
   def tileTypeList = _tileTypeList.toList
-  
+
   //</editor-fold>
-  
+
   //<editor-fold desc='Visual appearance'>
 
-  lazy val TileHalfWidth = 18
+  val TileHalfWidth = 18
   lazy val TileWidth = TileHalfWidth * 2
-  lazy val TileHalfHeight = 10
+  val TileHalfHeight = 10
   lazy val TileHeight = TileHalfHeight * 2
   lazy val TileDiagonalLength = sqrt(pow(TileHalfWidth, 2) + pow(TileHalfHeight, 2))
 
+  @deprecated("Use IsometricPolygonTile.TileShape instead")
   lazy val ComponentShape = {
     val polygon = new Polygon
     polygon.addPoint(-TileHalfWidth, 0)
@@ -316,25 +430,58 @@ object IsometricPolygonTile {
     polygon
   }
 
-  /**
-   * The color used when the mouse is pointing at the tile.
-   */
-  lazy val MouseFocusColor = new Color(175, 175, 175, 50)
+  val TileShape = IsometricTileRelativeShape(0.5, 0.5, 0.5, 0.5)
 
   /**
-   * The color being used when the tile is on a path predicted by a pathfinder for an entity.
-   */
-  lazy val MoveTargetColor = new Color(75, 75, 75, 125)
+    * The color used when the mouse is pointing at the tile.
+    */
+  val DefaultMouseFocusColor = new Color(175, 175, 175, 50)
 
   /**
-   * The line stroke used to clarify that the tile is lying on a certain path calculated
-   * by the pathfinder.
-   */
-  lazy val MoveTargetStroke = new BasicStroke(5)
+    * The color being used when the tile is on a path predicted by a pathfinder for an entity.
+    */
+  val MoveTargetColor = new Color(75, 75, 75, 125)
 
-  val StandardDrawStroke = new BasicStroke(7)
-  
+  /**
+    * The line stroke used to clarify that the tile is lying on a certain path calculated
+    * by the pathfinder.
+    */
+  val MoveTargetStroke = new BasicStroke(5)
+
+  val StandardDrawStroke = new BasicStroke(2)
+
   //</editor-fold>
+
+  case class IsometricTileAbsoluteShape private[IsometricPolygonTile] (north: Point, east: Point, south: Point, west: Point) {
+    lazy val polygon: Polygon = {
+      val polygon = new Polygon
+      polygon.addPoint(north.x, north.y)
+      polygon.addPoint(east.x, east.y)
+      polygon.addPoint(south.x, south.y)
+      polygon.addPoint(west.x, west.y)
+      polygon
+    }
+  }
+
+  case class IsometricTileRelativeShape private[IsometricPolygonTile] (topMove: Double, rightMove: Double, bottomMove: Double, leftMove: Double) {
+
+    private def calculateInsets(dimension: Int, factor: Double): Int = (dimension * factor).asInstanceOf[Int]
+
+    def construct(x: Int, y: Int, width: Int, height: Int): IsometricTileAbsoluteShape = {
+
+      val topInset = calculateInsets(width, topMove)
+      val rightInset = calculateInsets(height, rightMove)
+      val bottomInset = calculateInsets(width, bottomMove)
+      val leftInset = calculateInsets(height, leftMove)
+
+      IsometricTileAbsoluteShape(
+        new Point(x + topInset, y),
+        new Point(x + width, y + rightInset),
+        new Point(x + bottomInset, y + height),
+        new Point(x, y + leftInset))
+    }
+
+  }
 
 }
 

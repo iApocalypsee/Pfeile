@@ -22,7 +22,7 @@ case class Vector2(x: Float, y: Float) extends FloatVector {
 
   override def vectorFrom(x: List[Float]) = {
     require(x.size == dimension)
-    Vector2(x(0), x(1))
+    Vector2(x.head, x(1))
   }
 
   def lerp(dest: Vector2, lerpFactor: Float): Vector2 = {
@@ -57,4 +57,6 @@ case class Vector2(x: Float, y: Float) extends FloatVector {
 object Vector2 {
   def apply(point: Point2D): Vector2 = Vector2(point.getX.asInstanceOf[Float], point.getY.asInstanceOf[Float])
   def apply(point: Point): Vector2 = Vector2(point.x, point.y)
+
+  val zero = Vector2(0, 0)
 }

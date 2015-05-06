@@ -67,10 +67,19 @@ class Transformation2D {
     * @return This.
     */
   def setTranslation(x: Double, y: Double) = {
+
     val old = translation
-    _translationMatrix = AffineTransform.getTranslateInstance(x, y)
-    onTranslated(TranslationChange(old, translation))
+    setTranslationWithoutSideEffect(x, y)
+    val firedEvent = TranslationChange(old, translation)
+    if(firedEvent.delta == Vector2.zero) {
+      onTranslated(firedEvent)
+    }
+
     this
+  }
+
+  private[comp] def setTranslationWithoutSideEffect(x: Double, y: Double) = {
+    _translationMatrix = AffineTransform.getTranslateInstance(x, y)
   }
 
   /**
@@ -80,10 +89,18 @@ class Transformation2D {
    */
   def setRotation(angle: Double) = {
     val old = _rotation
+    setRotationWithoutSideEffect(angle)
+    val firedEvent = RotationChange(old, _rotation)
+    if(firedEvent.delta != 0) {
+      onRotated(firedEvent)
+    }
+
+    this
+  }
+
+  private[comp] def setRotationWithoutSideEffect(angle: Double) = {
     _rotationMatrix = AffineTransform.getRotateInstance(toRadians(angle))
     _rotation = angle
-    onRotated(RotationChange(old, _rotation))
-    this
   }
 
   def copy = {
@@ -103,9 +120,15 @@ class Transformation2D {
    */
   def setScale(sx: Double, sy: Double) = {
     val old = scale
-    _scaleMatrix = AffineTransform.getScaleInstance(sx, sy)
+    setScaleWithoutSideEffect(sx, sy)
+    val firedEvent = ScaleChange(old, scale)
+    // TODO Delta check?
     onScaled(ScaleChange(old, scale))
     this
+  }
+
+  private[comp] def setScaleWithoutSideEffect(sx: Double, sy: Double) = {
+    _scaleMatrix = AffineTransform.getScaleInstance(sx, sy)
   }
 
   def translation = Vector2(_translationMatrix.getTranslateX.asInstanceOf[Float], _translationMatrix.getTranslateY.asInstanceOf[Float])
@@ -129,7 +152,34 @@ class Transformation2D {
 
 }
 
-case class RotationChange(oldDegree: Double, newDegree: Double)
-case class TranslationChange(oldTranslation: Vector2, newTranslation: Vector2)
-case class ScaleChange(oldScale: Vector2, newScale: Vector2)
+object Transformation2D {
+  def applySilently(c: Component, t: Transformation2D): Component = {
+    val translation = t.translation.toPoint
+    c.getTransformation.setTranslationWithoutSideEffect(translation.x, translation.y)
+    c.getTransformation.setRotationWithoutSideEffect(t.rotation)
+    c.getTransformation.setScaleWithoutSideEffect(t.scale.x.asInstanceOf[Int], t.scale.y.asInstanceOf[Int])
+    c
+  }
+}
 
+trait TransformationEvent {
+  def matrix: AffineTransform
+  def deltaMatrix: AffineTransform
+}
+
+case class RotationChange(oldDegree: Double, newDegree: Double) extends TransformationEvent {
+  val delta = newDegree - oldDegree
+  override lazy val matrix = AffineTransform.getRotateInstance(newDegree)
+  override lazy val deltaMatrix = AffineTransform.getRotateInstance(delta)
+}
+
+case class TranslationChange(oldTranslation: Vector2, newTranslation: Vector2) extends TransformationEvent {
+  val delta = newTranslation - oldTranslation
+  override lazy val matrix = AffineTransform.getTranslateInstance(newTranslation.x, newTranslation.y)
+  override lazy val deltaMatrix = AffineTransform.getTranslateInstance(delta.x, delta.y)
+}
+
+case class ScaleChange(oldScale: Vector2, newScale: Vector2) extends TransformationEvent {
+  override lazy val matrix = AffineTransform.getScaleInstance(newScale.x, newScale.y)
+  override def deltaMatrix = throw new NotImplementedError("Scale delta not implemented yet")
+}

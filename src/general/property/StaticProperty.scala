@@ -2,8 +2,22 @@ package general.property
 
 import java.lang
 
-class StaticProperty[A <: AnyRef] extends PropertyBase[A] with StaticAccessors[A]
-class LazyStaticProperty[A <: AnyRef] extends StaticProperty[A] with LazyInit[A]
+class StaticProperty[A] extends PropertyBase[A] with StaticAccessors[A] {
+  def this(x: A) = {
+    this()
+    this set x
+  }
+}
+
+object StaticProperty {
+  def lazily[A](x: => A): LazyStaticProperty[A] = {
+    val lazyProp = new LazyStaticProperty[A]
+    lazyProp.lazyCompute = () => x
+    lazyProp
+  }
+}
+
+class LazyStaticProperty[A] extends StaticProperty[A] with LazyInit[A]
 
 class IntStaticProperty extends StaticProperty[lang.Integer]
 class DoubleStaticProperty extends StaticProperty[lang.Double]
