@@ -2,6 +2,7 @@ package general;
 
 import gui.screen.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -9,6 +10,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 /**
  * <b>4.1.2014 (Josip):</b> Einfachere Initialisierung der Screens. <br>
@@ -104,11 +107,19 @@ public class GameWindow extends JFrame {
 	    int xSize = ((int) tk.getScreenSize().getWidth());  
 	    int ySize = ((int) tk.getScreenSize().getHeight());  
 		window.setSize(xSize, ySize);
-		//window.setExtendedState(window.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		window.setExtendedState(Frame.MAXIMIZED_BOTH);
 		window.setUndecorated(true);
 		window.setResizable(false);
 		window.setLocationRelativeTo(null);
+
+        // adding the icon on the upper right corner or on the task bar.
+        BufferedImage windowIcon = null;
+        try {
+            windowIcon = ImageIO.read(GameWindow.class.getClassLoader().getResourceAsStream(
+                    "resources/gfx/comp/windowIcon.png"));
+        } catch (IOException e) { e.printStackTrace(); }
+        if (windowIcon != null)
+            window.setIconImage(windowIcon);
 	}
 
 	/**
