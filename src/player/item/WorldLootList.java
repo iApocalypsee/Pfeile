@@ -9,6 +9,7 @@ import scala.collection.Seq;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The <code>WorldLootList</code> is saved in PfeileContext. This class provides the information need to store all loots,
@@ -38,7 +39,7 @@ public class WorldLootList implements Drawable {
     public WorldLootList (PfeileContext context) {
         this.context = context;
         lootList = new ArrayList<>(20);
-        lootVisibleList = new ArrayList<>(12);
+        lootVisibleList = new CopyOnWriteArrayList<>();
         lootSpawner = new LootSpawner(context);
 
         context.turnSystem().onTurnGet().registerJava(team -> {

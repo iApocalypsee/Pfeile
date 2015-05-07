@@ -14,7 +14,8 @@ class VisualMap(world: WorldLike) extends Drawable {
   /** The color which is drawn on top of the tile when it is revealed (but not visible). */
   private val _revealedTileColor = new java.awt.Color(0.0f, 0.0f, 0.0f, 0.2f)
 
-  /** Object that gives information on how to display the map.
+  /**
+    * Object that gives information on how to display the map.
     *
     * There are two options currently on displaying the map:
     * <ul>
@@ -42,7 +43,8 @@ class VisualMap(world: WorldLike) extends Drawable {
   }
   def setSightType(s: SightType) = this.sightType = s
 
-  /** Moves the visual.
+  /**
+    * Moves the visual.
     *
     * @param shiftX The amount of x units to move the map.
     * @param shiftY The amount of y units to move the map.
@@ -66,7 +68,8 @@ class VisualMap(world: WorldLike) extends Drawable {
     _sightType.draw(g)
   }
 
-  /** Represents how the world is being drawn.
+  /**
+    * Represents how the world is being drawn.
     *
     * A world can be draw in various ways; either the full map, or just parts of it.
     * Or even hide it completely (but that is not good).
@@ -78,23 +81,46 @@ class VisualMap(world: WorldLike) extends Drawable {
 
   /** Draws the map with the currently active player's vision map and the visible loots in WorldLootList. */
   object VisionSightType extends SightType {
-    protected[VisualMap] override def draw(g: Graphics2D): Unit = {
-       _displayWorld.terrain.tiles foreach { tile =>
-          // Only draw the tile if the active player has actually revealed the tile.
-          val status = Main.getContext.activePlayer.visionMap.visionStatusOf(tile.latticeX, tile.latticeY)
 
-          if(status != VisionStatus.Hidden) {
-             tile.component.draw(g)
-             if(status == VisionStatus.Revealed) {
-                g.setColor(_revealedTileColor)
-                g.fill(tile.component.getBounds)
-             }
-             if(status == VisionStatus.Visible) {
-                tile.entities foreach { e => e.component.draw(g) }
-             }
-          }
-       }
-       Main.getContext.getWorldLootList.draw(g)
+    private def drawTiles(g: Graphics2D) = {
+
+      val terrain = _displayWorld.terrain
+      val usedVision = Main.getContext.activePlayer.visionMap
+
+      for (
+        y <- terrain.height - 1 to 0 by -1;
+        x <- 0 until terrain.width;
+        visionStatus = usedVision.visionStatusOf(x, y) if visionStatus != VisionStatus.Hidden
+      ) {
+        val tile = terrain.tileAt(x, y)
+        tile.component.draw(g)
+
+        if (visionStatus == VisionStatus.Revealed) {
+          g.setColor(_revealedTileColor)
+          g.fill(tile.component.getBounds)
+        }
+      }
+
+    }
+
+    private def drawEntities(g: Graphics2D) = {
+      val terrain = _displayWorld.terrain
+      val usedVision = Main.getContext.activePlayer.visionMap
+
+      for (
+        y <- terrain.height - 1 to 0 by -1;
+        x <- 0 until terrain.width;
+        visionStatus = usedVision.visionStatusOf(x, y) if terrain.isTileValid(x, y) && visionStatus != VisionStatus.Visible;
+        entity <- terrain.tileAt(x, y).entities
+      ) {
+        entity.component.draw(g)
+      }
+    }
+
+    protected[VisualMap] override def draw(g: Graphics2D): Unit = {
+      drawTiles(g)
+      drawEntities(g)
+      Main.getContext.getWorldLootList.draw(g)
     }
   }
 
@@ -102,14 +128,13 @@ class VisualMap(world: WorldLike) extends Drawable {
   object FullSightType extends SightType {
     import scala.collection.JavaConversions._
 
-     protected[VisualMap] override def draw(g: Graphics2D): Unit = {
+    protected[VisualMap] override def draw(g: Graphics2D): Unit = {
       _displayWorld.terrain.tiles foreach { tile =>
         tile.component.draw(g)
       }
 
       Main.getContext.getWorldLootList.getLoots.foreach(loot =>
-         loot.getLootUI.draw(g)
-      )
+        loot.getLootUI.draw(g))
     }
   }
 }

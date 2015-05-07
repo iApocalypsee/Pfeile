@@ -33,6 +33,9 @@ sealed trait EntityLike extends BoardPositionable with DisplayRepresentable {
   * All implementations for entity are required to be written in Scala, because Java cannot handle
   * the "Stackable trait" pattern offered by Scala.
   *
+  * The important thing about the entity is that an entity in code '''does not have to represent a living object.'''
+  * It can be treasures, decoration, loot, walls, whatsoever.
+  *
   * @param n The name of the entity. Defaults to null.
   * @param world The world of the entity. Should not be null.
   * @param spawnPosition The position where the entity spawns.

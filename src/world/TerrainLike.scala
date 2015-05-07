@@ -160,6 +160,14 @@ class DefaultTerrain(override val world: DefaultWorld, initWidth: Int, initHeigh
 
   override def generate(r: Random)(seed: Long): Unit = {
 
+    // Converts all sea tiles that have a grass tile neighbor to a coast tile
+    def coasten() = {
+      val adjacentSeaTiles = _tiles.flatten.collect {
+        case seaTile: SeaTile if seaTile.neighbors.exists(_.isInstanceOf[GrassTile]) => seaTile
+      }
+      for(tile <- adjacentSeaTiles) setTileAt(tile.getGridX, tile.getGridY, new CoastTile(tile.getGridX, tile.getGridY, this))
+    }
+
     def tileTypeStage(): Unit = {
 
       case class TTPoint(x: Int, y: Int, tileType: Class[_ <: IsometricPolygonTile])
@@ -185,6 +193,7 @@ class DefaultTerrain(override val world: DefaultWorld, initWidth: Int, initHeigh
     r.setSeed(seed)
 
     tileTypeStage()
+    coasten()
 
   }
 }

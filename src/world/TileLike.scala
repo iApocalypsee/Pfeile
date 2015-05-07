@@ -37,28 +37,31 @@ trait TileLike extends DisplayRepresentable with AttackContainer {
   def requiredMovementPoints: Int
 
   /** The tile located north of this tile. */
-  def north: TileLike
+  def north: Option[TileLike]
 
   /** The tile located northeast of this tile. */
-  def northEast: TileLike
+  def northEast: Option[TileLike]
 
   /** The tile located east of this tile. */
-  def east: TileLike
+  def east: Option[TileLike]
 
   /** The tile located southeast of this tile. */
-  def southEast: TileLike
+  def southEast: Option[TileLike]
 
   /** The tile located south of this tile. */
-  def south: TileLike
+  def south: Option[TileLike]
 
   /** The tile located southwest of this tile. */
-  def southWest: TileLike
+  def southWest: Option[TileLike]
 
   /** The tile located west of this tile. */
-  def west: TileLike
+  def west: Option[TileLike]
 
   /** The tile located northwest of this tile. */
-  def northWest: TileLike
+  def northWest: Option[TileLike]
+
+  /** The neighbors the tile has. */
+  def neighbors: Seq[TileLike] = Seq(north, northEast, east, southEast, south, southWest, west, northWest).flatten
 
   /** The entities that are currently on this tile. */
   def entities: Seq[EntityLike]
@@ -156,21 +159,26 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
 
   //<editor-fold desc='Directions (north, east, west, south, etc.)'>
 
-  override def north: TileLike = terrain.tileAt(latticeX - 1, latticeY + 1)
+  private def directionalGet(xdiff: Int, ydiff: Int): Option[TileLike] = {
+    if(terrain.isTileValid(latticeX + xdiff, latticeY + ydiff)) Some(terrain.tileAt(latticeX + xdiff, latticeY + ydiff))
+    else None
+  }
 
-  override def northEast: TileLike = terrain.tileAt(latticeX, latticeY + 1)
+  override def north: Option[TileLike] = directionalGet(-1, 1)
 
-  override def east: TileLike = terrain.tileAt(latticeX + 1, latticeY + 1)
+  override def northEast: Option[TileLike] = directionalGet(0, 1)
 
-  override def southEast: TileLike = terrain.tileAt(latticeX + 1, latticeY)
+  override def east: Option[TileLike] = directionalGet(1, 1)
 
-  override def south: TileLike = terrain.tileAt(latticeX + 1, latticeY - 1)
+  override def southEast: Option[TileLike] = directionalGet(1, 0)
 
-  override def southWest: TileLike = terrain.tileAt(latticeX, latticeY - 1)
+  override def south: Option[TileLike] = directionalGet(1, -1)
 
-  override def west: TileLike = terrain.tileAt(latticeX - 1, latticeY - 1)
+  override def southWest: Option[TileLike] = directionalGet(0, -1)
 
-  override def northWest: TileLike = terrain.tileAt(latticeX - 1, latticeY)
+  override def west: Option[TileLike] = directionalGet(-1, -1)
+
+  override def northWest: Option[TileLike] = directionalGet(-1, 0)
 
   //</editor-fold>
 
@@ -494,8 +502,7 @@ class GrassTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends I
 }
 
 object GrassTile {
-
-  lazy val TileColor = new Color(0x1C9618)
+  val TileColor = new Color(0x1C9618)
 }
 
 class SeaTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends IsometricPolygonTile(latticeX,
@@ -507,6 +514,18 @@ class SeaTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends Iso
 }
 
 object SeaTile {
+  val TileColor = new Color(0x3555DB)
+}
 
-  lazy val TileColor = new Color(0x3555DB)
+class CoastTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends IsometricPolygonTile(latticeX, latticeY, terrain) {
+
+  /** Returns the color that is used to represent the isometric tile. */
+  override def color = CoastTile.TileColor
+
+  /** The movement points that are required to get on this tile. */
+  override def requiredMovementPoints = 10
+}
+
+object CoastTile {
+  val TileColor = new Color(0x4865E0)
 }
