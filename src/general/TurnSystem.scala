@@ -18,6 +18,21 @@ import scala.collection.JavaConversions
 class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
 
   /**
+   * Called when a turn has been ended.
+   */
+  val onTurnEnded = Delegate.create[Team]
+
+  /**
+   * Called when it's another player's turn.
+   */
+  val onTurnGet = Delegate.create[Team]
+
+  /**
+   * Called when every player completed their moves in this turn.
+   */
+  val onGlobalTurnCycleEnded = Delegate.createZeroArity
+
+  /**
     * The player that is currently able to do actions.
     */
   private var _currentPlayer = teams().apply(teamToBeginIndex)
@@ -42,21 +57,6 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
      }
      throw new RuntimeException("The team of the active player " + activePlayer.name + " could not be found!")
   }
-
-  /**
-    * Called when a turn has been ended.
-    */
-  val onTurnEnded = Delegate.create[Team]
-
-  /**
-    * Called when it's another player's turn.
-    */
-  val onTurnGet = Delegate.create[Team]
-
-  /**
-    * Called when every player completed their moves in this turn.
-    */
-  val onGlobalTurnCycleEnded = Delegate.createZeroArity
 
   /**
     * The player that currently holds the turn.

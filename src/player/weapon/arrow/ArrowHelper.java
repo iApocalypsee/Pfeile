@@ -1,7 +1,6 @@
 package player.weapon.arrow;
 
 import general.LogFacility;
-import general.Main;
 import misc.ImageHelper;
 import newent.InventoryLike;
 import player.item.Item;
@@ -249,8 +248,7 @@ public final class ArrowHelper {
      * @return int[] - an array of the size <code>ArrowHelper.NUMBER_OF_ARROW_TYPES</code>
      * (it's 8 like the number of kinds of arrows).
      */
-    public static int[] arrowCountInventory() {
-        final InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
+    public static int[] arrowCountInventory(final InventoryLike inventory) {
 
         int[] arrowsCount = new int[NUMBER_OF_ARROW_TYPES];
         for (Item item : inventory.javaItems()) {
@@ -272,6 +270,14 @@ public final class ArrowHelper {
                 arrowsCount[ShadowArrow.INDEX]++;
         }
         return arrowsCount;
+    }
+
+    public static int[] emptyArrowCount() {
+        final int[] array = new int[NUMBER_OF_ARROW_TYPES];
+        for(int i = 0; i < array.length; i++) {
+            array[i] = 0;
+        }
+        return array;
     }
 
     /**

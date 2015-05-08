@@ -79,7 +79,7 @@ public class GameScreen extends Screen implements FrameContainer {
 
 		onScreenEnter.register(JavaInterop.asScala(() -> {
             if (map == null) {
-                map = new VisualMap(Main.getContext().getWorld());
+                map = new VisualMap(Main.getContext());
                 map.moveMap(120, 470);
             }
             return BoxedUnit.UNIT;
@@ -208,6 +208,18 @@ public class GameScreen extends Screen implements FrameContainer {
             case KeyEvent.VK_I:
                 onLeavingScreen(InventoryScreen.SCREEN_INDEX);
                 break;
+			case KeyEvent.VK_LEFT:
+				map.moveMap(-1f, 0);
+				break;
+			case KeyEvent.VK_RIGHT:
+				map.moveMap(1f, 0);
+				break;
+			case KeyEvent.VK_UP:
+				map.moveMap(0, -1f);
+				break;
+			case KeyEvent.VK_DOWN:
+				map.moveMap(0, 1f);
+				break;
 
             // FIXME: remove this later
             case KeyEvent.VK_SPACE:

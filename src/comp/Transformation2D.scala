@@ -71,9 +71,7 @@ class Transformation2D {
     val old = translation
     setTranslationWithoutSideEffect(x, y)
     val firedEvent = TranslationChange(old, translation)
-    if(firedEvent.delta == Vector2.zero) {
-      onTranslated(firedEvent)
-    }
+    onTranslated(firedEvent)
 
     this
   }

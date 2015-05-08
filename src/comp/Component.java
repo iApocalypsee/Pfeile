@@ -1,13 +1,11 @@
 package comp;
 
 import general.Delegate;
-import general.JavaInterop;
 import general.Main;
 import geom.Vector2;
 import gui.screen.Screen;
 import scala.Function1;
 import scala.Unit;
-import scala.runtime.BoxedUnit;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -218,17 +216,15 @@ public abstract class Component implements IComponent {
 			onTransformed.apply(t);
 		});
 
-		transformation.onScaled().register(JavaInterop.asScala((ScaleChange t) -> {
+		transformation.onScaled().registerJava((ScaleChange t) -> {
 			isTransformationChangedSince = true;
 			onTransformed.apply(t);
-			return BoxedUnit.UNIT;
-		}));
+		});
 
-		transformation.onRotated().register(JavaInterop.asScala((RotationChange t) -> {
+		transformation.onRotated().registerJava((RotationChange t) -> {
 			isTransformationChangedSince = true;
 			onTransformed.apply(t);
-			return BoxedUnit.UNIT;
-		}));
+		});
 	}
 
 	/**

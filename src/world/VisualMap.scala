@@ -2,11 +2,23 @@ package world
 
 import java.awt.Graphics2D
 
-import general.Main
+import general.{LogFacility, Main, PfeileContext}
+import geom.Vector2
 import gui.Drawable
-import newent.VisionStatus
+import newent.{CommandTeam, VisionStatus}
 
-class VisualMap(world: WorldLike) extends Drawable {
+/**
+  * Takes care of the drawing of the tiles in the given world.
+  * Note that objects of this class only can handle tiles that provide a [[world.IsometricPolygonTile.IsometricPolygonTileComponent]]
+  * as their component representation.
+  * @param context The context on which this object operates.
+  */
+class VisualMap(context: PfeileContext) extends Drawable {
+
+  context.turnSystem.onTurnGet += {
+    case team: CommandTeam => centerMap(team.head.getGridX, team.head.getGridY)
+    case _ =>
+  }
 
   /** Data object that holds information on how to display the viewport. */
   private val _vp = new WorldViewport
@@ -26,9 +38,9 @@ class VisualMap(world: WorldLike) extends Drawable {
   private var _sightType: SightType = VisionSightType
 
   /** The world that is being displayed currently. */
-  private val _displayWorld = world
+  private val _displayWorld = context.world
 
-  private val zoom = new ZoomBehavior(world.terrain)
+  private val zoom = new ZoomBehavior(_displayWorld.terrain)
 
   /** Returns the current shifting of the map in the x direction. */
   def getShiftY: Float = _vp.getShiftY
@@ -55,12 +67,54 @@ class VisualMap(world: WorldLike) extends Drawable {
 
     // Recalculate the position of every tile...
     _displayWorld.terrain.tiles foreach { c =>
-      c.component.getTransformation.translate(shiftX, shiftY)
+      c.component.move(shiftX.asInstanceOf[Int], shiftY.asInstanceOf[Int])
+    }
+  }
+
+  /**
+   * Sets the position of the whole map.
+   * @param x The new x position of the left corner of the map.
+   * @param y The new y position of the left corner of the map.
+   */
+  def setMapPosition(x: Int, y: Int): Unit = {
+    _vp.setShiftX(x)
+    _vp.setShiftY(y)
+
+    for (tile <- _displayWorld.terrain.tiles) tile.component match {
+      case isometric: IsometricPolygonTile#IsometricPolygonTileComponent =>
+        isometric.setPositionRelativeToMap(x, y)
+      // The visual map can only handle isometric tiles for now.
+      case unknownComponent => throw new NotImplementedError(s"Component of tile is ${unknownComponent.getClass.getName}; " +
+        s"IsometricPolygonTile#IsometricPolygonTileComponent expected")
+    }
+  }
+
+  def centerMap(tileX: Int, tileY: Int): Unit = {
+    val centerOn = _displayWorld.terrain.tileAt(tileX, tileY)
+
+    centerOn.component match {
+      case isometric: IsometricPolygonTile#IsometricPolygonTileComponent =>
+        
+        val center = Main.getGameWindow.getCenterPosition
+        val tileNormalPosition = Vector2(isometric.normalX, isometric.normalY)
+        val upperLeft = center - Vector2(isometric.getWidth / 2, isometric.getHeight / 2)
+        
+        val relevantDelta = (upperLeft - tileNormalPosition).toPoint
+        
+        for(tile <- _displayWorld.terrain.tiles) tile.component match {
+          case isometric: IsometricPolygonTile#IsometricPolygonTileComponent =>
+            isometric.setPositionRelativeToMap(relevantDelta.x, relevantDelta.y)
+        }
+
+      // The visual map can only handle isometric tiles for now.
+      case unknownComponent => throw new NotImplementedError(s"Component of tile is ${unknownComponent.getClass.getName}; " +
+        s"IsometricPolygonTile#IsometricPolygonTileComponent expected")
     }
   }
 
   def zoom(factor: Float): Unit = {
-    zoom.zoomFrom(Main.getContext.activePlayer.getGridX, Main.getContext.activePlayer.getGridY, factor)
+    //zoom.zoomFrom(Main.getContext.activePlayer.getGridX, Main.getContext.activePlayer.getGridY, factor)
+    LogFacility.log("Zooming currently disabled. Don't rotate your mouse wheel to not see me again.", "Info")
   }
 
   /** Draws the whole map. */
@@ -85,7 +139,7 @@ class VisualMap(world: WorldLike) extends Drawable {
     private def drawTiles(g: Graphics2D) = {
 
       val terrain = _displayWorld.terrain
-      val usedVision = Main.getContext.activePlayer.visionMap
+      val usedVision = context.activePlayer.visionMap
 
       for (
         y <- terrain.height - 1 to 0 by -1;
@@ -105,7 +159,7 @@ class VisualMap(world: WorldLike) extends Drawable {
 
     private def drawEntities(g: Graphics2D) = {
       val terrain = _displayWorld.terrain
-      val usedVision = Main.getContext.activePlayer.visionMap
+      val usedVision = context.activePlayer.visionMap
 
       for (
         y <- terrain.height - 1 to 0 by -1;
@@ -120,7 +174,7 @@ class VisualMap(world: WorldLike) extends Drawable {
     protected[VisualMap] override def draw(g: Graphics2D): Unit = {
       drawTiles(g)
       drawEntities(g)
-      Main.getContext.getWorldLootList.draw(g)
+      context.getWorldLootList.draw(g)
     }
   }
 
@@ -133,7 +187,7 @@ class VisualMap(world: WorldLike) extends Drawable {
         tile.component.draw(g)
       }
 
-      Main.getContext.getWorldLootList.getLoots.foreach(loot =>
+      context.getWorldLootList.getLoots.foreach(loot =>
         loot.getLootUI.draw(g))
     }
   }

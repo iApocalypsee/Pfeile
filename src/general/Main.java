@@ -302,9 +302,8 @@ public class Main {
 
     /**
      * Returns the object holding all data for the game.
-     * @deprecated Resembles global state! Not good!
+     * <b>DO NOT USE THIS OBJECT UNTIL IT HAS BEEN INITIALIZED!</b>
      */
-    @Deprecated
 	public static PfeileContext getContext() {
 		return context;
 	}

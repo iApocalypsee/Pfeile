@@ -70,13 +70,6 @@ class Player(world: WorldLike,
   val onTurnGet = Delegate.createZeroArity
 
   /**
-    * Called when the player ended his turn. <p>
-    * In terms of UI the equivalent to the delegate would be pressing the "End turn" button,
-    * which essentially tells the program that the player has completed all of his actions now.
-    */
-  val onMovesCompleted = Delegate.createZeroArity
-
-  /**
     * The component that the representable object uses first. Method is called only once.
     *
     * The start component must not be null at first, else it will throw a [[java.lang.IllegalArgumentException]].

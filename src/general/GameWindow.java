@@ -1,5 +1,6 @@
 package general;
 
+import geom.Vector2;
 import gui.screen.*;
 
 import javax.imageio.ImageIO;
@@ -146,6 +147,10 @@ public class GameWindow extends JFrame {
 
 		g.dispose();
 		strat.show();
+	}
+
+	public Vector2 getCenterPosition() {
+		return new Vector2(getWidth() / 2, getHeight() / 2);
 	}
 
 	/**

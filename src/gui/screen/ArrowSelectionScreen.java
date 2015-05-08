@@ -146,7 +146,8 @@ public class ArrowSelectionScreen extends Screen {
 
             arrowList = new ArrayList<>();
 
-            final int[] arrowsCount = ArrowHelper.arrowCountInventory();
+			// FIXME Where to get the data from?! PfeileContext is definitely null at that point!
+            final int[] arrowsCount = ArrowHelper.emptyArrowCount();
             arrowList.add("Feuerpfeil " + "[" + arrowsCount[FireArrow.INDEX] + "]");
             arrowList.add("Wasserpfeil " + "[" + arrowsCount[WaterArrow.INDEX] + "]");
             arrowList.add("Sturmpfeil " + "[" + arrowsCount[StormArrow.INDEX] + "]");
@@ -239,7 +240,6 @@ public class ArrowSelectionScreen extends Screen {
                 }
             });
 
-            updateInventoryList();
             onScreenEnter.register(new AbstractFunction0<BoxedUnit>() {
                 @Override
                 public BoxedUnit apply () {
@@ -423,7 +423,7 @@ public class ArrowSelectionScreen extends Screen {
             public void run () {
                 arrowList.clear();
 
-                final int[] arrowsCount = ArrowHelper.arrowCountInventory();
+				final int[] arrowsCount = ArrowHelper.arrowCountInventory(Main.getContext().getActivePlayer().inventory());
                 arrowList.add("Feuerpfeil " + "[" + arrowsCount[FireArrow.INDEX] + "]");
                 arrowList.add("Wasserpfeil " + "[" + arrowsCount[WaterArrow.INDEX] + "]");
                 arrowList.add("Sturmpfeil " + "[" + arrowsCount[StormArrow.INDEX] + "]");

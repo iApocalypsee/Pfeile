@@ -5,7 +5,8 @@ import world.brush.TileTypeBrush
 import scala.collection.mutable
 import scala.util.Random
 
-/** Base trait for all terrain types.
+/**
+  * Base trait for all terrain types.
   *
   * With a need to support extensibility, we need a base "interface" so that we can support terrains
   * that are implemented differently.
@@ -27,7 +28,8 @@ trait TerrainLike {
   require(width > 0, "Width may not be negative or 0.")
   require(height > 0, "Height may not be negative or 0.")
 
-  /** Returns true if the specified coordinate is valid.
+  /**
+    * Returns true if the specified coordinate is valid.
     *
     * @param x The x coordinate.
     * @param y The y coordinate.
@@ -35,7 +37,8 @@ trait TerrainLike {
     */
   def isTileValid(x: Int, y: Int) = x >= 0 && x < width && y >= 0 && y < height
 
-  /** Returns the tile at the given coordinate.
+  /**
+    * Returns the tile at the given coordinate.
     *
     * It is implementation-specific how terrains are coping with coordinates that are out of bounds.
     * Some may throw an exception, others just return null. Like I said, implementation-specific.
@@ -46,7 +49,8 @@ trait TerrainLike {
     */
   def tileAt(x: Int, y: Int): TileType
 
-  /** Sets the tile type at the given position to the specified tile.
+  /**
+    * Sets the tile type at the given position to the specified tile.
     *
     * @param x The x position.
     * @param y The x position.
@@ -57,8 +61,8 @@ trait TerrainLike {
   /** Returns the tiles in a one dimensional list. */
   def tiles: List[TileType] = {
     val ret = mutable.MutableList[TileType]()
-    for(y <- 0 until height) {
-      for(x <- 0 until width) {
+    for (y <- 0 until height) {
+      for (x <- 0 until width) {
         ret += tileAt(x, y)
       }
     }
@@ -70,8 +74,8 @@ trait TerrainLike {
   /** Ditto. */
   def javaTiles = {
     val ret = new java.util.ArrayList[TileLike](height * width)
-    for(y <- 0 until height) {
-      for(x <- 0 until width) {
+    for (y <- 0 until height) {
+      for (x <- 0 until width) {
         ret.add(tileAt(x, y))
       }
     }
@@ -79,49 +83,29 @@ trait TerrainLike {
   }
 
   /**
-   * Finds the tile at the gui-position (posX|posY).
-   * <p>
-   * <code>val ret = tiles.filter(tile =>
-      tile.component.getBounds.contains(posX, posY))
-   * </code>
-   * <p>
-   *   <code> if (ret.isEmpty()) null
-   *      <p> else null
-   *   </code>
-   *
-   *
-   * @param posX the x-position on the screen / of a component
-   * @param posY the y-position on the screen / of a component
-   * @return the tile, or null if the position out of the map ends
-   */
-  def findTile(posX: Double, posY: Double): TileType = {
-    val ret = tiles.filter(tile => {
-      tile.component.getBounds.contains(posX, posY)
-    })
-
-    if (ret.isEmpty)
-      null.asInstanceOf[TileType]
-    else
-      ret.head
-  }
+    * Finds the tile at the gui-position (posX|posY).
+    *
+    * @param posX the x-position on the screen / of a component
+    * @param posY the y-position on the screen / of a component
+    * @return The tile at given coordinates, or null if no tile can be found at these particular screen coordinates.
+    */
+  def findTile(posX: Double, posY: Double): TileType = tiles.find(tile => tile.component.getBounds.contains(posX, posY)).getOrElse(null.asInstanceOf[TileType])
 
   /**
-   * <b> Description in TileLike#findTile(posX, posY). </b>
-   * <p>
-   * Java-Compiler has Problems with <code>TileType</code>, so if you don't want to cast, this method will return a
-   * TileLike.
-   *
-   * @return TerrainLike#findTile(posX, posY)
-   */
-  def findTileJava(posX: Double, posY: Double): TileLike = {
-    findTile(posX, posY)
-  }
+    * Java-Compiler has Problems with <code>TileType</code>, so if you don't want to cast, this method will return a
+    * TileLike.
+    *
+    * @return TerrainLike#findTile(posX, posY)
+    * @see [[world.TerrainLike#findTile(double, double)]]
+    */
+  def findTileJava(posX: Double, posY: Double): TileLike = findTile(posX, posY)
 
-  def generate(r: Random = new Random)(seed: Long = r.nextLong( )): Unit
+  def generate(r: Random = new Random)(seed: Long = r.nextLong()): Unit
 
 }
 
-/** The default terrain (for now).
+/**
+  * The default terrain (for now).
   *
   * The terrain manages isometric tiles and has no references to the [[comp.Component]] class
   * or whatsoever GUI class we have.
@@ -132,7 +116,7 @@ class DefaultTerrain(override val world: DefaultWorld, initWidth: Int, initHeigh
   override type TileType = IsometricPolygonTile
 
   /** It uses PfeileContext.WORLD_SIZE_X */
-  override lazy val width  = initWidth
+  override lazy val width = initWidth
   /** PfeileContext.WORLD_SIZE_Y is used */
   override lazy val height = initHeight
 
@@ -165,7 +149,7 @@ class DefaultTerrain(override val world: DefaultWorld, initWidth: Int, initHeigh
       val adjacentSeaTiles = _tiles.flatten.collect {
         case seaTile: SeaTile if seaTile.neighbors.exists(_.isInstanceOf[GrassTile]) => seaTile
       }
-      for(tile <- adjacentSeaTiles) setTileAt(tile.getGridX, tile.getGridY, new CoastTile(tile.getGridX, tile.getGridY, this))
+      for (tile <- adjacentSeaTiles) setTileAt(tile.getGridX, tile.getGridY, new CoastTile(tile.getGridX, tile.getGridY, this))
     }
 
     def tileTypeStage(): Unit = {
@@ -174,7 +158,7 @@ class DefaultTerrain(override val world: DefaultWorld, initWidth: Int, initHeigh
 
       val points = mutable.MutableList[TTPoint]()
 
-      for(i <- 0 until ((width * height) / 2)) {
+      for (i <- 0 until ((width * height) / 2)) {
         points += TTPoint(r.nextInt(width), r.nextInt(height), r.nextInt(2) match {
           case 0 => classOf[SeaTile]
           case 1 => classOf[GrassTile]

@@ -24,7 +24,7 @@ import scala.concurrent.Future
   * that has not implemented any Component interface.
   * @author Josip Palavra
   */
-trait TileLike extends DisplayRepresentable with AttackContainer {
+trait TileLike extends AnyRef with DisplayRepresentable with AttackContainer {
 
   /** The x position in the grid of the world. */
   val latticeX: Int
@@ -160,7 +160,7 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
   //<editor-fold desc='Directions (north, east, west, south, etc.)'>
 
   private def directionalGet(xdiff: Int, ydiff: Int): Option[TileLike] = {
-    if(terrain.isTileValid(latticeX + xdiff, latticeY + ydiff)) Some(terrain.tileAt(latticeX + xdiff, latticeY + ydiff))
+    if (terrain.isTileValid(latticeX + xdiff, latticeY + ydiff)) Some(terrain.tileAt(latticeX + xdiff, latticeY + ydiff))
     else None
   }
 
@@ -204,7 +204,7 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
     * Note that this component is not able to rotate! If you attempt a rotation, the component
     * will throw a UnsupportedOperationException, stating that rotation is not supported.
     */
-  private class IsometricPolygonTileComponent private[IsometricPolygonTile] extends Component with AdjustableDrawing {
+  class IsometricPolygonTileComponent private[IsometricPolygonTile] extends Component with AdjustableDrawing {
 
     // Just make sure that the isometric tile is not being rotated.
     onTransformed += {
@@ -215,9 +215,9 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
     //<editor-fold desc='Visual appearance'>
 
     /**
-     * The shape from which the component is going to retrieve the corner points.
-     * The corner points are needed to draw border lines on seperate sides.
-     */
+      * The shape from which the component is going to retrieve the corner points.
+      * The corner points are needed to draw border lines on seperate sides.
+      */
     private val cornerPoints = new {
 
       var north: Point = null
@@ -267,7 +267,7 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
     setName((getGridX, getGridY).toString())
 
     // Translate so that the tile fits into the grid again.
-    getTransformation.translate(latticeX * TileHalfWidth + latticeY * TileHalfWidth, latticeX * TileHalfHeight - latticeY * TileHalfHeight)
+    getTransformation.translate(normalX, normalY)
 
     //</editor-fold>
 
@@ -388,6 +388,29 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
     }
 
     //</editor-fold>
+
+    /**
+      * Calculates the normal x position for this tile, considering that the center of the (0|0) tile
+      * is at screen coordinates (0|0).
+      * @return The x position of the upper left corner of this tile.
+      */
+    def normalX = getGridX * TileHalfWidth + getGridY * TileHalfWidth
+
+    /**
+      * Calculates the normal y position for this tile, considering that the center of the (0|0) tile
+      * is at screen coordinates (0|0).
+      * @return The y position of the upper left corner of this tile.
+      */
+    def normalY = getGridX * TileHalfHeight - getGridY * TileHalfHeight
+
+    /**
+      * Sets the position of this tile component to the normal position, to which the given translation is added.
+      * @param leftCornerX How much x units to move this tile additionally.
+      * @param leftCornerY How much y units to move this tile additionally.
+      */
+    def setPositionRelativeToMap(leftCornerX: Int, leftCornerY: Int): Unit = {
+      setLocation(normalX + leftCornerX, normalY + leftCornerY)
+    }
 
     override def draw(g: Graphics2D): Unit = {
       g.setColor(Color.black)
