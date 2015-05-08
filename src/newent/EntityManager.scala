@@ -30,10 +30,9 @@ sealed trait EntityManagerLike {
     * @param e The entity to remove.
     */
   def -=(e: EntityLike): Unit = {
-    import scala.concurrent.ExecutionContext.Implicits.global
     val prev = entityList
     sortOut { _ ne e }
-    if(prev.diff(entityList).nonEmpty) onEntityUnlogged callAsync e
+    if(prev.diff(entityList).nonEmpty) onEntityUnlogged(e)
   }
 
   // Ditto.

@@ -38,16 +38,8 @@ class Choice {
 
   case class Decision(private val consequence: () => Unit) {
 
-    /**
-      * Called when this particular decision has been triggered.
-      * This delegate applies only to this decision and nothing else,
-      * unlike the [[general.Choice#onChoosed()]].
-      */
-    lazy val onChosen = Delegate.createZeroArity
-
     /** Picks this decision. */
     def decide(): Unit = {
-      onChosen()
       consequence()
     }
 

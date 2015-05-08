@@ -6,7 +6,6 @@ import player.BoardPositionable
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
-import scala.concurrent.ExecutionContext.Implicits.global
 
 /** An object that can take attacks. <p>
   *
@@ -33,11 +32,11 @@ trait AttackContainer extends BoardPositionable {
 
   def take(e: AttackEvent): Unit = {
     _attackList += new AttackProgress(e)
-    onAttacked.callAsync(e)
+    onAttacked(e)
   }
 
   def takeImmediately(e: AttackEvent): Unit = {
-    onDamage.callAsync(e)
+    onDamage(e)
   }
 
   def queuedAttacks = _attackList.clone().toList
@@ -50,7 +49,7 @@ trait AttackContainer extends BoardPositionable {
         // Remove the attack from the list, since it is impacting
         val removed = _attackList.remove(_attackList.indexOf(p))
         // And notify the callbacks about this event
-        onImpact.callAsync(removed.event)
+        onImpact(removed.event)
       }
     }
   }

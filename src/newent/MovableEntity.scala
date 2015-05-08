@@ -59,7 +59,6 @@ trait MovableEntity extends Entity with StatisticalEntity {
     * If no path is set, this method does nothing.
     */
   def moveAlong(): Unit = {
-    import scala.concurrent.ExecutionContext.Implicits.global
     breakable {
       // Only walk along if the entity has a path associated right now.
       if (_currentPath.isDefined) {
@@ -74,7 +73,7 @@ trait MovableEntity extends Entity with StatisticalEntity {
             val prevX = getGridX
             val prevY = getGridY
             setGridPosition(step.x, step.y)
-            onLocationChanged.callAsync(LocationChangedEvent(prevX, prevY, getGridX, getGridY, this))
+            onLocationChanged(LocationChangedEvent(prevX, prevY, getGridX, getGridY, this))
             _currentPath = Some(Path(p.steps.tail))
 
             // If it is the last step in the path, I have to remove the path, since it is walked already...

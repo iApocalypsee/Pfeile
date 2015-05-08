@@ -7,7 +7,6 @@ import general.Delegate
 import gui.screen.Screen
 
 import scala.collection.mutable
-import scala.concurrent.ExecutionContext.Implicits.global
 
 /** A screen that can contain an unspecified amount of internal frames.
   *
@@ -37,15 +36,15 @@ class FrameContainerObject private[gui] {
   /** Adds a frame to the container object. */
   def addFrame(f: InternalFrame): Unit = {
     _frames += f
-    onFrameAdded callAsync f
+    onFrameAdded(f)
   }
 
   /** Removes the first frame that matches the condition in the function. */
   def removeFrame(f: InternalFrame => Boolean): Unit = {
     val occurrence = _frames find f
-    occurrence.map { frame =>
+    occurrence.foreach { frame =>
       _frames -= frame
-      onFrameRemoved callAsync frame
+      onFrameRemoved(frame)
     }
   }
 

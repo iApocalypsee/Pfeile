@@ -5,7 +5,6 @@ import comp.Component.ComponentStatus;
 import general.Delegate;
 import general.Main;
 import gui.Drawable;
-import scala.concurrent.ExecutionContext;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -169,7 +168,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * Wird aufgerufen, wenn der Screen betreten wird.
 	 */
 	public void onEnteringScreen(Object sender) {
-        onScreenEnter.callAsync(ExecutionContext.Implicits$.MODULE$.global());
+        onScreenEnter.apply();
 	}
 
 	/**
@@ -182,7 +181,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	public void onLeavingScreen(int toScreen) {
 		manager.setActiveScreen(toScreen);
 		manager.setLastScreenChange(new Date());
-        onScreenLeft.callAsync(new ScreenChangedEvent(toScreen), ExecutionContext.Implicits$.MODULE$.global());
+        onScreenLeft.apply(new ScreenChangedEvent(toScreen));
         manager.getActiveScreen().onScreenEnter.apply();
 	}
 

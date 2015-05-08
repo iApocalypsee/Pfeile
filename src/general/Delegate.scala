@@ -2,8 +2,6 @@ package general
 
 import java.util.function.Consumer
 
-import scala.concurrent.{ExecutionContext, Future}
-
 /** An implementation of the observer pattern.
   *
   * The observer pattern is found in a variety of situations: calling functions that registered
@@ -134,9 +132,16 @@ object Delegate {
 
     override type FunType = (In) => Unit
 
-    def apply(arg: In): Unit = callbacks foreach {
-      case pf: PartialFunction[In, Any] => if (pf.isDefinedAt( arg )) pf( arg ) else throw new MatchError( this )
-      case reg_f: ((In) => Any) => reg_f( arg )
+    @volatile private var isProcessing = false
+
+    def apply(arg: In): Unit = {
+      if(isProcessing) return
+      isProcessing = true
+      callbacks foreach {
+        case pf: PartialFunction[In, Any] => if (pf.isDefinedAt( arg )) pf( arg ) else throw new MatchError( this )
+        case reg_f: ((In) => Any) => reg_f( arg )
+      }
+      isProcessing = false
     }
 
     def registerJava(jf: Consumer[In]) = this += (x => jf.accept(x))
@@ -157,25 +162,21 @@ object Delegate {
 
     def registerOnceJava(jf: Consumer[In]): Unit = registerOnce(x => jf.accept(x))
 
-    /** Code in java zum ausführen der gethreaden Version:
-      *
-    <code> delegate.callAsync(<In>, scala.concurrent.ExecutionContext.Implicits$.MODULE$.global()); </code> */
-    @deprecated def callAsync(arg: In)(implicit ec: ExecutionContext): Future[Unit] = Future {
-      apply( arg )
-    }
-
   }
 
   trait NonParameterizedDelegate extends DelegateLike {
 
     override type FunType = () => Unit
 
-    def apply(): Unit = callbacks foreach {
-      _( )
-    }
+    @volatile private var isProcessing = false
 
-    @deprecated def callAsync()(implicit ec: ExecutionContext): Future[Unit] = Future {
-      apply()
+    def apply(): Unit = {
+      if(isProcessing) return
+      isProcessing = true
+      callbacks foreach {
+        _( )
+      }
+      isProcessing = false
     }
 
     def registerJava(jf: ProcFun0): Unit = this += ProcFun0.toScalaFunction(jf)
