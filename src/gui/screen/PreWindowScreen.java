@@ -108,6 +108,9 @@ public class PreWindowScreen extends Screen {
     /** position of <code>g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y")</code> */
     private Point fontSmallPosition;
 
+    // Was a test...
+    // public ImageLikeComponent waitCircle = new ImageLikeComponent(500, 235, new WaitCircle(50), this);
+
     public PreWindowScreen() {
         super(SCREEN_NAME, SCREEN_INDEX);
 

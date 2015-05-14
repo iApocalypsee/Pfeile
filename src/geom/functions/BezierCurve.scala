@@ -37,11 +37,15 @@ case class BezierCurve(startPoint: Vector2, c1: Vector2, c2: Vector2, endPoint: 
     p
   }
 
+  def pointWith(t: Double): Vector2 = pointWith(t.asInstanceOf[Float])
+
 }
 
 object BezierCurve {
 
   implicit def augmentCubicCurve(cubicCurve: CubicCurve2D): BezierCurve = BezierCurve(Vector2(cubicCurve.getP1),
     Vector2(cubicCurve.getCtrlP1), Vector2(cubicCurve.getCtrlP2), Vector2(cubicCurve.getP2))
+
+  def linear(p1: Vector2, p2: Vector2) = BezierCurve(p1, p1, p2, p2)
 
 }

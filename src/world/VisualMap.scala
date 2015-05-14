@@ -2,7 +2,7 @@ package world
 
 import java.awt.Graphics2D
 
-import general.{LogFacility, Main, PfeileContext}
+import general.{Delegate, LogFacility, Main, PfeileContext}
 import geom.Vector2
 import gui.Drawable
 import newent.{CommandTeam, VisionStatus}
@@ -19,6 +19,12 @@ class VisualMap(context: PfeileContext) extends Drawable {
     case team: CommandTeam => centerMap(team.head.getGridX, team.head.getGridY)
     case _ =>
   }
+
+  /**
+    * Called when the world GUI has been changed in some way, either through moving the map
+    * or zooming.
+    */
+  val onWorldGuiChanged = Delegate.createZeroArity
 
   /** Data object that holds information on how to display the viewport. */
   private val _vp = new WorldViewport
@@ -43,9 +49,9 @@ class VisualMap(context: PfeileContext) extends Drawable {
   private val zoom = new ZoomBehavior(_displayWorld.terrain)
 
   /** Returns the current shifting of the map in the x direction. */
-  def getShiftY: Float = _vp.getShiftY
+  def getShiftY: Int = _vp.getShiftY.asInstanceOf[Int]
   /** Returns the current shifting of the map in the y direction. */
-  def getShiftX: Float = _vp.getShiftX
+  def getShiftX: Int = _vp.getShiftX.asInstanceOf[Int]
 
   def sightType = _sightType
   def getSightType = sightType
@@ -61,21 +67,15 @@ class VisualMap(context: PfeileContext) extends Drawable {
     * @param shiftX The amount of x units to move the map.
     * @param shiftY The amount of y units to move the map.
     */
-  def moveMap(shiftX: Float, shiftY: Float): Unit = {
-    _vp.setShiftX(getShiftX + shiftX - getShiftX)
-    _vp.setShiftY(getShiftY + shiftY - getShiftY)
-
-    // Recalculate the position of every tile...
-    _displayWorld.terrain.tiles foreach { c =>
-      c.component.move(shiftX.asInstanceOf[Int], shiftY.asInstanceOf[Int])
-    }
+  def moveMap(shiftX: Int, shiftY: Int): Unit = {
+    setMapPosition(getShiftX + shiftX, getShiftY + shiftY)
   }
 
   /**
-   * Sets the position of the whole map.
-   * @param x The new x position of the left corner of the map.
-   * @param y The new y position of the left corner of the map.
-   */
+    * Sets the position of the whole map.
+    * @param x The new x position of the left corner of the map.
+    * @param y The new y position of the left corner of the map.
+    */
   def setMapPosition(x: Int, y: Int): Unit = {
     _vp.setShiftX(x)
     _vp.setShiftY(y)
@@ -87,6 +87,8 @@ class VisualMap(context: PfeileContext) extends Drawable {
       case unknownComponent => throw new NotImplementedError(s"Component of tile is ${unknownComponent.getClass.getName}; " +
         s"IsometricPolygonTile#IsometricPolygonTileComponent expected")
     }
+
+    onWorldGuiChanged()
   }
 
   def centerMap(tileX: Int, tileY: Int): Unit = {
@@ -94,17 +96,13 @@ class VisualMap(context: PfeileContext) extends Drawable {
 
     centerOn.component match {
       case isometric: IsometricPolygonTile#IsometricPolygonTileComponent =>
-        
+
         val center = Main.getGameWindow.getCenterPosition
         val tileNormalPosition = Vector2(isometric.normalX, isometric.normalY)
-        val upperLeft = center - Vector2(isometric.getWidth / 2, isometric.getHeight / 2)
-        
-        val relevantDelta = (upperLeft - tileNormalPosition).toPoint
-        
-        for(tile <- _displayWorld.terrain.tiles) tile.component match {
-          case isometric: IsometricPolygonTile#IsometricPolygonTileComponent =>
-            isometric.setPositionRelativeToMap(relevantDelta.x, relevantDelta.y)
-        }
+        val centeredUpperLeft = center - Vector2(isometric.getWidth / 2, isometric.getHeight / 2)
+
+        val relevantDelta = (centeredUpperLeft - tileNormalPosition).toPoint
+        setMapPosition(relevantDelta.x, relevantDelta.y)
 
       // The visual map can only handle isometric tiles for now.
       case unknownComponent => throw new NotImplementedError(s"Component of tile is ${unknownComponent.getClass.getName}; " +

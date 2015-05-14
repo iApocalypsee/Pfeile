@@ -5,6 +5,35 @@ import java.awt.image.BufferedImage
 
 import gui.screen.Screen
 
+class ImageLikeComponent(x: Int, y: Int, imageLike: ImageLike, screen: Screen) extends Component(x, y, imageLike.image.getWidth, imageLike.image.getHeight, screen) {
+
+  /**
+   * Rotates the component by the angle specified around its center. Consequently, the AffineTransform is translated
+   * to <code>getSimplifiedBounds().getCenterX(), getSimplifiedBounds().getCenterY()</code>, rotated and then
+   * translated to <code>- getSimplifiedBounds().getCenterX(), - getSimplifiedBounds().getCenterY()</code>.
+   * <p>
+   * <p>
+   * This method is the same like <code>imageComponent.rotateRadians(Math.toRadians(angle))</code>.
+   *
+   * @param angle The angle to rotate the component by, in degrees.
+   */
+  def rotateDegree(angle: Double): Unit = {
+    getTransformation.rotate(angle)
+  }
+
+  /** the rotation of this ImageComponent in Radians. To set this value use <code>rotateRadians</code> or <code>rotateDegree</code>.*/
+  def getRotation = getTransformation.rotation
+
+  override def draw(g: Graphics2D): Unit = {
+    val oldTransformation = g.getTransform
+    val src_s = getSourceShape.getBounds
+    g.setTransform(getTransformation.concatenatedMatrix)
+    imageLike.drawImage(g, x, y, getWidth, getHeight)
+    g.setTransform(oldTransformation)
+  }
+
+}
+
 /**
   * Component that just owns an image as a representation of itself
   * @param x The x position of the image.

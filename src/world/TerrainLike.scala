@@ -49,6 +49,8 @@ trait TerrainLike {
     */
   def tileAt(x: Int, y: Int): TileType
 
+  def getTileAt(x: Int, y: Int): TileLike = tileAt(x, y)
+
   /**
     * Sets the tile type at the given position to the specified tile.
     *

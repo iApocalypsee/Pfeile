@@ -92,7 +92,7 @@ trait LivingEntity extends Entity with AttackContainer {
      life.changeLife(- damage + defence)
 
      LogFacility.log(s"Impacting attack: by ${event.aggressor} to " +
-           s"${event.destination.toString} with ${event.weapon.getName}. " +
+           s"${event.target.toString} with ${event.weapon.getName}. " +
            s"[Damage " + damage + " | Defence: " + defence + "]", "Debug", "Attack")
   }
 }

@@ -209,16 +209,16 @@ public class GameScreen extends Screen implements FrameContainer {
                 onLeavingScreen(InventoryScreen.SCREEN_INDEX);
                 break;
 			case KeyEvent.VK_LEFT:
-				map.moveMap(-1f, 0);
+				map.moveMap(-5, 0);
 				break;
 			case KeyEvent.VK_RIGHT:
-				map.moveMap(1f, 0);
+				map.moveMap(5, 0);
 				break;
 			case KeyEvent.VK_UP:
-				map.moveMap(0, -1f);
+				map.moveMap(0, -5);
 				break;
 			case KeyEvent.VK_DOWN:
-				map.moveMap(0, 1f);
+				map.moveMap(0, 5);
 				break;
 
             // FIXME: remove this later

@@ -8,7 +8,7 @@ import general.Property
 /**
   * Everything that can be described as an image can inherit this trait.
   */
-sealed trait ImageLike {
+trait ImageLike {
 
   /**
     * The image that is going to get drawn.
@@ -45,13 +45,13 @@ sealed trait ImageLike {
 class StaticImage(override val image: BufferedImage) extends ImageLike
 
 /**
-  * Establishes a keyframe animation with several keyframes.
-  * The keyframes switch with every draw call, so that it creates the illusion of movement.
-  * @param keyframeStrip The image in which all steps of the animations are saved.
-  * @param keyframes How many keyframes does this animation contain?
-  * @param startKeyframe The start keyframe. Zero is the first keyframe.
-  */
-class KeyframeAnimation(keyframeStrip: BufferedImage, keyframes: Int, startKeyframe: Int) extends ImageLike {
+ * Establishes a keyframe animation with several keyframes.
+ * The keyframes switch with every draw call, so that it creates the illusion of movement.
+ * @param keyframeStrip The image in which all steps of the animations are saved.
+ * @param keyframes How many keyframes does this animation contain?
+ * @param startKeyframe The start keyframe. Zero is the first keyframe.
+ */
+class KeyframeAnimation(keyframeStrip: BufferedImage, keyframes: Int, startKeyframe: Int) extends AnimationLike {
 
   def this(keyframeStrip: BufferedImage, keyframes: Int) = this(keyframeStrip, keyframes, 0)
 
@@ -76,44 +76,31 @@ class KeyframeAnimation(keyframeStrip: BufferedImage, keyframes: Int, startKeyfr
   }
 
   /**
-    * Causes the animation to step to the next keyframe.
-    * @return The next keyframe as an image.
-    */
-  def nextKeyframe(): BufferedImage = {
+   * Causes the animation to step to the next keyframe.
+   * @return The next keyframe as an image.
+   */
+  override def nextKeyframe(): BufferedImage = {
     currentKeyframeIndex += 1
     if (currentKeyframeIndex >= partitions.size) currentKeyframeIndex = 0
     partitions(currentKeyframeIndex)
   }
 
   /**
-    * Causes the animation to step to the previous keyframe.
-    * @return The previous keyframe as an image.
-    */
-  def previousKeyframe(): BufferedImage = {
+   * Causes the animation to step to the previous keyframe.
+   * @return The previous keyframe as an image.
+   */
+  override def previousKeyframe(): BufferedImage = {
     currentKeyframeIndex -= 1
     if (currentKeyframeIndex < 0) currentKeyframeIndex = partitions.size - 1
     partitions(currentKeyframeIndex)
   }
 
   /**
-    * Returns the image on which the animation currently is.
-    * @return The current keyframe.
-    */
+   * Returns the image on which the animation currently is.
+   * @return The current keyframe.
+   */
   override def image = partitions(currentKeyframeIndex)
 
-  /**
-    * Draws the current image and calls automatically for the next keyframe in the animation.
-    * @param g The graphics object.
-    * @param x Ditto.
-    * @param y Ditto.
-    * @param width Ditto.
-    * @param height Ditto.
-    * @return
-    */
-  override def drawImage(g: Graphics2D, x: Int, y: Int, width: Int, height: Int) = {
-    super.drawImage(g, x, y, width, height)
-    nextKeyframe()
-  }
 }
 
 object KeyframeAnimation {

@@ -15,8 +15,8 @@ trait Aggressor extends CanHoldTeamContract {
     * @param withEvent The event to use.
     */
   def attack(withEvent: AttackEvent): Unit = {
-    assume(withEvent.destination ne null)
-    withEvent.destination.take(withEvent)
+    assume(withEvent.target ne null)
+    withEvent.target.take(withEvent)
   }
 
 }
