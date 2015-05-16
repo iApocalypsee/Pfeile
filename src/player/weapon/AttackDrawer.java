@@ -55,6 +55,24 @@ public class AttackDrawer implements Drawable {
         return arrowList;
     }
 
+    /**
+     * Every Weapon, which currently attacks (i.e. is listed in an attackContainer and therefore an AttackProgress)
+     * something somewhere in the world, is part of the returned LinkedList.
+     *
+     * @return a LinkedList with Weapons from AttackContainers.
+     */
+    public static List<Weapon> getAttackingWeapons () {
+        List<Weapon> attackingWeapons = new LinkedList<>();
+
+        for (AttackContainer attackContainer : AttackContainer$.MODULE$.javaAllAttackContainers()) {
+            for (AttackProgress attackProgress : attackContainer.getQueuedAttacks()) {
+                attackingWeapons.add(attackProgress.event().weapon());
+            }
+        }
+
+        return attackingWeapons;
+    }
+
     @Override
     public void draw (Graphics2D g) {
         List<AttackProgress> filteredProgresses = getAttackProgressesOfArrows();

@@ -445,9 +445,9 @@ object IsometricPolygonTile {
 
   //<editor-fold desc='Visual appearance'>
 
-  val TileHalfWidth = 18 * 2
+  val TileHalfWidth = 27
   lazy val TileWidth = TileHalfWidth * 2
-  val TileHalfHeight = 10 * 2
+  val TileHalfHeight = 15
   lazy val TileHeight = TileHalfHeight * 2
   lazy val TileDiagonalLength = sqrt(pow(TileHalfWidth, 2) + pow(TileHalfHeight, 2))
 

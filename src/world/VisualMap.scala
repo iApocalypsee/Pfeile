@@ -5,7 +5,10 @@ import java.awt.Graphics2D
 import general.{Delegate, LogFacility, Main, PfeileContext}
 import geom.Vector2
 import gui.Drawable
-import newent.{CommandTeam, VisionStatus}
+import newent.{EntityLike, CommandTeam, VisionStatus}
+import player.item.Loot
+import player.weapon.AttackDrawer
+import player.weapon.arrow.AbstractArrow
 
 /**
   * Takes care of the drawing of the tiles in the given world.
@@ -77,6 +80,11 @@ class VisualMap(context: PfeileContext) extends Drawable {
     * @param y The new y position of the left corner of the map.
     */
   def setMapPosition(x: Int, y: Int): Unit = {
+    import scala.collection.JavaConversions._
+
+    val shiftX = x - getShiftX
+    val shiftY = y - getShiftY
+
     _vp.setShiftX(x)
     _vp.setShiftY(y)
 
@@ -86,6 +94,19 @@ class VisualMap(context: PfeileContext) extends Drawable {
       // The visual map can only handle isometric tiles for now.
       case unknownComponent => throw new NotImplementedError(s"Component of tile is ${unknownComponent.getClass.getName}; " +
         s"IsometricPolygonTile#IsometricPolygonTileComponent expected")
+    }
+
+    Main.getContext.world.entities.entityList.foreach { entity: EntityLike =>
+      entity.getComponent.move(shiftX, shiftY)
+    }
+
+    Main.getContext.getWorldLootList.getLoots.foreach { loot: Loot =>
+      loot.getLootUI.getComponent.move(shiftX, shiftY)
+    }
+
+    // TODO: other weapons (AttackDrawer.getAttackingWeapons()) apart from Arrows need to be moved.
+    AttackDrawer.getAttackingArrows.foreach { arrow: AbstractArrow =>
+      arrow.getComponent.move(shiftX, shiftY)
     }
 
     onWorldGuiChanged()

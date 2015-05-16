@@ -81,7 +81,7 @@ public class Aim implements BoardPositionable {
         return tile.getComponent().getBounds();
     }
 
-    /** This returns the more accurate x-position of the center of the attacked Tile then the similar method <code>getPositionGui()</code>.
+    /** This returns the more accurate x-position of the <b>center</b> of the attacked Tile then the similar method <code>getPositionGui()</code>.
      *
      * @return the accurate x position of the center of the attackedTile
      * @see player.weapon.Aim#getPosYGui()
@@ -93,7 +93,7 @@ public class Aim implements BoardPositionable {
         return attackedTile.getComponent().getPreciseRectangle().getCenterX();
     }
 
-    /** This returns the more accurate y-position of the center of the attacked Tile then the similar method <code>getPositionGui()</code>.
+    /** This returns the more accurate y-position of the <b>center</b> of the attacked Tile then the similar method <code>getPositionGui()</code>.
      *
      * @return the accurate y position of the center of the attackedTile
      * @see player.weapon.Aim#getPosXGui()
