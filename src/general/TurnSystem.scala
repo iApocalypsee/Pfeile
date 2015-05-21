@@ -61,8 +61,8 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
   /**
     * The player that currently holds the turn.
     */
-  def currentPlayer = _currentPlayer
-  def getCurrentPlayer = currentPlayer
+  def currentTeam = _currentPlayer
+  def getCurrentTeam = currentTeam
 
   /**
     * Causes the turn system to assign the next player in the cycle as
@@ -75,6 +75,12 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
     if(turnCycleCompleted) onGlobalTurnCycleEnded()
     onTurnGet(_currentPlayer)
   }
+
+  /** 
+    * Returns the next team in the list without assigning the turn to the next team.
+    * @return The next team for turn.
+    */
+  def peekNext: Team = findNextFrom(currentTeam)._1
 
   /**
     * Finds the player that follows the given player in the turn system.

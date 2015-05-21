@@ -39,6 +39,13 @@ sealed abstract class Team protected {
   /** Returns true if this team is the barbarian one. */
   def isBarbarian: Boolean
 
+  /**
+    * Returns this team instance as a command team.
+    * If this instance is not a CommandTeam instance, it will return null.
+    * @return This object as a CommandTeam instance, if possible.
+    */
+  def asCommandTeam: CommandTeam
+
   /** the extra damage is added as multiplier to the damage */
   private var extraDamage: Double = 1
 
@@ -79,7 +86,8 @@ object BarbarianTeam extends Team {
 
   // Implementation of considering every other entity as hostile...
   override def isInTeam(x: CanHoldTeamContract) = false
-  // ... that's it.
+
+  override def asCommandTeam = null
 }
 
 /**
@@ -113,6 +121,8 @@ class CommandTeam(val head: Player, val name: String) extends Team {
   def getHead = head
   def getName = name
 
-   override def toString: String = "CommandTeam[Head: " + head.name + "]"
+  override def asCommandTeam = this
+
+  override def toString: String = "CommandTeam[Head: " + head.name + "]"
 }
 

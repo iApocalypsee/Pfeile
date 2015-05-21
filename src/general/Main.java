@@ -172,7 +172,7 @@ public class Main {
                 // Notify the first player of the player list that it's his turn now.
                 // The delegate has to be called somehow...
                 final TurnSystem turnSystem = getContext().getTurnSystem();
-                turnSystem.onTurnGet().apply(turnSystem.getCurrentPlayer());
+                turnSystem.onTurnGet().apply(turnSystem.getCurrentTeam());
 
 
                 // play the game sound, when the game begins
