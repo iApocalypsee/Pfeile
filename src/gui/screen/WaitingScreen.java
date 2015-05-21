@@ -4,6 +4,7 @@ import comp.Button;
 import comp.Component;
 import comp.Label;
 import general.Main;
+import newent.Team;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -38,10 +39,11 @@ public class WaitingScreen extends Screen {
         label.setFont(new Font(Component.STD_FONT.getFontName(), Font.ITALIC, 28));
         label.setFontColor(new Color(108, 63, 255, 140));
 
-        onScreenEnter.registerJava(() ->
-                        // FIXME: instead of activePlayer, use nextPlayer
-             label.setText("Warte auf nächsten Spieler: " + Main.getContext().getActivePlayer().name())
-        );
+        onScreenEnter.registerJava(() -> {
+            Team nextTeam = Main.getContext().getTurnSystem().peekNext();
+            if (!nextTeam.isBarbarian())
+                label.setText("Warte auf nächsten Spieler: " + nextTeam.asCommandTeam().getHead().name());
+        });
     }
 
     @Override

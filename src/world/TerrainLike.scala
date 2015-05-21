@@ -98,7 +98,7 @@ trait TerrainLike {
     * TileLike.
     *
     * @return TerrainLike#findTile(posX, posY)
-    * @see [[world.TerrainLike#findTile(double, double)]]
+    * @see [[findTile(double, double)]]
     */
   def findTileJava(posX: Double, posY: Double): TileLike = findTile(posX, posY)
 

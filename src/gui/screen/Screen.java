@@ -8,7 +8,6 @@ import gui.Drawable;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -164,14 +163,7 @@ public abstract class Screen implements Drawable, MouseListener,
 		}
 	}
 
-	/**
-	 * Wird aufgerufen, wenn der Screen betreten wird.
-	 */
-	public void onEnteringScreen(Object sender) {
-        onScreenEnter.apply();
-	}
-
-	/**
+    /**
 	 * Wird aufgerufen, wenn der Screen verlassen wird. Sollte man selbst aufrufen, wenn man 
 	 * den Screen verlassen will und zu einem anderen wechseln will. Der Index des Zielscreens
 	 * sollte in Screen.{@link #SCREEN_INDEX} gespeichert sein.
@@ -179,10 +171,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * @param toScreen Der Index des zu betretenden Screens
 	 */
 	public void onLeavingScreen(int toScreen) {
-		manager.setActiveScreen(toScreen);
-		manager.setLastScreenChange(new Date());
-        onScreenLeft.apply(new ScreenChangedEvent(toScreen));
-        manager.getActiveScreen().onScreenEnter.apply();
+        manager.setActiveScreen(toScreen);
 	}
 
 	public void mousePressed(MouseEvent e) {
@@ -482,7 +471,7 @@ public abstract class Screen implements Drawable, MouseListener,
 		this.preprocessedDrawingEnabled = preprocessedDrawingEnabled;
 	}
 
-    public final class ScreenChangedEvent {
+    public static final class ScreenChangedEvent {
         public final int toIndex;
         public ScreenChangedEvent(int toIndex) {
             this.toIndex = toIndex;

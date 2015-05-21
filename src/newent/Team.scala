@@ -105,7 +105,7 @@ class CommandTeam(val head: Player, val name: String) extends Team {
   // list, since the overridden function does not accept players.
   super.integrate(head)
 
-  override def isBarbarian = true
+  override def isBarbarian = false
 
   /**
    * Causes the specified object to join the team.

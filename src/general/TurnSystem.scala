@@ -1,5 +1,6 @@
 package general
 
+import gui.screen.ArrowSelectionScreenPreSet
 import newent.{CommandTeam, Team}
 
 import scala.collection.JavaConversions
@@ -118,7 +119,7 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
     }
 
     def onReachedTurnCycleThreshold(): Unit = {
-      // TODO Code to execute.
+      Main.getGameWindow.getScreenManager.setActiveScreen(ArrowSelectionScreenPreSet.SCREEN_INDEX)
     }
 
   }
