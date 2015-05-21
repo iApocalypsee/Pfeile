@@ -14,10 +14,6 @@ public class GenericReferenceSpinnerModel<A> implements ISpinnerModel<A> {
 		this.values = values;
 	}
 
-	private int indexOfCurrent() {
-		return values.indexOf(current);
-	}
-
 	public List<A> getValues() {
 		return values;
 	}
@@ -64,11 +60,4 @@ public class GenericReferenceSpinnerModel<A> implements ISpinnerModel<A> {
 		return current;
 	}
 
-	/**
-	 * Returns the string representation of the current element.
-	 * @return The string representation of the current element.
-	 */
-	public String currentAsString() {
-		return current.toString();
-	}
 }

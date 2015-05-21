@@ -23,6 +23,12 @@ class Transformation2D {
   val onRotated = Delegate.create[RotationChange]
   val onScaled = Delegate.create[ScaleChange]
 
+  val onTransformed = Delegate.create[TransformationEvent]
+
+  onTranslated += { x => onTransformed(x) }
+  onRotated += { x => onTransformed(x) }
+  onScaled += { x => onTransformed(x) }
+
   /**
    * Resets the whole transformation, so that every stat is cleaned.
    *

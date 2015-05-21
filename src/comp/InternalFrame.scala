@@ -3,7 +3,8 @@ package comp
 import java.awt._
 import java.awt.event.{MouseAdapter, MouseEvent}
 
-import general.{Delegate, LogFacility, Property}
+import general.property.StaticProperty
+import general.{Delegate, LogFacility}
 import gui.FrameContainer
 import gui.screen.Screen
 
@@ -25,30 +26,39 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
 
   import comp.InternalFrame._
 
+  // Check new components if their bounds really are inside the frame's bounds
   onChildAdded += { component =>
     component.getTransformation.onTranslated += { _ =>
       if (!this.getBounds.intersects(component.getBounds.getBounds2D)) {
-        LogFacility.log("Component \""+component.getName+"\" is not intersecting bounds of frame \""+getName+"\" "+
+        LogFacility.log("Component \"" + component.getName + "\" is not intersecting bounds of frame \"" + getName + "\" " +
           "anymore. Ignoring component in drawing process...", "Warning")
       }
     }
     comps = JavaConversions.collectionAsScalaIterable(getChildren.values()).toSeq
   }
 
+  // Check if the backing screen can actually hold frames (ability supplied by FrameContainer trait)
   backingScreen match {
     case frameContainer: FrameContainer =>
       frameContainer.frameContainer.addFrame(this)
-    case _ => LogFacility.log("Frame cannot be added to screen; not a [[FrameContainer]] instance", "Warning")
+    case _ => LogFacility.log(s"Frame $this cannot be added to screen; screen not a FrameContainer instance", "Warning")
   }
 
   /**
     * The color that the top bar is using.
     * Don't put null in there.
     */
-  val topBarColor = Property(FrameStyle.DefaultTopBarColor)
-  topBarColor.appendSetter { color => require(color != null); color }
+  val topBarColor = new StaticProperty(FrameStyle.DefaultTopBarColor) {
+    override def staticSetter(x: Color) = {
+      require(x != null)
+      x
+    }
+  }
 
-  val background: Property[ImageLike] = Property(new SolidColor(FrameStyle.DefaultBackgroundColor))
+  /**
+    * The background used by the frame. Can be transparent, but does not have to be.
+    */
+  val background: StaticProperty[ImageLike] = new StaticProperty(new SolidColor(FrameStyle.DefaultBackgroundColor))
 
   @volatile private var comps = Seq.empty[Component]
 
@@ -158,7 +168,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     private val defaultBarHeight = FrameStyle.CommonInset * 2 + closeButton.getHeight
     setSourceShape(new Rectangle(-InternalFrame.this.getWidth / 2, -defaultBarHeight / 2, InternalFrame.this.getWidth, defaultBarHeight))
     setBackingScreen(InternalFrame.this.getBackingScreen)
-    setName(InternalFrame.this.getName+": toplinebar")
+    setName(InternalFrame.this.getName + ": toplinebar")
     setLocation(0, 0)
 
     onMouseDragDetected += { vec =>

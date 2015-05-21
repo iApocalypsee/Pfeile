@@ -118,7 +118,7 @@ public abstract class Component implements IComponent {
 	/**
 	 * Called when any transformation has been done to the component.
 	 */
-	public final Delegate.Delegate<TransformationEvent> onTransformed = new Delegate.Delegate<>();
+	public final Delegate.Delegate<TransformationEvent> onTransformed = transformation.onTransformed();
 
     /**
      * Called when a child has been added to this component.

@@ -5,23 +5,35 @@ package comp;
  */
 public interface ISpinnerModel<A> {
 
-	public A next();
-	public A previous();
+	A next();
+	A previous();
 
-	public A peekNext();
-	public A peekPrevious();
+	A peekNext();
+	A peekPrevious();
 
-	public A getCurrent();
+	A getCurrent();
 
-    default public A getMinimum() {
+    default A getMinimum() {
         return getValues().get(0);
     }
 
-    default public A getMaximum() {
+    default A getMaximum() {
         final java.util.List<A> values = getValues();
         return values.get(values.size() - 1);
     }
 
-	public java.util.List<A> getValues();
+    default int indexOf(A x) {
+        return getValues().indexOf(x);
+    }
+
+    default int indexOfCurrent() {
+        return indexOf(getCurrent());
+    }
+
+    default String currentAsString() {
+        return getCurrent().toString();
+    }
+
+	java.util.List<A> getValues();
 
 }

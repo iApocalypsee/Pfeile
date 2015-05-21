@@ -1,6 +1,6 @@
 package general;
 
-import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Class for logging operations, mainly to the console.
@@ -26,7 +26,7 @@ public final class LogFacility {
 	 */
 	public static void log(String msg, LoggingLevel level) {
 		String lstr = level.toString().toUpperCase();
-		String timestamp = new Date().toString();
+		String timestamp = LogFacility.getTimestamp();
 
 
 		if(level == LoggingLevel.Error) {
@@ -119,6 +119,16 @@ public final class LogFacility {
 	 */
 	public static enum LoggingLevel {
 		Debug, Info, Warning, Error
+	}
+
+	private static String getTimestamp() {
+		final long currentTime = System.currentTimeMillis();
+		final long executionTime = currentTime - Main.getProgramStartTime();
+		return String.format("%d.%d.%d.%d",
+				TimeUnit.MILLISECONDS.toHours(executionTime),
+				TimeUnit.MILLISECONDS.toMinutes(executionTime),
+				TimeUnit.MILLISECONDS.toSeconds(executionTime),
+				TimeUnit.MILLISECONDS.toMillis(executionTime));
 	}
 
 }

@@ -61,6 +61,8 @@ public class Main {
 	// The actor system taking care of threaded actors.
 	private static ActorSystem actorSystem = ActorSystem.create("system");
 
+    private static long programStartTime;
+
     // DONE WITH ALL VARIABELS;
     // MOST IMPORTANT METHODS ####################################
     // ###########################################################
@@ -91,6 +93,8 @@ public class Main {
      * Main-Method �ffnet eine neue Instanz von Main: main
      */
     public static void main(String[] arguments) {
+
+        programStartTime = System.currentTimeMillis();
 
         GraphicsEnvironment environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
@@ -160,6 +164,7 @@ public class Main {
 	    LoadingWorldScreen.getInstance().onScreenLeft.register(new AbstractFunction1<Screen.ScreenChangedEvent, BoxedUnit>() {
             @Override
             public BoxedUnit apply (Screen.ScreenChangedEvent v1) {
+
                 // initialize TimeClock
                 getContext().getTimeClock();
 
@@ -168,11 +173,6 @@ public class Main {
                 getContext().onStartRunningTimeClock().apply();
                 // the players have been added to entityList, so this call is valid now
                 PreWindowScreen.correctArrowNumber();
-
-                // Notify the first player of the player list that it's his turn now.
-                // The delegate has to be called somehow...
-                final TurnSystem turnSystem = getContext().getTurnSystem();
-                turnSystem.onTurnGet().apply(turnSystem.getCurrentTeam());
 
 
                 // play the game sound, when the game begins
@@ -298,6 +298,10 @@ public class Main {
 
     public static User getUser() {
         return user;
+    }
+
+    public static long getProgramStartTime() {
+        return programStartTime;
     }
 
     /**
