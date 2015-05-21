@@ -5,7 +5,7 @@ import java.awt.{Color, Graphics2D, Point}
 import animation.SoundPool
 import comp.Component
 import general.Main.getGameWindow
-import general.{Delegate, Main, PfeileContext, Property}
+import general._
 import gui.LifeUI
 import gui.screen.GameOverScreen
 import newent.pathfinding.AStarPathfinder
@@ -24,20 +24,7 @@ class Player(world: WorldLike,
              name: String) extends Entity(world, spawnpoint, name) with CombatUnit with MoneyEarner {
 
   // Game section.
-
-  private var _localVisionPoint = visionMap.grantVision(getGridX, getGridY, 5)
-
-  private def updateLocalVisionPoint(): Unit = {
-    if (_localVisionPoint ne null) {
-      _localVisionPoint.releaseVision()
-    }
-    _localVisionPoint = visionMap.grantVision(getGridX, getGridY, 5)
-  }
-
-  override protected def setGridPosition(x: Int, y: Int): Unit = {
-    super.setGridPosition(x, y)
-    updateLocalVisionPoint()
-  }
+  hasSelfTracking = true
 
   /** The default movement points that the entity has. */
   override def defaultMovementPoints = 4
@@ -66,6 +53,10 @@ class Player(world: WorldLike,
     SoundPool.play_gameOverMelodie(SoundPool.LOOP_CONTINUOUSLY)
   }
 
+  onLocationChanged += { e =>
+    tightenComponentToTile(e.end)
+  }
+
   /** Called when turn is assigned to the player. */
   val onTurnGet = Delegate.createZeroArity
 
@@ -75,14 +66,19 @@ class Player(world: WorldLike,
     * The start component must not be null at first, else it will throw a [[java.lang.IllegalArgumentException]].
     * @return A component object which the representable object uses first.
     */
-  override protected def startComponent = new Component {
+  override protected def startComponent = new PlayerComponent
+
+  class PlayerComponent extends Component {
 
     private val drawColor = new Color(190, 35, 255)
 
-    setSourceShape(tileLocation.component.getSourceShape)
+    tightenComponentToTile(tileLocation)
 
-    onLocationChanged += { e =>
-      tightenComponentToTile(e.end)
+    def tightenComponentToTile(t: TileLike): Unit = {
+      val endComponent = t.component
+      setSourceShape(endComponent.getSourceShape)
+      setX(endComponent.getX)
+      setY(endComponent.getY)
     }
 
     override def draw(g: Graphics2D): Unit = {
@@ -92,11 +88,7 @@ class Player(world: WorldLike,
   }
 
   def tightenComponentToTile(t: TileLike): Unit = {
-    val endComponent = t.component
-    component.setSourceShape(endComponent.getSourceShape)
-    component.resetPosition()
-    component.setX(endComponent.getX)
-    component.setY(endComponent.getY)
+    component.asInstanceOf[PlayerComponent].tightenComponentToTile(t)
   }
 
    override def toString: String = "Player: " + name
