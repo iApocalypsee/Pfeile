@@ -183,7 +183,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
       for (
         y <- terrain.height - 1 to 0 by -1;
         x <- 0 until terrain.width;
-        visionStatus = usedVision.visionStatusOf(x, y) if terrain.isTileValid(x, y) && visionStatus != VisionStatus.Visible;
+        visionStatus = usedVision.visionStatusOf(x, y) if terrain.isTileValid(x, y) && visionStatus == VisionStatus.Visible;
         entity <- terrain.tileAt(x, y).entities
       ) {
         entity.component.draw(g)
