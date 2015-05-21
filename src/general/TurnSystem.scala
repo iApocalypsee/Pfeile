@@ -91,7 +91,7 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
     assume(searchFromIndex != -1, "No known player given to turn system.")
 
     val isOutOfRange = searchFromIndex + 1 >= list.size
-    if (isOutOfRange) (list(0), true)
+    if (isOutOfRange) (list.head, true)
     else (list(searchFromIndex + 1), false)
   }
 

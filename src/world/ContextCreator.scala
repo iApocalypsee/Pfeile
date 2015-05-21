@@ -4,7 +4,7 @@ import java.awt.Point
 
 import general.io.StageDescriptable
 import general.{Main, PfeileContext, Property, StageOrganized}
-import gui.screen.ArrowSelectionScreen
+import gui.screen.{WaitingScreen, ArrowSelectionScreen}
 import misc.ItemInitialization
 import newent.Player
 
@@ -106,6 +106,10 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       // Finally, I need to ensure that WorldLootList and LootSpawner are initialized to register their methods.
       // (scala lazy val WorldLootList). Furthermore, it's save, that the activePlayer can see loots around him.
       context.getWorldLootList.updateVisibleLoot()
+
+      context.getTurnSystem.onTurnEnded.register(team => {
+        Main.getGameWindow.getScreenManager.setActiveScreen(WaitingScreen.SCREEN_INDEX)
+      })
     }
 
     /** The name of the stage. */
