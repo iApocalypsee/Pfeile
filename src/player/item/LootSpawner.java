@@ -1,10 +1,7 @@
 package player.item;
 
 import comp.Circle;
-import general.Main;
 import general.PfeileContext;
-import gui.screen.ArrowSelectionScreenPreSet;
-import gui.screen.LoadingWorldScreen;
 import newent.Bot;
 import newent.EntityLike;
 import newent.Player;
@@ -19,11 +16,12 @@ import world.TerrainLike;
 import java.awt.*;
 import java.util.Random;
 
+
 /**
  * Every Loot spawns by this class. The loot is automatically added to {@link player.item.WorldLootList}.
  * LootSpawner is created in WorldLootList. Do not create it twice.
  */
-class LootSpawner {
+public class LootSpawner {
 
     /**
      * The context on which this loot spawner. is operating on.
@@ -37,20 +35,7 @@ class LootSpawner {
         this.context = context;
         random = new Random();
 
-        LoadingWorldScreen.getInstance().onScreenLeft.registerOnceJava(screenChangedEvent -> {
-
-            // LoadingWorldScreen appears after ArrowSelectionScreenPreSet; so the first time LootSpawner is entered
-            // [from WorldLootList] the RoundChest must spawn manually.
-            spawningRoundChest();
-
-            // Spawn 0 to 13 loots with the possibility of 50% for more fun at the beginning
-            for (int i = 0; i < random.nextInt(13); i++) {
-                if (random.nextBoolean())
-                    spawningAnyLoot();
-            }
-        });
-
-        ArrowSelectionScreenPreSet.getInstance().onScreenLeft.registerJava(screenChangedEvent -> {
+        context.getTurnSystem().getRoundOperations().onRoundEnded().registerJava(() -> {
             spawningRoundChest();
 
             // Spawn 0 to 5 loots with the possibility of 50% for more fun at the beginning
@@ -70,6 +55,18 @@ class LootSpawner {
 
     }
 
+    /** Spawns the start-setup of Loots. <b>Only call it once by ContexCreator!</b>*/
+    public void spawnAtBeginning () {
+
+        // The first RoundChest should spawn at the beginning; the first rounds ends usually after 10 turnCycles.
+        spawningRoundChest();
+
+        // Spawn 0 to 13 loots with the possibility of 50% for more fun at the beginning
+        for (int i = 0; i < random.nextInt(16); i++) {
+            if (random.nextBoolean())
+                spawningAnyLoot();
+        }
+    }
 
     /** This spawns the {@link player.item.RoundChest}. It is triggered every time <code>ArrowSelectionScreenPreSet</code>
      * is left. The position is set by {@link player.item.LootSpawner#spawnLoot(int, int)} with <code>4</code> and <code>5</code>.
@@ -158,7 +155,7 @@ class LootSpawner {
     private Point spawnLoot (int radiusTroops, int radiusPlayers) {
         Point spawnPoint = new Point(-1, -1);
 
-        TerrainLike terrain = Main.getContext().getWorld().terrain();
+        TerrainLike terrain = context.getWorld().terrain();
 
         int count = 0;
         int maxCount = PfeileContext.worldSizeX().get() * PfeileContext.worldSizeY().get();

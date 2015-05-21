@@ -42,18 +42,14 @@ public class WorldLootList implements Drawable {
         lootVisibleList = new CopyOnWriteArrayList<>();
         lootSpawner = new LootSpawner(context);
 
-        context.turnSystem().onTurnGet().registerJava(team -> {
-            updateVisibleLoot();
-        });
+        context.turnSystem().onTurnGet().registerJava(team -> updateVisibleLoot());
 
         // every time, when the location of a player has changed, the list of every not-hidden loot must update itself.
         // ==> {@link WorldLootList#updateVisibleLoot()} is registered to the "onLocationChanged"-Delegate of every Player.
         final Seq<Team> teamSeq = context.getTurnSystem().teams().apply();
         teamSeq.foreach(JavaInterop.asScala(team -> {
             Player player = ((CommandTeam) team).getHead();
-            player.onLocationChanged().registerJava(locationChangedEvent -> {
-                updateVisibleLoot();
-            });
+            player.onLocationChanged().registerJava(locationChangedEvent -> updateVisibleLoot());
         }));
     }
 
@@ -129,6 +125,15 @@ public class WorldLootList implements Drawable {
 
             }
         }
+    }
+
+    /** Returns the LootSpawner, which spawns new Loots with Delegates. After Initialization of WorldLootList in
+     * <code>ContextCreator</code>, the LootSpawner is used to spawn the first loots.
+     *
+     * @return the LootSpawner
+     */
+    public LootSpawner getLootSpawner () {
+        return lootSpawner;
     }
 
     /**

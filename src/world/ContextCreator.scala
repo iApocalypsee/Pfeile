@@ -104,8 +104,8 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       ArrowSelectionScreen.getInstance().init()
 
       // Finally, I need to ensure that WorldLootList and LootSpawner are initialized to register their methods.
-      // (scala lazy val WorldLootList). Furthermore, it's save, that the activePlayer can see loots around him.
-      context.getWorldLootList.updateVisibleLoot()
+      // (scala lazy val WorldLootList). Furthermore, some loots have to spawn at the beginning.
+      context.getWorldLootList.getLootSpawner.spawnAtBeginning()
 
       context.getTurnSystem.onTurnEnded.register(team => {
         Main.getGameWindow.getScreenManager.setActiveScreen(WaitingScreen.SCREEN_INDEX)

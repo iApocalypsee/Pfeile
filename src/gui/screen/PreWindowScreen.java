@@ -412,7 +412,7 @@ public class PreWindowScreen extends Screen {
         PfeileContext.damageMultiplicator().set(1.0f);
         labels[7].setText("Schadensmultiplikator: " + "mittel");
 
-        PfeileContext.turnsPerRound().set(7);
+        PfeileContext.turnsPerRound().set(10);
         labels[8].setText("Züge pro Runde: " + PfeileContext.turnsPerRound().get());
 
         TimeClock.setTurnTime(new FiniteDuration(2, TimeUnit.MINUTES));

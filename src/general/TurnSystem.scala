@@ -34,6 +34,20 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
   val onGlobalTurnCycleEnded = Delegate.createZeroArity
 
   /**
+   * A TurnCycle ends, when every team has ended its turn; A Round ends, when several turnCycles end (defined by
+   * <code>Main.getContext().turnsPerRound().get()</code> - by default 10). <p>
+   * After each Round, a new RoundChest spawns and ArrowSelectionScreePreSet is entered to select new arrowsPreSet.
+   */
+  val roundOperations = new RoundOperations
+
+  /**
+   * A TurnCycle ends, when every team has ended its turn; A Round ends, when several turnCycles end (defined by
+   * <code>Main.getContext().turnsPerRound().get()</code> - by default 10). <p>
+   * After each Round, a new RoundChest spawns and ArrowSelectionScreePreSet is entered to select new arrowsPreSet.
+   */
+  def getRoundOperations: RoundOperations = roundOperations
+
+  /**
     * The player that is currently able to do actions.
     */
   private var _currentPlayer = teams().apply(teamToBeginIndex)
@@ -102,26 +116,35 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
     else (list(searchFromIndex + 1), false)
   }
 
-  private object TurnCycleOperations {
+  /**
+   * A TurnCycle ends, when every team has ended its turn; A Round ends, when several turnCycles end (defined by
+   * <code>Main.getContext().turnsPerRound().get()</code> - by default 10). <p>
+   * After each Round, a new RoundChest spawns and ArrowSelectionScreePreSet is entered to select new arrowsPreSet.
+   */
+  class RoundOperations {
+
+    /** Called, when a round ends. A round ends, when <code>Main.getContext().turnsPerRound().get()</code> turn cycles
+      * have been ended. By default it is 10.
+      */
+    val onRoundEnded = Delegate.createZeroArity
 
     var count = 0
 
     onGlobalTurnCycleEnded += { () =>
       count += 1
       if(count >= PfeileContext.turnsPerRound()) {
-        onReachedTurnCycleThreshold()
-        reset()
+        onRoundEnded.apply()
       }
+    }
+
+    onRoundEnded += { () =>
+      Main.getGameWindow.getScreenManager.setActiveScreen(ArrowSelectionScreenPreSet.SCREEN_INDEX)
+      reset()
     }
 
     private def reset() = {
       count = 0
     }
 
-    def onReachedTurnCycleThreshold(): Unit = {
-      Main.getGameWindow.getScreenManager.setActiveScreen(ArrowSelectionScreenPreSet.SCREEN_INDEX)
-    }
-
   }
-
 }
