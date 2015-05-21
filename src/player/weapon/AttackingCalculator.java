@@ -1,5 +1,6 @@
 package player.weapon;
 
+import comp.Component;
 import comp.ImageComponent;
 import general.Main;
 import geom.functions.FunctionCollectionEasing;
@@ -7,7 +8,8 @@ import newent.AttackProgress;
 import player.weapon.arrow.AbstractArrow;
 import world.TileLike;
 
-import java.util.LinkedList;
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
 
@@ -20,12 +22,23 @@ public class AttackingCalculator {
      * <p> <code>TIME_MULTI / attackingArrow.getSpeed()</code>*/
     private static final int TIME_MULTI = 1500;
 
-    private class Clock extends TimerTask {
-        @Override
-        public void run () {
-            milliSec++;
-        }
+    /** The threads are saved in this list. It contains all AttackingThreads, which haven't been arrived yet (progress != 1). */
+    private ArrayList<Thread> attackingArrows;
+
+    /** the singleton-instance */
+    private static AttackingCalculator instance;
+
+    /** only one AttackingCalculator can exist, because the old threads has to continue. */
+    private static AttackingCalculator getInstance () {
+        if (instance == null)
+            instance = new AttackingCalculator();
+        return instance;
     }
+
+    public AttackingCalculator () {
+        this.attackingArrows = new ArrayList<>();
+    }
+
 
     public void arrowsFlying () {
         List<AttackProgress> filteredProgresses = AttackDrawer.getAttackProgressesOfArrows();
@@ -52,27 +65,42 @@ public class AttackingCalculator {
             attackingThreads[i].start();
         }
 
-        // waiting for the threads to stop their activity (to let the arrows arive
+        // waiting for the threads to stop their activity (to let the arrows arrive)
         for (AttackingThread attackingThread : attackingThreads) {
             try {
                 attackingThread.join();
             } catch (InterruptedException e) { e.printStackTrace(); }
         }
 
+        // if ready stop the timer and reset the milli-seconds after beginning
+        timer.cancel();
+        milliSec = 0;
+
         // wait a little bit, that the user is able to recognize what happened.
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) { e.printStackTrace(); }
 
-        // if ready stop the timer and reset the milli-seconds after beginning
-        timer.cancel();
-        milliSec = 0;
+    }
+
+
+    /** This Timer increments <code>milliSec</code>. */
+    private class Clock extends TimerTask {
+        @Override
+        public void run () {
+            milliSec++;
+        }
     }
 
     /** for every attack, we need to run one thread */
     private class AttackingThread extends Thread {
         private AbstractArrow attackingArrow;
         private AttackProgress attackProgress;
+
+        /** the percentage of the progress, the position of the arrow has reached. It is the changing variable of the
+         * FunctionCollectionFunctions. It's saved here because the the Thread has to run several times.
+         * If the arrow has arrived progress is <code>1</code>. */
+        private double progress;
 
         AttackingThread (AbstractArrow attackingArrow, AttackProgress attackProgress) {
             this.attackingArrow = attackingArrow;
@@ -81,42 +109,38 @@ public class AttackingCalculator {
 
         @Override
         public void run () {
+            Component comp = attackingArrow.getComponent();
+            double posXOldCenter = comp.getPreciseRectangle().getCenterX();
+            double posYOldCenter = comp.getPreciseRectangle().getCenterY();
+
+            Point attackedCenter = attackingArrow.getAim().getPositionGui();
+            double posXAimCenter = attackedCenter.getX();
+            double posYAimCenter = attackedCenter.getY();
+
             // alpha (radiant) is the ankle between the position of the aim and the current Point
             // double alpha = FunctionCollection.angle(attackingArrow.getPosX(), attackingArrow.getPosY(), attackingArrow.getPosXAim(), attackingArrow.getPosYAim());
 
+
             double distanceToCover = attackProgress.event().lengthGUI();
 
-            int posXOld = attackingArrow.getComponent().getX();
-            int posYOld = attackingArrow.getComponent().getY();
-            double posXAimGui = attackingArrow.getAim().getPosXGui();
-            double posYAimGui = attackingArrow.getAim().getPosYGui();
-
-            // System.out.println("\nRadius: " + radius + "\tDistance: " + attackProgress.event().lengthGUI() + "\tDistance/Radius: " + (attackProgress.event().lengthGUI() / radius));
-            // System.out.println("countRounds: " + attackProgress.event().lengthPerTurn());
-
-            // as long as MilliSec are smaller than (TIME_MULTI / attackingArrow.getSpeed()) (per turn per tile)
             while (milliSec < TIME_MULTI / attackingArrow.getSpeed()) {
                 double accuracy = milliSec / (TIME_MULTI / attackingArrow.getSpeed());
 
-                //LogFacility.log("MilliSec: " + milliSec + "\tx_current (radius reached): " +
-                //        ((int) ((radius * accuracy) * 1000) / 1000.0) + "\t(x|y): ( " + attackingArrow.getPosX() + " | " + attackingArrow.getPosY() + " )", LogFacility.LoggingLevel.Debug);
-
-                // Replace the quadratic_easing_inOut with a Beziér curve?
-                // I don't understand the usage of quadratic_easing_inOut anymore, because I cannot
-                // imagine such complicated things.
-
                 double changeInX = FunctionCollectionEasing.quadratic_easing_inOut(
-                        distanceToCover * accuracy, 0, posXAimGui - posXOld, distanceToCover);
+                        distanceToCover * accuracy, 0, posXAimCenter - posXOldCenter, distanceToCover);
 
                 double changeInY = FunctionCollectionEasing.quadratic_easing_inOut(
-                        distanceToCover * accuracy, 0, posYAimGui - posYOld, distanceToCover);
+                        distanceToCover * accuracy, 0, posYAimCenter - posYOldCenter, distanceToCover);
+
+
+
+
 
 
                 final ImageComponent component = attackingArrow.getComponent();
 
                 // refreshing the screen-position
-                component.setX((int) (posXOld + Math.round(changeInX)));
-                component.setY((int) (posYOld + Math.round(changeInY)));
+                component.setLocation((int) (posXOldCenter + changeInX), (int) (posYOldCenter + changeInY));
 
                 try {
                     Thread.sleep(15);

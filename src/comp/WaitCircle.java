@@ -13,10 +13,14 @@ public class WaitCircle extends AnimationLike {
     private BufferedImage image;
     private double angle = 0.0;
     private int sideLength;
+    private Color fillColor;
+    private double anglePerDrawing;
 
     public WaitCircle(int sideLength, Color fillColor) {
         this.sideLength = sideLength;
+        this.fillColor = fillColor;
         this.image = recreate(angle, sideLength);
+        anglePerDrawing = WaitCircle.AnglePerDrawing;
     }
 
     public WaitCircle(int sideLength) {
@@ -34,7 +38,7 @@ public class WaitCircle extends AnimationLike {
         g.setStroke(WaitCircle.LineStroke);
 
         // Ring interior
-        g.setColor(WaitCircle.DefaultWaitColor);
+        g.setColor(fillColor);
         g.fillOval(0, 0, sideLength, sideLength);
 
         g.setColor(Color.white);
@@ -65,6 +69,24 @@ public class WaitCircle extends AnimationLike {
         return image;
     }
 
+    /** the angle, the WaitCircle turns after each draw-process. It is "3" by default.
+     * <b>The value is in degrees.</b> */
+    public double getAnglePerDrawing () {
+        return Math.toDegrees(anglePerDrawing);
+    }
+
+    /**
+     * The default value is 3 <b>degree</b>. This allows to set the speed of the wait circle, but it still depends on
+     * the speed of the system very much.
+     *
+     * @param anglePerDrawingDegree the angle, the wait circle turns after each draw process.
+     */
+    public void setAnglePerDrawing (double anglePerDrawingDegree) {
+        synchronized (this) {
+            anglePerDrawing = Math.toRadians(anglePerDrawingDegree);
+        }
+    }
+
     @Override
     public BufferedImage getImage() {
         return ImageLike$class.getImage(this);
@@ -72,19 +94,19 @@ public class WaitCircle extends AnimationLike {
 
     @Override
     public BufferedImage previousKeyframe() {
-        return recreate(angle - WaitCircle.AnglePerDrawing, sideLength);
+        return recreate(angle - anglePerDrawing, sideLength);
     }
 
     @Override
     public BufferedImage nextKeyframe() {
-        return recreate(angle + WaitCircle.AnglePerDrawing, sideLength);
+        return recreate(angle + anglePerDrawing, sideLength);
     }
 
     @Override
     public void drawImage(Graphics2D g, int x, int y, int width, int height) {
         ImageLike$class.drawImage(this, g, x, y, width, height);
         image = nextKeyframe();
-        angle += WaitCircle.AnglePerDrawing;
+        angle += anglePerDrawing;
     }
 
     @Override
