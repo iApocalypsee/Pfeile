@@ -309,6 +309,7 @@ public class Main {
      * <b>DO NOT USE THIS OBJECT UNTIL IT HAS BEEN INITIALIZED!</b>
      */
 	public static PfeileContext getContext() {
+        if(context == null) throw new NullPointerException();
 		return context;
 	}
 

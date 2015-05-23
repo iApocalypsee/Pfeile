@@ -8,7 +8,8 @@ import general._
 import world.ContextCreator
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
 /**
@@ -25,7 +26,7 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
     val creator = new ContextCreator(worldWidth, worldHeight)
 
     // Every time the stage changes, the label has to be changed as well.
-    creator.onStageDone += { stage => GUI.stageLabel.setText(stage.stageName) }
+    creator.onStageDone += { stageCompleted => GUI.stageLabel.setText(stageCompleted.stage.stageName) }
     // Return the creator as a property.
     Property.withValidation(creator)
   }
@@ -33,18 +34,11 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
   private lazy val contextCreationFuture = Property[Future[PfeileContext]]()
 
   onScreenEnter += { () =>
-    val creationProcedure: Future[PfeileContext] = worldCreation().createWorld() andThen {
-      // if the world has been computed successfully, change to the GameScreen immediately
-      case s: Success[PfeileContext] =>
-        // Hand the newly created world to the PfeileContext object.
-        Main.setContext(s.get)
-
-        // Switch forward to the game screen immediately. The world has been generated and
-        // populated now.
-        onLeavingScreen(GameScreen.SCREEN_INDEX)
-      // if an exception has been thrown in the world creation thread, rethrow it in the main thread
-      case f: Failure[_] => throw f.exception
-    }
+    val creationProcedure: Future[PfeileContext] = worldCreation().createWorld().map(context => {
+      Main.setContext(context)
+      Future { onLeavingScreen(GameScreen.SCREEN_INDEX) }
+      context
+    })
     contextCreationFuture set creationProcedure
   }
 

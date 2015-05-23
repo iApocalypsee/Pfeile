@@ -46,6 +46,13 @@ sealed abstract class Team protected {
     */
   def asCommandTeam: CommandTeam
 
+  /**
+   * Essentially returns the same as [[asCommandTeam]], but packed in an option to reduce the
+   * risk of potential NullPointerExceptions.
+   * @return An option with this team as a command team, if this object really is a CommandTeam object.
+   */
+  def asCommandTeamOpt = Option(asCommandTeam)
+
   /** the extra damage is added as multiplier to the damage */
   private var extraDamage: Double = 1
 

@@ -16,16 +16,15 @@ trait StageDescriptable[A] {
   def stageName: String
 
   /** Executes the stage. */
-  def executeStage(): A = {
+  def executeStage(): Unit = {
     val ret = executeStageImpl()
-    onStageExecuted()
-    ret
+    onStageExecuted(ret)
   }
 
   /** The implementation of the stage. */
   protected def executeStageImpl(): A
 
   /** Called when the stage execution has been completed. */
-  val onStageExecuted = Delegate.createZeroArity
+  val onStageExecuted = Delegate.create[A]
 
 }

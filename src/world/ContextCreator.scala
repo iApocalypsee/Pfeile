@@ -2,9 +2,9 @@ package world
 
 import java.awt.Point
 
+import general._
 import general.io.StageDescriptable
-import general.{Main, PfeileContext, Property, StageOrganized}
-import gui.screen.{WaitingScreen, ArrowSelectionScreen}
+import gui.screen.{ArrowSelectionScreen, WaitingScreen}
 import misc.ItemInitialization
 import newent.Player
 
@@ -12,27 +12,28 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Random
 
-/**
- *
- * @author Josip Palavra
- */
 class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
-  
+
   lazy val sizeX = Property(initWidth)
   lazy val sizeY = Property(initHeight)
-  
+
+  private var context: PfeileContext = null
+
+  addStage(new InstantiatorStage)
+  addStage(new PopulatorStage)
+  addStage(new OtherStuffStage)
+
   def createWorld(): Future[PfeileContext] = Future {
-    val world = execute(new InstantiatorStage)
-    execute(new PopulatorStage(world))
-    execute(new OtherStuffStage(world))
-    world
+    execute()
+    context
   }
 
-  /** Populates the world.
+  /**
+    * Populates the world.
     *
     * TODO The implementation is a whole mess; I am going through the code in the next time.
     */
-  private[ContextCreator] class PopulatorStage(val context: PfeileContext) extends StageDescriptable[Unit] {
+  private[ContextCreator] class PopulatorStage extends StageDescriptable[Unit] {
 
     override def stageName = "Populating..."
 
@@ -44,7 +45,6 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       val randomGen: Random = new Random
       var isSpawnValid: Boolean = false
       val terrain = context.world.terrain
-
 
       do {
         var tile: TileLike = terrain.tileAt(randomGen.nextInt(terrain.width), randomGen.nextInt(terrain.height))
@@ -77,7 +77,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
   }
 
   /** Instantiates the world with its terrain. */
-  private[ContextCreator] class InstantiatorStage extends StageDescriptable[PfeileContext] {
+  private[ContextCreator] class InstantiatorStage extends StageDescriptable[Unit] {
 
     /** The name of the stage. */
     override def stageName = "Creating world..."
@@ -90,11 +90,12 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
         override lazy val terrain = new DefaultTerrain(this, sizeX(), sizeY())
       }
       context.world = world
-      context
+      ContextCreator.this.context = context
     }
+
   }
-  
-  private[ContextCreator] class OtherStuffStage(val context: PfeileContext) extends StageDescriptable[Unit] {
+
+  private[ContextCreator] class OtherStuffStage extends StageDescriptable[Unit] {
     /** The implementation of the stage. */
     override protected def executeStageImpl() = {
       // the loot gets initialized before WorldLootList (--> LootSpawner) uses them. The Main-Thread should not need
@@ -107,9 +108,17 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       // (scala lazy val WorldLootList). Furthermore, some loots have to spawn at the beginning.
       context.getWorldLootList.getLootSpawner.spawnAtBeginning()
 
-      context.getTurnSystem.onTurnEnded.register(team => {
+      context.turnSystem.onTurnEnded.register(team => {
         Main.getGameWindow.getScreenManager.setActiveScreen(WaitingScreen.SCREEN_INDEX)
       })
+
+      notifyAboutFirstTurn()
+    }
+
+    private def notifyAboutFirstTurn(): Unit = {
+      LogFacility.logMethodWithMessage("Calling onTurnGet...")
+      context.turnSystem.onTurnGet(context.turnSystem.currentTeam)
+      LogFacility.logMethodWithMessage("onTurnGet called")
     }
 
     /** The name of the stage. */

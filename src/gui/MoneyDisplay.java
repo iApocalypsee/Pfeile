@@ -41,17 +41,34 @@ public class MoneyDisplay extends Component {
         getBorder().setClickColor(new Color(175, 0, 235));
         getBorder().setStroke(new BasicStroke(3.2f));
 
-        money = "0";
+        setMoney("0");
         font = new Font(STD_FONT.getFontName(), Font.ITALIC, 14);
     }
 
     public void retrieveDataFrom(MoneyEarner earner) {
+        LogFacility.logMethodWithMessage("Entered with earner=" + earner, LogFacility.LoggingLevel.Info);
         data = earner;
-        money = Integer.toString(data.getPurse().numericValue());
+        setMoney(Integer.toString(data.getPurse().numericValue()));
+        LogFacility.logCurrentStackTrace();
     }
+
+    private void setMoney(String money) {
+        LogFacility.log("Set money display's count to " + money + " from " + data);
+        LogFacility.logCurrentStackTrace();
+        this.money = money;
+    }
+
+    boolean detected = false;
 
     @Override
     public void draw (Graphics2D g) {
+        if(!detected) {
+            if(money.equals("0")) {
+                LogFacility.logCurrentStackTrace();
+                LogFacility.log("BUG!", "Warning");
+                detected = true;
+            }
+        }
         getBorder().draw(g);
         g.drawImage(image, getX() + 5, getY() + 7, null);
 

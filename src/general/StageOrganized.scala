@@ -2,38 +2,53 @@ package general
 
 import general.io.StageDescriptable
 
+import scala.collection.mutable
+
 /**
   * Can execute stages in a certain order.
   */
 class StageOrganized {
 
+  private val m_stages = mutable.ListBuffer[StageDescriptable[_]]()
+
   /**
     * Called when a stage has completed execution.
     */
-  val onStageDone = Delegate.create[StageDescriptable[_]]
+  val onStageDone = Delegate.create[StageCompletedEvent[_]]
 
   /**
-    * Property in which the current executing stage is saved.
+    * Called when the last stage has completed execution.
     */
-  private val currentStageProp = Property[StageDescriptable[_]]()
-  currentStageProp appendSetter { newStage =>
-    // Redirect the callback flow into the onStageDone delegate.
-    newStage.onStageExecuted.registerOnce(() => onStageDone(newStage))
-    newStage
+  val onLastStageDone = Delegate.create[StageCompletedEvent[_]]
+
+  // Last stage callback
+  onStageDone += { event => if(event.stage == m_stages.last) onLastStageDone(event) }
+
+  /**
+    * The stages registered to the stage collection.
+    * @return A list of all registered stages.
+    */
+  def stages = m_stages.toList
+
+  /**
+    * Adds a stage to this stage collection.
+    * The handed stage is prepared internally for execution, some delegates are given callbacks specific to
+    * this class.
+    * @param x The stage to add.
+    */
+  def addStage(x: StageDescriptable[_]): Unit = {
+    x.onStageExecuted += { result => onStageDone(StageCompletedEvent(x, result)) }
+    m_stages += x
+    LogFacility.log(s"Added stage ${x.stageName} to stage collection $this")
   }
 
   /**
-    * Executes the given stage.
-    * Be careful when using threads, this implementation is '''not thread-safe'''.
-    *
-    * Does exactly the same as invoking the set branch of [[general.StageOrganized#currentStage()]] property.
-    * @param stage The stage to execute.
-    * @tparam A The return type of the stage.
-    * @return The value computed by the stage.
+    * Executes all registered stages.
     */
-  def execute[A](stage: StageDescriptable[A]): A = {
-    currentStageProp set stage
-    stage.executeStage()
+  def execute(): Unit = {
+    for (stage <- m_stages) {
+      stage.executeStage()
+    }
   }
 
 }
