@@ -1,10 +1,10 @@
 package comp
 
 import java.awt._
-import java.awt.event.{MouseAdapter, MouseEvent}
+import java.awt.event.{ MouseAdapter, MouseEvent }
 
 import general.property.StaticProperty
-import general.{Delegate, LogFacility}
+import general.{ Delegate, LogFacility }
 import gui.FrameContainer
 import gui.screen.Screen
 
@@ -14,6 +14,10 @@ import scala.collection.JavaConversions
   * An internal frame capable of containing components in order to make a more "cleaner" UI.
   * The coordinates of components are given in absolute coordinates (not relative to the frame's
   * upper left corner), but this is still a WIP.
+  *
+  * =Visibility of the frame=
+  * To open or close the frame, set the setVisible property accordingly. Note that corresponding delegates
+  * will be triggered when the property's value is changed.
   *
   * @param x Initial x position of the frame.
   * @param y Initial y position of the frame.

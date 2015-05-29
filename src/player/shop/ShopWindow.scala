@@ -74,7 +74,7 @@ class ShopWindow(articles: Seq[Article], val representing: TraderLike) extends D
 
     val filteredArticles = articles.filter(VisualArticleAttributes.filterArticlesFunction(forWho))
 
-    for (i <- 0 until filteredArticles.size) yield {
+    for (i <- filteredArticles.indices) yield {
       val (x_grid, y_grid) = rowToTable(i)
       ShopButton.create(x_grid, y_grid, filteredArticles(i), this)
     }

@@ -72,19 +72,6 @@ class Bot(world: WorldLike, spawnPoint: Point, name: String)
   /** This is just the same as the player has */
   override val pathfinderLogic: Pathfinder = new AStarPathfinder(20, { t => true })
 
-  /**
-    * The initial attribute object with which the entity begins recording its attributes.
-    *
-    * The method just gets called once to initialize an underlying field.
-    *
-    * The implementation is the same like in Player
-    */
-  override protected def initialAttribute = new Attributes {
-    override protected def initialCurrent(initObject: Current) = initObject
-
-    override protected def initialLasting(initObject: Lasting) = initObject
-  }
-
   private var _localVisionPoint = visionMap.grantVision(getGridX, getGridY, 5)
 
   private def updateLocalVisionPoint(): Unit = {
