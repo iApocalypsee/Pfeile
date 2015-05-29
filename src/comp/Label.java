@@ -49,6 +49,7 @@ public class Label extends Component {
         setSourceShape(new Rectangle(-text_bounds.width / 2, -text_bounds.height / 2, text_bounds.width, text_bounds.height));
 
         getTransformation().translate(x, y);
+        getTransformation().onTransformed().registerJava(transformationEvent -> recalculateInternalData());
 
         //setWidth(text_bounds.width);
         //setHeight(text_bounds.height);
@@ -165,12 +166,24 @@ public class Label extends Component {
             setHeight(dimension.height);
     }
 
+    private void recalculateInternalData() {
+        Dimension d = textSequence.formattedDimension();
+        if(optImage != null) {
+            imageDrawLocation = new Point(getX(), getY());
+            textDrawLocation = new Point(imageDrawLocation.x + imageTextInset + imageDrawScale.width, getY() + d.height + STD_INSETS.top);
+        } else {
+            textDrawLocation = new Point(getX(), getY() + d.height);
+        }
+    }
+
     /**
      * Returns a dimension with new suitable bounds.
      */
     private Dimension recalculateBounds () {
         String text = getText();
         Dimension d = new TextSequence(text).formattedDimension();
+
+        recalculateInternalData();
 
         if (optImage != null) {
 
@@ -271,6 +284,7 @@ public class Label extends Component {
         private String sourceString;
 
         public TextSequence(String text) {
+            if(text == null) throw new NullPointerException();
             sourceString = text;
             textTokens = Arrays.asList(text.split("\n"));
         }
