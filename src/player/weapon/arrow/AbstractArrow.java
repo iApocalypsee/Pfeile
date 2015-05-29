@@ -1,8 +1,6 @@
 package player.weapon.arrow;
 
-import comp.ImageComponent;
-import comp.InternalFrame;
-import comp.Label;
+import comp.*;
 import general.Main;
 import general.PfeileContext;
 import geom.functions.FunctionCollection;
@@ -33,7 +31,7 @@ import java.awt.event.MouseEvent;
  */
 public abstract class AbstractArrow extends RangedWeapon implements BoardPositionable {
 
-    private ImageComponent component;
+	private DisplayRepresentable component;
 
     /** the speed of the arrow */
 	protected double speed;
@@ -90,41 +88,47 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 		setSpeed(speed);
         getAim().setDamageRadius(damageRadius);
 
-		component = new ImageComponent(0, 0, getImage(), GameScreen.getInstance());
-		component.addMouseListener(new MouseAdapter() {
+		component = new AbstractDisplayRepresentable() {
 			@Override
-			public void mouseReleased (MouseEvent e) {
-				// Variables.
-				FrameContainerObject containerObject = GameScreen.getInstance().getFrameContainer();
-				InternalFrame dataFrame = new InternalFrame(50, 50, 135, 125, GameScreen.getInstance());
-				String arrowType = "Arrow type: " + getName();
-				String damage = "Damage: " + getAttackValue();
-				String defense = "Defense: " + getAverageDefence();
-				String speed = "Speed: " + getSpeed();
-
-
-				Label arrowTypeLabel = new Label(10, 15, GameScreen.getInstance(), arrowType);
-				Label damageLabel = new Label(10, 27, GameScreen.getInstance(), damage);
-				Label defenseLabel = new Label(10, 39, GameScreen.getInstance(), defense);
-				Label speedLabel = new Label(10, 51, GameScreen.getInstance(), speed);
-
-				// Add the label to show the actual data to the screen.
-				dataFrame.add(arrowTypeLabel);
-				dataFrame.add(damageLabel);
-				dataFrame.add(defenseLabel);
-				dataFrame.add(speedLabel);
-				// When the frame closes, it should be removed from the container object as well.
-				dataFrame.onClosed().register(new AbstractFunction0<Object>() {
+			public Component startComponent() {
+				Component component = new ImageComponent(0, 0, getImage(), GameScreen.getInstance());
+				component.addMouseListener(new MouseAdapter() {
 					@Override
-					public Object apply () {
-						containerObject.removeFrame(dataFrame);
-						return BoxedUnit.UNIT;
+					public void mouseReleased (MouseEvent e) {
+						// Variables.
+						FrameContainerObject containerObject = GameScreen.getInstance().getFrameContainer();
+						InternalFrame dataFrame = new InternalFrame(50, 50, 135, 125, GameScreen.getInstance());
+						String arrowType = "Arrow type: " + getName();
+						String damage = "Damage: " + getAttackValue();
+						String defense = "Defense: " + getAverageDefence();
+						String speed = "Speed: " + getSpeed();
+
+
+						Label arrowTypeLabel = new Label(10, 15, GameScreen.getInstance(), arrowType);
+						Label damageLabel = new Label(10, 27, GameScreen.getInstance(), damage);
+						Label defenseLabel = new Label(10, 39, GameScreen.getInstance(), defense);
+						Label speedLabel = new Label(10, 51, GameScreen.getInstance(), speed);
+
+						// Add the label to show the actual data to the screen.
+						dataFrame.add(arrowTypeLabel);
+						dataFrame.add(damageLabel);
+						dataFrame.add(defenseLabel);
+						dataFrame.add(speedLabel);
+						// When the frame closes, it should be removed from the container object as well.
+						dataFrame.onClosed().register(new AbstractFunction0<Object>() {
+							@Override
+							public Object apply () {
+								containerObject.removeFrame(dataFrame);
+								return BoxedUnit.UNIT;
+							}
+						});
+
+						containerObject.addFrame(dataFrame);
 					}
 				});
-
-				containerObject.addFrame(dataFrame);
+				return component;
 			}
-		});
+		};
 	}
 
 	/** Gibt die Schadensverlustrate zur�ck */
@@ -183,7 +187,7 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 	 * <p>
      * This call is redirected to <code>getComponent().setX(posX)</code> and rotates the arrow by calling <code>calculateRotation()</code> */
 	public void setPosX(int posX) {
-		component.setX(posX);
+		getComponent().setX(posX);
 		calculateRotation();
 	}
 
@@ -191,7 +195,7 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 	 * <p>
      * This call is redirected to <code>getComponent().setY(posY)</code> and the ImageComponent will be rotated <code>calulateRotation()</code>*/
 	public void setPosY(int posY) {
-		component.setY(posY);
+		getComponent().setY(posY);
 		calculateRotation();
 	}
 
@@ -199,11 +203,6 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 	public double getSpeed() { return speed; }
 
 	protected void setSpeed(double speed) { this.speed = speed; }
-
-    /** this returns the Component of an Arrow. */
-    public ImageComponent getComponent () { return component; }
-
-
 
     @Override
     public boolean equip (Combatant combatant) {
@@ -236,7 +235,16 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
      * <p> <code>rotation = FunctionCollection.angle(...getCenterX(), ...getCenterY(), getAim().getPosXGui(), getAim().getPosYGui());</code>
      */
     public void calculateRotation () {
-        component.rotateDegree(Math.toDegrees(FunctionCollection.angle(
-                getComponent().getPreciseRectangle().getCenterX(), getComponent().getPreciseRectangle().getCenterY(), getAim().getPosXGui(), getAim().getPosYGui())));
+        getComponent().rotateDegree(Math.toDegrees(FunctionCollection.angle(
+				getComponent().getPreciseRectangle().getCenterX(), getComponent().getPreciseRectangle().getCenterY(), getAim().getPosXGui(), getAim().getPosYGui())));
     }
+
+	public ImageComponent getComponent () {
+		return (ImageComponent) component.getComponent();
+	}
+
+	public void setComponent(ImageComponent a) {
+		component.setComponent(a);
+	}
+
 }

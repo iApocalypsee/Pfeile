@@ -46,15 +46,19 @@ public class MoneyDisplay extends Component {
     }
 
     public void retrieveDataFrom(MoneyEarner earner) {
-        LogFacility.logMethodWithMessage("Entered with earner=" + earner, LogFacility.LoggingLevel.Info);
         data = earner;
         setMoney(Integer.toString(data.getPurse().numericValue()));
-        LogFacility.logCurrentStackTrace();
+    }
+
+    public MoneyEarner getData() {
+        return data;
+    }
+
+    public String getMoneyString() {
+        return money;
     }
 
     private void setMoney(String money) {
-        LogFacility.log("Set money display's count to " + money + " from " + data);
-        LogFacility.logCurrentStackTrace();
         this.money = money;
     }
 

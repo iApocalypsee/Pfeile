@@ -11,7 +11,6 @@ import scala.collection.{JavaConversions, mutable}
 
 /**
   * Every entity that can earn gold should inherit from this trait.
-  * TODO Align with coin system.
   */
 trait MoneyEarner extends Entity with InventoryEntity {
 

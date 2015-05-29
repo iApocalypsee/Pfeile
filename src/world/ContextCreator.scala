@@ -116,9 +116,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
     }
 
     private def notifyAboutFirstTurn(): Unit = {
-      LogFacility.logMethodWithMessage("Calling onTurnGet...")
       context.turnSystem.onTurnGet(context.turnSystem.currentTeam)
-      LogFacility.logMethodWithMessage("onTurnGet called")
     }
 
     /** The name of the stage. */

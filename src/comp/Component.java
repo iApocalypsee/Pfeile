@@ -652,6 +652,11 @@ public abstract class Component implements IComponent {
 
 	public void setParent(Component parent) {
         if(this.parent == parent) return;
+
+		if(children.containsValue(parent)) {
+			throw new IllegalArgumentException("Circular component reference involving " + this + " and " + parent);
+		}
+
 		if(this.parent != null) {
 			move(-this.parent.getX(), -this.parent.getY());
             this.parent.remove(this);

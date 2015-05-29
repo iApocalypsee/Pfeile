@@ -27,12 +27,12 @@ public final class LogFacility {
 	public static void log(String msg, LoggingLevel level) {
 		String lstr = level.toString().toUpperCase();
 		String timestamp = LogFacility.getTimestamp();
-
+		String threadLabel = "[" + Thread.currentThread().getName() + "]";
 
 		if(level == LoggingLevel.Error) {
-			System.err.printf("[%s] [%s]: %s\n", lstr, timestamp, msg);
+			System.err.printf("[%s] [%s] [%s]: %s\n", lstr, timestamp, threadLabel, msg);
 		} else {
-			System.out.printf("[%s] [%s]: %s\n", lstr, timestamp, msg);
+			System.out.printf("[%s] [%s] [%s]: %s\n", lstr, timestamp, threadLabel, msg);
 		}
 	}
 
@@ -82,6 +82,16 @@ public final class LogFacility {
 		log(log);
 	}
 
+	public static void logCurrentStackTrace(String msg, LoggingLevel level) {
+		StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
+		String log = msg + ": \n" + getCutStackTrace(1);
+		log(log, level);
+	}
+
+	public static void logCurrentStackTrace(String msg, String loggingLevel) {
+		logCurrentStackTrace(msg, LoggingLevel.valueOf(loggingLevel));
+	}
+
 	/**
 	 * Logs the stack trace element where execution is currently.
 	 */
@@ -129,6 +139,26 @@ public final class LogFacility {
 				TimeUnit.MILLISECONDS.toMinutes(executionTime),
 				TimeUnit.MILLISECONDS.toSeconds(executionTime),
 				TimeUnit.MILLISECONDS.toMillis(executionTime));
+	}
+
+	private static String getCutStackTrace(int cutIndices) {
+		if(cutIndices < 0) throw new IllegalArgumentException("Negative values not allowed");
+		final StackTraceElement[] stackTrace = new Exception().getStackTrace();
+		String log = "";
+		for (int i = 1 + cutIndices; i < stackTrace.length; i++) {
+			StackTraceElement e = stackTrace[i];
+			if (e.getLineNumber() >= 100) {
+				log += "\tline " + e.getLineNumber() + "\t" + e.getClassName() + "::" + e.getMethodName();
+			} else {
+				log += "\tline " + e.getLineNumber() + "\t\t" + e.getClassName() + "::" + e.getMethodName();
+			}
+
+			if (e.isNativeMethod()) {
+				log += " <<native>>";
+			}
+			log += "\n";
+		}
+		return log;
 	}
 
 }

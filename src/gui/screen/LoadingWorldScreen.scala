@@ -1,9 +1,10 @@
 package gui.screen
 
+import java.awt.event.{MouseEvent, MouseAdapter}
 import java.awt.{Color, Font, Graphics2D}
 
 import comp.Component.ComponentStatus
-import comp.{Component, Label}
+import comp.{Button, Component, Label}
 import general._
 import world.ContextCreator
 
@@ -20,6 +21,14 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
 
   lazy val getInstance = this
 
+  val goButton = new Button(Main.getWindowWidth - 150, Main.getWindowHeight - 50, this, "GO")
+  goButton.declineInput()
+  goButton.addMouseListener(new MouseAdapter {
+    override def mouseReleased(e: MouseEvent): Unit = {
+      onLeavingScreen(GameScreen.SCREEN_INDEX)
+    }
+  })
+
   private lazy val worldCreation = {
     val worldWidth = PfeileContext.worldSizeX()
     val worldHeight = PfeileContext.worldSizeY()
@@ -27,6 +36,7 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
 
     // Every time the stage changes, the label has to be changed as well.
     creator.onStageDone += { stageCompleted => GUI.stageLabel.setText(stageCompleted.stage.stageName) }
+    creator.onLastStageDone += { _ => GUI.stageLabel.setText("Done!") }
     // Return the creator as a property.
     Property.withValidation(creator)
   }
@@ -36,7 +46,8 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
   onScreenEnter += { () =>
     val creationProcedure: Future[PfeileContext] = worldCreation().createWorld().map(context => {
       Main.setContext(context)
-      Future { onLeavingScreen(GameScreen.SCREEN_INDEX) }
+      postLoadingCheck()
+      goButton.acceptInput()
       context
     })
     contextCreationFuture set creationProcedure
@@ -44,8 +55,16 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
 
   override def draw(g: Graphics2D) = {
     super.draw(g)
-
+    goButton.draw(g)
     GUI.stageLabel.draw(g)
+  }
+
+  private def postLoadingCheck(): Unit = {
+    val gameScreen = GameScreen.getInstance()
+    val dataFrom = gameScreen.getMoneyDisplay.getData
+    val moneyString = gameScreen.getMoneyDisplay.getMoneyString
+    assert(moneyString != "0", "Money string still 0")
+    assert(dataFrom != null, "Money display data provider is null")
   }
 
   private[LoadingWorldScreen] object GUI {

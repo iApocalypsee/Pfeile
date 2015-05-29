@@ -1,7 +1,7 @@
 package general
 
 import gui.screen.ArrowSelectionScreenPreSet
-import newent.{CommandTeam, Team}
+import newent.{ CommandTeam, Team }
 
 import scala.collection.JavaConversions
 
@@ -19,58 +19,58 @@ import scala.collection.JavaConversions
 class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
 
   /**
-   * Called when a turn has been ended.
-   */
+    * Called when a turn has been ended.
+    */
   val onTurnEnded = Delegate.create[Team]
 
   /**
-   * Called when it's another player's turn.
-   */
+    * Called when it's another player's turn.
+    */
   val onTurnGet = Delegate.create[Team]
 
   /**
-   * Called when every player completed their moves in this turn.
-   */
+    * Called when every player completed their moves in this turn.
+    */
   val onGlobalTurnCycleEnded = Delegate.createZeroArity
 
   /**
-   * A TurnCycle ends, when every team has ended its turn; A Round ends, when several turnCycles end (defined by
-   * <code>Main.getContext().turnsPerRound().get()</code> - by default 10). <p>
-   * After each Round, a new RoundChest spawns and ArrowSelectionScreePreSet is entered to select new arrowsPreSet.
-   */
+    * A TurnCycle ends, when every team has ended its turn; A Round ends, when several turnCycles end (defined by
+    * <code>Main.getContext().turnsPerRound().get()</code> - by default 10). <p>
+    * After each Round, a new RoundChest spawns and ArrowSelectionScreePreSet is entered to select new arrowsPreSet.
+    */
   val roundOperations = new RoundOperations
 
   /**
-   * A TurnCycle ends, when every team has ended its turn; A Round ends, when several turnCycles end (defined by
-   * <code>Main.getContext().turnsPerRound().get()</code> - by default 10). <p>
-   * After each Round, a new RoundChest spawns and ArrowSelectionScreePreSet is entered to select new arrowsPreSet.
-   */
+    * A TurnCycle ends, when every team has ended its turn; A Round ends, when several turnCycles end (defined by
+    * <code>Main.getContext().turnsPerRound().get()</code> - by default 10). <p>
+    * After each Round, a new RoundChest spawns and ArrowSelectionScreePreSet is entered to select new arrowsPreSet.
+    */
   def getRoundOperations: RoundOperations = roundOperations
 
   /**
     * The player that is currently able to do actions.
     */
-  private var _currentPlayer = teams().apply(teamToBeginIndex)
+  private var _currentPlayer = firstTeam
 
-   /**
+  /**
     * The list of all teams
     *
     * @return <code>JavaConversions.seqAsJavaList(teams().apply())</code>
     */
   def getTeams = JavaConversions.seqAsJavaList(teams.apply())
 
-   /**
+  /**
     * The list of teams is searched for the team of the active player.
     *
     * @return the CommandTeam of <code>Main.getContext().getActivePlayer()</code>
     */
   def getTeamOfActivePlayer: CommandTeam = {
-     val activePlayer = Main.getContext.getActivePlayer
-     teams.apply().foreach { team: Team =>
-        if (team.isInTeam(activePlayer))
-           return team.asInstanceOf[CommandTeam]
-     }
-     throw new RuntimeException("The team of the active player " + activePlayer.name + " could not be found!")
+    val activePlayer = Main.getContext.getActivePlayer
+    teams.apply().foreach { team: Team =>
+      if (team.isInTeam(activePlayer))
+        return team.asInstanceOf[CommandTeam]
+    }
+    throw new RuntimeException("The team of the active player " + activePlayer.name + " could not be found!")
   }
 
   /**
@@ -87,15 +87,21 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
     onTurnEnded(_currentPlayer)
     val (nextPlayer, turnCycleCompleted) = findNextFrom(_currentPlayer)
     _currentPlayer = nextPlayer
-    if(turnCycleCompleted) onGlobalTurnCycleEnded()
+    if (turnCycleCompleted) onGlobalTurnCycleEnded()
     onTurnGet(_currentPlayer)
   }
 
-  /** 
+  /**
     * Returns the next team in the list without assigning the turn to the next team.
     * @return The next team for turn.
     */
   def peekNext: Team = findNextFrom(currentTeam)._1
+
+  /**
+    * Returns the first team in the turn system.
+    * @return The first team in the turn system.
+    */
+  def firstTeam = teams()(teamToBeginIndex)
 
   /**
     * Finds the player that follows the given player in the turn system.
@@ -117,13 +123,14 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
   }
 
   /**
-   * A TurnCycle ends, when every team has ended its turn; A Round ends, when several turnCycles end (defined by
-   * <code>Main.getContext().turnsPerRound().get()</code> - by default 10). <p>
-   * After each Round, a new RoundChest spawns and ArrowSelectionScreePreSet is entered to select new arrowsPreSet.
-   */
+    * A TurnCycle ends, when every team has ended its turn; A Round ends, when several turnCycles end (defined by
+    * <code>Main.getContext().turnsPerRound().get()</code> - by default 10). <p>
+    * After each Round, a new RoundChest spawns and ArrowSelectionScreePreSet is entered to select new arrowsPreSet.
+    */
   class RoundOperations {
 
-    /** Called, when a round ends. A round ends, when <code>Main.getContext().turnsPerRound().get()</code> turn cycles
+    /**
+      * Called, when a round ends. A round ends, when <code>Main.getContext().turnsPerRound().get()</code> turn cycles
       * have been ended. By default it is 10.
       */
     val onRoundEnded = Delegate.createZeroArity
@@ -132,7 +139,7 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
 
     onGlobalTurnCycleEnded += { () =>
       count += 1
-      if(count >= PfeileContext.turnsPerRound()) {
+      if (count >= PfeileContext.turnsPerRound()) {
         onRoundEnded.apply()
       }
     }

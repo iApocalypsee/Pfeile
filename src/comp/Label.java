@@ -50,8 +50,6 @@ public class Label extends Component {
 
         getTransformation().translate(x, y);
 
-        getTransformation().onTranslated().registerJava(translationChange -> recalculateDimension());
-
         //setWidth(text_bounds.width);
         //setHeight(text_bounds.height);
 

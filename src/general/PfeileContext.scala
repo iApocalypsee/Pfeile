@@ -48,33 +48,23 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   // to the TurnSystem instance.
   lazy val turnSystem = {
 
-    LogFacility.log("Beginning initialization of turnSystem...")
-    LogFacility.logCurrentStackTrace()
-
     // TODO Clear the initialization up a bit. Looks ugly.
-    val turnSystem = new TurnSystem(() => for (player <- world.entities.entityList.filterType(classOf[Player])) yield player.belongsTo.team)
+    val turnSystem = new TurnSystem(() => for(p <- world.entities.entityList.collect({case p: Player => p})) yield p.belongsTo.team)
 
     // Notifies the entities in the world that a turn has been ended
     turnSystem.onTurnEnded += { team =>
       GameScreen.getInstance().lockUI()
 
       GameScreen.getInstance().releaseUI()
-
     }
 
-    LogFacility.log("Appending crucial callback...")
     turnSystem.onTurnGet += {
       case playerTeam: CommandTeam =>
-        LogFacility.log(s"Executed crucial callback with team=$playerTeam; player=${playerTeam.head}")
         require(playerTeam.head != null)
         activePlayer = playerTeam.head
         GameScreen.getInstance().getMoneyDisplay.retrieveDataFrom(playerTeam.head)
-
       case _ => ???
     }
-    LogFacility.log("Crucial callback registered")
-
-    LogFacility.log(s"Players in turn system: ${turnSystem.teams()}")
 
     turnSystem.onGlobalTurnCycleEnded += { () =>
 

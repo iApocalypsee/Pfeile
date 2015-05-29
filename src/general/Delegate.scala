@@ -140,8 +140,8 @@ object Delegate {
 
     def checkRecursion(): Unit = {
       if (_isProcessing) {
-        LogFacility.log("Recursive processing detected at: ", "Warning")
-        LogFacility.logCurrentStackTrace()
+        LogFacility.logCurrentStackTrace("Recursive processing detected at", "Warning")
+        throw new RuntimeException
       }
     }
 
