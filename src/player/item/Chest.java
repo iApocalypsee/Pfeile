@@ -81,7 +81,8 @@ public abstract class Chest extends Loot {
      */
     @Override
     protected void addCollectListener(LootUI lootUI) {
-        if(lootUI == null) throw new NullPointerException();
+        if(lootUI == null)
+            throw new NullPointerException();
 
         lootUI.component.addMouseListener(new MouseAdapter() {
             @Override
