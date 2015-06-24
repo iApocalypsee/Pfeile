@@ -271,7 +271,10 @@ public class ArrowSelectionScreenPreSet extends Screen {
         if (selectedArrows.size() < PfeileContext.arrowNumberPreSet().get()) {
             openConfirmQuestion("Bitten wählen sie alle Pfeile aus!");
         } else {
-            onLeavingScreen(LoadingWorldScreen.getInstance().SCREEN_INDEX);
+            if (LoadingWorldScreen.isLoaded())
+                onLeavingScreen(GameScreen.SCREEN_INDEX);
+            else
+                onLeavingScreen(LoadingWorldScreen.getInstance().SCREEN_INDEX);
         }
     }
 

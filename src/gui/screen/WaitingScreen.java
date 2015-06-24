@@ -65,12 +65,12 @@ public class WaitingScreen extends Screen {
             } else {
                 label.setText("Warte auf nächsten Spieler:... ");
             }
-            circle.setLocation(label.getX() + label.getWidth() + 20, (int) (label.getY() - label.getHeight() / 2.0));
+            circle.setLocation(label.getX() + label.getWidth() + 20, circle.getY());
         });
 
         WaitCircle waitCircle = new WaitCircle(100, new Color(108, 63, 255, 78));
         waitCircle.setAnglePerDrawing(2.5);
-        circle = new ImageLikeComponent((int) (label.getY() - label.getHeight() / 2.0), label.getWidth() + 20, waitCircle, this);
+        circle = new ImageLikeComponent((int) (label.getY() - label.getHeight() / 2.0), label.getX() + label.getWidth() + 20, waitCircle, this);
 
         setPreprocessedDrawingEnabled(true);
     }

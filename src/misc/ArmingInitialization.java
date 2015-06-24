@@ -35,7 +35,7 @@ public class ArmingInitialization {
     }
 
     private static Thread initializeArrows () {
-          return new Thread (ArrowHelper::new, "ArrowInititializationThread.");
+          return new Thread (ArrowHelper::new, "Arrow Initialization");
     }
 
     private static void initializeWeapon () {
