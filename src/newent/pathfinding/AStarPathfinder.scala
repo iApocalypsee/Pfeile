@@ -132,6 +132,7 @@ class AStarPathfinder(val maxSearchDepth: Int, val excludes: (TileLike) => Boole
     val stepList = mutable.MutableList[Path.Step]()
     var target = nodes(tx)(ty)
     while(target ne nodes(sx)(sy)) {
+      // FIXME: This line sometimes causes NullPointerExceptions [at moveTowards]
       stepList.+=:(Path.Step(target.x, target.y, terrain.tileAt(target.x, target.y).requiredMovementPoints))
       target = target.parent
     }
