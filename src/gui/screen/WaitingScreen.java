@@ -65,14 +65,15 @@ public class WaitingScreen extends Screen {
             } else {
                 label.setText("Warte auf nächsten Spieler:... ");
             }
-            circle.setLocation(label.getX() + label.getWidth() + 20, circle.getY());
+            circle.setX(label.getX() + label.getWidth() + 20);
+            // FIXME: This only changes the rectangle within ImageLikeComponent, but does NOT effect the position used in the draw method
         });
 
-        WaitCircle waitCircle = new WaitCircle(100, new Color(108, 63, 255, 78));
+        WaitCircle waitCircle = new WaitCircle(100, new Color(159, 107, 255, 153));
         waitCircle.setAnglePerDrawing(2.5);
-        circle = new ImageLikeComponent((int) (label.getY() - label.getHeight() / 2.0), label.getX() + label.getWidth() + 20, waitCircle, this);
-
-        setPreprocessedDrawingEnabled(true);
+        circle = new ImageLikeComponent(label.getX() + label.getWidth() + 20, label.getY() - (int) (0.4 * label.getHeight()), waitCircle, this);
+        // FIXME: The x and y position of the circle aren't the same like I coded in the line above.
+        circle.setVisible(true);
     }
 
     @Override
@@ -84,6 +85,8 @@ public class WaitingScreen extends Screen {
 
     @Override
     public void draw (Graphics2D g) {
-        super.draw(g);
+        continueButton.draw(g);
+        label.draw(g);
+        circle.draw(g);
     }
 }

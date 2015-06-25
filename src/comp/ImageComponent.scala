@@ -29,6 +29,8 @@ class ImageLikeComponent(x: Int, y: Int, imageLike: ImageLike, screen: Screen) e
     val src_s = getSourceShape.getBounds
     g.setTransform(getTransformation.concatenatedMatrix)
     imageLike.drawImage(g, x, y, getWidth, getHeight)
+    // FIXME: The waiting circle isn't drawn, even though, this method is entered
+    // e.g. WaitingScreen#circle: x=79, y=576, width=100, height=100. But it you can't see it on the screen
     g.setTransform(oldTransformation)
   }
 

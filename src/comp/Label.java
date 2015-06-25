@@ -114,6 +114,7 @@ public class Label extends Component {
                 g.setFont(font);
                 textSequence.draw(g);
             }
+            g.setFont(Component.STD_FONT);
         }
     }
 
