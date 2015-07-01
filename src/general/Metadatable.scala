@@ -1,5 +1,7 @@
 package general
 
+import scala.beans.BeanProperty
+
 /**
   * An object that can store metadata for its object lifetime.
   *
@@ -10,7 +12,7 @@ package general
 trait Metadatable {
 
   /** The object that holds all metadata for this object. */
-  val metadata = Property(new Metadata)
+  @BeanProperty lazy val metadata = new MetadataTree
 
 }
 
