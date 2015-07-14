@@ -1,10 +1,10 @@
 package player.item;
 
 import general.Main;
-import newent.Bot;
-import newent.Entity;
-import newent.InventoryEntity;
-import newent.Player;
+import gui.screen.GameScreen;
+import newent.*;
+import scala.Option;
+import scala.runtime.AbstractFunction1;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -101,16 +101,32 @@ public abstract class Chest extends Loot {
                                 }
                             }
                         } else {
-                            // TODO remove the key
-
                             // if the chest isn't open, it will be opened now, if the chest and the player are on the tile.
-                            // It can only be opened by players, but collected by every InventoryEntity.
+                            // It can only be opened by players, but collected by every InventoryEntity. You need a key to open it.
                             if (selectedEntity instanceof Player || selectedEntity instanceof Bot) {
-                                if (Chest.this.getGridX() == selectedEntity.getGridX() && Chest.this.getGridY() == selectedEntity.getGridY())
-                                    open();
+                                if (Chest.this.getGridX() == selectedEntity.getGridX() && Chest.this.getGridY() == selectedEntity.getGridY()) {
+
+                                    // removing the key
+                                    CombatUnit active = (CombatUnit) selectedEntity;
+                                    Option<Item> opt = active.inventory().remove(new AbstractFunction1<Item, Object>() {
+                                        @Override
+                                        public Object apply(Item v1) {
+                                            if (getName().equals("Default Chest"))
+                                                return v1 instanceof KeyDefaultChest;
+                                            else
+                                                return v1 instanceof KeyRoundChest;
+                                        }
+                                    });
+
+                                    if (opt.isDefined()) {
+                                        open();
+                                    } else {
+                                        GameScreen.getInstance().setWarningMessage("Du brauchst einen Schlüssel, um eine Kiste zu öffnen. You need a key to open a chest!");
+                                        GameScreen.getInstance().activateWarningMessage();
+                                    }
+                                }
                             }
                         }
-
                     });
 
                     x.setDaemon(true);
