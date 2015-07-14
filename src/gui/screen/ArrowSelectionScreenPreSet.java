@@ -199,8 +199,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
                     } else {
                         setArrowListSelected(selectedArrows);
                         remainingArrows.setText("Übrige Pfeile: "
-                                + (PfeileContext.arrowNumberPreSet().get() - selectedArrows
-                                .size()));
+                                + (PfeileContext.arrowNumberPreSet().get() - selectedArrows.size()));
                     }
                 }
             }
@@ -271,7 +270,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
         if (selectedArrows.size() < PfeileContext.arrowNumberPreSet().get()) {
             openConfirmQuestion("Bitten wählen sie alle Pfeile aus!");
         } else {
-            if (LoadingWorldScreen.isLoaded())
+            if (LoadingWorldScreen.hasLoaded())
                 onLeavingScreen(GameScreen.SCREEN_INDEX);
             else
                 onLeavingScreen(LoadingWorldScreen.getInstance().SCREEN_INDEX);

@@ -5,6 +5,7 @@ import general.PfeileContext;
 import newent.Bot;
 import newent.EntityLike;
 import newent.Player;
+import newent.Team;
 import player.item.coin.*;
 import player.item.potion.PotionOfDamage;
 import player.item.potion.PotionOfHealing;
@@ -65,6 +66,12 @@ public class LootSpawner {
         for (int i = 0; i < random.nextInt(16); i++) {
             if (random.nextBoolean())
                 spawningAnyLoot();
+        }
+
+        // every player should have a key to a default chest
+        for (Team team : context.getTurnSystem().getTeams()) {
+            if (!team.isBarbarian())
+                team.asCommandTeam().head().inventory().put(new KeyDefaultChest());
         }
     }
 
