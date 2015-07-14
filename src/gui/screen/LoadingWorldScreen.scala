@@ -61,8 +61,6 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
     creator.onLastStageDone += {
       _ => {
         GUI.stageLabel.setText("Done!")
-        isLoaded = true
-        goButton.acceptInput()
       }
     }
     // Return the creator as a property.
@@ -74,8 +72,19 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
   onScreenEnter += { () =>
     val creationProcedure: Future[PfeileContext] = worldCreation().createWorld().map(context => {
       Main.setContext(context)
-      postLoadingCheck()
 
+      // these calls only work, if "Main.getContext()" is available
+      // I want them to be ready before entering GameScreen, because at this point, the user still sees "Applying other stuff..."
+      // initialize ShopWindow
+      GameScreen.getInstance().getShopWindow
+
+      // creates the visualMap; it is used for centering the map later on and creating it before entering GameScreen.
+      GameScreen.getInstance().createVisualMap(context)
+
+      // center map
+      GameScreen.getInstance().getMap.centerMap(context.getActivePlayer.getGridX, context.getActivePlayer.getGridY)
+
+      postLoadingCheck()
       isLoaded = true
       GUI.stageLabel.setText("Done!")
       goButton.acceptInput()

@@ -96,11 +96,11 @@ class VisualMap(context: PfeileContext) extends Drawable {
         s"IsometricPolygonTile#IsometricPolygonTileComponent expected")
     }
 
-    Main.getContext.world.entities.entityList.foreach { entity: EntityLike =>
+    context.world.entities.entityList.foreach { entity: EntityLike =>
       entity.getComponent.move(shiftX, shiftY)
     }
 
-    Main.getContext.getWorldLootList.getLoots.foreach { loot: Loot =>
+    context.getWorldLootList.getLoots.foreach { loot: Loot =>
       loot.getLootUI.getComponent.move(shiftX, shiftY)
     }
 

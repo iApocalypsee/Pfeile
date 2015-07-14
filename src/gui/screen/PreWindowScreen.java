@@ -126,7 +126,7 @@ public class PreWindowScreen extends Screen {
                 "Computerstärke", "Startgeld", "Geld pro Zug",
                 "Pfeilanzahl [frei wählbar]", "Pfeilanzahl [vorher wählbar]",
                 "maximales Leben", "Lebensregeneration", "Schadensmultiplikator",
-                "Züge pro Runde", "Zeit pro Zug", "Handicap [Spieler 1]", "Handicap [Spieler 2]", "Weltgröße"};
+                "Züge pro Runde", "Zeit pro Zug", "Handicap [" + Main.getUser().getUsername() + "]", "Handicap [" + "Opponent" + "]", "Weltgröße"};
 
         int labelPosX = 100;
         int labelPosY = 370;
@@ -419,10 +419,10 @@ public class PreWindowScreen extends Screen {
         labels[9].setText("Zeit pro Zug: " + "2 min");
 
         PfeileContext.handicapPlayer().set(0);
-        labels[10].setText("Handicap [Spieler]: " + "0%");
+        labels[10].setText("Handicap [" + Main.getUser().getUsername() + "]: " + "0%");
 
         PfeileContext.handicapAI().set(0);
-        labels[11].setText("Handicap [Computer]: " + "0%");
+        labels[11].setText("Handicap [" + "Opponent" + "]: " + "0%");
 
         PfeileContext.worldSizeX().set(28);
         PfeileContext.worldSizeY().set(25);
@@ -553,7 +553,7 @@ public class PreWindowScreen extends Screen {
                     case 10: PfeileContext.handicapPlayer().set(-25); break;
                     default: PfeileContext.handicapPlayer().set(0);
                 }
-                labels[10].setText("Handicap [Spieler]: " + boxSelectHandicapPlayer.getSelectedValue());
+                labels[10].setText("Handicap [" + Main.getUser().getUsername() + "]: " + boxSelectHandicapPlayer.getSelectedValue());
 
                 if (e != null)
                     boxSelectHandicapKI.triggerListeners(e);
@@ -570,7 +570,7 @@ public class PreWindowScreen extends Screen {
                     case 10: PfeileContext.handicapAI().set(-25); break;
                     default: PfeileContext.handicapAI().set(0);
                 }
-                labels[11].setText("Handicap [Computer]: " + boxSelectHandicapKI.getSelectedValue());
+                labels[11].setText("Handicap [" + "Opponent" + "]: " + boxSelectHandicapKI.getSelectedValue());
                 return;
             }
             case 11: {

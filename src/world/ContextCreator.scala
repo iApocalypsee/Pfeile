@@ -111,11 +111,11 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       // initialize TimeClock
       context.getTimeClock
 
-      notifyAboutFirstTurn()
-
       // Finally, I need to ensure that WorldLootList and LootSpawner are initialized to register their methods.
       // (scala lazy val WorldLootList). Furthermore, some loots have to spawn at the beginning.
       context.getWorldLootList.getLootSpawner.spawnAtBeginning()
+
+      notifyAboutFirstTurn()
     }
 
     private def notifyAboutFirstTurn(): Unit = {
