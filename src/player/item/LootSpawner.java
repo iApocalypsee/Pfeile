@@ -5,6 +5,7 @@ import general.PfeileContext;
 import newent.Bot;
 import newent.EntityLike;
 import newent.Player;
+import newent.Team;
 import player.item.coin.*;
 import player.item.potion.PotionOfDamage;
 import player.item.potion.PotionOfHealing;
@@ -66,6 +67,12 @@ public class LootSpawner {
             if (random.nextBoolean())
                 spawningAnyLoot();
         }
+
+        // every player should have a key to a default chest
+        for (Team team : context.getTurnSystem().getTeams()) {
+            if (!team.isBarbarian())
+                team.asCommandTeam().head().inventory().put(new KeyDefaultChest());
+        }
     }
 
     /** This spawns the {@link player.item.RoundChest}. It is triggered every time <code>ArrowSelectionScreenPreSet</code>
@@ -81,14 +88,26 @@ public class LootSpawner {
         spawnedChest.add(new PotionOfMovement((byte) (random.nextInt(3))));
         if (random.nextFloat() < 0.2f)
             spawnedChest.add(new PlatinumCoin());
-        spawnedChest.add(new GoldCoin());
-        spawnedChest.add(new SilverCoin());
-        spawnedChest.add(new BronzeCoin());
+        for (int i = 0; i < random.nextInt(10); i++)
+            spawnedChest.add(new GoldCoin());
+        for (int i = 0; i < random.nextInt(10); i++)
+            spawnedChest.add(new SilverCoin());
+        for (int i = 0; i < random.nextInt(50) + 10; i++)
+            spawnedChest.add(new BronzeCoin());
 
-        for (int i = 0; i < 6; i++) {
+        // adding some arrows
+        for (int i = 0; i < 9; i++) {
             if (random.nextBoolean())
                 spawnedChest.add(ArrowHelper.instanceArrow(random.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES)));
         }
+
+        // adding new keys
+        if (random.nextFloat() < 0.01f)
+            spawnedChest.add(new KeyRoundChest());
+        if (random.nextFloat() < 0.12f)
+            spawnedChest.add(new KeyDefaultChest());
+        if (random.nextFloat() < 0.88f)
+            spawnedChest.add(new KeyDefaultChest());
 
         context.getWorldLootList().add(spawnedChest);
     }
@@ -109,16 +128,22 @@ public class LootSpawner {
 
         // if it's a Treasure just add money
         if (spawnedLoot instanceof Treasure) {
-            BronzeCoin[] coins = CoinHelper.getCoins(random.nextInt(250) + 1);
+            BronzeCoin[] coins = CoinHelper.getCoins(random.nextInt(250) + 10);
             for (BronzeCoin coin : coins)
                 spawnedLoot.add(coin);
 
             if (random.nextFloat() < 0.05)
                 spawnedLoot.add(new SilverCoin());
 
+            if (random.nextFloat() < 0.01)
+                spawnedLoot.add(new GoldCoin());
+
             // with the possibility of 15% a PotionOfDamage is added.
-            if (random.nextDouble() < 0.15)
+            if (random.nextFloat() < 0.15)
                 spawnedLoot.add(new PotionOfDamage((byte) (random.nextInt(3))));
+
+            if (random.nextFloat() < 0.03)
+                spawnedLoot.add(new KeyDefaultChest());
 
         // if it's a defaultChest add a potion and a little bit money
         } else {
@@ -131,12 +156,20 @@ public class LootSpawner {
             for (BronzeCoin coin : coins)
                 spawnedLoot.add(coin);
 
-            if (random.nextDouble() < 0.2)
+            for (int i = 0; i < random.nextInt(8); i++)
+                spawnedLoot.add(new SilverCoin());
+
+            if (random.nextFloat() < 0.2)
                 spawnedLoot.add(new PotionOfDamage((byte) (random.nextInt(3))));
 
             // with the possibility of 10% an arrow
-            if (random.nextDouble() < 0.1)
+            if (random.nextFloat() < 0.1)
                 spawnedLoot.add(ArrowHelper.instanceArrow(random.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES)));
+
+            if (random.nextFloat() < 0.12f)
+                spawnedLoot.add(new KeyDefaultChest());
+            if (random.nextFloat() < 0.02f)
+                spawnedLoot.add(new KeyRoundChest());
         }
 
         context.getWorldLootList().add(spawnedLoot);

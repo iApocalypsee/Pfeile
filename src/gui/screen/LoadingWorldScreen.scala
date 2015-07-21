@@ -19,9 +19,11 @@ import scala.concurrent.Future
 object LoadingWorldScreen extends Screen("Loading screen", 222) {
 
   lazy val getInstance = this
+
   /** If the world (and every other stage) is loaded and LoadingWorldScreen is left, this is <code>true</code> */
-  private var isLoad = false
-  def isLoaded: Boolean = isLoad
+  private var isLoaded = false
+  /** If the world (and every other stage) is loaded and LoadingWorldScreen is left, this is <code>true</code> */
+  def hasLoaded: Boolean = isLoaded
 
   // GO-Button
   val goButton = new Button(Main.getWindowWidth - 150, Main.getWindowHeight - 90, this, "GO...")
@@ -33,6 +35,7 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
     }
   })
 
+
   override def keyReleased(e: KeyEvent): Unit = {
     super.keyReleased(e)
     if (e.getKeyCode == KeyEvent.VK_G) {
@@ -41,8 +44,8 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
   }
 
   private def triggerGoButton (): Unit = {
-    isLoad = true
-    onLeavingScreen(GameScreen.SCREEN_INDEX)
+    if (isLoaded)
+      onLeavingScreen(GameScreen.SCREEN_INDEX)
   }
 
   private lazy val worldCreation = {
@@ -52,8 +55,12 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
 
     // FIXME: The stage Label should set the stageName, when it begins, because the user doesn't know when to click at "GO...".
     // Every time the stage changes, the label has to be changed as well.
-    creator.onStageDone += { stageCompleted => GUI.stageLabel.setText(stageCompleted.stage.stageName) }
-    creator.onLastStageDone += { _ => GUI.stageLabel.setText("Done!") }
+    creator.onStageDone += { stageCompleted => 
+      GUI.stageLabel.setText(stageCompleted.stage.stageName)
+    }
+    creator.onLastStageDone += { _ => 
+      GUI.stageLabel.setText("Done!")
+    }
     // Return the creator as a property.
     Property.withValidation(creator)
   }
@@ -64,8 +71,24 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
     val creationProcedure: Future[PfeileContext] = worldCreation().createWorld()
 
     creationProcedure onSuccess {
-      case context => Main.setContext(context)
+      case context => 
+        
+        Main.setContext(context)
+
+        // these calls only work, if "Main.getContext()" is available
+        // I want them to be ready before entering GameScreen, because at this point, the user still sees "Applying other stuff..."
+        // initialize ShopWindow
+        GameScreen.getInstance().getShopWindow
+
+        // creates the visualMap; it is used for centering the map later on and creating it before entering GameScreen.
+        GameScreen.getInstance().createVisualMap(context)
+
+        // center map
+        GameScreen.getInstance().getMap.centerMap(context.getActivePlayer.getGridX, context.getActivePlayer.getGridY)
+        
         postLoadingCheck()
+        isLoaded = true
+        GUI.stageLabel.setText("Done!")
         goButton.acceptInput()
         context
     }
@@ -88,6 +111,8 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
   }
 
   private def postLoadingCheck(): Unit = {
+    val timeClockString = Main.getContext.getTimeClock.getTimePrintString
+    assert(timeClockString != "null", "The current TimeClock TimePrintString is still null")
   }
 
   private[LoadingWorldScreen] object GUI {

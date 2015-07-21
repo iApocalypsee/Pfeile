@@ -1,6 +1,5 @@
 package general
 
-import general.SeqOp._
 import gui.screen.GameScreen
 import newent.{CommandTeam, Entity, Player}
 import player.item.WorldLootList
@@ -21,7 +20,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   private var _stopwatchThread: Thread = null
 
   private lazy val _lazyTimeObj: TimeClock = {
-    val ret = new TimeClock
+    val ret = new TimeClock(this)
     _stopwatchThread = new Thread(ret)
     _stopwatchThread.setDaemon(true)
     _stopwatchThread.setPriority(Thread.MIN_PRIORITY + 2)
@@ -122,7 +121,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     */
   def getWorldLootList = _worldLootList
 
-  /** it is called, when TimeClock needs to start to run, this means at leaving LoadingWorldScreen */
+  /** it is called, when TimeClock needs to start to run; this means at leaving LoadingWorldScreen */
   val onStartRunningTimeClock = Delegate.createZeroArity
 
   /**

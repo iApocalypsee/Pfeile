@@ -58,7 +58,7 @@ public class TimeClock extends Component implements Runnable {
     private Color colorLowLife = new Color (118, 1, 0);
 
     /** this String displays the time */
-	private String timePrintString = "NULL";
+	private String timePrintString = "null";
 
 	public final Delegate.Function0Delegate onTimeOver = new Delegate.Function0Delegate();
 
@@ -66,7 +66,7 @@ public class TimeClock extends Component implements Runnable {
     private static Property<FiniteDuration> _turnTime = Property.withValidation();
 
 	// KONSTURCKTOR
-	public TimeClock () {
+	public TimeClock (PfeileContext context) {
         // these values put the underlying component directly in the upper middle of the screen.
 		super(Main.getWindowWidth() / 2 - 72 / 2, 25, 72, 26, 
 				GameScreen.getInstance());
@@ -79,13 +79,13 @@ public class TimeClock extends Component implements Runnable {
             @Override
             public BoxedUnit apply() {
                 if (sm.getActiveScreenIndex() == GameScreen.SCREEN_INDEX) {
-                    Main.getContext().getTurnSystem().increment();
+                    context.getTurnSystem().increment();
                 } else if (sm.getActiveScreenIndex() == ArrowSelectionScreen.SCREEN_INDEX) {
                     sm.setActiveScreen(GameScreen.SCREEN_INDEX);
-                    Main.getContext().getTurnSystem().increment();
+                    context.getTurnSystem().increment();
                 } else if (sm.getActiveScreenIndex() == AimSelectionScreen.SCREEN_INDEX) {
                     sm.setActiveScreen(GameScreen.SCREEN_INDEX);
-                    Main.getContext().getTurnSystem().increment();
+                    context.getTurnSystem().increment();
                 } else
                     throw new java.lang.RuntimeException("Time is out. The active Screen is neither GameScreen nor Aim- or ArrowSelectionScreen. Register it! " +
                             "ActiveScreen: " + sm.getActiveScreen().getName());
@@ -94,7 +94,7 @@ public class TimeClock extends Component implements Runnable {
             }
         });
 
-        final TurnSystem turnSystem = Main.getContext().getTurnSystem();
+        final TurnSystem turnSystem = context.getTurnSystem();
         turnSystem.onTurnGet().registerJava(p -> {
             reset();
             start();
@@ -279,7 +279,7 @@ public class TimeClock extends Component implements Runnable {
 	
 	/** GETTER 
 	 * @return timePrintString*/ 
-	protected synchronized String getTimePrintString () {
+	public synchronized String getTimePrintString () {
 		return timePrintString;
 	}
 	

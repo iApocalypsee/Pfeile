@@ -4,6 +4,7 @@ import comp.Button;
 import comp.WarningMessage;
 import general.JavaInterop;
 import general.Main;
+import general.PfeileContext;
 import gui.FrameContainer;
 import gui.FrameContainerObject;
 import gui.MoneyDisplay;
@@ -86,6 +87,14 @@ public class GameScreen extends Screen implements FrameContainer {
         }));
 	}
 
+    /** Creates an instance of VisualMap. It is saved in GameScreen as "getMap". Only creates a new instance, if
+     * there isn't already one. Notice, that entering GameScreen at the first time, will create a new instance, as well.*/
+    public void createVisualMap (PfeileContext context) {
+        if (map == null) {
+            map = new VisualMap(context);
+        }
+    }
+
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         super.mouseWheelMoved(e);
@@ -152,7 +161,7 @@ public class GameScreen extends Screen implements FrameContainer {
         });
 	}
 
-    ShopWindow getShopWindow() {
+    public ShopWindow getShopWindow() {
         if(shopWindow == null) {
             shopWindow = new ShopWindow(ShopCentral.articles(), ShopCentral$.MODULE$);
         }

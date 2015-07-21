@@ -36,7 +36,7 @@ sealed abstract class Team protected {
 
   def isInTeam(x: CanHoldTeamContract): Boolean = _members.contains(x)
 
-  /** Returns true if this team is the barbarian one. */
+  /** Returns true if this team is the barbarian one. (--> CommandTeam -> false)*/
   def isBarbarian: Boolean
 
   /**
