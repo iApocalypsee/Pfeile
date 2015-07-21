@@ -7,6 +7,8 @@ import general.io.StageDescriptable
 import gui.screen.{ArrowSelectionScreen, WaitingScreen}
 import misc.ItemInitialization
 import newent.Player
+import player.item.ore.OreRegistry
+import world.brush.OreBrush
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -21,6 +23,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
 
   addStage(new InstantiatorStage)
   addStage(new PopulatorStage)
+  addStage(new OreGenerationStage)
   addStage(new OtherStuffStage)
 
   def createWorld(): Future[PfeileContext] = Future {
@@ -93,6 +96,31 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       ContextCreator.this.context = context
     }
 
+  }
+
+  /**
+   * Generates all ore for the world.
+   */
+  private[ContextCreator] class OreGenerationStage extends StageDescriptable[Unit] {
+
+    val generateOreAmount = Random.nextInt(20) + 30
+    val maximumRadius = 5
+    val minimumRadius = 3
+
+    /** The implementation of the stage. */
+    override protected def executeStageImpl(): Unit = {
+      LogFacility.log("Entering ore generation stage")
+      for(i <- 0 until generateOreAmount) {
+        val brush = new OreBrush
+        brush.appliedOre = OreRegistry.randomOre
+        brush.radius = Random.nextInt(maximumRadius - minimumRadius) + minimumRadius
+        brush.applyBrush(context.world.terrain, Random.nextInt(context.world.terrain.width), Random.nextInt(context.world.terrain.height))
+      }
+      LogFacility.log("Ore generation complete!")
+    }
+
+    /** The name of the stage. */
+    override def stageName: String = "Generating ores..."
   }
 
   private[ContextCreator] class OtherStuffStage extends StageDescriptable[Unit] {

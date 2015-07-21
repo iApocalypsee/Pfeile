@@ -33,6 +33,11 @@ trait TileLike extends AnyRef with DisplayRepresentable with AttackContainer {
   /** The terrain to which the tile belongs to. */
   val terrain: TerrainLike
 
+  /**
+    * The properties of this tile.
+    */
+  def tileProperties: TileProperties
+
   /** The movement points that are required to get on this tile. */
   def requiredMovementPoints: Int
 
@@ -103,6 +108,9 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
   def paintBorderLines(x: Color): Unit = for (colorProp <- borderColorProps) colorProp set x
 
   def clearBorderLines(): Unit = for (colorProp <- borderColorProps) colorProp set null
+
+  // TODO Remove tile properties object from IsometricPolygonTile, too generic
+  val tileProperties = new TileProperties
 
   //<editor-fold desc='Instance variables'>
 

@@ -3,6 +3,7 @@ package newent
 import general.{LogFacility, Main, PfeileContext}
 import player.Life
 import player.armour.Armour
+import player.item.EquippableItem
 import player.weapon.{RangedWeapon, Weapon}
 
 /** An entity that has its own life status.
@@ -61,7 +62,7 @@ trait LivingEntity extends Entity with AttackContainer {
 
      // counting every defence value of every piece of armour together and save it in defence
 
-     /* FIXME Medieval Equipment and EquipmentStrategy cause an StackOverflowException
+     //* FIXME Medieval Equipment and EquipmentStrategy cause an StackOverflowException
      if (this.isInstanceOf[Combatant]) {
         val combatant: Combatant = this.asInstanceOf[Combatant]
         combatant.equipment.equippedItems.foreach { equippableItem: EquippableItem =>
@@ -72,7 +73,7 @@ trait LivingEntity extends Entity with AttackContainer {
            }
         }
      }
-     */
+     //*/
 
      if (event.weapon.isInstanceOf[RangedWeapon])
         damage = event.weapon.asInstanceOf[RangedWeapon].damageAt(getGridX, getGridY)

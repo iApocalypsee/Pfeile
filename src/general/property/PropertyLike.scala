@@ -32,6 +32,7 @@ trait PropertyLike[A] {
   */
 trait EagerEval[A] extends PropertyLike[A] with SetEvalStyle[EagerEval[A]] {
   def set(x: A)
+  def :=(x: A) = set(x)
 }
 
 /**
@@ -41,5 +42,6 @@ trait EagerEval[A] extends PropertyLike[A] with SetEvalStyle[EagerEval[A]] {
   */
 trait LazyEval[A] extends PropertyLike[A] with SetEvalStyle[EagerEval[A]] {
   def set(f: => A): Unit
+  def :=(f: => A): Unit = set(f)
   def set(javafun: Supplier[A]): Unit = set(javafun.get())
 }

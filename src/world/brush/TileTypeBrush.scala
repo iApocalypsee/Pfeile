@@ -1,6 +1,5 @@
 package world.brush
 
-import comp.Circle
 import world.{DefaultTerrain, IsometricPolygonTile, TerrainLike}
 
 /** Brush for setting the tile type of a position.
@@ -15,24 +14,9 @@ class TileTypeBrush extends BrushLike {
   def tileType = _type
   def tileType_=(t: Class[_ <: IsometricPolygonTile]) = _type = t
 
-  override def applyBrush(terrain: TerrainLike, x: Int, y: Int): Unit = {
-
-    require(terrain.isInstanceOf[DefaultTerrain])
+  override protected def applySideEffects(terrain: TerrainLike, x: Int, y: Int, centerX: Int, centerY: Int): Unit = {
     val t = terrain.asInstanceOf[DefaultTerrain]
-
-    val circle = new Circle
-    circle.setRadius(radius)
-    circle.setX(x)
-    circle.setY(y)
-
-    for(y_tile <- 0 until t.height) {
-      for(x_tile <- 0 until t.width) {
-        if(circle.contains(x_tile, y_tile)) {
-          t.setTileAt(x_tile, y_tile, _type.getConstructors.apply(0).newInstance(new Integer(x_tile), new Integer(y_tile), t).asInstanceOf[t.TileType])
-        }
-      }
-    }
-
+    t.setTileAt(x, y, _type.getConstructors.apply(0).newInstance(new Integer(x), new Integer(y), t).asInstanceOf[t.TileType])
   }
 
 }

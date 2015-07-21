@@ -10,6 +10,9 @@ import misc.ItemInitialization;
 import newent.CommandTeam;
 import newent.Player;
 import newent.Team;
+import player.item.ore.CopperOre;
+import player.item.ore.IronOre;
+import player.item.ore.OreRegistry;
 import player.item.potion.PotionOfDamage;
 import player.item.potion.PotionOfHealing;
 import player.shop.ShopCentral;
@@ -101,6 +104,8 @@ public class Main {
         // TODO Remove that later. This definitely does not belong here and is just for testing purposes.
         ShopCentral.addArticle(JavaInterop.asScala(() -> new PotionOfHealing((byte) 2)), 50);
         ShopCentral.addArticle(JavaInterop.asScala(() -> new PotionOfDamage((byte) 2)), 35);
+
+        initializeOreRegistry();
 
         // This will load the background melodies of SoundPool and SoundEffectTimeClock in an Thread and start to play
         // the main melodie, if it's ready.
@@ -198,12 +203,6 @@ public class Main {
         // starten wir das Spiel
         main.runGame();
 
-		/*
-         * TODO Hier kommt cleanup-code, z.B. noch offene Dateien schließen.
-		 * Ich weis, noch nichts zum Aufr�umen hinterher, aber wir werden es sp�ter
-		 * 100% brauchen.
-		 */
-
         // sanftes Schlie�en des GameWindows anstelle des harten System.exit(0)
         gameWindow.dispose();
 
@@ -232,6 +231,11 @@ public class Main {
         GameLoop.run(1 / 60.0);
 
         // TODO: System, bei der nach jeder Runde der Bonusauswahlbildschirm und ArrowSelectionPreSet kommt
+    }
+
+    private static void initializeOreRegistry() {
+        OreRegistry.add(new OreRegistry.RegistryEntry(IronOre.class, IronOre.SpawnCondition()));
+        OreRegistry.add(new OreRegistry.RegistryEntry(CopperOre.class, CopperOre.SpawnCondition()));
     }
 
     // #########################################################

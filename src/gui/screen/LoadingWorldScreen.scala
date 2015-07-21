@@ -33,7 +33,6 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
     }
   })
 
-
   override def keyReleased(e: KeyEvent): Unit = {
     super.keyReleased(e)
     if (e.getKeyCode == KeyEvent.VK_G) {
@@ -62,12 +61,23 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
   private lazy val contextCreationFuture = Property[Future[PfeileContext]]()
 
   onScreenEnter += { () =>
-    val creationProcedure: Future[PfeileContext] = worldCreation().createWorld().map(context => {
-      Main.setContext(context)
-      postLoadingCheck()
-      goButton.acceptInput()
-      context
-    })
+    val creationProcedure: Future[PfeileContext] = worldCreation().createWorld()
+
+    creationProcedure onSuccess {
+      case context => Main.setContext(context)
+        postLoadingCheck()
+        goButton.acceptInput()
+        context
+    }
+
+    creationProcedure onFailure {
+      case e: Exception =>
+        val errorString = "Error while creating PfeileContext: " + e
+        GUI.stageLabel.setText(errorString)
+        LogFacility.log(errorString, "Error")
+        e.printStackTrace()
+    }
+
     contextCreationFuture set creationProcedure
   }
 
@@ -78,11 +88,6 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
   }
 
   private def postLoadingCheck(): Unit = {
-    val gameScreen = GameScreen.getInstance()
-    val dataFrom = gameScreen.getMoneyDisplay.getData
-    val moneyString = gameScreen.getMoneyDisplay.getMoneyString
-    assert(moneyString != "0", "Money string still 0")
-    assert(dataFrom != null, "Money display data provider is null")
   }
 
   private[LoadingWorldScreen] object GUI {

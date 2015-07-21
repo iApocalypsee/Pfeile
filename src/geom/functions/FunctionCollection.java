@@ -112,7 +112,7 @@ public class FunctionCollection {
             return 0;
         }
 
-        // Nur mit positiven Zahlen rechnen, im nachhinein dann das Vorzeichen wieder hinzufügen (gespeichert in isPositive)
+        // Nur mit positiven Zahlen rechnen, im nachhinein dann das Vorzeichen wieder hinzufï¿½gen (gespeichert in isPositive)
         boolean isPositive = number > 0;
 
         number = Math.abs(number);
@@ -127,7 +127,7 @@ public class FunctionCollection {
         number = number / 100;
         number = number * 100;
 
-        // Hier werden die neuen Stellen wieder hinzugefügt
+        // Hier werden die neuen Stellen wieder hinzugefï¿½gt
         if (lastDigits >= 0 && lastDigits <= 12) {
             // number = number + 0;
         } else if (lastDigits >= 13 && lastDigits <= 37)
@@ -139,7 +139,25 @@ public class FunctionCollection {
         else if (lastDigits >= 88 && lastDigits <= 99)
             number = number + 100;
 
-        // Vorzeichen hinzufügen und zurückgeben
+        // Vorzeichen hinzufï¿½gen und zurï¿½ckgeben
         return isPositive ? number : -number;
+    }
+
+    public static double clamp(double value, double min, double max) {
+        if(value >= min && value <= max) return value;
+        else if(value < min) return min;
+        else return max;
+    }
+
+    public static float clamp(float value, float min, float max) {
+        if(value >= min && value <= max) return value;
+        else if(value < min) return min;
+        else return max;
+    }
+
+    public static int clamp(int value, int min, int max) {
+        if(value >= min && value <= max) return value;
+        else if(value < min) return min;
+        else return max;
     }
 }

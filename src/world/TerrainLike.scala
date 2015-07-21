@@ -49,6 +49,8 @@ trait TerrainLike {
     */
   def tileAt(x: Int, y: Int): TileType
 
+  def tileAtOption(x: Int, y: Int) = Option(tileAt(x, y))
+
   def getTileAt(x: Int, y: Int): TileLike = tileAt(x, y)
 
   /**
@@ -133,10 +135,9 @@ class DefaultTerrain(override val world: DefaultWorld, initWidth: Int, initHeigh
     }
   }
 
-  @throws[ArrayIndexOutOfBoundsException]("Tile is not specified.")
   override def tileAt(x: Int, y: Int) = {
-    require(isTileValid(x, y))
-    _tiles(x)(y)
+    if(isTileValid(x, y)) _tiles(x)(y)
+    else null
   }
 
   override def setTileAt(x: Int, y: Int, t: TileType): Unit = {

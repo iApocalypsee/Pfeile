@@ -77,7 +77,9 @@ class Transformation2D {
     val old = translation
     setTranslationWithoutSideEffect(x, y)
     val firedEvent = TranslationChange(old, translation)
-    onTranslated(firedEvent)
+    if(firedEvent.isDelta) {
+      onTranslated(firedEvent)
+    }
 
     this
   }
@@ -95,7 +97,7 @@ class Transformation2D {
     val old = _rotation
     setRotationWithoutSideEffect(angle)
     val firedEvent = RotationChange(old, _rotation)
-    if(firedEvent.delta != 0) {
+    if(firedEvent.isDelta) {
       onRotated(firedEvent)
     }
 
@@ -126,7 +128,7 @@ class Transformation2D {
     val old = scale
     setScaleWithoutSideEffect(sx, sy)
     val firedEvent = ScaleChange(old, scale)
-    // TODO Delta check?
+    // TODO Delta check? See TransformationEvent#isDelta
     onScaled(ScaleChange(old, scale))
     this
   }
@@ -169,6 +171,7 @@ object Transformation2D {
 trait TransformationEvent {
   def matrix: AffineTransform
   def deltaMatrix: AffineTransform
+  def isDelta = !deltaMatrix.isIdentity
 }
 
 case class RotationChange(oldDegree: Double, newDegree: Double) extends TransformationEvent {
@@ -185,5 +188,7 @@ case class TranslationChange(oldTranslation: Vector2, newTranslation: Vector2) e
 
 case class ScaleChange(oldScale: Vector2, newScale: Vector2) extends TransformationEvent {
   override lazy val matrix = AffineTransform.getScaleInstance(newScale.x, newScale.y)
+
+  // Todo: Should delta matrix be oriented multiplicatively or additionally?
   override def deltaMatrix = throw new NotImplementedError("Scale delta not implemented yet")
 }

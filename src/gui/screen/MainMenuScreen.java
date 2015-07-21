@@ -34,8 +34,6 @@ public class MainMenuScreen extends Screen {
 				onLeavingScreen(ArrowSelectionScreen.SCREEN_INDEX);
 			}
 		});
-		
-		// TODO zusätzlicher init-code für das Hauptmenü, falls nötig
 	}
 
 	@Override

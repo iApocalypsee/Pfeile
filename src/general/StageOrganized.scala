@@ -22,7 +22,7 @@ class StageOrganized {
   val onLastStageDone = Delegate.create[StageCompletedEvent[_]]
 
   // Last stage callback
-  onStageDone += { event => if(event.stage eq m_stages.last) onLastStageDone(event) }
+  onStageDone += { event => if(event.stage == m_stages.last) onLastStageDone(event) }
 
   /**
     * The stages registered to the stage collection.

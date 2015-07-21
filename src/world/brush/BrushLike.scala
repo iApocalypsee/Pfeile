@@ -1,14 +1,13 @@
 package world.brush
 
-import world.{TerrainLike, TileLike}
+import comp.Circle
+import world.TerrainLike
 
 /**
  *
  * @author Josip Palavra
  */
 trait BrushLike {
-
-  type LinkedTileType <: TileLike
 
   private var _radius = 3
 
@@ -18,6 +17,21 @@ trait BrushLike {
     _radius = a
   }
 
-  def applyBrush(t: TerrainLike, x: Int, y: Int): Unit
+  def applyBrush(t: TerrainLike, x: Int, y: Int): Unit = {
+    val circle = new Circle
+    circle.setRadius(radius)
+    circle.setX(x)
+    circle.setY(y)
+
+    for(y_tile <- 0 until t.height) {
+      for(x_tile <- 0 until t.width) {
+        if(circle.contains(x_tile, y_tile)) {
+          applySideEffects(t, x_tile, y_tile, x, y)
+        }
+      }
+    }
+  }
+
+  protected def applySideEffects(t: TerrainLike, x: Int, y: Int, centerX: Int, centerY: Int): Unit
 
 }
