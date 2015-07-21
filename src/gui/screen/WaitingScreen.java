@@ -6,6 +6,7 @@ import comp.*;
 import comp.Label;
 import general.LogFacility;
 import general.Main;
+import misc.ImageHelper;
 import newent.Team;
 
 import javax.imageio.ImageIO;
@@ -29,6 +30,7 @@ public class WaitingScreen extends Screen {
         String path = "resources/gfx/comp/continueButton.png";
         try {
             continueImage = ImageIO.read(WaitingScreen.class.getClassLoader().getResourceAsStream(path));
+            continueImage = ImageHelper.scaleBufferedImage(continueImage, 0.82f);
         } catch (IOException e) {
             e.printStackTrace();
             LogFacility.log("The BufferedImage of class WaitingScreen couldn't be loaded! Path: " + path,
@@ -43,9 +45,13 @@ public class WaitingScreen extends Screen {
     public WaitingScreen () {
         super(SCREEN_NAME, SCREEN_INDEX);
 
-        continueButton = new Button(Main.getWindowWidth() - 200, Main.getWindowHeight() - 300, this, "Weiter");
+        // The continueButton should be on place as the endTurnButton in GameScreen. It's easier to click in that way...
+        continueButton = new Button(30, Main.getWindowHeight() - 50, this, "Weiter");
         continueButton.setRoundBorder(true);
         continueButton.iconify(continueImage);
+        // It should also have the same size.
+        continueButton.setWidth(108);
+        continueButton.setHeight(40);
         continueButton.setVisible(true);
         continueButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -54,9 +60,16 @@ public class WaitingScreen extends Screen {
             }
         });
 
-        label = new Label(80, 80, this, "Warte auf nächsten Spieler:... ");
+        label = new Label(0, 85, this, "Warte auf nächsten Spieler:... ");
         label.setFont(new Font(Component.STD_FONT.getFontName(), Font.ITALIC, 28));
-        label.setFontColor(new Color(108, 63, 255, 140));
+        label.setFontColor(new Color(163, 139, 255, 214));
+
+        WaitCircle waitCircle = new WaitCircle(75, new Color(132, 0, 255, 125));
+        waitCircle.setAnglePerDrawing(2.5);
+        circle = new ImageLikeComponent(33, label.getY() - (int) (0.55 * label.getHeight()), waitCircle, this);
+        circle.setVisible(true);
+
+        label.setX(circle.getX() + circle.getWidth() + 17);
 
         onScreenEnter.registerJava(() -> {
             Team nextTeam = Main.getContext().getTurnSystem().peekNext();
@@ -65,13 +78,8 @@ public class WaitingScreen extends Screen {
             } else {
                 label.setText("Warte auf nächsten Spieler:... ");
             }
-            circle.setX(label.getX() + label.getWidth() + 20);
+            label.setX(circle.getX() + circle.getWidth() + 17);
         });
-
-        WaitCircle waitCircle = new WaitCircle(100, new Color(159, 107, 255, 153));
-        waitCircle.setAnglePerDrawing(2.5);
-        circle = new ImageLikeComponent(label.getX() + label.getWidth() + 20, label.getY() - (int) (0.4 * label.getHeight()), waitCircle, this);
-        circle.setVisible(true);
     }
 
     @Override
