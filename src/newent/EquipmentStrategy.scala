@@ -77,7 +77,7 @@ trait HasWeapons extends EquipmentStrategy {
   /**
     * Returns all equipped items the equipment strategy is holding right now.
     */
-  override def equippedItems: Seq[EquippableItem] = equippedItems ++: super.equippedItems
+  override def equippedItems: Seq[EquippableItem] = availableWeapons ++: super.equippedItems
 
   override def equip(x: EquipInformation): Unit = x.equippedItem match {
     case weapon: Weapon => primaryWeapon = Some(weapon)
