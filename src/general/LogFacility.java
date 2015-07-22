@@ -136,9 +136,9 @@ public final class LogFacility {
 		final long executionTime = currentTime - Main.getProgramStartTime();
 		return String.format("%d.%d.%d.%d",
 				TimeUnit.MILLISECONDS.toHours(executionTime),
-				TimeUnit.MILLISECONDS.toMinutes(executionTime),
-				TimeUnit.MILLISECONDS.toSeconds(executionTime),
-				TimeUnit.MILLISECONDS.toMillis(executionTime));
+				TimeUnit.MILLISECONDS.toMinutes(executionTime) % 60,
+				TimeUnit.MILLISECONDS.toSeconds(executionTime) % 60,
+				TimeUnit.MILLISECONDS.toMillis(executionTime) % 1000);
 	}
 
 	private static String getCutStackTrace(int cutIndices) {

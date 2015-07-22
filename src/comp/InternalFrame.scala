@@ -1,10 +1,11 @@
 package comp
 
 import java.awt._
-import java.awt.event.{ MouseAdapter, MouseEvent }
+import java.awt.event.{MouseAdapter, MouseEvent}
+import java.util.Collections
 
 import general.property.StaticProperty
-import general.{ Delegate, LogFacility }
+import general.{Delegate, LogFacility}
 import gui.FrameContainer
 import gui.screen.Screen
 
@@ -38,7 +39,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
           "anymore. Ignoring component in drawing process...", "Warning")
       }
     }
-    comps = JavaConversions.collectionAsScalaIterable(getChildren.values()).toSeq
+    comps = JavaConversions.collectionAsScalaIterable(Collections.unmodifiableCollection(getChildren.values())).toSeq
   }
 
   // Check if the backing screen can actually hold frames (ability supplied by FrameContainer trait)
