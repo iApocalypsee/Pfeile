@@ -42,7 +42,7 @@ public class List extends Component {
 
 	public final Delegate.Delegate<Integer> onItemSelected = new Delegate.Delegate<>();
 
-	static final Insets STD_INSETS = new Insets(4, 4, 7, 8);
+	static final Insets STD_INSETS = new Insets(7, 4, 7, 8);
 
 	public List(int x, int y, int width, int height, Screen backing, java.util.List<String> items) {
 		super(x, y, width, height, backing);
@@ -80,6 +80,7 @@ public class List extends Component {
 	public void putListEntry(String text, int atIndex) {
 		items.add(atIndex, text);
 		listItems = mapToLabels(items);
+        realignLabels();
 	}
 
 	/**
@@ -90,10 +91,17 @@ public class List extends Component {
 	private java.util.List<Label> mapToLabels(java.util.List<String> stringList) {
 		java.util.List<Label> labels = new LinkedList<>();
 		for (int i = 0; i < stringList.size(); i++) {
-			final Label build = new Label(getX(), getY(), getBackingScreen(), stringList.get(i));
+            final Label build = new Label(getX(), getY(), getBackingScreen(), stringList.get(i)) {
+
+            };
+
+            int previousLabelsTotalHeight = 0;
+            for(int previousLabelsIterator = 0; previousLabelsIterator < i; previousLabelsIterator++) {
+                previousLabelsTotalHeight += labels.get(previousLabelsIterator).getHeight();
+            }
 
 			// I need to set the position in the correct order.
-			build.move(STD_INSETS.right, STD_INSETS.top + (build.getHeight() + 1) * i);
+			build.move(STD_INSETS.right, STD_INSETS.top + previousLabelsTotalHeight);
 
 			// The loop wants that.
 
@@ -126,6 +134,20 @@ public class List extends Component {
 		return labels;
 	}
 
+    private void realignLabels() {
+        for(int i = 0; i < listItems.size(); i++) {
+
+            int previousLabelsTotalHeight = STD_INSETS.top;
+            for(int prevLabelIter = 0; prevLabelIter < i; prevLabelIter++) {
+                previousLabelsTotalHeight += listItems.get(prevLabelIter).getHeight() + STD_INSETS.top;
+            }
+
+            final Label currentLabel = listItems.get(i);
+            currentLabel.setY(this.getY() + previousLabelsTotalHeight);
+
+        }
+    }
+
 	/**
 	 * Puts a new list label entry at the end of the list with the given text.
 	 * @param text The text to append.
@@ -157,6 +179,7 @@ public class List extends Component {
 	public void removeListEntry(int index) {
 		items.remove(index);
 		listItems = mapToLabels(items);
+        realignLabels();
 	}
 
     /**
@@ -345,21 +368,7 @@ public class List extends Component {
         if (getHeight() < bounds.height)
             setHeight(bounds.height);
 
-        // resetting the bounds of the labels. Implementation vastly resembles "mapToLabels".
-        for (int i = 0; i < listItems.size(); i++) {
-            final Label build = listItems.get(i);
-
-            // Resetting the location of label
-            build.setLocation(getX(), getY());
-
-            // and moving it to its new position in the correct order.
-            build.move(STD_INSETS.right, STD_INSETS.top + (build.getHeight() + 1) * i);
-
-            // The loop wants that.
-
-            // If the label is inside the boundaries of the list, then it should be visible...
-            build.setVisible((build.getY() + build.getHeight()) < (this.getY() + this.getHeight()));
-        }
+        realignLabels();
     }
 
     /** Returns the size [= length] of the list. The last index is <code>getIndexSize() - 1</code> as the index is 0-based.*/
