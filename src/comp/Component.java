@@ -11,7 +11,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 
@@ -698,17 +697,14 @@ public abstract class Component implements IComponent {
 		}
 	}
 
-	/**
-	 * Calculates the center point of the component's bounding box.
-	 * For now, the simplified bounds will be used for calculation.
-	 * The point is rather the focus point of the component's bounds rather
-	 * than its rectangular center.
-	 *
-	 * @return The center point of the component's simplified bounding box.
-	 */
+    /**
+     * Returns the center point of the bounds.
+     * @return The bound's center.
+     */
 	public Point center() {
+		/*
 		java.util.List<Vector2> vectorList = new LinkedList<>();
-		for(PathIterator pi = bounds.getPathIterator(null); !pi.isDone(); pi.next()) {
+		for(PathIterator pi = getBounds().getPathIterator(null); !pi.isDone(); pi.next()) {
 			final float[] coords = new float[6];
 			pi.currentSegment(coords);
 			vectorList.add(new Vector2(coords[0], coords[1]));
@@ -723,8 +719,10 @@ public abstract class Component implements IComponent {
 
 		float balancePointX = sum_x / vectorList.size();
 		float balancePointY = sum_y / vectorList.size();
+		*/
 
-		return new Point((int) balancePointX, (int) balancePointY);
+        final Rectangle2D preciseRectangle = getPreciseRectangle();
+        return new Point((int) preciseRectangle.getCenterX(), (int) preciseRectangle.getCenterY());
 	}
 
 	/**

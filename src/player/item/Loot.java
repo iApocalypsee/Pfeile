@@ -47,13 +47,6 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
      */
     protected Loot (int gridX, int gridY, String name) {
         this(gridX, gridY, null, name);
-
-        lootUI.setLazyInit(() -> {
-            final LootUI returnedUI = createUI();
-            // Only after LootUI has been created, the mouseListener for collecting the Loot can be added.
-            addCollectListener(returnedUI);
-            return returnedUI;
-        });
     }
 
     /** Creates a new Loot on the Tile at (gridX, gridY) with the specified name and the lootUI. */
@@ -68,6 +61,15 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
         if(lootUI != null) {
             this.lootUI.set(lootUI);
             addCollectListener(this.lootUI.get());
+            lootUI.setOnTile(getTile());
+        } else {
+            this.lootUI.setLazyInit(() -> {
+                final LootUI returnedUI = createUI();
+                // Only after LootUI has been created, the mouseListener for collecting the Loot can be added.
+                addCollectListener(returnedUI);
+                returnedUI.setOnTile(getTile());
+                return returnedUI;
+            });
         }
     }
 
@@ -202,8 +204,7 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
         return new LootUI(component) {
             @Override
             public void draw (Graphics2D g) {
-                ImageComponent lootComponent = (ImageComponent) getComponent();
-                lootComponent.draw(g);
+                getComponent().draw(g);
             }
         };
     }

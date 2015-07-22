@@ -1,6 +1,8 @@
 package player.item;
 
 import comp.Component;
+import general.Delegate;
+import general.LogFacility;
 import gui.Drawable;
 import world.TileLike;
 
@@ -13,6 +15,8 @@ import java.awt.*;
 public abstract class LootUI implements Drawable {
 
     protected Component component;
+    private TileLike tilePosition;
+    private Delegate.DelegateLike.Handle activeCallback;
 
     public LootUI (Component component) {
         this.component = component;
@@ -25,7 +29,21 @@ public abstract class LootUI implements Drawable {
      * @param tile the new tile
      */
     protected void setOnTile (TileLike tile) {
-        Point centerPoint = tile.component().center();
+        if(tilePosition != null) {
+            activeCallback.dispose();
+            activeCallback = null;
+        }
+        this.tilePosition = tile;
+        if(tilePosition != null) {
+            LogFacility.log("Set tile position of " + this + " to " + tilePosition, "Debug");
+            activeCallback = tilePosition.getComponent().onTransformed.registerJava(transformationEvent -> {
+                relocateGuiPosition();
+            });
+        }
+    }
+
+    public void relocateGuiPosition() {
+        Point centerPoint = tilePosition.component().center();
         component.setLocation(centerPoint.x - component.getWidth() / 2, centerPoint.y - component.getHeight() / 2);
     }
 

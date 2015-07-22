@@ -1,5 +1,6 @@
 package player.item.coin;
 
+import player.item.Item;
 import scala.Tuple2;
 import scala.collection.JavaConversions;
 
@@ -208,12 +209,10 @@ public class CoinHelper {
      * @param <A> Type parameter.
      * @return The value of the seq, if any. Defaults to 0.
      */
-    public static <A> int getValue(scala.collection.Iterable<A> seq) {
+    public static <A extends Item> int getValue(scala.collection.Iterable<A> seq) {
         int value = 0;
         for(A a : JavaConversions.asJavaIterable(seq)) {
-            if(a instanceof Coin) {
-                value += ((Coin) a).getValue();
-            }
+            value += a.getValue();
         }
         return value;
     }

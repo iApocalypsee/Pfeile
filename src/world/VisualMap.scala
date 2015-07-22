@@ -5,7 +5,7 @@ import java.awt.Graphics2D
 import general.{Delegate, LogFacility, Main, PfeileContext}
 import geom.Vector2
 import gui.Drawable
-import newent.{EntityLike, CommandTeam, VisionStatus}
+import newent.{CommandTeam, EntityLike, VisionStatus}
 import player.item.Loot
 import player.weapon.AttackDrawer
 import player.weapon.arrow.AbstractArrow
@@ -101,7 +101,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
     }
 
     context.getWorldLootList.getLoots.foreach { loot: Loot =>
-      loot.getLootUI.getComponent.move(shiftX, shiftY)
+      loot.getLootUI.relocateGuiPosition()
     }
 
     // TODO: other weapons (AttackDrawer.getAttackingWeapons()) apart from Arrows need to be moved.

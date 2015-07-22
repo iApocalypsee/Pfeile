@@ -397,17 +397,36 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
 
     //</editor-fold>
 
+    //<editor-fold desc='Debug capabilities'>
+
+    /**
+      * If true, the coordinates of this tile are going to be drawn on top of everything.
+      */
+    var isCoordinateDrawn = false
+
+    private val debugCoordinateFont = new Font(Font.MONOSPACED, Font.PLAIN, 10)
+
+    private def drawCoordinates(g: Graphics2D) = if(isCoordinateDrawn) {
+      g.setFont(debugCoordinateFont)
+      g.setColor(Color.white)
+      g.drawString(s"($getGridX|$getGridY)", getX, getY)
+    }
+
+    //</editor-fold>
+
     /**
       * Calculates the normal x position for this tile, considering that the center of the (0|0) tile
       * is at screen coordinates (0|0).
-      * @return The x position of the upper left corner of this tile.
+      * @return The x position of the upper left corner of this tile while considering that the map has not been moved
+      *         at all.
       */
     def normalX = getGridX * TileHalfWidth + getGridY * TileHalfWidth
 
     /**
       * Calculates the normal y position for this tile, considering that the center of the (0|0) tile
       * is at screen coordinates (0|0).
-      * @return The y position of the upper left corner of this tile.
+      * @return The y position of the upper left corner of this tile while considering that the map has not been moved
+      *         at all.
       */
     def normalY = getGridX * TileHalfHeight - getGridY * TileHalfHeight
 
@@ -427,6 +446,7 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
       g.fill(getBounds)
       drawAll(g)
       drawBorders(g)
+      drawCoordinates(g)
     }
   }
 

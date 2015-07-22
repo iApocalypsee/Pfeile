@@ -47,8 +47,7 @@ public abstract class Chest extends Loot {
      * @see player.item.Chest#Chest(int, int, LootUI, String)
      * */
     protected Chest (int gridX, int gridY, String name) {
-        super(gridX, gridY, name);
-        isOpen = false;
+        this(gridX, gridY, null, name);
     }
 
     /** you need to open a chest.
@@ -121,7 +120,7 @@ public abstract class Chest extends Loot {
                                     if (opt.isDefined()) {
                                         open();
                                     } else {
-                                        GameScreen.getInstance().setWarningMessage("Du brauchst einen Schlüssel, um eine Kiste zu öffnen. You need a key to open a chest!");
+                                        GameScreen.getInstance().setWarningMessage("Du brauchst einen Schlï¿½ssel, um eine Kiste zu ï¿½ffnen. You need a key to open a chest!");
                                         GameScreen.getInstance().activateWarningMessage();
                                     }
                                 }
