@@ -3,7 +3,7 @@ package newent
 import general.{LogFacility, Main, PfeileContext}
 import player.Life
 import player.armour.Armour
-import player.item.{Item, BagOfLoots, EquippableItem}
+import player.item.EquippableItem
 import player.weapon.{RangedWeapon, Weapon}
 
 /** An entity that has its own life status.
@@ -42,27 +42,8 @@ trait LivingEntity extends Entity with AttackContainer {
      var damage: Double = 0
      var defence: Double = 0
 
-
-     // This counts the defence. The implementation under this part should be equal (but shorter and faster), but doesn't work
-     if (this.isInstanceOf[Combatant]) {
-        this.asInstanceOf[Combatant].getEquipment match {
-           case armour: HasArmor =>
-              armour.armorParts.foreach { armour: Option[Armour] =>
-                 if (armour != None)
-                    defence = defence + armour.get.getDefence(event.weapon.getArmingType)
-              }
-           case weapons: HasWeapons =>
-              weapons.weapons.foreach { weapon: Option[Weapon] =>
-                 if (weapon != None)
-                    defence = defence + weapon.get.getDefence(event.weapon.getArmingType)
-              }
-           case _ =>
-        }
-     }
-
      // counting every defence value of every piece of armour together and save it in defence
 
-     //* FIXME MedievalEquipment and EquipmentStrategy cause an StackOverflowException
      if (this.isInstanceOf[Combatant]) {
         val combatant: Combatant = this.asInstanceOf[Combatant]
         combatant.equipment.equippedItems.foreach { equippableItem: EquippableItem =>
