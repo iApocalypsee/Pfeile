@@ -10,6 +10,7 @@ import misc.ItemInitialization;
 import newent.CommandTeam;
 import newent.Player;
 import newent.Team;
+import player.item.KeyDefaultChest;
 import player.item.ore.CopperOre;
 import player.item.ore.IronOre;
 import player.item.ore.OreRegistry;
@@ -104,6 +105,7 @@ public class Main {
         // TODO Remove that later. This definitely does not belong here and is just for testing purposes.
         ShopCentral.addArticle(JavaInterop.asScala(() -> new PotionOfHealing((byte) 2)), 50);
         ShopCentral.addArticle(JavaInterop.asScala(() -> new PotionOfDamage((byte) 2)), 35);
+        ShopCentral.addArticle(JavaInterop.asScala(() -> new KeyDefaultChest()), 100);
 
         initializeOreRegistry();
 
@@ -230,10 +232,10 @@ public class Main {
 
         GameLoop.run(1 / 60.0);
 
-        // TODO: System, bei der nach jeder Runde der Bonusauswahlbildschirm und ArrowSelectionPreSet kommt
     }
 
     private static void initializeOreRegistry() {
+        // TODO change the position of this code later. Main should only call the method and not contain the method.
         OreRegistry.add(new OreRegistry.RegistryEntry(IronOre.class, IronOre.SpawnCondition()));
         OreRegistry.add(new OreRegistry.RegistryEntry(CopperOre.class, CopperOre.SpawnCondition()));
     }

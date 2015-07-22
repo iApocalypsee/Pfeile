@@ -1,5 +1,7 @@
 package comp;
 
+import general.Main;
+import general.PfeileContext;
 import gui.screen.Screen;
 
 import java.awt.*;
@@ -55,6 +57,11 @@ public class WarningMessage extends Component {
                     setTransparency(1);
             }
         });
+
+        // if any screen is left, the warning message disappears.
+        Main.getGameWindow().getScreenManager().getScreens().forEach((index, screen) -> {
+            screen.onScreenLeft.registerJava((screenChangedEvent) -> setTransparency(0));
+        });
     }
 
     /**
@@ -70,7 +77,8 @@ public class WarningMessage extends Component {
 
     /** the method is called, if the current frame has been drawn. It changes the transparency value of warningColor */
     private void update () {
-        if (getTransparency() - 0.009f > 0)
+        // at 5% transparency the warningMessage should disappear.
+        if (getTransparency() - 0.009f > 0.05f)
             setTransparency(getTransparency() - 0.009f);
         else
             setTransparency(0);

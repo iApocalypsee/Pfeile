@@ -29,7 +29,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
     public static final int SCREEN_INDEX = 256;
     public static final String SCREEN_NAME = "ArrowSelectionScreenPreSet";
 
-    private Label remainingArrows;
+    private Label remainingArrows, playerName;
     private Button readyButton, randomButton;
 
     /** Liste der Button f�r andere Aufgaben */
@@ -206,9 +206,14 @@ public class ArrowSelectionScreenPreSet extends Screen {
         });
 
         onScreenEnter.registerJava(() -> {
-            if(PfeileContext.arrowNumberPreSet().get() == 1) {
-                remainingArrows.setText("Verfügbaren Pfeil definieren!");
-            }
+            selectedArrows.clear();
+            selectedArrows.add("<keine Pfeile>");
+
+            if (PfeileContext.arrowNumberPreSet().get() > 1)
+                remainingArrows.setText("Verfügbare Pfeile auswählen!");
+            else
+                remainingArrows.setText("Verfügbaren Pfeil auswählen!");
+
         });
     }
 

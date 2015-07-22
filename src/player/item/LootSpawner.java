@@ -11,6 +11,7 @@ import player.item.potion.PotionOfDamage;
 import player.item.potion.PotionOfHealing;
 import player.item.potion.PotionOfMovement;
 import player.weapon.arrow.ArrowHelper;
+import world.GrassTile;
 import world.SeaTile;
 import world.TerrainLike;
 
@@ -39,18 +40,20 @@ public class LootSpawner {
         context.getTurnSystem().getRoundOperations().onRoundEnded().registerJava(() -> {
             spawningRoundChest();
 
-            // Spawn 0 to 5 loots with the possibility of 50% for more fun at the beginning
+            // Spawn 0 to 5 loots with the possibility of 35% after the end of a round
             for (int i = 0; i < random.nextInt(5); i++) {
-                if (random.nextBoolean())
+                if (random.nextFloat() < 0.35f)
                     spawningAnyLoot();
             }
         });
 
         context.getTurnSystem().onGlobalTurnCycleEnded().registerJava(() -> {
-            // Just spawn one or two loots with a possibility of 50% each.
-            if (random.nextBoolean())
+            // Just spawn one or two loots with a possibility of ?% each.
+            if (random.nextFloat() < 0.25f)
                 spawningAnyLoot();
-            if (random.nextBoolean())
+            if (random.nextFloat() < 0.10f)
+                spawningAnyLoot();
+            if (random.nextFloat() < 0.03f)
                 spawningAnyLoot();
         });
 
@@ -62,8 +65,8 @@ public class LootSpawner {
         // The first RoundChest should spawn at the beginning; the first rounds ends usually after 10 turnCycles.
         spawningRoundChest();
 
-        // Spawn 0 to 13 loots with the possibility of 50% for more fun at the beginning
-        for (int i = 0; i < random.nextInt(16); i++) {
+        // Spawn 0 to 20 loots with the possibility of 50% for more fun at the beginning
+        for (int i = 0; i < random.nextInt(21); i++) {
             if (random.nextBoolean())
                 spawningAnyLoot();
         }
@@ -88,7 +91,7 @@ public class LootSpawner {
         spawnedChest.add(new PotionOfMovement((byte) (random.nextInt(3))));
         if (random.nextFloat() < 0.2f)
             spawnedChest.add(new PlatinumCoin());
-        for (int i = 0; i < random.nextInt(10); i++)
+        for (int i = 0; i < random.nextInt(7); i++)
             spawnedChest.add(new GoldCoin());
         for (int i = 0; i < random.nextInt(10); i++)
             spawnedChest.add(new SilverCoin());
@@ -102,7 +105,7 @@ public class LootSpawner {
         }
 
         // adding new keys
-        if (random.nextFloat() < 0.01f)
+        if (random.nextFloat() < 0.008f)
             spawnedChest.add(new KeyRoundChest());
         if (random.nextFloat() < 0.12f)
             spawnedChest.add(new KeyDefaultChest());
@@ -128,7 +131,7 @@ public class LootSpawner {
 
         // if it's a Treasure just add money
         if (spawnedLoot instanceof Treasure) {
-            BronzeCoin[] coins = CoinHelper.getCoins(random.nextInt(250) + 10);
+            BronzeCoin[] coins = CoinHelper.getCoins(random.nextInt(150) + 10);
             for (BronzeCoin coin : coins)
                 spawnedLoot.add(coin);
 
@@ -147,8 +150,8 @@ public class LootSpawner {
 
         // if it's a defaultChest add a potion and a little bit money
         } else {
-            if (random.nextBoolean())
-                spawnedLoot.add(new PotionOfHealing((byte) (random.nextInt(3))));
+            if (random.nextFloat() < 0.3)
+                spawnedLoot.add(new PotionOfHealing((byte) (random.nextInt(2))));
             else
                 spawnedLoot.add(new PotionOfMovement((byte) (random.nextInt(3))));
 
@@ -159,12 +162,8 @@ public class LootSpawner {
             for (int i = 0; i < random.nextInt(8); i++)
                 spawnedLoot.add(new SilverCoin());
 
-            if (random.nextFloat() < 0.2)
+            if (random.nextFloat() < 0.15)
                 spawnedLoot.add(new PotionOfDamage((byte) (random.nextInt(3))));
-
-            // with the possibility of 10% an arrow
-            if (random.nextFloat() < 0.1)
-                spawnedLoot.add(ArrowHelper.instanceArrow(random.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES)));
 
             if (random.nextFloat() < 0.12f)
                 spawnedLoot.add(new KeyDefaultChest());
@@ -200,7 +199,7 @@ public class LootSpawner {
             int spawnX = random.nextInt(PfeileContext.worldSizeX().get());
             int spawnY = random.nextInt(PfeileContext.worldSizeY().get());
 
-            if (terrain.tileAt(spawnX, spawnY) instanceof SeaTile)
+            if (!(terrain.tileAt(spawnX, spawnY) instanceof GrassTile))
                 continue;
 
             if (!isEntityNear(spawnX, spawnY, radiusTroops - distanceTroops, radiusPlayers - distancePlayers)) {

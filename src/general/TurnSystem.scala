@@ -145,7 +145,8 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
     }
 
     onRoundEnded += { () =>
-      Main.getGameWindow.getScreenManager.setActiveScreen(ArrowSelectionScreenPreSet.SCREEN_INDEX)
+      if (PfeileContext.arrowNumberPreSet() != 0)
+        Main.getGameWindow.getScreenManager.setActiveScreen(ArrowSelectionScreenPreSet.SCREEN_INDEX)
       reset()
     }
 

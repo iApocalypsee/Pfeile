@@ -92,7 +92,9 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
      * If the <code>lootUI</code>/<code>getLootUI()</code> is <code>null</code>, the method returns doing nothing.
      */
     protected void addCollectListener (LootUI lootUI) {
-        if(lootUI == null) throw new NullPointerException();
+        if(lootUI == null)
+            throw new NullPointerException();
+
         lootUI.component.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased (MouseEvent e) {
