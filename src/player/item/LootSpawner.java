@@ -151,7 +151,7 @@ public class LootSpawner {
         // if it's a defaultChest add a potion and a little bit money
         } else {
             if (random.nextFloat() < 0.3)
-                spawnedLoot.add(new PotionOfHealing((byte) (random.nextInt(2))));
+                spawnedLoot.add(new PotionOfHealing((byte) (random.nextInt(3))));
             else
                 spawnedLoot.add(new PotionOfMovement((byte) (random.nextInt(3))));
 
@@ -159,15 +159,15 @@ public class LootSpawner {
             for (BronzeCoin coin : coins)
                 spawnedLoot.add(coin);
 
-            for (int i = 0; i < random.nextInt(8); i++)
+            for (int i = 0; i < random.nextInt(18); i++)
                 spawnedLoot.add(new SilverCoin());
 
             if (random.nextFloat() < 0.15)
                 spawnedLoot.add(new PotionOfDamage((byte) (random.nextInt(3))));
 
-            if (random.nextFloat() < 0.12f)
+            if (random.nextFloat() < 0.15f)
                 spawnedLoot.add(new KeyDefaultChest());
-            if (random.nextFloat() < 0.02f)
+            if (random.nextFloat() < 0.08f)
                 spawnedLoot.add(new KeyRoundChest());
         }
 

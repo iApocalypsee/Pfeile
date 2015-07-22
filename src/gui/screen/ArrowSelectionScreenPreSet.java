@@ -208,6 +208,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
         onScreenEnter.registerJava(() -> {
             selectedArrows.clear();
             selectedArrows.add("<keine Pfeile>");
+            setArrowListSelected(selectedArrows);
 
             if (PfeileContext.arrowNumberPreSet().get() > 1)
                 remainingArrows.setText("Verfügbare Pfeile auswählen!");

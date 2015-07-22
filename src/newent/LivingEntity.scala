@@ -3,7 +3,7 @@ package newent
 import general.{LogFacility, Main, PfeileContext}
 import player.Life
 import player.armour.Armour
-import player.item.EquippableItem
+import player.item.{Item, BagOfLoots, EquippableItem}
 import player.weapon.{RangedWeapon, Weapon}
 
 /** An entity that has its own life status.
@@ -62,7 +62,7 @@ trait LivingEntity extends Entity with AttackContainer {
 
      // counting every defence value of every piece of armour together and save it in defence
 
-     //* FIXME Medieval Equipment and EquipmentStrategy cause an StackOverflowException
+     //* FIXME MedievalEquipment and EquipmentStrategy cause an StackOverflowException
      if (this.isInstanceOf[Combatant]) {
         val combatant: Combatant = this.asInstanceOf[Combatant]
         combatant.equipment.equippedItems.foreach { equippableItem: EquippableItem =>
@@ -73,6 +73,32 @@ trait LivingEntity extends Entity with AttackContainer {
            }
         }
      }
+
+     // the following code adds a bagOfLoots with the content, the Entity has carried before its death, to WorldLootList.
+     val bagOfLoots: BagOfLoots = new BagOfLoots(this)
+
+     if (this.isInstanceOf[Combatant]) {
+       val combatant: Combatant = this.asInstanceOf[Combatant]
+       life.onDeath.register { () =>
+         combatant.equipment.equippedItems.foreach { (item: EquippableItem) =>
+           bagOfLoots.add(item)
+         }
+       }
+     }
+
+     if (this.isInstanceOf[InventoryEntity]) {
+       val inventory: InventoryLike = this.asInstanceOf[InventoryEntity].inventory
+       life.onDeath.register { () =>
+         inventory.items.foreach { (item: Item) =>
+           bagOfLoots.add(item)
+         }
+       }
+     }
+
+     if (bagOfLoots.getStoredItems.size() > 0) {
+       Main.getContext.getWorldLootList.add(bagOfLoots)
+     }
+
      //*/
 
      if (event.weapon.isInstanceOf[RangedWeapon])
