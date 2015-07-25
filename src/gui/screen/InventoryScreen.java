@@ -75,7 +75,7 @@ public class InventoryScreen extends Screen {
         inventoryList.setVisible(true);
 
         Function1<Integer, Object> listSelectCallback = JavaInterop.asScala((Integer selectedIndex) -> {
-            String selectedName = getItems()._1().get(selectedIndex);
+            String selectedName = inventoryList.getItems().get(selectedIndex);
             if (selectedName.equals("<keine Items>"))
                 selectedName = "<Item auswählen>";
             selectedItem.setText(selectedName);

@@ -18,7 +18,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.List;
 
 public class ArrowSelectionScreen extends Screen {
 
@@ -248,6 +247,11 @@ public class ArrowSelectionScreen extends Screen {
                     return BoxedUnit.UNIT;
                 }
             });
+
+            Main.getContext().getTurnSystem().onTurnGet().registerJava ( team -> {
+                        Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().set(PfeileContext.arrowNumberFreeSet().get());
+            });
+
         });
         initThread.setPriority(7);
         initThread.start();

@@ -64,19 +64,19 @@ public class PreWindowScreen extends Screen {
     private Spinner<Integer> spinner;
 
     /** SpinnerModel for choosing <code>PfeileContext.ARROW_NUMBER_FREE_SET</code> - "Pfeilanzahl [frei wählbar]" */
-    private SpinnerModel spinnerModelPreSet;
+    private RangeSpinnerModel spinnerModelPreSet;
 
     /** SpinnerModel for choosing <code>PfeileContext.ARROW_NUMBER_PRE_SET</code> - "Pfeilanzahl [vorher wählbar]" */
-    private SpinnerModel spinnerModelFreeSet;
+    private RangeSpinnerModel spinnerModelFreeSet;
 
     /** SpinnerModel for choosing <code>PfeileContext.TURNS_PER_ROUND</code> - "Züge pro Runde" */
-    private SpinnerModel spinnerModelTurnsPerRound;
+    private RangeSpinnerModel spinnerModelTurnsPerRound;
 
     /** SpinnerModel for choosing "Startgold" */
-    private SpinnerModel spinnerModelStartGold;
+    private RangeSpinnerModel spinnerModelStartGold;
 
     /** SpinnerModel for choosing "Gold pro Zug" */
-    private SpinnerModel spinnerModelGoldPerTurn;
+    private RangeSpinnerModel spinnerModelGoldPerTurn;
 
     /** backgroundColor */
     private static final Color TRANSPARENT_BACKGROUND = new Color(39, 47, 69, 204);
@@ -108,9 +108,6 @@ public class PreWindowScreen extends Screen {
     /** position of <code>g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y")</code> */
     private Point fontSmallPosition;
 
-    // Was a test...
-    // public ImageLikeComponent waitCircle = new ImageLikeComponent(500, 235, new WaitCircle(50), this);
-
     public PreWindowScreen() {
         super(SCREEN_NAME, SCREEN_INDEX);
 
@@ -132,9 +129,9 @@ public class PreWindowScreen extends Screen {
         int labelPosY = 370;
         int labelYGap = 4;
 
-        labels[0] = new Label(labelPosX, labelPosY, this, labelValues[0] + " :");
+        labels[0] = new Label(labelPosX, labelPosY, this, labelValues[0] + ":");
         for (int i = 1; i < labels.length; i++)
-            labels[i] = new Label(labelPosX, labels[i-1].getY() + labels[i-1].getHeight() + labelYGap, this, labelValues[i] + " :");
+            labels[i] = new Label(labelPosX, labels[i-1].getY() + labels[i-1].getHeight() + labelYGap, this, labelValues[i] + ":");
 
         for (Label label : labels) {
             label.declineInput();
@@ -188,11 +185,11 @@ public class PreWindowScreen extends Screen {
         confirmDialog.setVisible(false);
 
 
-        spinnerModelStartGold = new SpinnerModel(250, 0, 1200, 15);
-        spinnerModelGoldPerTurn = new SpinnerModel(10, 0, 150, 3);
-        spinnerModelPreSet = new SpinnerModel(15, 0, 50, 1);
-        spinnerModelFreeSet = new SpinnerModel(4, 0, 20, 1);
-        spinnerModelTurnsPerRound = new SpinnerModel(7, 1, 40, 1);
+        spinnerModelStartGold = new RangeSpinnerModel(250, 0, 1200, 15);
+        spinnerModelGoldPerTurn = new RangeSpinnerModel(10, 0, 100, 2);
+        spinnerModelPreSet = new RangeSpinnerModel(15, 0, 50, 1);
+        spinnerModelFreeSet = new RangeSpinnerModel(4, 0, 20, 1);
+        spinnerModelTurnsPerRound = new RangeSpinnerModel(8, 1, 40, 1);
 
         spinner = new Spinner<>(boxSelectHigh.getX(), selectorComboBox.getY(), this, spinnerModelPreSet);
         spinner.setVisible(false);
@@ -452,24 +449,24 @@ public class PreWindowScreen extends Screen {
                 return;
             }
             case 1 : { // Startgold
-                MoneyValues.startMoney().set(spinnerModelStartGold.getValue());
-                labels[1].setText("Startgeld: " + spinnerModelStartGold.getValue());
+                MoneyValues.startMoney().set(spinnerModelStartGold.getCurrent());
+                labels[1].setText("Startgeld: " + spinnerModelStartGold.getCurrent());
                 return;
             }
             case 2 : { // Gold pro Zug
-                MoneyValues.moneyPerTurn().set(spinnerModelGoldPerTurn.getValue());
-                labels[2].setText("Geld pro Zug: " + spinnerModelGoldPerTurn.getValue());
+                MoneyValues.moneyPerTurn().set(spinnerModelGoldPerTurn.getCurrent());
+                labels[2].setText("Geld pro Zug: " + spinnerModelGoldPerTurn.getCurrent());
                 return;
             }
             case 3 : {
                 // Pfeilanzahl [frei wählbar]
-                PfeileContext.arrowNumberFreeSet().set(spinnerModelFreeSet.getValue());
+                PfeileContext.arrowNumberFreeSet().set(spinnerModelFreeSet.getCurrent());
                 labels[3].setText("Pfeilanzahl [frei wählbar]: " + PfeileContext.arrowNumberFreeSet().get());
                 return;
             }
             case 4 : {
                 // Pfeilanzahl [vorher wählbar]
-                PfeileContext.arrowNumberPreSet().set(spinnerModelPreSet.getValue());
+                PfeileContext.arrowNumberPreSet().set(spinnerModelPreSet.getCurrent());
                 labels[4].setText("Pfeilanzahl [vorher wählbar]: " + PfeileContext.arrowNumberPreSet().get());
                 return;
             }
@@ -517,8 +514,8 @@ public class PreWindowScreen extends Screen {
             }
             case 8 : {
                 // Züge pro Runde
-                PfeileContext.turnsPerRound().set(spinnerModelTurnsPerRound.getValue());
-                labels[8].setText("Züge pro Runde: " + spinnerModelTurnsPerRound.getValue());
+                PfeileContext.turnsPerRound().set(spinnerModelTurnsPerRound.getCurrent());
+                labels[8].setText("Züge pro Runde: " + spinnerModelTurnsPerRound.getCurrent());
                 return;
             }
             case 9 : {

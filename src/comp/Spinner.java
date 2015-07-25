@@ -48,15 +48,24 @@ public class Spinner<T> extends Component {
 
         this.spinnerModel = spinnerModel;
 
-        valueBox = new TextBox(x + 1, y + 1, String.valueOf(spinnerModel.getMinimum()), backingScreen);
+        valueBox = new TextBox(x + 1, y + 1, spinnerModel.currentAsString(), backingScreen);
+
+        // adjust the width and height of the textBox
         valueBox.setHeight(img_downButton.getHeight() + img_upButton.getHeight());
+
+        int textBoxWidth_Maximum = Component.getTextBounds(String.valueOf(spinnerModel.getMaximum()), STD_FONT).width;
+        int textBoxWidth_Minimum = Component.getTextBounds(String.valueOf(spinnerModel.getMinimum()), STD_FONT).width;
+        if (textBoxWidth_Maximum > textBoxWidth_Minimum)
+            valueBox.setWidth(textBoxWidth_Maximum);
+        else
+            valueBox.setWidth(textBoxWidth_Minimum);
 
         upButton = new Rectangle(valueBox.getX() + valueBox.getWidth(), y + 1,
                 img_upButton.getWidth(), img_upButton.getHeight());
         downButton = new Rectangle(upButton.x, valueBox.getY() + upButton.height,
                 upButton.width, upButton.height);
 
-        setWidth(valueBox.getWidth() + img_downButton.getWidth() + 1);
+        setWidth(valueBox.getWidth() + img_downButton.getWidth() + STD_INSETS.left + STD_INSETS.right);
         setHeight(valueBox.getHeight() + 1);
 
         upButton.x = valueBox.getX() + valueBox.getWidth();
@@ -159,8 +168,8 @@ public class Spinner<T> extends Component {
 
     public void setSpinnerModel(ISpinnerModel<T> model) {
         this.spinnerModel = model;
-        valueBox.setEnteredText(String.valueOf(spinnerModel.getCurrent()));
-        valueBox.setStdText(String.valueOf(spinnerModel.getCurrent()));
+        valueBox.setEnteredText(spinnerModel.currentAsString());
+        valueBox.setStdText(spinnerModel.currentAsString());
     }
 
     @Override

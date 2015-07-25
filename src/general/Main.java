@@ -184,7 +184,7 @@ public class Main {
 
                 // play the game sound, when the game begins
                 //SoundPool.stop_titleMelodie();
-                //SoundPool.playLoop_mainThemeMelodie(SoundPool.LOOP_CONTINUOUSLY);
+                //SoundPool.play_mainThemeMelodie(SoundPool.LOOP_CONTINUOUSLY);
 
                 return BoxedUnit.UNIT;
             }

@@ -127,9 +127,10 @@ public class SpinnerModel {
      * @see #getMinimum()
      */
     public int getPreviousValue () {
-        if (value - stepSize < minimum)
+        if (value - stepSize <= minimum)
             return minimum;
-        else return (value - stepSize);
+        else
+            return (value - stepSize);
     }
 
     /**
@@ -144,6 +145,7 @@ public class SpinnerModel {
     public int getNextValue () {
         if (value + stepSize >= maximum)
             return maximum;
-        else return (value + stepSize);
+        else
+            return (value + stepSize);
     }
 }
