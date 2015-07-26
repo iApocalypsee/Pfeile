@@ -1,7 +1,5 @@
 package player.item.ore
 
-import general.LogFacility
-
 import scala.annotation.tailrec
 import scala.collection.{JavaConversions, mutable}
 import scala.util.Random
@@ -14,7 +12,6 @@ object OreRegistry {
   private val m_registeredOres = mutable.ListBuffer[RegistryEntry]()
 
   def add(x: RegistryEntry): Unit = {
-    LogFacility.log(s"Registered $x to ore registry", "Info", "orereg")
     m_registeredOres += x
   }
 

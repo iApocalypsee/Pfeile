@@ -1,7 +1,6 @@
 package player.item;
 
 import general.JavaInterop;
-import general.LogFacility;
 import general.PfeileContext;
 import gui.Drawable;
 import newent.*;
@@ -64,7 +63,6 @@ public class WorldLootList implements Drawable {
             lootList.add(droppedLoot);
         }
         updateVisibleLoot();
-        LogFacility.log("Added loot " + droppedLoot + " to loot list", "Debug");
     }
 
     /**

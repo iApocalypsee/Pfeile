@@ -7,7 +7,8 @@ import general.io.StageDescriptable
 import gui.screen.{ArrowSelectionScreen, WaitingScreen}
 import misc.ItemInitialization
 import newent.Player
-import player.item.ore.OreRegistry
+import player.item.ore.{CopperOre, IronOre, OreRegistry}
+import player.shop.ShopInitializer
 import world.brush.OreBrush
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -24,6 +25,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
   addStage(new InstantiatorStage)
   addStage(new PopulatorStage)
   addStage(new OreGenerationStage)
+  addStage(new LootGenerationStage)
   addStage(new OtherStuffStage)
 
   def createWorld(): Future[PfeileContext] = Future {
@@ -102,6 +104,9 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
    * Generates all ore for the world.
    */
   private[ContextCreator] class OreGenerationStage extends StageDescriptable[Unit] {
+    // initialize the ore, while the other stages are still loading..
+    initializeOreRegistry()
+    var isRegistryLoaded = false
 
     val generateOreAmount = Random.nextInt(20) + 30
     val maximumRadius = 5
@@ -109,28 +114,64 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
 
     /** The implementation of the stage. */
     override protected def executeStageImpl(): Unit = {
-      LogFacility.log("Entering ore generation stage")
+
+      // You may improve that later... Futures???
+      while (!isRegistryLoaded) {
+        LogFacility.log("The Registry hasn't been loaded fast enough!", "Warning")
+        Thread.sleep(1)
+      }
+
       for(i <- 0 until generateOreAmount) {
         val brush = new OreBrush
         brush.appliedOre = OreRegistry.randomOre
         brush.radius = Random.nextInt(maximumRadius - minimumRadius) + minimumRadius
         brush.applyBrush(context.world.terrain, Random.nextInt(context.world.terrain.width), Random.nextInt(context.world.terrain.height))
       }
-      LogFacility.log("Ore generation complete!")
+    }
+
+    /** adds to OreRegistry every RegistryEntry and its spawnConditions... */
+    def initializeOreRegistry() = {
+      val oreRegistryInitializer: Thread = new Thread (new Runnable {
+        override def run(): Unit = {
+          OreRegistry.add(new OreRegistry.RegistryEntry(classOf[IronOre], IronOre.SpawnCondition))
+          OreRegistry.add(new OreRegistry.RegistryEntry(classOf[CopperOre], CopperOre.SpawnCondition))
+          isRegistryLoaded = true
+        }
+      }, "OreRegistry Initializer")
+      oreRegistryInitializer.setDaemon(true)
+      oreRegistryInitializer.start()
     }
 
     /** The name of the stage. */
     override def stageName: String = "Generating ores..."
   }
 
-  private[ContextCreator] class OtherStuffStage extends StageDescriptable[Unit] {
+  private[ContextCreator] class LootGenerationStage extends StageDescriptable[Unit] {
+
     /** The implementation of the stage. */
-    override protected def executeStageImpl() = {
+    override protected def executeStageImpl(): Unit = {
+
       // the loot gets initialized before WorldLootList (--> LootSpawner) uses them. The Main-Thread should not need
       // to wait for the images to load.
       ItemInitialization.initializeLoots()
 
+
+      // Finally, I need to ensure that WorldLootList and LootSpawner are initialized to register their methods.
+      // (scala lazy val WorldLootList). Furthermore, some loots have to spawn at the beginning.
+      context.getWorldLootList.getLootSpawner.spawnAtBeginning()
+    }
+
+
+    /** The name of the stage. */
+    override def stageName: String = "Generating loots..."
+  }
+
+  private[ContextCreator] class OtherStuffStage extends StageDescriptable[Unit] {
+    /** The implementation of the stage. */
+    override protected def executeStageImpl() = {
       ArrowSelectionScreen.getInstance().init()
+
+      ShopInitializer.initalizeShop()
 
       context.turnSystem.onTurnEnded.register(team => {
         Main.getGameWindow.getScreenManager.setActiveScreen(WaitingScreen.SCREEN_INDEX)
@@ -138,10 +179,6 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
 
       // initialize TimeClock
       context.getTimeClock
-
-      // Finally, I need to ensure that WorldLootList and LootSpawner are initialized to register their methods.
-      // (scala lazy val WorldLootList). Furthermore, some loots have to spawn at the beginning.
-      context.getWorldLootList.getLootSpawner.spawnAtBeginning()
 
       notifyAboutFirstTurn()
     }

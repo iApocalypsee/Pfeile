@@ -102,13 +102,6 @@ public class Main {
 
         GraphicsEnvironment environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
-        // TODO Remove that later. This definitely does not belong here and is just for testing purposes.
-        ShopCentral.addArticle(JavaInterop.asScala(() -> new PotionOfHealing((byte) 2)), 50);
-        ShopCentral.addArticle(JavaInterop.asScala(() -> new PotionOfDamage((byte) 2)), 35);
-        ShopCentral.addArticle(JavaInterop.asScala(() -> new KeyDefaultChest()), 100);
-
-        initializeOreRegistry();
-
         // This will load the background melodies of SoundPool and SoundEffectTimeClock in an Thread and start to play
         // the main melodie, if it's ready.
         SoundPool.isLoaded();
@@ -232,12 +225,6 @@ public class Main {
 
         GameLoop.run(1 / 60.0);
 
-    }
-
-    private static void initializeOreRegistry() {
-        // TODO change the position of this code later. Main should only call the method and not contain the method.
-        OreRegistry.add(new OreRegistry.RegistryEntry(IronOre.class, IronOre.SpawnCondition()));
-        OreRegistry.add(new OreRegistry.RegistryEntry(CopperOre.class, CopperOre.SpawnCondition()));
     }
 
     // #########################################################

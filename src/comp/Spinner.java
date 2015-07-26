@@ -78,15 +78,16 @@ public class Spinner<T> extends Component {
             public void mousePressed(MouseEvent e) {
                 if (isAcceptingInput()) {
                     if (downButton.contains(e.getPoint())) {
-                        spinnerModel.previous();
-                    } else if (upButton.contains(e.getPoint()))
-                        spinnerModel.next();
-                    valueBox.setEnteredText(spinnerModel.getCurrent().toString());
+                        Spinner.this.spinnerModel.previous();
+                        valueBox.setEnteredText(Spinner.this.spinnerModel.currentAsString());
+                    } else if (upButton.contains(e.getPoint())) {
+                        Spinner.this.spinnerModel.next();
+                        valueBox.setEnteredText(Spinner.this.spinnerModel.currentAsString());
+                    }
                 }
             }
         });
 
-        // TODO: add Listener for valueBox
         // the listener needs to recognize the entered number,
         // and set spinnerModel.setValue(String.valueOf(valueBox.getEnteredText());
 
@@ -94,8 +95,11 @@ public class Spinner<T> extends Component {
             @Override
             public void keyTyped(KeyEvent e) {
                 if (isAcceptingInput()) {
-                    if (Character.isDigit(e.getKeyCode()))
+                    if (Character.isDigit(e.getKeyCode())) {
+                        // FIXME: the new value must be between minimum and maximum
                         valueBox.enterText(e);
+
+                    }
                 }
             }
         };
@@ -162,8 +166,8 @@ public class Spinner<T> extends Component {
     @Deprecated
     public void setSpinnerModel(SpinnerModel spinnerModel) {
         this.spinnerModel = (ISpinnerModel<T>) new RangeSpinnerModel(spinnerModel);
-        valueBox.setEnteredText(String.valueOf(this.spinnerModel.getCurrent()));
-        valueBox.setStdText(String.valueOf(this.spinnerModel.getCurrent()));
+        valueBox.setEnteredText(this.spinnerModel.currentAsString());
+        valueBox.setStdText(this.spinnerModel.currentAsString());
     }
 
     public void setSpinnerModel(ISpinnerModel<T> model) {

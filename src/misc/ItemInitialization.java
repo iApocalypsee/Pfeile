@@ -66,8 +66,9 @@ public class ItemInitialization {
             public void run () {
                 new RoundChest(0, 0).getImage();
                 new DefaultChest(0, 0).getImage();
-                new BagOfLoots(0, 0).getImage();
                 new Treasure(0, 0).getImage();
+                new BagOfLoots(0, 0).getImage();
+                LogFacility.log("Loot images loaded.", "Info", "initprocess");
             }
         };
         x.setDaemon(true);

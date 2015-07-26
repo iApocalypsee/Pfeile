@@ -3,6 +3,7 @@ package gui.screen;
 import comp.Button;
 import comp.WarningMessage;
 import general.JavaInterop;
+import general.LogFacility;
 import general.Main;
 import general.PfeileContext;
 import gui.FrameContainer;

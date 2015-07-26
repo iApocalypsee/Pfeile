@@ -53,7 +53,6 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
     val worldHeight = PfeileContext.worldSizeY()
     val creator = new ContextCreator(worldWidth, worldHeight)
 
-    // FIXME: The stage Label should set the stageName, when it begins, because the user doesn't know when to click at "GO...".
     // Every time the stage changes, the label has to be changed as well.
     creator.onStageDone += { stageCompleted => 
       GUI.stageLabel.setText(stageCompleted.stage.stageName)
@@ -74,11 +73,6 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
       case context => 
         
         Main.setContext(context)
-
-        // these calls only work, if "Main.getContext()" is available
-        // I want them to be ready before entering GameScreen, because at this point, the user still sees "Applying other stuff..."
-        // initialize ShopWindow
-        GameScreen.getInstance().getShopWindow
 
         // creates the visualMap; it is used for centering the map later on and creating it before entering GameScreen.
         GameScreen.getInstance().createVisualMap(context)
