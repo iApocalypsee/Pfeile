@@ -106,21 +106,17 @@ public class Main {
         // the main melodie, if it's ready.
         SoundPool.isLoaded();
 
-        LogFacility.log("Running Pfeile on... " + SystemProperties.getComputerName(), "Info");
-        LogFacility.putSeparationLine();
+        System.out.println("Running Pfeile on... " + SystemProperties.getComputerName() + "\n");
 
         SystemProperties.printSystemProperties();
 
         LogFacility.log("Beginning initialization process...", "Info", "initprocess");
 
-        LogFacility.log("Initializating languages...", "Info", "initprocess");
         LangInitialization.apply();
-        LogFacility.log("[[LangInitialization]] done", "Info", "initprocess");
+        LogFacility.log("LangInitialization done!", "Info", "initprocess");
 
         main = new Main();
         user = new User(SystemProperties.getComputerName());
-
-        LogFacility.log("Attempting to execute PreInitStage...", "Info", "initprocess");
 
         PreInitStage.execute();
 

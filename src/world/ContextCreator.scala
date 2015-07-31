@@ -4,7 +4,7 @@ import java.awt.Point
 
 import general._
 import general.io.StageDescriptable
-import gui.screen.{ArrowSelectionScreen, WaitingScreen}
+import gui.screen.{GameScreen, ArrowSelectionScreen, WaitingScreen}
 import misc.ItemInitialization
 import newent.Player
 import player.item.ore.{CopperOre, IronOre, OreRegistry}
@@ -31,6 +31,25 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
   def createWorld(): Future[PfeileContext] = Future {
     execute()
     context
+  }
+
+  /** Instantiates the world with its terrain. */
+  private[ContextCreator] class InstantiatorStage extends StageDescriptable[Unit] {
+
+    /** The name of the stage. */
+    override def stageName = "Creating world..."
+
+    /** The implementation of the stage. */
+    override protected def executeStageImpl() = {
+      val context = new PfeileContext(new PfeileContext.Values)
+      val world = new DefaultWorld {
+        /** The terrain that describes the geography of the world. */
+        override lazy val terrain = new DefaultTerrain(this, sizeX(), sizeY())
+      }
+      context.world = world
+      ContextCreator.this.context = context
+    }
+
   }
 
   /**
@@ -81,25 +100,6 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
     }
   }
 
-  /** Instantiates the world with its terrain. */
-  private[ContextCreator] class InstantiatorStage extends StageDescriptable[Unit] {
-
-    /** The name of the stage. */
-    override def stageName = "Creating world..."
-
-    /** The implementation of the stage. */
-    override protected def executeStageImpl() = {
-      val context = new PfeileContext(new PfeileContext.Values)
-      val world = new DefaultWorld {
-        /** The terrain that describes the geography of the world. */
-        override lazy val terrain = new DefaultTerrain(this, sizeX(), sizeY())
-      }
-      context.world = world
-      ContextCreator.this.context = context
-    }
-
-  }
-
   /**
    * Generates all ore for the world.
    */
@@ -118,7 +118,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       // You may improve that later... Futures???
       while (!isRegistryLoaded) {
         LogFacility.log("The Registry hasn't been loaded fast enough!", "Warning")
-        Thread.sleep(1)
+        Thread.sleep(3)
       }
 
       for(i <- 0 until generateOreAmount) {
@@ -176,6 +176,9 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       context.turnSystem.onTurnEnded.register(team => {
         Main.getGameWindow.getScreenManager.setActiveScreen(WaitingScreen.SCREEN_INDEX)
       })
+
+      // initialize MoneyDisplay --> it will actualize it's string, if the money of a entity has been changed.
+      GameScreen.getInstance().getMoneyDisplay.initializeDataActualization(context)
 
       // initialize TimeClock
       context.getTimeClock
