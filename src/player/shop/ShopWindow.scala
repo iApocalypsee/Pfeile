@@ -4,7 +4,7 @@ import java.awt.{Graphics2D, Insets}
 import java.util
 
 import comp._
-import general.{ImmutableObjectManagerFacade, LogFacility, Main, ObjectManager}
+import general.{ImmutableObjectManagerFacade, Main, ObjectManager}
 import gui.screen.GameScreen
 
 import scala.beans.BeanProperty
@@ -92,7 +92,6 @@ class ShopWindow(articles: Seq[Article], val representing: TraderLike) extends D
   private def clearOldArticleGUI(): Unit = {
     if(tempArticleComponents != null) {
       for(component <- tempArticleComponents) component.unparent()
-      LogFacility.log("@[[ShopWindow]]: Cleared article GUI", "Debug", "gui")
       tempArticleComponents = null
     }
   }

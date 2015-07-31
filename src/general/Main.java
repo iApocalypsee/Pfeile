@@ -132,14 +132,7 @@ public class Main {
         // initialize Loots, Coins and Potions (internally threaded)
         ItemInitialization.initialize();
 
-        // waiting for loading arrow images
-        try {
-            arrowInitializationThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        gameWindow.initializeScreens();
+        gameWindow.initializeScreens(arrowInitializationThread);
         LogFacility.log("Screens initialized.", "Info", "initprocess");
 
         GameWindow.adjustWindow(gameWindow);

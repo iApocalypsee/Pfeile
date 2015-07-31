@@ -91,7 +91,7 @@ public class ArrowSelectionScreen extends Screen {
 	}
 
     /** this initializes ArrowSelectionScreen. It is a threaded method. */
-	public void init () {
+	public void init (PfeileContext context) {
         // inside run
         Thread initThread = new Thread (() -> {
             /* X-Position des ersten Buttons (Screen) */
@@ -145,7 +145,6 @@ public class ArrowSelectionScreen extends Screen {
 
             arrowList = new ArrayList<>();
 
-			// FIXME Where to get the data from?! PfeileContext is definitely null at that point!
             final int[] arrowsCount = ArrowHelper.emptyArrowCount();
             arrowList.add("Feuerpfeil " + "[" + arrowsCount[FireArrow.INDEX] + "]");
             arrowList.add("Wasserpfeil " + "[" + arrowsCount[WaterArrow.INDEX] + "]");
@@ -248,11 +247,12 @@ public class ArrowSelectionScreen extends Screen {
                 }
             });
 
-            Main.getContext().getTurnSystem().onTurnGet().registerJava ( team -> {
-                        Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().set(PfeileContext.arrowNumberFreeSet().get());
+            context.getTurnSystem().onTurnGet().registerJava ( team -> {
+                        context.getActivePlayer().arrowNumberFreeSetUsable().set(PfeileContext.arrowNumberFreeSet().get());
             });
 
         });
+        initThread.setDaemon(true);
         initThread.setPriority(7);
         initThread.start();
     }

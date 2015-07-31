@@ -82,6 +82,10 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
         
         postLoadingCheck()
         isLoaded = true
+        LogFacility.log("Game begins now...", "Info")
+        LogFacility.putSeparationLine()
+
+
         GUI.stageLabel.setText("Done!")
         goButton.acceptInput()
         context

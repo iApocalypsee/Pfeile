@@ -74,7 +74,6 @@ public class MoneyDisplay extends Component {
      * which changes the String of MoneyDisplay. </n>
      */
     public void initializeDataActualization (PfeileContext context) {
-        int z = 6;
         context.getTurnSystem().getHeadOfCommandTeams().forEach((player) -> {
             player.onMoneyChanged().registerJava(() -> {
                 Thread x = new Thread(() -> {

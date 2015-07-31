@@ -4,7 +4,7 @@ import java.awt.Point
 
 import general._
 import general.io.StageDescriptable
-import gui.screen.{GameScreen, ArrowSelectionScreen, WaitingScreen}
+import gui.screen.{ArrowSelectionScreen, GameScreen, WaitingScreen}
 import misc.ItemInitialization
 import newent.Player
 import player.item.ore.{CopperOre, IronOre, OreRegistry}
@@ -169,7 +169,8 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
   private[ContextCreator] class OtherStuffStage extends StageDescriptable[Unit] {
     /** The implementation of the stage. */
     override protected def executeStageImpl() = {
-      ArrowSelectionScreen.getInstance().init()
+      // This initialization may take long...
+      ArrowSelectionScreen.getInstance().init(context)
 
       ShopInitializer.initalizeShop()
 
