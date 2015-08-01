@@ -2,10 +2,7 @@ package general;
 
 import animation.SoundEffectTimeClock;
 import comp.Component;
-import gui.screen.AimSelectionScreen;
-import gui.screen.ArrowSelectionScreen;
-import gui.screen.GameScreen;
-import gui.screen.ScreenManager;
+import gui.screen.*;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.Duration$;
 import scala.concurrent.duration.FiniteDuration;
@@ -78,17 +75,14 @@ public class TimeClock extends Component implements Runnable {
         onTimeOver.register(new AbstractFunction0<BoxedUnit>() {
             @Override
             public BoxedUnit apply() {
-                if (sm.getActiveScreenIndex() == GameScreen.SCREEN_INDEX) {
-                    context.getTurnSystem().increment();
-                } else if (sm.getActiveScreenIndex() == ArrowSelectionScreen.SCREEN_INDEX) {
-                    sm.setActiveScreen(GameScreen.SCREEN_INDEX);
-                    context.getTurnSystem().increment();
-                } else if (sm.getActiveScreenIndex() == AimSelectionScreen.SCREEN_INDEX) {
-                    sm.setActiveScreen(GameScreen.SCREEN_INDEX);
-                    context.getTurnSystem().increment();
-                } else
-                    throw new java.lang.RuntimeException("Time is out. The active Screen is neither GameScreen nor Aim- or ArrowSelectionScreen. Register it! " +
-                            "ActiveScreen: " + sm.getActiveScreen().getName());
+                switch (sm.getActiveScreenIndex()) {
+                    case GameScreen.SCREEN_INDEX: context.getTurnSystem().increment(); break;
+                    case ArrowSelectionScreen.SCREEN_INDEX: context.getTurnSystem().increment(); break;
+                    case AimSelectionScreen.SCREEN_INDEX: context.getTurnSystem().increment(); break;
+                    case InventoryScreen.SCREEN_INDEX: context.getTurnSystem().increment(); break;
+                    default: LogFacility.log("Time out! The active Screen is neither GameScreen nor Arrow-/AimSelectionScreen or InventoryScreen. " +
+                                    "Register it!   ActiveScreen... " + sm.getActiveScreen(), LogFacility.LoggingLevel.Error);
+                }
 
                 return BoxedUnit.UNIT;
             }

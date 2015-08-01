@@ -31,7 +31,7 @@ public class InventoryScreen extends Screen {
 
     public static final int SCREEN_INDEX = 22;
 
-    public static final String SCREEN_NAME = "Inventory";
+    public static final String SCREEN_NAME = "InventoryScreen";
 
     /** the List where the items (excluded arrows) are saved */
     private List inventoryList;
