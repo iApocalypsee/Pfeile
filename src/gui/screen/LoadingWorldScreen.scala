@@ -43,9 +43,9 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
   /** The key is the name of the player: either <code>Main.getUser().getUsername()</code> or "Opponent". */
   def setAddingArrowList (key: String, selectedArrows: java.util.List[String]) = {
     if (key.equals(Main.getUser.getUsername)) {
-      addingArrowList(0) = selectedArrows
+      addingArrowList(0) = new util.ArrayList[String](selectedArrows)
     } else if (key.equals("Opponent")) {
-      addingArrowList(1) = selectedArrows
+      addingArrowList(1) = new util.ArrayList[String](selectedArrows)
     } else {
       throw new IllegalArgumentException("Unknown player name/key " + key + ": Must be either " + Main.getUser.getUsername + " or " + "Opponent.")
     }
