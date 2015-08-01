@@ -2,6 +2,7 @@ package gui.screen
 
 import java.awt.event.{KeyEvent, MouseAdapter, MouseEvent}
 import java.awt.{Color, Font, Graphics2D}
+import java.util
 
 import animation.ImageLoader
 import comp.Component.ComponentStatus
@@ -34,6 +35,29 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
       triggerGoButton()
     }
   })
+
+  private val addingArrowList = new Array[java.util.List[String]](2)
+  addingArrowList(0) = new util.LinkedList[String]()
+  addingArrowList(1) = new util.LinkedList[String]()
+
+  /** The key is the name of the player: either <code>Main.getUser().getUsername()</code> or "Opponent". */
+  def setAddingArrowList (key: String, selectedArrows: java.util.List[String]) = {
+    if (key.equals(Main.getUser.getUsername)) {
+      addingArrowList(0) = selectedArrows
+    } else if (key.equals("Opponent")) {
+      addingArrowList(1) = selectedArrows
+    } else {
+      throw new IllegalArgumentException("Unknown player name/key " + key + ": Must be either " + Main.getUser.getUsername + " or " + "Opponent.")
+    }
+  }
+
+  /**
+   * At position 0: Main.getUser().getUsername()
+   * <n>At position 1: "Opponent" </n>
+   *
+   * @return the list the selected arrows
+   */
+  def getAddingArrowList = addingArrowList
 
 
   override def keyReleased(e: KeyEvent): Unit = {
@@ -79,6 +103,9 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
 
         // center map
         GameScreen.getInstance().getMap.centerMap(context.getActivePlayer.getGridX, context.getActivePlayer.getGridY)
+
+        // the players have been added to entityList, so this call is valid now
+        PreWindowScreen.correctArrowNumber()
         
         postLoadingCheck()
         isLoaded = true

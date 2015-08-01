@@ -206,6 +206,9 @@ public class GameScreen extends Screen implements FrameContainer {
 			case KeyEvent.VK_S:
 				onLeavingScreen(ArrowSelectionScreen.SCREEN_INDEX);
 				break;
+            case KeyEvent.VK_B:
+                getShopWindow().parentComponent().setVisible(!shopWindow.parentComponent().isVisible());
+                break;
 			case KeyEvent.VK_E:
 				Main.getContext().turnSystem().increment();
 				break;
@@ -235,20 +238,6 @@ public class GameScreen extends Screen implements FrameContainer {
             case KeyEvent.VK_SPACE:
                 Main.getContext().getActivePlayer().life().changeLife(-20);
 		}
-	}
-
-    public void lockUI() {
-		endTurnButton.declineInput();
-		shootButton.declineInput();
-		inventoryButton.declineInput();
-        message.declineInput();
-	}
-	
-	public void releaseUI() {
-		endTurnButton.acceptInput();
-		shootButton.acceptInput();
-		inventoryButton.acceptInput();
-        message.acceptInput();
 	}
 
     /** Sets the WarningMessage printed on the screen. <p>

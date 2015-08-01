@@ -4,11 +4,12 @@ import java.awt.Point
 
 import general._
 import general.io.StageDescriptable
-import gui.screen.{ArrowSelectionScreen, GameScreen, WaitingScreen}
+import gui.screen.{LoadingWorldScreen, ArrowSelectionScreen, GameScreen, WaitingScreen}
 import misc.ItemInitialization
 import newent.Player
 import player.item.ore.{CopperOre, IronOre, OreRegistry}
 import player.shop.ShopInitializer
+import player.weapon.arrow.ArrowHelper
 import world.brush.OreBrush
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -97,6 +98,16 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
 
       context.world.entities += act
       context.world.entities += opponent
+
+      // adding Arrows:
+      LoadingWorldScreen.getInstance.getAddingArrowList(0).forEach(JavaInterop.asJava((selectedArrow) => {
+        if (!ArrowHelper.instanceArrow(selectedArrow).equip(act))
+          LogFacility.log("Cannot add " + selectedArrow + " at " + LogFacility.getCurrentMethodLocation, LogFacility.LoggingLevel.Error)
+      }))
+      LoadingWorldScreen.getInstance.getAddingArrowList(1).forEach(JavaInterop.asJava((selectedArrow) => {
+        if (!ArrowHelper.instanceArrow(selectedArrow).equip(opponent))
+          LogFacility.log("Cannot add " + selectedArrow + " at " + LogFacility.getCurrentMethodLocation, LogFacility.LoggingLevel.Error)
+      }))
     }
   }
 

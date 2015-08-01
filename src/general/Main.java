@@ -10,14 +10,6 @@ import misc.ItemInitialization;
 import newent.CommandTeam;
 import newent.Player;
 import newent.Team;
-import player.item.KeyDefaultChest;
-import player.item.ore.CopperOre;
-import player.item.ore.IronOre;
-import player.item.ore.OreRegistry;
-import player.item.potion.PotionOfDamage;
-import player.item.potion.PotionOfHealing;
-import player.shop.ShopCentral;
-import player.weapon.arrow.ArrowHelper;
 import scala.collection.Seq;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
@@ -154,14 +146,7 @@ public class Main {
             @Override
             public BoxedUnit apply (Screen.ScreenChangedEvent v1) {
 
-                // initialize TimeClock
-                getContext().getTimeClock();
-
-                main.doArrowSelectionAddingArrows();
-
                 getContext().onStartRunningTimeClock().apply();
-                // the players have been added to entityList, so this call is valid now
-                PreWindowScreen.correctArrowNumber();
 
 
                 // play the game sound, when the game begins
@@ -219,19 +204,6 @@ public class Main {
     // #########################################################
     // METHODEN: v. a. alle Threads ############################
     // #########################################################
-
-    /**
-     * Puts all selected arrows from <code>ArrowSelectionScreenPreSet.getInstance()</code> to the inventory of the
-     * Player by calling {@link player.weapon.Weapon#equip()}.
-     */
-    private void doArrowSelectionAddingArrows() {
-        final ArrowSelectionScreenPreSet arrowSelection = ArrowSelectionScreenPreSet.getInstance();
-
-        for (String selectedArrow : arrowSelection.selectedArrows) {
-            if (!ArrowHelper.instanceArrow(selectedArrow).equip())
-                System.err.println("Cannot add " + selectedArrow + " at Main.doArrowSelectionAddingArrows() - adding the arrowNumberPreSet");
-        }
-    }
 
     /**
      * Toggles between fullscreen mode and windowed mode.

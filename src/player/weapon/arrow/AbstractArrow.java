@@ -1,12 +1,16 @@
 package player.weapon.arrow;
 
 import comp.*;
+import general.LogFacility;
 import general.Main;
 import general.PfeileContext;
 import geom.functions.FunctionCollection;
 import gui.FrameContainerObject;
 import gui.screen.GameScreen;
 import newent.Combatant;
+import newent.InventoryEntity;
+import newent.InventoryLike;
+import newent.Player;
 import player.ArmingType;
 import player.BoardPositionable;
 import player.weapon.RangedWeapon;
@@ -206,8 +210,13 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 
     @Override
     public boolean equip (Combatant combatant) {
-        // no Combatant is able to shoot with arrow, only players
-        return false;
+        if (combatant instanceof InventoryEntity) {
+            InventoryLike inventory = ((InventoryEntity) combatant).inventory();
+            return inventory.put(this);
+        } else {
+            LogFacility.log("Failed to add " + this + " to " + combatant + "; Combatant needs to be an InventoryEntity to hold Arrows.", LogFacility.LoggingLevel.Debug);
+            return false;
+        }
     }
 
     @Override
