@@ -1,6 +1,6 @@
 package newent
 
-import general.Delegate
+import general.{LogFacility, Main, Delegate}
 
 import scala.collection.{JavaConversions, mutable}
 
@@ -15,6 +15,11 @@ sealed trait EntityManagerLike {
   /** Called when an entity has been registered. */
   val onEntityRegistered = Delegate.create[EntityLike]
   val onEntityUnlogged = Delegate.create[EntityLike]
+
+  if(Main.isDebug) {
+    onEntityRegistered += { entity => LogFacility.log(s"Entity registered: $entity") }
+    onEntityUnlogged += { entity => LogFacility.log(s"Entity unlogged: $entity") }
+  }
 
   /** Registers an entity to the manager.
     *

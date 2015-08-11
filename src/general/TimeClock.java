@@ -75,23 +75,18 @@ public class TimeClock extends Component implements Runnable {
 
         ScreenManager sm = Main.getGameWindow().getScreenManager();
 
-        onTimeOver.register(new AbstractFunction0<BoxedUnit>() {
-            @Override
-            public BoxedUnit apply() {
-                if (sm.getActiveScreenIndex() == GameScreen.SCREEN_INDEX) {
-                    context.getTurnSystem().increment();
-                } else if (sm.getActiveScreenIndex() == ArrowSelectionScreen.SCREEN_INDEX) {
-                    sm.setActiveScreen(GameScreen.SCREEN_INDEX);
-                    context.getTurnSystem().increment();
-                } else if (sm.getActiveScreenIndex() == AimSelectionScreen.SCREEN_INDEX) {
-                    sm.setActiveScreen(GameScreen.SCREEN_INDEX);
-                    context.getTurnSystem().increment();
-                } else
-                    throw new java.lang.RuntimeException("Time is out. The active Screen is neither GameScreen nor Aim- or ArrowSelectionScreen. Register it! " +
-                            "ActiveScreen: " + sm.getActiveScreen().getName());
-
-                return BoxedUnit.UNIT;
-            }
+        onTimeOver.registerJava(() -> {
+            if (sm.getActiveScreenIndex() == GameScreen.SCREEN_INDEX) {
+                context.getTurnSystem().increment();
+            } else if (sm.getActiveScreenIndex() == ArrowSelectionScreen.SCREEN_INDEX) {
+                sm.setActiveScreen(GameScreen.SCREEN_INDEX);
+                context.getTurnSystem().increment();
+            } else if (sm.getActiveScreenIndex() == AimSelectionScreen.SCREEN_INDEX) {
+                sm.setActiveScreen(GameScreen.SCREEN_INDEX);
+                context.getTurnSystem().increment();
+            } else
+                throw new java.lang.RuntimeException("Time is out. The active Screen is neither GameScreen nor Aim- or ArrowSelectionScreen. Register it! " +
+                        "ActiveScreen: " + sm.getActiveScreen().getName());
         });
 
         final TurnSystem turnSystem = context.getTurnSystem();

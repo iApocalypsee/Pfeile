@@ -86,12 +86,8 @@ public class GameOverScreen extends Screen {
         calcTimeThread.setPriority(4);
         calcTimeThread.setDaemon(true);
 
-        onScreenEnter.register(new AbstractFunction0<BoxedUnit>() {
-            @Override
-            public BoxedUnit apply () {
-                calcTimeThread.start();
-                return BoxedUnit.UNIT;
-            }
+        onScreenEnter.registerJava(() -> {
+            calcTimeThread.start();
         });
     }
 

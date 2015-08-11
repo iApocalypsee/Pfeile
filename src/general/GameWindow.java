@@ -30,6 +30,8 @@ public class GameWindow extends JFrame {
 
 	private ScreenManager screenManager;
 
+	private final CoordinateGrid grid = new CoordinateGrid(0, 0);
+
 	/**
 	 * Konstruktor von GameWindow.
 	 */
@@ -146,8 +148,16 @@ public class GameWindow extends JFrame {
 
 		screenManager.draw(g);
 
+		if(Main.isDebug() && grid.isActivated()) {
+			grid.draw(g);
+		}
+
 		g.dispose();
 		strat.show();
+	}
+
+	public CoordinateGrid getGrid() {
+		return grid;
 	}
 
 	public Vector2 getCenterPosition() {
@@ -159,6 +169,13 @@ public class GameWindow extends JFrame {
 	 */
 	public ScreenManager getScreenManager() {
 		return screenManager;
+	}
+
+	@Override
+	public void setSize(int width, int height) {
+		super.setSize(width, height);
+		grid.setCanvasWidth(width);
+		grid.setCanvasHeight(height);
 	}
 }
 

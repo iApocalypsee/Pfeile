@@ -2,10 +2,6 @@ package newent.pathfinding
 
 import newent.MovableEntity
 
-/**
- *
- * @author Josip Palavra
- */
 trait Pathfinder {
 
   /** Finds a path according to the implemented logic.

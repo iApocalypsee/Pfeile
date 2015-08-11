@@ -32,13 +32,9 @@ public class Life {
 		this.lifeRegen = lifeRegeneration;
 		this.life = startingLife;
 
-		onLifeChanged.register(new AbstractFunction1<LifeChangedEvent, BoxedUnit>() {
-			@Override
-			public BoxedUnit apply(LifeChangedEvent v1) {
-				if(v1.getNewLife() <= 0) {
-					onDeath.apply();
-				}
-				return BoxedUnit.UNIT;
+		onLifeChanged.registerJava(v1 -> {
+			if(v1.getNewLife() <= 0) {
+				onDeath.apply();
 			}
 		});
 	}

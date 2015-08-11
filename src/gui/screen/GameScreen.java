@@ -78,13 +78,12 @@ public class GameScreen extends Screen implements FrameContainer {
 	private GameScreen() {
 		super(GameScreen.SCREEN_NAME, GameScreen.SCREEN_INDEX);
 
-		onScreenEnter.register(JavaInterop.asScala(() -> {
+		onScreenEnter.registerJava(() -> {
             if (map == null) {
                 map = new VisualMap(Main.getContext());
                 map.moveMap(120, 470);
             }
-            return BoxedUnit.UNIT;
-        }));
+        });
 	}
 
     /** Creates an instance of VisualMap. It is saved in GameScreen as "getMap". Only creates a new instance, if

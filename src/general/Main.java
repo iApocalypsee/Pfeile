@@ -52,6 +52,20 @@ public class Main {
 
     private static GameWindow gameWindow;
     private static GraphicsDevice graphicsDevice;
+
+    /**
+     * Ditto.
+     * @see Main#isDebug
+     */
+    private static boolean debug = true;
+
+    /**
+     * Determines whether Pfeile is running in debug mode.
+     */
+    public static boolean isDebug() {
+        return debug;
+    }
+
     private static Main main;
 
     // Just user data. User data is not intertwined with game data.
@@ -64,6 +78,8 @@ public class Main {
 
 	// The actor system taking care of threaded actors.
 	private static ActorSystem actorSystem = ActorSystem.create("system");
+
+    private static DebugWindows debugWindows = new DebugWindows();
 
     private static long programStartTime;
 
@@ -101,6 +117,8 @@ public class Main {
         programStartTime = System.currentTimeMillis();
 
         GraphicsEnvironment environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
+
+        debugWindows.setWindowEnabled(true);
 
         // TODO Remove that later. This definitely does not belong here and is just for testing purposes.
         ShopCentral.addArticle(JavaInterop.asScala(() -> new PotionOfHealing((byte) 2)), 50);
@@ -160,34 +178,24 @@ public class Main {
         gameWindow.setVisible(true);
         gameWindow.createBufferStrategy();
 
-	    ArrowSelectionScreenPreSet.getInstance().onScreenLeft.register(new AbstractFunction1<Screen.ScreenChangedEvent, BoxedUnit>() {
-		    @Override
-		    public BoxedUnit apply(Screen.ScreenChangedEvent v1) {
-			    main.disposeInitialResources();
-			    return BoxedUnit.UNIT;
-		    }
-	    });
+	    ArrowSelectionScreenPreSet.getInstance().onScreenLeft.registerJava(event -> {
+            main.disposeInitialResources();
+        });
 
-	    LoadingWorldScreen.getInstance().onScreenLeft.register(new AbstractFunction1<Screen.ScreenChangedEvent, BoxedUnit>() {
-            @Override
-            public BoxedUnit apply (Screen.ScreenChangedEvent v1) {
+	    LoadingWorldScreen.getInstance().onScreenLeft.registerJava(event -> {
+            // initialize TimeClock
+            getContext().getTimeClock();
 
-                // initialize TimeClock
-                getContext().getTimeClock();
+            main.doArrowSelectionAddingArrows();
 
-                main.doArrowSelectionAddingArrows();
-
-                getContext().onStartRunningTimeClock().apply();
-                // the players have been added to entityList, so this call is valid now
-                PreWindowScreen.correctArrowNumber();
+            getContext().onStartRunningTimeClock().apply();
+            // the players have been added to entityList, so this call is valid now
+            PreWindowScreen.correctArrowNumber();
 
 
-                // play the game sound, when the game begins
-                //SoundPool.stop_titleMelodie();
-                //SoundPool.playLoop_mainThemeMelodie(SoundPool.LOOP_CONTINUOUSLY);
-
-                return BoxedUnit.UNIT;
-            }
+            // play the game sound, when the game begins
+            //SoundPool.stop_titleMelodie();
+            //SoundPool.playLoop_mainThemeMelodie(SoundPool.LOOP_CONTINUOUSLY);
         });
 
         GameScreen.getInstance().onScreenEnter.registerOnceJava(() -> {

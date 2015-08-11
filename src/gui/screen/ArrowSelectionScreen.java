@@ -163,13 +163,10 @@ public class ArrowSelectionScreen extends Screen {
             inventoryList.setRoundBorder(true);
             inventoryList.setVisible(true);
 
-			final Function1<Integer, Object> listSelectCallback = JavaInterop.asScala((Integer selectedIndex) -> {
-                String selectedArrowName = ArrowHelper.arrowIndexToName(selectedIndex);
-                selectedArrowBox.setEnteredText(selectedArrowName);
-                return BoxedUnit.UNIT;
-            });
-
-			inventoryList.onItemSelected.register(listSelectCallback);
+	        inventoryList.onItemSelected.registerJava((Integer selectedIndex) -> {
+		        String selectedArrowName = ArrowHelper.arrowIndexToName(selectedIndex);
+		        selectedArrowBox.setEnteredText(selectedArrowName);
+	        });
 
 			inventoryList.acceptInput();
 
@@ -240,13 +237,9 @@ public class ArrowSelectionScreen extends Screen {
                 }
             });
 
-            onScreenEnter.register(new AbstractFunction0<BoxedUnit>() {
-                @Override
-                public BoxedUnit apply () {
-                    updateInventoryList();
-                    warningMessage.setTransparency(0);
-                    return BoxedUnit.UNIT;
-                }
+            onScreenEnter.registerJava(() -> {
+	            updateInventoryList();
+	            warningMessage.setTransparency(0);
             });
         });
         initThread.setPriority(7);

@@ -115,12 +115,8 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 						dataFrame.add(defenseLabel);
 						dataFrame.add(speedLabel);
 						// When the frame closes, it should be removed from the container object as well.
-						dataFrame.onClosed().register(new AbstractFunction0<Object>() {
-							@Override
-							public Object apply () {
-								containerObject.removeFrame(dataFrame);
-								return BoxedUnit.UNIT;
-							}
+						dataFrame.onClosed().registerJava(() -> {
+							containerObject.removeFrame(dataFrame);
 						});
 
 						containerObject.addFrame(dataFrame);

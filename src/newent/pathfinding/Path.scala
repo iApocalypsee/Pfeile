@@ -1,18 +1,29 @@
 package newent.pathfinding
 
-/**
- *
- * @author Josip Palavra
- */
 case class Path(steps: Seq[Path.Step]) {
 
   import newent.pathfinding.Path.Step
 
   def length = steps.size
 
+  /** Append a step to the end of the path.
+    *
+    * @param s The step to append.
+    */
   def append(s: Step): Unit = Path(steps ++ Seq(s))
+
+  /** Puts a step at the beginning of the path.
+    *
+    * @param s The step to prepend.
+    */
   def prepend(s: Step): Unit = Path(Seq(s) ++ steps)
 
+  /** Checks if the specified tile lies on this very path.
+    *
+    * @param x The x coordinate of the tile.
+    * @param y The y coordinate of the tile.
+    * @return Self-evident.
+    */
   def contains(x: Int, y: Int): Boolean = steps.foldLeft(false)({ (p, e) =>
     if(p) p
     else if(e.x == x && e.y == y) true

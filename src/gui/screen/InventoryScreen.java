@@ -74,7 +74,7 @@ public class InventoryScreen extends Screen {
         //inventoryList.setRoundBorder(true);
         inventoryList.setVisible(true);
 
-        Function1<Integer, Object> listSelectCallback = JavaInterop.asScala((Integer selectedIndex) -> {
+        inventoryList.onItemSelected.registerJava(selectedIndex -> {
             String selectedName = getItems()._1().get(selectedIndex);
             if (selectedName.equals("<keine Items>"))
                 selectedName = "<Item auswählen>";
@@ -87,10 +87,7 @@ public class InventoryScreen extends Screen {
                     break;
                 }
             }
-            return BoxedUnit.UNIT;
         });
-
-        inventoryList.onItemSelected.register(listSelectCallback);
 
         inventoryList.acceptInput();
 

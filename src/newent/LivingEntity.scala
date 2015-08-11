@@ -3,7 +3,7 @@ package newent
 import general.{LogFacility, Main, PfeileContext}
 import player.Life
 import player.armour.Armour
-import player.item.EquippableItem
+import player.item.{Item, BagOfLoots, EquippableItem}
 import player.weapon.{RangedWeapon, Weapon}
 
 /** An entity that has its own life status.

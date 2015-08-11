@@ -1,8 +1,9 @@
 package general.langsupport
 
-import akka.actor.{Actor, Props}
-import akka.pattern.ask
+import akka.{Main => AkkaMain, _}
+import akka.actor._
 import akka.util.Timeout
+import akka.pattern.ask
 import general._
 import org.json4s._
 import org.json4s.native.JsonMethods._
@@ -27,7 +28,7 @@ import scala.languageFeature.dynamics
   */
 class LangDict private (@BeanProperty val owner: String) extends Dynamic {
 
-  import LangDict._
+  import general.langsupport.LangDict._
 
   //<editor-fold desc='Threaded core'>
 
@@ -117,7 +118,9 @@ class LangDict private (@BeanProperty val owner: String) extends Dynamic {
     *   import scala.concurrent.duration._
     *
     *   // Scala way of obtaining the translation of some identifier in a certain language
-    *   val translationFuture = getTranslation("someIdentifier", English)
+    *   val translationFuture = getTranslation("someIdentifier", SomeLanguage)
+    *   // ...or, in Scala as well. This line is equal to the line above
+    *   val translationFuture = langDict.someIdentifier(SomeLanguage)
     *   // Java way of doing that
     *   scala.concurrent.Future<String> translationFuture = getTranslation("someIdentifier", English$.MODULE$);
     *

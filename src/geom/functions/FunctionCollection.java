@@ -160,4 +160,24 @@ public class FunctionCollection {
         else if(value < min) return min;
         else return max;
     }
+
+    public static int cycleUp(int value, int cap, int step) {
+        while(value + step < cap) value += step;
+        return value;
+    }
+
+    public static int cycle(int value, int cap, int step) {
+        boolean cycleUp = value < cap;
+        if(cycleUp) {
+            value = cycleUp(value, cap, step);
+        } else {
+            value = cycleDown(value, cap, step);
+        }
+        return value;
+    }
+
+    public static int cycleDown(int value, int cap, int step) {
+        while(value - step > cap) value -= step;
+        return value;
+    }
 }

@@ -14,6 +14,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.function.Consumer;
 
 /**
  * ComboBox is just for String
@@ -126,12 +127,11 @@ public class ComboBox extends Component {
             }
         });
 
-        final Function1<Integer, BoxedUnit> changeTextCallback = JavaInterop.asScala((Integer boxedIndex) -> {
+        final Consumer<Integer> changeTextJavaCallback = (Integer boxedIndex) -> {
             containerLabel.setText(values[getSelectedIndex()]);
-            return BoxedUnit.UNIT;
-        });
+        };
 
-        selectionList.onItemSelected.register(changeTextCallback);
+        selectionList.onItemSelected.registerJava(changeTextJavaCallback);
         selectionList.appendListenerToLabels(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {

@@ -176,6 +176,15 @@ object Delegate {
 
     def registerJava(jf: Consumer[In]) = this += (x => jf.accept(x))
 
+    /** Registers a routine for this delegate with parameters.
+      *
+      * This method differs from method += in that the routine method accepts a call-by-name
+      * parameter, thus ignoring potential input parameters.
+      * @param f The routine to register.
+      * @return A handle to the registered callback.
+      */
+    def routine(f: => Unit): Handle = this += { _ => f }
+
     override def registerOnce(f: FunType): Handle = synchronized {
 
       var handle: Handle = null

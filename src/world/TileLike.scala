@@ -2,11 +2,15 @@ package world
 
 import java.awt._
 import java.awt.event.{MouseAdapter, MouseEvent}
+import java.awt.geom.Point2D
+import java.io.File
+import javax.imageio.ImageIO
 
 import comp.{Component, DisplayRepresentable, RotationChange}
 import general.Main
 import general.property.{PropertyBase, StaticProperty}
 import gui.AdjustableDrawing
+import gui.image.TextureAtlas
 import gui.screen.GameScreen
 import newent.pathfinding.Path
 import newent.{AttackContainer, EntityLike, MovableEntity}
@@ -255,6 +259,8 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
       }
     }
 
+    val image = IsometricPolygonTile.atlas.getTexture(getGridX, getGridY)
+
     private def cornerRecalculation(relativeShape: IsometricTileRelativeShape, x: Int, y: Int, width: Int, height: Int): Unit = {
 
       val absoluteShape = relativeShape.construct(x, y, width, height)
@@ -443,7 +449,8 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
       g.setColor(Color.black)
       g.draw(getBounds)
       g.setColor(color)
-      g.fill(getBounds)
+      //g.fill(getBounds)
+      g.drawImage(image, getX, getY, null)
       drawAll(g)
       drawBorders(g)
       drawCoordinates(g)
@@ -480,7 +487,7 @@ object IsometricPolygonTile {
   lazy val TileDiagonalLength = sqrt(pow(TileHalfWidth, 2) + pow(TileHalfHeight, 2))
 
   @deprecated("Use IsometricPolygonTile.TileShape instead")
-  lazy val ComponentShape = {
+  val ComponentShape = {
     val polygon = new Polygon
     polygon.addPoint(-TileHalfWidth, 0)
     polygon.addPoint(0, -TileHalfHeight)
@@ -510,6 +517,13 @@ object IsometricPolygonTile {
   val StandardDrawStroke = new BasicStroke(2)
 
   //</editor-fold>
+
+  val atlas = new TextureAtlas(ComponentShape, ImageIO.read(new File("src/resources/gfx/item textures/coin textures/bronzeCoin.png")))
+  atlas.positionCalculation := { atlasPoint =>
+    val x = atlasPoint.x * TileHalfWidth + atlasPoint.y * TileHalfWidth
+    val y = atlasPoint.x * TileHalfHeight - atlasPoint.y * TileHalfHeight
+    new Point2D.Double(x, y)
+  }
 
   case class IsometricTileAbsoluteShape private[IsometricPolygonTile] (north: Point, east: Point, south: Point, west: Point) {
     lazy val polygon: Polygon = {

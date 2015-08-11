@@ -86,24 +86,20 @@ public class AimSelectionScreen extends Screen {
 
         fieldContainer = new FieldContainer();
 
-        onScreenEnter.register(new AbstractFunction0<BoxedUnit>() {
-            @Override
-            public BoxedUnit apply () {
-                final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
+        onScreenEnter.registerJava(() -> {
+            final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
 
-                posX_selectedField = -1;
-                posY_selectedField = -1;
+            posX_selectedField = -1;
+            posY_selectedField = -1;
 
-                animatedLine.setStartX((int) Main.getContext().getActivePlayer().getComponent().getBounds().getBounds().getCenterX());
-                animatedLine.setStartY((int) Main.getContext().getActivePlayer().getComponent().getBounds().getBounds().getCenterY());
-                animatedLine.setColor(ArrowHelper.getUnifiedColor(ArrowSelectionScreen.getInstance().getSelectedIndex()));
-                warningMessage.setTransparency(0);
+            animatedLine.setStartX((int) Main.getContext().getActivePlayer().getComponent().getBounds().getBounds().getCenterX());
+            animatedLine.setStartY((int) Main.getContext().getActivePlayer().getComponent().getBounds().getBounds().getCenterY());
+            animatedLine.setColor(ArrowHelper.getUnifiedColor(ArrowSelectionScreen.getInstance().getSelectedIndex()));
+            warningMessage.setTransparency(0);
 
-                // a new Rectangle for a new arrow, because of different damageRadius
-                boundsOvalDamageRadius = new Rectangle(boundsOvalDamageRadius.x, boundsOvalDamageRadius.y,
-                        (int) arrow.getAim().getDamageRadiusGUIWidth(), (int) arrow.getAim().getDamageRadiusGUIHeight());
-                return BoxedUnit.UNIT;
-            }
+            // a new Rectangle for a new arrow, because of different damageRadius
+            boundsOvalDamageRadius = new Rectangle(boundsOvalDamageRadius.x, boundsOvalDamageRadius.y,
+                    (int) arrow.getAim().getDamageRadiusGUIWidth(), (int) arrow.getAim().getDamageRadiusGUIHeight());
         });
 		
 		// MouseListener f�r confirm-Button
