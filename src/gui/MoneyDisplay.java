@@ -2,6 +2,8 @@ package gui;
 
 import comp.Component;
 import general.LogFacility;
+import general.Main;
+import general.PfeileContext;
 import gui.screen.Screen;
 import newent.MoneyEarner;
 
@@ -17,7 +19,7 @@ public class MoneyDisplay extends Component {
 
     private static BufferedImage image;
 
-    private String money;
+    private volatile String money;
 
     private MoneyEarner data;
 
@@ -47,7 +49,7 @@ public class MoneyDisplay extends Component {
 
     public void retrieveDataFrom(MoneyEarner earner) {
         data = earner;
-        setMoney(Integer.toString(data.getPurse().numericValue()));
+        setMoney(data.getPurse().numericValue());
     }
 
     public MoneyEarner getData() {
@@ -62,17 +64,29 @@ public class MoneyDisplay extends Component {
         this.money = money;
     }
 
-    boolean detected = false;
+    private void setMoney(int numericValue) {
+        money = Integer.toString(numericValue);
+    }
+
+    /**
+     * <b>only called once by ContextCreator#ApplyingOtherStuffStage</b>
+     * <n>This call adds to each player's delegate <code>onMoneyChanged</code> a function, which creates a thread,
+     * which changes the String of MoneyDisplay. </n>
+     */
+    public void initializeDataActualization (PfeileContext context) {
+        context.getTurnSystem().getHeadOfCommandTeams().forEach((player) -> {
+            player.onMoneyChanged().registerJava(() -> {
+                Thread x = new Thread(() -> {
+                    setMoney(data.getPurse().numericValue());
+                }, "MoneyDisplayChanger");
+                x.setDaemon(true);
+                x.start();
+            });
+        });
+    }
 
     @Override
     public void draw (Graphics2D g) {
-        if(!detected) {
-            if(money.equals("0")) {
-                LogFacility.logCurrentStackTrace();
-                LogFacility.log("BUG!", "Warning");
-                detected = true;
-            }
-        }
         getBorder().draw(g);
         g.drawImage(image, getX() + 5, getY() + 7, null);
 

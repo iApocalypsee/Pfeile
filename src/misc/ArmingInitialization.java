@@ -16,7 +16,7 @@ public class ArmingInitialization {
     public static Thread initialize () {
         Thread returnThread = initializeArrows();
         returnThread.setDaemon(true);
-        returnThread.setPriority(7);
+        returnThread.setPriority(Thread.MAX_PRIORITY);
         returnThread.start();
 
         Thread x = new Thread (() -> {
@@ -28,7 +28,7 @@ public class ArmingInitialization {
         });
         x.setDaemon(true);
         x.setName("Arming Initialization");
-        x.setPriority(2);
+        x.setPriority(1);
         x.start();
 
         return returnThread;

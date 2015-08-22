@@ -2,6 +2,7 @@ package gui.screen
 
 import java.awt.event.{KeyEvent, MouseAdapter, MouseEvent}
 import java.awt.{Color, Font, Graphics2D}
+import java.util
 
 import animation.ImageLoader
 import comp.Component.ComponentStatus
@@ -35,6 +36,29 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
     }
   })
 
+  private val addingArrowList = new Array[java.util.List[String]](2)
+  addingArrowList(0) = new util.LinkedList[String]()
+  addingArrowList(1) = new util.LinkedList[String]()
+
+  /** The key is the name of the player: either <code>Main.getUser().getUsername()</code> or "Opponent". */
+  def setAddingArrowList (key: String, selectedArrows: java.util.List[String]) = {
+    if (key.equals(Main.getUser.getUsername)) {
+      addingArrowList(0) = new util.ArrayList[String](selectedArrows)
+    } else if (key.equals("Opponent")) {
+      addingArrowList(1) = new util.ArrayList[String](selectedArrows)
+    } else {
+      throw new IllegalArgumentException("Unknown player name/key " + key + ": Must be either " + Main.getUser.getUsername + " or " + "Opponent.")
+    }
+  }
+
+  /**
+   * At position 0: Main.getUser().getUsername()
+   * <n>At position 1: "Opponent" </n>
+   *
+   * @return the list the selected arrows
+   */
+  def getAddingArrowList = addingArrowList
+
 
   override def keyReleased(e: KeyEvent): Unit = {
     super.keyReleased(e)
@@ -53,7 +77,6 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
     val worldHeight = PfeileContext.worldSizeY()
     val creator = new ContextCreator(worldWidth, worldHeight)
 
-    // FIXME: The stage Label should set the stageName, when it begins, because the user doesn't know when to click at "GO...".
     // Every time the stage changes, the label has to be changed as well.
     creator.onStageDone += { stageCompleted => 
       GUI.stageLabel.setText(stageCompleted.stage.stageName)
@@ -75,19 +98,21 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
         
         Main.setContext(context)
 
-        // these calls only work, if "Main.getContext()" is available
-        // I want them to be ready before entering GameScreen, because at this point, the user still sees "Applying other stuff..."
-        // initialize ShopWindow
-        GameScreen.getInstance().getShopWindow
-
         // creates the visualMap; it is used for centering the map later on and creating it before entering GameScreen.
         GameScreen.getInstance().createVisualMap(context)
 
         // center map
         GameScreen.getInstance().getMap.centerMap(context.getActivePlayer.getGridX, context.getActivePlayer.getGridY)
+
+        // the players have been added to entityList, so this call is valid now
+        PreWindowScreen.correctArrowNumber()
         
         postLoadingCheck()
         isLoaded = true
+        LogFacility.log("Game begins now...", "Info")
+        LogFacility.putSeparationLine()
+
+
         GUI.stageLabel.setText("Done!")
         goButton.acceptInput()
         context

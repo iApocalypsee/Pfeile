@@ -80,16 +80,52 @@ public class GameWindow extends JFrame {
 	 * rein. GameScreen und ArrowSelectionScreen wurden bereits vorher initialisiert.
 	 * <b>Darf nicht im Konstruktor von GameWindow selbst aufgerufen werden.</b>
 	 */
-	void initializeScreens() {
-		new MainMenuScreen();
-		new PauseScreen();
-		new AimSelectionScreen();
-        new GameOverScreen();
-        new InventoryScreen();
-        new WaitingScreen();
-        GameScreen.getInstance();
-        ArrowSelectionScreen.getInstance();
-        ArrowSelectionScreenPreSet.getInstance();
+	void initializeScreens(Thread arrowInitializationThread) {
+        Thread x = new Thread(() -> {
+            new MainMenuScreen();
+            new PauseScreen();
+        }, "Screen Initializer #1");
+        x.setDaemon(true);
+        x.start();
+
+        Thread y = new Thread(() -> {
+            GameScreen.getInstance();
+            new InventoryScreen();
+            LoadingWorldScreen.getInstance();
+            new WaitingScreen();
+        }, "Screen Initializer #2");
+        y.setDaemon(true);
+        y.start();
+
+        Thread w = new Thread(() -> {
+            new GameOverScreen();
+            new AimSelectionScreen();
+        }, "Screen Initializer #3");
+        w.setDaemon(true);
+        w.start();
+
+        Thread z = new Thread(() -> {
+            // waiting for loading arrow images
+            try {
+                arrowInitializationThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // method: init(PfeileContext) is called later during ContextCreator#Stage: ApplyingOtherStuff
+            ArrowSelectionScreen.getInstance();
+            ArrowSelectionScreenPreSet.getInstance();
+        }, "Screen Initializer #4");
+        z.setDaemon(true);
+        z.start();
+
+        try {
+            x.join();
+            y.join();
+            w.join();
+            z.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         screenManager.setActiveScreen(new PreWindowScreen());
 	}

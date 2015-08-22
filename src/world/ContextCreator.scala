@@ -4,10 +4,12 @@ import java.awt.Point
 
 import general._
 import general.io.StageDescriptable
-import gui.screen.{ArrowSelectionScreen, WaitingScreen}
+import gui.screen.{LoadingWorldScreen, ArrowSelectionScreen, GameScreen, WaitingScreen}
 import misc.ItemInitialization
 import newent.Player
-import player.item.ore.OreRegistry
+import player.item.ore.{CopperOre, IronOre, OreRegistry}
+import player.shop.ShopInitializer
+import player.weapon.arrow.ArrowHelper
 import world.brush.OreBrush
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -24,11 +26,31 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
   addStage(new InstantiatorStage)
   addStage(new PopulatorStage)
   addStage(new OreGenerationStage)
+  addStage(new LootGenerationStage)
   addStage(new OtherStuffStage)
 
   def createWorld(): Future[PfeileContext] = Future {
     execute()
     context
+  }
+
+  /** Instantiates the world with its terrain. */
+  private[ContextCreator] class InstantiatorStage extends StageDescriptable[Unit] {
+
+    /** The name of the stage. */
+    override def stageName = "Creating world..."
+
+    /** The implementation of the stage. */
+    override protected def executeStageImpl() = {
+      val context = new PfeileContext(new PfeileContext.Values)
+      val world = new DefaultWorld {
+        /** The terrain that describes the geography of the world. */
+        override lazy val terrain = new DefaultTerrain(this, sizeX(), sizeY())
+      }
+      context.world = world
+      ContextCreator.this.context = context
+    }
+
   }
 
   /**
@@ -76,32 +98,26 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
 
       context.world.entities += act
       context.world.entities += opponent
+
+      // adding Arrows:
+      LoadingWorldScreen.getInstance.getAddingArrowList(0).forEach(JavaInterop.asJava((selectedArrow) => {
+        if (!ArrowHelper.instanceArrow(selectedArrow).equip(act))
+          LogFacility.log("Cannot add " + selectedArrow + " at " + LogFacility.getCurrentMethodLocation, LogFacility.LoggingLevel.Error)
+      }))
+      LoadingWorldScreen.getInstance.getAddingArrowList(1).forEach(JavaInterop.asJava((selectedArrow) => {
+        if (!ArrowHelper.instanceArrow(selectedArrow).equip(opponent))
+          LogFacility.log("Cannot add " + selectedArrow + " at " + LogFacility.getCurrentMethodLocation, LogFacility.LoggingLevel.Error)
+      }))
     }
-  }
-
-  /** Instantiates the world with its terrain. */
-  private[ContextCreator] class InstantiatorStage extends StageDescriptable[Unit] {
-
-    /** The name of the stage. */
-    override def stageName = "Creating world..."
-
-    /** The implementation of the stage. */
-    override protected def executeStageImpl() = {
-      val context = new PfeileContext(new PfeileContext.Values)
-      val world = new DefaultWorld {
-        /** The terrain that describes the geography of the world. */
-        override lazy val terrain = new DefaultTerrain(this, sizeX(), sizeY())
-      }
-      context.world = world
-      ContextCreator.this.context = context
-    }
-
   }
 
   /**
    * Generates all ore for the world.
    */
   private[ContextCreator] class OreGenerationStage extends StageDescriptable[Unit] {
+    // initialize the ore, while the other stages are still loading..
+    initializeOreRegistry()
+    var isRegistryLoaded = false
 
     val generateOreAmount = Random.nextInt(20) + 30
     val maximumRadius = 5
@@ -109,39 +125,75 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
 
     /** The implementation of the stage. */
     override protected def executeStageImpl(): Unit = {
-      LogFacility.log("Entering ore generation stage")
+
+      // You may improve that later... Futures???
+      while (!isRegistryLoaded) {
+        LogFacility.log("The Registry hasn't been loaded fast enough!", "Warning")
+        Thread.sleep(3)
+      }
+
       for(i <- 0 until generateOreAmount) {
         val brush = new OreBrush
         brush.appliedOre = OreRegistry.randomOre
         brush.radius = Random.nextInt(maximumRadius - minimumRadius) + minimumRadius
         brush.applyBrush(context.world.terrain, Random.nextInt(context.world.terrain.width), Random.nextInt(context.world.terrain.height))
       }
-      LogFacility.log("Ore generation complete!")
+    }
+
+    /** adds to OreRegistry every RegistryEntry and its spawnConditions... */
+    def initializeOreRegistry() = {
+      val oreRegistryInitializer: Thread = new Thread (new Runnable {
+        override def run(): Unit = {
+          OreRegistry.add(new OreRegistry.RegistryEntry(classOf[IronOre], IronOre.SpawnCondition))
+          OreRegistry.add(new OreRegistry.RegistryEntry(classOf[CopperOre], CopperOre.SpawnCondition))
+          isRegistryLoaded = true
+        }
+      }, "OreRegistry Initializer")
+      oreRegistryInitializer.setDaemon(true)
+      oreRegistryInitializer.start()
     }
 
     /** The name of the stage. */
     override def stageName: String = "Generating ores..."
   }
 
-  private[ContextCreator] class OtherStuffStage extends StageDescriptable[Unit] {
+  private[ContextCreator] class LootGenerationStage extends StageDescriptable[Unit] {
+
     /** The implementation of the stage. */
-    override protected def executeStageImpl() = {
+    override protected def executeStageImpl(): Unit = {
+
       // the loot gets initialized before WorldLootList (--> LootSpawner) uses them. The Main-Thread should not need
       // to wait for the images to load.
       ItemInitialization.initializeLoots()
 
-      ArrowSelectionScreen.getInstance().init()
+
+      // Finally, I need to ensure that WorldLootList and LootSpawner are initialized to register their methods.
+      // (scala lazy val WorldLootList). Furthermore, some loots have to spawn at the beginning.
+      context.getWorldLootList.getLootSpawner.spawnAtBeginning()
+    }
+
+
+    /** The name of the stage. */
+    override def stageName: String = "Generating loots..."
+  }
+
+  private[ContextCreator] class OtherStuffStage extends StageDescriptable[Unit] {
+    /** The implementation of the stage. */
+    override protected def executeStageImpl() = {
+      // This initialization may take long...
+      ArrowSelectionScreen.getInstance().init(context)
+
+      ShopInitializer.initalizeShop()
 
       context.turnSystem.onTurnEnded.register(team => {
         Main.getGameWindow.getScreenManager.setActiveScreen(WaitingScreen.SCREEN_INDEX)
       })
 
+      // initialize MoneyDisplay --> it will actualize it's string, if the money of a entity has been changed.
+      GameScreen.getInstance().getMoneyDisplay.initializeDataActualization(context)
+
       // initialize TimeClock
       context.getTimeClock
-
-      // Finally, I need to ensure that WorldLootList and LootSpawner are initialized to register their methods.
-      // (scala lazy val WorldLootList). Furthermore, some loots have to spawn at the beginning.
-      context.getWorldLootList.getLootSpawner.spawnAtBeginning()
 
       notifyAboutFirstTurn()
     }

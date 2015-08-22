@@ -2,7 +2,6 @@ package player.item;
 
 import comp.Component;
 import general.Delegate;
-import general.LogFacility;
 import gui.Drawable;
 import world.TileLike;
 
@@ -35,7 +34,6 @@ public abstract class LootUI implements Drawable {
         }
         this.tilePosition = tile;
         if(tilePosition != null) {
-            LogFacility.log("Set tile position of " + this + " to " + tilePosition, "Debug");
             activeCallback = tilePosition.getComponent().onTransformed.registerJava(transformationEvent -> {
                 relocateGuiPosition();
             });

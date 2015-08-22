@@ -31,7 +31,7 @@ public class InventoryScreen extends Screen {
 
     public static final int SCREEN_INDEX = 22;
 
-    public static final String SCREEN_NAME = "Inventory";
+    public static final String SCREEN_NAME = "InventoryScreen";
 
     /** the List where the items (excluded arrows) are saved */
     private List inventoryList;
@@ -75,7 +75,7 @@ public class InventoryScreen extends Screen {
         inventoryList.setVisible(true);
 
         inventoryList.onItemSelected.registerJava(selectedIndex -> {
-            String selectedName = getItems()._1().get(selectedIndex);
+            String selectedName = inventoryList.getItems().get(selectedIndex);
             if (selectedName.equals("<keine Items>"))
                 selectedName = "<Item auswählen>";
             selectedItem.setText(selectedName);

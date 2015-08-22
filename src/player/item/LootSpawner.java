@@ -59,14 +59,15 @@ public class LootSpawner {
 
     }
 
-    /** Spawns the start-setup of Loots. <b>Only call it once by ContexCreator!</b>*/
+    /** Spawns the start-setup of Loots. <b>Only call it once by ContexCreator!</b>. Adds also a key for a default chest
+     * to every players inventory. */
     public void spawnAtBeginning () {
 
         // The first RoundChest should spawn at the beginning; the first rounds ends usually after 10 turnCycles.
         spawningRoundChest();
 
-        // Spawn 0 to 20 loots with the possibility of 50% for more fun at the beginning
-        for (int i = 0; i < random.nextInt(21); i++) {
+        // Spawn 5 to 24 loots with the possibility of 50% for more fun at the beginning
+        for (int i = 0; i < random.nextInt(20) + 5; i++) {
             if (random.nextBoolean())
                 spawningAnyLoot();
         }

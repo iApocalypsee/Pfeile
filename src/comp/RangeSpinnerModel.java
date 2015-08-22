@@ -13,7 +13,16 @@ public class RangeSpinnerModel implements ISpinnerModel<Integer> {
 	private int stepSize;
 	private int current;
 
+    public RangeSpinnerModel (int currentValue, int minimum, int maximum, int stepSize) {
+        this.current = currentValue;
+        this.minimum = minimum;
+        this.maximum = maximum;
+        this.stepSize = stepSize;
+    }
+
+    /** The current value is the average value of minimum and maximum <code>(minimum + maximum) / 2.0</code> */
 	public RangeSpinnerModel(int minimum, int maximum, int stepSize) {
+        this.current = (int) ((minimum + maximum) / 2.0);
 		this.minimum = minimum;
 		this.maximum = maximum;
 		this.stepSize = stepSize;
@@ -68,8 +77,13 @@ public class RangeSpinnerModel implements ISpinnerModel<Integer> {
 	public Integer peekNext() {
 		int ret;
 		if(current + stepSize > maximum) {
-			int diff = (current + stepSize) - maximum;
-			ret = minimum + diff;
+            //the diff value leads to strange changes, e.g.:
+            // minimum = 0; maximum = 50; stepSize = 1; current = 50;
+            // --> ret = 1 [instead of 0]
+
+			//int diff = (current + stepSize) - maximum;
+			//ret = minimum + diff;
+            ret = minimum;
 		} else ret = current + stepSize;
 		return ret;
 	}
@@ -78,8 +92,11 @@ public class RangeSpinnerModel implements ISpinnerModel<Integer> {
 	public Integer peekPrevious() {
 		int ret;
 		if(current - stepSize < minimum) {
-			int diff = minimum - (current - stepSize);
-			ret = maximum - diff;
+            // no diff. Compare with peekNext()
+
+			//int diff = minimum - (current - stepSize);
+			//ret = maximum - diff;
+            ret = maximum;
 		} else ret = current - stepSize;
 		return ret;
 	}
@@ -91,8 +108,8 @@ public class RangeSpinnerModel implements ISpinnerModel<Integer> {
 
 	@Override
 	public List<Integer> getValues() {
-		List<Integer> ret = new LinkedList<Integer>();
-		for(int value = minimum; value < maximum; value += stepSize) {
+		List<Integer> ret = new LinkedList<>();
+		for(int value = minimum; value <= maximum; value += stepSize) {
 			ret.add(value);
 		}
 		return ret;

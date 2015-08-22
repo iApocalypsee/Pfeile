@@ -6,6 +6,8 @@ import player.armour.Armour
 import player.item.{Item, BagOfLoots, EquippableItem}
 import player.weapon.{RangedWeapon, Weapon}
 
+import scala.collection.JavaConversions
+
 /** An entity that has its own life status.
   *
   * Every entity that inherits from this trait has a life attribute attached to it.
@@ -18,6 +20,13 @@ trait LivingEntity extends Entity with AttackContainer {
 
   /** The life of the entity. */
   def getLife = { life }
+
+  /** Override this method to add items, which drop, if the LivingEntity dies. For example, a wolf doesn't have an
+    * inventory, but should drop tooth/fur. If the method is not overridden, it returns an empty Seq.*/
+  def additionalDrops = Seq.empty[Item]
+
+  /** Returns <code>additionalDrops</code> as JavaList.  */
+  final def additionalDropsAsJava = JavaConversions.seqAsJavaList(additionalDrops)
 
   // Every living entity can be attacked with weapons, so every weapon
   // should have a visible effect on the living entity.
@@ -56,28 +65,33 @@ trait LivingEntity extends Entity with AttackContainer {
      }
 
      // the following code adds a bagOfLoots with the content, the Entity has carried before its death, to WorldLootList.
-     val bagOfLoots: BagOfLoots = new BagOfLoots(this)
+     life.onDeath.register { () =>
+       val bagOfLoots: BagOfLoots = new BagOfLoots(this)
 
-     if (this.isInstanceOf[Combatant]) {
-       val combatant: Combatant = this.asInstanceOf[Combatant]
-       life.onDeath.register { () =>
+       if (this.isInstanceOf[Combatant]) {
+         val combatant: Combatant = this.asInstanceOf[Combatant]
          combatant.equipment.equippedItems.foreach { (item: EquippableItem) =>
            bagOfLoots.add(item)
          }
        }
-     }
 
-     if (this.isInstanceOf[InventoryEntity]) {
-       val inventory: InventoryLike = this.asInstanceOf[InventoryEntity].inventory
-       life.onDeath.register { () =>
+       if (this.isInstanceOf[InventoryEntity]) {
+         val inventory: InventoryLike = this.asInstanceOf[InventoryEntity].inventory
          inventory.items.foreach { (item: Item) =>
            bagOfLoots.add(item)
          }
        }
-     }
 
-     if (bagOfLoots.getStoredItems.size() > 0) {
-       Main.getContext.getWorldLootList.add(bagOfLoots)
+       // adding additional drops
+       additionalDrops.foreach { (item) =>
+         bagOfLoots.add(item)
+       }
+
+       // only drop a loot, if it does had content.
+       if (bagOfLoots.getStoredItems.size() > 0) {
+         Main.getContext.getWorldLootList.add(bagOfLoots)
+       }
+
      }
 
      //*/

@@ -103,17 +103,17 @@ trait MoneyEarner extends Entity with InventoryEntity {
                     throw new RuntimeException("Not enough money but check still passed. New type of coin?")
                   } else {
                     val convertedGoldAmount = PlatinumCoin.VALUE / GoldCoin.VALUE
-                    inventory.remove(_ == platins(0), 1)
+                    inventory.remove(_ == platins.head, 1)
                     inventory.put(convertedGoldAmount of new GoldCoin)
                   }
                 } else {
                   val convertedSilverAmount = GoldCoin.VALUE / SilverCoin.VALUE
-                  inventory.remove(_ == golds(0), 1)
+                  inventory.remove(_ == golds.head, 1)
                   inventory.put(convertedSilverAmount of new SilverCoin)
                 }
               } else {
                 val convertedBronzeAmount = SilverCoin.VALUE / BronzeCoin.VALUE
-                inventory.remove(_ == silvers(0), 1)
+                inventory.remove(_ == silvers.head, 1)
                 inventory.put(convertedBronzeAmount of new BronzeCoin)
               }
             }

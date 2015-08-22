@@ -10,14 +10,6 @@ import misc.ItemInitialization;
 import newent.CommandTeam;
 import newent.Player;
 import newent.Team;
-import player.item.KeyDefaultChest;
-import player.item.ore.CopperOre;
-import player.item.ore.IronOre;
-import player.item.ore.OreRegistry;
-import player.item.potion.PotionOfDamage;
-import player.item.potion.PotionOfHealing;
-import player.shop.ShopCentral;
-import player.weapon.arrow.ArrowHelper;
 import scala.collection.Seq;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.BoxedUnit;
@@ -120,32 +112,21 @@ public class Main {
 
         debugWindows.setWindowEnabled(true);
 
-        // TODO Remove that later. This definitely does not belong here and is just for testing purposes.
-        ShopCentral.addArticle(JavaInterop.asScala(() -> new PotionOfHealing((byte) 2)), 50);
-        ShopCentral.addArticle(JavaInterop.asScala(() -> new PotionOfDamage((byte) 2)), 35);
-        ShopCentral.addArticle(JavaInterop.asScala(() -> new KeyDefaultChest()), 100);
-
-        initializeOreRegistry();
-
         // This will load the background melodies of SoundPool and SoundEffectTimeClock in an Thread and start to play
         // the main melodie, if it's ready.
         SoundPool.isLoaded();
 
-        LogFacility.log("Running Pfeile on... " + SystemProperties.getComputerName(), "Info");
-        LogFacility.putSeparationLine();
+        System.out.println("Running Pfeile on... " + SystemProperties.getComputerName() + "\n");
 
         SystemProperties.printSystemProperties();
 
         LogFacility.log("Beginning initialization process...", "Info", "initprocess");
 
-        LogFacility.log("Initializating languages...", "Info", "initprocess");
         LangInitialization.apply();
-        LogFacility.log("[[LangInitialization]] done", "Info", "initprocess");
+        LogFacility.log("LangInitialization done!", "Info", "initprocess");
 
         main = new Main();
         user = new User(SystemProperties.getComputerName());
-
-        LogFacility.log("Attempting to execute PreInitStage...", "Info", "initprocess");
 
         PreInitStage.execute();
 
@@ -161,14 +142,7 @@ public class Main {
         // initialize Loots, Coins and Potions (internally threaded)
         ItemInitialization.initialize();
 
-        // waiting for loading arrow images
-        try {
-            arrowInitializationThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        gameWindow.initializeScreens();
+        gameWindow.initializeScreens(arrowInitializationThread);
         LogFacility.log("Screens initialized.", "Info", "initprocess");
 
         GameWindow.adjustWindow(gameWindow);
@@ -183,19 +157,7 @@ public class Main {
         });
 
 	    LoadingWorldScreen.getInstance().onScreenLeft.registerJava(event -> {
-            // initialize TimeClock
-            getContext().getTimeClock();
-
-            main.doArrowSelectionAddingArrows();
-
             getContext().onStartRunningTimeClock().apply();
-            // the players have been added to entityList, so this call is valid now
-            PreWindowScreen.correctArrowNumber();
-
-
-            // play the game sound, when the game begins
-            //SoundPool.stop_titleMelodie();
-            //SoundPool.playLoop_mainThemeMelodie(SoundPool.LOOP_CONTINUOUSLY);
         });
 
         GameScreen.getInstance().onScreenEnter.registerOnceJava(() -> {
@@ -242,28 +204,9 @@ public class Main {
 
     }
 
-    private static void initializeOreRegistry() {
-        // TODO change the position of this code later. Main should only call the method and not contain the method.
-        OreRegistry.add(new OreRegistry.RegistryEntry(IronOre.class, IronOre.SpawnCondition()));
-        OreRegistry.add(new OreRegistry.RegistryEntry(CopperOre.class, CopperOre.SpawnCondition()));
-    }
-
     // #########################################################
     // METHODEN: v. a. alle Threads ############################
     // #########################################################
-
-    /**
-     * Puts all selected arrows from <code>ArrowSelectionScreenPreSet.getInstance()</code> to the inventory of the
-     * Player by calling {@link player.weapon.Weapon#equip()}.
-     */
-    private void doArrowSelectionAddingArrows() {
-        final ArrowSelectionScreenPreSet arrowSelection = ArrowSelectionScreenPreSet.getInstance();
-
-        for (String selectedArrow : arrowSelection.selectedArrows) {
-            if (!ArrowHelper.instanceArrow(selectedArrow).equip())
-                System.err.println("Cannot add " + selectedArrow + " at Main.doArrowSelectionAddingArrows() - adding the arrowNumberPreSet");
-        }
-    }
 
     /**
      * Toggles between fullscreen mode and windowed mode.

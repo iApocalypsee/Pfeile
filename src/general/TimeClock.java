@@ -2,10 +2,7 @@ package general;
 
 import animation.SoundEffectTimeClock;
 import comp.Component;
-import gui.screen.AimSelectionScreen;
-import gui.screen.ArrowSelectionScreen;
-import gui.screen.GameScreen;
-import gui.screen.ScreenManager;
+import gui.screen.*;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.Duration$;
 import scala.concurrent.duration.FiniteDuration;
@@ -76,17 +73,23 @@ public class TimeClock extends Component implements Runnable {
         ScreenManager sm = Main.getGameWindow().getScreenManager();
 
         onTimeOver.registerJava(() -> {
-            if (sm.getActiveScreenIndex() == GameScreen.SCREEN_INDEX) {
-                context.getTurnSystem().increment();
-            } else if (sm.getActiveScreenIndex() == ArrowSelectionScreen.SCREEN_INDEX) {
-                sm.setActiveScreen(GameScreen.SCREEN_INDEX);
-                context.getTurnSystem().increment();
-            } else if (sm.getActiveScreenIndex() == AimSelectionScreen.SCREEN_INDEX) {
-                sm.setActiveScreen(GameScreen.SCREEN_INDEX);
-                context.getTurnSystem().increment();
-            } else
-                throw new java.lang.RuntimeException("Time is out. The active Screen is neither GameScreen nor Aim- or ArrowSelectionScreen. Register it! " +
-                        "ActiveScreen: " + sm.getActiveScreen().getName());
+            switch (sm.getActiveScreenIndex()) {
+                case GameScreen.SCREEN_INDEX:
+                    context.getTurnSystem().increment();
+                    break;
+                case ArrowSelectionScreen.SCREEN_INDEX:
+                    context.getTurnSystem().increment();
+                    break;
+                case AimSelectionScreen.SCREEN_INDEX:
+                    context.getTurnSystem().increment();
+                    break;
+                case InventoryScreen.SCREEN_INDEX:
+                    context.getTurnSystem().increment();
+                    break;
+                default:
+                    LogFacility.log("Time out! The active Screen is neither GameScreen nor Arrow-/AimSelectionScreen or InventoryScreen. " +
+                            "Register it!   ActiveScreen... " + sm.getActiveScreen(), LogFacility.LoggingLevel.Error);
+            }
         });
 
         final TurnSystem turnSystem = context.getTurnSystem();
@@ -98,8 +101,8 @@ public class TimeClock extends Component implements Runnable {
             stop();
         });
     }
-	
-	/** �bernimmt timeSinceLastFrame + Aufruf durch 'Main'
+
+    /** �bernimmt timeSinceLastFrame + Aufruf durch 'Main'
 	 *  .... updated die aktuelle Zeit; �bernimmt Thread */
 	@Override
 	public void run() {

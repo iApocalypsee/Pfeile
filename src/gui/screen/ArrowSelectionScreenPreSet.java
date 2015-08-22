@@ -4,9 +4,11 @@ import comp.Button;
 import comp.ConfirmDialog;
 import comp.Label;
 import comp.List;
+import general.LogFacility;
 import general.Main;
 import general.PfeileContext;
 import general.io.FontLoader;
+import newent.Player;
 import player.weapon.arrow.*;
 
 import java.awt.*;
@@ -37,9 +39,6 @@ public class ArrowSelectionScreenPreSet extends Screen {
     private List arrowListSelected;
     private ConfirmDialog confirmDialog;
     public LinkedList<String> selectedArrows;
-
-    /** Hintergrund Farbe */
-    private static final Color TRANSPARENT_BACKGROUND = new Color(39, 47, 69, 204);
 
 	private static ArrowSelectionScreenPreSet instance = null;
 
@@ -76,6 +75,9 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
     /** position of <code>g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y")</code> */
     private Point fontSmallPosition;
+
+    /** the activePlayer */
+    private Player activePlayer;
 
     /**
      * Screen für die Pfeilauswahl für vorhersetzbaren Pfeilen.
@@ -143,6 +145,10 @@ public class ArrowSelectionScreenPreSet extends Screen {
             button.addMouseListener(new ButtonHelper());
         }
 
+        playerName = new Label(40, Main.getWindowHeight() - 85, this, Main.getUser().getUsername());
+        playerName.setFont(new Font(comp.Component.STD_FONT.getFontName(), Font.BOLD, 40));
+        playerName.setFontColor(new Color(206, 3, 255));
+
         confirmDialog = new ConfirmDialog(500, 300, this, "");
         confirmDialog.setVisible(false);
         confirmDialog.getOk().addMouseListener(new MouseAdapter() {
@@ -205,17 +211,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
             }
         });
 
-        onScreenEnter.registerJava(() -> {
-            selectedArrows.clear();
-            selectedArrows.add("<keine Pfeile>");
-            setArrowListSelected(selectedArrows);
-
-            if (PfeileContext.arrowNumberPreSet().get() > 1)
-                remainingArrows.setText("Verfügbare Pfeile auswählen!");
-            else
-                remainingArrows.setText("Verfügbaren Pfeil auswählen!");
-
-        });
+        onScreenEnter.registerJava(this :: resetArrowList);
     }
 
     private void setArrowListSelected(LinkedList<String> selectedArrows) {
@@ -248,6 +244,17 @@ public class ArrowSelectionScreenPreSet extends Screen {
         arrowListSelected.acceptInput();
     }
 
+    private void resetArrowList () {
+        selectedArrows.clear();
+        selectedArrows.add("<keine Pfeile>");
+        setArrowListSelected(selectedArrows);
+
+        if (PfeileContext.arrowNumberPreSet().get() > 1)
+            remainingArrows.setText("Verfügbare Pfeile auswählen!");
+        else
+            remainingArrows.setText("Verfügbaren Pfeil auswählen!");
+    }
+
     private class ButtonHelper extends MouseAdapter {
         @Override
         public void mouseReleased (MouseEvent e) {
@@ -276,10 +283,37 @@ public class ArrowSelectionScreenPreSet extends Screen {
         if (selectedArrows.size() < PfeileContext.arrowNumberPreSet().get()) {
             openConfirmQuestion("Bitten wählen sie alle Pfeile aus!");
         } else {
-            if (LoadingWorldScreen.hasLoaded())
-                onLeavingScreen(GameScreen.SCREEN_INDEX);
-            else
-                onLeavingScreen(LoadingWorldScreen.getInstance().SCREEN_INDEX);
+            if (LoadingWorldScreen.hasLoaded()) {
+                // the first player should have the name Main.getUser().getUsername(). Compare with the initialization at
+                // ContextCreator#PopulatorStage
+                doAddingArrows();
+
+                if (playerName.getText().equals(Main.getUser().getUsername())) {
+                    // only after the arrows are added...
+                    java.util.List<Player> commandTeamHeads = Main.getContext().getTurnSystem().getHeadOfCommandTeams();
+                    commandTeamHeads.forEach((player) -> {
+                        if (player.name().equals("Opponent")) {
+                            setActivePlayer(player);
+                        }
+                    });
+                } else if (playerName.getText().equals("Opponent")) {
+                    onLeavingScreen(GameScreen.SCREEN_INDEX);
+                } else {
+                    throw new RuntimeException("Unknown name of activePlayer" + playerName.getText() + "; registered  Player: " + activePlayer);
+                }
+            } else {
+                LoadingWorldScreen.getInstance().setAddingArrowList(playerName.getText(), selectedArrows);
+                if (playerName.getText().equals(Main.getUser().getUsername())) {
+                    // manually switching players...
+                    playerName.setText("Opponent");
+                    resetArrowList();
+
+                } else if (playerName.getText().equals("Opponent")) {
+                    onLeavingScreen(LoadingWorldScreen.getInstance().SCREEN_INDEX);
+                } else {
+                    throw new RuntimeException("Unknown name of activePlayer" + playerName.getText() + "; registered  Player: " + activePlayer);
+                }
+            }
         }
     }
 
@@ -295,6 +329,33 @@ public class ArrowSelectionScreenPreSet extends Screen {
             selectedArrows.add(arrow);
             remainingArrows.setText("Übrige Pfeile: " + (PfeileContext.arrowNumberPreSet().get() - selectedArrows.size()));
             setArrowListSelected(selectedArrows);
+        }
+    }
+
+    /** Changes the player and the GUI */
+    public void setActivePlayer (Player activePlayer) {
+        this.activePlayer = activePlayer;
+        activePlayerChanged();
+    }
+
+    /** If the activePlayer changes, call this method, to change the GUI */
+    private void activePlayerChanged () {
+        playerName.setText(activePlayer.name());
+        resetArrowList();
+    }
+
+    private void doAddingArrows () {
+        doAddingArrows(activePlayer);
+    }
+
+    /**
+     * Puts all selected arrows from <code>ArrowSelectionScreenPreSet.getInstance()</code> to the inventory of the
+     * Player by calling {@link player.weapon.Weapon#equip()}.
+     */
+    private void doAddingArrows (Player player) {
+        for (String selectedArrow : selectedArrows) {
+            if (!ArrowHelper.instanceArrow(selectedArrow).equip(player))
+                LogFacility.log("Cannot add " + selectedArrow + " at " + LogFacility.getCurrentMethodLocation(), LogFacility.LoggingLevel.Error);
         }
     }
 
@@ -323,9 +384,6 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
     @Override
     public void draw(Graphics2D g) {
-        // drawing the background and the "Pfeile"-slogan
-        g.setColor(TRANSPARENT_BACKGROUND);
-        g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
         g.setColor(colorBig);
         g.setFont(fontBig);
         g.drawString("Pfeile", fontBigPosition.x, fontBigPosition.y);
@@ -338,10 +396,10 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
         // resetting the font and draw the rest
         g.setFont(comp.Component.STD_FONT);
-
         for(Button arrowButton : buttonListArrows) {
             arrowButton.draw(g);
         }
+        playerName.draw(g);
         arrowListSelected.draw(g);
         randomButton.draw(g);
         readyButton.draw(g);

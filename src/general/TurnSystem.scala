@@ -1,7 +1,9 @@
 package general
 
+import java.util
+
 import gui.screen.ArrowSelectionScreenPreSet
-import newent.{ CommandTeam, Team }
+import newent.{CommandTeam, Player, Team}
 
 import scala.collection.JavaConversions
 
@@ -71,6 +73,47 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
         return team.asInstanceOf[CommandTeam]
     }
     throw new RuntimeException("The team of the active player " + activePlayer.name + " could not be found!")
+  }
+
+  def getCommandTeams: util.ArrayList[CommandTeam] = {
+    // two players --> two CommandTeams.
+    val commandTeams = new util.ArrayList[CommandTeam](2)
+    teams.apply().foreach { (team) =>
+      if (!team.isBarbarian) {
+        commandTeams.add(team.asCommandTeam)
+      }
+    }
+    commandTeams
+  }
+
+  /**
+   * @return a List with all CommandTeams. Should have size 2 with two players...
+   */
+  def commandTeams: Seq[CommandTeam] = {
+    var commandTeams = Seq.empty[CommandTeam]
+    teams.apply().foreach((team) => {
+      if (!team.isBarbarian) {
+        commandTeams = commandTeams.:+(team.asCommandTeam)
+      }
+    })
+    commandTeams
+  }
+
+  def getHeadOfCommandTeams: util.ArrayList[newent.Player] = {
+    val heads = new util.ArrayList[Player](2)
+    commandTeams.foreach((commandTeam) => {
+      heads.add(commandTeam.getHead)
+    })
+    heads
+  }
+
+  /** returns a sequence with every head of a commandTeam. */
+  def headOfCommandTeams: Seq[newent.Player] = {
+    var heads = Seq.empty[newent.Player]
+    commandTeams.foreach((commandTeam) => {
+      heads = heads.:+(commandTeam.getHead)
+    })
+    heads
   }
 
   /**
@@ -145,8 +188,10 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
     }
 
     onRoundEnded += { () =>
-      if (PfeileContext.arrowNumberPreSet() != 0)
+      if (PfeileContext.arrowNumberPreSet() != 0) {
+        ArrowSelectionScreenPreSet.getInstance().setActivePlayer(firstTeam.asCommandTeam.getHead)
         Main.getGameWindow.getScreenManager.setActiveScreen(ArrowSelectionScreenPreSet.SCREEN_INDEX)
+      }
       reset()
     }
 

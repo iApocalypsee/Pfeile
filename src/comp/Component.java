@@ -442,6 +442,8 @@ public abstract class Component implements IComponent {
 		onResize.apply(new Vector2(width, getHeight()));
 	}
 
+    /** Does nothing */
+    @Deprecated
     void setWidthDirectly(int width) {
 
     }

@@ -50,13 +50,6 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     // TODO Clear the initialization up a bit. Looks ugly.
     val turnSystem = new TurnSystem(() => for(p <- world.entities.entityList.collect({case p: Player => p})) yield p.belongsTo.team)
 
-    // Notifies the entities in the world that a turn has been ended
-    turnSystem.onTurnEnded += { team =>
-      GameScreen.getInstance().lockUI()
-
-      GameScreen.getInstance().releaseUI()
-    }
-
     turnSystem.onTurnGet += {
       case playerTeam: CommandTeam =>
         require(playerTeam.head != null)
