@@ -23,6 +23,7 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Art
   private[this] def hdiv2 = ShopButton.Style.fixedHeight() / 2
 
   setSourceShape(new Rectangle(-wdiv2, -hdiv2, w, h))
+  setParent(shopWindow.window)
 
   private var imageDrawLocation: Point = null
   private var imageDrawDimension: Dimension = null
@@ -57,8 +58,7 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Art
     val rawX = gridX * (buttonStyle.fixedWidth() + buttonStyle.insetsBetweenEach().left + buttonStyle.insetsBetweenEach().right) + ShopWindow.ButtonsInsetsInsideWindow.left
     val rawY = gridY * (buttonStyle.fixedHeight() + buttonStyle.insetsBetweenEach().top + buttonStyle.insetsBetweenEach().bottom) + ShopWindow.ButtonsInsetsInsideWindow.top
 
-    //setLocation(position.x.asInstanceOf[Int], position.y.asInstanceOf[Int])
-    setLocation(rawX, rawY)
+    setRelativeLocation(rawX, rawY)
 
     val absolutePosition = Vector2(getX, getY)
 

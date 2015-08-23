@@ -11,21 +11,33 @@ import player.item.Item
   */
 object ShopCentral extends TraderLike {
 
+  //<editor-fold desc="ShopWindow representation and article component coordination">
+
+  private def subscribeShopButtonCallbacks(s: Seq[ShopButton]): Unit = {
+    for (button <- s) button.addMouseListener(new MouseAdapter {
+      override def mouseReleased(e: MouseEvent): Unit = {
+        ShopCentral.sell(Main.getContext.activePlayer, _ == button.article)
+      }
+    })
+  }
+
   ShopWindow.objectManagement.applyOnEnter {
     // Only execute for that window if that window is representing the ShopCentral.
     case window if window.representing == this =>
 
-      window.articleComponents.collect {
-        case shopButton: ShopButton =>
-          shopButton.addMouseListener(new MouseAdapter {
-            override def mouseReleased(e: MouseEvent): Unit = {
-              ShopCentral.sell(Main.getContext.activePlayer, _ == shopButton.article)
-            }
-          })
+      // For every article component that is existing right now, register the listener.
+      // The already computed components are not affected by the onArticleComponentRebuilt callback subscription
+      subscribeShopButtonCallbacks(window.articleComponents.collect({ case s: ShopButton => s }))
+
+      // For every article component that is computed later, register the listener as well
+      window.onArticleComponentsRebuilt += { swap =>
+        subscribeShopButtonCallbacks(swap.newObj.collect({ case s: ShopButton => s }))
       }
 
     case _ =>
   }
+
+  //</editor-fold>
 
   def addArticle(item: () => Item, price: Int): Unit = addArticle(Article(item, price))
   def addArticle(article: Article): Unit = {

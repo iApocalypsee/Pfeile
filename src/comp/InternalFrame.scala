@@ -2,7 +2,6 @@ package comp
 
 import java.awt._
 import java.awt.event.{MouseAdapter, MouseEvent}
-import java.util.Collections
 import java.util.concurrent.CopyOnWriteArrayList
 
 import general.property.StaticProperty
@@ -68,7 +67,9 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
 
   @volatile private var comps = new CopyOnWriteArrayList[Component]
 
-  /** Called when the internal frame's close button has been pressed. */
+  /**
+    * Called when the internal frame's close button has been pressed.
+    */
   val onClosed = Delegate.createZeroArity
 
   /**
@@ -128,6 +129,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
       }
     })
     ret.setName("frame: closeButton")
+    ret.getBackingScreen.putAfter(this, ret)
     ret
   }
 
@@ -144,7 +146,6 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     closeButton.draw(g)
   }
 
-  // Adds a few more lines in which the delegates for opening and closing are called.
   override def setVisible(vvvvvv: Boolean): Unit = {
     val wasVisible = isVisible
     super.setVisible(vvvvvv)
@@ -152,14 +153,21 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     else if (!vvvvvv && wasVisible) onClosed()
   }
 
+  def open() = setVisible(true)
+  def close() = setVisible(false)
+
   /**
     * Adds a component to the internal frame.
     *
     * @param c The component.
     * @return Nothing.
     */
-  def <<(c: Component) = {
+  def <<(c: Component): Unit = {
+    require(c.getBackingScreen == this.getBackingScreen, s"Backing screens not equal for $this and $c")
     c.setParent(this)
+
+    val screen = getBackingScreen
+    screen.putAfter(this, c)
   }
 
   /** Ditto. */

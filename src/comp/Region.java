@@ -32,7 +32,7 @@ public class Region extends Component {
 
     @Override
     public void draw(Graphics2D g) {
-        // Nothing, it's a region.
+
     }
 
 }

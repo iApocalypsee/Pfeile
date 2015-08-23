@@ -1,9 +1,11 @@
 package general.langsupport
 
-import akka.{Main => AkkaMain, _}
+import java.net.URI
+
 import akka.actor._
-import akka.util.Timeout
 import akka.pattern.ask
+import akka.util.Timeout
+import akka.{Main => AkkaMain}
 import general._
 import org.json4s._
 import org.json4s.native.JsonMethods._
@@ -12,6 +14,7 @@ import scala.beans.BeanProperty
 import scala.collection.mutable
 import scala.concurrent.Future
 import scala.concurrent.duration._
+import scala.io.Source
 import scala.language.dynamics
 import scala.languageFeature.dynamics
 
@@ -80,12 +83,18 @@ class LangDict private (@BeanProperty val owner: String) extends Dynamic {
       else onNewIdentifier(identifier, translation)
     }
 
+    def clearAllTranslations(): Unit = {
+      translations.clear()
+    }
+
     override def receive = {
       // Returns String.
       case Translate(id, lang) => sender ! translations(id)(lang)
       // Returns Unit.
       case remember: RememberTranslation =>
         sender ! addTranslation(remember)
+      //case clear: LangDict.ClearAllTranslations =>
+      //  sender ! clearAllTranslations()
     }
   }
 
@@ -138,6 +147,30 @@ class LangDict private (@BeanProperty val owner: String) extends Dynamic {
     */
   def getTranslation(identifier: String, language: Language): Future[String] = applyDynamic(identifier)(language)
 
+  def addTranslation(identifier: String, translation: Translation): Unit = {
+    actor ! RememberTranslation(identifier, translation)
+  }
+
+  def addJsonTranslations(jsonDocument: JValue): Unit = {
+
+    val extractedActorMessages: Seq[RememberTranslation] = for (
+      JObject(langItemSeq) <- jsonDocument;
+      JField(langItem, translationsList) <- langItemSeq if !langItem.equals(JsonOwnershipIdentifier);
+      JObject(translations) <- translationsList;
+      JField(langCode, JString(translation)) <- translations
+    ) yield {
+        RememberTranslation(langItem, Translation(Language.findLanguage(langCode).get, translation))
+      }
+
+    for (message <- extractedActorMessages) actor ! message
+  }
+
+  def addJsonTranslations(jsonString: String): Unit = addJsonTranslations(parse(jsonString))
+
+  def addJsonTranslations(uri: URI): Unit = addJsonTranslations(Source.fromURI(uri).mkString("\n"))
+
+  def addJsonTranslations(file: java.io.File): Unit = addJsonTranslations(file.toURI)
+
 }
 
 /**
@@ -166,29 +199,19 @@ object LangDict {
     * @return A lang dict object.
     */
   def fromJson(json: String): LangDict = {
-
     val jsonDocument = parse(json)
-
-    val extractedActorMessages: Seq[RememberTranslation] = for (
-      JObject(langItemSeq) <- jsonDocument;
-      JField(langItem, translationsList) <- langItemSeq if !langItem.equals(JsonOwnershipIdentifier);
-      JObject(translations) <- translationsList;
-      JField(langCode, JString(translation)) <- translations
-    ) yield {
-      RememberTranslation(langItem, Translation(Language.findLanguage(langCode).get, translation))
-    }
-
     val jsonDocumentOwner = jsonDocument \ JsonOwnershipIdentifier match {
       case JString(owner) => owner
       case _ => UnidentifiableOwnerString
     }
 
-    val dictionary = new LangDict(jsonDocumentOwner)
-
-    for (message <- extractedActorMessages) dictionary.actor ! message
+    val dictionary = LangDict.emptyDictionary(jsonDocumentOwner)
+    dictionary.addJsonTranslations(jsonDocument)
 
     dictionary
   }
+
+  def emptyDictionary(creator: String) = new LangDict(creator)
 
   /**
     * A test string that can be used for testing, obviously...
@@ -224,6 +247,8 @@ object LangDict {
     * @param translation The translation itself.
     */
   private[LangDict] case class RememberTranslation(identifier: String, translation: Translation)
+
+  //case object ClearAllTranslations
 
   class AmbiguousEntryException[A, B](oldKv: (A, B), newKv: (A, B)) extends Exception(s"Ambiguity: old=$oldKv; new=$newKv")
 

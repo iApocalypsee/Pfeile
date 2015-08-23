@@ -2,7 +2,6 @@ package gui;
 
 import comp.Component;
 import general.LogFacility;
-import general.Main;
 import general.PfeileContext;
 import gui.screen.Screen;
 import newent.MoneyEarner;
@@ -50,9 +49,6 @@ public class MoneyDisplay extends Component {
     public void retrieveDataFrom(MoneyEarner earner) {
         data = earner;
         setMoney(data.getPurse().numericValue());
-        data.onMoneyChanged().registerJava(() -> {
-            setMoney(data.getPurse().numericValue());
-        });
     }
 
     public MoneyEarner getData() {
@@ -78,12 +74,8 @@ public class MoneyDisplay extends Component {
      */
     public void initializeDataActualization (PfeileContext context) {
         context.getTurnSystem().getHeadOfCommandTeams().forEach((player) -> {
-//            Thread t = new Thread(() -> { player.onMoneyChanged().registerJava(() -> {
-//                // A thread is way too overload for such a tiny computation.
-//                setMoney(data.getPurse().numericValue());
-//            }); });
-//            t.setDaemon(true);
-//            t.start();
+            // A thread is way too overkill for such a tiny computation.
+            player.onMoneyChanged().registerJava(() -> setMoney(player.getPurse().numericValue()));
         });
     }
 

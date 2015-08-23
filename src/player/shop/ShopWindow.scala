@@ -1,14 +1,16 @@
 package player.shop
 
 import java.awt.{Graphics2D, Insets}
-import java.util
+import java.util.concurrent.atomic.AtomicReference
+import java.util.{List => JList}
 
 import comp._
-import general.{ImmutableObjectManagerFacade, Main, ObjectManager}
+import general._
 import gui.screen.GameScreen
 
 import scala.beans.BeanProperty
 import scala.collection.JavaConversions
+import scala.collection.parallel.immutable.ParVector
 
 /**
   * The main shop window through which every input is directed while shopping.
@@ -19,15 +21,17 @@ class ShopWindow(articles: Seq[Article], val representing: TraderLike) extends D
     * Additional constructor for Java lists.
     * @param javaArticles The list of articles to display. Java-form.
     */
-  def this(javaArticles: util.List[Article], representing: TraderLike) = this(JavaConversions.asScalaBuffer(javaArticles), representing)
+  def this(javaArticles: JList[Article], representing: TraderLike) = this(JavaConversions.asScalaBuffer(javaArticles), representing)
 
   import player.shop.ShopWindow._
 
-  @BeanProperty val parentComponent: Region = new Region(ShopWindow.x, ShopWindow.y, ShopWindow.Width, ShopWindow.Height, ShopWindow.BackingScreen) {
+  //<editor-fold desc="Main components: region and frame">
+
+  @BeanProperty val parentComponent = new Region(ShopWindow.x, ShopWindow.y, ShopWindow.Width, ShopWindow.Height, ShopWindow.BackingScreen) {
 
     override def draw(g: Graphics2D): Unit = {
       super.draw(g)
-      window.draw(g)
+      window.drawChecked(g)
     }
 
   }
@@ -36,16 +40,26 @@ class ShopWindow(articles: Seq[Article], val representing: TraderLike) extends D
 
   @BeanProperty val window: InternalFrame = {
     val frame = new InternalFrame(0, 0, parentComponent.getWidth, parentComponent.getHeight, parentComponent.getBackingScreen)
-    frame.setParent(parentComponent)
     frame.onClosed += { () =>
       parentComponent.setVisible(false)
     }
+    frame.setParent(parentComponent)
+    frame.setName(FrameName)
     frame
   }
 
-  window.setName(FrameName)
+  //</editor-fold>
 
-  @volatile private var tempArticleComponents: Seq[Component] = null
+  //<editor-fold desc="Events">
+
+  /**
+    * Called when the components representing the articles have been recomputed.
+    */
+  val onArticleComponentsRebuilt = Delegate.create[SwapEvent[Seq[Component]]]
+
+  //</editor-fold>
+
+  private val tempArticleComponents = new AtomicReference(new ParVector[Component])
 
   // Every time the window opens, the article buttons should be recomputed again.
   // Who knows if something has changed?
@@ -55,17 +69,14 @@ class ShopWindow(articles: Seq[Article], val representing: TraderLike) extends D
     rebuildArticleComponents()
   }
 
-  def articleComponents: Seq[Component] = {
-    rebuildArticleComponents()
-    tempArticleComponents
-  }
-  def getArticleComponents = articleComponents
+  def articleComponents: Seq[Component] = tempArticleComponents.get().toVector
+  def getArticleComponents: Seq[Component] = articleComponents
 
   /**
     * Maps given articles to a collection of components that can be used to display the articles
     * in the shop window.
     */
-  private def articleComponentCollection(articles: Seq[Article]): Seq[Component] = {
+  private def articleComponentCollection(articles: Seq[Article]): Seq[ShopButton] = {
 
     // Returns a tuple with the x and y coordinates in the grid
     def rowToTable(index: Int) = (index % ButtonRowCount, index / ButtonRowCount)
@@ -81,19 +92,24 @@ class ShopWindow(articles: Seq[Article], val representing: TraderLike) extends D
     }
   }
 
-  private def rebuildArticleComponents(): Unit = {
+  def rebuildArticleComponents(): Unit = {
+    val oldComponents = tempArticleComponents.get().toVector
     clearOldArticleGUI()
-    tempArticleComponents = articleComponentCollection(articles)
-    for(component <- tempArticleComponents) {
-      component.setName(articleComponentName(component.hashCode()))
-      window.add(component)
+    val shopButtons = articleComponentCollection(articles)
+    for(component <- shopButtons) {
+      component.setName(articleComponentName(component))
     }
+    val newComponents = ParVector(shopButtons:_*)
+    tempArticleComponents.set(newComponents)
+    onArticleComponentsRebuilt(SwapEvent(oldComponents, newComponents.toVector))
   }
 
   private def clearOldArticleGUI(): Unit = {
-    if(tempArticleComponents != null) {
-      for(component <- tempArticleComponents) component.unparent()
-      tempArticleComponents = null
+    if(tempArticleComponents.get().nonEmpty) {
+      for(component <- tempArticleComponents.get()) {
+        component.getBackingScreen.remove(component)
+      }
+      tempArticleComponents.set(ParVector.empty)
     }
   }
 
@@ -107,6 +123,8 @@ class ShopWindow(articles: Seq[Article], val representing: TraderLike) extends D
 
   parentComponent.setVisible(false)
   accessObjectManagement.manage(this)
+
+  override def toString = s"ShopWindow(tempArticleComponents=$tempArticleComponents, representing=$representing)"
 
 }
 
@@ -146,7 +164,7 @@ object ShopWindow {
   //<editor-fold desc='Component names'>
 
   private val FrameName = "@[[ShopWindow]]: frame"
-  private def articleComponentName(hash: Int) = s"@[[ShopWindow]]: articleComponent id=$hash"
+  private def articleComponentName(component: ShopButton) = s"${component.article}"
 
   //</editor-fold>
 

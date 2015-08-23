@@ -3,7 +3,6 @@ package gui.screen;
 import comp.Component;
 import comp.Component.ComponentStatus;
 import comp.ImageLike;
-import comp.ImageLike$class;
 import comp.SolidColor;
 import general.Delegate;
 import general.Main;
@@ -43,8 +42,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	protected ScreenManager manager = Main.getGameWindow().getScreenManager();
 
     public final Delegate.Function0Delegate onScreenEnter = new Delegate.Function0Delegate();
-    public final Delegate.Delegate<ScreenChangedEvent> onScreenLeft = new Delegate.Delegate<ScreenChangedEvent>();
-
+    public final Delegate.Delegate<ScreenChangedEvent> onScreenLeft = new Delegate.Delegate<>();
 
 	private List<Component> components = new CopyOnWriteArrayList<>();
 	public final int SCREEN_INDEX;
@@ -55,6 +53,14 @@ public abstract class Screen implements Drawable, MouseListener,
 	private boolean preprocessedDrawingEnabled = false;
 
 	private ImageLike background = new SolidColor(Color.black);
+
+    private boolean boundsDrawEnabled = false;
+    private Stroke boundsDrawStroke = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 4, new float[]{4}, 0);
+    private Font boundsDrawFont = new Font(Font.MONOSPACED, Font.PLAIN, 10);
+    private final Color boundsDrawWhite = new Color(255, 255, 255, 91),
+            boundsDrawRed = new Color(255, 0, 0, 100),
+            boundsDrawOrange = new Color(255, 200, 0, 155),
+            boundsDrawFillString = new Color(0, 100, 155, 255);
 
 	protected static boolean isLeftMousePressed;
 	protected static boolean isRightMousePressed;
@@ -146,7 +152,6 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * @return A copy of all components that screen currently holds. Notice that the
 	 * components won't ge updated.
 	 */
-	@SuppressWarnings("unchecked")
 	public synchronized List<Component> getComponents() {
 		return components;
 	}
@@ -163,7 +168,40 @@ public abstract class Screen implements Drawable, MouseListener,
 		if(preprocessedDrawingEnabled) {
 			getComponents().forEach(c -> c.drawChecked(g));
 		}
+
+        drawBounds(g);
 	}
+
+    private void drawBounds(Graphics2D g) {
+        if(boundsDrawEnabled) {
+            g.setStroke(boundsDrawStroke);
+            final Font previousFont = g.getFont();
+            g.setFont(boundsDrawFont);
+            final Component[] mouseFocused = {null};
+            getComponents().forEach(component -> {
+                if (component.isVisible()) g.setColor(boundsDrawWhite);
+                else g.setColor(boundsDrawRed);
+                if (component.isMouseFocused()) g.setColor(boundsDrawOrange);
+                g.draw(component.getBounds());
+                if (component.isMouseFocused()) {
+                    mouseFocused[0] = component;
+                }
+                final Point center = component.center();
+                g.drawString(component.getName(), center.x, center.y);
+            });
+
+            if(mouseFocused[0] != null) {
+                final Point center = mouseFocused[0].center();
+                final Dimension textBounds = Component.getTextBounds(mouseFocused[0].getName(), boundsDrawFont);
+                final Color prevColor = g.getColor();
+                g.setColor(boundsDrawFillString);
+                g.fillRect(center.x, center.y - textBounds.height, textBounds.width, textBounds.height);
+                g.setColor(prevColor);
+                g.drawString(mouseFocused[0].getName(), center.x, center.y);
+            }
+            g.setFont(previousFont);
+        }
+    }
 
     /**
 	 * Wird aufgerufen, wenn der Screen verlassen wird. Sollte man selbst aufrufen, wenn man 
@@ -405,6 +443,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 */
 	public final void remove(Component c) {
 		if(components.contains(c)) {
+            c.unparent();
 			components.remove(c);
 		}
 	}
@@ -500,6 +539,16 @@ public abstract class Screen implements Drawable, MouseListener,
 	protected void setPreprocessedDrawingEnabled(boolean preprocessedDrawingEnabled) {
 		this.preprocessedDrawingEnabled = preprocessedDrawingEnabled;
 	}
+
+    public boolean isBoundsDrawEnabled()
+    {
+        return boundsDrawEnabled;
+    }
+
+    public void setBoundsDrawEnabled(boolean boundsDrawEnabled)
+    {
+        this.boundsDrawEnabled = boundsDrawEnabled;
+    }
 
     public static final class ScreenChangedEvent {
         public final int toIndex;

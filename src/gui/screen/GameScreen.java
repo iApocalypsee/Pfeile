@@ -3,7 +3,6 @@ package gui.screen;
 import comp.Button;
 import comp.WarningMessage;
 import general.JavaInterop;
-import general.LogFacility;
 import general.Main;
 import general.PfeileContext;
 import gui.FrameContainer;
@@ -162,6 +161,7 @@ public class GameScreen extends Screen implements FrameContainer {
             @Override
             public void mouseReleased(MouseEvent e) {
                 getShopWindow().parentComponent().setVisible(!shopWindow.parentComponent().isVisible());
+                getShopWindow().getArticleComponents().foreach(JavaInterop.asScala(GameScreen.this::forcePullFront));
             }
         });
 	}
@@ -192,6 +192,8 @@ public class GameScreen extends Screen implements FrameContainer {
         shopWindowButton.draw(g);
         moneyDisplay.draw(g);
 		Main.getContext().getActivePlayer().drawLifeUI(g);
+
+        getShopWindow().getParentComponent().drawChecked(g);
 
 		frameContainerObject.drawFrames(g);
 

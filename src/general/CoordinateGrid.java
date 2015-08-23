@@ -8,7 +8,7 @@ public class CoordinateGrid implements Drawable {
 
 	/**
 	 * If active, draws a grid which displays where what coordinate is.
-	 * Applies only if Main.isDebug() is true.
+	 * Should only apply if Main.isDebug() is true.
 	 */
 	private boolean activated = false;
 
@@ -39,8 +39,8 @@ public class CoordinateGrid implements Drawable {
 		int offsetXMod = offsetX % density;
 		int offsetYMod = offsetY % density;
 
-		for(int y = offsetYMod; y < canvasWidth; y += density) {
-			for(int x = offsetXMod; x < canvasHeight; x += density) {
+		for(int y = offsetYMod; y < canvasHeight; y += density) {
+			for(int x = offsetXMod; x < canvasWidth; x += density) {
 				int normalX = x - offsetX;
 				int normalY = y - offsetY;
 				if(normalX == 0 || normalY == 0) g.setColor(Color.white);

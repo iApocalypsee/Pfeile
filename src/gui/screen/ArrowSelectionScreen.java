@@ -3,20 +3,17 @@ package gui.screen;
 import comp.Button;
 import comp.Component;
 import comp.*;
-import general.JavaInterop;
 import general.Main;
 import general.PfeileContext;
 import newent.InventoryLike;
 import player.weapon.arrow.*;
-import scala.Function1;
-import scala.runtime.AbstractFunction0;
-import scala.runtime.BoxedUnit;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.List;
 
 public class ArrowSelectionScreen extends Screen {
@@ -39,7 +36,7 @@ public class ArrowSelectionScreen extends Screen {
 	public static final String SCREEN_NAME = "ArrowSelection";
 	
 	/** Die TextBox, die Anzeigt, welcher Pfeil ausgew�hlt worden ist */
-	private TextBox selectedArrowBox; 
+	private TextBox selectedArrowBox;
 	
 	/** Ausgew�hlter Pfeil zum Hinzuf�gen */
 	private Class<? extends AbstractArrow> selectedIndex;

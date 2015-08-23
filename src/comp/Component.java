@@ -12,7 +12,11 @@ import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A standard implementation of a component.
@@ -102,7 +106,7 @@ public abstract class Component implements IComponent {
 	 * are not allowed; if a component tries to hook into another component having another component
 	 * with the same name, the new component overrides the old one.
 	 */
-	private Map<String, Component> children = new HashMap<>();
+	private Map<String, Component> children = new ConcurrentHashMap<>();
 
 	/**
 	 * Object for coloring borders (if you were to paint them).
@@ -741,6 +745,8 @@ public abstract class Component implements IComponent {
 		}
 	}
 
+
+
 	public Transformation2D getTransformation() {
 		return transformation;
 	}
@@ -755,7 +761,7 @@ public abstract class Component implements IComponent {
 	}
 
     public void unparent() {
-        if(parent == null) throw new NoSuchElementException("Component has no parent to unparent from");
+        if(parent == null) return;
         parent.children.remove(getName());
         this.parent = null;
     }
