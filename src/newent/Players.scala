@@ -91,15 +91,21 @@ class Player(world: WorldLike,
     component.asInstanceOf[PlayerComponent].tightenComponentToTile(t)
   }
 
-   override def toString: String = "Player: " + name
+  override def toString: String = ScalaUtil.stringRepresentation(this, Map(
+  "world" -> world,
+  "name" -> name,
+  "component" -> component,
+  "money" -> purse.numericValue,
+  "inventory" -> inventory
+  ))
 
-   /** The initial gold per turn amount that the earner gets. __Must not be below 0__.
+  /** The initial gold per turn amount that the earner gets. __Must not be below 0__.
      * <code> Defined as MoneyValues.START_MONEY</code>.*/
-   override protected def initialMoneyPerTurn: Int = MoneyValues.moneyPerTurn()
+  override protected def initialMoneyPerTurn: Int = MoneyValues.moneyPerTurn()
 
-   /** The initial amount of gold that the earner gets. __Must not be below 0__.
+  /** The initial amount of gold that the earner gets. __Must not be below 0__.
      * <code> Defined as MoneyValues.START_MONEY</code>.*/
-   override protected def initialMoney: Int = MoneyValues.startMoney()
+  override protected def initialMoney: Int = MoneyValues.startMoney()
 }
 
 object Player {

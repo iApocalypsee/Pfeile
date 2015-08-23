@@ -2,14 +2,18 @@ package gui.screen;
 
 import comp.Component;
 import comp.Component.ComponentStatus;
+import comp.ImageLike;
+import comp.ImageLike$class;
+import comp.SolidColor;
 import general.Delegate;
 import general.Main;
+import geom.functions.FunctionCollection;
 import gui.Drawable;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Hauptklasse für Screens.
@@ -28,9 +32,6 @@ import java.util.List;
 public abstract class Screen implements Drawable, MouseListener,
 		MouseMotionListener, MouseWheelListener, KeyListener {
 
-	/**
-	 * Die Mausposition des Zeigers.
-	 */
 	private static Point mousePosition = new Point(0, 0);
 
 	/**
@@ -38,26 +39,22 @@ public abstract class Screen implements Drawable, MouseListener,
 	 */
 	private static Point lastClickPosition = new Point(0, 0);
 
-	/**
-	 * Der Name des Screens.
-	 */
 	protected String name;
 	protected ScreenManager manager = Main.getGameWindow().getScreenManager();
 
     public final Delegate.Function0Delegate onScreenEnter = new Delegate.Function0Delegate();
     public final Delegate.Delegate<ScreenChangedEvent> onScreenLeft = new Delegate.Delegate<ScreenChangedEvent>();
 
-    /**
-	 * Die Components, die der Screen hält.
-	 */
-	private LinkedList<Component> components = new LinkedList<Component>();
+
+	private List<Component> components = new CopyOnWriteArrayList<>();
 	public final int SCREEN_INDEX;
 	
 	/**
-	 * Sagt aus, ob Components automatisch vom Screen gezeichnet werden oder nicht.
-	 * Auf <code>false</code> lassen, die Funktion ist buggy!
+	 * Whether the screen draws its components by itself or lets the user control the drawing.
 	 */
 	private boolean preprocessedDrawingEnabled = false;
+
+	private ImageLike background = new SolidColor(Color.black);
 
 	protected static boolean isLeftMousePressed;
 	protected static boolean isRightMousePressed;
@@ -114,7 +111,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * Returns the last position of a click (using MouseReleased) on the screen.
 	 * @return The last click position.
 	 */
-	public static synchronized Point getLastClickPosition() {
+	public static Point getLastClickPosition() {
 		return lastClickPosition;
 	}
 
@@ -134,6 +131,15 @@ public abstract class Screen implements Drawable, MouseListener,
 		Screen.isRightMousePressed = isMousePressed;
 	}
 
+	public ImageLike getBackground() {
+		return background;
+	}
+
+	public void setBackground(ImageLike background) {
+		if(background == null) throw new NullPointerException();
+		this.background = background;
+	}
+
 	/**
 	 * Returns a <b>copy</b> of the component list. This copied list is not to be used
 	 * for adding components. This should be done with the method ???
@@ -142,7 +148,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 */
 	@SuppressWarnings("unchecked")
 	public synchronized List<Component> getComponents() {
-		return (java.util.List<Component>) components.clone();
+		return components;
 	}
 
 	/**
@@ -150,16 +156,12 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * @param g Der Grafikkontext
 	 */
 	public void draw(Graphics2D g) {
-		// clear screen
 		g.setColor(Color.black);
 		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
+		background.drawImage(g, 0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 		
 		if(preprocessedDrawingEnabled) {
-			for (Component c : getComponents()) {
-				if(c != null) {
-                    c.drawChecked(g);
-				}
-			}
+			getComponents().forEach(c -> c.drawChecked(g));
 		}
 	}
 
@@ -182,15 +184,16 @@ public abstract class Screen implements Drawable, MouseListener,
 		if(e.getButton() == 3) {
 			isRightMousePressed = true;
 		}
-		for (Component c : getComponents()) {
+		for(int i = components.size() - 1; i >= 0; i--) {
+			Component c = components.get(i);
             if(c.isVisible()) {
                 if(c.isAcceptingInput()) {
 	                if(c.getPreciseRectangle().contains(e.getPoint())) {
 		                if (c.getBounds().contains(e.getPoint())) {
 			                for (MouseListener m : c.getMouseListeners()) {
-				                // hier ist eigentlicher Aufruf des Listeners
 				                m.mousePressed(e);
 			                }
+			                break;
 		                } else {
 			                if (c.getStatus() != ComponentStatus.NO_MOUSE) {
 				                c.setStatus(ComponentStatus.NO_MOUSE);
@@ -220,14 +223,17 @@ public abstract class Screen implements Drawable, MouseListener,
 
 		lastClickPosition = e.getPoint();
 
-		for (Component c : getComponents()) {
-			if (c.isAcceptingInput()) {
+		for(int i = components.size() - 1; i >= 0; i--) {
+			Component c = components.get(i);
+			if (c.isAcceptingInput() && c.isVisible()) {
 				if(c.getPreciseRectangle().contains(e.getPoint())) {
 					if (c.getBounds().contains(e.getPoint())) {
 						for (MouseListener m : c.getMouseListeners()) {
-							// hier ist eigentlicher Aufruf des Listeners
 							m.mouseReleased(e);
 						}
+						// A component already received the release event, no other component
+						// should receive this event anymore.
+						break;
 					} else {
 						if (c.getStatus() != ComponentStatus.NO_MOUSE) {
 							c.setStatus(ComponentStatus.NO_MOUSE);
@@ -264,25 +270,33 @@ public abstract class Screen implements Drawable, MouseListener,
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		mousePosition = e.getPoint();
-		if(!isLeftMousePressed) {
-			isLeftMousePressed = true;
-		}
-		for (Component c : getComponents()) {
-			if(c.isAcceptingInput()) {
-				if(c.getPreciseRectangle().contains(e.getPoint())) {
+
+		Component focusedComponent = null;
+
+		for(int i = components.size() - 1; i >= 0; i--) {
+			Component c = components.get(i);
+			if(c.isAcceptingInput() && c.isVisible()) {
+				if(c.getPreciseRectangle().contains(e.getPoint()) && focusedComponent == null) {
 					if(c.getBounds().contains(e.getPoint())) {
-						if (c.getStatus() != ComponentStatus.MOUSE) {
+						if (c.getStatus() != ComponentStatus.CLICK) {
 							for (MouseListener m : c.getMouseListeners()) {
 								m.mouseEntered(e);
 							}
+							c.setStatus(ComponentStatus.CLICK);
 						}
 						for (MouseMotionListener m : c.getMouseMotionListeners()) {
 							m.mouseDragged(e);
 						}
+						focusedComponent = c;
+					} else {
+						if(c.getStatus() != ComponentStatus.NO_MOUSE) {
+							for (MouseListener m : c.getMouseListeners()) {
+								m.mouseExited(e);
+							}
+						}
 					}
 				} else {
 					if(c.getStatus() != ComponentStatus.NO_MOUSE) {
-						c.setStatus(ComponentStatus.NO_MOUSE);
 						for (MouseListener m : c.getMouseListeners()) {
 							m.mouseExited(e);
 						}
@@ -299,9 +313,14 @@ public abstract class Screen implements Drawable, MouseListener,
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		mousePosition = e.getPoint();
-		for (Component c : getComponents()) {
-			if(c.isAcceptingInput()) {
-				if(c.getPreciseRectangle().contains(e.getPoint())) {
+
+		Component focusedComponent = null;
+
+		// Traverse in reverse; last components in list are drawn on top of the first components in list
+		for(int i = components.size() - 1; i >= 0; i--) {
+			Component c = components.get(i);
+			if(c.isAcceptingInput() && c.isVisible()) {
+				if(c.getPreciseRectangle().contains(e.getPoint()) && focusedComponent == null) {
 					if(c.getBounds().contains(e.getPoint())) {
 						if (c.getStatus() == ComponentStatus.NO_MOUSE) {
 							for (MouseListener m : c.getMouseListeners()) {
@@ -311,9 +330,9 @@ public abstract class Screen implements Drawable, MouseListener,
 						for (MouseMotionListener m : c.getMouseMotionListeners()) {
 							m.mouseMoved(e);
 						}
+						focusedComponent = c;
 					} else {
 						if(c.getStatus() != ComponentStatus.NO_MOUSE) {
-							c.setStatus(ComponentStatus.NO_MOUSE);
 							for(MouseListener m : c.getMouseListeners()) {
 								m.mouseExited(e);
 							}
@@ -321,7 +340,6 @@ public abstract class Screen implements Drawable, MouseListener,
 					}
 				} else {
 					if(c.getStatus() != ComponentStatus.NO_MOUSE) {
-						c.setStatus(ComponentStatus.NO_MOUSE);
 						for (MouseListener m : c.getMouseListeners()) {
 							m.mouseExited(e);
 						}
@@ -337,7 +355,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		for (Component c : getComponents()) {
+		for (Component c : components) {
 			if(c.isAcceptingInput()) {
 				if(c.getBounds().contains(e.getPoint())) {
 					for (MouseWheelListener m : c.getMouseWheelListeners()) {
@@ -356,7 +374,6 @@ public abstract class Screen implements Drawable, MouseListener,
 	 */
 	@Override
 	public void keyPressed(KeyEvent arg0) {
-		
 	}
 	
 	/* (non-Javadoc)
@@ -373,13 +390,13 @@ public abstract class Screen implements Drawable, MouseListener,
 	public void keyTyped(KeyEvent arg0) {
 		
 	}
-	
-	/**
-	 * Fügt ein Steuerelement der Auflistung hinzu.
-	 * @param c Das Steuerelement, das hinzugefügt werden soll.
-	 */
+
 	public final void add(Component c) {
 		components.add(c);
+	}
+
+	public final void add(int index, Component c) {
+		components.add(index, c);
 	}
 	
 	/**
@@ -398,7 +415,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * @return The layer number of the component.
 	 */
 	public int getLayerNumber(Component c) {
-		return getComponents().indexOf(c);
+		return components.indexOf(c);
 	}
 
 	/**
@@ -406,15 +423,15 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * @param component The component to push into the background.
 	 */
 	public void pushBack(Component component) {
-		if(!getComponents().contains(component)) {
+		if(!components.contains(component)) {
 			System.out.println("Component " + component.getName() + " could not be found.");
 			System.out.println("Message from Screen.pushBack(Component)");
 			return;
 		}
 
-		int oldIndex = getComponents().indexOf(component);
-		getComponents().remove(component);
-		getComponents().add(oldIndex - 1, component);
+		int oldIndex = components.indexOf(component);
+		components.remove(component);
+		components.add(oldIndex - 1, component);
 	}
 
 	/**
@@ -422,14 +439,14 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * @param component The component to push into the background.
 	 */
 	public void forcePushBack(Component component) {
-		if(!getComponents().contains(component)) {
+		if(!components.contains(component)) {
 			System.out.println("Component " + component.getName() + " could not be found.");
 			System.out.println("Message from Screen.forcePushBack(Component)");
 			return;
 		}
 
-		getComponents().remove(component);
-		getComponents().add(0, component);
+		components.remove(component);
+		components.add(0, component);
 	}
 
 	/**
@@ -437,15 +454,15 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * @param component The component to pull into the foreground.
 	 */
 	public void pullFront(Component component) {
-		if(!getComponents().contains(component)) {
+		if(!components.contains(component)) {
 			System.out.println("Component " + component.getName() + " could not be found.");
 			System.out.println("Message from Screen.pullFront(Component)");
 			return;
 		}
 
-		int oldIndex = getComponents().indexOf(component);
-		getComponents().remove(component);
-		getComponents().add(oldIndex + 1, component);
+		int oldIndex = components.indexOf(component);
+		components.remove(component);
+		components.add(oldIndex + 1, component);
 	}
 
 	/**
@@ -453,21 +470,34 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * @param component The component to pull into the foreground.
 	 */
 	public void forcePullFront(Component component) {
-		if(!getComponents().contains(component)) {
+		if(!components.contains(component)) {
 			System.out.println("Component " + component.getName() + " could not be found.");
 			System.out.println("Message from Screen.forcePullFront(Component)");
 			return;
 		}
 
-		getComponents().remove(component);
-		getComponents().add(component);
+		components.remove(component);
+		components.add(component);
+	}
+
+	public Screen putBefore(Component beforeWhat, Component move) {
+		if(components.contains(move)) components.remove(move);
+		final int beforeIndex = FunctionCollection.clamp(components.indexOf(beforeWhat), 0, components.size());
+		components.add(beforeIndex, move);
+		return this;
+	}
+
+	public Screen putAfter(Component afterWhat, Component move) {
+		if(components.contains(move)) components.remove(move);
+		components.add(components.indexOf(afterWhat) + 1, move);
+		return this;
 	}
 	
-	public boolean isPreprocessedDrawingEnabled() {
+	protected boolean isPreprocessedDrawingEnabled() {
 		return preprocessedDrawingEnabled;
 	}
 	
-	public void setPreprocessedDrawingEnabled(boolean preprocessedDrawingEnabled) {
+	protected void setPreprocessedDrawingEnabled(boolean preprocessedDrawingEnabled) {
 		this.preprocessedDrawingEnabled = preprocessedDrawingEnabled;
 	}
 
@@ -476,5 +506,12 @@ public abstract class Screen implements Drawable, MouseListener,
         public ScreenChangedEvent(int toIndex) {
             this.toIndex = toIndex;
         }
+
+	    @Override
+	    public String toString() {
+		    return "gui.screen.Screen.ScreenChangedEvent{" +
+				    "toIndex=" + toIndex +
+				    '}';
+	    }
     }
 }

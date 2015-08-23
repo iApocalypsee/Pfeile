@@ -64,12 +64,10 @@ public class GameWindow extends JFrame {
 		});
 
 		addMouseWheelListener(new MouseAdapter() {
-
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
 				screenManager.getActiveScreen().mouseWheelMoved(e);
 			}
-
 		});
 
 		addKeyListener(new Keys());

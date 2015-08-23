@@ -19,7 +19,7 @@ public class ShopInitializer {
             addArticles();
 
             // this call only work, if "Main.getContext()" is available, so it is called in LoadingWorldScreen.
-            GameScreen.getInstance().getShopWindow();
+            // GameScreen.getInstance().getShopWindow();
         }, "Shop Initializer");
         shopInitializer.setDaemon(true);
         shopInitializer.start();

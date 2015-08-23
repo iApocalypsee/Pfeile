@@ -2,7 +2,7 @@ package newent
 
 import java.awt.Point
 
-import comp.DisplayRepresentable
+import comp.{Component, DisplayRepresentable}
 import general.Delegate
 import newent.event.LocationChangedEvent
 import player.BoardPositionable
@@ -24,6 +24,7 @@ sealed trait EntityLike extends BoardPositionable with DisplayRepresentable {
 
   /** Delegate for the entity that a player cycle has been completed. */
   val onTurnCycleEnded = Delegate.createZeroArity
+
 }
 
 /**
@@ -50,7 +51,7 @@ abstract class Entity(override val world: WorldLike, spawnPosition: (Int, Int), 
 
   /** The name of the entity. It is never going to change. */
   val name: String = {
-    if (n eq null) hashCode.toString
+    if (n == null) hashCode.toString
     else if (world.entities.entityList.filter { e => e.name == n }.isEmpty) n
     else throw new NotUniqueNameException(n)
   }

@@ -30,7 +30,7 @@ class LangDict private (@BeanProperty val owner: String) extends Dynamic {
 
   import general.langsupport.LangDict._
 
-  //<editor-fold desc='Threaded core'>
+  //<editor-fold desc="Threaded core">
 
   /**
     * Threaded core of the language dictionary.

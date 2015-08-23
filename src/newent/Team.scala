@@ -56,7 +56,7 @@ sealed abstract class Team protected {
   /** the extra damage is added as multiplier to the damage */
   private var extraDamage: Double = 1
 
-   /**
+  /**
     * The extra damage, that every member of this team does.
     * <code>damage = damage * (extraDamage + 1)</code>
     *
@@ -66,20 +66,18 @@ sealed abstract class Team protected {
     *
     * @param extraDamage the relative extra damage like: 0.2 --> damage * 1.2
     */
-   // TODO I don't understand __why__ you are adding 1 to the extraDamage parameter...?
   def setExtraDamage(extraDamage: Double) = {
-     require(extraDamage >= -1, "Extra damage [" + extraDamage + "] must be higher than -1 to prohibit healing on attack")
-     this.extraDamage = extraDamage + 1
+    require(extraDamage >= -1, "Extra damage [" + extraDamage + "] must be higher than -1 to prohibit healing on attack")
+    this.extraDamage = extraDamage + 1
   }
 
-   /**
+  /**
     * Every team can make extra damage because of special effects. This is the multiplier: <code>damage = damage * getExtraDamage() </code>
     *
     * @return the multiplier for the damage
     */
-  def getExtraDamage: Double = {
-     extraDamage
-  }
+  def getExtraDamage = extraDamage
+
 }
 
 /**
@@ -95,6 +93,7 @@ object BarbarianTeam extends Team {
   override def isInTeam(x: CanHoldTeamContract) = false
 
   override def asCommandTeam = null
+
 }
 
 /**
@@ -116,13 +115,13 @@ class CommandTeam(val head: Player, val name: String) extends Team {
 
   /**
    * Causes the specified object to join the team.
-   * This function __denies players to join the team.__
+   * This function __denies any players to join the team except for its head player.__
    * @param x The object to be integrated into the team. If it is
    *          an object of type [[newent.Player]], it is ignored.
    */
   override def integrate(x: CanHoldTeamContract): Unit = {
-    if (!x.isInstanceOf[Player]) super.integrate(x)
-    else if(x != head) LogFacility.log(x.toString + " can not be added to team " + name, "Info")
+    if (!x.isInstanceOf[Player] || x == head) super.integrate(x)
+    else LogFacility.log(x.toString + " can not be added to team " + name, "Info")
   }
 
   def getHead = head
@@ -131,5 +130,6 @@ class CommandTeam(val head: Player, val name: String) extends Team {
   override def asCommandTeam = this
 
   override def toString: String = "CommandTeam[Head: " + head.name + "]"
+
 }
 

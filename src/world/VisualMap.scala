@@ -89,7 +89,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
     _vp.setShiftY(y)
 
     for (tile <- _displayWorld.terrain.tiles) tile.component match {
-      case isometric: IsometricPolygonTile#IsometricPolygonTileComponent =>
+      case isometric: IsometricPolygonTileComponent =>
         isometric.setPositionRelativeToMap(x, y)
       // The visual map can only handle isometric tiles for now.
       case unknownComponent => throw new NotImplementedError(s"Component of tile is ${unknownComponent.getClass.getName}; " +
@@ -116,7 +116,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
     val centerOn = _displayWorld.terrain.tileAt(tileX, tileY)
 
     centerOn.component match {
-      case isometric: IsometricPolygonTile#IsometricPolygonTileComponent =>
+      case isometric: IsometricPolygonTileComponent =>
 
         val center = Main.getGameWindow.getCenterPosition
         val tileNormalPosition = Vector2(isometric.normalX, isometric.normalY)

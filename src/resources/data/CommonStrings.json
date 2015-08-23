@@ -46,6 +46,71 @@
     "de_DE": "Behalten"
   },
 
+  "done": {
+    "en_EN": "Done",
+    "de_DE": "Fertig"
+  },
+
+  "high": {
+    "en_EN": "high",
+    "de_DE": "hoch"
+  },
+
+  "balanced": {
+    "en_EN": "balanced",
+    "de_DE": "mittel"
+  },
+
+  "low": {
+    "en_EN": "low",
+    "de_DE": "niedrig"
+  },
+
+  "huge": {
+    "en_EN": "huge",
+    "de_DE": "riesig"
+  },
+
+  "large": {
+    "en_EN": "large",
+    "de_DE": "groß"
+  },
+
+  "normal": {
+    "en_EN": "normal",
+    "de_DE": "normal"
+  },
+
+  "small": {
+    "en_EN": "small",
+    "de_DE": "klein"
+  },
+
+  "tiny": {
+    "en_EN": "tiny",
+    "de_DE": "winzig"
+  },
+
+  "brutal": {
+    "en_EN": "brutal",
+    "de_DE": "brutal"
+  },
+
+  "strong": {
+    "en_EN": "strong",
+    "de_DE": "stark"
+  },
+
+  "weak": {
+    "en_EN": "weak",
+    "de_DE": "schwach"
+  },
+
+  "miserable": {
+    "en_EN": "miserable",
+    "de_DE": "erbärmlich"
+  },
+
   "money": {
     "en_EN": "Money",
     "de_DE": "Geld"

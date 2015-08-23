@@ -4,7 +4,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Properties;
 
-/** Thread which prints the System Properties in the console */
 public class SystemProperties {
 
     /**

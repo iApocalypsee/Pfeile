@@ -2,9 +2,6 @@ package comp;
 
 import java.awt.*;
 
-/**
- * Created by jolecaric on 08/04/15.
- */
 public class Orientation {
 
     public final HorizontalOrientation horizontal;
@@ -22,4 +19,12 @@ public class Orientation {
         return new Point(inside.x + widthInset, inside.y + heightInset + textBounds.height);
     }
 
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("comp.Orientation{");
+        sb.append("horizontal=").append(horizontal);
+        sb.append(", vertical=").append(vertical);
+        sb.append('}');
+        return sb.toString();
+    }
 }

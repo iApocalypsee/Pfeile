@@ -138,6 +138,8 @@ public class ComboBox extends Component {
                 selectionList.setVisible(false);
             }
         });
+
+        screenBacking.putAfter(this, clickButton);
     }
 
     /** sets the selectedIndex of the <code> selectionList</code> to index. It also selects at <code> containerLabel </code>.
@@ -207,5 +209,9 @@ public class ComboBox extends Component {
             containerLabel.draw(g);
             clickButton.draw(g);
         }
+    }
+
+    public void registerOnItemSelected(Consumer<Integer> callback) {
+        selectionList.onItemSelected.registerJava(callback);
     }
 }

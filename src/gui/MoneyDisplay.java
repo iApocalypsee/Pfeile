@@ -50,6 +50,9 @@ public class MoneyDisplay extends Component {
     public void retrieveDataFrom(MoneyEarner earner) {
         data = earner;
         setMoney(data.getPurse().numericValue());
+        data.onMoneyChanged().registerJava(() -> {
+            setMoney(data.getPurse().numericValue());
+        });
     }
 
     public MoneyEarner getData() {
@@ -70,18 +73,17 @@ public class MoneyDisplay extends Component {
 
     /**
      * <b>only called once by ContextCreator#ApplyingOtherStuffStage</b>
-     * <n>This call adds to each player's delegate <code>onMoneyChanged</code> a function, which creates a thread,
-     * which changes the String of MoneyDisplay. </n>
+     * <n>This call adds to each player's delegate <code>onMoneyChanged</code> a function which 
+     * changes the String of MoneyDisplay. </n>
      */
     public void initializeDataActualization (PfeileContext context) {
         context.getTurnSystem().getHeadOfCommandTeams().forEach((player) -> {
-            player.onMoneyChanged().registerJava(() -> {
-                Thread x = new Thread(() -> {
-                    setMoney(data.getPurse().numericValue());
-                }, "MoneyDisplayChanger");
-                x.setDaemon(true);
-                x.start();
-            });
+//            Thread t = new Thread(() -> { player.onMoneyChanged().registerJava(() -> {
+//                // A thread is way too overload for such a tiny computation.
+//                setMoney(data.getPurse().numericValue());
+//            }); });
+//            t.setDaemon(true);
+//            t.start();
         });
     }
 

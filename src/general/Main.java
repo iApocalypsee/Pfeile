@@ -17,15 +17,6 @@ import world.TileLike;
 
 import java.awt.*;
 
-/**
- * Hauptklasse mit der Main-Methode und den abstraktesten Objekten unseres Spiels.
- * <p>27.02.2014</p>
- * <ul>
- * <li>Updater hinzugef�gt. Der Updater stellt sicher, dass die Daten von Objekten geupdated werden.</li>
- * </ul>
- *
- * @version 1.3.2014
- */
 public class Main {
 
     // NUR INTIALISIERUNG - WIE WERTE UND VARIABLEN ###############
@@ -75,7 +66,7 @@ public class Main {
 
     private static long programStartTime;
 
-    // DONE WITH ALL VARIABELS;
+    // DONE WITH ALL VARIABLES;
     // MOST IMPORTANT METHODS ####################################
     // ###########################################################
 
@@ -105,6 +96,16 @@ public class Main {
      * Main-Method �ffnet eine neue Instanz von Main: main
      */
     public static void main(String[] arguments) {
+
+        /*
+        final int x = 2 & 3, y = 3 & 3, z = 4 & 3, a = 5 & 3, b = 6 & 3, c = -2 & 3;
+        System.out.println("2 & 3 = " + x);
+        System.out.println("3 & 3 = " + y);
+        System.out.println("4 & 3 = " + z);
+        System.out.println("5 & 3 = " + a);
+        System.out.println("6 & 3 = " + b);
+        System.out.println("-2 & 3 = " + c);
+        */
 
         programStartTime = System.currentTimeMillis();
 
@@ -195,13 +196,8 @@ public class Main {
 
     // ############ RUN GAME
 
-    /**
-     * Hier laeuft das Spiel nach allen Insizialisierungen
-     */
     private void runGame() {
-
         GameLoop.run(1 / 60.0);
-
     }
 
     // #########################################################

@@ -51,6 +51,7 @@ class ShopWindow(articles: Seq[Article], val representing: TraderLike) extends D
   // Who knows if something has changed?
   // See VisualArticleAttributes.filterArticlesFunction(...)
   window.onOpened += { () =>
+    parentComponent.setVisible(true)
     rebuildArticleComponents()
   }
 

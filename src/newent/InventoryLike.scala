@@ -104,18 +104,6 @@ class DefaultInventory extends InventoryLike {
   */
 
 
-
-  /*
-   DOES THE FOLLOWING CODE WORK?
-
-  override def removeAllInstanceOf(f: Item): Unit = {
-     for (i <- 0 until _list.size) {
-        if (_list.apply(i).isInstanceOf[f.type])
-           _list.remove(i)
-     }
-  }
-  */
-
   override def remove(f: (Item) => Boolean, amount: Int): Seq[Item] = {
     var removeCount = 0
     val filtered = _list.filterNot(item => {

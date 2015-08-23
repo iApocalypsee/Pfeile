@@ -14,7 +14,6 @@ import player.shop.ShopCentral$;
 import player.shop.ShopWindow;
 import player.weapon.AttackDrawer;
 import player.weapon.arrow.ImpactDrawerHandler;
-import scala.runtime.BoxedUnit;
 import world.VisualMap;
 
 import java.awt.*;
@@ -62,6 +61,10 @@ public class GameScreen extends Screen implements FrameContainer {
 
     private MoneyDisplay moneyDisplay;
 
+	/**
+	 * Frame containing every item the standard trader has to offer.
+	 * Gets drawn through the <tt>frameContainerObject</tt>.
+	 */
     private ShopWindow shopWindow;
 
 	private VisualMap map = null;
@@ -78,6 +81,8 @@ public class GameScreen extends Screen implements FrameContainer {
 	 */
 	private GameScreen() {
 		super(GameScreen.SCREEN_NAME, GameScreen.SCREEN_INDEX);
+
+		setPreprocessedDrawingEnabled(false);
 
 		onScreenEnter.registerJava(() -> {
             if (map == null) {
@@ -180,7 +185,7 @@ public class GameScreen extends Screen implements FrameContainer {
 		//visualEntity.draw(g);
         attackDrawer.draw(g);
         ImpactDrawerHandler.draw(g);
-		// Zeichnet die Welt und den UserInterface, der den Player dargestellt
+
 		endTurnButton.draw(g);
 		shootButton.draw(g);
 		inventoryButton.draw(g);

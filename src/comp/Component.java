@@ -33,18 +33,37 @@ public abstract class Component implements IComponent {
 	private Screen backingScreen;
 
 	/**
-	 * Das umfassende Polygon um die Komponente.
+	 * The current bounds of the component.
+	 * Recomputed on demand. The recompute flag is set when any positional data changes.
 	 */
 	private Shape bounds;
 
+	/**
+	 * The shape from which the component derives its bounds.
+	 */
 	private Shape srcShape;
 
-	private boolean isTransformationChangedSince = false;
+	/**
+	 * The recompute flag for the bounds.
+	 * @see Component#bounds
+	 */
+	private boolean transformationChangedSince = false;
 
+	/**
+	 * Determines whether this component's bounds should recalculate every
+	 * time the component is transformed. However, this flag does not prevent
+	 * the {@link Component#onTransformed} delegate to be called.
+	 */
+	private boolean boundsRecalculationIssued = true;
+
+	/**
+	 * Object taking care of aligning the bounds to any new positional data given to the
+	 * component.
+	 */
 	private final Transformation2D transformation = new Transformation2D();
 
 	/**
-	 * Der Name des Steuerelements. Wird hauptsächlich für {@link Component#children} benötigt.
+	 * The name of the component. Useful for debugging and necessary for the parent mechanism.
 	 */
 	private String name;
 
@@ -58,47 +77,48 @@ public abstract class Component implements IComponent {
 	private boolean acceptingInput = true;
 
 	/**
-	 * Zeigt an, ob das Steuerelement sichtbar ist.
-	 * Wenn nicht, akzeptiert es automatisch auch keinen Input.
+	 * Indicates whether this component is visible.
+	 * If it is not, the component should not accept input.
 	 */
 	private boolean visible = true;
 
 	/**
-	 * Die Liste der MouseListener.
+	 * Self-explanatory.
 	 */
 	private java.util.List<MouseListener> mouseListeners;
 
 	/**
-	 * Die Liste der MouseMotionListener.
+	 * Self-explanatory.
 	 */
 	private java.util.List<MouseMotionListener> mouseMotionListeners;
 
 	/**
-	 * Die Liste der MouseWheelListener.
+	 * Self-explanatory.
 	 */
 	private java.util.List<MouseWheelListener> mouseWheelListeners = new LinkedList<>();
 
 	/**
-	 * Die Steuerelemente, die von diesem hier abhängen. Die Koordinatenangaben der
-	 * untergeordneten Elemente werden relativ zu diesem hier angegeben.
+	 * Saves components that are children of <tt>this</tt>. Duplicate names
+	 * are not allowed; if a component tries to hook into another component having another component
+	 * with the same name, the new component overrides the old one.
 	 */
 	private Map<String, Component> children = new HashMap<>();
 
 	/**
-	 * Die Farbgebung innen und außen.
+	 * Object for coloring borders (if you were to paint them).
 	 */
 	private Border border;
 
 	/**
 	 * The parent of the component, if any.
-	 * Coordinates are given according to the parent. If the parent is null, the corodinates
+	 * Coordinates are specified according to the parent. If the parent is null, the coordinates
 	 * are absolute.
 	 */
 	private Component parent = null;
 
 	/**
-	 * Ability of the component to draw additional things that belong to the component
-	 * but don't have to belong to the boundaries of the component.
+	 * Ability of the component to draw additional things that should be displayed alongside the component
+	 * but doesn't belong to the component itself.
 	 */
 	private Function1<Graphics2D, Unit> additionalDrawing = null;
 
@@ -149,7 +169,7 @@ public abstract class Component implements IComponent {
 	public static final Insets STD_INSETS = new Insets(7, 7, 10, 7);
 
 	/**
-	 * Erstellt eine Component, deren Daten nicht bekannt sind.
+	 * Creates an empty component with an empty rectangle as a source shape.
 	 */
 	public Component() {
 		mouseListeners = new LinkedList<>();
@@ -165,6 +185,13 @@ public abstract class Component implements IComponent {
 			public void mouseMoved(MouseEvent arg0) {
 				if (status != ComponentStatus.MOUSE) {
 					status = ComponentStatus.MOUSE;
+				}
+			}
+
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				if(status != ComponentStatus.CLICK) {
+					status = ComponentStatus.CLICK;
 				}
 			}
 		});
@@ -207,7 +234,9 @@ public abstract class Component implements IComponent {
 		setName(Integer.toString(this.hashCode()));
 
 		transformation.onTranslated().registerJava((TranslationChange t) -> {
-			isTransformationChangedSince = true;
+			if(boundsRecalculationIssued) {
+				transformationChangedSince = true;
+			}
 			children.values().forEach(component -> {
 				final Vector2 diffTranslation = t.newTranslation().sub(t.oldTranslation());
 				component.move(((int) diffTranslation.x()), ((int) diffTranslation.y()));
@@ -216,12 +245,16 @@ public abstract class Component implements IComponent {
 		});
 
 		transformation.onScaled().registerJava((ScaleChange t) -> {
-			isTransformationChangedSince = true;
+			if(boundsRecalculationIssued) {
+				transformationChangedSince = true;
+			}
 			onTransformed.apply(t);
 		});
 
 		transformation.onRotated().registerJava((RotationChange t) -> {
-			isTransformationChangedSince = true;
+			if(boundsRecalculationIssued) {
+				transformationChangedSince = true;
+			}
 			onTransformed.apply(t);
 		});
 	}
@@ -249,15 +282,21 @@ public abstract class Component implements IComponent {
 	}
 
 	public Component(Vector2 initialPosition, Shape srcShape, Screen backing) {
-		super();
+		this();
 		setSourceShape(srcShape);
 		transformation.translate(initialPosition.x(), initialPosition.y());
 		setBackingScreen(backing);
 	}
 
+	private boolean isBoundsRecomputeNeeded() {
+		return /*visible && */(transformationChangedSince || bounds == null) && boundsRecalculationIssued;
+	}
+
     public final void drawChecked(Graphics2D g) {
         if(isVisible()) {
             draw(g);
+
+	        children.forEach((key, component) -> component.drawChecked(g));
 
             if(additionalDrawing != null) {
                 additionalDrawing.apply(g);
@@ -401,24 +440,18 @@ public abstract class Component implements IComponent {
 		setLocation(x + parent.getSimplifiedBounds().x, y + parent.getSimplifiedBounds().y);
 	}
 
-	public void move(int x, int y) {
-		setLocation(getX() + x, getY() + y);
+	public void move(int dx, int dy) {
+		setLocation(getX() + dx, getY() + dy);
 	}
 
-	public void move(Point p) {
-		move(p.x, p.y);
+	public void move(Point dp) {
+		move(dp.x, dp.y);
 	}
 
-	/**
-	 * @return the width
-	 */
 	public int getWidth() {
 		return (int) getBounds().getBounds2D().getWidth();
 	}
 
-	/**
-	 * @param width the width to set
-	 */
 	public void setWidth(int width) {
         if(width == 0) throw new IllegalArgumentException("Illegal width of 0: Shape implosion");
 		double scaleFactor = width / getPreciseRectangle().getWidth();
@@ -479,30 +512,64 @@ public abstract class Component implements IComponent {
 		onResize.apply(new Vector2(getWidth(), height));
 	}
 
+	protected void forceBoundsRecalculation() {
+		bounds = generatedBounds();
+	}
+
+	protected final Shape generatedBounds() {
+		return transformation.transformOriginal(srcShape);
+	}
+
 	/**
-	 * @return the bounds
+	 * Returns the current bounds for the component.
+	 * The bounds are derived from the component's source shape and its transformation.
+	 * However, it is possible to set special bounds for the component, which overrides the
+	 * source shape and transform automatism provided by the component, allowing for arbitrary
+	 * optimizations.
+	 * @return The current component's bounds.
 	 */
 	public Shape getBounds() {
-		if(isTransformationChangedSince || bounds == null) {
-			bounds = transformation.transformOriginal(srcShape);
-		}
+		forceBoundsRecalculation();
+		if(bounds == null) throw new IllegalStateException("Component with no bounds");
 		return bounds;
+	}
+
+	/**
+	 * Sets the bounds for this component.
+	 * When new, custom bounds are set for this component, the component assumes that
+	 * the caller does not want it to recalculate bounds upon any transformation done to it.
+	 * However, if the new bounds are set to be <tt>null</tt>, the component restores its behavior
+	 * of automatically calculating new bounds on demand.
+	 * @param bounds The new bounds to set for the component.
+	 */
+	public void setBounds(Shape bounds) {
+		this.bounds = bounds;
+		boundsRecalculationIssued = bounds == null;
+		transformationChangedSince = bounds == null;
+	}
+
+	public boolean isBoundsRecalculationIssued() {
+		return boundsRecalculationIssued;
+	}
+
+	public void setBoundsRecalculationIssued(boolean boundsRecalculationIssued) {
+		this.boundsRecalculationIssued = boundsRecalculationIssued;
 	}
 
 	public Shape getSourceShape() {
 		return srcShape;
 	}
 
-	public void setSourceShape(Shape srcShape) {
-		if(srcShape == null) throw new NullPointerException();
+	public void setSourceShape(Shape srcShapeParam) {
+		if(srcShapeParam == null) throw new NullPointerException();
 
-		this.srcShape = srcShape;
+		this.srcShape = srcShapeParam;
 
 		// Invalidate old bounds, very likely to be wrong now.
-		bounds = null;
+		transformationChangedSince = true;
 
 		transformation.resetTransformation();
-		transformation.setTranslationWithoutSideEffect(srcShape.getBounds2D().getWidth() / 2, srcShape.getBounds2D().getHeight() / 2);
+		transformation.setTranslationWithoutSideEffect(srcShapeParam.getBounds2D().getWidth() / 2, srcShapeParam.getBounds2D().getHeight() / 2);
 	}
 
 	/**
@@ -593,12 +660,17 @@ public abstract class Component implements IComponent {
 		visible = vvvvvv;
         children.values().forEach(component -> component.setVisible(vvvvvv));
 		if (vvvvvv) {
+			if(bounds == null) forceBoundsRecalculation();
 			acceptInput();
 		} else {
 			declineInput();
 		}
 	}
 
+	/**
+	 * Gets an unmodifiable view of the component's current children map
+	 * @return The children of this component.
+	 */
     public Map<String, Component> getChildren() {
         return Collections.unmodifiableMap(children);
     }
@@ -610,10 +682,10 @@ public abstract class Component implements IComponent {
 	/**
 	 * Setzt den Namen neu.
 	 *
-	 * @param name Der neue Name der Component.
+	 * @param nameParam Der neue Name der Component.
 	 */
-	public void setName(String name) {
-		this.name = getClass().getName() + ": \"" + name + "\"";
+	public void setName(String nameParam) {
+		this.name = getClass().getName() + ": \"" + nameParam + "\"";
 	}
 
 	/**
@@ -675,7 +747,7 @@ public abstract class Component implements IComponent {
 
 	protected void reproduceTransformation(Transformation2D transformation) {
 		Transformation2D.applySilently(this, transformation);
-		isTransformationChangedSince = true;
+		transformationChangedSince = true;
 	}
 
 	public void resetPosition() {

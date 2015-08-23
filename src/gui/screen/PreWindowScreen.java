@@ -229,12 +229,11 @@ public class PreWindowScreen extends Screen {
             }
         });
 
-        selectorComboBox.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased (MouseEvent e) {
-                triggerSelectorComboBox();
-            }
-        });
+        selectorComboBox.registerOnItemSelected(this::triggerSelectorComboBoxByIndex);
+
+        forcePullFront(confirmButton);
+        forcePullFront(readyButton);
+        forcePullFront(standardButton);
     }
 
     /**
@@ -595,7 +594,11 @@ public class PreWindowScreen extends Screen {
 
     /** this triggers the comboBox for securing, that only the necessary components are active */
     private void triggerSelectorComboBox () {
-        switch (selectorComboBox.getSelectedIndex()) {
+        triggerSelectorComboBoxByIndex(selectorComboBox.getSelectedIndex());
+    }
+
+    private void triggerSelectorComboBoxByIndex(int index) {
+        switch (index) {
             case 0: { // Computerstärke
                 setSelectingComponentsNotVisible();
                 boxSelectKI.setVisible(true);

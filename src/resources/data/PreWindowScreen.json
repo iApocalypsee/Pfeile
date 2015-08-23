@@ -1,0 +1,78 @@
+{
+  "ownership": "Pfeile team",
+
+  "defaultSettings": {
+    "en_EN": "Apply default settings",
+    "de_DE": "Standardeinstellung"
+  },
+
+  "aiStrength": {
+    "en_EN": "AI strength",
+    "de_DE": "KI-Stärke"
+  },
+
+  "initialMoney": {
+    "en_EN": "Initial money",
+    "de_DE": "Startgeld"
+  },
+
+  "moneyPerTurn": {
+    "en_EN": "Money per turn",
+    "de_DE": "Geld pro Runde"
+  },
+
+  "arrowAmountFreeSet": {
+    "en_EN": "Selectable amount of arrows",
+    "de_DE": "Anzahl der wählbaren Pfeile"
+  },
+
+  "arrowAmountPreSet": {
+    "en_EN": "Selectable amount of arrows before",
+    "de_DE": "Anzahl der vorher wählbaren Pfeile"
+  },
+
+  "maxLife": {
+    "en_EN": "Maximum life",
+    "de_DE": "Maximales Leben",
+  },
+
+  "lifeRegen": {
+    "en_EN": "Life regeneration",
+    "de_DE": "Lebensregeneration"
+  }
+
+  "dmgScale": {
+    "en_EN": "Damage amplification",
+    "de_DE": "Schadensmultiplikator"
+  },
+
+  "turnsPerRound": {
+    "en_EN": "Turns per round",
+    "de_DE": "Züge pro Runde"
+  },
+
+  "timePerTurn": {
+    "en_EN": "Time per turn",
+    "de_DE": "Zeit pro Zug"
+  },
+
+  "handicap": {
+    "en_EN": "Handicap",
+    "de_DE": "Handicap"
+  },
+
+  "worldsize": {
+    "en_EN": "World size",
+    "de_DE": "Weltgröße"
+  },
+
+  "label_strategyGame": {
+    "en_EN": "A small strategy game",
+    "de_DE": "Ein kleines Strategiespiel"
+  },
+
+  "label_authors": {
+    "en_EN": "by Josip Palavra and Daniel Schmaus",
+    "de_DE": "von Josip Palavra und Daniel Schmaus"
+  }
+}

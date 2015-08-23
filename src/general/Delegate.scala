@@ -167,11 +167,13 @@ object Delegate {
       checkRecursion()
       if(processing) return
       processing = true
-      callbacks foreach {
+      try callbacks foreach {
         case pf: PartialFunction[In, Any] => if (pf.isDefinedAt(arg)) pf(arg) else throw new MatchError(this)
         case reg_f: ((In) => Any) => reg_f(arg)
       }
-      processing = false
+      finally {
+        processing = false
+      }
     }
 
     def registerJava(jf: Consumer[In]) = this += (x => jf.accept(x))
@@ -211,10 +213,12 @@ object Delegate {
       checkRecursion()
       if(processing) return
       processing = true
-      callbacks foreach {
-        _()
+      try callbacks foreach {
+          _()
+        }
+      finally {
+        processing = false
       }
-      processing = false
     }
 
     def registerJava(jf: ProcFun0): Unit = this += ProcFun0.toScalaFunction(jf)

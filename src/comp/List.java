@@ -72,6 +72,12 @@ public class List extends Component {
 		return Collections.unmodifiableList(items);
 	}
 
+	public void setItems(java.util.List<String> items) {
+		this.items = items;
+		listItems = mapToLabels(items);
+		realignLabels();
+	}
+
 	/**
 	 * Puts the specified text entry at the given index.
 	 * @param text The text to add to the list as a new entry.
@@ -91,9 +97,9 @@ public class List extends Component {
 	private java.util.List<Label> mapToLabels(java.util.List<String> stringList) {
 		java.util.List<Label> labels = new LinkedList<>();
 		for (int i = 0; i < stringList.size(); i++) {
-            final Label build = new Label(getX(), getY(), getBackingScreen(), stringList.get(i)) {
+            final Label build = new Label(0, 0, getBackingScreen(), stringList.get(i));
 
-            };
+			build.setParent(this);
 
             int previousLabelsTotalHeight = 0;
             for(int previousLabelsIterator = 0; previousLabelsIterator < i; previousLabelsIterator++) {
@@ -102,8 +108,6 @@ public class List extends Component {
 
 			// I need to set the position in the correct order.
 			build.move(STD_INSETS.right, STD_INSETS.top + previousLabelsTotalHeight);
-
-			// The loop wants that.
 
 			// If the label is inside the boundaries of the list, then it should be visible...
 			build.setVisible((build.getY() + build.getHeight()) < (this.getY() + this.getHeight()));
@@ -117,6 +121,8 @@ public class List extends Component {
 					onItemSelected.apply(selectedIndex);
 				}
 			});
+
+			getBackingScreen().putAfter(this, build);
 
 			labels.add(build);
 		}
@@ -143,7 +149,7 @@ public class List extends Component {
             }
 
             final Label currentLabel = listItems.get(i);
-            currentLabel.setY(this.getY() + previousLabelsTotalHeight);
+            currentLabel.setRelativeY(previousLabelsTotalHeight);
 
         }
     }
@@ -313,12 +319,10 @@ public class List extends Component {
 	 */
 	@Override
 	public void acceptInput() {
-
+		super.acceptInput();
 		for (Label label : listItems) {
 			label.acceptInput();
 		}
-		
-		super.acceptInput(); 
 	}
 	
 	/**
@@ -396,4 +400,9 @@ public class List extends Component {
     public boolean contains (String element) {
         return items.contains(element);
     }
+
+	@Override
+	public String toString() {
+		return "comp.List{" + "items=" + items + ", selectedIndex=" + selectedIndex + ", name=" + getName() + '}';
+	}
 }

@@ -3,6 +3,7 @@ package comp
 import java.awt._
 import java.awt.event.{MouseAdapter, MouseEvent}
 import java.util.Collections
+import java.util.concurrent.CopyOnWriteArrayList
 
 import general.property.StaticProperty
 import general.{Delegate, LogFacility}
@@ -39,7 +40,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
           "anymore. Ignoring component in drawing process...", "Warning")
       }
     }
-    comps = JavaConversions.collectionAsScalaIterable(Collections.unmodifiableCollection(getChildren.values())).toSeq
+    comps = new CopyOnWriteArrayList[Component](getChildren.values())
   }
 
   // Check if the backing screen can actually hold frames (ability supplied by FrameContainer trait)
@@ -65,9 +66,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     */
   val background: StaticProperty[ImageLike] = new StaticProperty(new SolidColor(FrameStyle.DefaultBackgroundColor))
 
-  @volatile private var comps = Seq.empty[Component]
-
-  private def syncComps = synchronized(comps)
+  @volatile private var comps = new CopyOnWriteArrayList[Component]
 
   /** Called when the internal frame's close button has been pressed. */
   val onClosed = Delegate.createZeroArity
@@ -136,9 +135,11 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
 
     background.get.drawImage(g, getX, getY, getWidth, getHeight)
 
-    synchronized(for (comp <- syncComps) {
+    val it = comps.iterator()
+    while(it.hasNext) {
+      val comp = it.next()
       comp.drawChecked(g)
-    })
+    }
 
     closeButton.draw(g)
   }
@@ -165,7 +166,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
   def add(c: Component) = this << c
 
   /** The containers that are contained by the frame. */
-  def containedComponents = comps.toList
+  def containedComponents = JavaConversions.asScalaBuffer(comps).toList
 
   // Singleton instance object, represents the top bar which "holds" the close button.
   private object ToplineBar extends Component with MouseDragDetector {

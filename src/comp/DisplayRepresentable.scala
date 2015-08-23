@@ -1,5 +1,7 @@
 package comp
 
+import general.traitarg
+
 /** An object that can be represented by a [[comp.IComponent]] object.
   *
   * The component of the [[comp.DisplayRepresentable]] object can be changed easily by just calling
@@ -14,16 +16,17 @@ trait DisplayRepresentable {
   def component: Component = {
     // Lazy initialization of the component, because some components rely
     // on data that is initiialized maybe afterwards.
-    if(_component eq null) {
+    if(_component == null) {
       val start = startComponent
-      require(start ne null)
+      require(start != null)
       _component = start
     }
     _component
   }
+
   /** Sets the representing component. */
   def component_=(a: Component) = {
-    require(a ne null)
+    require(a != null)
     _component = a
   }
 
@@ -36,7 +39,7 @@ trait DisplayRepresentable {
     * The start component must not be null at first, else it will throw a [[java.lang.IllegalArgumentException]].
     * @return A component object which the representable object uses first.
     */
-  protected def startComponent: Component
+  @traitarg protected def startComponent: Component
 
 }
 

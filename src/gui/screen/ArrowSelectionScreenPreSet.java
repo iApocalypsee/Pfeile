@@ -1,7 +1,7 @@
 package gui.screen;
 
+import comp.*;
 import comp.Button;
-import comp.ConfirmDialog;
 import comp.Label;
 import comp.List;
 import general.LogFacility;
@@ -76,7 +76,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
     /** position of <code>g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y")</code> */
     private Point fontSmallPosition;
 
-    /** the activePlayer */
+    /** The player currently selecting his set of arrows. */
     private Player activePlayer;
 
     /**
@@ -85,6 +85,8 @@ public class ArrowSelectionScreenPreSet extends Screen {
      */
     private ArrowSelectionScreenPreSet() {
         super(SCREEN_NAME, SCREEN_INDEX);
+
+        //setBackground(new SolidColor(TRANSPARENT_BACKGROUND));
 
         selectedArrows = new LinkedList<>();
         selectedArrows.add("<keine Pfeile>");
@@ -384,6 +386,10 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
     @Override
     public void draw(Graphics2D g) {
+
+        super.draw(g);
+        // drawing the background and the "Pfeile"-slogan
+
         g.setColor(colorBig);
         g.setFont(fontBig);
         g.drawString("Pfeile", fontBigPosition.x, fontBigPosition.y);
@@ -393,6 +399,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
         g.setColor(colorSmall);
         g.setFont(fontSmall);
         g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y);
+
 
         // resetting the font and draw the rest
         g.setFont(comp.Component.STD_FONT);
@@ -405,5 +412,6 @@ public class ArrowSelectionScreenPreSet extends Screen {
         readyButton.draw(g);
         remainingArrows.draw(g);
         confirmDialog.draw(g);
+
     }
 }

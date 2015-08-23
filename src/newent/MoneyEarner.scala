@@ -1,6 +1,6 @@
 package newent
 
-import general.{Delegate, Property}
+import general.{ScalaUtil, traitarg, Delegate, Property}
 import player.item._
 import player.item.coin._
 
@@ -31,7 +31,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
     */
   @BeanProperty val account = new Transactions
   
-  //<editor-fold desc='Money holding'>
+  //<editor-fold desc="Money holding">
 
   /**
     * Singleton managing the money of this object.
@@ -168,12 +168,11 @@ trait MoneyEarner extends Entity with InventoryEntity {
       mineAssets()
     }
 
-     override def toString: String = "Purse (of " + name + ")"
   }
 
   //</editor-fold>
 
-  //<editor-fold desc='Monetary obligation system'>
+  //<editor-fold desc="Monetary obligation system">
 
   /**
     * Class that keeps track of the money earner's spendings and savings.
@@ -245,14 +244,14 @@ trait MoneyEarner extends Entity with InventoryEntity {
 
   //</editor-fold>
 
-  //<editor-fold desc='MoneyEarner trait arguments'>
+  //<editor-fold desc="MoneyEarner trait arguments">
 
    override def toString: String = "MoneyEarner: " + name
 
    /** The initial gold per turn amount that the earner gets. __Must not be below 0__. */
-  protected def initialMoneyPerTurn: Int
+  @traitarg protected def initialMoneyPerTurn: Int
   /** The initial amount of gold that the earner gets. __Must not be below 0__. */
-  protected def initialMoney: Int
+  @traitarg protected def initialMoney: Int
 
   //</editor-fold>
 

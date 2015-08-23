@@ -4,7 +4,6 @@ import comp.Button;
 import comp.Component;
 import comp.List;
 import comp.WarningMessage;
-import general.JavaInterop;
 import general.Main;
 import newent.InventoryLike;
 import player.item.EquippableItem;
@@ -13,14 +12,11 @@ import player.item.coin.Coin;
 import player.item.coin.CoinHelper;
 import player.item.potion.Potion;
 import player.weapon.arrow.AbstractArrow;
-import scala.Function1;
 import scala.Tuple2;
-import scala.runtime.BoxedUnit;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -75,18 +71,16 @@ public class InventoryScreen extends Screen {
         inventoryList.setVisible(true);
 
         inventoryList.onItemSelected.registerJava(selectedIndex -> {
+            final Tuple2<java.util.List<String>, java.util.List<Item>> items = getItems();
+
+            // Are these three lines of code even necessary? I think that this should be
+            // applied by default when no item is to be displayed.
             String selectedName = inventoryList.getItems().get(selectedIndex);
             if (selectedName.equals("<keine Items>"))
                 selectedName = "<Item auswählen>";
-            selectedItem.setText(selectedName);
 
-            InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
-            for (Item item : inventory.javaItems()) {
-                if (selectedItem.getText().equals(item.getName())) {
-                    selectedItem.iconify(item.getImage());
-                    break;
-                }
-            }
+            selectedItem.setText(selectedName);
+            selectedItem.iconify(items._2().get(selectedIndex).getImage());
         });
 
         inventoryList.acceptInput();
@@ -143,16 +137,15 @@ public class InventoryScreen extends Screen {
         });
 
         onScreenEnter.registerJava(() -> {
-            Tuple2<java.util.List<String>, java.util.List<BufferedImage>> items = getItems();
+            final Tuple2<java.util.List<String>, java.util.List<Item>> items = getItems();
 
             // creating a new List the
-            inventoryList = new List(inventoryList.getX(), inventoryList.getY(), inventoryList.getWidth(), inventoryList.getHeight(),
-                    InventoryScreen.this, items._1());
+            inventoryList.setItems(items._1());
 
             // iconify the list
             for (int i = 0; i < items._2().size(); i++) {
                 if (items._2().get(i) != null)
-                    inventoryList.iconify(i, items._2().get(i));
+                    inventoryList.iconify(i, items._2().get(i).getImage());
             }
 
             selectedItem.setText("<Item auswählen>");
@@ -164,16 +157,15 @@ public class InventoryScreen extends Screen {
     }
 
     /**
-     * Returns a tuple with the list of Strings containing every name and a list of BufferedImage containg the image
-     * of the items.
-     * No arrows are added to the list.
+     * Returns a tuple with a <tt>List&lt;String&gt;</tt> containing every name and the associated item
+     * at the same index in the other list. <b>No arrows are being added to the list.</b>
      *
-     * @return a <code>scala.Tuple2</code> containing a <code></coe>LinkedList<String></code> for every name of an item
-     *              and a <code>LinkedList<BufferedImage></code> containing the equivalent images of the items.
+     * @return a <code>scala.Tuple2</code> containing a string list with every item's name
+     *              and an Item list containing the associated items.
      */
-    public scala.Tuple2<java.util.List<String>, java.util.List<BufferedImage>> getItems () {
+    public scala.Tuple2<java.util.List<String>, java.util.List<Item>> getItems () {
         java.util.List<String> itemList = new LinkedList<>();
-        java.util.List<BufferedImage> imageList = new LinkedList<>();
+        java.util.List<Item> realItemObjList = new LinkedList<>();
         java.util.LinkedList<Coin> coins = new LinkedList<>();
 
         InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
@@ -183,8 +175,8 @@ public class InventoryScreen extends Screen {
                 if (!(item instanceof Coin)) {
                     // the name
                     itemList.add(item.getName());
-                    // the image
-                    imageList.add(item.getImage());
+                    // Not the image, the item object itself is needed!
+                    realItemObjList.add(item);
                 } else {
                     // coins are added to the list later
                     coins.add((Coin) item);
@@ -197,7 +189,7 @@ public class InventoryScreen extends Screen {
             for (java.util.List<Coin> aCoinList : coinList) {
                 if (!aCoinList.isEmpty()) {
                     itemList.add(aCoinList.get(0).getName() + ": " + aCoinList.size());
-                    imageList.add(aCoinList.get(0).getImage());
+                    realItemObjList.add(aCoinList.get(0));
                 }
             }
         }
@@ -205,7 +197,7 @@ public class InventoryScreen extends Screen {
         if (itemList.size() == 0)
             itemList.add("<keine Items>");
 
-        return new Tuple2<>(itemList, imageList);
+        return new Tuple2<>(itemList, realItemObjList);
     }
 
     @Override

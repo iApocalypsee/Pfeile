@@ -59,7 +59,7 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
     *
     * @return <code>JavaConversions.seqAsJavaList(teams().apply())</code>
     */
-  def getTeams = JavaConversions.seqAsJavaList(teams.apply())
+  def getTeams = JavaConversions.seqAsJavaList(teams())
 
   /**
     * The list of teams is searched for the team of the active player.
@@ -68,11 +68,9 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
     */
   def getTeamOfActivePlayer: CommandTeam = {
     val activePlayer = Main.getContext.getActivePlayer
-    teams.apply().foreach { team: Team =>
-      if (team.isInTeam(activePlayer))
-        return team.asInstanceOf[CommandTeam]
+    teams().collect({case x: CommandTeam => x}).find(team => team.isInTeam(activePlayer)) getOrElse {
+      throw new RuntimeException("The team of the active player " + activePlayer.name + " could not be found!")
     }
-    throw new RuntimeException("The team of the active player " + activePlayer.name + " could not be found!")
   }
 
   def getCommandTeams: util.ArrayList[CommandTeam] = {

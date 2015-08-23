@@ -13,12 +13,42 @@ import world.WorldLike
   */
 class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
-  import general.PfeileContext._
+  //<editor-fold desc="Events">
 
+  /**
+    * Called when the world attribute has been changed.
+    */
+  val onWorldSwapped = Delegate.create[SwapEvent[WorldLike]]
+
+  /**
+    * Called, when TimeClock needs to start to run; this means at leaving LoadingWorldScreen.
+    * TODO Should be just a callback and not a separate event (see above: "...this means at leaving LoadingWorldScreen")
+    */
+  val onStartRunningTimeClock = Delegate.createZeroArity
+
+  /**
+    * Called when the active player changes.
+    */
+  val onActivePlayerChanged = Delegate.create[SwapEvent[Player]]
+
+  //</editor-fold>
+
+  //<editor-fold desc="Game data">
+
+  /**
+    * The player that is currently in control of the computer running this game.
+    */
   private var _activePlayer: Player = null
-  private var _world: WorldLike = null
-  private var _stopwatchThread: Thread = null
 
+  /**
+    * The world which is currently loaded in.
+    */
+  private var _world: WorldLike = null
+
+  //</editor-fold>
+
+  // TODO: Thread belongs to stopwatch, should be moved to class Stopwatch/Timeclock/whathaveyou
+  private var _stopwatchThread: Thread = null
   private lazy val _lazyTimeObj: TimeClock = {
     val ret = new TimeClock(this)
     _stopwatchThread = new Thread(ret)
@@ -32,23 +62,16 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   }
 
   /**
-    * Called when the world attribute has been changed. <p>
-    * The argument is given as a tuple of two world objects: <p>
-    * The first world is the old world, the second one is the new world.
-    */
-  private[this] val onWorldSwapped = Delegate.create[(WorldLike, WorldLike)]
-
-  /**
     * Object that takes care of the turns.
     */
-  // I know, this line is not readable. Shame on me.
-  // What the long statement after the "=>" sign means is that it is collecting
-  // every player from the EntityManager instance of the world and makes it available
-  // to the TurnSystem instance.
   lazy val turnSystem = {
 
-    // TODO Clear the initialization up a bit. Looks ugly.
-    val turnSystem = new TurnSystem(() => for(p <- world.entities.entityList.collect({case p: Player => p})) yield p.belongsTo.team)
+    val turnSystemTeamList = () => {
+      val players = world.entities.entityList.collect({ case p: Player => p })
+      players.map(player => player.belongsTo.team)
+    }
+
+    val turnSystem = new TurnSystem(turnSystemTeamList)
 
     turnSystem.onTurnGet += {
       case playerTeam: CommandTeam =>
@@ -61,18 +84,19 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     turnSystem.onGlobalTurnCycleEnded += { () =>
 
       // looks weird, but with a static method I can't manage the thread
+      // Edit: Of course you can. Just activate your engineering skills :)
       new AttackingCalculator().arrowsFlying()
 
       // Notify the tiles first that the turn cycle has been completed.
       // Primarily, this for loop is written to update the arrow queues of the tiles.
-      for (y <- 0 until _world.terrain.height) {
-        for (x <- 0 until _world.terrain.width) {
-          val tile = _world.terrain.tileAt(x, y)
-          tile.updateQueues()
-        }
+      for(tile <- world.terrain.tiles) {
+        tile.updateQueues()
       }
+
       // Then the entities.
-      world.entities.entityList.foreach { _.onTurnCycleEnded() }
+      for(entity <- world.entities.entityList) {
+        entity.onTurnCycleEnded()
+      }
 
       values.turnCycleCount += 1
     }
@@ -83,7 +107,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   def getTurnSystem = turnSystem
 
   def activePlayer = _activePlayer
-  def activePlayerOption = optReturn(activePlayer _)
+  def activePlayerOption = Option(world)
   def activePlayer_=(p: Player): Unit = {
     _activePlayer = p
     entitySelection.selectedEntity = p
@@ -93,11 +117,11 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   def setActivePlayer(p: Player) = activePlayer = p
 
   def world = _world
-  def worldOption = optReturn(world _)
+  def worldOption = Option(world)
   def world_=(w: WorldLike): Unit = {
     val old = _world
     _world = w
-    onWorldSwapped((old, w))
+    onWorldSwapped(SwapEvent(old, w))
   }
 
   def getWorld = world
@@ -106,7 +130,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   def getTimeClock = _lazyTimeObj
 
   // need instance WorldLootList after TurnSystem initializing.
-  private lazy val _worldLootList: WorldLootList = new WorldLootList(this)
+  private lazy val _worldLootList = new WorldLootList(this)
 
   /**
     * It's the list of every loot, which is placed somewhere in the world. Use it to draw all loots, or to get a Loot.
@@ -114,13 +138,11 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     */
   def getWorldLootList = _worldLootList
 
-  /** it is called, when TimeClock needs to start to run; this means at leaving LoadingWorldScreen */
-  val onStartRunningTimeClock = Delegate.createZeroArity
 
   /**
     * Access to the current selection of entities.
     */
-  lazy val entitySelection = EntitySelection
+  def entitySelection = EntitySelection
 
   object EntitySelection {
 
@@ -130,7 +152,6 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     def selectedEntity_=(x: Entity): Unit = {
       if (x == null) _selectedEntity = activePlayer
       else _selectedEntity = x
-      //LogFacility.log(s"$selectedEntity selected", "Debug")
     }
 
     def resetSelection(): Unit = {
@@ -233,13 +254,6 @@ object PfeileContext {
     private[PfeileContext] def turnCycleCount_=(a: Int) = _turnCycleCount = a
     /** Describes how many turn cycles have been completed. */
     def getTurnCycleCount = turnCycleCount
-  }
-
-  // Returns an option instead of the direct reference value: None instead of null, Some(obj) instead of obj
-  private def optReturn[A <: AnyRef](f: () => A): Option[A] = {
-    val f_result = f()
-    if (f_result eq null) None
-    else Some(f_result)
   }
 
 }
