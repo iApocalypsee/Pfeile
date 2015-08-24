@@ -95,6 +95,7 @@ public class List extends Component {
 	 * @return A list full of labels ready for use.
 	 */
 	private java.util.List<Label> mapToLabels(java.util.List<String> stringList) {
+        clearOldLabels();
 		java.util.List<Label> labels = new LinkedList<>();
 		for (int i = 0; i < stringList.size(); i++) {
             final Label build = new Label(0, 0, getBackingScreen(), stringList.get(i));
@@ -139,6 +140,11 @@ public class List extends Component {
 
 		return labels;
 	}
+
+    private void clearOldLabels() {
+        listItems.forEach(label -> label.getBackingScreen().remove(label));
+        listItems = Collections.emptyList();
+    }
 
     private void realignLabels() {
         for(int i = 0; i < listItems.size(); i++) {

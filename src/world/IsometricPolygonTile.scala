@@ -1,25 +1,16 @@
 package world
 
-import java.awt.event.{MouseEvent, MouseAdapter}
-import java.awt.geom.Point2D
 import java.awt._
 import java.io.File
 import javax.imageio.ImageIO
-import javax.swing.SwingUtilities
 
-import comp.{RotationChange, Component}
-import general.Main
-import general.property.{PropertyBase, StaticProperty}
-import gui.AdjustableDrawing
+import comp.Component
+import general.property.StaticProperty
 import gui.image.TextureAtlas
-import gui.image.TextureAtlas.AtlasPoint
-import gui.screen.GameScreen
-import newent.pathfinding.Path
-import newent.{MovableEntity, AttackContainer, EntityLike}
-import player.weapon.arrow.{ImpactDrawerHandler, AbstractArrow}
+import newent.{AttackContainer, EntityLike}
+import player.weapon.arrow.{AbstractArrow, ImpactDrawerHandler}
 
 import scala.collection.mutable
-import scala.concurrent.Future
 
 /**
  *
@@ -144,6 +135,11 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
   def color: Color
 
   /**
+    * The texture facility that the tile is using.
+    */
+  def textureAtlas: TextureAtlas
+
+  /**
     * Paints all border lines of the tile in the corresponding color.
     * @param x The color to paint the borders.
     */
@@ -243,7 +239,5 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
   override protected def startComponent: Component = new IsometricPolygonTileComponent(this)
 
   //</editor-fold>
-
-  
 
 }

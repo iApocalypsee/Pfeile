@@ -124,7 +124,7 @@ class IsometricPolygonTileComponent(val isoTile: IsometricPolygonTile) extends C
 
   //<editor-fold desc="Texturing (not used yet)">
 
-  lazy val texture = IsometricPolygonTile.atlas.getTexture(isoTile.getGridX, isoTile.getGridY, getBounds, atlasImageCutPosition).get
+  lazy val texture = isoTile.textureAtlas.getTexture(isoTile.getGridX, isoTile.getGridY, getBounds, atlasImageCutPosition).get
 
   /**
     * For texture atlas: Determines where the upper left corner of the image cut shall be.

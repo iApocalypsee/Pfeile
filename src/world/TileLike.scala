@@ -1,26 +1,14 @@
 package world
 
 import java.awt._
-import java.awt.event.{MouseAdapter, MouseEvent}
-import java.awt.geom.Point2D
 import java.io.File
 import javax.imageio.ImageIO
-import javax.swing.SwingUtilities
 
-import comp.{Component, DisplayRepresentable, RotationChange}
-import general.Main
-import general.property.{PropertyBase, StaticProperty}
-import gui.AdjustableDrawing
+import comp.DisplayRepresentable
 import gui.image.TextureAtlas
-import gui.image.TextureAtlas.AtlasPoint
-import gui.screen.GameScreen
-import newent.pathfinding.Path
-import newent.{AttackContainer, EntityLike, MovableEntity}
-import player.weapon.arrow.{AbstractArrow, ImpactDrawerHandler}
+import newent.{AttackContainer, EntityLike}
 
-import scala.collection.{JavaConversions, mutable}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.collection.JavaConversions
 
 /**
   * Base trait for all tiles.
@@ -88,11 +76,14 @@ class GrassTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends I
 
   override def color = GrassTile.TileColor
 
+  override def textureAtlas = GrassTile.Atlas
+
   override def requiredMovementPoints = 1
 }
 
 object GrassTile {
   val TileColor = new Color(0x1C9618)
+  val Atlas = new TextureAtlas(ImageIO.read(new File("src/resources/gfx/tile/grass.png")))
 }
 
 class SeaTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends IsometricPolygonTile(latticeX,
@@ -100,11 +91,14 @@ class SeaTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends Iso
 
   override def color = SeaTile.TileColor
 
+  override def textureAtlas = SeaTile.Atlas
+
   override def requiredMovementPoints: Int = 10
 }
 
 object SeaTile {
   val TileColor = new Color(0x3555DB)
+  val Atlas = new TextureAtlas(ImageIO.read(new File("src/resources/gfx/tile/ocean.png")))
 }
 
 class CoastTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends IsometricPolygonTile(latticeX, latticeY, terrain) {
@@ -112,10 +106,13 @@ class CoastTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends I
   /** Returns the color that is used to represent the isometric tile. */
   override def color = CoastTile.TileColor
 
+  override def textureAtlas = CoastTile.Atlas
+
   /** The movement points that are required to get on this tile. */
   override def requiredMovementPoints = 10
 }
 
 object CoastTile {
   val TileColor = new Color(0x4865E0)
+  val Atlas = new TextureAtlas(ImageIO.read(new File("src/resources/gfx/tile/ocean.png")))
 }

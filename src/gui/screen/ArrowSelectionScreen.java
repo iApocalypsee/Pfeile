@@ -427,15 +427,7 @@ public class ArrowSelectionScreen extends Screen {
                 arrowList.add("Lichtpfeil " + "[" + arrowsCount[LightArrow.INDEX] + "]");
                 arrowList.add("Schattenpfeil " + "[" + arrowsCount[ShadowArrow.INDEX] + "]");
 
-				inventoryList = new comp.List(inventoryList_PosX, inventoryList_PosY, inventoryList_Width, inventoryList_Height, ArrowSelectionScreen.getInstance(), arrowList);
-				inventoryList.setRoundBorder(true);
-				inventoryList.setVisible(true);
-
-                if (inventoryList.isAcceptingInput()) {
-                    inventoryList.acceptInput();
-                } else {
-                    inventoryList.declineInput();
-                }
+                inventoryList.setItems(arrowList);
             }
         };
         updateThreaded.setDaemon(true);

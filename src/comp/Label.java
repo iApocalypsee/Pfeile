@@ -51,9 +51,6 @@ public class Label extends Component {
         getTransformation().translate(x, y);
         getTransformation().onTransformed().registerJava(transformationEvent -> recalculateInternalData());
 
-        //setWidth(text_bounds.width);
-        //setHeight(text_bounds.height);
-
         declineInput();
         setName("Label " + hashCode());
     }
