@@ -3,9 +3,9 @@ package general
 /**
   * Additional functions that could be helpful sometimes.
   */
-class SeqOp[A] private (from: Seq[A]) {
+class SeqOp[A] private (val from: Seq[A]) extends AnyVal {
   
-  def filterType[B](clazz: Class[B]) = from.filter(_.getClass == clazz).asInstanceOf[Seq[B]]
+  @deprecated def filterType[B](clazz: Class[B]) = from.filter(_.getClass == clazz).asInstanceOf[Seq[B]]
 
 }
 

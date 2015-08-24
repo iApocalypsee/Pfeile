@@ -25,8 +25,8 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Art
   setSourceShape(new Rectangle(-wdiv2, -hdiv2, w, h))
   setParent(shopWindow.window)
 
-  private var imageDrawLocation: Point = null
-  private var imageDrawDimension: Dimension = null
+  private var imageDrawLocation = new Point(0, 0)
+  private var imageDrawDimension = new Dimension(0, 0)
 
   private val cachedItem = article.cachedItem
 
