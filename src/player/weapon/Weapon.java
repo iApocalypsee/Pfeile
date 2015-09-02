@@ -1,6 +1,5 @@
 package player.weapon;
 
-import player.ArmingType;
 import player.armour.Defence;
 import player.item.EquippableItem;
 
@@ -19,7 +18,7 @@ public abstract class Weapon extends EquippableItem implements Defence {
     private float defenceMagic;
 
     /**
-     * creating a new weapon with the defence value <code>0</code> in every {@link player.ArmingType} category.
+     * creating a new weapon with the defence value <code>0</code> in every {@link ArmingType} category.
      *
      * @param name the name of the weapon
      * @param attackVal the attack value of the weapon in the category <code>armingType</code>

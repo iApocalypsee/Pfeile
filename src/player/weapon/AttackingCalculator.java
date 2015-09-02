@@ -5,10 +5,12 @@ import comp.ImageComponent;
 import general.Main;
 import geom.functions.FunctionCollectionEasing;
 import newent.AttackProgress;
+import org.w3c.dom.css.Rect;
 import player.weapon.arrow.AbstractArrow;
 import world.TileLike;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
@@ -149,10 +151,11 @@ public class AttackingCalculator {
                 }
             }
 
+            Rectangle2D boundsArrow = attackingArrow.getComponent().getPreciseRectangle();
+
             // refreshing the tile-position
             TileLike newTile = Main.getContext().getWorld().terrain().findTileJava(
-                    attackingArrow.getComponent().getPreciseRectangle().getCenterX(),
-                    attackingArrow.getComponent().getPreciseRectangle().getCenterY());
+                    boundsArrow.getCenterX(), boundsArrow.getCenterY());
 
             if (newTile != null) {
                 attackingArrow.setGridX(newTile.getGridX());

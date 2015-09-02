@@ -103,9 +103,6 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
 
         // center map
         GameScreen.getInstance().getMap.centerMap(context.getActivePlayer.getGridX, context.getActivePlayer.getGridY)
-
-        // the players have been added to entityList, so this call is valid now
-        PreWindowScreen.correctArrowNumber()
         
         postLoadingCheck()
         isLoaded = true

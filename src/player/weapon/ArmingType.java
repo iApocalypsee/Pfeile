@@ -1,4 +1,4 @@
-package player;
+package player.weapon;
 
 /**
  * The type of weapon or armour value.

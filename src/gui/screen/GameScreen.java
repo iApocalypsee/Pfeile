@@ -3,6 +3,7 @@ package gui.screen;
 import comp.Button;
 import comp.WarningMessage;
 import general.JavaInterop;
+import general.LogFacility;
 import general.Main;
 import general.PfeileContext;
 import gui.FrameContainer;
@@ -13,6 +14,7 @@ import player.shop.ShopCentral$;
 import player.shop.ShopWindow;
 import player.weapon.AttackDrawer;
 import player.weapon.arrow.ImpactDrawerHandler;
+import scala.runtime.BoxedUnit;
 import world.VisualMap;
 
 import java.awt.*;
@@ -114,56 +116,61 @@ public class GameScreen extends Screen implements FrameContainer {
 	 */
 	private void postInit() {
 
-		// Initialisierung der Buttons
-		endTurnButton = new Button(30, Main.getWindowHeight() - 50, this,
-				"End turn");
-		shootButton = new Button(endTurnButton.getX() + endTurnButton.getWidth() + 20,
-                endTurnButton.getY(), this, "Shoot");
-		inventoryButton = new Button(shootButton.getX() + shootButton.getWidth() + 20,
-				shootButton.getY(), this, "Inventar");
-        shopWindowButton = new Button(inventoryButton.getX() + inventoryButton.getWidth() + 20,
-                inventoryButton.getY(), this, "Shop");
+        Thread initThread = new Thread (() -> {
+            // Initialisierung der Buttons
+            endTurnButton = new Button(30, Main.getWindowHeight() - 50, this,
+                    "End turn");
+            shootButton = new Button(endTurnButton.getX() + endTurnButton.getWidth() + 20,
+                    endTurnButton.getY(), this, "Shoot");
+            inventoryButton = new Button(shootButton.getX() + shootButton.getWidth() + 20,
+                    shootButton.getY(), this, "Inventar");
+            shopWindowButton = new Button(inventoryButton.getX() + inventoryButton.getWidth() + 20,
+                    inventoryButton.getY(), this, "Shop");
 
-		endTurnButton.setName("End turn button");
-		shootButton.setName("Shoot button");
-		inventoryButton.setName("Inventory button");
-        shopWindowButton.setName("Shop button");
+            endTurnButton.setName("End turn button");
+            shootButton.setName("Shoot button");
+            inventoryButton.setName("Inventory button");
+            shopWindowButton.setName("Shop button");
 
-        message = new WarningMessage("          ", 80, Main.getWindowHeight() - 95, this);
-        message.setWarningColor(new Color(221, 49, 77));
+            message = new WarningMessage("          ", 80, Main.getWindowHeight() - 95, this);
+            message.setWarningColor(new Color(221, 49, 77));
 
-        moneyDisplay = new MoneyDisplay(Main.getWindowWidth() - 192, Main.getWindowHeight() - 250, this);
-        
-		endTurnButton.addMouseListener(new MouseAdapter() {
+            moneyDisplay = new MoneyDisplay(Main.getWindowWidth() - 192, Main.getWindowHeight() - 250, this);
 
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				Main.getContext().turnSystem().increment();
-			}
+            endTurnButton.addMouseListener(new MouseAdapter() {
 
-		});
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    Main.getContext().turnSystem().increment();
+                }
 
-		shootButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				onLeavingScreen(ArrowSelectionScreen.SCREEN_INDEX);
-			}
-		});
+            });
 
-		inventoryButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased (MouseEvent e) {
-                onLeavingScreen(InventoryScreen.SCREEN_INDEX);
-            }
-        });
+            shootButton.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    onLeavingScreen(ArrowSelectionScreen.SCREEN_INDEX);
+                }
+            });
 
-        shopWindowButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                getShopWindow().parentComponent().setVisible(!shopWindow.parentComponent().isVisible());
-                getShopWindow().getArticleComponents().foreach(JavaInterop.asScala(GameScreen.this::forcePullFront));
-            }
-        });
+            inventoryButton.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseReleased (MouseEvent e) {
+                    onLeavingScreen(InventoryScreen.SCREEN_INDEX);
+                }
+            });
+
+            shopWindowButton.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    getShopWindow().parentComponent().setVisible(!shopWindow.parentComponent().isVisible());
+                    getShopWindow().getArticleComponents().foreach(JavaInterop.asScala(GameScreen.this::forcePullFront));
+                }
+            });
+        }, "GameScreenInitializer");
+        initThread.setDaemon(true);
+        initThread.setPriority(7);
+        initThread.start();
 	}
 
     public ShopWindow getShopWindow() {

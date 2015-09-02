@@ -1,9 +1,9 @@
 package player.armour;
 
-import player.ArmingType;
+import player.weapon.ArmingType;
 
 /**
- * Getter and Setter for defence/armour attributes: {@link player.ArmingType}
+ * Getter and Setter for defence/armour attributes: {@link player.weapon.ArmingType}
  * <p>defenceCutting</p>
  * <p>defenceStabbing</p>
  * <p>defenceMagic</p>

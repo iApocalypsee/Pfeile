@@ -4,7 +4,7 @@ import java.awt.Point
 
 import general._
 import general.io.StageDescriptable
-import gui.screen.{LoadingWorldScreen, ArrowSelectionScreen, GameScreen, WaitingScreen}
+import gui.screen._
 import misc.ItemInitialization
 import newent.Player
 import player.item.ore.{CopperOre, IronOre, OreRegistry}
@@ -96,8 +96,11 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
 
       context.setActivePlayer(act)
 
-      context.world.entities += act
-      context.world.entities += opponent
+      val entityManager = context.world.entities
+      entityManager += act
+      entityManager += opponent
+
+      PreWindowScreen.correctArrowNumber(entityManager.javaEntityList)
 
       // adding Arrows:
       LoadingWorldScreen.getInstance.getAddingArrowList(0).forEach(JavaInterop.asJava((selectedArrow) => {

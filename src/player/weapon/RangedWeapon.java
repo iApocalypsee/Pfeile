@@ -1,7 +1,5 @@
 package player.weapon;
 
-import player.ArmingType;
-
 public abstract class RangedWeapon extends Weapon {
 	
 	/** der Grundwert der Reichweite der Waffe (ggf. innerhalb der ableitenden Klasse noch Wert 'rangeCurrent'*/

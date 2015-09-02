@@ -38,7 +38,7 @@ public class FontLoader {
             return new Font(fontName, Font.PLAIN, (int) size);
 
         Font customFont;
-        InputStream inputStream = null;
+        InputStream inputStream;
         try {
             if (fontType == FontType.TTF)
                 inputStream = FontLoader.class.getClassLoader().getResourceAsStream("resources\\data\\fonts\\" + fontName + ".ttf");

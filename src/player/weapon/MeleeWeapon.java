@@ -1,7 +1,6 @@
 package player.weapon;
 
 import newent.Player;
-import player.ArmingType;
 
 /**
  * @author Josip Palavra
@@ -24,7 +23,7 @@ public abstract class MeleeWeapon extends Weapon {
     }
 
     /**
-     * creating a new weapon with the defence value <code>0</code> in every {@link player.ArmingType} category.
+     * creating a new weapon with the defence value <code>0</code> in every {@link ArmingType} category.
      *
      * @param name       the name of the weapon
      * @param attackVal  the attack value of the weapon in the category <code>armingType</code>

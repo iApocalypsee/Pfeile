@@ -24,6 +24,8 @@ trait StageDescriptable[A] {
   /** The implementation of the stage. */
   protected def executeStageImpl(): A
 
+  override def toString: String = "Stage[" + stageName + "]"
+
   /** Called when the stage execution has been completed. */
   val onStageExecuted = Delegate.create[A]
 
