@@ -7,6 +7,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Spinner
@@ -17,6 +19,7 @@ public class Spinner<T> extends Component {
     private Rectangle downButton, upButton;
     private TextBox valueBox;
     private KeyListener keyListener;
+    private Timer timer;
 
     private static BufferedImage img_downButton, img_upButton;
 
@@ -73,17 +76,50 @@ public class Spinner<T> extends Component {
         upButton.y = upButton.y++;
         downButton.y = downButton.y++;
 
+        timer = new Timer("Spinner Timer", true);
+
         addMouseListener(new MouseAdapter() {
+            TimerTask timerTask;
+            boolean isTaskActive = false;
+
             @Override
             public void mousePressed(MouseEvent e) {
                 if (isAcceptingInput()) {
                     if (downButton.contains(e.getPoint())) {
                         Spinner.this.spinnerModel.previous();
                         valueBox.setEnteredText(Spinner.this.spinnerModel.currentAsString());
+                        timerTask = new TimerTask() {
+                            @Override
+                            public void run () {
+                                Spinner.this.spinnerModel.previous();
+                                valueBox.setEnteredText(Spinner.this.spinnerModel.currentAsString());
+                            }
+                        };
+                        isTaskActive = true;
+
+                        timer.schedule(timerTask, 300, 185);
                     } else if (upButton.contains(e.getPoint())) {
                         Spinner.this.spinnerModel.next();
                         valueBox.setEnteredText(Spinner.this.spinnerModel.currentAsString());
+                        timerTask = new TimerTask() {
+                            @Override
+                            public void run () {
+                                Spinner.this.spinnerModel.next();
+                                valueBox.setEnteredText(Spinner.this.spinnerModel.currentAsString());
+                            }
+                        };
+                        isTaskActive = true;
+
+                        timer.schedule(timerTask, 300, 185);
                     }
+                }
+            }
+
+            @Override
+            public void mouseReleased (MouseEvent e) {
+                if (isTaskActive) {
+                    timer.cancel();
+                    timer = new Timer("Spinner Timer", true);
                 }
             }
         });
