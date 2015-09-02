@@ -59,16 +59,16 @@ public class Spinner<T> extends Component {
         int textBoxWidth_Maximum = Component.getTextBounds(String.valueOf(spinnerModel.getMaximum()), STD_FONT).width;
         int textBoxWidth_Minimum = Component.getTextBounds(String.valueOf(spinnerModel.getMinimum()), STD_FONT).width;
         if (textBoxWidth_Maximum > textBoxWidth_Minimum)
-            valueBox.setWidth(textBoxWidth_Maximum);
+            valueBox.setWidth(textBoxWidth_Maximum + STD_INSETS.left + STD_INSETS.right);
         else
-            valueBox.setWidth(textBoxWidth_Minimum);
+            valueBox.setWidth(textBoxWidth_Minimum + STD_INSETS.left + STD_INSETS.right);
 
         upButton = new Rectangle(valueBox.getX() + valueBox.getWidth(), y + 1,
                 img_upButton.getWidth(), img_upButton.getHeight());
         downButton = new Rectangle(upButton.x, valueBox.getY() + upButton.height,
                 upButton.width, upButton.height);
 
-        setWidth(valueBox.getWidth() + img_downButton.getWidth() + STD_INSETS.left + STD_INSETS.right);
+        setWidth(valueBox.getWidth() + img_downButton.getWidth());
         setHeight(valueBox.getHeight() + 1);
 
         upButton.x = valueBox.getX() + valueBox.getWidth();
@@ -76,7 +76,7 @@ public class Spinner<T> extends Component {
         upButton.y = upButton.y++;
         downButton.y = downButton.y++;
 
-        timer = new Timer("Spinner Timer", true);
+        timer = new Timer("SpinnerScheduler", true);
 
         addMouseListener(new MouseAdapter() {
             TimerTask timerTask;

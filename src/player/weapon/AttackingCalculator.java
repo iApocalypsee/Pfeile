@@ -125,7 +125,7 @@ public class AttackingCalculator {
             double distanceToCover = attackProgress.event().lengthGUI();
 
             while (milliSec < TIME_MULTI / attackingArrow.getSpeed()) {
-                double accuracy = milliSec / (TIME_MULTI / attackingArrow.getSpeed());
+                double accuracy = (milliSec / TIME_MULTI) * attackingArrow.getSpeed();
 
                 double changeInX = FunctionCollectionEasing.quadratic_easing_inOut(
                         distanceToCover * accuracy, 0, posXAimCenter - posXOldCenter, distanceToCover);

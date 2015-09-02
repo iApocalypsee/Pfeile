@@ -64,10 +64,10 @@ public class ItemInitialization {
         Thread x = new Thread("Loot initialization Thread") {
             @Override
             public void run () {
-                new RoundChest(0, 0).getImage();
-                new DefaultChest(0, 0).getImage();
-                new Treasure(0, 0).getImage();
-                new BagOfLoots(0, 0).getImage();
+                new RoundChest(0, 0);
+                new DefaultChest(0, 0);
+                new Treasure(0, 0);
+                new BagOfLoots(0, 0);
                 LogFacility.log("Loot images loaded.", "Info", "initprocess");
             }
         };

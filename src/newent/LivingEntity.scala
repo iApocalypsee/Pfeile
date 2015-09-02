@@ -1,6 +1,7 @@
 package newent
 
 import general.{LogFacility, Main, PfeileContext}
+import gui.screen.GameScreen
 import player.Life
 import player.item.{BagOfLoots, Item}
 import player.weapon.RangedWeapon
@@ -60,11 +61,14 @@ trait LivingEntity extends Entity with AttackContainer {
 
     life.changeLife(-resultingDamage)
 
-    putLootBag()
-
     LogFacility.log(s"Impacting attack: by ${event.aggressor} to " +
       s"${event.target.toString} with ${event.weapon.getName}. " +
       s"[Damage " + rawDamage + " | Defence: " + rawDefense + "]", "Debug", "Attack")
+  }
+
+  life.onDeath += { () =>
+    putLootBag()
+    GameScreen.getInstance().setWarningMessage("Dropped Loot: " + name)
   }
 
   onTurnCycleEnded += { () =>

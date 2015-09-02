@@ -88,13 +88,7 @@ class Player(world: WorldLike,
 
   override def defaultMovementPoints = 4
 
-  override def toString: String = ScalaUtil.stringRepresentation(this, Map(
-    "world" -> world,
-    "name" -> name,
-    "component" -> component,
-    "money" -> purse.numericValue,
-    "inventory" -> inventory
-  ))
+  override def toString: String = name
 
   override protected def startComponent = new PlayerComponent
 

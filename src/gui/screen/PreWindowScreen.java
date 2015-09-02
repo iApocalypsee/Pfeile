@@ -126,8 +126,6 @@ public class PreWindowScreen extends Screen {
     public PreWindowScreen() {
         super(SCREEN_NAME, SCREEN_INDEX);
 
-        setBoundsDrawEnabled(true);
-
         try {
             test_image = new ImageComponent(900, 400, ImageIO.read(new File("src/resources/gfx/buildings/barracks.png")), this);
         } catch (IOException e) {

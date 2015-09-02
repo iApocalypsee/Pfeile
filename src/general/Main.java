@@ -4,15 +4,15 @@ import akka.actor.ActorSystem;
 import animation.SoundPool;
 import general.io.PreInitStage;
 import general.langsupport.LangInitialization;
-import gui.screen.*;
+import gui.screen.ArrowSelectionScreenPreSet;
+import gui.screen.GameScreen;
+import gui.screen.LoadingWorldScreen;
 import misc.ArmingInitialization;
 import misc.ItemInitialization;
 import newent.CommandTeam;
 import newent.Player;
 import newent.Team;
 import scala.collection.Seq;
-import scala.runtime.AbstractFunction1;
-import scala.runtime.BoxedUnit;
 import world.TileLike;
 
 import java.awt.*;
@@ -111,7 +111,7 @@ public class Main {
 
         GraphicsEnvironment environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
-        debugWindows.setWindowEnabled(true);
+        //debugWindows.setWindowEnabled(false);
 
         // This will load the background melodies of SoundPool and SoundEffectTimeClock in an Thread and start to play
         // the main melodie, if it's ready.
