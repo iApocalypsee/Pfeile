@@ -8,7 +8,7 @@ import comp.ImageComponent
 import gui.screen.GameScreen
 import newent.pathfinding.AStarPathfinder
 import player.Life
-import world.{ SeaTile, WorldLike }
+import world.{SeaTile, WorldLike}
 
 /**
   * A swordsman. Ditto.
@@ -17,7 +17,7 @@ import world.{ SeaTile, WorldLike }
   * @param team The team to which it should belong.
   */
 class Swordsman(world: WorldLike, spawnPosition: Point, team: Team)
-  extends Entity(world, spawnPosition, null) with CombatUnit {
+  extends Entity(world, spawnPosition.x, spawnPosition.y) with CombatUnit {
 
   override val life = new Life(90, 0, 90)
 

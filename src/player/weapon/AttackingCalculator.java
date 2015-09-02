@@ -5,7 +5,6 @@ import comp.ImageComponent;
 import general.Main;
 import geom.functions.FunctionCollectionEasing;
 import newent.AttackProgress;
-import org.w3c.dom.css.Rect;
 import player.weapon.arrow.AbstractArrow;
 import world.TileLike;
 
@@ -142,7 +141,7 @@ public class AttackingCalculator {
                 final ImageComponent component = attackingArrow.getComponent();
 
                 // refreshing the screen-position
-                component.setLocation((int) (posXOldCenter + changeInX), (int) (posYOldCenter + changeInY));
+                component.setCenteredLocation((int) (posXOldCenter + changeInX), (int) (posYOldCenter + changeInY));
 
                 try {
                     Thread.sleep(15);

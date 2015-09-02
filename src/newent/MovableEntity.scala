@@ -1,12 +1,13 @@
 package newent
 
+import geom.functions.FunctionCollection
 import newent.event.LocationChangedEvent
 import newent.pathfinding.{Path, Pathfinder}
 
 import scala.util.control.Breaks._
 
 /** Represents an entity that can move. */
-trait MovableEntity extends Entity with StatisticalEntity {
+trait MovableEntity extends Entity with StatisticalEntity with TeleportableEntity {
 
   /** The pathfinder for the movable entity. */
   val pathfinderLogic: Pathfinder
@@ -22,28 +23,28 @@ trait MovableEntity extends Entity with StatisticalEntity {
   /** The current movement points the entity has left in this turn. */
   def currentMovementPoints = _currentMovementPoints
 
-   /** Adding new movementPoints to the currentMovementPoints.
-     *  If <code>additionalMovementPoints + currentMovementPoints() < 0</code>, the currentMovementPoints() is set to <code>0</code>.
-     *  Only the current number of movement points is changed, so at the end of the turn the number is set to
-     *  <code>defaultMovementPoints()</code> again.
-     *
-     * @param additionalMovementPoints the number with which the <code>currentMovementPoints()</code> should be increased
-     */
-  def addMovementPoints (additionalMovementPoints: Int) = {
-      if (_currentMovementPoints + additionalMovementPoints < 0)
-         _currentMovementPoints = 0
-      else
-         _currentMovementPoints = _currentMovementPoints + additionalMovementPoints
+  /**
+    * Adding new movementPoints to the currentMovementPoints.
+    *  If <code>additionalMovementPoints + currentMovementPoints() < 0</code>, the currentMovementPoints() is set to <code>0</code>.
+    *  Only the current number of movement points is changed, so at the end of the turn the number is set to
+    *  <code>defaultMovementPoints()</code> again.
+    *
+    * @param additionalMovementPoints the number with which the <code>currentMovementPoints()</code> should be increased
+    */
+  def addMovementPoints(additionalMovementPoints: Int) = {
+    _currentMovementPoints = FunctionCollection.clamp(_currentMovementPoints + additionalMovementPoints, 0, Integer.MAX_VALUE)
   }
 
-  /** Moves the entity.
+  /**
+    * Moves the entity.
     *
     * @param x The amount of units to go the x direction.
     * @param y The amount of units to go the y direction.
     */
   def move(x: Int = 0, y: Int = 0): Unit = moveTowards(getGridX + x, getGridY + y)
 
-  /** Tells the entity to move towards the specified position.
+  /**
+    * Tells the entity to move towards the specified position.
     *
     * @param x The x position.
     * @param y The y position.
@@ -54,7 +55,8 @@ trait MovableEntity extends Entity with StatisticalEntity {
     moveAlong()
   }
 
-  /** Moves the entity along his current path that has been set by the [[move( I n t, I n t )]] method.
+  /**
+    * Moves the entity along his current path that has been set by the [[move( I n t, I n t )]] method.
     *
     * If no path is set, this method does nothing.
     */
@@ -80,7 +82,8 @@ trait MovableEntity extends Entity with StatisticalEntity {
             if (step eq p.steps.last) {
               _currentPath = None
             }
-          } else break()
+          }
+          else break()
         }
       }
     }

@@ -81,7 +81,7 @@ object ScalaUtil {
   //<editor-fold desc="Programmer's delight">
 
   def stringRepresentation(x: Map[String, Any]): String =
-    s"{${x.foldLeft("") { (c, kv) => s"$c, ${kv._1}=${kv._2}" }}}"
+    s"{${x.foldLeft("") { (c, kv) => s"$c, ${kv._1}=${kv._2}" } substring 2}}"
 
   def stringRepresentation(objectName: String, x: Map[String, Any]): String = s"$objectName{${stringRepresentation(x)}}"
 
@@ -95,7 +95,7 @@ object ScalaUtil {
   */
 
   def objectDesc(x: Any) = /*s"${x.getClass.getAnnotations.foldLeft("") { (c, a) => s"$c @${a.annotationType().getName}" }}" +*/
-    s"${x.getClass.getName}"
+    s"${x.getClass.getName}@${x.hashCode()}"
 
   //</editor-fold>
 

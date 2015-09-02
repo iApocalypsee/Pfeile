@@ -9,6 +9,7 @@ import gui.image.TextureAtlas
 import newent.{AttackContainer, EntityLike}
 
 import scala.collection.JavaConversions
+import scala.collection.JavaConverters._
 
 /**
   * Base trait for all tiles.
@@ -62,6 +63,9 @@ trait TileLike extends AnyRef with DisplayRepresentable with AttackContainer {
   /** The neighbors the tile has. */
   def neighbors: Seq[TileLike] = Seq(north, northEast, east, southEast, south, southWest, west, northWest).flatten
 
+  /** The neighbors of this tile as a Java list. */
+  def getNeighbors = neighbors.asJava
+
   /** The entities that are currently on this tile. */
   def entities: Seq[EntityLike]
 
@@ -69,6 +73,7 @@ trait TileLike extends AnyRef with DisplayRepresentable with AttackContainer {
   def javaEntities = JavaConversions.seqAsJavaList(entities)
 
   override def toString = s"(x=$latticeX|y=$latticeY) - ${getClass.getName}"
+
 }
 
 class GrassTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends IsometricPolygonTile(latticeX,

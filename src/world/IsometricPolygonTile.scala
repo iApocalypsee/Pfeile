@@ -1,8 +1,6 @@
 package world
 
 import java.awt._
-import java.io.File
-import javax.imageio.ImageIO
 
 import comp.Component
 import general.property.StaticProperty
@@ -12,18 +10,15 @@ import player.weapon.arrow.{AbstractArrow, ImpactDrawerHandler}
 
 import scala.collection.mutable
 
-/**
- *
- * @author Tihomir Palavra
- */
 object IsometricPolygonTile {
 
   import scala.math._
 
+  //<editor-fold desc="Tile type list">
+
   // Tile type list is used in world generation.
   // Every subclass of IsometricPolygonTile puts a java.lang.Class
   // object of itself into this list.
-  //<editor-fold desc='Tile type list'>
 
   private[this] val _tileTypeList = mutable.MutableList[Class[_ <: IsometricPolygonTile]]()
 
@@ -35,13 +30,31 @@ object IsometricPolygonTile {
 
   //</editor-fold>
 
-  //<editor-fold desc='Visual appearance'>
+  //<editor-fold desc="Visual appearance">
 
-  val TileHalfWidth = 27
+  val TileHalfWidth = 60
   lazy val TileWidth = TileHalfWidth * 2
-  val TileHalfHeight = 15
+  val TileHalfHeight = 30
   lazy val TileHeight = TileHalfHeight * 2
   lazy val TileDiagonalLength = sqrt(pow(TileHalfWidth, 2) + pow(TileHalfHeight, 2))
+
+  /*
+  /**
+   * Describes the ratio that the quotient `TileHalfWidth / TileHalfHeight` has to obey.
+   */
+  val TileDimensionRatio = 2
+
+  assert(TileHalfWidth.asInstanceOf[Double] / TileHalfHeight == TileDimensionRatio, "Invalid ratio of tile width to tile height")
+  */
+
+  /*
+  def verticalAngle = atan(TileHalfWidth / TileHalfHeight)
+  def horizontalAngle = atan(TileHalfHeight / TileHalfWidth)
+
+  println("verticalAngle = " + verticalAngle)
+  println("horizontalAngle = " + horizontalAngle)
+
+  */
 
   @deprecated("Use IsometricPolygonTile.TileShape instead")
   val ComponentShape = {
@@ -74,8 +87,6 @@ object IsometricPolygonTile {
   val StandardDrawStroke = new BasicStroke(2)
 
   //</editor-fold>
-
-  val atlas = new TextureAtlas(ImageIO.read(new File("src/resources/gfx/item textures/coin textures/platinumCoin.png")))
 
   case class IsometricTileAbsoluteShape private[IsometricPolygonTile] (north: Point, east: Point, south: Point, west: Point) {
     lazy val polygon: Polygon = {

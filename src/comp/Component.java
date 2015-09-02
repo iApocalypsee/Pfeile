@@ -238,29 +238,32 @@ public abstract class Component implements IComponent {
 		setName(Integer.toString(this.hashCode()));
 
 		transformation.onTranslated().registerJava((TranslationChange t) -> {
-			if(boundsRecalculationIssued) {
-				transformationChangedSince = true;
-			}
-			children.values().forEach(component -> {
-				final Vector2 diffTranslation = t.newTranslation().sub(t.oldTranslation());
-				component.move(((int) diffTranslation.x()), ((int) diffTranslation.y()));
-			});
-			onTransformed.apply(t);
-		});
+            if (boundsRecalculationIssued)
+            {
+                transformationChangedSince = true;
+            }
+            children.values().forEach(component -> {
+                final Vector2 diffTranslation = t.newTranslation().sub(t.oldTranslation());
+                component.move(((int) diffTranslation.x()), ((int) diffTranslation.y()));
+            });
+            onTransformed.apply(t);
+        });
 
 		transformation.onScaled().registerJava((ScaleChange t) -> {
-			if(boundsRecalculationIssued) {
-				transformationChangedSince = true;
-			}
-			onTransformed.apply(t);
-		});
+            if (boundsRecalculationIssued)
+            {
+                transformationChangedSince = true;
+            }
+            onTransformed.apply(t);
+        });
 
 		transformation.onRotated().registerJava((RotationChange t) -> {
-			if(boundsRecalculationIssued) {
-				transformationChangedSince = true;
-			}
-			onTransformed.apply(t);
-		});
+            if (boundsRecalculationIssued)
+            {
+                transformationChangedSince = true;
+            }
+            onTransformed.apply(t);
+        });
 	}
 
 	/**
@@ -433,16 +436,17 @@ public abstract class Component implements IComponent {
 		if(xTranslation != 0 || yTranslation != 0) {
 			transformation.translate(xTranslation, yTranslation);
 		}
-
-        children.values().forEach(component -> {
-			component.setLocation(x + component.getRelativeX(), y + component.getRelativeY());
-		});
 	}
 
 	public void setRelativeLocation(int x, int y) {
 		if(parent == null) throw new NullPointerException("Parent of component is null.");
 		setLocation(x + parent.getSimplifiedBounds().x, y + parent.getSimplifiedBounds().y);
 	}
+
+    public void setCenteredLocation(int x, int y) {
+        final Point center = center();
+        move(x - center.x, y - center.y);
+    }
 
 	public void move(int dx, int dy) {
 		setLocation(getX() + dx, getY() + dy);
@@ -567,7 +571,11 @@ public abstract class Component implements IComponent {
 	public void setSourceShape(Shape srcShapeParam) {
 		if(srcShapeParam == null) throw new NullPointerException();
 
-		this.srcShape = srcShapeParam;
+        final AffineTransform resetSrcShapeTransform = AffineTransform.getTranslateInstance(
+                -srcShapeParam.getBounds2D().getX() - srcShapeParam.getBounds2D().getWidth() / 2,
+                -srcShapeParam.getBounds2D().getY() - srcShapeParam.getBounds2D().getHeight() / 2);
+
+        this.srcShape = resetSrcShapeTransform.createTransformedShape(srcShapeParam);
 
 		// Invalidate old bounds, very likely to be wrong now.
 		transformationChangedSince = true;

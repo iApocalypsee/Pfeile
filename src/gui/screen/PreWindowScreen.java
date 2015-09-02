@@ -11,12 +11,16 @@ import general.io.FontLoader;
 import newent.*;
 import scala.concurrent.duration.FiniteDuration;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 /**
  * This is the Screen in which some PfeileContext values like worldSize are set. It replaces the old PreWindow.
@@ -109,8 +113,26 @@ public class PreWindowScreen extends Screen {
     /** position of <code>g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y")</code> */
     private Point fontSmallPosition;
 
+    private ImageComponent test_image;
+    private Button test_button;
+    private double test_temp;
+
+    private void test_updateImage() {
+        test_temp += 0.0005;
+        //test_image.getTransformation().setScale(Math.sin(test_temp), Math.cos(test_temp));
+        test_image.rotateDegree(test_temp);
+    }
+
     public PreWindowScreen() {
         super(SCREEN_NAME, SCREEN_INDEX);
+
+        setBoundsDrawEnabled(true);
+
+        try {
+            test_image = new ImageComponent(900, 400, ImageIO.read(new File("src/resources/gfx/buildings/barracks.png")), this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // Initialise the Components
         confirmButton = new Button(550, 400, this, "Bestätigen");
@@ -223,9 +245,11 @@ public class PreWindowScreen extends Screen {
             }
         });
 
-        confirmButton.addMouseListener(new MouseAdapter() {
+        confirmButton.addMouseListener(new MouseAdapter()
+        {
             @Override
-            public void mouseReleased (MouseEvent e) {
+            public void mouseReleased(MouseEvent e)
+            {
                 triggerConfirmButton(e);
             }
         });
@@ -235,6 +259,7 @@ public class PreWindowScreen extends Screen {
         forcePullFront(confirmButton);
         forcePullFront(readyButton);
         forcePullFront(standardButton);
+        forcePullFront(test_image);
     }
 
     /**
@@ -727,9 +752,18 @@ public class PreWindowScreen extends Screen {
 	    }
     }
 
+    @Override
+    public void mouseMoved(MouseEvent e)
+    {
+        super.mouseMoved(e);
+        //test_image.setCenteredLocation(e.getX(), e.getY());
+    }
 
     @Override
     public void draw (Graphics2D g) {
+
+        super.draw(g);
+
         // Backgound
         g.setColor(TRANSPARENT_BACKGROUND);
         g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
@@ -761,5 +795,8 @@ public class PreWindowScreen extends Screen {
         standardButton.draw(g);
         readyButton.draw(g);
         confirmDialog.draw(g);
+
+        test_updateImage();
+        test_image.draw(g);
     }
 }

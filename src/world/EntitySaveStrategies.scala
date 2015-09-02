@@ -38,5 +38,5 @@ trait LocalEntitySaveStrategy extends TileLike {
   * by going through the entity manager and filtering all entities that satisfy the position.
   */
 trait OnDemandEntitiesStrategy extends TileLike {
-  override def entities: Seq[EntityLike] = terrain.world.entities.entityList.filter { e => e.getGridX == latticeX && e.getGridY == latticeY }
+  override def entities: Seq[EntityLike] = terrain.world.entities.entityList.filter { e => e.containsCoordinate(this.getGridX, this.getGridY) }
 }

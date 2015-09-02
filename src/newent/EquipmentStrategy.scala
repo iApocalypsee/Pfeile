@@ -3,7 +3,7 @@ package newent
 import newent.event.EquipInformation
 import player.armour._
 import player.item.EquippableItem
-import player.weapon.Weapon
+import player.weapon.{ArmingType, Weapon}
 
 import scala.beans.BeanProperty
 import scala.collection.JavaConversions
@@ -22,6 +22,8 @@ abstract class EquipmentStrategy {
 
   /** Java-interop method returning a Java list. */
   def getEquippedItems = JavaConversions.seqAsJavaList(equippedItems)
+
+  def defense(x: ArmingType) = 0.0
 
 }
 
@@ -63,12 +65,14 @@ trait HasArmor extends EquipmentStrategy {
   /**
     * Collects every piece of armor that is not [[scala.None]].
     */
-  def availableArmor: Seq[EquippableItem] = for (part <- armorParts; if part.isDefined) yield part.get
+  def availableArmor: Seq[Armour] = for (part <- armorParts; if part.isDefined) yield part.get
 
   /**
     * @see [[newent.HasArmor#availableArmor()]]
     */
   def getAvailableArmor = JavaConversions.seqAsJavaList(availableArmor)
+
+  override def defense(forArmingType: ArmingType) = availableArmor.foldLeft(0.0) { (c, e) => c + e.getDefence(forArmingType) }
 
 }
 
@@ -109,5 +113,7 @@ trait HasWeapons extends EquipmentStrategy {
   def availableWeapons: Seq[Weapon] = for (weapon <- weapons; if weapon.isDefined) yield weapon.get
 
   def getAvailableWeapons = JavaConversions.seqAsJavaList(availableWeapons)
+
+  override def defense(forArmingType: ArmingType) = availableWeapons.foldLeft(0.0) { (c, e) => c + e.getDefence(forArmingType) }
 
 }

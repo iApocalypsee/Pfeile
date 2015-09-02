@@ -19,9 +19,26 @@ object StaticProperty {
 
 class LazyStaticProperty[A] extends StaticProperty[A] with LazyInit[A]
 
-class IntStaticProperty extends StaticProperty[lang.Integer]
-class DoubleStaticProperty extends StaticProperty[lang.Double]
-class LongStaticProperty extends StaticProperty[lang.Long]
+class IntStaticProperty extends StaticProperty[lang.Integer] {
+  def this(x: lang.Integer) = {
+    this()
+    set(x)
+  }
+}
+
+class DoubleStaticProperty extends StaticProperty[lang.Double] {
+  def this(x: lang.Double) = {
+    this()
+    set(x)
+  }
+}
+
+class LongStaticProperty extends StaticProperty[lang.Long] {
+  def this(x: lang.Long) = {
+    this()
+    set(x)
+  }
+}
 
 class LazyIntStaticProperty extends LazyStaticProperty[lang.Integer]
 class LazyDoubleStaticProperty extends LazyStaticProperty[lang.Double]

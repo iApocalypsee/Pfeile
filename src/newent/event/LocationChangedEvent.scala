@@ -19,4 +19,7 @@ case class LocationChangedEvent(fromX: Int, fromY: Int, toX: Int, toY: Int, enti
   /** The end tile. */
   def end = entity.world.terrain.tileAt(toX, toY)
 
+  def diffX = toX - fromX
+  def diffY = toY - fromY
+
 }

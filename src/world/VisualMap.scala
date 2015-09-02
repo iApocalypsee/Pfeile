@@ -5,7 +5,7 @@ import java.awt.Graphics2D
 import general.{Delegate, LogFacility, Main, PfeileContext}
 import geom.Vector2
 import gui.Drawable
-import newent.{CommandTeam, EntityLike, VisionStatus}
+import newent.{CommandTeam, VisionStatus}
 import player.item.Loot
 import player.weapon.AttackDrawer
 import player.weapon.arrow.AbstractArrow
@@ -96,9 +96,10 @@ class VisualMap(context: PfeileContext) extends Drawable {
         s"IsometricPolygonTile#IsometricPolygonTileComponent expected")
     }
 
+    /*
     context.world.entities.entityList.foreach { entity: EntityLike =>
       entity.getComponent.move(shiftX, shiftY)
-    }
+    }*/
 
     context.getWorldLootList.getLoots.foreach { loot: Loot =>
       loot.getLootUI.relocateGuiPosition()

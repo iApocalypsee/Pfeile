@@ -13,7 +13,7 @@ import world.WorldLike
   * The KI is not implemented as a intelligent KI. It is just a basic construct, that is similar to the Player class.
   */
 class Bot(world: WorldLike, spawnPoint: Point, name: String)
-    extends Entity(world, spawnPoint, name) with CombatUnit with IntelligentArrowSelectionBot with MoneyEarner {
+    extends Entity(world, spawnPoint.x, spawnPoint.y, name) with CombatUnit with IntelligentArrowSelectionBot with MoneyEarner {
 
   /**
     * The component that the representable object uses first. Method is called only once.
@@ -50,7 +50,7 @@ class Bot(world: WorldLike, spawnPoint: Point, name: String)
   }
 
   /** the life of the bot is introduced with standard values */
-  override protected lazy val life = new Life(Bot.maximumLife.get, Bot.lifeRegeneration.get, Bot.maximumLife.get)
+  override lazy val life = new Life(Bot.maximumLife.get, Bot.lifeRegeneration.get, Bot.maximumLife.get)
 
   private lazy val lifeUI = new LifeUI(Main.getWindowWidth - 200, Main.getWindowHeight - 150, Main.getContext.getActivePlayer.getLife)
   life.onDeath += { () =>

@@ -12,12 +12,7 @@ trait PropertyBase[A] extends PropertyLike[A] with EagerEval[A] {
 
   override def get: A = option.getOrElse(throw new RuntimeException("Property is undefined. undef() call? Lazy compute triggered? Did setter accept value?"))
 
-  override def set(x: A): Unit = x match {
-    case anyRef: AnyRef =>
-      if (anyRef == null) value = None
-      else value = Some(x)
-    case _ => value = Some(x)
-  }
+  override def set(x: A): Unit = value = Option(x)
 
   override def option = value
 

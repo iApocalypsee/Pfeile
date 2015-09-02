@@ -39,6 +39,7 @@ class Transformation2D {
     _rotationMatrix = new AffineTransform
     _scaleMatrix = new AffineTransform
     _rotation = 0.0
+    this
   }
 
   /**
@@ -63,6 +64,8 @@ class Transformation2D {
     * @return This.
     */
   def scale(sx: Double, sy: Double): Transformation2D = setScale(scale.x * sx, scale.y * sy)
+
+  def scale(fac: Double): Transformation2D = scale(fac, fac)
 
   /**
     * Sets the absolute translation.
@@ -145,7 +148,7 @@ class Transformation2D {
   def rotationMatrix = new AffineTransform(_rotationMatrix)
   def scaleMatrix = new AffineTransform(_scaleMatrix)
 
-  def concatenatedMatrix: AffineTransform = {
+  def localConcatenatedMatrix: AffineTransform = {
     // Get a fresh copy of every matrix. I don't want to modify the original matrices.
     val t = translationMatrix
     val r = rotationMatrix
@@ -154,7 +157,7 @@ class Transformation2D {
     t
   }
 
-  def transformOriginal(s: Shape) = concatenatedMatrix.createTransformedShape(s)
+  def transformOriginal(s: Shape) = localConcatenatedMatrix.createTransformedShape(s)
 
 }
 

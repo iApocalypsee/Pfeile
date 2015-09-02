@@ -2,8 +2,6 @@ package player;
 
 import general.Delegate;
 import newent.Player;
-import scala.runtime.AbstractFunction1;
-import scala.runtime.BoxedUnit;
 
 /**
  * Contains only data relevant to life of an entity.
@@ -113,6 +111,14 @@ public class Life {
         else if (life > lifeMax)
             life = lifeMax;
         onLifeChanged.apply(new LifeChangedEvent(life));
+    }
+
+    /**
+     * Causes this object to regenerate <tt>lifeRegeneration</tt> life.
+     * This method should be called when a turn cycle ends.
+     */
+    public void updateLife() {
+        changeLife(lifeRegen);
     }
 
 	/**

@@ -7,7 +7,7 @@ import player.item.ore.OreDeposit
   */
 class TileProperties {
 
-  var oreDeposit: Option[OreDeposit] = None
-  var placedObject: Option[Placeable] = None
+  var oreDeposit = Option.empty[OreDeposit]
+  var placedObject = Option.empty[Placeable]
 
 }
