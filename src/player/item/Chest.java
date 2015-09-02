@@ -5,6 +5,7 @@ import gui.screen.GameScreen;
 import newent.*;
 import scala.Option;
 import scala.runtime.AbstractFunction1;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -110,17 +111,19 @@ public abstract class Chest extends Loot {
                                     Option<Item> opt = active.inventory().remove(new AbstractFunction1<Item, Object>() {
                                         @Override
                                         public Object apply(Item v1) {
-                                            if (getName().equals("Default Chest"))
+                                            if (Chest.this instanceof DefaultChest)
                                                 return v1 instanceof KeyDefaultChest;
-                                            else
+                                            else if (Chest.this instanceof RoundChest)
                                                 return v1 instanceof KeyRoundChest;
+                                            else
+                                                throw new NotImplementedException(); // this chest type doesn't exit... Add it here...
                                         }
                                     });
 
                                     if (opt.isDefined()) {
                                         open();
                                     } else {
-                                        GameScreen.getInstance().setWarningMessage("Du brauchst einen Schl�ssel, um eine Kiste zu �ffnen. You need a key to open a chest!");
+                                        GameScreen.getInstance().setWarningMessage("Du brauchst einen Schlüssel, um eine Kiste zu öffnen. You need a key to open a chest!");
                                         GameScreen.getInstance().activateWarningMessage();
                                     }
                                 }
