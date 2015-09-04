@@ -130,12 +130,12 @@ class AttackProgress(val event: AttackEvent, private var _progress: Double) {
    */
   val onProgressed = Delegate.create[java.lang.Double]
 
-  private lazy val _progressPerTurn = event.geographicalLength / event.travelSpeed
+  val progressPerTurn = event.travelSpeed / event.geographicalLength
 
   /** Updates the progress with the associated travel speed. */
   private[newent] def updateProgress(): Unit = {
-    _progress += _progressPerTurn
-    onProgressed(_progressPerTurn)
+    _progress += progressPerTurn
+    onProgressed(progressPerTurn)
   }
 
   /** Returns the progress of the attack in percent. */

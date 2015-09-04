@@ -271,7 +271,7 @@ public abstract class Screen implements Drawable, MouseListener,
 						}
 						// A component already received the release event, no other component
 						// should receive this event anymore.
-						break;
+						if(!c.isListenerTransparent()) break;
 					} else {
 						if (c.getStatus() != ComponentStatus.NO_MOUSE) {
 							c.setStatus(ComponentStatus.NO_MOUSE);

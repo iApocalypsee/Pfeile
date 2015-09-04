@@ -19,6 +19,7 @@ public abstract class LootUI implements Drawable {
 
     public LootUI (Component component) {
         this.component = component;
+        component.setListenerTransparent(true);
     }
 
     /**
