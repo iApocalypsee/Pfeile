@@ -86,6 +86,11 @@ public abstract class Component implements IComponent {
 	 */
 	private boolean visible = true;
 
+    /**
+     * Determines whether the next underlying component's listeners should be triggered as well.
+     */
+    private boolean listenerTransparent = false;
+
 	/**
 	 * Self-explanatory.
 	 */
@@ -753,9 +758,15 @@ public abstract class Component implements IComponent {
 		}
 	}
 
+    public boolean isListenerTransparent() {
+        return listenerTransparent;
+    }
 
+    public void setListenerTransparent(boolean listenerTransparent) {
+        this.listenerTransparent = listenerTransparent;
+    }
 
-	public Transformation2D getTransformation() {
+    public Transformation2D getTransformation() {
 		return transformation;
 	}
 
