@@ -75,8 +75,7 @@ public class AttackingCalculator {
         final Point initialCenterPosition = arrow.getComponent().center();
 
         // Begin of real method execution
-
-        resultingPath.lineTo(initialCenterPosition.x, initialCenterPosition.y);
+        resultingPath.moveTo(initialCenterPosition.x, initialCenterPosition.y);
 
         Vector2 sectionBeginPoint = Vector2.apply(initialCenterPosition.x, initialCenterPosition.y);
 
