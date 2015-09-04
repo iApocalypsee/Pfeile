@@ -3,7 +3,6 @@ package general
 import gui.screen.GameScreen
 import newent.{CommandTeam, Entity, Player}
 import player.item.WorldLootList
-import player.weapon.AttackingCalculator
 import world.WorldLike
 
 /**
@@ -82,11 +81,6 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     }
 
     turnSystem.onGlobalTurnCycleEnded += { () =>
-
-      // looks weird, but with a static method I can't manage the thread
-      // Edit: Of course you can. Just activate your engineering skills :)
-      new AttackingCalculator().arrowsFlying()
-
       // Notify the tiles first that the turn cycle has been completed.
       // Primarily, this for loop is written to update the arrow queues of the tiles.
       for(tile <- world.terrain.tiles) {

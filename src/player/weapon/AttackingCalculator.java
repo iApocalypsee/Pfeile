@@ -30,7 +30,7 @@ public class AttackingCalculator {
     private static AttackingCalculator instance;
 
     /** only one AttackingCalculator can exist, because the old threads has to continue. */
-    private static AttackingCalculator getInstance () {
+    public static AttackingCalculator getInstance () {
         if (instance == null)
             instance = new AttackingCalculator();
         return instance;
@@ -41,12 +41,17 @@ public class AttackingCalculator {
     }
 
 
-    public void arrowsFlying () {
-        List<AttackProgress> filteredProgresses = AttackDrawer.getAttackProgressesOfArrows();
+    /** <b><code>AttackingCalculator.getInstance().arrowsFlying(AttackDrawer.getAttackProgressesOfArrows());</code></b> */
+    public void arrowsFlying (List<AttackProgress> filteredProgresses) {
 
-        // if there aren't any arrows to shot, there's nothing to do.
-        if (filteredProgresses.isEmpty())
-            return;
+        // if there aren't any arrows to shot, there's nothing to do. But it should be controlled first...
+        if (filteredProgresses.isEmpty()) {
+            List<AttackProgress> progresses = AttackDrawer.getAttackProgressesOfArrows();
+            if (progresses.isEmpty())
+                return;
+            else
+                filteredProgresses = progresses;
+        }
 
         List<AbstractArrow> attackingArrows = AttackDrawer.getAttackingArrows();
 
@@ -121,8 +126,11 @@ public class AttackingCalculator {
             // alpha (radiant) is the ankle between the position of the aim and the current Point
             // double alpha = FunctionCollection.angle(attackingArrow.getPosX(), attackingArrow.getPosY(), attackingArrow.getPosXAim(), attackingArrow.getPosYAim());
 
-
+            // it's only a part of the distance the arrow has to fly...
+            //double maxDistanceToCover = attackProgress.event().lengthGUI();
+            //double distanceToCover = maxDistanceToCover / attackProgress.numberOfTurns();
             double distanceToCover = attackProgress.event().lengthGUI();
+
 
             while (milliSec < TIME_MULTI / attackingArrow.getSpeed()) {
                 double accuracy = (milliSec / TIME_MULTI) * attackingArrow.getSpeed();
@@ -132,10 +140,6 @@ public class AttackingCalculator {
 
                 double changeInY = FunctionCollectionEasing.quadratic_easing_inOut(
                         distanceToCover * accuracy, 0, posYAimCenter - posYOldCenter, distanceToCover);
-
-
-
-
 
 
                 final ImageComponent component = attackingArrow.getComponent();

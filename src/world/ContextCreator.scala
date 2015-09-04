@@ -192,7 +192,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       ShopInitializer.initalizeShop()
 
       context.turnSystem.onTurnEnded.register(team => {
-        Main.getGameWindow.getScreenManager.setActiveScreen(WaitingScreen.SCREEN_INDEX)
+        Main.getGameWindow.getScreenManager.setActiveScreen(AttackingScreen.SCREEN_INDEX)
       })
 
       // initialize MoneyDisplay --> it will actualize it's string, if the money of a entity has been changed.

@@ -16,9 +16,7 @@ import player.item.Item;
 import player.weapon.arrow.AbstractArrow;
 import player.weapon.arrow.ArrowHelper;
 import scala.Option;
-import scala.runtime.AbstractFunction0;
 import scala.runtime.AbstractFunction1;
-import scala.runtime.BoxedUnit;
 import world.TerrainLike;
 import world.TileLike;
 
@@ -391,7 +389,7 @@ public class AimSelectionScreen extends Screen {
             animatedLine.draw(g);
         } else {
             // when you've selected an arrow you don't need to see all the others
-            GameScreen.getInstance().getAttackDrawer().draw(g);
+            AttackingScreen.getInstance().getAttackDrawer().draw(g);
         }
 
         // TODO: inizalizise and create TimeLifeBox

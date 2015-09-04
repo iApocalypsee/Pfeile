@@ -98,6 +98,7 @@ public class GameWindow extends JFrame {
         Thread w = new Thread(() -> {
             new GameOverScreen();
             new AimSelectionScreen();
+            AttackingScreen.getInstance();
         }, "Screen Initializer #3");
         w.setDaemon(true);
         w.start();

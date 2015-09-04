@@ -27,31 +27,36 @@ public class SoundEffectTimeClock {
     }
 
     static {
-        tickingNoise = SoundLoader.load("resources/sfx/soundEffects/clock sound effect.wav");
+        Thread x = new Thread(() -> {
+            tickingNoise = SoundLoader.load("resources/sfx/soundEffects/clock sound effect.wav");
 
-        /* this controls the volume of <code>tickingNoise</code> */
-        FloatControl gainControlTicking = (FloatControl) tickingNoise.getControl(FloatControl.Type.MASTER_GAIN);
+            /* this controls the volume of <code>tickingNoise</code> */
+            FloatControl gainControlTicking = (FloatControl) tickingNoise.getControl(FloatControl.Type.MASTER_GAIN);
 
-        tickingCriticalNoise = SoundLoader.load("resources/sfx/soundEffects/clock sound effect.wav");
+            tickingCriticalNoise = SoundLoader.load("resources/sfx/soundEffects/clock sound effect.wav");
 
-        /* to set the volume of {@link animation.SoundEffectTimeClock#play_tickingCriticalNoise().*/
-        FloatControl gainControlTickingCritical = (FloatControl) tickingCriticalNoise.getControl(FloatControl.Type.MASTER_GAIN);
+            /* to set the volume of {@link animation.SoundEffectTimeClock#play_tickingCriticalNoise().*/
+            FloatControl gainControlTickingCritical = (FloatControl) tickingCriticalNoise.getControl(FloatControl.Type.MASTER_GAIN);
 
-        explosion = SoundLoader.load("resources/sfx/soundEffects/explosion.wav");
+            explosion = SoundLoader.load("resources/sfx/soundEffects/explosion.wav");
 
-        /* this controls the volume of <code>explosion</code> */
-        FloatControl gainControlExplosion = (FloatControl) explosion.getControl(FloatControl.Type.MASTER_GAIN);
+            /* this controls the volume of <code>explosion</code> */
+            FloatControl gainControlExplosion = (FloatControl) explosion.getControl(FloatControl.Type.MASTER_GAIN);
 
 
-        // setting volume
-        gainControlTicking.setValue(-7);   // - 8 db
-        gainControlExplosion.setValue(+2); // + 2 db
-        gainControlTickingCritical.setValue(-1);  // - 1 db
-        // instead of using another sound file for criticalTickingNoise, I'm just increasing the volume of tickingCriticalNoise
+            // setting volume
+            gainControlTicking.setValue(-7);   // - 8 db
+            gainControlExplosion.setValue(+2); // + 2 db
+            gainControlTickingCritical.setValue(-1);  // - 1 db
+            // instead of using another sound file for criticalTickingNoise, I'm just increasing the volume of tickingCriticalNoise
 
-        isLoaded = true;
+            isLoaded = true;
 
-        LogFacility.log("Sound effect files loaded.", "Info", "initprocess");
+            LogFacility.log("Sound effect files loaded.", "Info", "initprocess");
+        }, "SoundLoaderTimeClock");
+        x.setDaemon(true);
+        x.setPriority(2);
+        x.start();
     }
 
 

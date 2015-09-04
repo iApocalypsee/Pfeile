@@ -11,8 +11,8 @@ import player.BoardPositionable
 import world.{TileLike, WorldLike}
 
 import scala.collection.JavaConverters._
-import scala.collection.{JavaConversions, mutable}
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.{JavaConversions, mutable}
 import scala.{NotNull => DeprecatedScalaNotNull}
 
 sealed trait EntityLike extends BoardPositionable with DisplayRepresentable {
@@ -132,6 +132,8 @@ abstract class Entity(@NotNull override val world: WorldLike, initX: Int, initY:
       pt.x += initX
       pt.y += initY
     }
+
+    // FIXME: The requirement fails often (barracks?)
 
     for (pt <- ptList) require(world.terrain.isTileValid(pt.x, pt.y))
     require(ptList.nonEmpty, s"Board shape of $this is empty")

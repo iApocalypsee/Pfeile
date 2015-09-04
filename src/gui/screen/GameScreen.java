@@ -3,7 +3,6 @@ package gui.screen;
 import comp.Button;
 import comp.WarningMessage;
 import general.JavaInterop;
-import general.LogFacility;
 import general.Main;
 import general.PfeileContext;
 import gui.FrameContainer;
@@ -12,9 +11,6 @@ import gui.MoneyDisplay;
 import player.shop.ShopCentral;
 import player.shop.ShopCentral$;
 import player.shop.ShopWindow;
-import player.weapon.AttackDrawer;
-import player.weapon.arrow.ImpactDrawerHandler;
-import scala.runtime.BoxedUnit;
 import world.VisualMap;
 
 import java.awt.*;
@@ -69,13 +65,8 @@ public class GameScreen extends Screen implements FrameContainer {
     private ShopWindow shopWindow;
 
 	private VisualMap map = null;
-    private final AttackDrawer attackDrawer = new AttackDrawer();
 
 	private final FrameContainerObject frameContainerObject = new FrameContainerObject();
-
-    public AttackDrawer getAttackDrawer () {
-        return attackDrawer;
-    }
 
 	/**
 	 * Die Welt, die vom GameScreen gezeichnet wird.
@@ -183,15 +174,8 @@ public class GameScreen extends Screen implements FrameContainer {
     @Override
 	public void draw(Graphics2D g) {
 		super.draw(g);
-		if(map != null) {
-			map.draw(g);
-		}
-		// I practically do not need the visual entity to let the entities draw on to the screen
-		// BUT I still need the component objects, which reside in the visual entity object.
-		// Drawing of the entities is done in VisualMap
-		//visualEntity.draw(g);
-        attackDrawer.draw(g);
-        ImpactDrawerHandler.draw(g);
+
+		map.draw(g);
 
 		endTurnButton.draw(g);
 		shootButton.draw(g);

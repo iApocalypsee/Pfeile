@@ -14,7 +14,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.List;
 
 public class ArrowSelectionScreen extends Screen {
 
@@ -255,7 +254,7 @@ public class ArrowSelectionScreen extends Screen {
 		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 
         GameScreen.getInstance().getMap().draw(g);
-        GameScreen.getInstance().getAttackDrawer().draw(g);
+        AttackingScreen.getInstance().getAttackDrawer().draw(g);
 
         Main.getContext().getTimeClock().draw(g);
 		

@@ -141,4 +141,8 @@ class AttackProgress(val event: AttackEvent, private var _progress: Double) {
   /** Returns the progress of the attack in percent. */
   def progress = _progress
 
+  /** Returns the number of turns, the attack needs to come to it's destination. It's the rounded up reciprocal of progressPerTurn. */
+  def numberOfTurns = {
+    Math.ceil(1.0 / _progressPerTurn).asInstanceOf[Int]
+  }
 }
