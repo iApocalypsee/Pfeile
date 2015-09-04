@@ -5,16 +5,21 @@ import comp.Component;
 import comp.List;
 import comp.WarningMessage;
 import general.Main;
+import general.PfeileContext;
 import newent.InventoryLike;
+import player.armour.Armour;
 import player.item.EquippableItem;
 import player.item.Item;
 import player.item.coin.Coin;
 import player.item.coin.CoinHelper;
 import player.item.potion.Potion;
+import player.weapon.Weapon;
 import player.weapon.arrow.AbstractArrow;
 import scala.Tuple2;
+import scala.collection.Seq;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -88,51 +93,14 @@ public class InventoryScreen extends Screen {
         cancelButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased (MouseEvent e) {
-                onLeavingScreen(GameScreen.SCREEN_INDEX);
+                triggerCancelButton();
             }
         });
 
         confirmButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased (MouseEvent e) {
-                // if nothing is selected yet, you don't need to trigger the rest
-                if (selectedItem.getText().equals("<Item auswählen>")) {
-                    warningMessage.setMessage("Wähle erst ein Item aus!");
-                    warningMessage.activateMessage();
-                    return;
-                }
-
-                boolean isLeavingScreen = true;
-
-                InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
-                for (Item item : inventory.javaItems()) {
-                    if (selectedItem.getText().equals(item.getName())) {
-                        if (item instanceof Potion) {
-                            Potion potion = (Potion) item;
-                            if (!potion.triggerEffect()) {
-                                warningMessage.setMessage("Die " + potion.getName() + " konnte nicht entfernt werden.");
-                                warningMessage.activateMessage();
-                                isLeavingScreen = false;
-                            }
-
-                        } else if (item instanceof EquippableItem) {
-                            EquippableItem equippableItem = (EquippableItem) item;
-                            if (!equippableItem.equip()) {
-                                warningMessage.setMessage("Die " + equippableItem.getName() + " kann nicht ausgerüstet werden.");
-                                warningMessage.activateMessage();
-                                isLeavingScreen = false;
-                            }
-
-                        } else {
-                            warningMessage.setMessage("Das ausgewählte Item " + item.getName() + " kann nicht verwendet werden.");
-                            warningMessage.activateMessage();
-                            isLeavingScreen = false;
-                        }
-                        break;
-                    }
-                }
-                if (isLeavingScreen)
-                    onLeavingScreen(GameScreen.SCREEN_INDEX);
+                triggerConfirmButton();
             }
         });
 
@@ -154,6 +122,75 @@ public class InventoryScreen extends Screen {
         });
 
         setPreprocessedDrawingEnabled(false);
+    }
+
+    private void triggerCancelButton() {
+        onLeavingScreen(GameScreen.SCREEN_INDEX);
+    }
+
+    private void triggerConfirmButton() {
+        // if nothing is selected yet, you don't need to trigger the rest
+        if (selectedItem.getText().equals("<Item auswählen>")) {
+            warningMessage.setMessage("Wähle erst ein Item aus!");
+            warningMessage.activateMessage();
+            return;
+        }
+
+        InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
+        for (Item item : inventory.javaItems()) {
+            if (selectedItem.getText().equals(item.getName())) {
+                if (item instanceof Potion) {
+                    Potion potion = (Potion) item;
+                    if (!potion.triggerEffect()) {
+                        warningMessage.setMessage("Die " + potion.getName() + " konnte nicht entfernt werden.");
+                        warningMessage.activateMessage();
+                    } else {
+                        warningMessage.setMessage("Verwendete: " + potion.getName());
+                        warningMessage.activateMessage();
+                    }
+
+                } else if (item instanceof EquippableItem) {
+                    EquippableItem equippableItem = (EquippableItem) item;
+
+                    Seq<EquippableItem> equippedItemSeq = Main.getContext().getActivePlayer().getEquipment().equippedItems();
+                    EquippableItem[] equippedItems = new EquippableItem[equippedItemSeq.size()];
+                    equippedItemSeq.copyToArray(equippedItems);
+
+                    if (!equippableItem.equip()) {
+                        warningMessage.setMessage("Die " + equippableItem.getName() + " kann nicht ausgerüstet werden.");
+                        warningMessage.activateMessage();
+                    } else {
+                        EquippableItem unequipped = null;
+                        for (EquippableItem equippedItem : equippedItems) {
+                            if (!equippedItemSeq.contains(equippedItem)) {
+                                unequipped = equippedItem;
+                                break;
+                            }
+                        }
+                        if (unequipped == null)
+                            warningMessage.setMessage("Ausgerüstet: " + equippableItem.getName());
+                        else
+                            warningMessage.setMessage("Ausgerüstet: " + equippableItem.getName() + "; Unausgerüstet: " + unequipped.getName());
+                        warningMessage.activateMessage();
+                    }
+
+                } else {
+                    warningMessage.setMessage(item.getName() + " kann hier nicht verwendet werden.");
+                    warningMessage.activateMessage();
+                }
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void keyReleased (KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_ENTER: triggerConfirmButton(); break;
+            case KeyEvent.VK_B: triggerConfirmButton(); break;
+            case KeyEvent.VK_A: triggerCancelButton(); break;
+            case KeyEvent.VK_ESCAPE: triggerCancelButton(); break;
+        }
     }
 
     /**
