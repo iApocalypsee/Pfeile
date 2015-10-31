@@ -31,10 +31,10 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
     protected int gridY;
 
     /** Subclasses must override this value */
-    private Property<LootUI> lootUI = PropertyWorkaround.apply();
+    private final Property<LootUI> lootUI = PropertyWorkaround.apply();
 
     /** everything, that is stored inside this loot and can be received by collecting this Loot. */
-    protected List<Item> listOfContent;
+    protected final List<Item> listOfContent;
 
     /**
      * The LootUI will be created automatically, based on {@link Loot#createUI()}
@@ -187,7 +187,9 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
      * @param lootUI the new outward appearance
      */
     protected void setLootUI (LootUI lootUI) {
-        this.lootUI.set(lootUI);
+        synchronized (this.lootUI) {
+            this.lootUI.set(lootUI);
+        }
     }
 
     /**

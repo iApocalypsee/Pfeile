@@ -61,7 +61,17 @@ public abstract class Chest extends Loot {
      * @param imgOfOpenChest the BufferedImage of the opened chest
      */
     public void changeUIforOpenedChest (BufferedImage imgOfOpenChest) {
-        setLootUI(createUI(imgOfOpenChest));
+        System.out.println("Old lootUI:  " + getLootUI());
+        LootUI createdUI = createUI(imgOfOpenChest);
+
+        System.out.println("Setting to tile " + getTile());
+        createdUI.setOnTile(getTile());
+
+        System.out.println("created UI: " + createdUI);
+
+        setLootUI(createdUI);
+
+        System.out.println("Changed LootUI! " + getLootUI() + " with comp: " + getLootUI().getComponent());
     }
 
     @Override
@@ -85,22 +95,46 @@ public abstract class Chest extends Loot {
             throw new NullPointerException();
 
         lootUI.component.addMouseListener(new MouseAdapter() {
+            private Thread x;
+
             @Override
             public void mouseReleased (MouseEvent e) {
+                System.out.println("Clicked at: " + Chest.this.getName());
 
                 if (SwingUtilities.isLeftMouseButton(e)) {
-                    Thread x = new Thread(() -> {
+                    System.out.println("Clicked with: left mouse button");
+
+                    if (x != null) {
+                        try {
+                            x.join();
+                        } catch (InterruptedException e1) { e1.printStackTrace(); }
+                    }
+
+                     x = new Thread(() -> {
                         Entity selectedEntity = Main.getContext().entitySelection().selectedEntity();
 
+                        System.out.println("Chest is open " + isOpen);
+
                         if (isOpen) {
+
+                            System.out.println("Selected Entity " + selectedEntity.name() + " and Chest are on the same place: " +
+                                    (Chest.this.getGridX() == selectedEntity.getGridX() && Chest.this.getGridY() == selectedEntity.getGridY()));
+
                             // only trigger collect, when the selectedEntity is on the same tile as the loot
                             if (Chest.this.getGridX() == selectedEntity.getGridX() && Chest.this.getGridY() == selectedEntity.getGridY()) {
                                 if (selectedEntity instanceof InventoryEntity) {
+                                    System.err.println("Trying to call collect");
                                     if (collect((InventoryEntity) selectedEntity))
                                         getLootUI().component.removeMouseListener(this);
+                                    else
+                                        System.err.println("collect returned false");
                                 }
                             }
                         } else {
+
+                            System.out.println("Selected Entity " + selectedEntity.name() + " and Chest are on the same place: " +
+                                    (Chest.this.getGridX() == selectedEntity.getGridX() && Chest.this.getGridY() == selectedEntity.getGridY()));
+
                             // if the chest isn't open, it will be opened now, if the chest and the player are on the tile.
                             // It can only be opened by players, but collected by every InventoryEntity. You need a key to open it.
                             if (selectedEntity instanceof Player || selectedEntity instanceof Bot) {
@@ -119,6 +153,8 @@ public abstract class Chest extends Loot {
                                                 throw new NotImplementedException(); // this chest type doesn't exit... Add it here...
                                         }
                                     });
+
+                                    System.out.println("opt.isDefined()" + opt.isDefined());
 
                                     if (opt.isDefined()) {
                                         open();

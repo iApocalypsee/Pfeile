@@ -3,16 +3,21 @@ package player.weapon;
 import comp.Component;
 import comp.ImageComponent;
 import general.Main;
+import geom.Vector2;
 import geom.functions.FunctionCollectionEasing;
 import newent.AttackProgress;
 import player.weapon.arrow.AbstractArrow;
+import scala.Tuple2;
 import world.TileLike;
 
 import java.awt.*;
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.TimerTask;
+import java.util.stream.Stream;
 
 public class AttackingCalculator {
 
@@ -30,7 +35,7 @@ public class AttackingCalculator {
     private static AttackingCalculator instance;
 
     /** only one AttackingCalculator can exist, because the old threads has to continue. */
-    private static AttackingCalculator getInstance () {
+    public static AttackingCalculator getInstance () {
         if (instance == null)
             instance = new AttackingCalculator();
         return instance;
@@ -40,76 +45,13 @@ public class AttackingCalculator {
         this.attackingArrows = new ArrayList<>();
     }
 
-    //<editor-fold desc="Path prediction tests">
-
     /** <b><code>AttackingCalculator.getInstance().arrowsFlying(AttackDrawer.getAttackProgressesOfArrows());</code></b> */
     public void arrowsFlying (List<AttackProgress> filteredProgresses) {
-    private static final List<Path2D> pathList = new ArrayList<>();
-
-    private static Path2D[] executeForEvery(List<AttackProgress> progresses, List<AbstractArrow> arrows) {
-        List<Tuple2<AttackProgress, AbstractArrow> > tupled = new ArrayList<>();
-        for(int i = 0; i < arrows.size(); ++i) {
-            tupled.add(new Tuple2<>(progresses.get(i), arrows.get(i)));
-        }
-
-        final Stream<Path2D> pathStream = tupled.stream().map(tuple -> predictedPath(tuple._1(), tuple._2()));
-
-        final Path2D[] pathArray = pathStream.toArray(Path2D[]::new);
-
         pathList.clear();
-        for(Path2D path : pathArray) {
-            pathList.add(path);
-        }
-
-        return pathArray;
-    }
-
-    private static Path2D predictedPath(AttackProgress progress, AbstractArrow arrow) {
-        // Customizable variables.
-        final double beginProgress = progress.progress();
-        final double progressPerTurn = progress.progressPerTurn();
-        final Path2D.Double resultingPath = new Path2D.Double();
-        final Point initialCenterPosition = arrow.getComponent().center();
-
-        // Begin of real method execution
-        resultingPath.moveTo(initialCenterPosition.x, initialCenterPosition.y);
-
-        Vector2 sectionBeginPoint = Vector2.apply(initialCenterPosition.x, initialCenterPosition.y);
-
-        for(double simulatedProgress = beginProgress; simulatedProgress < 1.0; simulatedProgress += progressPerTurn) {
-            final Vector2 sectionEndPoint = AttackingCalculatorCompanion.sectionEndPoint(
-                    0, sectionBeginPoint, arrow, sectionBeginPoint.toPoint(), TIME_MULTI, arrow.getAim(), progress.event().lengthGUI());
-            resultingPath.lineTo(sectionEndPoint.x(), sectionEndPoint.y());
-            sectionBeginPoint = sectionEndPoint;
-        }
-
-        return resultingPath;
-    }
-
-    public static List<Path2D> getPathList() {
-        return Collections.unmodifiableList(pathList);
-    }
-
-    //</editor-fold>
-
-    public void arrowsFlying () {
-
-        pathList.clear();
-
-        List<AttackProgress> filteredProgresses = AttackDrawer.getAttackProgressesOfArrows();
-
-        // if there aren't any arrows to shot, there's nothing to do. But it should be controlled first...
-        if (filteredProgresses.isEmpty()) {
-            List<AttackProgress> progresses = AttackDrawer.getAttackProgressesOfArrows();
-            if (progresses.isEmpty())
-                return;
-            else
-                filteredProgresses = progresses;
-        }
 
         List<AbstractArrow> attackingArrows = AttackDrawer.getAttackingArrows();
 
-        executeForEvery(filteredProgresses, attackingArrows);
+        //executeForEvery(filteredProgresses, attackingArrows);
 
         java.util.Timer timer = new java.util.Timer("attackCalculatorScheduler", true);
         // every milliSec has to increase every millisecond
@@ -142,7 +84,15 @@ public class AttackingCalculator {
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) { e.printStackTrace(); }
+    }
 
+    /** calls <code> arrowsFlying(AttackDrawer.getAttackProgressesOfArrows()) </code>. If there are no arrows, this
+     * method does nothing. Use arrowsFlying(List...), because you can leave AttackingScreen directly, if there are no arrows. */
+    public void arrowsFlying () {
+        List<AttackProgress> filteredProgresses = AttackDrawer.getAttackProgressesOfArrows();
+
+        if (!filteredProgresses.isEmpty())
+            arrowsFlying(filteredProgresses);
     }
 
 
@@ -222,4 +172,55 @@ public class AttackingCalculator {
             }
         }
     }
+
+    // TEST:
+    // PATH PREDICTION
+
+    //<editor-fold desc="Path prediction tests">
+
+    private static final List<Path2D> pathList = new ArrayList<>();
+
+    private static Path2D[] executeForEvery(List<AttackProgress> progresses, List<AbstractArrow> arrows) {
+        List<Tuple2<AttackProgress, AbstractArrow>> tupled = new ArrayList<>();
+        for(int i = 0; i < arrows.size(); ++i) {
+            tupled.add(new Tuple2<>(progresses.get(i), arrows.get(i)));
+        }
+
+        final Stream<Path2D> pathStream = tupled.stream().map(tuple -> predictedPath(tuple._1(), tuple._2()));
+
+        final Path2D[] pathArray = pathStream.toArray(Path2D[]::new);
+
+        pathList.clear();
+        Collections.addAll(pathList, pathArray);
+
+        return pathArray;
+    }
+
+    private static Path2D predictedPath(AttackProgress progress, AbstractArrow arrow) {
+        // Customizable variables.
+        final double beginProgress = progress.progress();
+        final double progressPerTurn = progress.progressPerTurn();
+        final Path2D.Double resultingPath = new Path2D.Double();
+        final Point initialCenterPosition = arrow.getComponent().center();
+
+        // Begin of real method execution
+        resultingPath.moveTo(initialCenterPosition.x, initialCenterPosition.y);
+
+        Vector2 sectionBeginPoint = Vector2.apply(initialCenterPosition.x, initialCenterPosition.y);
+
+        for(double simulatedProgress = beginProgress; simulatedProgress < 1.0; simulatedProgress += progressPerTurn) {
+            final Vector2 sectionEndPoint = AttackingCalculatorCompanion.sectionEndPoint(
+                    0, sectionBeginPoint, arrow, sectionBeginPoint.toPoint(), TIME_MULTI, arrow.getAim(), progress.event().lengthGUI());
+            resultingPath.lineTo(sectionEndPoint.x(), sectionEndPoint.y());
+            sectionBeginPoint = sectionEndPoint;
+        }
+
+        return resultingPath;
+    }
+
+    public static List<Path2D> getPathList() {
+        return Collections.unmodifiableList(pathList);
+    }
+
+    //</editor-fold>
 }

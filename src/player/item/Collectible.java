@@ -35,7 +35,9 @@ public interface Collectible {
      * @see player.item.Collectible#collect(newent.InventoryEntity)
      */
     default boolean defaultCollect (InventoryLike inventory, Loot loot) {
-        // controlling if the inventory is full, is already done by "put(this)".
+        System.err.println("Trying to remove loot!");
+
+        // controlling if the inventory is full, is already done by "put(item)".
         if (inventory.currentSize() + loot.getStoredItems().size() <= inventory.maximumSize()) {
 
             for (Item item : loot.getStoredItems()) {
@@ -66,9 +68,6 @@ public interface Collectible {
                 GameScreen.getInstance().setWarningMessage(loot.getName() + " konnte nicht entfernt werden.");
                 GameScreen.getInstance().activateWarningMessage();
                 LogFacility.log(loot.toString() + " konnte nicht entfernt werden", LogFacility.LoggingLevel.Error);
-
-                if(loot.getStoredItems().isEmpty())
-                    removed = true;
             }
 
             // the money has changed probably

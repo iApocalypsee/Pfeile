@@ -1,6 +1,7 @@
 package player.item;
 
 import general.JavaInterop;
+import general.LogFacility;
 import general.PfeileContext;
 import gui.Drawable;
 import newent.*;
@@ -76,11 +77,15 @@ public class WorldLootList implements Drawable {
         boolean removed;
 
         synchronized (lootList) {
+            System.out.println("Trying to remove " + collectedLoot.getName());
             removed = lootList.remove(collectedLoot);
         }
 
-        if (removed)
+        if (removed) {
             updateVisibleLoot();
+            System.out.println("Removed loot: " + collectedLoot.getName());
+        } else
+            LogFacility.log("Can't remove loot!" + lootList.toString(), LogFacility.LoggingLevel.Error);
 
         return removed;
     }
