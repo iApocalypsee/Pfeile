@@ -11,7 +11,6 @@ import player.item.ore.{CopperOre, IronOre, OreRegistry}
 import player.shop.ShopInitializer
 import player.weapon.arrow.ArrowHelper
 import world.brush.OreBrush
-import world.buildings.Barracks
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -102,8 +101,6 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       entityManager += opponent
 
       PreWindowScreen.correctArrowNumber(entityManager.javaEntityList)
-
-      context.world.entities += new Barracks(context.world, act.getGridX + 1, act.getGridY + 1)
 
       // adding Arrows:
       LoadingWorldScreen.getInstance.getAddingArrowList(0).forEach(JavaInterop.asJava((selectedArrow) => {

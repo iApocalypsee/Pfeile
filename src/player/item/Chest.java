@@ -105,9 +105,11 @@ public abstract class Chest extends Loot {
                     System.out.println("Clicked with: left mouse button");
 
                     if (x != null) {
-                        try {
-                            x.join();
-                        } catch (InterruptedException e1) { e1.printStackTrace(); }
+                        if (x.isAlive()) {
+                            try {
+                                x.join();
+                            } catch (InterruptedException e1) { e1.printStackTrace(); }
+                        }
                     }
 
                      x = new Thread(() -> {
