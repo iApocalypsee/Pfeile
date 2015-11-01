@@ -43,14 +43,9 @@ public class RoundChest extends Chest {
         return image;
     }
 
-    /**
-     * you need to open a chest.
-     * <p>
-     * <b>Call {@link player.item.Chest#changeUIforOpenedChest(java.awt.image.BufferedImage)} at the end. </b>
-     */
     @Override
     public void open () {
-        changeUIforOpenedChest(imageOpenChest);
+        getLootUI().changeUI(imageOpenChest);
         isOpen = true;
         GameScreen.getInstance().setWarningMessage("Rundenkiste geöffnet. Schlüssel wurde aus Inventar entfernt.");
         GameScreen.getInstance().activateWarningMessage();

@@ -106,7 +106,7 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
                         if (Loot.this.getGridX() == selectedEntity.getGridX() && Loot.this.getGridY() == selectedEntity.getGridY()) {
                             if (selectedEntity instanceof InventoryEntity) {
                                 if (collect((InventoryEntity) selectedEntity))
-                                    getLootUI().component.removeMouseListener(this);
+                                    lootUI.component.removeMouseListener(this);
                             }
                         }
                     });

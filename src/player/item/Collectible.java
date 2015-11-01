@@ -65,7 +65,6 @@ public interface Collectible {
             } else {
                 GameScreen.getInstance().setWarningMessage(loot.getName() + " konnte nicht entfernt werden.");
                 GameScreen.getInstance().activateWarningMessage();
-                LogFacility.log(loot.toString() + " konnte nicht entfernt werden", LogFacility.LoggingLevel.Error);
             }
 
             // the money has changed probably

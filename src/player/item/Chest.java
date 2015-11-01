@@ -51,28 +51,8 @@ public abstract class Chest extends Loot {
 
     /** you need to open a chest.
      * <p>
-     * <b>Call {@link player.item.Chest#changeUIforOpenedChest(java.awt.image.BufferedImage)} at the end. </b>*/
+     * <b>Call {@link player.item.LootUI#changeUI(java.awt.image.BufferedImage)} at the end. </b>*/
     public abstract void open();
-
-    /** If the chest has been opened, the image of the chest must change.
-     *
-     * @param imgOfOpenChest the BufferedImage of the opened chest
-     */
-    public void changeUIforOpenedChest (BufferedImage imgOfOpenChest) {
-        System.out.println("Old lootUI:  " + getLootUI());
-        LootUI createdUI = createUI(imgOfOpenChest);
-
-        System.out.println("Setting to tile " + getTile());
-        createdUI.setOnTile(getTile());
-
-        System.out.println("created UI: " + createdUI);
-
-        addCollectListener(createdUI);
-
-        setLootUI(createdUI);
-
-        System.out.println("Changed LootUI! " + getLootUI() + " with comp: " + getLootUI().getComponent());
-    }
 
     @Override
     public boolean collect (InventoryEntity entity) {
@@ -156,9 +136,7 @@ public abstract class Chest extends Loot {
                                     }
 
                                     if (removed) {
-                                        isOpen = true;
-                                        GameScreen.getInstance().setWarningMessage("Kiste wurde geöffnet! The chest has been unlocked!");
-                                        GameScreen.getInstance().activateWarningMessage();
+                                        open();
                                     } else {
                                         GameScreen.getInstance().setWarningMessage("Du brauchst einen Schlüssel, um eine Kiste zu öffnen. You need a key to open a chest!");
                                         GameScreen.getInstance().activateWarningMessage();
