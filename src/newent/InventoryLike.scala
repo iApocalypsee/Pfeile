@@ -91,18 +91,6 @@ class DefaultInventory extends InventoryLike {
       false
     }
   }
-  /*
-  override def remove(f: Item): Item = {
-     for (i <- 0 until _list.size) {
-        if (_list(i) == f) {
-           return _list.remove(i)
-        }
-     }
-     // if the element hasn't been found
-     null
-  }
-  */
-
 
   override def remove(f: (Item) => Boolean, amount: Int): Seq[Item] = {
     var removeCount = 0

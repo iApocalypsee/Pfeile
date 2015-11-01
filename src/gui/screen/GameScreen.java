@@ -125,6 +125,7 @@ public class GameScreen extends Screen implements FrameContainer {
 
             message = new WarningMessage("          ", 80, Main.getWindowHeight() - 95, this);
             message.setWarningColor(new Color(221, 49, 77));
+            message.setFont(message.getFont().deriveFont(Font.PLAIN));
 
             moneyDisplay = new MoneyDisplay(Main.getWindowWidth() - 192, Main.getWindowHeight() - 250, this);
 

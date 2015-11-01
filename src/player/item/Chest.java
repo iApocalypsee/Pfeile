@@ -3,14 +3,12 @@ package player.item;
 import general.Main;
 import gui.screen.GameScreen;
 import newent.*;
-import scala.Option;
-import scala.runtime.AbstractFunction1;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 /**
  * The superclass for chests. To open a chest you need to give up something (arrows, gold, ...) or find a key
@@ -69,6 +67,8 @@ public abstract class Chest extends Loot {
 
         System.out.println("created UI: " + createdUI);
 
+        addCollectListener(createdUI);
+
         setLootUI(createdUI);
 
         System.out.println("Changed LootUI! " + getLootUI() + " with comp: " + getLootUI().getComponent());
@@ -99,11 +99,9 @@ public abstract class Chest extends Loot {
 
             @Override
             public void mouseReleased (MouseEvent e) {
-                System.out.println("Clicked at: " + Chest.this.getName());
-
                 if (SwingUtilities.isLeftMouseButton(e)) {
-                    System.out.println("Clicked with: left mouse button");
 
+                    // If there is an old Thread, wait until the thread has stopped...
                     if (x != null) {
                         if (x.isAlive()) {
                             try {
@@ -112,54 +110,55 @@ public abstract class Chest extends Loot {
                         }
                     }
 
-                     x = new Thread(() -> {
+                    x = new Thread(() -> {
                         Entity selectedEntity = Main.getContext().entitySelection().selectedEntity();
 
-                        System.out.println("Chest is open " + isOpen);
-
                         if (isOpen) {
-
-                            System.out.println("Selected Entity " + selectedEntity.name() + " and Chest are on the same place: " +
-                                    (Chest.this.getGridX() == selectedEntity.getGridX() && Chest.this.getGridY() == selectedEntity.getGridY()));
-
                             // only trigger collect, when the selectedEntity is on the same tile as the loot
                             if (Chest.this.getGridX() == selectedEntity.getGridX() && Chest.this.getGridY() == selectedEntity.getGridY()) {
                                 if (selectedEntity instanceof InventoryEntity) {
-                                    System.err.println("Trying to call collect");
                                     if (collect((InventoryEntity) selectedEntity))
-                                        getLootUI().component.removeMouseListener(this);
-                                    else
-                                        System.err.println("collect returned false");
+                                        lootUI.getComponent().removeMouseListener(this);
                                 }
                             }
                         } else {
-
-                            System.out.println("Selected Entity " + selectedEntity.name() + " and Chest are on the same place: " +
-                                    (Chest.this.getGridX() == selectedEntity.getGridX() && Chest.this.getGridY() == selectedEntity.getGridY()));
-
                             // if the chest isn't open, it will be opened now, if the chest and the player are on the tile.
                             // It can only be opened by players, but collected by every InventoryEntity. You need a key to open it.
                             if (selectedEntity instanceof Player || selectedEntity instanceof Bot) {
                                 if (Chest.this.getGridX() == selectedEntity.getGridX() && Chest.this.getGridY() == selectedEntity.getGridY()) {
 
                                     // removing the key
-                                    CombatUnit active = (CombatUnit) selectedEntity;
-                                    Option<Item> opt = active.inventory().remove(new AbstractFunction1<Item, Object>() {
-                                        @Override
-                                        public Object apply(Item v1) {
-                                            if (Chest.this instanceof DefaultChest)
-                                                return v1 instanceof KeyDefaultChest;
-                                            else if (Chest.this instanceof RoundChest)
-                                                return v1 instanceof KeyRoundChest;
-                                            else
-                                                throw new NotImplementedException(); // this chest type doesn't exit... Add it here...
+                                    boolean removed = false;
+
+                                    InventoryLike inventory = ((CombatUnit) selectedEntity).inventory();
+
+                                    List<Item> inventoryList = inventory.javaItems();
+                                    if (Chest.this instanceof DefaultChest) {
+                                        for (Item item : inventoryList) {
+                                            if (item instanceof KeyDefaultChest) {
+                                                inventory.remove(item);
+                                                removed = true;
+                                                break;
+                                            }
                                         }
-                                    });
+                                    } else if (Chest.this instanceof RoundChest) {
+                                        for (Item item : inventoryList) {
+                                            if (item instanceof KeyRoundChest) {
+                                                inventory.remove(item);
+                                                removed = true;
+                                                break;
+                                            }
+                                        }
+                                    } else { // register new Chest
+                                        try {
+                                            throw new ClassNotFoundException("add the typ of chest your using here");
+                                        } catch (ClassNotFoundException e1) { e1.printStackTrace(); }
+                                    }
 
-                                    System.out.println("opt.isDefined()" + opt.isDefined());
-
-                                    if (opt.isDefined()) {
-                                        open();
+                                    if (removed) {
+                                        isOpen = true;
+                                        GameScreen.getInstance().setWarningMessage("Kiste wurde geöffnet! The chest has been unlocked!");
+                                        GameScreen.getInstance().activateWarningMessage();
                                     } else {
                                         GameScreen.getInstance().setWarningMessage("Du brauchst einen Schlüssel, um eine Kiste zu öffnen. You need a key to open a chest!");
                                         GameScreen.getInstance().activateWarningMessage();
@@ -167,10 +166,9 @@ public abstract class Chest extends Loot {
                                 }
                             }
                         }
-                    });
+                    }, "CollectLootListener");
 
                     x.setDaemon(true);
-                    x.setName("Collect Loot Listener");
                     x.start();
                 }
             }

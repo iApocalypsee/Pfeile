@@ -9,12 +9,10 @@ import java.awt.image.BufferedImage;
 public abstract class Item {
 
 	private String name;
-	private int value;
 
 	public Item(String name) {
 		if(name == null) throw new NullPointerException();
 		this.name = name;
-		this.value = 0;
 	}
 
 	public String getName() {
@@ -37,12 +35,4 @@ public abstract class Item {
     public String toString () {
         return getName();
     }
-
-	public int getValue() {
-		return value;
-	}
-
-	public void setValue(int value) {
-		this.value = value;
-	}
 }

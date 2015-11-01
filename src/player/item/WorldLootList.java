@@ -77,13 +77,11 @@ public class WorldLootList implements Drawable {
         boolean removed;
 
         synchronized (lootList) {
-            System.out.println("Trying to remove " + collectedLoot.getName());
             removed = lootList.remove(collectedLoot);
         }
 
         if (removed) {
             updateVisibleLoot();
-            System.out.println("Removed loot: " + collectedLoot.getName());
         } else
             LogFacility.log("Can't remove loot!" + lootList.toString(), LogFacility.LoggingLevel.Error);
 

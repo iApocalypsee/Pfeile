@@ -212,7 +212,8 @@ public class CoinHelper {
     public static <A extends Item> int getValue(scala.collection.Iterable<A> seq) {
         int value = 0;
         for(A a : JavaConversions.asJavaIterable(seq)) {
-            value += a.getValue();
+            if (a instanceof Coin)
+                value += ((Coin) a).getValue();
         }
         return value;
     }

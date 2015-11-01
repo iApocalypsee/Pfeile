@@ -35,8 +35,6 @@ public interface Collectible {
      * @see player.item.Collectible#collect(newent.InventoryEntity)
      */
     default boolean defaultCollect (InventoryLike inventory, Loot loot) {
-        System.err.println("Trying to remove loot!");
-
         // controlling if the inventory is full, is already done by "put(item)".
         if (inventory.currentSize() + loot.getStoredItems().size() <= inventory.maximumSize()) {
 
@@ -59,7 +57,7 @@ public interface Collectible {
                     else
                         otherItems.add(item);
                 }
-                GameScreen.getInstance().setWarningMessage(loot.getName() + ": {Geld: " + money + " | Items: " + otherItems + "}");
+                GameScreen.getInstance().setWarningMessage("Geld: " + money + " | Items: " + otherItems);
                 GameScreen.getInstance().activateWarningMessage();
 
                 // secure, that no item remains
@@ -76,7 +74,7 @@ public interface Collectible {
             return removed;
 
         } else {
-            GameScreen.getInstance().setWarningMessage("Das Inventar ist voll! Maximal Größe: " + inventory.maximumSize()
+            GameScreen.getInstance().setWarningMessage("Das Inventar ist voll! Maximalgröße: " + inventory.maximumSize()
                     + " | Aktuelle Größe: " + inventory.currentSize());
             GameScreen.getInstance().activateWarningMessage();
             LogFacility.log("The inventory is full: " + inventory.toString() + " at adding: " + loot.toString(), LogFacility.LoggingLevel.Info);
