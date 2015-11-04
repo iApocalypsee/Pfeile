@@ -44,24 +44,23 @@ public class SoundPool {
 
     static {
         // loading all melodies
-        Thread x = new Thread(new Runnable() {
-            @Override
-            public void run () {
-                titleMelodie = SoundLoader.load("resources/sfx/titleMelodie.wav");
-                mainThemeMelodie = SoundLoader.load("resources/sfx/mainThemeMelodie.wav", 6);
-                tensionThemeMelodie = SoundLoader.load("resources/sfx/tensionThemeMelodie.wav", 5);
-                // the gameOverMelodie should be slightly quieter, because of a smooth change from mainThemeMelodie [or whatever] to GameOverScreen
-                gameOverMelodie = SoundLoader.load("resources/sfx/gameOverMelodie.wav", -12);
-                loaded = true;
-                LogFacility.log("Background music files loaded.", "Info", "initprocess");
+        Thread x = new Thread(() -> {
+            titleMelodie = SoundLoader.load("resources/sfx/titleMelodie.wav");
+            // the title melody can be played now
+            titleMelodie.loop(LOOP_CONTINUOUSLY);
+            titleMelodie.start();
 
-                // When the files are loaded, the computer can play the title melodie
-                play_titleMelodie(LOOP_CONTINUOUSLY);
+            mainThemeMelodie = SoundLoader.load("resources/sfx/mainThemeMelodie.wav", 6);
+            tensionThemeMelodie = SoundLoader.load("resources/sfx/tensionThemeMelodie.wav", 5);
+            // the gameOverMelodie should be slightly quieter, because of a smooth change from mainThemeMelodie [or whatever] to GameOverScreen
+            gameOverMelodie = SoundLoader.load("resources/sfx/gameOverMelodie.wav", -12);
 
-                // That will loaded SoundEffectTimeClock as well
-                SoundEffectTimeClock.isLoaded();
-            }
-        });
+            loaded = true;
+            LogFacility.log("Background music files loaded.", "Info", "initprocess");
+
+            // That will loaded SoundEffectTimeClock as well
+            SoundEffectTimeClock.isLoaded();
+        }, "MusicLoader");
         x.setPriority(Thread.MAX_PRIORITY);
         x.setDaemon(true);
         x.start();

@@ -1,7 +1,7 @@
 package comp
 
+import java.awt.Graphics2D
 import java.awt.image.BufferedImage
-import java.awt.{Color, Graphics2D}
 
 import gui.image.{DefaultTextureUsage, TextureUsage}
 import gui.screen.Screen
@@ -45,7 +45,7 @@ class ImageLikeComponent(x: Int, y: Int, imageLike: ImageLike, screen: Screen) e
   *
   * @param x The x position of the image.
   * @param y The y position of the image.
-  * @param image The image to display.
+  * @param textureUsage The image to display.
   * @param screen The screen to bind the component to. Needed for listener implementation.
   */
 class ImageComponent(x: Int, y: Int, val textureUsage: TextureUsage, screen: Screen) extends Component(x, y, textureUsage.textureBinding.getWidth, textureUsage.textureBinding.getHeight, screen) {
@@ -89,11 +89,5 @@ class ImageComponent(x: Int, y: Int, val textureUsage: TextureUsage, screen: Scr
     g.setTransform(getTransformation.localConcatenatedMatrix)
     g.drawImage(textureUsage.textureBinding, src_s.x, src_s.y, src_s.width, src_s.height, null)
     g.setTransform(oldTransformation)
-
-
-    g.setColor(Color.white)
-    g.drawOval(getBounds.getBounds.x - 15, getBounds.getBounds.y - 15, 30, 30)
-    g.drawOval((getBounds.getBounds2D.getCenterX - 5).asInstanceOf[Int], (getBounds.getBounds2D.getCenterY - 5).asInstanceOf[Int], 10, 10)
-
   }
 }

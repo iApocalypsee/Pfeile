@@ -96,17 +96,6 @@ public class Main {
      * Main-Method �ffnet eine neue Instanz von Main: main
      */
     public static void main(String[] arguments) {
-
-        /*
-        final int x = 2 & 3, y = 3 & 3, z = 4 & 3, a = 5 & 3, b = 6 & 3, c = -2 & 3;
-        System.out.println("2 & 3 = " + x);
-        System.out.println("3 & 3 = " + y);
-        System.out.println("4 & 3 = " + z);
-        System.out.println("5 & 3 = " + a);
-        System.out.println("6 & 3 = " + b);
-        System.out.println("-2 & 3 = " + c);
-        */
-
         programStartTime = System.currentTimeMillis();
 
         GraphicsEnvironment environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -123,15 +112,15 @@ public class Main {
 
         LogFacility.log("Beginning initialization process...", "Info", "initprocess");
 
-        LangInitialization.apply();
-        LogFacility.log("LangInitialization done!", "Info", "initprocess");
-
         main = new Main();
         user = new User(SystemProperties.getComputerName());
 
         PreInitStage.execute();
 
         LogFacility.log("PreInitStage done!", "Info", "initprocess");
+
+        LangInitialization.apply();
+        LogFacility.log("LangInitialization done!", "Info", "initprocess");
 
         graphicsDevice = environmentG.getDefaultScreenDevice();
         gameWindow = new GameWindow();
@@ -147,7 +136,7 @@ public class Main {
         LogFacility.log("Screens initialized.", "Info", "initprocess");
 
         GameWindow.adjustWindow(gameWindow);
-        //toggleFullscreen(true);
+        toggleFullscreen(true);
 
         // window showing process
         gameWindow.setVisible(true);
@@ -155,19 +144,6 @@ public class Main {
 
 	    ArrowSelectionScreenPreSet.getInstance().onScreenLeft.registerJava(event -> {
             main.disposeInitialResources();
-        });
-
-	    LoadingWorldScreen.getInstance().onScreenLeft.registerJava(event -> {
-            getContext().onStartRunningTimeClock().apply();
-        });
-
-        GameScreen.getInstance().onScreenEnter.registerOnceJava(() -> {
-
-            final Seq<Team> teamSeq = Main.getContext().getTurnSystem().teams().apply();
-            teamSeq.foreach(JavaInterop.asScala(team -> {
-                Player p = ((CommandTeam) team).getHead();
-                p.tightenComponentToTile((TileLike) p.tileLocation());
-            }));
         });
 
         LogFacility.log("Pfeile is ready.", "Info", "initprocess");

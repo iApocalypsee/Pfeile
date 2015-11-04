@@ -186,6 +186,10 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       // This initialization may take long...
       ArrowSelectionScreen.getInstance().init(context)
 
+      val teamSeq = context.getTurnSystem.headOfCommandTeams.foreach(player => {
+        player.tightenComponentToTile(player.tileLocation)
+      })
+
       ShopInitializer.initalizeShop()
 
       context.turnSystem.onTurnEnded.register(team => {

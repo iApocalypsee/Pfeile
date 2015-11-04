@@ -13,10 +13,8 @@ import world.TileLike;
 import java.awt.*;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.TimerTask;
 import java.util.stream.Stream;
 
 public class AttackingCalculator {
@@ -29,7 +27,7 @@ public class AttackingCalculator {
     private static final int TIME_MULTI = 1500;
 
     /** The threads are saved in this list. It contains all AttackingThreads, which haven't been arrived yet (progress != 1). */
-    private ArrayList<Thread> attackingArrows;
+    private LinkedList<AttackingThread> attackingThreads;
 
     /** the singleton-instance */
     private static AttackingCalculator instance;
@@ -42,13 +40,11 @@ public class AttackingCalculator {
     }
 
     public AttackingCalculator () {
-        this.attackingArrows = new ArrayList<>();
+        attackingThreads = new LinkedList<>();
     }
 
     /** <b><code>AttackingCalculator.getInstance().arrowsFlying(AttackDrawer.getAttackProgressesOfArrows());</code></b> */
     public void arrowsFlying (List<AttackProgress> filteredProgresses) {
-        pathList.clear();
-
         List<AbstractArrow> attackingArrows = AttackDrawer.getAttackingArrows();
 
         //executeForEvery(filteredProgresses, attackingArrows);
@@ -57,16 +53,15 @@ public class AttackingCalculator {
         // every milliSec has to increase every millisecond
         timer.schedule(new Clock(), 0, 1);
 
-        AttackingThread [] attackingThreads = new AttackingThread[attackingArrows.size()];
-
         for (int i = 0; i < attackingArrows.size(); i++) {
             AbstractArrow attackingArrow = attackingArrows.get(i);
             AttackProgress attackProgress = filteredProgresses.get(i);
 
-            attackingThreads[i] = new AttackingThread (attackingArrow, attackProgress);
-            attackingThreads[i].setDaemon(true);
-            attackingThreads[i].setPriority(3);
-            attackingThreads[i].start();
+            AttackingThread attack = new AttackingThread (attackingArrow, attackProgress);
+            attack.setDaemon(true);
+            attack.setPriority(3);
+            attackingThreads.add(attack);
+            attack.start();
         }
 
         // waiting for the threads to stop their activity (to let the arrows arrive)
@@ -136,7 +131,7 @@ public class AttackingCalculator {
             //double maxDistanceToCover = attackProgress.event().lengthGUI();
             //double distanceToCover = maxDistanceToCover / attackProgress.numberOfTurns();
             double distanceToCover = attackProgress.event().lengthGUI();
-            
+
 
             while (milliSec < TIME_MULTI / attackingArrow.getSpeed()) {
                 double accuracy = (milliSec / TIME_MULTI) * attackingArrow.getSpeed();
@@ -165,6 +160,10 @@ public class AttackingCalculator {
             // refreshing the tile-position
             TileLike newTile = Main.getContext().getWorld().terrain().findTileJava(
                     boundsArrow.getCenterX(), boundsArrow.getCenterY());
+            if (newTile == null) {
+                newTile = Main.getContext().getWorld().terrain().findTileJava(
+                        boundsArrow.getCenterX() + 1, boundsArrow.getCenterY() + 1);
+            }
 
             if (newTile != null) {
                 attackingArrow.setGridX(newTile.getGridX());
@@ -181,6 +180,8 @@ public class AttackingCalculator {
     private static final List<Path2D> pathList = new ArrayList<>();
 
     private static Path2D[] executeForEvery(List<AttackProgress> progresses, List<AbstractArrow> arrows) {
+        pathList.clear();
+
         List<Tuple2<AttackProgress, AbstractArrow>> tupled = new ArrayList<>();
         for(int i = 0; i < arrows.size(); ++i) {
             tupled.add(new Tuple2<>(progresses.get(i), arrows.get(i)));

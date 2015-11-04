@@ -126,6 +126,10 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
     contextCreationFuture set creationProcedure
   }
 
+  onScreenLeft.register(event => {
+    Main.getContext.onStartRunningTimeClock.apply()
+  })
+
   override def draw(g: Graphics2D) = {
     super.draw(g)
     goButton.draw(g)
