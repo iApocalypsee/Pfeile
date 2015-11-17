@@ -1,6 +1,7 @@
 package world
 
-import newent.EntityLike
+import newent.GameObject
+
 
 /** Trait for tiles that hold references to currently standing entities locally and do
   * not calculate the entities on demand. <p>
@@ -11,7 +12,7 @@ trait LocalEntitySaveStrategy extends TileLike {
 
   import scala.collection.mutable
 
-  private val _entities = mutable.ArrayBuffer[EntityLike]()
+  private val _entities = mutable.ArrayBuffer[GameObject]()
 
   terrain.world.entities.onEntityRegistered += { entity =>
     entity.onLocationChanged += { locationChange =>
@@ -29,7 +30,7 @@ trait LocalEntitySaveStrategy extends TileLike {
   }
 
   /** The entities that are currently on this tile. */
-  override def entities: Seq[EntityLike] = _entities.toList
+  override def entities: Seq[GameObject] = _entities.toList
 
 
 }
@@ -38,5 +39,5 @@ trait LocalEntitySaveStrategy extends TileLike {
   * by going through the entity manager and filtering all entities that satisfy the position.
   */
 trait OnDemandEntitiesStrategy extends TileLike {
-  override def entities: Seq[EntityLike] = terrain.world.entities.entityList.filter { e => e.containsCoordinate(this.getGridX, this.getGridY) }
+  override def entities: Seq[GameObject] = terrain.world.entities.entityList.filter { e => e.isOccupyingPosition(this.getGridX, this.getGridY) }
 }

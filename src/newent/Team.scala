@@ -3,7 +3,8 @@ package newent
 import general.LogFacility
 
 /**
-  * Created by jolecaric on 28.12.14.
+  * Object being able of grouping entities together which mix in the [[newent.CanHoldTeamContract]] trait.
+  * @since 28.12.14
   */
 sealed abstract class Team protected {
 
@@ -89,8 +90,8 @@ object BarbarianTeam extends Team {
 
   override def isBarbarian = true
 
-  // Implementation of considering every other entity as hostile...
-  override def isInTeam(x: CanHoldTeamContract) = false
+  // Implementation of considering every other entity as hostile except for themselves...
+  override def isInTeam(x: CanHoldTeamContract) = x.belongsTo.team == this
 
   override def asCommandTeam = null
 
@@ -121,7 +122,7 @@ class CommandTeam(val head: Player, val name: String) extends Team {
    */
   override def integrate(x: CanHoldTeamContract): Unit = {
     if (!x.isInstanceOf[Player] || x == head) super.integrate(x)
-    else LogFacility.log(x.toString + " can not be added to team " + name, "Info")
+    else LogFacility.log(x.toString + " can not be added to command team " + name, "Info")
   }
 
   def getHead = head

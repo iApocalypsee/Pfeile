@@ -4,7 +4,6 @@ import java.awt.{Color, Graphics2D, Point}
 
 import animation.SoundPool
 import comp.Component
-import general.Main.getGameWindow
 import general._
 import general.property.IntStaticProperty
 import gui.LifeUI
@@ -31,8 +30,8 @@ class Player(world: WorldLike,
 
   // Delegate registration only valid after initialization of the actual life object.
   life.onDeath += { () =>
-    general.Main.getContext.getTimeClock.stop()
-    getGameWindow.getScreenManager.getActiveScreen.onLeavingScreen(GameOverScreen.SCREEN_INDEX)
+    Main.getContext.getTimeClock.stop()
+    Main.getGameWindow.getScreenManager.getActiveScreen.onLeavingScreen(GameOverScreen.SCREEN_INDEX)
     SoundPool.play_gameOverMelodie(SoundPool.LOOP_CONTINUOUSLY)
   }
 

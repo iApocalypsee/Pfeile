@@ -14,3 +14,5 @@ trait Pathfinder {
   def findPath(moveable: MovableEntity, tx: Int, ty: Int): Option[Path]
 
 }
+
+object DefaultPathfinder extends AStarPathfinder(50, _ => true)

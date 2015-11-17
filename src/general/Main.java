@@ -5,17 +5,11 @@ import animation.SoundPool;
 import general.io.PreInitStage;
 import general.langsupport.LangInitialization;
 import gui.screen.ArrowSelectionScreenPreSet;
-import gui.screen.GameScreen;
-import gui.screen.LoadingWorldScreen;
 import misc.ArmingInitialization;
 import misc.ItemInitialization;
-import newent.CommandTeam;
-import newent.Player;
-import newent.Team;
-import scala.collection.Seq;
-import world.TileLike;
 
 import java.awt.*;
+import java.util.Arrays;
 
 public class Main {
 
@@ -93,9 +87,16 @@ public class Main {
     // ###########################################################
 
     /**
-     * Main-Method �ffnet eine neue Instanz von Main: main
+     * List of possible program arguments to Pfeile:
+     *  "-nofullscreen" => Do not enter fullscreen upon program startup.
      */
     public static void main(String[] arguments) {
+
+        // Determines if the game should switch directly to fullscreen mode.
+        // This line makes it possible for users to specify on the command line that he does
+        // not want to enter fullscreen mode.
+        boolean activateFullscreen = !Arrays.stream(arguments).anyMatch(arg -> arg.equals("-nofullscreen"));
+
         programStartTime = System.currentTimeMillis();
 
         GraphicsEnvironment environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -136,7 +137,7 @@ public class Main {
         LogFacility.log("Screens initialized.", "Info", "initprocess");
 
         GameWindow.adjustWindow(gameWindow);
-        toggleFullscreen(true);
+        toggleFullscreen(activateFullscreen);
 
         // window showing process
         gameWindow.setVisible(true);

@@ -1,6 +1,5 @@
 package world.buildings
 
-import java.awt.Point
 import java.io.File
 
 import comp.ImageComponent
@@ -9,7 +8,7 @@ import gui.screen.GameScreen
 import newent.Entity
 import world.{IsometricPolygonTile, WorldLike}
 
-class Barracks(world: WorldLike, x: Int, y: Int) extends Entity(world, x, y, Seq(new Point(0, 0), new Point(0, 1), new Point(1, 1), new Point(1, 0))) {
+class Barracks(world: WorldLike, x: Int, y: Int) extends Entity(world, x, y) {
 
   override protected def startComponent = new VisualBarracks(this)
 

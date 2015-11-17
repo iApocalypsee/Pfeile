@@ -6,7 +6,7 @@ import javax.imageio.ImageIO
 
 import comp.DisplayRepresentable
 import gui.image.TextureAtlas
-import newent.{AttackContainer, EntityLike}
+import newent.{AttackContainer, GameObject}
 
 import scala.collection.JavaConversions
 import scala.collection.JavaConverters._
@@ -22,9 +22,9 @@ import scala.collection.JavaConverters._
 trait TileLike extends AnyRef with DisplayRepresentable with AttackContainer {
 
   /** The x position in the grid of the world. */
-  val latticeX: Int
+  @deprecated("Use getGridX() instead", "16.11.2015") val latticeX: Int
   /** The y position in the grid of the world. */
-  val latticeY: Int
+  @deprecated("Use getGridY() instead", "16.11.2015") val latticeY: Int
   /** The terrain to which the tile belongs to. */
   val terrain: TerrainLike
 
@@ -67,7 +67,7 @@ trait TileLike extends AnyRef with DisplayRepresentable with AttackContainer {
   def getNeighbors = neighbors.asJava
 
   /** The entities that are currently on this tile. */
-  def entities: Seq[EntityLike]
+  def entities: Seq[GameObject]
 
   /** Java interop method for the entity list. */
   def javaEntities = JavaConversions.seqAsJavaList(entities)

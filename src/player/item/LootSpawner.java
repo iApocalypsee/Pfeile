@@ -3,7 +3,7 @@ package player.item;
 import comp.Circle;
 import general.PfeileContext;
 import newent.Bot;
-import newent.EntityLike;
+import newent.GameObject;
 import newent.Player;
 import newent.Team;
 import player.item.coin.*;
@@ -12,7 +12,6 @@ import player.item.potion.PotionOfHealing;
 import player.item.potion.PotionOfMovement;
 import player.weapon.arrow.ArrowHelper;
 import world.GrassTile;
-import world.SeaTile;
 import world.TerrainLike;
 
 import java.awt.*;
@@ -231,9 +230,9 @@ public class LootSpawner {
      * @return <code>true</code> - if there is any entity near the position (<code>posX</code>|<code>posY</code>) in the radius
      */
     private boolean isEntityNear (int posX, int posY, int radiusTroops, int radiusPlayers) {
-        java.util.List<EntityLike> entityList = context.getWorld().entities().javaEntityList();
+        java.util.List<GameObject> entityList = context.getWorld().entities().javaEntityList();
 
-        for (EntityLike entity : entityList) {
+        for (GameObject entity : entityList) {
             if (entity instanceof Player || entity instanceof Bot) {
                 Circle circle = new Circle(entity.getGridX(), entity.getGridY(), radiusPlayers);
                 if (circle.contains(posX, posY))

@@ -64,10 +64,8 @@ trait AttackContainer extends BoardPositionable {
 object AttackContainer {
 
   /** Returns all entities in the current world (in PfeileContext) that are AttackContainer objects. */
-  def allACEntities(): Seq[AttackContainer] = {
-    val entityList = Main.getContext.getWorld.entities.entityList
-    val checkFun = { e: EntityLike => e.isInstanceOf[AttackContainer] }
-    entityList.filter(checkFun).asInstanceOf[Seq[AttackContainer]]
+  def allACEntities(): Seq[AttackContainer] = Main.getContext.getWorld.entities.entityList.collect {
+    case x: AttackContainer => x
   }
 
   /**

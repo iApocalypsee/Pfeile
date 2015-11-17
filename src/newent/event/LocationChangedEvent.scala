@@ -1,6 +1,6 @@
 package newent.event
 
-import newent.EntityLike
+import newent.GameObject
 
 /** Represents an event in which an entity's location changed.
   *
@@ -10,9 +10,9 @@ import newent.EntityLike
   * @param toY To what y position the entity heads.
   * @param entity A reference to the entity.
   */
-case class LocationChangedEvent(fromX: Int, fromY: Int, toX: Int, toY: Int, entity: EntityLike) {
+case class LocationChangedEvent(fromX: Int, fromY: Int, toX: Int, toY: Int, entity: GameObject) {
 
-  require(entity ne null)
+  require(entity != null)
 
   /** The start tile. */
   def start = entity.world.terrain.tileAt(fromX, fromY)

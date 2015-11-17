@@ -1,5 +1,6 @@
 package newent;
 
+import general.LogFacility;
 import general.PfeileContext;
 import player.weapon.arrow.ArrowHelper;
 
@@ -13,8 +14,14 @@ public interface IntelligentArrowSelectionBot {
      * Later, in this method an intelligent algorithm can be found. */
     public default void selectArrowsPreSet () {
         Random randomGen = new Random();
-        // This have to be possible, because every Entity, which calls this method IS a Bot.
-        Bot bot = (Bot) this;
+
+        Bot bot;
+        try {
+            bot = (Bot) this;
+        } catch(ClassCastException e) {
+            LogFacility.log(this + " is no subclass of Bot => illegal implementation of IntelligentArrowSelectionBot!");
+            throw e;
+        }
 
         switch (BotStrength.Strength) {
             case MISERABLE: {

@@ -5,7 +5,7 @@ import java.awt._
 import comp.Component
 import general.property.StaticProperty
 import gui.image.TextureAtlas
-import newent.{AttackContainer, EntityLike}
+import newent.{AttackContainer, GameObject}
 import player.weapon.arrow.{AbstractArrow, ImpactDrawerHandler}
 
 import scala.collection.mutable
@@ -131,8 +131,9 @@ object IsometricPolygonTile {
   * @param latticeY The y grid coordinate.
   * @param terrain The terrain to which the tile is linked.
   */
-abstract class IsometricPolygonTile protected (override val latticeX: Int,
-    override val latticeY: Int,
+abstract class IsometricPolygonTile protected (
+    @deprecatedName('initGridX) @deprecated("Use getGridX() instead.") override val latticeX: Int,
+    @deprecatedName('initGridY) @deprecated("Use getGridY() instead.") override val latticeY: Int,
     override val terrain: DefaultTerrain) extends TileLike with OnDemandEntitiesStrategy {
 
   import world.IsometricPolygonTile._
@@ -185,7 +186,7 @@ abstract class IsometricPolygonTile protected (override val latticeX: Int,
     // If there is any weapon the entity needs to feel the attack only on this file
     // If it is an arrow, the damageRadius is calculated with the "damageAt" method by RangedWeapon/AbstractArrow. Every Entity has to take the attack.
 
-    val filteredEntityList = mutable.ListBuffer[EntityLike]()
+    val filteredEntityList = mutable.ListBuffer[GameObject]()
 
     if (e.weapon.isInstanceOf[AbstractArrow]) {
 

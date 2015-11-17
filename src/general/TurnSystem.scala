@@ -1,11 +1,10 @@
 package general
 
-import java.util
-
 import gui.screen.ArrowSelectionScreenPreSet
-import newent.{CommandTeam, Player, Team}
+import newent.{CommandTeam, Team}
 
 import scala.collection.JavaConversions
+import scala.collection.JavaConverters._
 
 /**
   * Takes care of that the turn mechanics apply correctly to the players.
@@ -73,46 +72,17 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
     }
   }
 
-  def getCommandTeams: util.ArrayList[CommandTeam] = {
-    // two players --> two CommandTeams.
-    val commandTeams = new util.ArrayList[CommandTeam](2)
-    teams.apply().foreach { (team) =>
-      if (!team.isBarbarian) {
-        commandTeams.add(team.asCommandTeam)
-      }
-    }
-    commandTeams
-  }
+  def getCommandTeams = commandTeams.asJava
 
   /**
    * @return a List with all CommandTeams. Should have size 2 with two players...
    */
-  def commandTeams: Seq[CommandTeam] = {
-    var commandTeams = Seq.empty[CommandTeam]
-    teams.apply().foreach((team) => {
-      if (!team.isBarbarian) {
-        commandTeams = commandTeams.:+(team.asCommandTeam)
-      }
-    })
-    commandTeams
-  }
+  def commandTeams = teams().collect({ case x: CommandTeam => x })
 
-  def getHeadOfCommandTeams: util.ArrayList[newent.Player] = {
-    val heads = new util.ArrayList[Player](2)
-    commandTeams.foreach((commandTeam) => {
-      heads.add(commandTeam.getHead)
-    })
-    heads
-  }
+  def getHeadOfCommandTeams = headOfCommandTeams.asJava
 
   /** returns a sequence with every head of a commandTeam. */
-  def headOfCommandTeams: Seq[newent.Player] = {
-    var heads = Seq.empty[newent.Player]
-    commandTeams.foreach((commandTeam) => {
-      heads = heads.:+(commandTeam.getHead)
-    })
-    heads
-  }
+  def headOfCommandTeams = commandTeams.map(team => team.head)
 
   /**
     * The player that currently holds the turn.

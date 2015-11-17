@@ -1,6 +1,6 @@
 package general
 
-import java.util.function.{Consumer, Supplier}
+import java.util.function.{BiConsumer, BiFunction, Consumer, Supplier}
 import java.util.{Optional, function}
 
 object JavaInterop {
@@ -125,11 +125,23 @@ object JavaInterop {
 
   //</editor-fold>
 
-  //<editor-fold desc='Direct conversions'>
+  //<editor-fold desc='Direct function conversions'>
+
+  //<editor-fold desc="Shorthand Java -> Scala conversions">
+
+  def func[A](f: Supplier[A]) = asScala(f)
+  def func[A](f: Consumer[A]) = asScala(f)
+  def func[A, B](f: BiConsumer[A, B]) = asScala(f)
+  def func[A, R](f: function.Function[A, R]) = asScala(f)
+  def func[A, B, R](f: BiFunction[A, B, R]) = asScala(f)
+
+  //</editor-fold>
 
   implicit def asScala[A](x: Supplier[A]): () => A = () => x.get()
 
   implicit def asScala[A](x: Consumer[A]): A => Unit = i => x.accept(i)
+
+  implicit def asScala[A, B](f: BiConsumer[A, B]): (A, B) => Unit = (x, y) => f.accept(x, y)
 
   /**
     * This method has a different name from the other `asScalaFunction` methods, because it would
@@ -141,6 +153,8 @@ object JavaInterop {
     * @return The converted scala `Function1`.
     */
   implicit def asScala[A, R](x: function.Function[A, R]): A => R = i => x(i)
+
+  implicit def asScala[A, B, R](f: BiFunction[A, B, R]): (A, B) => R = (x, y) => f(x, y)
 
   implicit def asJavaFun[A, R](x: A => R): function.Function[A, R] = new function.Function[A, R] {
     override def apply(t: A) = x(t)

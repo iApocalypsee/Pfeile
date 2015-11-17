@@ -1,6 +1,6 @@
 package newent
 
-import general.{LogFacility, Main, Delegate}
+import general.{Delegate, LogFacility, Main}
 
 import scala.collection.{JavaConversions, mutable}
 
@@ -13,8 +13,8 @@ import scala.collection.{JavaConversions, mutable}
 sealed trait EntityManagerLike {
 
   /** Called when an entity has been registered. */
-  val onEntityRegistered = Delegate.create[EntityLike]
-  val onEntityUnlogged = Delegate.create[EntityLike]
+  val onEntityRegistered = Delegate.create[GameObject]
+  val onEntityUnlogged = Delegate.create[GameObject]
 
   if(Main.isDebug) {
     onEntityRegistered += { entity => LogFacility.log(s"Entity registered: $entity") }
@@ -25,26 +25,26 @@ sealed trait EntityManagerLike {
     *
     * @param e The entity to add.
     */
-  def +=(e: EntityLike): Unit
+  def +=(e: GameObject): Unit
 
   // Ditto.
-  def register(e: EntityLike) = +=(e)
+  def register(e: GameObject) = +=(e)
 
   /** Unregisters the specified entity from the manager.
     *
     * @param e The entity to remove.
     */
-  def -=(e: EntityLike): Unit = {
+  def -=(e: GameObject): Unit = {
     val prev = entityList
     sortOut { _ ne e }
     if(prev.diff(entityList).nonEmpty) onEntityUnlogged(e)
   }
 
   // Ditto.
-  def unlog(e: EntityLike) = -=(e)
+  def unlog(e: GameObject) = -=(e)
 
   /** The listing of all entities that are currently registered to the manager. */
-  def entityList: scala.collection.Seq[EntityLike]
+  def entityList: scala.collection.Seq[GameObject]
   /** Java interop method to entityList(). */
   def javaEntityList = JavaConversions.seqAsJavaList(entityList)
 
@@ -53,7 +53,7 @@ sealed trait EntityManagerLike {
     * @param f The filter function. If the function returns <code>false</code> for
     *          a given entity, that entity is going to be removed.
     */
-  def sortOut(f: (EntityLike) => Boolean): Unit
+  def sortOut(f: GameObject => Boolean): Unit
 
   /** Filters all entities out that satisfy a predicate, and saves the changes!!!
     *
@@ -61,7 +61,7 @@ sealed trait EntityManagerLike {
     * in other words, if the entity returns <code>false</code>, it is being kept in the manager.
     * @param f The filter function.
     */
-  def sortOutNot(f: (EntityLike) => Boolean): Unit = sortOut(f andThen { b => !b })
+  def sortOutNot(f: GameObject => Boolean): Unit = sortOut(f andThen { b => !b })
 
 }
 
@@ -72,16 +72,16 @@ sealed trait EntityManagerLike {
   */
 class DefaultEntityManager extends EntityManagerLike {
 
-  private var _entityList = mutable.MutableList[EntityLike]()
+  private var _entityList = mutable.MutableList[GameObject]()
 
-  override def +=(e: EntityLike): Unit = {
+  override def +=(e: GameObject): Unit = {
     _entityList += e
     onEntityRegistered(e)
   }
 
-  override def sortOut(f: (EntityLike) => Boolean): Unit = _entityList = _entityList filter f
+  override def sortOut(f: (GameObject) => Boolean): Unit = _entityList = _entityList filter f
 
-  override def entityList: Seq[EntityLike] = _entityList.toList
+  override def entityList: Seq[GameObject] = _entityList.toList
 }
 
 /** An exception indicating that given name is not unique to the manager.

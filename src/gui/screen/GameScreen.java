@@ -2,7 +2,6 @@ package gui.screen;
 
 import comp.Button;
 import comp.WarningMessage;
-import general.JavaInterop;
 import general.Main;
 import general.PfeileContext;
 import gui.FrameContainer;
@@ -18,6 +17,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+
+import static general.JavaInterop.func;
 
 /**
  * <b>4.1.2014 (Josip):</b> Konstruktor braucht keine ScreenManager-Instanz mehr. <br><br>
@@ -156,7 +157,7 @@ public class GameScreen extends Screen implements FrameContainer {
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     getShopWindow().parentComponent().setVisible(!shopWindow.parentComponent().isVisible());
-                    getShopWindow().getArticleComponents().foreach(JavaInterop.asScala(GameScreen.this::forcePullFront));
+                    getShopWindow().getArticleComponents().foreach(func(GameScreen.this::forcePullFront));
                 }
             });
         }, "GameScreenInitializer");

@@ -11,13 +11,10 @@ import general.io.FontLoader;
 import newent.*;
 import scala.concurrent.duration.FiniteDuration;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.List;
@@ -713,8 +710,8 @@ public class PreWindowScreen extends Screen {
 
     /** this updates arrowNumberFreeSetUsable (from Player and Bot)
      * Only use this method directly after added all Players (and Bots) to the entityList */
-    public static void correctArrowNumber (List<EntityLike> entities) {
-	    for(EntityLike e : entities) {
+    public static void correctArrowNumber (List<GameObject> entities) {
+	    for(GameObject e : entities) {
 		    if(e instanceof Player) {
 			    Player player = (Player) e;
 			    player.arrowNumberFreeSetUsable().set(PfeileContext.arrowNumberFreeSet().get());
