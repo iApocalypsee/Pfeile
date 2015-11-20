@@ -1,14 +1,59 @@
 package general;
 
+import gui.screen.Screen;
+
 import javax.swing.*;
+import java.util.Optional;
 
 public class DebugWindows {
 
 	private JFrame debugFrame = new JFrame("Debug window");
 	private boolean windowEnabled = false;
 
+    // <editor-fold desc="Screen control attributes">
+
+    private JPanel screenControls = new JPanel();
+    private JComboBox<String> screenList = new JComboBox<>();
+    private JCheckBox boundsDraw = new JCheckBox("Draw bounds?");
+    private JButton reloadScreenList = new JButton("Reload screen list");
+
+    private void initializeScreenControlAttribs(JPanel mainPanel) {
+        screenControls.setBorder(BorderFactory.createTitledBorder("Screen controls"));
+        screenControls.add(screenList);
+        screenControls.add(boundsDraw);
+        screenControls.add(reloadScreenList);
+
+        screenList.addItemListener(e -> {
+            final Optional<Screen> screenOpt = findScreenByName((String) screenList.getSelectedItem());
+            screenOpt.ifPresent(this::updateScreenControlComponents);
+        });
+
+        boundsDraw.addActionListener(e -> {
+            final Optional<Screen> screenOpt = findScreenByName((String) screenList.getSelectedItem());
+            screenOpt.ifPresent(screen -> screen.setBoundsDrawEnabled(boundsDraw.isSelected()));
+        });
+
+        reloadScreenList.addActionListener(e -> this.reloadScreenList());
+
+        mainPanel.add(screenControls);
+    }
+
+    /**
+     * Update the screen control components according to the given screen.
+     * @param screen The screen to update the components to.
+     */
+    private void updateScreenControlComponents(Screen screen) {
+        boundsDraw.setSelected(screen.isBoundsDrawEnabled());
+    }
+
+    // </editor-fold>
+
 	public DebugWindows() {
+
 		JPanel panel = new JPanel();
+
+        initializeScreenControlAttribs(panel);
+
 
 		JCheckBox coordinateGridActive = new JCheckBox("Coordinate grid");
 		coordinateGridActive.addActionListener(e -> {
@@ -33,6 +78,7 @@ public class DebugWindows {
 		panel.add(offsetY);
 		debugFrame.add(panel);
 		debugFrame.pack();
+
 	}
 
 	public boolean isWindowEnabled() {
@@ -43,4 +89,17 @@ public class DebugWindows {
 		this.windowEnabled = windowEnabled;
 		debugFrame.setVisible(windowEnabled);
 	}
+
+    // <editor-fold desc="Screen control component methods">
+
+    public void reloadScreenList() {
+        String[] screens = Main.getGameWindow().getScreenManager().getScreens().values().stream().map(Screen::getName).toArray(String[]::new);
+        screenList.setModel(new DefaultComboBoxModel<>(screens));
+    }
+
+    private Optional<Screen> findScreenByName(String name) {
+        return Main.getGameWindow().getScreenManager().getScreens().values().stream().filter(screen -> screen.getName().equals(name)).findFirst();
+    }
+
+    // </editor-fold>
 }

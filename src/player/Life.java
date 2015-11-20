@@ -93,8 +93,9 @@ public class Life {
             newLife = lifeMax;
         else if (newLife < 0)
             newLife = 0;
-        life = newLife;
-		onLifeChanged.apply(new LifeChangedEvent(newLife));
+        final double oldLife = this.life;
+        this.life = newLife;
+		onLifeChanged.apply(new LifeChangedEvent(oldLife, newLife));
 	}
 
     /**
@@ -105,12 +106,13 @@ public class Life {
      * @see player.Life#setLife(double)
      */
     public void changeLife (double changeOfLife) {
-        life = life + changeOfLife;
-        if (life < 0)
-            life = 0;
-        else if (life > lifeMax)
-            life = lifeMax;
-        onLifeChanged.apply(new LifeChangedEvent(life));
+        final double oldLife = this.life;
+        this.life = this.life + changeOfLife;
+        if (this.life < 0)
+            this.life = 0;
+        else if (this.life > lifeMax)
+            this.life = lifeMax;
+        onLifeChanged.apply(new LifeChangedEvent(oldLife, this.life));
     }
 
     /**
@@ -128,14 +130,20 @@ public class Life {
 	 */
 	public final class LifeChangedEvent {
 
-		private final double newLife;
+        private final double oldLife;
+        private final double newLife;
 
-		public LifeChangedEvent(double newLife) {
-			this.newLife = newLife;
+		public LifeChangedEvent(double oldLife, double newLife) {
+            this.oldLife = oldLife;
+            this.newLife = newLife;
 		}
 
 		public double getNewLife() {
 			return newLife;
 		}
-	}
+
+        public double getOldLife() {
+            return oldLife;
+        }
+    }
 }

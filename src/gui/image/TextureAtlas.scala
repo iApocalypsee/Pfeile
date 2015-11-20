@@ -4,16 +4,31 @@ import java.awt.geom.{AffineTransform, Point2D}
 import java.awt.image.BufferedImage
 import java.awt.{Color, Rectangle, Shape}
 
-import general.{ScalaUtil, LogFacility}
-import gui.image.TextureAtlas.AtlasPoint
+import general.{LogFacility, ScalaUtil}
 import geom.functions.FunctionCollection.cycle
+import gui.image.TextureAtlas.AtlasPoint
 
 import scala.collection.mutable
-import scala.util.{Try, Success, Failure}
+import scala.util.{Failure, Success, Try}
 
 class TextureAtlas(baseImage: BufferedImage) {
 
   private val m_map = mutable.Map[AtlasPoint, BufferedImage]()
+
+  lazy val averageColor: Color = {
+    val r = mutable.ArrayBuffer[Int]()
+    val g = mutable.ArrayBuffer[Int]()
+    val b = mutable.ArrayBuffer[Int]()
+    val raster = baseImage.getData
+    for(x <- 0 until baseImage.getWidth;
+        y <- 0 until baseImage.getHeight) {
+      val samples = raster.getPixel(x, y, null.asInstanceOf[Array[Int]])
+      r += samples(0)
+      g += samples(1)
+      b += samples(2)
+    }
+    new Color(r.sum / r.size, g.sum / g.size, b.sum / b.size)
+  }
 
   /**
    * Gets the texture at the specified position.

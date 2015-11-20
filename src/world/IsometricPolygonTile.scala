@@ -144,7 +144,7 @@ abstract class IsometricPolygonTile protected (
   IsometricPolygonTile.appendToTileTypeList(this.getClass)
 
   /** Returns the color that is used to represent the isometric tile. */
-  def color: Color
+  def color = textureAtlas.averageColor
 
   /**
     * The texture facility that the tile is using.

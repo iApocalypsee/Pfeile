@@ -160,6 +160,11 @@ public class GameScreen extends Screen implements FrameContainer {
                     getShopWindow().getArticleComponents().foreach(func(GameScreen.this::forcePullFront));
                 }
             });
+
+            forcePullFront(endTurnButton);
+            forcePullFront(inventoryButton);
+            forcePullFront(shootButton);
+            forcePullFront(shopWindowButton);
         }, "GameScreenInitializer");
         initThread.setDaemon(true);
         initThread.setPriority(7);

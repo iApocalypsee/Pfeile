@@ -100,6 +100,6 @@ public final class ScreenManager implements Drawable {
 	@Override
 	public void draw(Graphics2D g) {
         // It's not necessary to check; every Screen is initialized
-		getActiveScreen().draw(g);
+		getActiveScreen().drawChecked(g);
 	}
 }

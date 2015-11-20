@@ -134,6 +134,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
 
   def zoom(factor: Float): Unit = {
     //zoom.zoomFrom(Main.getContext.activePlayer.getGridX, Main.getContext.activePlayer.getGridY, factor)
+    //onWorldGuiChanged()
     LogFacility.log("Zooming currently disabled. Don't rotate your mouse wheel to not see me again.", "Info")
   }
 
@@ -151,6 +152,9 @@ class VisualMap(context: PfeileContext) extends Drawable {
   sealed trait SightType {
     /** I do not want other classes to access the draw method. */
     protected[VisualMap] def draw(g: Graphics2D): Unit
+
+    def isFullSight = this == FullSightType
+    def isVisionSight = !isFullSight
   }
 
   /** Draws the map with the currently active player's vision map and the visible loots in WorldLootList. */

@@ -89,6 +89,7 @@ public class Main {
     /**
      * List of possible program arguments to Pfeile:
      *  "-nofullscreen" => Do not enter fullscreen upon program startup.
+     *  "-dbgwindows"   => Enables the debug window object.
      */
     public static void main(String[] arguments) {
 
@@ -97,11 +98,12 @@ public class Main {
         // not want to enter fullscreen mode.
         boolean activateFullscreen = !Arrays.stream(arguments).anyMatch(arg -> arg.equals("-nofullscreen"));
 
+        boolean activateDbgWindows = Arrays.stream(arguments).anyMatch(arg -> arg.equals("-dbgwindows"));
+        debugWindows.setWindowEnabled(activateDbgWindows);
+
         programStartTime = System.currentTimeMillis();
 
         GraphicsEnvironment environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
-
-        //debugWindows.setWindowEnabled(false);
 
         // This will load the background melodies of SoundPool and SoundEffectTimeClock in an Thread and start to play
         // the main melodie, if it's ready.
@@ -166,11 +168,6 @@ public class Main {
         System.exit(0);
     }
 
-    /** EMPTY */
-    private void disposeInitialResources() {
-
-    }
-
     // ############ RUN GAME
 
     private void runGame() {
@@ -189,13 +186,13 @@ public class Main {
     protected static void toggleFullscreen(boolean fullscreen) {
         if (fullscreen) {
             if (graphicsDevice.getFullScreenWindow() == gameWindow) {
-                System.out.println("Already fullscreen.");
+                LogFacility.log("Already in fullscreen mode.", "Info");
                 return;
             }
             graphicsDevice.setFullScreenWindow(gameWindow);
         } else {
             if (graphicsDevice.getFullScreenWindow() != gameWindow) {
-                System.out.println("Already windowed.");
+                LogFacility.log("Already in windowed mode.", "Info");
                 return;
             }
             graphicsDevice.setFullScreenWindow(null);
@@ -205,7 +202,13 @@ public class Main {
     // ########################################################################
     // UNIMPORTANT METHODS -- NOT USED METHODS -- DEPRECATED METHODS ##########
     // ########################################################################
-	// None right now.
+
+    /**
+     * Called when there are some additional resources to return to the OS.
+     * Right now, there are no resources we need to release explicitly.
+     */
+    private void disposeInitialResources() {
+    }
 
     // ########################################
     // GETTERS ################################

@@ -57,8 +57,8 @@ public abstract class Screen implements Drawable, MouseListener,
     private boolean boundsDrawEnabled = false;
     private Stroke boundsDrawStroke = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 4, new float[]{4}, 0);
     private Font boundsDrawFont = new Font(Font.MONOSPACED, Font.PLAIN, 10);
-    private final Color boundsDrawWhite = new Color(255, 255, 255, 91),
-            boundsDrawRed = new Color(255, 0, 0, 100),
+    private final Color boundsDrawWhite = new Color(255, 255, 255, 155),
+            boundsDrawRed = new Color(255, 0, 0, 155),
             boundsDrawOrange = new Color(255, 200, 0, 155),
             boundsDrawFillString = new Color(0, 100, 155, 255);
 
@@ -156,6 +156,11 @@ public abstract class Screen implements Drawable, MouseListener,
 		return components;
 	}
 
+    public void drawChecked(Graphics2D g) {
+        draw(g);
+        drawBounds(g);
+    }
+
 	/**
 	 * Zeichnet den Screen mit dem Graphics2D Objekt.
 	 * @param g Der Grafikkontext
@@ -168,8 +173,6 @@ public abstract class Screen implements Drawable, MouseListener,
 		if(preprocessedDrawingEnabled) {
 			getComponents().forEach(c -> c.drawChecked(g));
 		}
-
-        drawBounds(g);
 	}
 
     private void drawBounds(Graphics2D g) {
