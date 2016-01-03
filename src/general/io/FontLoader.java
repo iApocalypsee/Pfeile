@@ -41,15 +41,15 @@ public class FontLoader {
         InputStream inputStream;
         try {
             if (fontType == FontType.TTF)
-                inputStream = FontLoader.class.getClassLoader().getResourceAsStream("resources\\data\\fonts\\" + fontName + ".ttf");
+                inputStream = FontLoader.class.getClassLoader().getResourceAsStream("resources/data/fonts/" + fontName + ".ttf");
             else
-                inputStream = FontLoader.class.getClassLoader().getResourceAsStream("resources\\data\\fonts\\" + fontName + ".otf");
+                inputStream = FontLoader.class.getClassLoader().getResourceAsStream("resources/data/fonts/" + fontName + ".otf");
 
             if (inputStream == null) {
                 if (fontType == FontType.TTF)
-                    LogFacility.log("Cannot find resource at: " + "resources\\data\\fonts\\" + fontName + ".ttf", LogFacility.LoggingLevel.Error);
+                    LogFacility.log("Cannot find resource at: " + "resources/data/fonts/" + fontName + ".ttf", LogFacility.LoggingLevel.Error);
                 else
-                    LogFacility.log("Cannot find resource at: " + "resources\\data\\fonts\\" + fontName + ".otf", LogFacility.LoggingLevel.Error);
+                    LogFacility.log("Cannot find resource at: " + "resources/data/fonts/" + fontName + ".otf", LogFacility.LoggingLevel.Error);
             }
 
             //create the font to use. Specify the size!
@@ -66,9 +66,9 @@ public class FontLoader {
         } catch (IOException | FontFormatException e) {
             e.printStackTrace();
             if (fontType == FontType.TTF)
-                LogFacility.log("Cannot find file: " + "resources\\data\\fonts\\" + fontName + ".ttf", LogFacility.LoggingLevel.Error);
+                LogFacility.log("Cannot find file: " + "resources/data/fonts/" + fontName + ".ttf", LogFacility.LoggingLevel.Error);
             else
-                LogFacility.log("Cannot find file: " + "resources\\data\\fonts\\" + fontName + ".otf", LogFacility.LoggingLevel.Error);
+                LogFacility.log("Cannot find file: " + "resources/data/fonts/" + fontName + ".otf", LogFacility.LoggingLevel.Error);
             customFont = comp.Component.STD_FONT.deriveFont(size);
         }
         //finally {

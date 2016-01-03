@@ -47,7 +47,7 @@ public class AttackingCalculator {
     public void arrowsFlying (List<AttackProgress> filteredProgresses) {
         List<AbstractArrow> attackingArrows = AttackDrawer.getAttackingArrows();
 
-        //executeForEvery(filteredProgresses, attackingArrows);
+        executeForEvery(filteredProgresses, attackingArrows);
 
         java.util.Timer timer = new java.util.Timer("attackCalculatorScheduler", true);
         // every milliSec has to increase every millisecond
@@ -178,6 +178,11 @@ public class AttackingCalculator {
     //<editor-fold desc="Path prediction tests">
 
     private static final List<Path2D> pathList = new ArrayList<>();
+
+    public static void drawPaths(Graphics2D g) {
+        g.setColor(Color.magenta);
+        pathList.forEach(g::draw);
+    }
 
     private static Path2D[] executeForEvery(List<AttackProgress> progresses, List<AbstractArrow> arrows) {
         pathList.clear();

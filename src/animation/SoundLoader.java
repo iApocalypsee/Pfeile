@@ -3,6 +3,7 @@ package animation;
 import general.LogFacility;
 
 import javax.sound.sampled.*;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -24,8 +25,7 @@ public class SoundLoader {
         Clip audioClip = null;
         AudioInputStream audioInputStream = null;
         try {
-            audioInputStream = AudioSystem.getAudioInputStream(
-                    SoundLoader.class.getClassLoader().getResourceAsStream(URL));
+            audioInputStream = AudioSystem.getAudioInputStream(new File("src/" + URL));
             AudioFormat audioFormat = audioInputStream.getFormat();
             int size = (int) (audioFormat.getFrameSize() * audioInputStream.getFrameLength());
             byte[] audio = new byte[size];
@@ -33,14 +33,14 @@ public class SoundLoader {
             audioInputStream.read(audio, 0, size);
             audioClip = (Clip) AudioSystem.getLine(info);
             audioClip.open(audioFormat, audio, 0, size);
-        } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+        } catch (NullPointerException | UnsupportedAudioFileException | LineUnavailableException | IOException e) {
             LogFacility.log("An error occurred at loading: " + URL, LogFacility.LoggingLevel.Error);
             e.printStackTrace();
         } finally {
             // closing the stream
             try {
-                assert audioInputStream != null;
-                audioInputStream.close();
+                if (audioInputStream != null)
+                    audioInputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

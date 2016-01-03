@@ -171,7 +171,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
         visionStatus = usedVision.visionStatusOf(x, y) if visionStatus != VisionStatus.Hidden
       ) {
         val tile = terrain.tileAt(x, y)
-        tile.component.draw(g)
+        tile.component.drawChecked(g)
 
         if (visionStatus == VisionStatus.Revealed) {
           g.setColor(_revealedTileColor)
@@ -208,7 +208,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
 
     protected[VisualMap] override def draw(g: Graphics2D): Unit = {
       _displayWorld.terrain.tiles foreach { tile =>
-        tile.component.draw(g)
+        tile.component.drawChecked(g)
       }
 
       context.getWorldLootList.getLoots.foreach(loot =>

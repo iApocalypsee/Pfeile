@@ -188,8 +188,8 @@ public class AimSelectionScreen extends Screen {
                     if(!tileWrapper.getComponent().getBounds().contains(evt.getPoint()))
                         continue;
 
-	                int tileX = tileWrapper.latticeX();
-	                int tileY = tileWrapper.latticeY();
+	                int tileX = tileWrapper.getGridX();
+	                int tileY = tileWrapper.getGridY();
 
 	                int playerX = Main.getContext().getActivePlayer().getGridX();
 	                int playerY = Main.getContext().getActivePlayer().getGridY();
@@ -199,7 +199,7 @@ public class AimSelectionScreen extends Screen {
 		                // Don't do anything, the player should not even notice that he did not
 		                // reveal that tile yet. That's why it's called Fog of War...
 		                return;
-	                } if(playerX == tileWrapper.latticeX() && playerY == tileWrapper.latticeY()) {
+	                } if(playerX == tileWrapper.getGridX() && playerY == tileWrapper.getGridY()) {
                         warningMessage.setMessage("Selbstangriff nicht möglich!");
                         warningMessage.activateMessage();
                     } else if (!isTileInRangeOfArrow(tileWrapper, playerX, playerY)) {
@@ -343,7 +343,7 @@ public class AimSelectionScreen extends Screen {
 
                 // the color is unifiedArrowColor with the alpha value: damage [relative to the maximum damage]
                 impactingColor = new Color(unifiedArrowColor.getRed() / 255f, unifiedArrowColor.getGreen() / 255f, unifiedArrowColor.getBlue() / 255f,
-                        (float) (arrow.damageAt(tile.latticeX(), tile.latticeY()) / (arrow.getAttackValue() * PfeileContext.damageMultiplicator().get())));
+                        (float) (arrow.damageAt(tile.getGridX(), tile.getGridY()) / (arrow.getAttackValue() * PfeileContext.damageMultiplicator().get())));
             }
 
             @Override

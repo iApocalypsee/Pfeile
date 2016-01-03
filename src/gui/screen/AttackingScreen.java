@@ -7,11 +7,11 @@ import player.weapon.AttackDrawer;
 import player.weapon.AttackingCalculator;
 import player.weapon.arrow.ImpactDrawerHandler;
 
-import java.util.List;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 /**
  * Every attack is handled in this screen.
@@ -89,6 +89,7 @@ public class AttackingScreen extends Screen {
 
         GameScreen.getInstance().getMap().draw(g);
 
+        AttackingCalculator.drawPaths(g);
         attackDrawer.draw(g);
         ImpactDrawerHandler.draw(g);
 

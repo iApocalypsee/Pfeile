@@ -10,6 +10,7 @@ import gui.MoneyDisplay;
 import player.shop.ShopCentral;
 import player.shop.ShopCentral$;
 import player.shop.ShopWindow;
+import player.weapon.AttackingCalculator;
 import world.VisualMap;
 
 import java.awt.*;
@@ -189,6 +190,7 @@ public class GameScreen extends Screen implements FrameContainer {
 		inventoryButton.draw(g);
         shopWindowButton.draw(g);
         moneyDisplay.draw(g);
+        AttackingCalculator.drawPaths(g);
 		Main.getContext().getActivePlayer().drawLifeUI(g);
 
         getShopWindow().getParentComponent().drawChecked(g);

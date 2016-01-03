@@ -30,17 +30,21 @@ public class LootSpawner {
      */
     private final PfeileContext context;
 
+    private final int numberOfSpawnsAtBeginning;
+
     private Random random;
 
     public LootSpawner(PfeileContext context) {
         this.context = context;
         random = new Random();
+        // there should be at least 10 loots at the beginning of the game
+        numberOfSpawnsAtBeginning = 10 + random.nextInt(20);
 
         context.getTurnSystem().getRoundOperations().onRoundEnded().registerJava(() -> {
             spawningRoundChest();
 
-            // Spawn 0 to 5 loots with the possibility of 35% after the end of a round
-            for (int i = 0; i < random.nextInt(5); i++) {
+            // Spawn 2 to 7 loots with the possibility of 35% after the end of a round
+            for (int i = 0; i < 2 + random.nextInt(5); i++) {
                 if (random.nextFloat() < 0.35f)
                     spawningAnyLoot();
             }
@@ -65,8 +69,8 @@ public class LootSpawner {
         // The first RoundChest should spawn at the beginning; the first rounds ends usually after 10 turnCycles.
         spawningRoundChest();
 
-        // Spawn 5 to 24 loots with the possibility of 50% for more fun at the beginning
-        for (int i = 0; i < random.nextInt(20) + 5; i++) {
+        // Spawn some loots with the possibility of 50% for more fun at the beginning
+        for (int i = 0; i < numberOfSpawnsAtBeginning; i++) {
             if (random.nextBoolean())
                 spawningAnyLoot();
         }

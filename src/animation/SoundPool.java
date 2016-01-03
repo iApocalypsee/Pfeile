@@ -47,8 +47,10 @@ public class SoundPool {
         Thread x = new Thread(() -> {
             titleMelodie = SoundLoader.load("resources/sfx/titleMelodie.wav");
             // the title melody can be played now
-            titleMelodie.loop(LOOP_CONTINUOUSLY);
-            titleMelodie.start();
+            if (titleMelodie != null) {
+                titleMelodie.loop(LOOP_CONTINUOUSLY);
+                titleMelodie.start();
+            }
 
             mainThemeMelodie = SoundLoader.load("resources/sfx/mainThemeMelodie.wav", 6);
             tensionThemeMelodie = SoundLoader.load("resources/sfx/tensionThemeMelodie.wav", 5);

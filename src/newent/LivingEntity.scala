@@ -37,9 +37,10 @@ trait LivingEntity extends Entity with AttackContainer {
   private def putLootBag(): Unit = {
     val bagOfLoots = new BagOfLoots(this)
 
-    for(item <- additionalDrops) bagOfLoots.add(item)
+    for(item <- additionalDrops)
+      bagOfLoots.add(item)
 
-    // only drop a loot, if it does had content.
+    // only drop a loot, if it had content.
     if (bagOfLoots.getStoredItems.size() > 0) {
       Main.getContext.getWorldLootList.add(bagOfLoots)
     }

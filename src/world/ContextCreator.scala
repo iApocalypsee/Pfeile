@@ -75,14 +75,14 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
         var tile: TileLike = terrain.tileAt(randomGen.nextInt(terrain.width), randomGen.nextInt(terrain.height))
           .asInstanceOf[TileLike]
         if (spawnPoint == null && tile.isInstanceOf[GrassTile]) {
-          spawnPoint = new Point(tile.latticeX, tile.latticeY)
+          spawnPoint = new Point(tile.getGridX, tile.getGridY)
         }
         tile = terrain.tileAt(randomGen.nextInt(terrain.width), randomGen.nextInt(terrain.height))
           .asInstanceOf[TileLike]
         if (spawnPoint != null && tile.isInstanceOf[GrassTile]) {
-          if ((spawnPoint.x > tile.latticeX + 2 || spawnPoint.x < tile.latticeX - 2) && (spawnPoint.y > tile.latticeY
-            + 2 || spawnPoint.y < tile.latticeY - 2)) {
-            spawnPointEnemy = new Point(tile.latticeX, tile.latticeY)
+          if ((spawnPoint.x > tile.getGridX + 2 || spawnPoint.x < tile.getGridX - 2) && (spawnPoint.y > tile.getGridY
+            + 2 || spawnPoint.y < tile.getGridY - 2)) {
+            spawnPointEnemy = new Point(tile.getGridX, tile.getGridY)
             isSpawnValid = true
           }
         }

@@ -1,7 +1,11 @@
 package newent;
 
 import comp.AbstractDisplayRepresentable;
+import comp.Component;
+import comp.ImageLikeComponent;
+import comp.SolidColor;
 import general.Delegate;
+import gui.screen.GameScreen;
 import newent.event.LocationChangedEvent;
 import player.BoardPositionable;
 import world.TileLike;
@@ -150,8 +154,8 @@ public abstract class GameObject extends AbstractDisplayRepresentable implements
      * @param y Ditto.
      */
     public boolean isOccupyingPosition(int x, int y) {
-        int checkX = (x & (world.terrain().width() - 1)) - deltaX;
-        int checkY = (y & (world.terrain().height() - 1)) - deltaY;
+        int checkX = ((x - deltaX) & (world.terrain().width() - 1));
+        int checkY = ((y - deltaY) & (world.terrain().height() - 1));
         if(isFullOccupy) return occupiedTiles.isOccupyingPositionFull(checkX, checkY);
         else return occupiedTiles.isOccupyingPositionBorder(checkX, checkY);
     }
@@ -167,8 +171,8 @@ public abstract class GameObject extends AbstractDisplayRepresentable implements
     public void place(int x, int y) {
         int oldDeltaX = this.deltaX;
         int oldDeltaY = this.deltaY;
-        this.deltaX = x & (world.terrain().width() - 1);
-        this.deltaY = y & (world.terrain().height() - 1);
+        this.deltaX = x;
+        this.deltaY = y;
         onLocationChanged.apply(new LocationChangedEvent(oldDeltaX, oldDeltaY, this.deltaX, this.deltaY, this));
     }
 
@@ -226,6 +230,15 @@ public abstract class GameObject extends AbstractDisplayRepresentable implements
             polygon.addPoint(xpoints[i], ypoints[i]);
         }
         return new OccupyShape(polygon, xpoints, ypoints);
+    }
+
+    public static GameObject createDummyObject(int x, int y, WorldLike world) {
+        return new GameObject(x, y, world) {
+            @Override
+            public Component startComponent() {
+                return new ImageLikeComponent(0, 0, new SolidColor(new Color(144, 144, 144)), GameScreen.getInstance());
+            }
+        };
     }
 
 }
