@@ -12,6 +12,26 @@
     "de_DE": "Du hast Pfeile zum Auswählen übrig, wähle aus!"
   },
 
+  "defineArrows": {
+    "en_EN": "Pick yourselves %d arrows.",
+    "de_DE": "Wähle dir %d Pfeile aus."
+  },
+
+  "defineLastArrow": {
+    "en_EN": "Pick yourselves one last arrow.",
+    "de_DE": "Wähle dir noch einen Pfeil aus."
+  },
+
+  "defineFirstLastArrow": {
+    "en_EN": "Pick yourselves one arrow.",
+    "de_DE": "Wähle dir einen Pfeil aus."
+  },
+
+  "defineNoMoreArrows": {
+    "en_EN": "You cannot pick more arrows.",
+    "de_DE": "Du kannst keine Pfeile mehr auswählen."
+  },
+
   "remainingArrows": {
     "en_EN": "Remaining arrows: ",
     "de_DE": "Übrige Pfeile: "
@@ -20,6 +40,11 @@
   "randomArrow": {
     "en_EN": "Pick random arrow",
     "de_DE": "Zufälliger Pfeile"
+  },
+
+  "noArrows": {
+    "en_EN": "No arrows yet",
+    "de_DE": "Noch keine Pfeile ausgewählt"
   },
 
   "confirm": {

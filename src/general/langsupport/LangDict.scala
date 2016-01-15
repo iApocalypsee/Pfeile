@@ -12,8 +12,8 @@ import org.json4s.native.JsonMethods._
 
 import scala.beans.BeanProperty
 import scala.collection.mutable
-import scala.concurrent.Future
 import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 import scala.io.Source
 import scala.language.dynamics
 import scala.languageFeature.dynamics
@@ -100,7 +100,7 @@ class LangDict private (@BeanProperty val owner: String) extends Dynamic {
 
   //</editor-fold>
 
-  private val actor = Main.getActorSystem.actorOf(Props(new TranslationProvider), "translationProvider")
+  private val actor = Main.getActorSystem.actorOf(Props(new TranslationProvider))
 
   /**
     * Makes it more look like I am accessing properties.
@@ -147,6 +147,10 @@ class LangDict private (@BeanProperty val owner: String) extends Dynamic {
     */
   def getTranslation(identifier: String, language: Language): Future[String] = applyDynamic(identifier)(language)
 
+  def getTranslationNow(identifier: String, language: Language, maxWaitingTime: Duration): String = Await.result(getTranslation(identifier, language), maxWaitingTime)
+
+  def getTranslationNow(identifier: String, language: Language): String = getTranslationNow(identifier, language, 10.seconds)
+
   def addTranslation(identifier: String, translation: Translation): Unit = {
     actor ! RememberTranslation(identifier, translation)
   }
@@ -167,7 +171,7 @@ class LangDict private (@BeanProperty val owner: String) extends Dynamic {
 
   def addJsonTranslations(jsonString: String): Unit = addJsonTranslations(parse(jsonString))
 
-  def addJsonTranslations(uri: URI): Unit = addJsonTranslations(Source.fromURI(uri).mkString("\n"))
+  def addJsonTranslations(uri: URI): Unit = addJsonTranslations(Source.fromURI(uri).mkString)
 
   def addJsonTranslations(file: java.io.File): Unit = addJsonTranslations(file.toURI)
 
@@ -210,6 +214,10 @@ object LangDict {
 
     dictionary
   }
+
+  def fromJson(uri: URI): LangDict = fromJson(Source.fromURI(uri).mkString)
+
+  def fromJson(file: java.io.File): LangDict = fromJson(file.toURI)
 
   def emptyDictionary(creator: String) = new LangDict(creator)
 

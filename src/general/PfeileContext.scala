@@ -1,5 +1,6 @@
 package general
 
+import general.property.{FloatStaticProperty, IntStaticProperty}
 import gui.screen.GameScreen
 import newent.{CommandTeam, Entity, Player}
 import player.item.WorldLootList
@@ -181,22 +182,22 @@ object PfeileContext {
     * this is the number of players (Humans and Bots) in the games.
     * Right now, its always 2.
     */
-  val playerNumber = Property.apply[java.lang.Integer](2)
+  val playerNumber = new IntStaticProperty(2)
 
   /**
     * this is the damage multiplier. Every damage will be multiplied with this value.
     * It is set by PreWindowScreen.
     */
-  val damageMultiplicator = Property.apply[java.lang.Float]()
+  val damageMultiplicator = new FloatStaticProperty
 
   /** the number of arrows, which need to be set before the start of a round. Don't mix it up with <code>arrowNumberFreeSet</code>.*/
-  val arrowNumberPreSet = Property.apply[java.lang.Integer]()
+  val arrowNumberPreSet = new IntStaticProperty
 
   /**
     * this is the number of arrow, which can be selected during the round. That's why they can be chosen for a
     * special purpose. Don't mix it up with <code>arrowNumberPreSet</code>
     */
-  val arrowNumberFreeSet = Property.apply[java.lang.Integer]()
+  val arrowNumberFreeSet = new IntStaticProperty
 
   /** this is the total number of arrows. It's <code>arrowNumberFreeSet + arrowNumberPreSet</code>*/
   def arrowNumberTotal = arrowNumberFreeSet.get + arrowNumberPreSet.get
@@ -207,31 +208,31 @@ object PfeileContext {
     * A new round allows the player to chose from some (3?) possible rewards and the player is able to select new
     * arrowsPreSet. Moreover, the player is allowed to use all arrowsFreeSet again (after selecting, of course).
     */
-  val turnsPerRound = Property.apply[java.lang.Integer]()
+  val turnsPerRound = new IntStaticProperty
 
   /**
     * How much the player is handicapped.
     * The value is percentage of support/deterioration.
     * Compare to <code>handicapAI</code>
     */
-  val handicapPlayer = Property.apply[java.lang.Integer](0)
+  val handicapPlayer = new IntStaticProperty(0)
 
   /**
     * How much the bot is handicapped.
     * Basically, it is the percentage of support/deterioration.
     * Compare to <code>handicapPlayer</code>
     */
-  val handicapAI = Property.apply[java.lang.Integer](0)
+  val handicapAI = new IntStaticProperty(0)
 
   /**
     * the size of the world in x direction, calculated in Tiles.
     */
-  val worldSizeX = Property.apply[java.lang.Integer](DefaultWorldSizeX)
+  val worldSizeX = new IntStaticProperty(DefaultWorldSizeX)
 
   /**
     * the size of the world in y-direction; in Tiles
     */
-  val worldSizeY = Property.apply[java.lang.Integer](DefaultWorldSizeY)
+  val worldSizeY = new IntStaticProperty(DefaultWorldSizeY)
 
   /**
     * Class holding all value information about the game. <p>

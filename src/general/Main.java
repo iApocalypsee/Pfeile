@@ -3,13 +3,21 @@ package general;
 import akka.actor.ActorSystem;
 import animation.SoundPool;
 import general.io.PreInitStage;
+import general.langsupport.German$;
 import general.langsupport.LangInitialization;
+import general.langsupport.Language;
 import gui.screen.ArrowSelectionScreenPreSet;
 import misc.ArmingInitialization;
 import misc.ItemInitialization;
+import scala.concurrent.ExecutionContext;
+import scala.concurrent.Future;
+import scala.concurrent.Future$;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
+
+import static general.JavaInterop.func;
 
 public class Main {
 
@@ -52,6 +60,9 @@ public class Main {
 	// The game context in which the game currently is.
 	// Every time a game is started, the context variable should be non-null.
 	private static PfeileContext context = null;
+
+    // The language the user speaks (or is supposed to speak).
+    private static Language language = German$.MODULE$;
 
 	// The actor system taking care of threaded actors.
 	private static ActorSystem actorSystem = ActorSystem.create("system");
@@ -199,6 +210,30 @@ public class Main {
         }
     }
 
+    /**
+     * Returns a buffered image which data model is optimized for the underlying system, allowing for better performance.
+     * @param image The image to be converted to a compatible format.
+     * @return A compatible buffered image, or the same image if the data model is already compatible with the system.
+     */
+    public static BufferedImage toCompatibleImage(BufferedImage image) {
+        if(image.getColorModel().equals(graphicsDevice.getDefaultConfiguration().getColorModel())) return image;
+        else {
+            final BufferedImage compatibleImage = graphicsDevice.getDefaultConfiguration().createCompatibleImage(image.getWidth(), image.getHeight(), image.getTransparency());
+            final Graphics2D graphics = (Graphics2D) compatibleImage.getGraphics();
+            graphics.drawImage(image, 0, 0, null);
+            graphics.dispose();
+            return compatibleImage;
+        }
+    }
+
+    public static Future<BufferedImage> askForCompatibleImage(BufferedImage image) {
+        return Future$.MODULE$.apply(func(() -> toCompatibleImage(image)), getGlobalExecutionContext());
+    }
+
+    public static ExecutionContext getGlobalExecutionContext() {
+        return ExecutionContext.Implicits$.MODULE$.global();
+    }
+
     // ########################################################################
     // UNIMPORTANT METHODS -- NOT USED METHODS -- DEPRECATED METHODS ##########
     // ########################################################################
@@ -235,6 +270,10 @@ public class Main {
 
     public static long getProgramStartTime() {
         return programStartTime;
+    }
+
+    public static Language getLanguage() {
+        return language;
     }
 
     /**

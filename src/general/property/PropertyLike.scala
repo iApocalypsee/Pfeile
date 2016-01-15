@@ -13,6 +13,8 @@ trait PropertyLike[A] {
 
   def get: A
 
+  @deprecated("Use get instead") def apply(): A = get
+
   def option: Option[A]
 
   def ifdef(x: A => Unit)

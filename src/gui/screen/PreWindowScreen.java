@@ -8,6 +8,8 @@ import general.Main;
 import general.PfeileContext;
 import general.TimeClock;
 import general.io.FontLoader;
+import general.langsupport.LangDict;
+import general.langsupport.Language;
 import newent.*;
 import scala.concurrent.duration.FiniteDuration;
 
@@ -15,6 +17,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.List;
@@ -110,22 +113,66 @@ public class PreWindowScreen extends Screen {
     /** position of <code>g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y")</code> */
     private Point fontSmallPosition;
 
+    private final LangDict dictionary;
+
+    private final String strategyGameLabel, authorsLabel;
+
     public PreWindowScreen() {
         super(SCREEN_NAME, SCREEN_INDEX);
 
+        dictionary = LangDict.fromJson(new File("src/resources/data/PreWindowScreen.json"));
+        dictionary.addJsonTranslations(new File("src/resources/data/CommonStrings.json"));
+
+        final Language lang = Main.getLanguage();
+
+        final String defaultSettings = dictionary.getTranslationNow("defaultSettings", lang),
+                     aiStrength = dictionary.getTranslationNow("aiStrength", lang),
+                     initialMoney = dictionary.getTranslationNow("initialMoney", lang),
+                     moneyPerTurn = dictionary.getTranslationNow("moneyPerTurn", lang),
+                     arrowAmountFreeSet = dictionary.getTranslationNow("arrowAmountFreeSet", lang),
+                     arrowAmountPreSet = dictionary.getTranslationNow("arrowAmountPreSet", lang),
+                     maxLife = dictionary.getTranslationNow("maxLife", lang),
+                     lifeRegen = dictionary.getTranslationNow("lifeRegen", lang),
+                     dmgScale = dictionary.getTranslationNow("dmgScale", lang),
+                     turnsPerRound = dictionary.getTranslationNow("turnsPerRound", lang),
+                     timePerTurn = dictionary.getTranslationNow("timePerTurn", lang),
+                     handicap = dictionary.getTranslationNow("handicap", lang),
+                     worldsize = dictionary.getTranslationNow("worldsize", lang),
+                     confirm = dictionary.getTranslationNow("confirm", lang),
+                     done = dictionary.getTranslationNow("done", lang);
+
+        final String high = dictionary.getTranslationNow("high", lang),
+                     balanced = dictionary.getTranslationNow("balanced", lang),
+                     low = dictionary.getTranslationNow("low", lang),
+                     huge = dictionary.getTranslationNow("huge", lang),
+                     large = dictionary.getTranslationNow("large", lang),
+                     normal = dictionary.getTranslationNow("normal", lang),
+                     small = dictionary.getTranslationNow("small", lang),
+                     tiny = dictionary.getTranslationNow("tiny", lang),
+                     brutal = dictionary.getTranslationNow("brutal", lang),
+                     strong = dictionary.getTranslationNow("strong", lang),
+                     decent = dictionary.getTranslationNow("decent", lang),
+                     weak = dictionary.getTranslationNow("weak", lang),
+                     miserable = dictionary.getTranslationNow("miserable", lang),
+                     balancedHigh = balanced + "-" + high,
+                     balancedLow = balanced + "-" + low;
+
+        strategyGameLabel = dictionary.getTranslationNow("label_strategyGame", lang);
+        authorsLabel = dictionary.getTranslationNow("label_authors", lang);
+
         // Initialise the Components
-        confirmButton = new Button(550, 400, this, "Bestätigen");
+        confirmButton = new Button(550, 400, this, confirm);
         confirmButton.setRoundBorder(true);
 
-        readyButton = new Button(Main.getWindowWidth() - 220, Main.getWindowHeight() - 150, this, "Fertig");
-        standardButton = new Button(readyButton.getX(), readyButton.getY() - 100, this, "Standardeinstellung");
+        readyButton = new Button(Main.getWindowWidth() - 220, Main.getWindowHeight() - 150, this, done);
+        standardButton = new Button(readyButton.getX(), readyButton.getY() - 100, this, defaultSettings);
         readyButton.setWidth(standardButton.getWidth());
 
         final String[] labelValues = {
-                "Computerstärke", "Startgeld", "Geld pro Zug",
-                "Pfeilanzahl [frei wählbar]", "Pfeilanzahl [vorher wählbar]",
-                "maximales Leben", "Lebensregeneration", "Schadensmultiplikator",
-                "Züge pro Runde", "Zeit pro Zug", "Handicap [" + Main.getUser().getUsername() + "]", "Handicap [" + "Opponent" + "]", "Weltgröße"};
+                aiStrength, initialMoney, moneyPerTurn,
+                arrowAmountFreeSet, arrowAmountPreSet,
+                maxLife, lifeRegen, dmgScale,
+                turnsPerRound, timePerTurn, handicap + " [" + Main.getUser().getUsername() + "]", handicap + " [" + "Opponent" + "]", worldsize};
 
         int labelPosX = 100;
         int labelPosY = 370;
@@ -140,20 +187,20 @@ public class PreWindowScreen extends Screen {
             label.setDeclineInputColor(new Color(202, 199, 246));
         }
 
-        final String[] comboBoxValuesSelector = { "Computerstärke", "Startgeld", "Geld pro Zug",
-                "Pfeilanzahl [frei wählbar]", "Pfeilanzahl [vorher wählbar]",
-                "maximales Leben", "Lebensregeneration", "Schadensmultiplikator", "Züge pro Runde", "Zeit pro Zug",
-                "Handicap", "Weltgröße"};
+        final String[] comboBoxValuesSelector = { aiStrength, initialMoney, moneyPerTurn,
+                arrowAmountFreeSet, arrowAmountPreSet,
+                maxLife, lifeRegen, dmgScale,
+                turnsPerRound, timePerTurn, handicap, worldsize};
 
         selectorComboBox = new ComboBox (labelPosX, 80, 250, 500, this, comboBoxValuesSelector);
 
-        final String[] comboBoxValuesHigh = { "hoch", "hoch-mittel", "mittel", "mittel-niedrig", "niedrig" };
+        final String[] comboBoxValuesHigh = { high, balancedHigh, balanced, balancedLow, low };
         boxSelectHigh = new ComboBox (confirmButton.getX() - 10, selectorComboBox.getY(), this, comboBoxValuesHigh);
         boxSelectHigh.setSelectedIndex(2);
         boxSelectHigh.setVisible(false);
         boxSelectHigh.declineInput();
 
-        final String[] comboBoxValuesSize = { "gigantisch", "groß", "normal", "klein", "winzig" };
+        final String[] comboBoxValuesSize = { huge, large, normal, small, tiny };
         boxSelectSize = new ComboBox (boxSelectHigh.getX(), selectorComboBox.getY(), this, comboBoxValuesSize);
         boxSelectSize.setSelectedIndex(2);
         boxSelectSize.setVisible(false);
@@ -170,7 +217,7 @@ public class PreWindowScreen extends Screen {
         boxSelectHandicapPlayer.declineInput();
         boxSelectHandicapKI.declineInput();
 
-        final String[] comboBoxValuesKI = { "brutal", "stark", "normal", "schwach", "erbärmlich" };
+        final String[] comboBoxValuesKI = { brutal, strong, decent, weak, miserable };
         boxSelectKI = new ComboBox(boxSelectHigh.getX(), selectorComboBox.getY(), this, comboBoxValuesKI);
         boxSelectKI.setSelectedIndex(2);
 
@@ -206,9 +253,9 @@ public class PreWindowScreen extends Screen {
 
         // the position of all points should be the same like in ArrowSelectionScreenPreSet
         fontBigPosition = new Point(confirmButton.getX() + 230, Component.getTextBounds("Pfeile", fontBig).height + 65);
-        fontMiddlePosition = new Point(fontBigPosition.x + 43, fontBigPosition.y + Component.getTextBounds("ein Strategiespiel", fontMiddle).height + 15);
+        fontMiddlePosition = new Point(fontBigPosition.x + 43, fontBigPosition.y + Component.getTextBounds(strategyGameLabel, fontMiddle).height + 15);
         fontSmallPosition = new Point(fontMiddlePosition.x,
-                   fontMiddlePosition.y + Component.getTextBounds("von Josip Palavra und Daniel Schmaus", fontSmall).height + 10);
+                   fontMiddlePosition.y + Component.getTextBounds(authorsLabel, fontSmall).height + 10);
 
         standardButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -745,10 +792,10 @@ public class PreWindowScreen extends Screen {
         g.drawString("Pfeile", fontBigPosition.x, fontBigPosition.y);
         g.setColor(colorMiddle);
         g.setFont(fontMiddle);
-        g.drawString("ein Strategiespiel", fontMiddlePosition.x, fontMiddlePosition.y);
+        g.drawString(strategyGameLabel, fontMiddlePosition.x, fontMiddlePosition.y);
         g.setColor(colorSmall);
         g.setFont(fontSmall);
-        g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y);
+        g.drawString(authorsLabel, fontSmallPosition.x, fontSmallPosition.y);
 
         g.setFont(Component.STD_FONT);
 

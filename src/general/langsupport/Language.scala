@@ -32,7 +32,7 @@ object Language {
   def packLangEntryPair(kv: (String, String)): Option[(Language, String)] = {
     val (lang, string) = kv
     val langObject = findLanguage(lang)
-    langObject.map { language => (language, string) } orElse ???
+    langObject.map { language => (language, string) }
   }
 
 }

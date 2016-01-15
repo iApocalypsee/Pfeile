@@ -4,6 +4,7 @@ import comp.Button;
 import comp.WarningMessage;
 import general.Main;
 import general.PfeileContext;
+import general.langsupport.LangDict;
 import gui.FrameContainer;
 import gui.FrameContainerObject;
 import gui.MoneyDisplay;
@@ -18,6 +19,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.io.File;
 
 import static general.JavaInterop.func;
 
@@ -70,11 +72,16 @@ public class GameScreen extends Screen implements FrameContainer {
 
 	private final FrameContainerObject frameContainerObject = new FrameContainerObject();
 
+    // The language dictionary holding translations from GameScreen.json primarily
+    private final LangDict dictionary;
+
 	/**
 	 * Die Welt, die vom GameScreen gezeichnet wird.
 	 */
 	private GameScreen() {
 		super(GameScreen.SCREEN_NAME, GameScreen.SCREEN_INDEX);
+
+        dictionary = LangDict.fromJson(new File("src/resources/data/GameScreen.json"));
 
 		setPreprocessedDrawingEnabled(false);
 
@@ -110,15 +117,18 @@ public class GameScreen extends Screen implements FrameContainer {
 	private void postInit() {
 
         Thread initThread = new Thread (() -> {
+
+            final String shootStr = dictionary.getTranslationNow("shootButton", Main.getLanguage()),
+                         inventoryStr = dictionary.getTranslationNow("inventoryButton", Main.getLanguage()),
+                         shopStr = dictionary.getTranslationNow("shopButton", Main.getLanguage()),
+                         endTurnStr = dictionary.getTranslationNow("endTurnButton", Main.getLanguage());
+
+
             // Initialisierung der Buttons
-            endTurnButton = new Button(30, Main.getWindowHeight() - 50, this,
-                    "End turn");
-            shootButton = new Button(endTurnButton.getX() + endTurnButton.getWidth() + 20,
-                    endTurnButton.getY(), this, "Shoot");
-            inventoryButton = new Button(shootButton.getX() + shootButton.getWidth() + 20,
-                    shootButton.getY(), this, "Inventar");
-            shopWindowButton = new Button(inventoryButton.getX() + inventoryButton.getWidth() + 20,
-                    inventoryButton.getY(), this, "Shop");
+            endTurnButton = new Button(30, Main.getWindowHeight() - 50, this, endTurnStr);
+            shootButton = new Button(endTurnButton.getX() + endTurnButton.getWidth() + 20, endTurnButton.getY(), this, shootStr);
+            inventoryButton = new Button(this.shootButton.getX() + this.shootButton.getWidth() + 20, this.shootButton.getY(), this, inventoryStr);
+            shopWindowButton = new Button(inventoryButton.getX() + inventoryButton.getWidth() + 20, inventoryButton.getY(), this, shopStr);
 
             endTurnButton.setName("End turn button");
             shootButton.setName("Shoot button");
@@ -140,7 +150,7 @@ public class GameScreen extends Screen implements FrameContainer {
 
             });
 
-            shootButton.addMouseListener(new MouseAdapter() {
+            this.shootButton.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     onLeavingScreen(ArrowSelectionScreen.SCREEN_INDEX);
@@ -164,7 +174,7 @@ public class GameScreen extends Screen implements FrameContainer {
 
             forcePullFront(endTurnButton);
             forcePullFront(inventoryButton);
-            forcePullFront(shootButton);
+            forcePullFront(this.shootButton);
             forcePullFront(shopWindowButton);
         }, "GameScreenInitializer");
         initThread.setDaemon(true);

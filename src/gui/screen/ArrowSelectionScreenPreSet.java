@@ -1,13 +1,15 @@
 package gui.screen;
 
-import comp.*;
 import comp.Button;
+import comp.ConfirmDialog;
 import comp.Label;
 import comp.List;
 import general.LogFacility;
 import general.Main;
 import general.PfeileContext;
 import general.io.FontLoader;
+import general.langsupport.LangDict;
+import general.langsupport.Language;
 import newent.Player;
 import player.weapon.arrow.*;
 
@@ -15,6 +17,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -79,6 +82,10 @@ public class ArrowSelectionScreenPreSet extends Screen {
     /** The player currently selecting his set of arrows. */
     private Player activePlayer;
 
+    private final LangDict dictionary;
+
+    private final String noArrowsStr, chooseVarArrows, chooseOneArrow, chooseFirstLastArrow, noMoreArrows;
+
     /**
      * Screen für die Pfeilauswahl für vorhersetzbaren Pfeilen.
      * äquivalent zu <code> ArrowSelection </code>.
@@ -88,13 +95,27 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
         //setBackground(new SolidColor(TRANSPARENT_BACKGROUND));
 
+        dictionary = LangDict.fromJson(new File("src/resources/data/ArrowSelectionScreen.json"));
+        dictionary.addJsonTranslations(new File("src/resources/data/CommonStrings.json"));
+
+        final Language lang = Main.getLanguage();
+
+        chooseVarArrows = dictionary.getTranslationNow("defineArrows", lang);
+        chooseOneArrow = dictionary.getTranslationNow("defineLastArrow", lang);
+        chooseFirstLastArrow = dictionary.getTranslationNow("defineFirstLastArrow", lang);
+        noArrowsStr = dictionary.getTranslationNow("noArrows", lang);
+        noMoreArrows = dictionary.getTranslationNow("defineNoMoreArrows", lang);
+
+        final String randomArrow = dictionary.getTranslationNow("randomArrow", lang),
+                     confirm = dictionary.getTranslationNow("confirm", lang);
+
         selectedArrows = new LinkedList<>();
-        selectedArrows.add("<keine Pfeile>");
+        selectedArrows.add(noArrowsStr);
 
         arrowListSelected = new List(50, 200, 200, 350, this, selectedArrows);
         arrowListSelected.setName("arrowListSelected");
 
-        remainingArrows = new Label(Main.getWindowWidth() - 232, Main.getWindowHeight() - 200, this, "Verfügbare Pfeile definieren!");
+        remainingArrows = new Label(Main.getWindowWidth() - 232, Main.getWindowHeight() - 200, this, chooseVarArrows);
 
         remainingArrows.setDeclineInputColor(new Color(202, 199, 246));
 
@@ -118,6 +139,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
         /** X-Position des ersten Buttons (Screen) */
         int posXButton = 38;
 
+        // TODO Replace with arrow name translations
         buttonListArrows [0] = new Button(posXButton, posYButtons, this, "Feuerpfeil");
         buttonListArrows [1] = new Button(posXButton + buttonListArrows [0].getWidth() + 43, posYButtons, this, "Wasserpfeil");
         buttonListArrows [2] = new Button(posXButton + (buttonListArrows [0].getWidth() + 43) * 2, posYButtons, this, "Sturmpfeil");
@@ -167,7 +189,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
         });
 
         // Position is equal to PreWindowScreen.readyButton
-        readyButton = new Button(Main.getWindowWidth() - 220, Main.getWindowHeight() - 150, this, "Bestätigen");
+        readyButton = new Button(Main.getWindowWidth() - 220, Main.getWindowHeight() - 150, this, confirm);
         readyButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -177,7 +199,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
             }
         });
 
-        randomButton = new Button (readyButton.getX(), readyButton.getY() - 200, this, "Zufälliger Pfeil");
+        randomButton = new Button (readyButton.getX(), readyButton.getY() - 200, this, randomArrow);
         randomButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased (MouseEvent e) {
@@ -196,24 +218,26 @@ public class ArrowSelectionScreenPreSet extends Screen {
                     arrowListSelected.triggerListeners(eClicked);
                     selectedArrows.remove(arrowListSelected.getSelectedIndex());
                     if (selectedArrows.isEmpty()) {
-                        selectedArrows.add("<keine Pfeile>");
-                        setArrowListSelected(selectedArrows);
-
-                        if (PfeileContext.arrowNumberPreSet().get() > 1)
-                            remainingArrows.setText("Verfügbare Pfeile auswählen!");
-                        else
-                            remainingArrows.setText("Verfügbaren Pfeil auswählen!");
-
-                    } else {
-                        setArrowListSelected(selectedArrows);
-                        remainingArrows.setText("Übrige Pfeile: "
-                                + (PfeileContext.arrowNumberPreSet().get() - selectedArrows.size()));
+                        selectedArrows.add(noArrowsStr);
                     }
+                    setArrowListSelected(selectedArrows);
+                    remainingArrows.setText(getRemainingArrowsString());
                 }
             }
         });
 
         onScreenEnter.registerJava(this :: resetArrowList);
+    }
+
+    private int getRemainingArrows() {
+        return PfeileContext.arrowNumberPreSet().get() - selectedArrows.size();
+    }
+
+    private String getRemainingArrowsString() {
+        if(getRemainingArrows() > 1) return String.format(chooseVarArrows, getRemainingArrows());
+        else if(getRemainingArrows() == 1 && PfeileContext.arrowNumberPreSet().get() == 1) return chooseFirstLastArrow;
+        else if(getRemainingArrows() == 1) return chooseOneArrow;
+        else return noMoreArrows;
     }
 
     private void setArrowListSelected(LinkedList<String> selectedArrows) {
@@ -248,13 +272,9 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
     private void resetArrowList () {
         selectedArrows.clear();
-        selectedArrows.add("<keine Pfeile>");
+        selectedArrows.add(noArrowsStr);
         setArrowListSelected(selectedArrows);
-
-        if (PfeileContext.arrowNumberPreSet().get() > 1)
-            remainingArrows.setText("Verfügbare Pfeile auswählen!");
-        else
-            remainingArrows.setText("Verfügbaren Pfeil auswählen!");
+        remainingArrows.setText(getRemainingArrowsString());
     }
 
     private class ButtonHelper extends MouseAdapter {
@@ -263,11 +283,11 @@ public class ArrowSelectionScreenPreSet extends Screen {
             for (Button buttonListArrow : buttonListArrows) {
                 if (buttonListArrow.getPreciseRectangle().contains(e.getPoint())) {
                     if (PfeileContext.arrowNumberPreSet().get() > selectedArrows.size()) {
-                        if (selectedArrows.get(0).equals("<keine Pfeile>")) {
+                        if (selectedArrows.get(0).equals(noArrowsStr)) {
                             selectedArrows.remove(0);
                         }
                         selectedArrows.add(buttonListArrow.getText());
-                        remainingArrows.setText("Übrige Pfeile: " + (PfeileContext.arrowNumberPreSet().get() - selectedArrows.size()));
+                        remainingArrows.setText(getRemainingArrowsString());
                         setArrowListSelected(selectedArrows);
                     }
                 }
@@ -325,11 +345,11 @@ public class ArrowSelectionScreenPreSet extends Screen {
         String arrow = ArrowHelper.arrowIndexToName(randomGen.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES));
 
         if (PfeileContext.arrowNumberPreSet().get() > selectedArrows.size()) {
-            if (selectedArrows.get(0).equals("<keine Pfeile>")) {
+            if (selectedArrows.get(0).equals(noArrowsStr)) {
                 selectedArrows.remove(0);
             }
             selectedArrows.add(arrow);
-            remainingArrows.setText("Übrige Pfeile: " + (PfeileContext.arrowNumberPreSet().get() - selectedArrows.size()));
+            remainingArrows.setText(getRemainingArrowsString());
             setArrowListSelected(selectedArrows);
         }
     }
@@ -373,13 +393,13 @@ public class ArrowSelectionScreenPreSet extends Screen {
         // by pressing "KeyEvent.VK_SPACE" all arrows are added randomly
         else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             java.util.Random randomGen = new Random();
-            if (selectedArrows.get(0).equals("<keine Pfeile>")) {
+            if (selectedArrows.get(0).equals(noArrowsStr)) {
                 selectedArrows.remove(0);
             }
             while (selectedArrows.size() < PfeileContext.arrowNumberPreSet().get()) {
                 selectedArrows.add(ArrowHelper.arrowIndexToName(randomGen.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES)));
             }
-            remainingArrows.setText("Übrige Pfeile: " + (PfeileContext.arrowNumberPreSet().get() - selectedArrows.size()));
+            remainingArrows.setText(getRemainingArrowsString());
             setArrowListSelected(selectedArrows);
         }
     }

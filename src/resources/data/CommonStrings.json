@@ -101,6 +101,11 @@
     "de_DE": "stark"
   },
 
+  "decent": {
+    "en_EN": "decent",
+    "de_DE": "normal"
+  },
+
   "weak": {
     "en_EN": "weak",
     "de_DE": "schwach"

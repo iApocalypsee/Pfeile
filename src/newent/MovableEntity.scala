@@ -1,7 +1,6 @@
 package newent
 
 import geom.functions.FunctionCollection
-import newent.event.LocationChangedEvent
 import newent.pathfinding.{DefaultPathfinder, Path, Pathfinder}
 
 import scala.util.control.Breaks._
@@ -73,41 +72,29 @@ trait MovableEntity extends Entity with StatisticalEntity {
   }
 
   /**
-    * Moves the entity along his current path that has been set by the [[move( I n t, I n t )]] method.
+    * Moves the entity along his current path that has been set by the [[move(Int,Int)]] method.
     *
     * If no path is set, this method does nothing.
     */
-  def moveAlong(): Unit = {
+  def moveAlong(): Unit = synchronized(
     breakable {
-      // Only walk along if the entity has a path associated right now.
-      if (_currentPath.isDefined) {
-        val p = _currentPath.get
-        for (step <- p.steps) {
+      _currentPath.foreach { path =>
+        path.steps.foreach { step =>
           if (currentMovementPoints >= step.reqMovementPoints) {
-
-            // Subtract the movement points...
             _currentMovementPoints -= step.reqMovementPoints
-
-            // And fire the event to the location changed delegate
-            val prevX = getGridX
-            val prevY = getGridY
+            val (prevX, prevY) = (getGridX, getGridY)
             setGridPosition(step.x, step.y)
-            onLocationChanged(LocationChangedEvent(prevX, prevY, getGridX, getGridY, this))
-            _currentPath = Some(Path(p.steps.tail))
-
-            // If it is the last step in the path, I have to remove the path, since it is walked already...
-            if (step == p.steps.last) {
-              _currentPath = None
-            }
-          }
-          else break()
+            _currentPath = Option(Path(path.steps.tail))
+          } else break()
         }
       }
     }
-  }
+  )
 
   onTurnCycleEnded += { () =>
+    // Before resetting movement points, move this entity as far as it can still get
     moveAlong()
+    // Reset the movement points
     _currentMovementPoints = defaultMovementPoints
   }
 

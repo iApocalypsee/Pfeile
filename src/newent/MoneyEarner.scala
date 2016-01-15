@@ -1,6 +1,7 @@
 package newent
 
-import general.{ScalaUtil, traitarg, Delegate, Property}
+import general.property.IntStaticProperty
+import general.{Delegate, traitarg}
 import player.item._
 import player.item.coin._
 
@@ -263,8 +264,8 @@ trait MoneyEarner extends Entity with InventoryEntity {
 object MoneyValues {
 
    /** The money a Player earns at the beginning of the game. Set by <code>PreWindowScreen</code>.*/
-   val startMoney = Property.apply[java.lang.Integer]()
+   val startMoney = new IntStaticProperty
 
    /** The money a Player earns after each TurnCycle. Set by <code>PreWindowScreen</code>.*/
-   val moneyPerTurn = Property.apply[java.lang.Integer]()
+   val moneyPerTurn = new IntStaticProperty
 }
