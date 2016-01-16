@@ -26,7 +26,7 @@ public class SilverCoin extends Coin {
     }
 
     public SilverCoin () {
-        super("Silver Coin");
+        super("SilverCoin");
     }
 
     /** The value of a silver coin measured in number of BronzeCoins */
@@ -43,5 +43,21 @@ public class SilverCoin extends Coin {
     @Override
     public BufferedImage getImage () {
         return image;
+    }
+
+    /**
+     * Returns the name of the item in English for the user
+     */
+    @Override
+    public String getNameEnglish () {
+        return "Silver coin";
+    }
+
+    /**
+     * Returns the name of the item in German for the user
+     */
+    @Override
+    public String getNameGerman () {
+        return "Silbermünze";
     }
 }

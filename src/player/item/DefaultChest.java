@@ -37,12 +37,28 @@ public class DefaultChest extends Chest {
      * @param gridY and the y-position
      */
     public DefaultChest (int gridX, int gridY) {
-        super(gridX, gridY, "Default Chest");
+        super(gridX, gridY, "DefaultChest");
     }
 
     @Override
     public BufferedImage getImage () {
         return image;
+    }
+
+    /**
+     * Returns the name of the item in English for the user
+     */
+    @Override
+    public String getNameEnglish () {
+        return "Chest";
+    }
+
+    /**
+     * Returns the name of the item in German for the user
+     */
+    @Override
+    public String getNameGerman () {
+        return "Truhe";
     }
 
     @Override

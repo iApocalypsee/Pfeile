@@ -14,7 +14,7 @@ public class StoneArrow extends AbstractArrow {
 	public static final int INDEX = 3;
 	
 	/** Name des Pfeils */
-	public static final String NAME = "Steinpfeil";
+	public static final String NAME = "StoneArrow";
 	
 	public static final Color UNIFIED_COLOR = new Color(142, 120, 93);
 	
@@ -32,7 +32,7 @@ public class StoneArrow extends AbstractArrow {
 	
 	/** ruft den Konstrucktor von 'AbstractArrow' auf */
 	public StoneArrow() {
-		super(59f, 41f, 12, 0.0075f, 0.025f, 0.14f, 0.04f, 5, 3.5f, "Steinpfeil");
+		super(59f, 41f, 12, 0.0075f, 0.025f, 0.14f, 0.04f, 5, 3.5f, NAME);
 	}
 	
 	/** Gibt das Bild des Steinpfeiles zur�ck 
@@ -41,4 +41,20 @@ public class StoneArrow extends AbstractArrow {
 	public BufferedImage getImage () {
 		return img_Stone;
 	}
+
+    /**
+     * Returns the name of the item in English for the user
+     */
+    @Override
+    public String getNameEnglish () {
+        return "Stone arrow";
+    }
+
+    /**
+     * Returns the name of the item in German for the user
+     */
+    @Override
+    public String getNameGerman () {
+        return "Steinpfeil";
+    }
 }

@@ -47,7 +47,7 @@ public class PotionOfMovement extends Potion {
      * @param level the level of the potion (the number of additional MovementPoints is multiplied with the level)
      */
     public PotionOfMovement (byte level) {
-        super(level, images[level], "Potion of Movement");
+        super(level, images[level], "PotionOfMovement");
     }
 
     /**
@@ -57,7 +57,7 @@ public class PotionOfMovement extends Potion {
      * @param posY and the Y-position
      */
     public PotionOfMovement (byte level, int posX, int posY) {
-        super(level, "Potion of Movement");
+        super(level, "PotionOfMovement");
         potionUI.createComponent(images[level], posX, posY);
     }
 
@@ -72,5 +72,21 @@ public class PotionOfMovement extends Potion {
     @Override
     public BufferedImage getImage () {
         return images[getLevel()];
+    }
+
+    /**
+     * Returns the name of the item in English for the user
+     */
+    @Override
+    public String getNameEnglish () {
+        return "Agility potion";
+    }
+
+    /**
+     * Returns the name of the item in German for the user
+     */
+    @Override
+    public String getNameGerman () {
+        return "Trank der Beweglichkeit";
     }
 }

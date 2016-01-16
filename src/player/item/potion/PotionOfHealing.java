@@ -48,7 +48,7 @@ public class PotionOfHealing extends Potion {
      * @param level the level (--> effectiveness) of the potion. Must be <code>0 <= level <= 2</code>
      */
     public PotionOfHealing (byte level) {
-        super(level, images[level], "Potion of Healing");
+        super(level, images[level], "PotionOfHealing");
     }
 
     /**
@@ -58,7 +58,7 @@ public class PotionOfHealing extends Potion {
      * @param posY the Y-position of the screen
      */
     public PotionOfHealing (byte level, int posX, int posY) {
-        super(level, "Potion of Healing");
+        super(level, "PotionOfHealing");
         potionUI.createComponent(images[getLevel()], posX, posY);
     }
 
@@ -73,5 +73,21 @@ public class PotionOfHealing extends Potion {
     @Override
     public BufferedImage getImage () {
         return images[getLevel()];
+    }
+
+    /**
+     * Returns the name of the item in English for the user
+     */
+    @Override
+    public String getNameEnglish () {
+        return "Healing potion";
+    }
+
+    /**
+     * Returns the name of the item in German for the user
+     */
+    @Override
+    public String getNameGerman () {
+        return "Heiltrank";
     }
 }

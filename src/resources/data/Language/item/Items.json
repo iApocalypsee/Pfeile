@@ -29,12 +29,16 @@
   },
   "treasure": {
     "en_EN": "Treasure",
-    "de_DE": "Schatztruhe"
+    "de_DE": "Schatz"
+  },
+  "permanentBox":  {
+    "en_EN": "Box",
+    "de_DE": "Kiste"
   },
 
   "damagePotion": {
     "en_EN": "Damage potion",
-    "de_DE": "Trank des Schadens"
+    "de_DE": "Schadenstrank"
   },
   "movementPotion": {
     "en_EN": "Agility potion",
@@ -43,5 +47,13 @@
   "healPotion": {
     "en_EN": "Healing potion",
     "de_DE": "Heiltrank"
+  },
+  "keyDefaultChest": {
+    "en_EN": "key (Chest)",
+    "de_DE": "Schlüssel (Truhe)"
+  },
+  "keyRoundChest": {
+  "en_EN": "key (Roundchest)",
+  "de_DE": "Schlüssel (Rundentruhe)"
   }
 }

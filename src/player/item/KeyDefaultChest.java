@@ -39,4 +39,20 @@ public class KeyDefaultChest extends Item {
     public BufferedImage getImage () {
         return image;
     }
+
+    /**
+     * Returns the name of the item in English for the user
+     */
+    @Override
+    public String getNameEnglish () {
+        return "key (chest)";
+    }
+
+    /**
+     * Returns the name of the item in German for the user
+     */
+    @Override
+    public String getNameGerman () {
+        return "Schlüssel (Truhe)";
+    }
 }

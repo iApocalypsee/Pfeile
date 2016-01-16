@@ -14,7 +14,7 @@ public class WaterArrow extends AbstractArrow {
 	public static final int INDEX = 1;
 	
 	/** Name des Pfeils */
-	public static final String NAME = "Wasserpfeil";
+	public static final String NAME = "WaterArrow";
 	
 	public static final Color UNIFIED_COLOR = new Color(60, 166, 221);
 	
@@ -30,7 +30,7 @@ public class WaterArrow extends AbstractArrow {
 
 	/** ruft den Konstrucktor von 'AbstractArrow' auf */
 	public WaterArrow() {
-		super(55f, 40f, 17, 0.0125f, 0.0125f, 0.065f, 0.13f, 3.1, 6.0f, "Wasserpfeil");
+		super(55f, 40f, 17, 0.0125f, 0.0125f, 0.065f, 0.13f, 3.1, 6.0f, NAME);
 	}
 	
 	/** Gibt das Bild des Wasserpfeiles zur�ck 
@@ -39,4 +39,20 @@ public class WaterArrow extends AbstractArrow {
 	public BufferedImage getImage () {
 		return img_Water;
 	}
+
+    /**
+     * Returns the name of the item in English for the user
+     */
+    @Override
+    public String getNameEnglish () {
+        return "Water arrow";
+    }
+
+    /**
+     * Returns the name of the item in German for the user
+     */
+    @Override
+    public String getNameGerman () {
+        return "Wasserpfeil";
+    }
 }

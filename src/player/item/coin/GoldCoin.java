@@ -26,7 +26,7 @@ public class GoldCoin extends Coin {
     }
 
     public GoldCoin () {
-        super("Gold coin");
+        super("GoldCoin");
     }
 
     /** the value of GoldCoin measured in number of BronzeCoins. It's 80. */
@@ -43,5 +43,21 @@ public class GoldCoin extends Coin {
     @Override
     public BufferedImage getImage () {
         return image;
+    }
+
+    /**
+     * Returns the name of the item in English for the user
+     */
+    @Override
+    public String getNameEnglish () {
+        return "Gold coin";
+    }
+
+    /**
+     * Returns the name of the item in German for the user
+     */
+    @Override
+    public String getNameGerman () {
+        return "Goldmünze";
     }
 }

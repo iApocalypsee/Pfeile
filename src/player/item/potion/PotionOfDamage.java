@@ -51,7 +51,7 @@ public class PotionOfDamage extends Potion {
      * @param level the level of the item (must be: <code>level >= 0 && level <= 2</code>)
      */
     public PotionOfDamage (byte level) {
-        super(level, images[level], "Potion of Damage");
+        super(level, images[level], "PotionOfDamage");
     }
 
     /**
@@ -63,7 +63,7 @@ public class PotionOfDamage extends Potion {
      * @see player.item.potion.PotionOfDamage#PotionOfDamage(byte)
      */
     public PotionOfDamage (byte level, int posX, int posY) {
-        super(level, "Potion of Damage");
+        super(level, "PotionOfDamage");
         potionUI.createComponent(images[level], posX, posY);
     }
 
@@ -92,5 +92,21 @@ public class PotionOfDamage extends Potion {
     @Override
     public BufferedImage getImage () {
         return images[getLevel()];
+    }
+
+    /**
+     * Returns the name of the item in English for the user
+     */
+    @Override
+    public String getNameEnglish () {
+        return "Damage potion";
+    }
+
+    /**
+     * Returns the name of the item in German for the user
+     */
+    @Override
+    public String getNameGerman () {
+        return "Schadenstrank";
     }
 }

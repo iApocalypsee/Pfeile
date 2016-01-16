@@ -2,10 +2,13 @@ package player.item.ore
 
 import java.awt.image.BufferedImage
 
-class CopperOre extends ItemOre("Copper ore") {
+class CopperOre extends ItemOre("CopperOre") {
 
   override def getImage: BufferedImage = ???
 
+  override def getNameEnglish: String = "Copper ore"
+
+  override def getNameGerman: String = "Kupfererz"
 }
 
 object CopperOre {

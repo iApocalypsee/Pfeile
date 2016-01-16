@@ -26,7 +26,7 @@ public class BronzeCoin extends Coin {
     }
 
     public BronzeCoin () {
-        super("Bronze Coin");
+        super("BronzeCoin");
     }
 
     /** the value of a bronze coin is <code>1</code> */
@@ -43,5 +43,21 @@ public class BronzeCoin extends Coin {
     @Override
     public BufferedImage getImage () {
         return image;
+    }
+
+    /**
+     * Returns the name of the item in English for the user
+     */
+    @Override
+    public String getNameEnglish () {
+        return "Bronze coin";
+    }
+
+    /**
+     * Returns the name of the item in German for the user
+     */
+    @Override
+    public String getNameGerman () {
+        return "Bronzemünze";
     }
 }

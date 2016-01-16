@@ -26,7 +26,7 @@ public class PlatinumCoin extends Coin {
     }
 
     public PlatinumCoin () {
-        super("Platinum Coin");
+        super("PlatinumCoin");
     }
 
     /** the value of a PlatinumCoin is equal to 400 BronzeCoins */
@@ -43,5 +43,21 @@ public class PlatinumCoin extends Coin {
     @Override
     public BufferedImage getImage () {
         return image;
+    }
+
+    /**
+     * Returns the name of the item in English for the user
+     */
+    @Override
+    public String getNameEnglish () {
+        return "Platinum coin";
+    }
+
+    /**
+     * Returns the name of the item in German for the user
+     */
+    @Override
+    public String getNameGerman () {
+        return "Platinmünze";
     }
 }

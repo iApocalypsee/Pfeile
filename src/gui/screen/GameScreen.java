@@ -216,9 +216,6 @@ public class GameScreen extends Screen implements FrameContainer {
 	public void keyDown(KeyEvent e) {
 		super.keyDown(e);
 		switch(e.getKeyCode()) {
-			case KeyEvent.VK_ESCAPE:
-				onLeavingScreen(PauseScreen.SCREEN_INDEX);
-				break;
 			case KeyEvent.VK_S:
 				onLeavingScreen(ArrowSelectionScreen.SCREEN_INDEX);
 				break;

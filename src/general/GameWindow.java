@@ -80,8 +80,7 @@ public class GameWindow extends JFrame {
 	 */
 	void initializeScreens(Thread arrowInitializationThread) {
         Thread x = new Thread(() -> {
-            new MainMenuScreen();
-            new PauseScreen();
+            LoadingWorldScreen.getInstance();
         }, "Screen Initializer #1");
         x.setDaemon(true);
         x.start();
@@ -89,7 +88,6 @@ public class GameWindow extends JFrame {
         Thread y = new Thread(() -> {
             GameScreen.getInstance();
             new InventoryScreen();
-            LoadingWorldScreen.getInstance();
             new WaitingScreen();
         }, "Screen Initializer #2");
         y.setDaemon(true);

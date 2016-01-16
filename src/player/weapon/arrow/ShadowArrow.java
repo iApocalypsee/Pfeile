@@ -14,7 +14,7 @@ public class ShadowArrow extends AbstractArrow {
 	public static final int INDEX = 7;
 	
 	/** Name des Pfeils */
-	public static final String NAME = "Schattenpfeil";
+	public static final String NAME = "ShadowArrow";
 	
 	public static final Color UNIFIED_COLOR = new Color(0, 0, 0);
 	
@@ -30,7 +30,7 @@ public class ShadowArrow extends AbstractArrow {
 	
 	/** ruft den Konstrucktor von 'AbstractArrow' auf */
 	public ShadowArrow() {
-		super(57f, 25f, 32, 0.0675f, 0.005f, 0.085f, 0.03f, 6.5, 5.3f, "Schattenpfeil");
+		super(57f, 25f, 32, 0.0675f, 0.005f, 0.085f, 0.03f, 6.5, 5.3f, NAME);
 	}
 	
 	/** Gibt das Bild des Schattenpfeils zur�ck 
@@ -39,4 +39,20 @@ public class ShadowArrow extends AbstractArrow {
 	public BufferedImage getImage () {
 		return img_Shadow;
 	}
+
+    /**
+     * Returns the name of the item in English for the user
+     */
+    @Override
+    public String getNameEnglish () {
+        return "Shadow arrow";
+    }
+
+    /**
+     * Returns the name of the item in German for the user
+     */
+    @Override
+    public String getNameGerman () {
+        return "Schattenpfeil";
+    }
 }

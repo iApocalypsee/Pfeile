@@ -14,7 +14,7 @@ public class IceArrow extends AbstractArrow {
 	public static final int INDEX = 4;
 	
 	/** Name des Pfeils */
-	public static final String NAME = "Eispfeil";
+	public static final String NAME = "IceArrow";
 	
 	public static final Color UNIFIED_COLOR = new Color(204, 228, 237);
 	
@@ -32,7 +32,7 @@ public class IceArrow extends AbstractArrow {
 	
 	/** ruft den Konstrucktor von 'AbstractArrow' auf */
 	public IceArrow() {
-		super(64f, 32f, 15, 0.035f, 0.025f, 0.13f, 0.06f, 5, 4.6f, "Eispfeil");
+		super(64f, 32f, 15, 0.035f, 0.025f, 0.13f, 0.06f, 5, 4.6f, NAME);
 	}
 	
 	/** Gibt das Bild des Eispfeiles zur�ck 
@@ -41,4 +41,20 @@ public class IceArrow extends AbstractArrow {
 	public BufferedImage getImage () {
 		return img_Ice;
 	}
+
+    /**
+     * Returns the name of the item in English for the user
+     */
+    @Override
+    public String getNameEnglish () {
+        return "Ice arrow";
+    }
+
+    /**
+     * Returns the name of the item in German for the user
+     */
+    @Override
+    public String getNameGerman () {
+        return "Eispfeil";
+    }
 }

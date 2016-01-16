@@ -104,6 +104,22 @@ public class PermanentBox extends Loot {
     }
 
     /**
+     * Returns the name of the item in English for the user
+     */
+    @Override
+    public String getNameEnglish () {
+        return "Box";
+    }
+
+    /**
+     * Returns the name of the item in German for the user
+     */
+    @Override
+    public String getNameGerman () {
+        return "Kiste";
+    }
+
+    /**
      * This adds a MouseListener [mouseReleased] to the loot, which registers a click at the component. After triggering
      * this mouseListener, a Thread is created, which controls that the selectedEntity and the loot are placed on the same
      * tile. The same Thread calls the <code>collect</code> method from {@link player.item.Collectible}, which also removes
