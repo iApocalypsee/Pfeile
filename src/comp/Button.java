@@ -6,15 +6,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * Eine neue Button-Klasse, die ohne externe Texturen klarkommt. Auf Texturen
- * verzichte ich, weil sie falsch oder sogar überhaupt nicht
- * dargestellt werden.
- * <b>18.12.2013:</b> Erstellung des Buttons.
- * <b>3.2.2014:</b> Bilder können als Icons vom Button verwendet werden. Bugmeldungen erwünscht.
- * 
- * @author Josip
- * @version 3.2.2014
- * 
+ * This is the "new" Button class, which doesn't need textures.
  */
 public class Button extends Component {
 
@@ -27,6 +19,8 @@ public class Button extends Component {
 	 * Ein optionales Bild, das mit dem Text dargestellt werden kann.
 	 */
 	private BufferedImage optImage = null;
+
+    private Font font = Component.STD_FONT;
 
 	public Button(int x, int y, Screen backing, String text) {
 		super(x, y, Component.getTextBounds(text, Component.STD_FONT).width + 50,
@@ -61,6 +55,22 @@ public class Button extends Component {
 		this.optImage = optimg;
 		recalculateDimension();
 	}
+
+    /** Changes the font used in the button. Don't use it to often, since the bounds of the button have to be
+     * recalculated and changed. Generally speaking, don't use other fonts then the Component.STD_FONT fontFamilyType,
+     * because it may look strange.
+     *
+     * @param font the new font of the button.
+     */
+    public void setFont(Font font) {
+        this.font = font;
+        recalculateDimension();
+    }
+
+    /** Returns the font of this button; the default value is <code>Component.STD_VALUE</code> */
+    public Font getFont() {
+        return font;
+    }
 	
 	/**
 	 * Berechnet die Bounds des Buttons neu.
@@ -69,9 +79,9 @@ public class Button extends Component {
 		Dimension d;
 		// leerer Text bei text == null
 		if(text != null) {
-			d = Component.getTextBounds(text, STD_FONT);
+			d = Component.getTextBounds(text, font);
 		} else {
-			d = Component.getTextBounds("", STD_FONT);
+			d = Component.getTextBounds("", font);
 		}
 		
 		if(optImage != null) {
@@ -93,6 +103,7 @@ public class Button extends Component {
         if (isVisible()) {
             getBorder().draw(g);
             g.setColor(Color.white);
+            g.setFont(font);
 
             if(optImage == null) {
                 g.drawString(text, getX() + 10, getY() + 20);

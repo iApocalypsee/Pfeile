@@ -20,7 +20,6 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.List;
 
 /**
  * This is the Screen in which some PfeileContext values like worldSize are set. It replaces the old PreWindow.
@@ -120,8 +119,8 @@ public class PreWindowScreen extends Screen {
     public PreWindowScreen() {
         super(SCREEN_NAME, SCREEN_INDEX);
 
-        dictionary = LangDict.fromJson(new File("src/resources/data/PreWindowScreen.json"));
-        dictionary.addJsonTranslations(new File("src/resources/data/CommonStrings.json"));
+        dictionary = LangDict.fromJsonStr("screen/PreWindowScreen.json");
+        dictionary.addJsonTranslationsStr("general/CommonStrings.json");
 
         final Language lang = Main.getLanguage();
 

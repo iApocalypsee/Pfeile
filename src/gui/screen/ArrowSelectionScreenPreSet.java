@@ -95,8 +95,8 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
         //setBackground(new SolidColor(TRANSPARENT_BACKGROUND));
 
-        dictionary = LangDict.fromJson(new File("src/resources/data/ArrowSelectionScreen.json"));
-        dictionary.addJsonTranslations(new File("src/resources/data/CommonStrings.json"));
+        dictionary = LangDict.fromJsonStr("screen/ArrowSelectionScreen.json");
+        dictionary.addJsonTranslationsStr("general/CommonStrings.json");
 
         final Language lang = Main.getLanguage();
 

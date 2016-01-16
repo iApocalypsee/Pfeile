@@ -19,7 +19,7 @@
     "de_DE": "Platinmünze"
   },
 
-  "lootBag": {
+  "bagOfLoots": {
     "en_EN": "Loot bag",
     "de_DE": "Warensack"
   },
@@ -43,39 +43,5 @@
   "healPotion": {
     "en_EN": "Healing potion",
     "de_DE": "Heiltrank"
-  },
-
-  "fireArrow": {
-    "en_EN": "Fire arrow",
-    "de_DE": "Feuerpfeil"
-  },
-  "iceArrow": {
-    "en_EN": "Ice arrow",
-    "de_DE": "Eispfeil"
-  },
-  "lightArrow": {
-    "en_EN": "Light arrow",
-    "de_DE": "Lichtpfeil"
-  },
-  "lightningArrow": {
-    "en_EN": "Lightning arrow",
-    "de_DE": "Blitzpfeil"
-  },
-  "shadowArrow": {
-    "en_EN": "Shadow arrow",
-    "de_DE": "Schattenpfeil"
-  },
-  "stoneArrow": {
-    "en_EN": "Stone arrow",
-    "de_DE": "Steinpfeil"
-  },
-  "stormArrow": {
-    "en_EN": "Storm arrow",
-    "de_DE": "Sturmpfeil"
-  },
-  "waterArrow": {
-    "en_EN": "Water arrow",
-    "de_DE": "Wasserpfeil"
   }
-
 }

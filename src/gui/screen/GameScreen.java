@@ -81,7 +81,7 @@ public class GameScreen extends Screen implements FrameContainer {
 	private GameScreen() {
 		super(GameScreen.SCREEN_NAME, GameScreen.SCREEN_INDEX);
 
-        dictionary = LangDict.fromJson(new File("src/resources/data/GameScreen.json"));
+        dictionary = LangDict.fromJsonStr("screen/GameScreen.json");
 
 		setPreprocessedDrawingEnabled(false);
 

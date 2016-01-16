@@ -30,9 +30,9 @@ public final class LogFacility {
 		String threadLabel = "[" + Thread.currentThread().getName() + "]";
 
 		if(level == LoggingLevel.Error) {
-			System.err.printf("[%s] [%s] [%s]: %s\n", lstr, timestamp, threadLabel, msg);
+			System.err.printf("[%s] [%s] [%s]: %s\n", timestamp, lstr, threadLabel, msg);
 		} else {
-			System.out.printf("[%s] [%s] [%s]: %s\n", lstr, timestamp, threadLabel, msg);
+			System.out.printf("[%s] [%s] [%s]: %s\n", timestamp, lstr, threadLabel, msg);
 		}
 	}
 

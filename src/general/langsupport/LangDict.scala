@@ -175,6 +175,17 @@ class LangDict private (@BeanProperty val owner: String) extends Dynamic {
 
   def addJsonTranslations(file: java.io.File): Unit = addJsonTranslations(file.toURI)
 
+  /** <code>addJsonTranslationsStr(new File("src/resources/data/language/" + address)</code>;
+    * Already begins in the language package, so only use the underlying package and the file name. Apart from the different parameter
+    * this is equal to addJsonTranslations<br><br>
+    * <i><u>Example</u></i><br>
+    * general/CommonStrings.json <br>
+    * screen/PreWindowScreen.json
+    *
+    * @param address the package within language and the file name: e.g. "general/CommonStrings.json"
+    */
+  def addJsonTranslationsStr(address: String): Unit = addJsonTranslations(new java.io.File("src/resources/data/language/" + address).toURI)
+
 }
 
 /**
@@ -218,6 +229,17 @@ object LangDict {
   def fromJson(uri: URI): LangDict = fromJson(Source.fromURI(uri).mkString)
 
   def fromJson(file: java.io.File): LangDict = fromJson(file.toURI)
+
+  /** <code>fromJason(new File("src/resources/data/language/" + address)</code>;
+    * Already begins in the language package, so only use the underlying package and the file name.<br><br>
+    * <i><u>Example</u></i><br>
+    * general/CommonStrings.json <br>
+    * screen/PreWindowScreen.json
+    * 
+    * @param address the package within language and the file name: e.g. "general/CommonStrings.json"
+    * @return the LangDict
+    */
+  def fromJsonStr(address: String): LangDict = fromJson(new java.io.File("src/resources/data/language/" + address))
 
   def emptyDictionary(creator: String) = new LangDict(creator)
 
