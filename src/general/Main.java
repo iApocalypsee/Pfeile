@@ -3,6 +3,7 @@ package general;
 import akka.actor.ActorSystem;
 import animation.SoundPool;
 import general.io.PreInitStage;
+import general.langsupport.English$;
 import general.langsupport.German$;
 import general.langsupport.LangInitialization;
 import general.langsupport.Language;
@@ -62,7 +63,7 @@ public class Main {
 	private static PfeileContext context = null;
 
     // The language the user speaks (or is supposed to speak).
-    private static Language language = German$.MODULE$;
+    private static Language language = English$.MODULE$;
 
 	// The actor system taking care of threaded actors.
 	private static ActorSystem actorSystem = ActorSystem.create("system");
@@ -272,6 +273,10 @@ public class Main {
         return programStartTime;
     }
 
+    /** English$.MODULE$ is the default setting.
+     *
+     * @return the language
+     */
     public static Language getLanguage() {
         return language;
     }

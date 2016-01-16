@@ -8,6 +8,7 @@ import general.Main;
 import general.PfeileContext;
 import general.TimeClock;
 import general.io.FontLoader;
+import general.langsupport.English$;
 import general.langsupport.LangDict;
 import general.langsupport.Language;
 import newent.*;
@@ -17,7 +18,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -114,7 +114,7 @@ public class PreWindowScreen extends Screen {
 
     private final LangDict dictionary;
 
-    private final String strategyGameLabel, authorsLabel;
+    private final String strategyGameLabel, authorsLabel, selectSelections;
 
     public PreWindowScreen() {
         super(SCREEN_NAME, SCREEN_INDEX);
@@ -158,6 +158,7 @@ public class PreWindowScreen extends Screen {
 
         strategyGameLabel = dictionary.getTranslationNow("label_strategyGame", lang);
         authorsLabel = dictionary.getTranslationNow("label_authors", lang);
+        selectSelections = dictionary.getTranslationNow("done", lang);
 
         // Initialise the Components
         confirmButton = new Button(550, 400, this, confirm);
@@ -372,47 +373,47 @@ public class PreWindowScreen extends Screen {
         }
         */
         if (MoneyValues.startMoney().isEmpty()) {
-            openConfirmDialog("Select unselected Selections: Startgeld");
+            openConfirmDialog(selectSelections + ": Startgeld");
             return;
         }
         if (MoneyValues.moneyPerTurn().isEmpty()) {
-            openConfirmDialog("Select unselected Selections: Geld pro Zug");
+            openConfirmDialog(selectSelections + ": Geld pro Zug");
             return;
         }
         if (PfeileContext.arrowNumberFreeSet().isEmpty()) {
-            openConfirmDialog("Select unselected Selections: Pfeilanzahl [frei wählbar]");
+            openConfirmDialog(selectSelections + ": Pfeilanzahl [frei wählbar]");
             return;
         }
         if (PfeileContext.arrowNumberPreSet().isEmpty()) {
-            openConfirmDialog("Select unselected Selections: Pfeilanzahl [vorher wählbar]");
+            openConfirmDialog(selectSelections + ": Pfeilanzahl [vorher wählbar]");
             return;
         }
         if (PfeileContext.turnsPerRound().isEmpty()) {
-            openConfirmDialog("Select unselected Selections: Züge pro Runde");
+            openConfirmDialog(selectSelections + ": Züge pro Runde");
             return;
         }
         if (Player.maximumLife().isEmpty()) {
-            openConfirmDialog("Select unselected Selections: maximales Leben");
+            openConfirmDialog(selectSelections + ": maximales Leben");
             return;
         }
         if (Player.lifeRegeneration().isEmpty()) {
-            openConfirmDialog("Select unselected Selections: Lebensregeneration");
+            openConfirmDialog(selectSelections + ": Lebensregeneration");
             return;
         }
         if (PfeileContext.damageMultiplicator().isEmpty()) {
-            openConfirmDialog("Select unselected Selections: Schadensmultiplikator");
+            openConfirmDialog(selectSelections + ": Schadensmultiplikator");
             return;
         }
         if (TimeClock.isTurnTimeInfinite()) {
-            openConfirmDialog("Select unselected Selections: Zeit pro Zug");
+            openConfirmDialog(selectSelections + ": Zeit pro Zug");
             return;
         }
         if (PfeileContext.worldSizeX().isEmpty() || PfeileContext.worldSizeY().isEmpty()) {
-            openConfirmDialog("Select unselected Selections: Weltgröße");
+            openConfirmDialog(selectSelections + ": Weltgröße");
             return;
         }
         if (PfeileContext.handicapPlayer().isEmpty() || PfeileContext.handicapAI().isEmpty()) {
-            openConfirmDialog("Select unselected Selections: Handicap");
+            openConfirmDialog(selectSelections + ": Handicap");
             return;
         }
 
@@ -628,7 +629,10 @@ public class PreWindowScreen extends Screen {
                 return;
             }
             default: {
-                openConfirmDialog("Der ausgewählte Index von der <code> selectorComboBox </code> konnte nicht gefunden werden.");
+                if (Main.getLanguage() == English$.MODULE$)
+                    openConfirmDialog("Error:  The selected Index of comboBox does not exist.");
+                else
+                    openConfirmDialog("Fehler: Der ausgewählte Index von ComboBox konnte nicht gefunden werden.");
                 System.err.println("The selected Index of selectorComboBox couldn't be found. " +
                         selectorComboBox.getSelectedValue() + " at " + selectorComboBox.getSelectedIndex() +
                         " This error is in PreWindowScreen at: confirmButton.addMouseListener(...).");
@@ -710,7 +714,11 @@ public class PreWindowScreen extends Screen {
                 break;
             }
             default: {
-                openConfirmDialog("Fehler bei der Auswahl von der ComboBox <code> selectorComboBox </code>");
+                if (Main.getLanguage() == English$.MODULE$)
+                    openConfirmDialog("An error occured during the selection in ComboBox");
+                else
+                    openConfirmDialog("Fehler bei der Auswahl von der ComboBox selectorComboBox");
+
                 System.err.println("Error: trying to reach " + selectorComboBox.getSelectedIndex() + " " +
                         "in PreWindowScreen at confirmButton.addMouseListner(...), " +
                         "however there is not such an index.");

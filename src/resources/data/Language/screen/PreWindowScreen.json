@@ -2,7 +2,7 @@
   "ownership": "Pfeile team",
 
   "defaultSettings": {
-    "en_EN": "Apply default settings",
+    "en_EN": "Default settings",
     "de_DE": "Standardeinstellung"
   },
 
@@ -22,24 +22,24 @@
   },
 
   "arrowAmountFreeSet": {
-    "en_EN": "Selectable amount of arrows",
-    "de_DE": "Anzahl der wählbaren Pfeile"
+    "en_EN": "Number of arrows",
+    "de_DE": "Frei wählbare Pfeile"
   },
 
   "arrowAmountPreSet": {
-    "en_EN": "Selectable amount of arrows before",
-    "de_DE": "Anzahl der vorher wählbaren Pfeile"
+    "en_EN": "Number of arrows before round",
+    "de_DE": "Vorher wählbare Pfeile"
   },
 
   "maxLife": {
     "en_EN": "Maximum life",
-    "de_DE": "Maximales Leben",
+    "de_DE": "Maximales Leben"
   },
 
   "lifeRegen": {
     "en_EN": "Life regeneration",
     "de_DE": "Lebensregeneration"
-  }
+  },
 
   "dmgScale": {
     "en_EN": "Damage amplification",
@@ -67,12 +67,17 @@
   },
 
   "label_strategyGame": {
-    "en_EN": "A small strategy game",
-    "de_DE": "Ein kleines Strategiespiel"
+    "en_EN": "A strategy game",
+    "de_DE": "Ein Strategiespiel"
   },
 
   "label_authors": {
     "en_EN": "by Josip Palavra and Daniel Schmaus",
     "de_DE": "von Josip Palavra und Daniel Schmaus"
+  },
+
+  "select_unselected_selections": {
+    "en_EN": "Select unselected selections",
+    "de_DE": "Wähle die restlichen Einstellungen aus"
   }
 }
