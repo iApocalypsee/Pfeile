@@ -430,7 +430,7 @@ public class PreWindowScreen extends Screen {
     /** this method triggers the action which is produced by standardButton ("Standardeinstellungen") or pressing "s" */
     private void triggerStandardButton () {
         BotStrength.Strength = BotStrength.NORMAL;
-        labels[0].setText("Computerstärke: " + "normal");
+        labels[0].setText(": " + "normal");
 
         MoneyValues.startMoney().set(250);
         labels[1].setText("Startgeld: " + MoneyValues.startMoney().get());

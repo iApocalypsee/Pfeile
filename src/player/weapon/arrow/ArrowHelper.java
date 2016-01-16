@@ -1,6 +1,11 @@
 package player.weapon.arrow;
 
 import general.LogFacility;
+import general.Main;
+import general.langsupport.English$;
+import general.langsupport.LangDict;
+import general.langsupport.Language;
+import javafx.scene.effect.Light;
 import misc.ImageHelper;
 import newent.InventoryLike;
 import player.item.Item;
@@ -15,6 +20,9 @@ import java.awt.image.BufferedImage;
 public final class ArrowHelper {
 
     private static BufferedImage[] arrowImages;
+
+    // [Language: 0=English 1=German][arrowIndex]
+    private static String[][] arrowNames;
 
     /**
      * the number of different types of arrows. It's equal 8.
@@ -37,6 +45,42 @@ public final class ArrowHelper {
         arrowImages[ShadowArrow.INDEX] = new ShadowArrow().getImage();
 
         LogFacility.log("Arrow images loaded.", "Info", "initprocess");
+
+        /* That only uses valuable computing time
+
+        LangDict dict = LangDict.fromJsonStr("item/Arrows.json");
+        Language language = Main.getLanguage();
+
+        String[] arrowNames = new String[ArrowHelper.NUMBER_OF_ARROW_TYPES];
+        arrowNames[FireArrow.INDEX] = dict.getTranslationNow("FireArrow", language);
+        arrowNames[WaterArrow.INDEX] = dict.getTranslationNow("WaterArrow", language);
+        arrowNames[StoneArrow.INDEX] = dict.getTranslationNow("StoneArrow", language);
+        arrowNames[StormArrow.INDEX] = dict.getTranslationNow("StormArrow", language);
+        arrowNames[IceArrow.INDEX] = dict.getTranslationNow("IceArrow", language);
+        arrowNames[LightningArrow.INDEX] = dict.getTranslationNow("LightningArrow", language);
+        arrowNames[LightArrow.INDEX] = dict.getTranslationNow("LightArrow", language);
+        arrowNames[ShadowArrow.INDEX] = dict.getTranslationNow("ShadowArrow", language);
+        */
+
+        // This implementation is much faster
+        // [Number of languages: 0=English, 1=German][number of arrows]
+        arrowNames = new String[2][NUMBER_OF_ARROW_TYPES];
+        arrowNames[0][FireArrow.INDEX] = "Fire arrow";
+        arrowNames[1][FireArrow.INDEX] = "Feuerpfeil";
+        arrowNames[0][WaterArrow.INDEX] = "Water arrow";
+        arrowNames[1][WaterArrow.INDEX] = "Wasserpfeil";
+        arrowNames[0][IceArrow.INDEX] = "Ice arrow";
+        arrowNames[1][IceArrow.INDEX] = "Eispfeil";
+        arrowNames[0][LightningArrow.INDEX] = "Lightening arrow";
+        arrowNames[1][LightningArrow.INDEX] = "Blitzpfeil";
+        arrowNames[0][StoneArrow.INDEX] = "Stone arrow";
+        arrowNames[1][StoneArrow.INDEX] = "Steinpfeil";
+        arrowNames[0][StormArrow.INDEX] = "Storm arrow";
+        arrowNames[1][StormArrow.INDEX] = "Sturmpfeil";
+        arrowNames[0][LightArrow.INDEX] = "Light arrow";
+        arrowNames[1][LightArrow.INDEX] = "Lichtpfeil";
+        arrowNames[0][ShadowArrow.INDEX] = "Shadow arrow";
+        arrowNames[1][ShadowArrow.INDEX] = "Schattenpfeil";
     }
 
     /**
@@ -370,5 +414,20 @@ public final class ArrowHelper {
      */
     public static BufferedImage getArrowImage(int selectedArrow, float scaleFactor) {
         return ImageHelper.scaleBufferedImage(getArrowImage(selectedArrow), scaleFactor, scaleFactor, Image.SCALE_SMOOTH);
+    }
+
+    /** Returns the translated name of arrow depending on the index of the arrow "FireArrow.INDEX" and the language "English$.MODULES$" */
+    public static String getTranslation (int arrowIndex, Language language) {
+        if (language == English$.MODULE$)
+            return arrowNames[0][arrowIndex];
+        else
+            return arrowNames[1][arrowIndex];
+    }
+
+    public static String getTranslation (int arrowIndex, boolean isEnglish) {
+        if (isEnglish)
+            return arrowNames[0][arrowIndex];
+        else
+            return arrowNames[1][arrowIndex];
     }
 }

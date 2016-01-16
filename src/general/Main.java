@@ -3,10 +3,7 @@ package general;
 import akka.actor.ActorSystem;
 import animation.SoundPool;
 import general.io.PreInitStage;
-import general.langsupport.English$;
-import general.langsupport.German$;
-import general.langsupport.LangInitialization;
-import general.langsupport.Language;
+import general.langsupport.*;
 import gui.screen.ArrowSelectionScreenPreSet;
 import misc.ArmingInitialization;
 import misc.ItemInitialization;
@@ -279,6 +276,11 @@ public class Main {
      */
     public static Language getLanguage() {
         return language;
+    }
+
+    /** Returns <code>true</code>, if the language is set to english. */
+    public static boolean isEnglish() {
+        return language == English$.MODULE$;
     }
 
     /**

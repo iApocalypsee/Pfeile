@@ -139,15 +139,22 @@ public class ArrowSelectionScreenPreSet extends Screen {
         /** X-Position des ersten Buttons (Screen) */
         int posXButton = 38;
 
-        // TODO Replace with arrow name translations
-        buttonListArrows [0] = new Button(posXButton, posYButtons, this, "Feuerpfeil");
-        buttonListArrows [1] = new Button(posXButton + buttonListArrows [0].getWidth() + 43, posYButtons, this, "Wasserpfeil");
-        buttonListArrows [2] = new Button(posXButton + (buttonListArrows [0].getWidth() + 43) * 2, posYButtons, this, "Sturmpfeil");
-        buttonListArrows [3] = new Button(posXButton + (buttonListArrows [0].getWidth() + 43) * 3, posYButtons, this, "Steinpfeil");
-        buttonListArrows [4] = new Button(posXButton + (buttonListArrows [0].getWidth() + 43) * 4, posYButtons, this, "Eispfeil");
-        buttonListArrows [5] = new Button(posXButton + (buttonListArrows [0].getWidth() + 43) * 5, posYButtons, this, "Blitzpfeil");
-        buttonListArrows [6] = new Button(posXButton + (buttonListArrows [0].getWidth() + 43) * 6 , posYButtons, this, "Lichtpfeil");
-        buttonListArrows [7] = new Button(posXButton + (buttonListArrows [0].getWidth() + 43) * 7, posYButtons, this, "Schattenpfeil");
+        buttonListArrows[0] = new Button(posXButton, posYButtons, this,
+                ArrowHelper.getTranslation(FireArrow.INDEX, lang));
+        buttonListArrows[1] = new Button(posXButton + buttonListArrows[0].getWidth() + 43, posYButtons, this,
+                ArrowHelper.getTranslation(WaterArrow.INDEX, lang));
+        buttonListArrows[2] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 2, posYButtons, this,
+                ArrowHelper.getTranslation(StormArrow.INDEX, lang));
+        buttonListArrows[3] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 3, posYButtons, this,
+                ArrowHelper.getTranslation(StoneArrow.INDEX, lang));
+        buttonListArrows[4] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 4, posYButtons, this,
+                ArrowHelper.getTranslation(IceArrow.INDEX, lang));
+        buttonListArrows[5] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 5, posYButtons, this,
+                ArrowHelper.getTranslation(LightningArrow.INDEX, lang));
+        buttonListArrows[6] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 6 , posYButtons, this,
+                ArrowHelper.getTranslation(LightArrow.INDEX, lang));
+        buttonListArrows[7] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 7, posYButtons, this,
+                ArrowHelper.getTranslation(ShadowArrow.INDEX, lang));
 
         // resizing for higher resolutions, if necessary
         for (Button button : buttonListArrows) {
