@@ -84,7 +84,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
     private final LangDict dictionary;
 
-    private final String noArrowsStr, chooseVarArrows, chooseOneArrow, chooseFirstLastArrow, noMoreArrows;
+    private final String noArrowsStr, chooseVarArrows, chooseOneArrow, chooseFirstLastArrow, noMoreArrows, authorsLabel, strategyGameLabel;
 
     /**
      * Screen für die Pfeilauswahl für vorhersetzbaren Pfeilen.
@@ -105,6 +105,8 @@ public class ArrowSelectionScreenPreSet extends Screen {
         chooseFirstLastArrow = dictionary.getTranslationNow("defineFirstLastArrow", lang);
         noArrowsStr = dictionary.getTranslationNow("noArrows", lang);
         noMoreArrows = dictionary.getTranslationNow("defineNoMoreArrows", lang);
+        strategyGameLabel = dictionary.getTranslationNow("label_strategyGame", lang);
+        authorsLabel = dictionary.getTranslationNow("label_authors", lang);
 
         final String randomArrow = dictionary.getTranslationNow("randomArrow", lang),
                      confirm = dictionary.getTranslationNow("confirm", lang);
@@ -129,9 +131,9 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
         // fontBigPosition.x = PreWindowScreen.fontBigPosition.x --> if you change the value there you have to change it here, too.
         fontBigPosition = new Point(780, comp.Component.getTextBounds("Pfeile", fontBig).height + 65);
-        fontMiddlePosition = new Point(fontBigPosition.x + 43, fontBigPosition.y + comp.Component.getTextBounds("ein Strategiespiel", fontMiddle).height + 15);
+        fontMiddlePosition = new Point(fontBigPosition.x + 43, fontBigPosition.y + comp.Component.getTextBounds(strategyGameLabel, fontMiddle).height + 15);
         fontSmallPosition = new Point(fontMiddlePosition.x,
-                fontMiddlePosition.y + comp.Component.getTextBounds("von Josip Palavra und Daniel Schmaus", fontSmall).height + 10);
+                fontMiddlePosition.y + comp.Component.getTextBounds(authorsLabel, fontSmall).height + 10);
 
 
         /** Y-Position des ersten Buttons (Bildschirm) */
@@ -310,7 +312,10 @@ public class ArrowSelectionScreenPreSet extends Screen {
         }
 
         if (selectedArrows.size() < PfeileContext.arrowNumberPreSet().get()) {
-            openConfirmQuestion("Bitten wählen sie alle Pfeile aus!");
+            if (Main.isEnglish())
+                openConfirmQuestion("Please, select all arrows!");
+            else
+                openConfirmQuestion("Bitte wählen sie alle Pfeile aus!");
         } else {
             if (LoadingWorldScreen.hasLoaded()) {
                 // the first player should have the name Main.getUser().getUsername(). Compare with the initialization at
@@ -422,10 +427,10 @@ public class ArrowSelectionScreenPreSet extends Screen {
         g.drawString("Pfeile", fontBigPosition.x, fontBigPosition.y);
         g.setColor(colorMiddle);
         g.setFont(fontMiddle);
-        g.drawString("ein Strategiespiel", fontMiddlePosition.x, fontMiddlePosition.y);
+        g.drawString(strategyGameLabel, fontMiddlePosition.x, fontMiddlePosition.y);
         g.setColor(colorSmall);
         g.setFont(fontSmall);
-        g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y);
+        g.drawString(authorsLabel, fontSmallPosition.x, fontSmallPosition.y);
 
 
         // resetting the font and draw the rest

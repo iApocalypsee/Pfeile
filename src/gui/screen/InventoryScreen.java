@@ -28,6 +28,7 @@ import java.util.LinkedList;
 /**
  * The <code>InventoryScreen</code> allows the user to choose items out of the inventory of the active player.
  */
+// TODO add language system for Inventory Screen
 public class InventoryScreen extends Screen {
 
     public static final int SCREEN_INDEX = 22;
@@ -55,19 +56,19 @@ public class InventoryScreen extends Screen {
     public InventoryScreen () {
         super(SCREEN_NAME, SCREEN_INDEX);
 
-        selectedItem = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 380, this, "<Item auswählen>");
+        selectedItem = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 380, this, "<select items>");
         selectedItem.declineInput();
         selectedItem.setRoundBorder(true);
 
         // getItems() can't be used yet as the active player is null
         java.util.List<String> itemList = new ArrayList<>(2);
-        itemList.add("<keine Items>");
+        itemList.add("<no items>");
 
         inventoryList = new List(50, 70, 200, 350, this, itemList);
 
-        cancelButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 220, this, "Abbrechen");
+        cancelButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 220, this, "Cancel");
 
-        confirmButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 300, this, "Bestätigen");
+        confirmButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 300, this, "Confirm");
 
         warningMessage = new WarningMessage("null", 40, Main.getWindowHeight() - 105, this);
         warningMessage.setFont(warningMessage.getFont().deriveFont(Component.STD_FONT.getSize2D() * 2));
@@ -81,8 +82,8 @@ public class InventoryScreen extends Screen {
             // Are these three lines of code even necessary? I think that this should be
             // applied by default when no item is to be displayed.
             String selectedName = inventoryList.getItems().get(selectedIndex);
-            if (selectedName.equals("<keine Items>"))
-                selectedName = "<Item auswählen>";
+            if (selectedName.equals("<no items>"))
+                selectedName = "<select item>";
 
             selectedItem.setText(selectedName);
             selectedItem.iconify(items._2().get(selectedIndex).getImage());
@@ -116,7 +117,7 @@ public class InventoryScreen extends Screen {
                     inventoryList.iconify(i, items._2().get(i).getImage());
             }
 
-            selectedItem.setText("<Item auswählen>");
+            selectedItem.setText("<select item>");
             selectedItem.iconify(null);
             warningMessage.setTransparency(0);
         });
@@ -130,22 +131,22 @@ public class InventoryScreen extends Screen {
 
     private void triggerConfirmButton() {
         // if nothing is selected yet, you don't need to trigger the rest
-        if (selectedItem.getText().equals("<Item auswählen>")) {
-            warningMessage.setMessage("Wähle erst ein Item aus!");
+        if (selectedItem.getText().equals("<select item>")) {
+            warningMessage.setMessage("You need to select an item first");
             warningMessage.activateMessage();
             return;
         }
 
         InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
         for (Item item : inventory.javaItems()) {
-            if (selectedItem.getText().equals(item.getName())) {
+            if (selectedItem.getText().equals(item.getNameDisplayed())) {
                 if (item instanceof Potion) {
                     Potion potion = (Potion) item;
                     if (!potion.triggerEffect()) {
-                        warningMessage.setMessage("Die " + potion.getName() + " konnte nicht entfernt werden.");
+                        warningMessage.setMessage(potion.getNameDisplayed() + " couldn't be removed.");
                         warningMessage.activateMessage();
                     } else {
-                        warningMessage.setMessage("Verwendete: " + potion.getName());
+                        warningMessage.setMessage("Used: " + potion.getNameDisplayed());
                         warningMessage.activateMessage();
                     }
 
@@ -157,7 +158,7 @@ public class InventoryScreen extends Screen {
                     equippedItemSeq.copyToArray(equippedItems);
 
                     if (!equippableItem.equip()) {
-                        warningMessage.setMessage("Die " + equippableItem.getName() + " kann nicht ausgerüstet werden.");
+                        warningMessage.setMessage(equippableItem.getNameDisplayed() + " failed to equip.");
                         warningMessage.activateMessage();
                     } else {
                         EquippableItem unequipped = null;
@@ -168,14 +169,14 @@ public class InventoryScreen extends Screen {
                             }
                         }
                         if (unequipped == null)
-                            warningMessage.setMessage("Ausgerüstet: " + equippableItem.getName());
+                            warningMessage.setMessage("Equipped: " + equippableItem.getNameDisplayed());
                         else
-                            warningMessage.setMessage("Ausgerüstet: " + equippableItem.getName() + "; Unausgerüstet: " + unequipped.getName());
+                            warningMessage.setMessage("Equipped: " + equippableItem.getNameDisplayed() + "; Not Equipped: " + unequipped.getNameDisplayed());
                         warningMessage.activateMessage();
                     }
 
                 } else {
-                    warningMessage.setMessage(item.getName() + " kann hier nicht verwendet werden.");
+                    warningMessage.setMessage(item.getNameDisplayed() + " can't be used here.");
                     warningMessage.activateMessage();
                 }
                 break;
@@ -211,7 +212,7 @@ public class InventoryScreen extends Screen {
             if (!(item instanceof AbstractArrow)) {
                 if (!(item instanceof Coin)) {
                     // the name
-                    itemList.add(item.getName());
+                    itemList.add(item.getNameDisplayed());
                     // Not the image, the item object itself is needed!
                     realItemObjList.add(item);
                 } else {
@@ -225,14 +226,14 @@ public class InventoryScreen extends Screen {
             java.util.List<Coin>[] coinList = CoinHelper.getSortedCoins(coins);
             for (java.util.List<Coin> aCoinList : coinList) {
                 if (!aCoinList.isEmpty()) {
-                    itemList.add(aCoinList.get(0).getName() + ": " + aCoinList.size());
+                    itemList.add(aCoinList.get(0).getNameDisplayed() + ": " + aCoinList.size());
                     realItemObjList.add(aCoinList.get(0));
                 }
             }
         }
 
         if (itemList.size() == 0)
-            itemList.add("<keine Items>");
+            itemList.add("<no items>");
 
         return new Tuple2<>(itemList, realItemObjList);
     }

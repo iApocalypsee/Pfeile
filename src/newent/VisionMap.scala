@@ -57,7 +57,7 @@ class VisionMap(val entity: VisionEntity) {
   /** Returns the current vision status of the tile. */
   def visionStatusOf(x: Int, y: Int): VisionStatus = {
     require(entity.world.terrain.isTileValid(x, y))
-    val findResult = _entries.find { e => e.tile.latticeX == x && e.tile.latticeY == y }.get
+    val findResult = _entries.find { e => e.tile.getGridX == x && e.tile.getGridY == y }.get
     findResult.visionStatus
   }
 
@@ -74,7 +74,7 @@ class VisionMap(val entity: VisionEntity) {
     _grantedVisionObjects foreach { v =>
       _entries foreach { e =>
         Future {
-          if (v.circle.contains(e.tile.latticeX, e.tile.latticeY)) {
+          if (v.circle.contains(e.tile.getGridX, e.tile.getGridY)) {
             e.visionStatus = VisionStatus.Visible
           }
         }

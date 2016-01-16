@@ -172,8 +172,8 @@ class AStarPathfinder(val maxSearchDepth: Int, val excludes: (TileLike) => Boole
 
   private class Node(val tile: TileLike) {
 
-    def x = tile.latticeX
-    def y = tile.latticeY
+    def x = tile.getGridX
+    def y = tile.getGridY
 
     /** The parent node. */
     var parent: Node = null

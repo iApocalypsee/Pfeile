@@ -30,8 +30,8 @@ final case class AttackEvent(weapon: Weapon, departure: TileLike, target: Attack
     * The length is just squared, not square-rooted yet. Squarerooting is expensive in computer
     * programming, so I don't want to use it every time when I can just use the squared value.
     */
-  lazy val geographicalLengthSq = pow(departure.latticeX - target.getGridX, 2) +
-    pow(departure.latticeY - target.getGridY, 2)
+  lazy val geographicalLengthSq = pow(departure.getGridX - target.getGridX, 2) +
+    pow(departure.getGridY - target.getGridY, 2)
 
   /** The squarerooted geographical length. (in Tiles) */
   lazy val geographicalLength = sqrt(geographicalLengthSq)

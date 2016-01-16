@@ -71,7 +71,7 @@ public class AimSelectionScreen extends Screen {
 		posX_selectedField = -1;
 		posY_selectedField = -1;
 		
-		confirm = new Button ((int) (0.86 * Main.getWindowWidth()), (int) (0.36 * Main.getWindowHeight()), this, "Bestätigen");
+		confirm = new Button ((int) (0.86 * Main.getWindowWidth()), (int) (0.36 * Main.getWindowHeight()), this, "Confirm");
 
         animatedLine = new AnimatedLine(0,0,0,0,Color.RED);
         animatedLine.setWidth(3.0f);
@@ -124,7 +124,7 @@ public class AimSelectionScreen extends Screen {
 
     private void triggerConfirmButton () {
         if (posX_selectedField == -1|| posY_selectedField == -1) {
-            warningMessage.setMessage("Kein Zielfeld ausgewählt");
+            warningMessage.setMessage("No aim selected!");
             warningMessage.activateMessage();
         } else {
             // deliver the attack message to the specified tile
@@ -200,10 +200,10 @@ public class AimSelectionScreen extends Screen {
 		                // reveal that tile yet. That's why it's called Fog of War...
 		                return;
 	                } if(playerX == tileWrapper.getGridX() && playerY == tileWrapper.getGridY()) {
-                        warningMessage.setMessage("Selbstangriff nicht möglich!");
+                        warningMessage.setMessage("You can't attack yourself!");
                         warningMessage.activateMessage();
                     } else if (!isTileInRangeOfArrow(tileWrapper, playerX, playerY)) {
-                        warningMessage.setMessage("Dieses Feld ist außerhalb der Reichweite des Pfeils!");
+                        warningMessage.setMessage("That tile can't be reached by a " + ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex()).getNameDisplayed() + "!");
                         warningMessage.activateMessage();
                     } else {
 		                posX_selectedField = tileX;

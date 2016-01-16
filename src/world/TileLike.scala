@@ -21,10 +21,6 @@ import scala.collection.JavaConverters._
   */
 trait TileLike extends AnyRef with DisplayRepresentable with AttackContainer {
 
-  /** The x position in the grid of the world. */
-  @deprecated("Use getGridX() instead", "16.11.2015") val latticeX: Int
-  /** The y position in the grid of the world. */
-  @deprecated("Use getGridY() instead", "16.11.2015") val latticeY: Int
   /** The terrain to which the tile belongs to. */
   val terrain: TerrainLike
 
@@ -72,7 +68,7 @@ trait TileLike extends AnyRef with DisplayRepresentable with AttackContainer {
   /** Java interop method for the entity list. */
   def javaEntities = JavaConversions.seqAsJavaList(entities)
 
-  override def toString = s"(x=$latticeX|y=$latticeY) - ${getClass.getName}"
+  override def toString = s"(x=$getGridX|y=$getGridY) - ${getClass.getName}"
 
 }
 
@@ -114,7 +110,7 @@ class CoastTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends I
   override def textureAtlas = CoastTile.Atlas
 
   /** The movement points that are required to get on this tile. */
-  override def requiredMovementPoints = 10
+  override def requiredMovementPoints = 6
 }
 
 object CoastTile {

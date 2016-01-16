@@ -10,11 +10,9 @@ import gui.screen.GameScreen;
 import newent.Combatant;
 import newent.InventoryEntity;
 import newent.InventoryLike;
-import player.weapon.ArmingType;
 import player.BoardPositionable;
+import player.weapon.ArmingType;
 import player.weapon.RangedWeapon;
-import scala.runtime.AbstractFunction0;
-import scala.runtime.BoxedUnit;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;

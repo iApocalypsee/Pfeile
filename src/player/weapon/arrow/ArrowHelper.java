@@ -430,4 +430,12 @@ public final class ArrowHelper {
         else
             return arrowNames[1][arrowIndex];
     }
+
+    /** Returns the translated name of the arrow by arrow.INDEX in the language <code>Main.getLanguage()</code> */
+    public static String getTranslation (int arrowIndex) {
+        if (Main.getLanguage() == English$.MODULE$)
+            return arrowNames[0][arrowIndex];
+        else
+            return arrowNames[1][arrowIndex];
+    }
 }

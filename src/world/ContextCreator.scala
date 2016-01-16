@@ -38,7 +38,12 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
   private[ContextCreator] class InstantiatorStage extends StageDescriptable[Unit] {
 
     /** The name of the stage. */
-    override def stageName = "Creating world..."
+    override def stageName = {
+      if (Main.isEnglish)
+        "Creating world..."
+      else
+        "Erzeuge Welt..."
+    }
 
     /** The implementation of the stage. */
     override protected def executeStageImpl() = {
@@ -60,7 +65,12 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
     */
   private[ContextCreator] class PopulatorStage extends StageDescriptable[Unit] {
 
-    override def stageName = "Populating..."
+    override def stageName = {
+      if (Main.isEnglish)
+        "Populating..."
+      else
+        "Bevölkern..."
+    }
 
     /** The implementation of the stage. */
     override protected def executeStageImpl() = {
@@ -157,7 +167,12 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
     }
 
     /** The name of the stage. */
-    override def stageName: String = "Generating ores..."
+    override def stageName: String = {
+      if (Main.isEnglish)
+        "Generating ores..."
+      else
+        "Rohstoffgenerierung..."
+    }
   }
 
   private[ContextCreator] class LootGenerationStage extends StageDescriptable[Unit] {
@@ -177,7 +192,12 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
 
 
     /** The name of the stage. */
-    override def stageName: String = "Generating loots..."
+    override def stageName: String = {
+      if (Main.isEnglish)
+        "Generating loots..."
+      else
+        "Erzeuge Schätze..."
+    }
   }
 
   private[ContextCreator] class OtherStuffStage extends StageDescriptable[Unit] {
@@ -210,7 +230,12 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
     }
 
     /** The name of the stage. */
-    override def stageName = "Applying other stuff..."
+    override def stageName = {
+      if (Main.isEnglish)
+        "Applying other stuff..."
+      else
+        "Hinzufügen des Restes..."
+    }
   }
 
 }

@@ -17,7 +17,7 @@ import scala.concurrent.Future
  *
  * @author Josip Palavra
  */
-object LoadingWorldScreen extends Screen("Loading screen", 222) {
+object LoadingWorldScreen extends Screen("LoadingScreen", 222) {
 
   lazy val getInstance = this
 
@@ -81,8 +81,11 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
     creator.onStageDone += { stageCompleted => 
       GUI.stageLabel.setText(stageCompleted.stage.stageName)
     }
-    creator.onLastStageDone += { _ => 
-      GUI.stageLabel.setText("Done!")
+    creator.onLastStageDone += { _ =>
+      if (Main.isEnglish)
+        GUI.stageLabel.setText("Done!")
+      else
+        GUI.stageLabel.setText("Fertig!")
     }
     // Return the creator as a property.
     Property.withValidation(creator)
@@ -109,8 +112,6 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
         LogFacility.log("Game begins now...", "Info")
         LogFacility.putSeparationLine()
 
-
-        GUI.stageLabel.setText("Done!")
         goButton.acceptInput()
         context
     }
@@ -143,7 +144,9 @@ object LoadingWorldScreen extends Screen("Loading screen", 222) {
 
   private[LoadingWorldScreen] object GUI {
 
-    lazy val stageLabel = new Label(20, 20, LoadingWorldScreen, "Begin")
+    lazy val stageLabel = new Label(20, 20, LoadingWorldScreen, "Begin!")
+    if (!Main.isEnglish)
+      stageLabel.setText("Starte!")
     stageLabel.setStatus(ComponentStatus.NO_MOUSE)
     stageLabel.setFont(new Font(Component.STD_FONT.getFontName, Font.ITALIC, 25))
     stageLabel.setFontColor(new Color(240, 100, 110))
