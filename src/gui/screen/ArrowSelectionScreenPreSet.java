@@ -90,12 +90,15 @@ public class ArrowSelectionScreenPreSet extends Screen {
      * Screen für die Pfeilauswahl für vorhersetzbaren Pfeilen.
      * äquivalent zu <code> ArrowSelection </code>.
      */
+    // TODO: Improve the dictionary / json-files for this class. It shouldn't use ArrowSelection.json and the translations should be used on the whole screen.
     private ArrowSelectionScreenPreSet() {
         super(SCREEN_NAME, SCREEN_INDEX);
 
         //setBackground(new SolidColor(TRANSPARENT_BACKGROUND));
 
+        // FIXME remove redundant translations
         dictionary = LangDict.fromJsonStr("screen/ArrowSelectionScreen.json");
+        dictionary.addJsonTranslationsStr("screen/ArrowSelectionScreenPreSet.json");
         dictionary.addJsonTranslationsStr("general/CommonStrings.json");
 
         final Language lang = Main.getLanguage();

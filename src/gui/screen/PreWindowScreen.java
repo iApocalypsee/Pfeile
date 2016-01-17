@@ -373,47 +373,47 @@ public class PreWindowScreen extends Screen {
         }
         */
         if (MoneyValues.startMoney().isEmpty()) {
-            openConfirmDialog(selectSelections + ": Startgeld");
+            openConfirmDialog(selectSelections + ": initial money");
             return;
         }
         if (MoneyValues.moneyPerTurn().isEmpty()) {
-            openConfirmDialog(selectSelections + ": Geld pro Zug");
+            openConfirmDialog(selectSelections + ": money per turn");
             return;
         }
         if (PfeileContext.arrowNumberFreeSet().isEmpty()) {
-            openConfirmDialog(selectSelections + ": Pfeilanzahl [frei wählbar]");
+            openConfirmDialog(selectSelections + ": number of arrows");
             return;
         }
         if (PfeileContext.arrowNumberPreSet().isEmpty()) {
-            openConfirmDialog(selectSelections + ": Pfeilanzahl [vorher wählbar]");
+            openConfirmDialog(selectSelections + ": number of arrows before round");
             return;
         }
         if (PfeileContext.turnsPerRound().isEmpty()) {
-            openConfirmDialog(selectSelections + ": Züge pro Runde");
+            openConfirmDialog(selectSelections + ": turns per round");
             return;
         }
         if (Player.maximumLife().isEmpty()) {
-            openConfirmDialog(selectSelections + ": maximales Leben");
+            openConfirmDialog(selectSelections + ": maximum life");
             return;
         }
         if (Player.lifeRegeneration().isEmpty()) {
-            openConfirmDialog(selectSelections + ": Lebensregeneration");
+            openConfirmDialog(selectSelections + ": life regeneration");
             return;
         }
         if (PfeileContext.damageMultiplicator().isEmpty()) {
-            openConfirmDialog(selectSelections + ": Schadensmultiplikator");
+            openConfirmDialog(selectSelections + ": damage amplification");
             return;
         }
         if (TimeClock.isTurnTimeInfinite()) {
-            openConfirmDialog(selectSelections + ": Zeit pro Zug");
+            openConfirmDialog(selectSelections + ": time per turn");
             return;
         }
         if (PfeileContext.worldSizeX().isEmpty() || PfeileContext.worldSizeY().isEmpty()) {
-            openConfirmDialog(selectSelections + ": Weltgröße");
+            openConfirmDialog(selectSelections + ": world size");
             return;
         }
         if (PfeileContext.handicapPlayer().isEmpty() || PfeileContext.handicapAI().isEmpty()) {
-            openConfirmDialog(selectSelections + ": Handicap");
+            openConfirmDialog(selectSelections + ": handicap");
             return;
         }
 
@@ -430,34 +430,34 @@ public class PreWindowScreen extends Screen {
     /** this method triggers the action which is produced by standardButton ("Standardeinstellungen") or pressing "s" */
     private void triggerStandardButton () {
         BotStrength.Strength = BotStrength.NORMAL;
-        labels[0].setText(": " + "normal");
+        labels[0].setText("AI strength: " + "normal");
 
         MoneyValues.startMoney().set(250);
-        labels[1].setText("Startgeld: " + MoneyValues.startMoney().get());
+        labels[1].setText("Initial money: " + MoneyValues.startMoney().get());
 
         MoneyValues.moneyPerTurn().set(10);
-        labels[2].setText("Geld pro Zug: " + MoneyValues.moneyPerTurn().get());
+        labels[2].setText("Money per turn: " + MoneyValues.moneyPerTurn().get());
 
         PfeileContext.arrowNumberFreeSet().set(4);
-        labels[3].setText("Pfeilanzahl [frei wählbar]: " + PfeileContext.arrowNumberFreeSet().get());
+        labels[3].setText("Number of arrows: " + PfeileContext.arrowNumberFreeSet().get());
 
         PfeileContext.arrowNumberPreSet().set(15);
-        labels[4].setText("Pfeilanzahl [vorher wählbar]: " + PfeileContext.arrowNumberPreSet().get());
+        labels[4].setText("Number of arrows before round: " + PfeileContext.arrowNumberPreSet().get());
 
         Player.maximumLife().set(400.);
-        labels[5].setText("maximales Leben: " + "mittel");
+        labels[5].setText("Maximum life: " + "balanced");
 
         Player.lifeRegeneration().set(3.);
-        labels[6].setText("Lebensregeneration: " + "mittel");
+        labels[6].setText("Life regeneration: " + "balanced");
 
         PfeileContext.damageMultiplicator().set(1.0f);
-        labels[7].setText("Schadensmultiplikator: " + "mittel");
+        labels[7].setText("Damage amplification: " + "balanced");
 
         PfeileContext.turnsPerRound().set(10);
-        labels[8].setText("Züge pro Runde: " + PfeileContext.turnsPerRound().get());
+        labels[8].setText("Moves per round: " + PfeileContext.turnsPerRound().get());
 
         TimeClock.setTurnTime(new FiniteDuration(2, TimeUnit.MINUTES));
-        labels[9].setText("Zeit pro Zug: " + "2 min");
+        labels[9].setText("Time per round: " + "2 min");
 
         PfeileContext.handicapPlayer().set(0);
         labels[10].setText("Handicap [" + Main.getUser().getUsername() + "]: " + "0%");
@@ -467,7 +467,7 @@ public class PreWindowScreen extends Screen {
 
         PfeileContext.worldSizeX().set(28);
         PfeileContext.worldSizeY().set(25);
-        labels[12].setText("Weltgröße: " + "normal");
+        labels[12].setText("World size: " + "normal");
     }
 
     /** this triggers all action of confirmButton ("Bestätigen"), which also happens by pressing at "b". The usage of a
@@ -489,29 +489,29 @@ public class PreWindowScreen extends Screen {
                     case 4: BotStrength.Strength = BotStrength.MISERABLE; break;
                     default: BotStrength.Strength = BotStrength.NORMAL;
                 }
-                labels[0].setText("Computerstärke: " + boxSelectKI.getSelectedValue());
+                labels[0].setText("AI strenth: " + boxSelectKI.getSelectedValue());
                 return;
             }
             case 1 : { // Startgold
                 MoneyValues.startMoney().set(spinnerModelStartGold.getCurrent());
-                labels[1].setText("Startgeld: " + spinnerModelStartGold.getCurrent());
+                labels[1].setText("Initial money: " + spinnerModelStartGold.getCurrent());
                 return;
             }
             case 2 : { // Gold pro Zug
                 MoneyValues.moneyPerTurn().set(spinnerModelGoldPerTurn.getCurrent());
-                labels[2].setText("Geld pro Zug: " + spinnerModelGoldPerTurn.getCurrent());
+                labels[2].setText("Money per turn: " + spinnerModelGoldPerTurn.getCurrent());
                 return;
             }
             case 3 : {
                 // Pfeilanzahl [frei wählbar]
                 PfeileContext.arrowNumberFreeSet().set(spinnerModelFreeSet.getCurrent());
-                labels[3].setText("Pfeilanzahl [frei wählbar]: " + PfeileContext.arrowNumberFreeSet().get());
+                labels[3].setText("Number of arrows: " + PfeileContext.arrowNumberFreeSet().get());
                 return;
             }
             case 4 : {
                 // Pfeilanzahl [vorher wählbar]
                 PfeileContext.arrowNumberPreSet().set(spinnerModelPreSet.getCurrent());
-                labels[4].setText("Pfeilanzahl [vorher wählbar]: " + PfeileContext.arrowNumberPreSet().get());
+                labels[4].setText("Number of arrows before round: " + PfeileContext.arrowNumberPreSet().get());
                 return;
             }
             case 5 : {
@@ -525,7 +525,7 @@ public class PreWindowScreen extends Screen {
                     case 4: Player.maximumLife().set(270.0); break;
                     default: Player.maximumLife().set(400.0);
                 }
-                labels[5].setText("maximales Leben: " + boxSelectHigh.getSelectedValue());
+                labels[5].setText("Maximum life: " + boxSelectHigh.getSelectedValue());
                 return;
             }
             case 6 : {
@@ -539,7 +539,7 @@ public class PreWindowScreen extends Screen {
                     case 4: Player.lifeRegeneration().set(1.0); break; // niedrig
                     default: Player.lifeRegeneration().set(3.0); // mittel
                 }
-                labels[6].setText("Lebensregeneration: " + boxSelectHigh.getSelectedValue());
+                labels[6].setText("Health regeneration: " + boxSelectHigh.getSelectedValue());
                 return;
             }
             case 7 : {
@@ -553,13 +553,13 @@ public class PreWindowScreen extends Screen {
                     case 4: PfeileContext.damageMultiplicator().set(0.65f); break; // niedrig
                     default: PfeileContext.damageMultiplicator().set(1.0f);       // mittel
                 }
-                labels[7].setText("Schadensmultiplikator: " + boxSelectHigh.getSelectedValue());
+                labels[7].setText("Damage amplification: " + boxSelectHigh.getSelectedValue());
                 return;
             }
             case 8 : {
                 // Züge pro Runde
                 PfeileContext.turnsPerRound().set(spinnerModelTurnsPerRound.getCurrent());
-                labels[8].setText("Züge pro Runde: " + spinnerModelTurnsPerRound.getCurrent());
+                labels[8].setText("Turns per round: " + spinnerModelTurnsPerRound.getCurrent());
                 return;
             }
             case 9 : {
@@ -574,7 +574,7 @@ public class PreWindowScreen extends Screen {
                     case 5: TimeClock.setTurnTime(new FiniteDuration(40, TimeUnit.SECONDS)); break;
                     default: TimeClock.setTurnTime(new FiniteDuration(2, TimeUnit.MINUTES));
                 }
-                labels[9].setText("Zeit pro Zug: " + boxSelectTime.getSelectedValue());
+                labels[9].setText("Time per turn: " + boxSelectTime.getSelectedValue());
                 return;
             }
             case 10 : {
@@ -625,7 +625,7 @@ public class PreWindowScreen extends Screen {
                     case 4: PfeileContext.worldSizeX().set(15); PfeileContext.worldSizeY().set(12); break;
                     default: PfeileContext.worldSizeX().set(28); PfeileContext.worldSizeY().set(25);
                 }
-                labels[12].setText("Weltgröße: " + boxSelectSize.getSelectedValue());
+                labels[12].setText("World size: " + boxSelectSize.getSelectedValue());
                 return;
             }
             default: {
