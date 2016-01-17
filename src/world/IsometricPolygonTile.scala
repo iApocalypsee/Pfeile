@@ -127,14 +127,12 @@ object IsometricPolygonTile {
   * The entities are not stored locally on the tile, instead they are retrieved from the EntityManager
   * instance. Why? Because I don't want to reference a tile from the entity.
   *
-  * @param latticeX The x grid coordinate.
-  * @param latticeY The y grid coordinate.
+  * @param gridX The x grid coordinate.
+  * @param gridY The y grid coordinate.
   * @param terrain The terrain to which the tile is linked.
   */
-abstract class IsometricPolygonTile protected (
-    @deprecatedName('initGridX) @deprecated("Use getGridX() instead.") override val latticeX: Int,
-    @deprecatedName('initGridY) @deprecated("Use getGridY() instead.") override val latticeY: Int,
-    override val terrain: DefaultTerrain) extends TileLike with OnDemandEntitiesStrategy {
+abstract class IsometricPolygonTile protected (gridX: Int,gridY: Int, override val terrain: DefaultTerrain)
+      extends TileLike with OnDemandEntitiesStrategy {
 
   import world.IsometricPolygonTile._
 
@@ -213,8 +211,10 @@ abstract class IsometricPolygonTile protected (
   //<editor-fold desc="Directions (north, east, west, south, etc.)">
 
   private def directionalGet(xdiff: Int, ydiff: Int): Option[TileLike] = {
-    if (terrain.isTileValid(latticeX + xdiff, latticeY + ydiff)) Some(terrain.tileAt(latticeX + xdiff, latticeY + ydiff))
-    else None
+    if (terrain.isTileValid(gridX + xdiff, getGridY + ydiff))
+      Some(terrain.tileAt(gridX + xdiff, gridY + ydiff))
+    else
+      None
   }
 
   override def north: Option[TileLike] = directionalGet(-1, 1)
@@ -238,9 +238,9 @@ abstract class IsometricPolygonTile protected (
   //<editor-fold desc="Overrides">
 
   /** Ditto. */
-  override val getGridY = latticeY
+  override val getGridY = gridY
   /** Ditto. */
-  override val getGridX = latticeX
+  override val getGridX = gridX
 
   /**
     * The component that the representable object uses first. Method is called only once.
