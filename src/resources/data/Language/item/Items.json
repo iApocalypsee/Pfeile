@@ -49,11 +49,11 @@
     "de_DE": "Heiltrank"
   },
   "keyDefaultChest": {
-    "en_EN": "key (Chest)",
+    "en_EN": "Key (Chest)",
     "de_DE": "Schlüssel (Truhe)"
   },
   "keyRoundChest": {
-  "en_EN": "key (Roundchest)",
+  "en_EN": "Key (Roundchest)",
   "de_DE": "Schlüssel (Rundentruhe)"
   }
 }
