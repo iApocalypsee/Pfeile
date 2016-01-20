@@ -212,7 +212,7 @@ class LangDict private(override val owner: String) extends LanguageDictionary {
     * @param language The language from which to get the translation.
     * @return A future with a possible translation.
     */
-  def getTranslation(identifier: String, language: Language): Future[String] = applyDynamic(identifier)(language)
+  def getTranslation(identifier: String, language: Language): Future[String] = actor.ask(Translate(identifier, language))(10.seconds).mapTo[String]
 
   def addJsonTranslations(jsonDocument: JValue): Unit = {
     val extractedActorMessages: Seq[RememberTranslation] = for (
