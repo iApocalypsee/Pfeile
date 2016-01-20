@@ -44,7 +44,7 @@ class AStarPathfinder(val maxSearchDepth: Int, val excludes: (TileLike) => Boole
     open.list += nodes(sx)(sy)
 
     breakable {
-      while (open.list.size > 0) {
+      while (open.list.nonEmpty) {
 
 
         // Pull out the first node in our open list, this is determined to
@@ -121,7 +121,7 @@ class AStarPathfinder(val maxSearchDepth: Int, val excludes: (TileLike) => Boole
       }
     }
 
-    // since we'e've run out of search
+    // since we've run out of search
     // there was no path. Just return null
     if(nodes(tx)(ty).parent eq null) return None
 
@@ -136,7 +136,6 @@ class AStarPathfinder(val maxSearchDepth: Int, val excludes: (TileLike) => Boole
       stepList.+=:(Path.Step(target.x, target.y, terrain.tileAt(target.x, target.y).requiredMovementPoints))
       target = target.parent
     }
-    stepList.+=:(Path.Step(sx, sy, terrain.tileAt(sx, sy).requiredMovementPoints))
 
     // That's it.
     Some(Path(stepList.toSeq))

@@ -37,6 +37,10 @@ object Language {
 
 }
 
-object English extends Language("en_EN", null)
+object English extends Language("en_EN", null) {
+  def instance = this
+}
 
-object German extends Language("de_DE", null)
+object German extends Language("de_DE", null) {
+  def instance = this
+}

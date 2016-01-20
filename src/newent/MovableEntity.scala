@@ -3,8 +3,6 @@ package newent
 import geom.functions.FunctionCollection
 import newent.pathfinding.{DefaultPathfinder, Path, Pathfinder}
 
-import scala.util.control.Breaks._
-
 /**
   * An entity which movement is limited by how many movement points it has available.
   */
@@ -77,21 +75,30 @@ trait MovableEntity extends Entity with StatisticalEntity {
     * If no path is set, this method does nothing.
     */
   def moveAlong(): Unit = synchronized(
-    breakable {
-      _currentPath.foreach { path =>
-        path.steps.foreach { step =>
-          if (currentMovementPoints >= step.reqMovementPoints) {
-            _currentMovementPoints -= step.reqMovementPoints
-            val (prevX, prevY) = (getGridX, getGridY)
-            setGridPosition(step.x, step.y)
-            _currentPath = Option(Path(path.steps.tail))
-          } else break()
+    if(_currentPath.isDefined) {
+      var path = _currentPath.get.steps
+
+      // Utility variable for indicating if the while loop should terminate
+      var moveBreakCondition = false
+
+      while(!moveBreakCondition) {
+        // If no more steps are to be done
+        if(path.isEmpty) moveBreakCondition = true
+        else {
+          val nextStep = path.head
+          if(nextStep.reqMovementPoints <= currentMovementPoints) {
+            _currentMovementPoints -= nextStep.reqMovementPoints
+            setGridPosition(nextStep.x, nextStep.y)
+            path = path.tail
+          } else moveBreakCondition = true
         }
       }
+
+      _currentPath = if(path.nonEmpty) Option(Path(path)) else None
     }
   )
 
-  onTurnCycleEnded += { () =>
+  onTurnEnded += { () =>
     // Before resetting movement points, move this entity as far as it can still get
     moveAlong()
     // Reset the movement points

@@ -24,6 +24,10 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
     */
   val onTurnEnded = Delegate.create[Team]
 
+  onTurnEnded += { team =>
+    team.asCommandTeam.head.onTurnEnded()
+  }
+
   /**
     * Called when it's another player's turn.
     */

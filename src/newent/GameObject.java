@@ -34,6 +34,8 @@ public abstract class GameObject extends AbstractDisplayRepresentable implements
 
     public final Delegate.Function0Delegate onTurnCycleEnded = Delegate.createZeroArity();
 
+    public final Delegate.Function0Delegate onTurnEnded = Delegate.createZeroArity();
+
     // <editor-fold desc="Constructors">
 
     private GameObject(OccupyShape shape, WorldLike world, int initX, int initY, boolean isFullOccupy) {

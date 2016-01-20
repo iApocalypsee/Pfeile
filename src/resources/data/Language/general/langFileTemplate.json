@@ -1,4 +1,53 @@
 {
+
+  // Ownership tag ignored for now in LangTreeDict implementation
+  "ownership": "Pfeile team",
+
+  // Objects can be nested now, but translations cannot
+  // Comments are not allowed in JSON either.
+  // This is a category node in the implementation.
+  "item": {
+
+    // This is a category node in the implementation.
+    "arrows": {
+      // This is a translation node in the implementation.
+      // Path to "fire" translation would be "item/arrows/fire"
+      "fire": {
+        "de_DE": "Feuerpfeil",
+        "en_EN": "Fire arrow"
+      }
+    },
+
+    // Categories may be splitted across files.
+    // Categories with the same path are merged together.
+    // Conflicting path to translation keeps the newest translation.
+    // Translations added after a category replace a category with the same path and vice versa.
+    // The last two cases are documented in the log via LogFacility.
+    "potions": {
+      // This is a translation node.
+      // Path to "heal" translation would be "item/potions/heal"
+      "heal": {
+        "de_DE": "Heiltrank",
+        "en_EN": "Healing potion"
+      },
+
+      // Language order inside translation nodes does not matter.
+      "speed": {
+        "en_EN": "Potion of Swiftness",
+        "de_DE": "Trank der Schnelligkeit"
+      }
+    }
+  },
+
+  // Nodes with no content are removed, no matter how many categories are nested inside.
+  "empty": {
+    "child": {
+    }
+  },
+
+  // ...but old layout is still compatible.
+  // This is a translation node as well.
+  // Translations associated to unregistered language codes are ignored as well.
   "identifier": {
     "en_EN": "Translation",
     "de_DE": "Übersetzung",

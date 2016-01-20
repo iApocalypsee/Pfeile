@@ -4,9 +4,9 @@ import java.net.URI
 
 import akka.actor._
 import akka.pattern.ask
-import akka.util.Timeout
 import akka.{Main => AkkaMain}
 import general._
+import org.json4s.JsonAST.{JField, JString}
 import org.json4s._
 import org.json4s.native.JsonMethods._
 
@@ -18,18 +18,100 @@ import scala.io.Source
 import scala.language.dynamics
 import scala.languageFeature.dynamics
 
+trait LanguageDictionary extends Dynamic {
+
+  /**
+    * Makes it more look like I am accessing properties.
+    *
+    * This is a feature enabled by the Scala Dynamic trait.
+    * @param identifier The identifier. I hope that I don't have to rename this parameter to "method"
+    * @param args Arguments.
+    * @return Can return anything! Be aware of signature changes, this __is intended to be changed soon.__
+    */
+  def applyDynamic(identifier: String)(args: Any*): Future[String] = args(0) match {
+    case language: Language => getTranslation(identifier, language)
+    case _ => ???
+  }
+
+  /**
+    * The intellectual owner of this translation set.
+    * @return Should be "Pfeile team", unless some random translator comes across.
+    */
+  def owner: String
+  def getOwner = owner
+
+  /**
+    * Retrieves a translation asynchonously from the instance.
+    *
+    * In order to extract the translation from the future, you can do it this way:
+    *
+    * {{{
+    *   import scala.concurrent.Await
+    *   import scala.concurrent.duration._
+    *
+    *   // Scala way of obtaining the translation of some identifier in a certain language
+    *   val translationFuture = getTranslation("someIdentifier", SomeLanguage)
+    *   // ...or, in Scala as well. This line is equal to the line above
+    *   val translationFuture = langDict.someIdentifier(SomeLanguage)
+    *   // Java way of doing that
+    *   scala.concurrent.Future<String> translationFuture = getTranslation("someIdentifier", English$.MODULE$);
+    *
+    *   // Either this way, if you are using Scala's implicit conversions
+    *   val actualTranslation = Await.result(translationFuture, 5.seconds)
+    *   // Or this way, if you use "Java-style"
+    *   String actualTranslation = Await.result(translationFuture, new FiniteDuration(5, TimeUnit.SECONDS)
+    * }}}
+    *
+    * Time units are not limited to this example: milliseconds, nanoseconds, minutes and days are also valid.
+    * @param identifier The unique identifier for the translation. Identifier interpretation
+    *                   may vary based on implementations.
+    * @param language The language to retrieve the translation for.
+    * @return Async future with a possible translation outcome.
+    */
+  def getTranslation(identifier: String, language: Language): Future[String]
+
+  /**
+    * Gets the translation from the instance.
+    * This method behaves just like [[general.langsupport.LanguageDictionary#getTranslation(java.lang.String, general.langsupport.Language)]];
+    * however, unlike the `getTranslation` method, this method is blocking the calling thread until the underlying future either
+    * completed with a result or threw an exception (which will rethrow in the calling thread upon calling this method).
+    * @param identifier The unique identifier for the translation. Identifier interpretation
+    *                   may vary based on implementations.
+    * @param language The language to retrieve the translation for.
+    * @param maxWaitingTime The maximum waiting time until this method finishes with an exception.
+    * @return A translation.
+    */
+  def getTranslationNow(identifier: String, language: Language, maxWaitingTime: Duration) = Await.result(getTranslation(identifier, language), maxWaitingTime)
+
+  /**
+    * Like [[general.langsupport.LanguageDictionary#getTranslationNow(java.lang.String, general.langsupport.Language)]], but with
+    * 10 seconds set as default maximum waiting time.
+    * @param identifier Ditto.
+    * @param language Ditto.
+    * @return Ditto.
+    */
+  def getTranslationNow(identifier: String, language: Language): String = getTranslationNow(identifier, language, 10.seconds)
+
+  def addJsonTranslations(jsonDocument: JValue): Unit
+
+  def addJsonTranslations(jsonString: String): Unit = addJsonTranslations(parse(jsonString))
+
+  def addJsonTranslations(uri: URI): Unit = addJsonTranslations(Source.fromURI(uri).mkString)
+
+  def addJsonTranslations(file: java.io.File): Unit = addJsonTranslations(file.toURI)
+
+  def addJsonTranslationsStr(address: String): Unit = addJsonTranslations(new java.io.File("src/resources/data/language/" + address).toURI)
+
+}
+
 /**
-  * This class aims to resolve the English-German language problem.
-  * I am going to load in some language files so that the program can switch between languages.
-  *
-  * The whole language dictionary structure is threaded, so responses should come up very fast and asynchronously
-  * with the help of futures.
+  * First implementation of a language dictionary with a list as base organization structure.
   *
   * @param owner The person (or group) to which the underlying data of the language dictionary belongs to.
   *              Use this to avoid collision between multiple authors of translations.
   * @author iApocalypsee
   */
-class LangDict private (@BeanProperty val owner: String) extends Dynamic {
+class LangDict private(override val owner: String) extends LanguageDictionary {
 
   import general.langsupport.LangDict._
 
@@ -103,21 +185,6 @@ class LangDict private (@BeanProperty val owner: String) extends Dynamic {
   private val actor = Main.getActorSystem.actorOf(Props(new TranslationProvider))
 
   /**
-    * Makes it more look like I am accessing properties.
-    *
-    * This is a feature enabled by the Scala Dynamic trait.
-    * @param identifier The identifier. I hope that I don't have to rename this parameter to "method"
-    * @param args Arguments.
-    * @return Can return anything! Be aware of signature changes, this __is intended to be changed soon.__
-    */
-  def applyDynamic(identifier: String)(args: Any*): Future[String] = args(0) match {
-    case language: Language =>
-      implicit val timeout = Timeout(10.seconds)
-      (actor ? Translate(identifier, language)).mapTo[String]
-    case _ => ???
-  }
-
-  /**
     * Gets a translation.
     *
     * In order to extract the translation from the future, you can do it this way:
@@ -147,16 +214,7 @@ class LangDict private (@BeanProperty val owner: String) extends Dynamic {
     */
   def getTranslation(identifier: String, language: Language): Future[String] = applyDynamic(identifier)(language)
 
-  def getTranslationNow(identifier: String, language: Language, maxWaitingTime: Duration): String = Await.result(getTranslation(identifier, language), maxWaitingTime)
-
-  def getTranslationNow(identifier: String, language: Language): String = getTranslationNow(identifier, language, 10.seconds)
-
-  def addTranslation(identifier: String, translation: Translation): Unit = {
-    actor ! RememberTranslation(identifier, translation)
-  }
-
   def addJsonTranslations(jsonDocument: JValue): Unit = {
-
     val extractedActorMessages: Seq[RememberTranslation] = for (
       JObject(langItemSeq) <- jsonDocument;
       JField(langItem, translationsList) <- langItemSeq if !langItem.equals(JsonOwnershipIdentifier);
@@ -169,22 +227,80 @@ class LangDict private (@BeanProperty val owner: String) extends Dynamic {
     for (message <- extractedActorMessages) actor ! message
   }
 
-  def addJsonTranslations(jsonString: String): Unit = addJsonTranslations(parse(jsonString))
+}
 
-  def addJsonTranslations(uri: URI): Unit = addJsonTranslations(Source.fromURI(uri).mkString)
+/**
+  * The current implementation of the language dictionary system utilizing a tree organization for
+  * the translations.
+  * @param owner Ditto.
+  */
+class LangTreeDict(override val owner: String) extends LanguageDictionary {
 
-  def addJsonTranslations(file: java.io.File): Unit = addJsonTranslations(file.toURI)
+  require(owner != null)
 
-  /** <code>addJsonTranslationsStr(new File("src/resources/data/language/" + address)</code>;
-    * Already begins in the language package, so only use the underlying package and the file name. Apart from the different parameter
-    * this is equal to addJsonTranslations<br><br>
-    * <i><u>Example</u></i><br>
-    * general/CommonStrings.json <br>
-    * screen/PreWindowScreen.json
-    *
-    * @param address the package within language and the file name: e.g. "general/CommonStrings.json"
-    */
-  def addJsonTranslationsStr(address: String): Unit = addJsonTranslations(new java.io.File("src/resources/data/language/" + address).toURI)
+  import LangDict._
+
+  class TranslationProvider extends Actor {
+
+    val root = new MutableCategoryNode("")
+
+    override def receive = {
+      // Consider this object to be added to the translation provider
+      case node: LangNode => root.addNode(node)
+      // Consider strings to request a node with given path
+      case path: String =>
+        if(path == "/") sender ! root
+        else sender ! root / path
+    }
+  }
+
+  private val actor = Main.getActorSystem.actorOf(Props(new TranslationProvider))
+
+  implicit val executionContext = Main.getGlobalExecutionContext
+
+  def getTranslation(path: String, language: Language) = actor.ask(path)(10.seconds).collect { case t: TranslationNode => t }.map(t => t.get(language)).mapTo[String]
+
+  def getNode(path: String) = actor.ask(path)(10.seconds).mapTo[LangNode]
+
+  def getNodeNow(path: String) = Await.result(getNode(path), 10.seconds)
+
+  def addJsonTranslations(jsonDocument: JValue): Unit = {
+
+    def recursiveTraversion(tuple: (String, JValue)): LangNode = {
+      val (id, value) = tuple
+      // Ignore the ownership part for now
+      if(id == "ownership") return InvalidNode("ownership")
+      val JObject(list) = value
+      val isLanguageKeyword = list.exists(tuple => Language.isAvailable(tuple._1))
+
+      if(isLanguageKeyword) {
+
+        // Must be an actual translation, treat the JSON object as such.
+        // JSON object thus required to carry some translations in specified format
+
+        var mapping = mutable.Map.empty[Language, String]
+
+        // Append every translation to 'mapping'
+        for((name, JString(translation)) <- list) Language.findLanguage(name).foreach(lang => mapping.+=((lang, translation)))
+
+        if(mapping.nonEmpty) new TranslationNode(id, mapping.toMap)
+        // Empty nodes are considered invalid
+        else InvalidNode(id)
+
+      } else {
+        // Must be a category subnode, return a category subnode with every contained subnode
+        val childNodes = list.map(tuple => recursiveTraversion(tuple)).filterNot(node => node.isInstanceOf[InvalidNode])
+        if(childNodes.nonEmpty) new CategoryNode(id, childNodes)
+        // Empty nodes are considered invalid
+        else InvalidNode(id)
+      }
+    }
+
+    val JObject(langItemSeq) = jsonDocument
+
+    actor ! new CategoryNode("", langItemSeq.map(tuple => recursiveTraversion(tuple)).filterNot(node => node.isInstanceOf[InvalidNode]))
+
+  }
 
 }
 
@@ -203,6 +319,8 @@ object LangDict {
     * The string used to denote that the dictionary's JSON does not provide an "ownership" field.
     */
   val UnidentifiableOwnerString = "unknown"
+
+  val NodeDelimiter = "/"
 
   /**
     * Constructs a [[general.langsupport.LangDict]] by taking a valid JSON string in.
@@ -262,6 +380,49 @@ object LangDict {
       |}
     """.stripMargin
 
+  def testTreeJson =
+    """
+      |{
+      |  "game-screen": {
+      |
+      |    "end-turn": {
+      |      "de_DE": "Runde beenden",
+      |      "en_EN": "End turn"
+      |    },
+      |
+      |    "enter-shop": {
+      |      "de_DE": "Betrete Laden",
+      |      "en_EN": "Enter shop"
+      |    }
+      |
+      |  }
+      |
+      |  "example": {
+      |    "translation-1": {
+      |      "de_DE": "Erste Beispielübersetzung",
+      |      "en_EN": "First example translation"
+      |    },
+      |
+      |    "translation-2": {
+      |      "de_DE": "Zweite Beispielübersetzung",
+      |      "en_EN": "Second example translation"
+      |    }
+      |  }
+      |}
+    """.stripMargin
+
+  def testTreeJson2 =
+    """
+      |{
+      |  "game-screen": {
+      |    "additionalTranslation": {
+      |      "de_DE": "Zusätzliche Übersetzung",
+      |      "en_EN": "Additional translation"
+      |    }
+      |  }
+      |}
+    """.stripMargin
+
   /**
     * Message to the [[general.langsupport.LangDict.TranslationProvider]] actor to
     * spit out the translation in given language to the given identifier.
@@ -281,6 +442,125 @@ object LangDict {
   //case object ClearAllTranslations
 
   class AmbiguousEntryException[A, B](oldKv: (A, B), newKv: (A, B)) extends Exception(s"Ambiguity: old=$oldKv; new=$newKv")
+
+  // <editor-fold desc="Node types">
+
+  /**
+    * Base class for the language tree node.
+    * @param id The identifier for this node.
+    */
+  class LangNode(@BeanProperty val id: String) {
+
+    def asCategory = this match {
+      case x: CategoryNode => Some(x)
+      case _ => None
+    }
+
+    def asTranslation = this match {
+      case x: TranslationNode => Some(x)
+      case _ => None
+    }
+
+    def isCategory = this.isInstanceOf[CategoryNode]
+    def isTranslation = this.isInstanceOf[TranslationNode]
+
+    def /(subnodeId: String): LangNode = {
+      val categoryNode = this.asCategory.getOrElse(throw new UnsupportedOperationException)
+      val splitPath = subnodeId.split("/")
+      val requestedNode = categoryNode.children.find(_.id == splitPath(0)).getOrElse(throw new NoSuchElementException)
+
+      if(splitPath.length == 1) requestedNode
+      else requestedNode / subnodeId.substring(subnodeId.indexOf("/") + 1)
+    }
+
+    def subnode(subnodeId: String): LangNode = this / subnodeId
+
+  }
+
+  class CategoryNode(id: String, initChildren: Seq[LangNode]) extends LangNode(id) {
+
+    def children = initChildren
+
+    protected[LangDict] def toMutableNode: MutableCategoryNode = {
+      val x = new MutableCategoryNode(id)
+      x.merge(this)
+      x
+    }
+  }
+
+  class MutableCategoryNode(id: String) extends CategoryNode(id, Seq.empty) {
+
+    private val m_children = mutable.Buffer.empty[LangNode]
+
+    override def children = m_children.toSeq
+    override protected[LangDict] def toMutableNode = this
+
+    def merge(x: CategoryNode): Unit = {
+      x.children.foreach(node => this.addNode(node))
+    }
+
+    def addNode(x: LangNode): Unit = {
+      val possibleCollision = m_children.find(_.id == x.id)
+
+      // Catch eventual naming collisions in different ways depending on the input parameter
+      possibleCollision match {
+
+        // A naming collision is present, resolve it and notify the log about potential errors
+        case Some(node) => node match {
+          // Input parameter colliding with category node
+          case category: MutableCategoryNode =>
+
+            x match {
+              // Normal case, categories are just overlapping.
+              // Merge the two categories together.
+              case addCategory: CategoryNode => addCategory.children.foreach(category.addNode)
+              // Alert that a category is going to be replaced by a translation.
+              case addTranslation: TranslationNode =>
+                LogFacility.log(s"Category (id=${category.id}) overridden by translation (id=${addTranslation.id})!", "Warning")
+                m_children.remove(m_children.indexOf(category))
+                m_children += addTranslation
+            }
+
+          // Input parameter colliding with translation node
+          case translation: TranslationNode =>
+
+            x match {
+              // Alert that a translation is going to be replaced by a category.
+              case addCategory: CategoryNode =>
+                LogFacility.log(s"Translation (id=${translation.id}) overridden by category (id=${addCategory.id})!", "Warning")
+                m_children.remove(m_children.indexOf(translation))
+                m_children += addCategory.toMutableNode
+              // Alert that existing translation is going to be replaced with new translation.
+              case addTranslation: TranslationNode =>
+                LogFacility.log(s"Translation (id=${translation.id}) overridden by translation (id=${addTranslation.id})!", "Warning")
+                m_children.remove(m_children.indexOf(translation))
+                m_children += addTranslation
+            }
+        }
+
+        // No naming collisions, proceed normally
+        case None => x match {
+          case category: CategoryNode =>
+            if(category.id == "") this.merge(category)
+            else m_children += category.toMutableNode
+          case translation: TranslationNode => m_children += translation
+        }
+      }
+
+    }
+  }
+
+  case class InvalidNode private[general](initId: String) extends CategoryNode(initId, Seq.empty)
+
+  /**
+    * Node representing a translatable word.
+    * @param mapping The language mapping for this
+    */
+  class TranslationNode(id: String, private val mapping: Map[Language, String]) extends LangNode(id) {
+    def get(x: Language) = mapping(x)
+  }
+
+  // </editor-fold>
 
 }
 

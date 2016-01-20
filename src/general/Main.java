@@ -60,12 +60,15 @@ public class Main {
 	private static PfeileContext context = null;
 
     // The language the user speaks (or is supposed to speak).
-    private static Language language = English$.MODULE$;
+    private static Language language = English.instance();
 
 	// The actor system taking care of threaded actors.
 	private static ActorSystem actorSystem = ActorSystem.create("system");
 
     private static DebugWindows debugWindows = new DebugWindows();
+
+    // Central translation instance.
+    private static LangTreeDict dictionary = new LangTreeDict("Pfeile team");
 
     private static long programStartTime;
 
@@ -124,15 +127,20 @@ public class Main {
 
         LogFacility.log("Beginning initialization process...", "Info", "initprocess");
 
+        LangInitialization.apply();
+        LogFacility.log("LangInitialization done!", "Info", "initprocess");
+
+        //dictionary.addJsonTranslationsStr("item/Arrows.json");
+        //dictionary.addJsonTranslationsStr("item/Items.json");
+        //dictionary.addJsonTranslations(LangDict.testTreeJson());
+        //dictionary.addJsonTranslations(LangDict.testTreeJson2());
+
         main = new Main();
         user = new User(SystemProperties.getComputerName());
 
         PreInitStage.execute();
 
         LogFacility.log("PreInitStage done!", "Info", "initprocess");
-
-        LangInitialization.apply();
-        LogFacility.log("LangInitialization done!", "Info", "initprocess");
 
         graphicsDevice = environmentG.getDefaultScreenDevice();
         gameWindow = new GameWindow();

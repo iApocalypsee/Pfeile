@@ -1,0 +1,83 @@
+{
+
+  "ownership": "Pfeile team",
+
+  "item": {
+
+    "coin": {
+
+      "bronze": {
+        "en_EN": "Bronze coin",
+        "de_DE": "Bronzemünze"
+      },
+
+      "silver": {
+        "en_EN": "Silver coin",
+        "de_DE": "Silbermünze"
+      },
+
+      "gold": {
+        "en_EN": "Gold coin",
+        "de_DE": "Goldmünze"
+      },
+
+      "platinum": {
+        "en_EN": "Platinum coin",
+        "de_DE": "Platinmünze"
+      }
+
+    },
+
+    "loot": {
+      "bag": {
+        "en_EN": "Loot bad",
+        "de_DE": "Beutesack"
+      },
+
+      "chest": {
+        "en_EN": "Chest",
+        "de_DE": "Truhe"
+      },
+
+      "treasure": {
+        "en_EN": "Treasure",
+        "de_DE": "Schatz"
+      },
+
+      "permanent box": {
+        "en_EN": "Box",
+        "de_DE": "Kiste"
+      }
+
+
+    },
+
+    "potion": {
+      "movement": {
+        "en_EN": "Agility potion",
+        "de_DE": "Trank der Beweglichkeit"
+      },
+
+      "heal": {
+        "en_EN": "Healing potion",
+        "de_DE": "Heiltrank"
+      }
+
+    },
+    
+    "key": {
+      "default": {
+        "en_EN": "Key (Chest)",
+        "de_DE": "Schlüssel (Truhe)"
+      },
+
+      "round": {
+        "en_EN": "Key (Roundchest)",
+        "de_DE": "Schlüssel (Rundentruhe)"
+      }
+    }
+    
+
+  }
+
+}

@@ -1,8 +1,10 @@
 package general.langsupport
 
 /**
- * Created by jolecaric on 24/04/15.
- */
+  * Does language initialization. There is not much to initialize, but I'm sure
+  * there will be.
+  * @since 24.04.15
+  */
 object LangInitialization {
 
   def apply(): Unit = {
