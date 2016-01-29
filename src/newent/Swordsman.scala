@@ -8,15 +8,16 @@ import comp.ImageComponent
 import gui.screen.GameScreen
 import newent.pathfinding.AStarPathfinder
 import player.Life
-import world.{SeaTile, WorldLike}
+import world.{SeaTile, World}
 
 /**
   * A swordsman. Ditto.
+ *
   * @param world The world of the entity. Should not be null.
   * @param spawnPosition The position where the entity spawns.
   * @param team The team to which it should belong.
   */
-class Swordsman(world: WorldLike, spawnPosition: Point, team: Team)
+class Swordsman(world: World, spawnPosition: Point, team: Team)
   extends Entity(world, spawnPosition.x, spawnPosition.y) with CombatUnit {
 
   override val life = new Life(90, 0, 90)
@@ -32,6 +33,7 @@ class Swordsman(world: WorldLike, spawnPosition: Point, team: Team)
     * The component that the representable object uses first. Method is called only once.
     *
     * The start component must not be null at first, else it will throw a [[java.lang.IllegalArgumentException]].
+ *
     * @return A component object which the representable object uses first.
     */
   override protected def startComponent = new ImageComponent(0, 0, Swordsman.swordsmanTexture, GameScreen.getInstance())

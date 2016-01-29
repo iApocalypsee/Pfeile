@@ -9,7 +9,7 @@ import java.util.TimerTask;
 
 /**
  * This class will draw an animation, when an arrow (<b>only Arrows!</b>)impacts. It is called by the Delegate <code>onImpact</code>, 
- * which is registered in TileLike. For Handling the draw-process use {@link ImpactDrawerHandler}.
+ * which is registered in Tile. For Handling the draw-process use {@link ImpactDrawerHandler}.
  */
 class ImpactDrawer implements Drawable {
 

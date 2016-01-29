@@ -10,15 +10,16 @@ import scala.util.Random
   *
   * With a need to support extensibility, we need a base "interface" so that we can support terrains
   * that are implemented differently.
+  *
   * @author Josip Palavra
   */
 trait TerrainLike {
 
   /** The type of tile that the terrain is managing. */
-  type TileType <: TileLike
+  type TileType <: Tile
 
   /** The world to which the terrain is linked. */
-  val world: WorldLike
+  val world: World
 
   /** The width dimension of the terrain. */
   def width: Int
@@ -51,7 +52,7 @@ trait TerrainLike {
 
   def tileAtOption(x: Int, y: Int) = Option(tileAt(x, y))
 
-  def getTileAt(x: Int, y: Int): TileLike = tileAt(x, y)
+  def getTileAt(x: Int, y: Int): Tile = tileAt(x, y)
 
   /**
     * Sets the tile type at the given position to the specified tile.
@@ -77,7 +78,7 @@ trait TerrainLike {
 
   /** Ditto. */
   def javaTiles = {
-    val ret = new java.util.ArrayList[TileLike](height * width)
+    val ret = new java.util.ArrayList[Tile](height * width)
     for (y <- 0 until height) {
       for (x <- 0 until width) {
         ret.add(tileAt(x, y))
@@ -97,12 +98,12 @@ trait TerrainLike {
 
   /**
     * Java-Compiler has Problems with <code>TileType</code>, so if you don't want to cast, this method will return a
-    * TileLike.
+    * Tile.
     *
     * @return TerrainLike#findTile(posX, posY)
     * @see [[findTile(double, double)]]
     */
-  def findTileJava(posX: Double, posY: Double): TileLike = findTile(posX, posY)
+  def findTileJava(posX: Double, posY: Double): Tile = findTile(posX, posY)
 
   def generate(r: Random = new Random)(seed: Long = r.nextLong()): Unit
 
@@ -115,9 +116,9 @@ trait TerrainLike {
   * or whatsoever GUI class we have.
   *
   */
-class DefaultTerrain(override val world: DefaultWorld, initWidth: Int, initHeight: Int) extends TerrainLike {
+class DefaultTerrain(override val world: World, initWidth: Int, initHeight: Int) extends TerrainLike {
 
-  override type TileType = IsometricPolygonTile
+  override type TileType = Tile
 
   /** It uses PfeileContext.WORLD_SIZE_X */
   override lazy val width = initWidth
@@ -157,7 +158,7 @@ class DefaultTerrain(override val world: DefaultWorld, initWidth: Int, initHeigh
 
     def tileTypeStage(): Unit = {
 
-      case class TTPoint(x: Int, y: Int, tileType: Class[_ <: IsometricPolygonTile])
+      case class TTPoint(x: Int, y: Int, tileType: Class[_ <: Tile])
 
       val points = mutable.MutableList[TTPoint]()
 

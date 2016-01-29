@@ -29,7 +29,7 @@ trait AttackContainer extends BoardPositionable {
   /**
     * <code>onImpact</code> calls <code>onDamage</code>, if onImpact recognizes an attack at an Entity.
     * In previous version <code>onImpact</code> and <code>onDamage</code> have been <code>onImpact</code>, however
-    * this caused a not fixable bug (The part in LivingEntity that was registered after [or before] TileLike wasn't
+    * this caused a not fixable bug (The part in LivingEntity that was registered after [or before] Tile wasn't
     * called even though he should.
     */
   val onDamage = Delegate.create[AttackEvent]

@@ -45,9 +45,7 @@ trait MovableEntity extends Entity with StatisticalEntity {
     *
     * @param additionalMovementPoints the number with which the <code>currentMovementPoints()</code> should be increased
     */
-  def addMovementPoints(additionalMovementPoints: Int) = {
-    _currentMovementPoints = FunctionCollection.clamp(_currentMovementPoints + additionalMovementPoints, 0, Integer.MAX_VALUE)
-  }
+  def addMovementPoints(additionalMovementPoints: Int) = currentMovementPoints += additionalMovementPoints
 
   /**
     * Moves the entity.

@@ -12,7 +12,7 @@ import player.weapon.arrow.AbstractArrow
 
 /**
   * Takes care of the drawing of the tiles in the given world.
-  * Note that objects of this class only can handle tiles that provide a [[world.IsometricPolygonTile.IsometricPolygonTileComponent]]
+  * Note that objects of this class only can handle tiles that provide a [[world.Tile.IsometricPolygonTileComponent]]
   * as their component representation.
   * @param context The context on which this object operates.
   */
@@ -93,7 +93,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
         isometric.setPositionRelativeToMap(x, y)
       // The visual map can only handle isometric tiles for now.
       case unknownComponent => throw new NotImplementedError(s"Component of tile is ${unknownComponent.getClass.getName}; " +
-        s"IsometricPolygonTile#IsometricPolygonTileComponent expected")
+        s"Tile#IsometricPolygonTileComponent expected")
     }
 
     /*
@@ -128,7 +128,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
 
       // The visual map can only handle isometric tiles for now.
       case unknownComponent => throw new NotImplementedError(s"Component of tile is ${unknownComponent.getClass.getName}; " +
-        s"IsometricPolygonTile#IsometricPolygonTileComponent expected")
+        s"Tile#IsometricPolygonTileComponent expected")
     }
   }
 

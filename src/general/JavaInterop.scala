@@ -1,7 +1,10 @@
 package general
 
+import java.util.concurrent.Executors
 import java.util.function.{BiConsumer, BiFunction, Consumer, Supplier}
 import java.util.{Optional, function}
+
+import scala.concurrent.Future
 
 object JavaInterop {
 
@@ -147,6 +150,7 @@ object JavaInterop {
     * This method has a different name from the other `asScalaFunction` methods, because it would
     * cause ambiguity when using Java lambda notation.
     * This method converts a Java regular function to a Scala regular `Function1`
+    *
     * @param x The Java function to convert to a Scala function.
     * @tparam A The input type.
     * @tparam R The return type.
@@ -176,6 +180,13 @@ object JavaInterop {
   }
 
   def asScala[A](x: Optional[A]): Option[A] = if (x.isPresent) Some(x.get) else None
+
+  def asScalaFuture[A](x: java.util.concurrent.Callable[A]) = {
+    implicit val executionContext = Main.getGlobalExecutionContext
+    Future(x.call())
+  }
+
+  def asCallable(x: Runnable) = Executors.callable(x)
 
   def scalaNone = None
 

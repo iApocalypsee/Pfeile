@@ -86,6 +86,7 @@ public class Main {
     public static Main getMain() {
         return main;
     }
+
     // KONSTRUKTOR ###############################################
     /**
      * Der Konstruktor. Hier stehen keine Hauptaufrufe. Die Hauptaufrufe werden
@@ -98,10 +99,13 @@ public class Main {
     // ################### IMPORTANT #############################
     // ###########################################################
 
+    public static boolean isMute = false;
+
     /**
      * List of possible program arguments to Pfeile:
      *  "-nofullscreen" => Do not enter fullscreen upon program startup.
      *  "-dbgwindows"   => Enables the debug window object.
+     *  "-nosound"      => Disables sound (bug: game-over-sound still played).
      */
     public static void main(String[] arguments) {
 
@@ -109,8 +113,13 @@ public class Main {
         // This line makes it possible for users to specify on the command line that he does
         // not want to enter fullscreen mode.
         boolean activateFullscreen = !Arrays.stream(arguments).anyMatch(arg -> arg.equals("-nofullscreen"));
-
+        // For debug purposes only.
         boolean activateDbgWindows = Arrays.stream(arguments).anyMatch(arg -> arg.equals("-dbgwindows"));
+        // For users who do not want to hear sound.
+        //boolean mute = Arrays.stream(arguments).anyMatch(arg -> arg.equals("-nosound"));
+        // This is not good. SoundPool depends on isMute for being completed.
+        isMute = Arrays.stream(arguments).anyMatch(arg -> arg.equals("-nosound"));
+
         debugWindows.setWindowEnabled(activateDbgWindows);
 
         programStartTime = System.currentTimeMillis();
@@ -129,11 +138,6 @@ public class Main {
 
         LangInitialization.apply();
         LogFacility.log("LangInitialization done!", "Info", "initprocess");
-
-        //dictionary.addJsonTranslationsStr("item/Arrows.json");
-        //dictionary.addJsonTranslationsStr("item/Items.json");
-        //dictionary.addJsonTranslations(LangDict.testTreeJson());
-        //dictionary.addJsonTranslations(LangDict.testTreeJson2());
 
         main = new Main();
         user = new User(SystemProperties.getComputerName());
@@ -236,6 +240,11 @@ public class Main {
         return Future$.MODULE$.apply(func(() -> toCompatibleImage(image)), getGlobalExecutionContext());
     }
 
+    /**
+     * Returns the global execution context, mainly for Scala's Future class to be happy about its implicit parameter
+     * which Java cannot fill in because... it's Java.
+     * @return The Scala Future's global execution context.
+     */
     public static ExecutionContext getGlobalExecutionContext() {
         return ExecutionContext.Implicits$.MODULE$.global();
     }

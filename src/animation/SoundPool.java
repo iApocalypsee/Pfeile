@@ -1,6 +1,7 @@
 package animation;
 
 import general.LogFacility;
+import general.Main;
 
 import javax.sound.sampled.Clip;
 
@@ -47,7 +48,7 @@ public class SoundPool {
         Thread x = new Thread(() -> {
             titleMelodie = SoundLoader.load("resources/sfx/titleMelodie.wav");
             // the title melody can be played now
-            if (titleMelodie != null) {
+            if (titleMelodie != null && !Main.isMute) {
                 titleMelodie.loop(LOOP_CONTINUOUSLY);
                 titleMelodie.start();
             }

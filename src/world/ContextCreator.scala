@@ -48,10 +48,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
     /** The implementation of the stage. */
     override protected def executeStageImpl() = {
       val context = new PfeileContext(new PfeileContext.Values)
-      val world = new DefaultWorld {
-        /** The terrain that describes the geography of the world. */
-        override lazy val terrain = new DefaultTerrain(this, sizeX(), sizeY())
-      }
+      val world = new World(sizeX(), sizeY())
       context.world = world
       ContextCreator.this.context = context
     }
@@ -69,7 +66,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       if (Main.isEnglish)
         "Populating..."
       else
-        "Bevölkern..."
+        "Bevï¿½lkern..."
     }
 
     /** The implementation of the stage. */
@@ -82,13 +79,13 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       val terrain = context.world.terrain
 
       do {
-        var tile: TileLike = terrain.tileAt(randomGen.nextInt(terrain.width), randomGen.nextInt(terrain.height))
-          .asInstanceOf[TileLike]
+        var tile: Tile = terrain.tileAt(randomGen.nextInt(terrain.width), randomGen.nextInt(terrain.height))
+          .asInstanceOf[Tile]
         if (spawnPoint == null && tile.isInstanceOf[GrassTile]) {
           spawnPoint = new Point(tile.getGridX, tile.getGridY)
         }
         tile = terrain.tileAt(randomGen.nextInt(terrain.width), randomGen.nextInt(terrain.height))
-          .asInstanceOf[TileLike]
+          .asInstanceOf[Tile]
         if (spawnPoint != null && tile.isInstanceOf[GrassTile]) {
           if ((spawnPoint.x > tile.getGridX + 2 || spawnPoint.x < tile.getGridX - 2) && (spawnPoint.y > tile.getGridY
             + 2 || spawnPoint.y < tile.getGridY - 2)) {
@@ -196,7 +193,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       if (Main.isEnglish)
         "Generating loots..."
       else
-        "Erzeuge Schätze..."
+        "Erzeuge Schï¿½tze..."
     }
   }
 
@@ -234,7 +231,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       if (Main.isEnglish)
         "Applying other stuff..."
       else
-        "Hinzufügen des Restes..."
+        "Hinzufï¿½gen des Restes..."
     }
   }
 

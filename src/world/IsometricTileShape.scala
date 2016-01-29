@@ -5,9 +5,10 @@ import geom.Vector2
 /**
   * Helper functions for calculating the corner points of the isometric polygon.
   * Work-in-progress yet.
+ *
   * @param tile The tile to calculate the corner points from.
   */
-class IsometricTileShape private (val tile: IsometricPolygonTile) {
+class IsometricTileShape private (val tile: Tile) {
 
   def upperMiddle: Vector2 = {
     val x = tile.component.getTransformation.translation.x
@@ -30,6 +31,6 @@ class IsometricTileShape private (val tile: IsometricPolygonTile) {
   */
 object IsometricTileShape {
 
-  def shapeFor(x: IsometricPolygonTile) = new IsometricTileShape(x)
+  def shapeFor(x: Tile) = new IsometricTileShape(x)
 
 }

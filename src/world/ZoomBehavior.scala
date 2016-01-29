@@ -29,7 +29,7 @@ private[world] class ZoomBehavior(val terrain: TerrainLike) {
     else None
   }
 
-  case class TileEntry(tile: TileLike, var visited: Boolean = false) {
+  case class TileEntry(tile: Tile, var visited: Boolean = false) {
 
     def transform(rootX: Int, rootY: Int, factor: Float): Unit = if(!visited) {
 

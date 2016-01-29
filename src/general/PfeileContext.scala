@@ -4,7 +4,7 @@ import general.property.{FloatStaticProperty, IntStaticProperty}
 import gui.screen.GameScreen
 import newent.{CommandTeam, Entity, Player}
 import player.item.WorldLootList
-import world.WorldLike
+import world.World
 
 /**
   * The game mechanics of "Pfeile" in its own class. <p>
@@ -18,7 +18,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   /**
     * Called when the world attribute has been changed.
     */
-  val onWorldSwapped = Delegate.create[SwapEvent[WorldLike]]
+  val onWorldSwapped = Delegate.create[SwapEvent[World]]
 
   /**
     * Called, when TimeClock needs to start to run; this means at leaving LoadingWorldScreen.
@@ -43,7 +43,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   /**
     * The world which is currently loaded in.
     */
-  private var _world: WorldLike = null
+  private var _world: World = null
 
   //</editor-fold>
 
@@ -113,14 +113,14 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
   def world = _world
   def worldOption = Option(world)
-  def world_=(w: WorldLike): Unit = {
+  def world_=(w: World): Unit = {
     val old = _world
     _world = w
     onWorldSwapped(SwapEvent(old, w))
   }
 
   def getWorld = world
-  def setWorld(w: WorldLike) = world = w
+  def setWorld(w: World) = world = w
 
   def getTimeClock = _lazyTimeObj
 
@@ -129,6 +129,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
   /**
     * It's the list of every loot, which is placed somewhere in the world. Use it to draw all loots, or to get a Loot.
+ *
     * @return the <code>WorldLootList</code> for the whole world.
     */
   def getWorldLootList = _worldLootList

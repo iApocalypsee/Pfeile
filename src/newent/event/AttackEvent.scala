@@ -5,7 +5,7 @@ import java.awt.Point
 import comp.DisplayRepresentable
 import newent.{Aggressor, AttackContainer}
 import player.weapon.Weapon
-import world.TileLike
+import world.Tile
 
 import scala.math._
 
@@ -17,7 +17,7 @@ import scala.math._
   * @param aggressor Ditto.
   * @param travelSpeed The amount of tiles that the attack progresses per turn.
   */
-final case class AttackEvent(weapon: Weapon, departure: TileLike, target: AttackContainer, aggressor: Aggressor,
+final case class AttackEvent(weapon: Weapon, departure: Tile, target: AttackContainer, aggressor: Aggressor,
                              travelSpeed: Double) {
 
   require(weapon != null)

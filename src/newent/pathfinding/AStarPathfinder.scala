@@ -1,7 +1,7 @@
 package newent.pathfinding
 
 import newent.MovableEntity
-import world.TileLike
+import world.Tile
 
 import scala.annotation.tailrec
 import scala.collection.mutable
@@ -11,7 +11,7 @@ import scala.math._
  *
  * @author Josip Palavra
  */
-class AStarPathfinder(val maxSearchDepth: Int, val excludes: (TileLike) => Boolean) extends Pathfinder {
+class AStarPathfinder(val maxSearchDepth: Int, val excludes: (Tile) => Boolean) extends Pathfinder {
 
   private val closed = mutable.ArrayBuffer[Node]()
   private val open = new SortedList
@@ -51,7 +51,7 @@ class AStarPathfinder(val maxSearchDepth: Int, val excludes: (TileLike) => Boole
         // be the most likely to be the next step based on our heuristic
         val current = open.nodeWithLeastFValue
 
-        if (current equals nodes( tx )( ty )) break()
+        if (current == null || current.equals(nodes( tx )( ty ))) break()
 
         open.list.remove(open.list.indexOf(current))
         closed += current
@@ -169,7 +169,7 @@ class AStarPathfinder(val maxSearchDepth: Int, val excludes: (TileLike) => Boole
 
   }
 
-  private class Node(val tile: TileLike) {
+  private class Node(val tile: Tile) {
 
     def x = tile.getGridX
     def y = tile.getGridY

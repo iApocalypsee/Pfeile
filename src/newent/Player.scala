@@ -10,7 +10,7 @@ import gui.LifeUI
 import gui.screen.GameOverScreen
 import newent.pathfinding.AStarPathfinder
 import player.Life
-import world.{CoastTile, SeaTile, TileLike, WorldLike}
+import world._
 
 /**
   * Represents a player in the world.
@@ -19,7 +19,7 @@ import world.{CoastTile, SeaTile, TileLike, WorldLike}
   * @param spawnpoint The spawnpoint of the player.
   * @param name The name. If null, a name based on the hash code will be generated.
   */
-class Player(world: WorldLike,
+class Player(world: World,
              spawnpoint: Point,
              name: String) extends Entity(world, spawnpoint.x, spawnpoint.y, name) with CombatUnit with MoneyEarner {
 
@@ -60,7 +60,7 @@ class Player(world: WorldLike,
 
     tightenComponentToTile(tileLocation)
 
-    def tightenComponentToTile(t: TileLike): Unit = {
+    def tightenComponentToTile(t: Tile): Unit = {
       val endComponent = t.component
       setSourceShape(endComponent.getSourceShape)
       setParent(t.component)
@@ -73,7 +73,7 @@ class Player(world: WorldLike,
     }
   }
 
-  def tightenComponentToTile(t: TileLike): Unit = {
+  def tightenComponentToTile(t: Tile): Unit = {
     component.asInstanceOf[PlayerComponent].tightenComponentToTile(t)
   }
 

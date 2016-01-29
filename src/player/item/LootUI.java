@@ -5,7 +5,7 @@ import comp.ImageComponent;
 import general.Delegate;
 import gui.Drawable;
 import gui.screen.GameScreen;
-import world.TileLike;
+import world.Tile;
 
 import java.awt.*;
 import java.awt.event.MouseListener;
@@ -21,7 +21,7 @@ import java.awt.image.BufferedImage;
 public abstract class LootUI implements Drawable {
 
     protected Component component;
-    private TileLike tilePosition;
+    private Tile tilePosition;
     private Delegate.DelegateLike.Handle activeCallback;
 
     public LootUI (Component component) {
@@ -35,7 +35,7 @@ public abstract class LootUI implements Drawable {
      *
      * @param tile the new tile
      */
-    protected void setOnTile (TileLike tile) {
+    protected void setOnTile (Tile tile) {
         if(tilePosition != null) {
             activeCallback.dispose();
             activeCallback = null;

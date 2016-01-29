@@ -13,7 +13,7 @@ object GuiMovementPrediction {
   /**
     * If a path is displayed right now, the path is going to be reflected in this field.
     */
-  private var m_currentPath = Option.empty[Seq[TileLike]]
+  private var m_currentPath = Option.empty[Seq[Tile]]
 
   /**
     * Implementation logic of the path drawing.
