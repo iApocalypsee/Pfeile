@@ -1,7 +1,7 @@
 package world.brush
 
 import comp.Circle
-import world.TerrainLike
+import world.Terrain
 
 /**
  *
@@ -17,7 +17,7 @@ trait BrushLike {
     _radius = a
   }
 
-  def applyBrush(t: TerrainLike, x: Int, y: Int): Unit = {
+  def applyBrush(t: Terrain, x: Int, y: Int): Unit = {
     val circle = new Circle
     circle.setRadius(radius)
     circle.setX(x)
@@ -32,6 +32,6 @@ trait BrushLike {
     }
   }
 
-  protected def applySideEffects(t: TerrainLike, x: Int, y: Int, centerX: Int, centerY: Int): Unit
+  protected def applySideEffects(t: Terrain, x: Int, y: Int, centerX: Int, centerY: Int): Unit
 
 }

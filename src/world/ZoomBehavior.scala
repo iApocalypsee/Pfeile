@@ -1,6 +1,6 @@
 package world
 
-private[world] class ZoomBehavior(val terrain: TerrainLike) {
+private[world] class ZoomBehavior(val terrain: Terrain) {
 
   val tileList = terrain.tiles.map { x => TileEntry(x) }
 

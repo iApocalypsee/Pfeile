@@ -14,7 +14,7 @@ class World(width: Int, height: Int) {
   /**
     * The terrain that describes the geography of the world.
     */
-  val terrain: TerrainLike = new DefaultTerrain(this, width, height)
+  val terrain: Terrain = new Terrain(this, width, height)
 
   /**
     * The entities that describe the population of the world.
@@ -26,6 +26,6 @@ class World(width: Int, height: Int) {
     */
   def name: String = hashCode().toString
 
-  terrain.generate()()
+  terrain.generate(new scala.util.Random().nextLong())
 
 }

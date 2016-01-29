@@ -14,7 +14,7 @@ import scala.collection.{JavaConversions, mutable}
 /**
   * Base trait for all tiles.
   */
-abstract class Tile protected(gridX: Int, gridY: Int, val terrain: DefaultTerrain) extends DisplayRepresentable with AttackContainer {
+abstract class Tile protected(gridX: Int, gridY: Int, val terrain: Terrain) extends DisplayRepresentable with AttackContainer {
 
   import world.Tile._
 

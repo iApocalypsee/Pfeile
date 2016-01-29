@@ -6,7 +6,7 @@ import javax.imageio.ImageIO
 
 import gui.image.TextureAtlas
 
-class GrassTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends Tile(latticeX,
+class GrassTile(latticeX: Int, latticeY: Int, terrain: Terrain) extends Tile(latticeX,
   latticeY, terrain) {
 
   override def color = GrassTile.TileColor
@@ -21,7 +21,7 @@ object GrassTile {
   val Atlas = new TextureAtlas(ImageIO.read(new File("src/resources/gfx/tile/grass.png")))
 }
 
-class SeaTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends Tile(latticeX,
+class SeaTile(latticeX: Int, latticeY: Int, terrain: Terrain) extends Tile(latticeX,
   latticeY, terrain) {
 
   override def color = SeaTile.TileColor
@@ -36,7 +36,7 @@ object SeaTile {
   val Atlas = new TextureAtlas(ImageIO.read(new File("src/resources/gfx/tile/ocean.png")))
 }
 
-class CoastTile(latticeX: Int, latticeY: Int, terrain: DefaultTerrain) extends Tile(latticeX, latticeY, terrain) {
+class CoastTile(latticeX: Int, latticeY: Int, terrain: Terrain) extends Tile(latticeX, latticeY, terrain) {
 
   /** Returns the color that is used to represent the isometric tile. */
   override def color = CoastTile.TileColor

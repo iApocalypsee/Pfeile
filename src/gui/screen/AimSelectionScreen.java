@@ -17,7 +17,7 @@ import player.weapon.arrow.AbstractArrow;
 import player.weapon.arrow.ArrowHelper;
 import scala.Option;
 import scala.runtime.AbstractFunction1;
-import world.TerrainLike;
+import world.Terrain;
 import world.Tile;
 
 import java.awt.*;
@@ -312,7 +312,7 @@ public class AimSelectionScreen extends Screen {
             arrow.getAim().setGridY(posY_selectedField);
 
             final Color unifiedArrowColor = ArrowHelper.getUnifiedColor(arrow.getName());
-            final TerrainLike terrain = Main.getContext().world().terrain();
+            final Terrain terrain = Main.getContext().world().terrain();
             final VisionMap visibleMap = Main.getContext().getActivePlayer().visionMap();
 
             // controls all tiles and if they are visible and the arrow would make damage, a new ContainedObject is added to the list to be drawn.
