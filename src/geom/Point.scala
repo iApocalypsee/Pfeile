@@ -1,13 +1,26 @@
 package geom
 
-class Point(x: Double, y: Double) {
-    def getX = x
-    def getY = y
+class Point(xc: Double, yc: Double) {
+	private var x = xc
+	private var y = yc
 
-    def -(other: Point) = new Vector(x - other.x, y - other.y)
-    def +(v: Vector) = new Point(x + v.getX, y + v.getY)
+	def getX = x
+	def getY = y
 
-    def isOrigin = isZero(x) && isZero(y)
+	def -(other: Point) = new Vector(x - other.getX, y - other.getY)
+	def +(v: Vector) = new Point(x + v.getX, y + v.getY)
+
+	def difference(other: Point) = this - other
+	def add(vec: Vector) = this + vec
+
+	def isOrigin = geom.isZero(x) && geom.isZero(y)
+	def setCoordinate(newX: Double = x, newY: Double = y): Unit = {
+		x = newX
+		y = newY
+  }
 }
 
-isCollinear(a: Point, b: Point, c: Point) = (b - a) isParallel (c - a)
+object Point {
+    def isCollinear(a: Point, b: Point, c: Point) = (b - a) isParallel (c - a)
+    def distance(a: Point, b: Point) = (b - a).length
+}
