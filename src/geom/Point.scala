@@ -4,6 +4,9 @@ class Point(xc: Double, yc: Double) {
 	private var x = xc
 	private var y = yc
 
+	def this(pt: java.awt.geom.Point2D) = this(pt.getX, pt.getY)
+	def this(pt: java.awt.Point) = this(pt.getX, pt.getY)
+
 	def getX = x
 	def getY = y
 
@@ -21,6 +24,6 @@ class Point(xc: Double, yc: Double) {
 }
 
 object Point {
-    def isCollinear(a: Point, b: Point, c: Point) = (b - a) isParallel (c - a)
-    def distance(a: Point, b: Point) = (b - a).length
+	def isCollinear(a: Point, b: Point, c: Point) = (b - a) isParallel (c - a)
+	def distance(a: Point, b: Point) = (b - a).length
 }

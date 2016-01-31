@@ -26,7 +26,7 @@ class Matrix(m11: Double, m12: Double, m13: Double,
         case _ => 0.0
     }
 
-    def *(other: Matrix) = {
+    def *(other: Matrix): Matrix = {
         var result = Array.ofDim[Double](3, 3)
         for (i <- 1 to 3; j <- 1 to 3; k <- 1 to 3) {
             result(i - 1)(k - 1) += this(i, j) * other(j, k)
@@ -39,13 +39,13 @@ class Matrix(m11: Double, m12: Double, m13: Double,
     def appendTo(other: Matrix) = this * other
     def append(other: Matrix) = other appendTo this
 
-    def *(other: Vector) {
+    def *(other: Vector): Vector = {
         val x = m11 * other.getX + m12 * other.getY
         val y = m21 * other.getX + m22 * other.getY
         new Vector(x, y)
     }
 
-    def *(other: Point) {
+    def *(other: Point): Point = {
         val x = m11 * other.getX + m12 * other.getY + m13
         val y = m21 * other.getX + m22 * other.getY + m23
         new Point(x, y)

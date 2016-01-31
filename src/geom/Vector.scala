@@ -1,8 +1,8 @@
 package geom
 
 class Vector(xc: Double, yc: Double) {
-    private var x: Double = xc
-    private var y: Double = yc
+    private val x: Double = xc
+    private val y: Double = yc
 
     def getX = x
     def getY = y
@@ -17,6 +17,7 @@ class Vector(xc: Double, yc: Double) {
 
     def squaredLength = this * this
     def length = math.sqrt(squaredLength)
+    def angle(other: Vector) = math.acos(this * other / (length * other.length))
     def difference(other: Vector) = this - other
     def sum(other: Vector) = this + other
 
