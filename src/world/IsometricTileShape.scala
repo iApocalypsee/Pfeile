@@ -1,6 +1,6 @@
 package world
 
-import geom.Vector2
+import geom.Vector
 
 /**
   * Helper functions for calculating the corner points of the isometric polygon.
@@ -9,16 +9,16 @@ import geom.Vector2
   */
 class IsometricTileShape private (val tile: IsometricPolygonTile) {
 
-  def upperMiddle: Vector2 = {
-    val x = tile.component.getTransformation.translation.x
+  def upperMiddle: Vector = {
+    val x = tile.component.getTransformation.translation.getX
     val y = tile.component.getY
-    Vector2(x, y)
+    new Vector(x, y)
   }
 
-  def lowerMiddle: Vector2 = {
-    val x = tile.component.getTransformation.translation.x
+  def lowerMiddle: Vector = {
+    val x = tile.component.getTransformation.translation.getX
     val y = tile.component.getY + tile.component.getSourceShape.getBounds.height
-    Vector2(x, y)
+    new Vector(x, y)
   }
 
   // TODO Left and right corners. Do that when tile heights are implemented.

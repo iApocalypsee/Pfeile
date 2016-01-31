@@ -31,6 +31,6 @@ class VisualBarracks(barracks: Barracks) extends ImageComponent(0, 0, VisualBarr
 
 object VisualBarracks {
 
-  private val currentUsage = TextureUsage.parseUsageDirect(new File("src/resources/gfx/buildings/barracks.scala"))
+  private val currentUsage = resources.gfx.buildings.BarracksTexture
 
 }

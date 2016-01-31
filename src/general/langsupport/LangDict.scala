@@ -16,7 +16,6 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.io.Source
 import scala.language.dynamics
-import scala.languageFeature.dynamics
 
 trait LanguageDictionary extends Dynamic {
 

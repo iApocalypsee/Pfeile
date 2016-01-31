@@ -58,6 +58,6 @@ public class GoldCoin extends Coin {
      */
     @Override
     public String getNameGerman () {
-        return "Goldmünze";
+        return "GoldmÃ¼nze";
     }
 }

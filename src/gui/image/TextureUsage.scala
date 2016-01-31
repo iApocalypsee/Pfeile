@@ -7,7 +7,6 @@ import java.io.File
 import scala.io.Source
 import scala.reflect.runtime
 import scala.reflect.runtime.currentMirror
-import scala.tools.reflect.ToolBox
 import scala.util.Try
 
 trait TextureUsage {
@@ -47,7 +46,7 @@ trait TextureUsage {
   final override def toString = super.toString
 
 }
-
+/*
 object TextureUsage {
 
   private val toolbox = currentMirror.mkToolBox()
@@ -66,7 +65,7 @@ object TextureUsage {
 
   def parseUsage(x: File): Try[TextureUsage] = parseUsage(Source.fromFile(x).mkString)
 
-}
+}*/
 
 class DefaultTextureUsage(image: BufferedImage) extends TextureUsage {
 

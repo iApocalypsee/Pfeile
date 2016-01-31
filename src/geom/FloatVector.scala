@@ -5,6 +5,7 @@ import scala.math._
 /**
   * Created by jolecaric on 12/01/15.
   */
+@deprecated("", "2016-01-29")
 trait FloatVector extends VectorLike[Float] {
 
   override type VecType <: FloatVector

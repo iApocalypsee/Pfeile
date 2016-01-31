@@ -63,7 +63,7 @@ public class RoundChest extends Chest {
     public void open () {
         getLootUI().changeUI(imageOpenChest);
         isOpen = true;
-        GameScreen.getInstance().setWarningMessage("Rundenkiste geöffnet. Schlüssel wurde aus Inventar entfernt.");
+        GameScreen.getInstance().setWarningMessage("Rundenkiste geÃ¶ffnet. SchlÃ¼ssel wurde aus Inventar entfernt.");
         GameScreen.getInstance().activateWarningMessage();
     }
 }

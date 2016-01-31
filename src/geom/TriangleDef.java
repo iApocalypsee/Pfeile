@@ -14,6 +14,7 @@ import java.awt.geom.Rectangle2D;
  * @author Josip
  * @version 13.05.2014
  */
+@Deprecated
 public class TriangleDef implements Triangle {
 
 	private PointRef p1, p2, p3;

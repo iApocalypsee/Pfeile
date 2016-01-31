@@ -5,6 +5,7 @@ import java.awt.*;
 /** This contains functions, that are not part of the {@link geom.functions.FunctionCollectionEasing}
  * ({@link geom.functions.FunctionCollectionEasing$}) easing (in/out) functions with acceleration/deceleration
  */
+@Deprecated
 public class FunctionCollection {
 
     /**

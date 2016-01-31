@@ -6,6 +6,7 @@ import java.awt.geom.Point2D;
  * Represents a point implying the use of the internal {@link PointRef.DoubleRef} class.
  * @author Josip
  */
+@Deprecated
 public class PointRef extends Point2D {
 
 	/**

@@ -90,7 +90,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
       // Then the entities.
       for(entity <- world.entities.entityList) {
-        entity.onTurnCycleEnded()
+        entity.onTurnCycleEnded
       }
 
       values.turnCycleCount += 1

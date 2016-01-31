@@ -1,6 +1,5 @@
 package geom;
 
-import geom.interfaces.Vector;
 import geom.interfaces.VectorChain;
 
 import java.util.LinkedList;
@@ -8,9 +7,11 @@ import java.util.LinkedList;
 /**
  * @author Josip Palavra
  */
-public class VectorChainDef extends VectorDef implements VectorChain {
+@Deprecated
+public class VectorChainDef implements VectorChain {
 
 	private LinkedList<Vector> vectors = new LinkedList<Vector>();
+	private Point start;
 
 	/**
 	 * Creates a new default vector instance.
@@ -18,9 +19,9 @@ public class VectorChainDef extends VectorDef implements VectorChain {
 	 * @param start The starting point.
 	 * @param end   The ending point.
 	 */
-	public VectorChainDef(PointRef start, PointRef end) {
-		super(start, end);
-		vectors.add(new VectorDef(start, end));
+	public VectorChainDef(Point start, Point end) {
+		this.start = start;
+		vectors.add(end.difference(start));
 	}
 
 	/**
@@ -30,7 +31,7 @@ public class VectorChainDef extends VectorDef implements VectorChain {
 	 */
 	@Override
 	public LinkedList<Vector> getVectors() {
-		return (LinkedList<Vector>) vectors.clone();
+		return vectors;
 	}
 
 	/**
@@ -40,8 +41,8 @@ public class VectorChainDef extends VectorDef implements VectorChain {
 	 * @return The starting vector.
 	 */
 	@Override
-	public Vector getStartVector() {
-		return vectors.getFirst();
+	public Point getStartPoint() {
+		return start;
 	}
 
 	/**
@@ -51,8 +52,8 @@ public class VectorChainDef extends VectorDef implements VectorChain {
 	 * @return The ending vector.
 	 */
 	@Override
-	public Vector getEndVector() {
-		return vectors.getLast();
+	public Point getEndPoint() {
+		return vectors.stream().reduce(start, (Point x, Vector y) -> x.add(y), null);
 	}
 
 	/**
@@ -62,59 +63,70 @@ public class VectorChainDef extends VectorDef implements VectorChain {
 	 */
 	@Override
 	public int countBreaks() {
-		return vectors.size() - 1;
+		return vectors.size();
 	}
 
 	@Override
-	public void append(PointRef point) {
-		vectors.add(new VectorDef(new PointRef(vectors.getLast().getEndX(), vectors.getLast().getEndY()), point));
+	public void append(Point point) {
+		vectors.add(point.difference(getEndPoint()));
 	}
 
 	@Override
 	public double getStartX() {
-		return vectors.getFirst().getStartX();
+		return start.getX();
 	}
 
 	@Override
 	public double getStartY() {
-		return vectors.getFirst().getStartY();
+		return start.getY();
 	}
 
 	@Override
 	public void setStartX(double x) {
-		vectors.getFirst().setStartX(x);
+		start.setCoordinate(x, start.getY());
 	}
 
 	@Override
 	public void setStartY(double y) {
-		vectors.getFirst().setStartY(y);
+		start.setCoordinate(start.getX(), y);
 	}
 
 	@Override
 	public double getEndX() {
-		return vectors.getLast().getEndX();
+		return getEndPoint().getX();
 	}
 
 	@Override
 	public double getEndY() {
-		return vectors.getLast().getEndY();
+		return getEndPoint().getY();
 	}
 
 	@Override
 	public void setEndX(double x) {
-		vectors.getLast().setEndX(x);
+		Point beforeLast = start;
+		double y = vectors.getLast().getY();
+		vectors.removeLast();
+		vectors.forEach(beforeLast::add);
+		vectors.addLast(new Vector(x, y));
 	}
 
 	@Override
 	public void setEndY(double y) {
-		vectors.getLast().setEndY(y);
+		Point beforeLast = start;
+		double x = vectors.getLast().getX();
+		vectors.removeLast();
+		vectors.forEach(beforeLast::add);
+		vectors.addLast(new Vector(x, y));
 	}
 
 	@Override
 	public double totalLength() {
-		double res = 0.0;
-		for(Vector v : vectors) res += v.straightLength();
-		return res;
+		return vectors.stream().map(Vector::length).reduce(0.0, Double::sum);
+	}
+
+	@Override
+	public double straightLength() {
+		return totalLength();
 	}
 
 	/**
@@ -125,7 +137,15 @@ public class VectorChainDef extends VectorDef implements VectorChain {
 	@Override
 	public void remove(int index) {
 		vectors.remove(index);
-		if(index - 1 >= 0) vectors.get(index - 1).setEndX(vectors.get(index + 1).getStartX());
-		if(index + 1 < vectors.size()) vectors.get(index - 1).setEndY(vectors.get(index + 1).getStartY());
+	}
+
+	@Override
+	public double diffX() {
+		return vectors.stream().map(Vector::getX).reduce(0.0, Double::sum);
+	}
+
+	@Override
+	public double diffY() {
+		return vectors.stream().map(Vector::getY).reduce(0.0, Double::sum);
 	}
 }

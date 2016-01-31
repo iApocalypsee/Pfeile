@@ -53,6 +53,6 @@ public class KeyRoundChest extends Item {
      */
     @Override
     public String getNameGerman () {
-        return "Schlüssel (Rundentruhe)";
+        return "SchlÃ¼ssel (Rundentruhe)";
     }
 }

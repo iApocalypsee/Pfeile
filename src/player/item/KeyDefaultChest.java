@@ -53,6 +53,6 @@ public class KeyDefaultChest extends Item {
      */
     @Override
     public String getNameGerman () {
-        return "Schlüssel (Truhe)";
+        return "SchlÃ¼ssel (Truhe)";
     }
 }

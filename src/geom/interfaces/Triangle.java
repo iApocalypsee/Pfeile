@@ -9,6 +9,7 @@ import java.awt.*;
  * TODO Implementations of this interface to be written.
  * @author Josip
  */
+@Deprecated
 public interface Triangle extends Shape {
 
 	/**

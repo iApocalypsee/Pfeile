@@ -1,7 +1,7 @@
 package geom
 
 import java.awt.geom.Point2D
-import java.awt.{Dimension, Point}
+import java.awt.{Dimension, Point => APoint}
 
 import scala.math._
 
@@ -10,11 +10,12 @@ import scala.math._
  * @param x The x component.
  * @param y The y component.
  */
+@deprecated("", "2016-01-29")
 case class Vector2(x: Float, y: Float) extends FloatVector {
 
   override type VecType = Vector2
 
-  def this(p: Point) = this(p.x, p.y)
+  def this(p: APoint) = this(p.x, p.y)
 
   def dot(vec: Vector2): Float = x * vec.x + y * vec.y
 
@@ -54,9 +55,10 @@ case class Vector2(x: Float, y: Float) extends FloatVector {
   def negated = Vector2(-x, -y)
 }
 
+@deprecated("", "2016-01-29")
 object Vector2 {
   def apply(point: Point2D): Vector2 = Vector2(point.getX.asInstanceOf[Float], point.getY.asInstanceOf[Float])
-  def apply(point: Point): Vector2 = Vector2(point.x, point.y)
+  def apply(point: APoint): Vector2 = Vector2(point.x, point.y)
 
   val zero = Vector2(0, 0)
 }

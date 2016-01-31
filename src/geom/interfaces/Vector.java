@@ -4,6 +4,7 @@ package geom.interfaces;
  * @author Josip
  * @version 09.05.2014
  */
+@Deprecated
 public interface Vector {
 
 	/**
@@ -72,10 +73,5 @@ public interface Vector {
 	 */
 	double straightLength();
 
-	/**
-	 * Triangulates the vector.
-	 * @return The triangle representation of the vector.
-	 */
-	Triangle triangulate();
 
 }

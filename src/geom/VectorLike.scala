@@ -4,8 +4,9 @@ package geom
  *
  * @author Josip Palavra
  */
+@deprecated("", "2016-01-29")
 trait VectorLike[NumberType <: AnyVal] {
-  
+
   type VecType <: VectorLike[_]
 
   /** The squared length of the vector.
@@ -41,14 +42,14 @@ trait VectorLike[NumberType <: AnyVal] {
   def /(f: NumberType): VecType
 
   def abs: VecType
-  
+
   def unifiedVector(factor: NumberType): VecType
-  
+
   def vectorFrom(x: Array[NumberType]): VecType = vectorFrom(x.toList)
-  
+
   def vectorFrom(x: List[NumberType]): VecType
 
   def asList: List[NumberType]
-  
+
   def dimension = asList.length
 }

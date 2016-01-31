@@ -8,27 +8,28 @@ import java.util.List;
  * @author Josip
  * @version 09.05.2014
  */
+@Deprecated
 public interface VectorChain extends Vector {
 
 	/**
 	 * Returns the collection of the vectors.
 	 * @return The vectors.
 	 */
-	List<Vector> getVectors();
+	List<geom.Vector> getVectors();
 
 	/**
 	 * Gets the starting vector of the vector chain. The starting vector
 	 * does not have to be saved in an instance variable.
 	 * @return The starting vector.
 	 */
-	Vector getStartVector();
+	geom.Point getStartPoint ();
 
 	/**
 	 * Gets the ending vector of the vector chain. The starting vector
 	 * does not have to be saved in an instance variable.
 	 * @return The ending vector.
 	 */
-	Vector getEndVector();
+	geom.Point getEndPoint();
 
 	/**
 	 * Returns the number of breaks in the vector chain.
@@ -41,7 +42,7 @@ public interface VectorChain extends Vector {
 	 * vector to it.
 	 * @param point The point to append to the vector chain.
 	 */
-	void append(PointRef point);
+	void append(geom.Point point);
 
 	/**
 	 * Removes the vector at the specified index.

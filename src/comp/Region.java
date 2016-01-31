@@ -1,6 +1,6 @@
 package comp;
 
-import geom.Vector2;
+import geom.Vector;
 import gui.screen.Screen;
 
 import java.awt.*;
@@ -15,7 +15,7 @@ public class Region extends Component {
         setVisible(false);
     }
 
-    public Region(Vector2 initialPosition, Shape srcShape, Screen backing) {
+    public Region(Vector initialPosition, Shape srcShape, Screen backing) {
         super(initialPosition, srcShape, backing);
         setVisible(false);
     }

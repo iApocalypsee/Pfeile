@@ -5,9 +5,9 @@
  */
 
 package object geom {
-    val EPSILON = 1e-9
-    def isEqual(x: Double, y: Double) = math.isZero(x - y)
-    def isZero(x: Double) = math.abs(x) < EPSILON
+    val Epsilon = 1e-9
+    def isEqual(x: Double, y: Double) = isZero(x - y)
+    def isZero(x: Double) = math.abs(x) < Epsilon
 
     implicit def toPointDef(p: PointRef) = {
         new PointDef(p.getX, p.getY)

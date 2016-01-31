@@ -21,6 +21,7 @@ import geom.Vector2
   * @param c2 The second control point.
   * @param endPoint The point where the curve ends.
   */
+@deprecated("", "2016-01-29")
 case class BezierCurve(startPoint: Vector2, c1: Vector2, c2: Vector2, endPoint: Vector2) {
 
   def pointWith(t: Float): Vector2 = {
@@ -41,6 +42,7 @@ case class BezierCurve(startPoint: Vector2, c1: Vector2, c2: Vector2, endPoint: 
 
 }
 
+@deprecated("", "2016-01-29")
 object BezierCurve {
 
   implicit def augmentCubicCurve(cubicCurve: CubicCurve2D): BezierCurve = BezierCurve(Vector2(cubicCurve.getP1),

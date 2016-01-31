@@ -12,6 +12,8 @@ hs_err_pid*
 
 # other folders that should not be included
 doc/
+bin/
+lib/
 .idea/
 .settings/
 Pfeile.iml

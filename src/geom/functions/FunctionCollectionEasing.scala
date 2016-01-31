@@ -4,6 +4,7 @@ package geom.functions
   *
   * A good source for such inconvenient functions is http://gizma.com/easing/#cub2.
   */
+@deprecated("", "2016-01-29")
 object FunctionCollectionEasing {
 
   /** Applies the cubic function to the given parameters.
@@ -52,5 +53,3 @@ object FunctionCollectionEasing {
       return -c/2 * (t*(t-2) - 1) + b
    }
 }
-
-

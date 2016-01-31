@@ -108,7 +108,7 @@ public class GameOverScreen extends Screen {
         // sin(x / (0.1 * Math.PI)) sind die Nullstellen bei 0+- k * 1 mit k aus den Ganzen Zahlen
         // jede 1/60s: counter++
         // ==> bei counter % 30 : 0.5s
-        // bei sin(counter/(pi*6))^2 jede Sekunde ist die Nullstelle erreicht. dh. innerhalb einer S ändert er die Farbe
+        // bei sin(counter/(pi*6))^2 jede Sekunde ist die Nullstelle erreicht. dh. innerhalb einer S Ã¤ndert er die Farbe
         // von ganz dunkel zu ganz hell zu ganz dunkel
         double sin = Math.sin(counter/(Math.PI * 125));
         double sin2 = Math.sin(counter/(Math.PI * 66));
@@ -117,13 +117,13 @@ public class GameOverScreen extends Screen {
         //blue = (int) Math.round(Math.abs(sin * sin * sin * 255.0));
         //return new Color(red , green, blue);
 
-        // hue: einfach durch den farbkeis kreisen (blau, rot, grün,...)
-        // staturation: sieht wie eine MMMMMMM formige sinusfunktion aus, bei 1 gibt es kräftige farben, bei 0 weiß(grau-schwarz)
+        // hue: einfach durch den farbkeis kreisen (blau, rot, grÃ¼n,...)
+        // staturation: sieht wie eine MMMMMMM formige sinusfunktion aus, bei 1 gibt es krÃ¤ftige farben, bei 0 weiÃŸ(grau-schwarz)
         // brighness: immer ganz hell (bei 1), d.h. kein scharz oder dunkle farben
         // colorTemp is used for ALL_COLOURS_CHANGING
         //Color colorTemp = new Color(Color.HSBtoRGB((float) (counter / (Math.PI * 92)), (float) ((sin * sin + sin2 * sin2) / 1.6), 1f));
 
-        // erst nach 3.1s fängt YouLose an, aber ~2.5 so schnell wie gameOver
+        // erst nach 3.1s fï¿½ngt YouLose an, aber ~2.5 so schnell wie gameOver
         if (lastColorOfYouLose.getAlpha() < 255 && timer > 4000 && counter % 3 == 0)
             /*RED_CHANGING:*/ lastColorOfYouLose = new Color((int) (Math.sin(counter / (Math.PI * 70)) * Math.sin(counter / (Math.PI * 70)) * 25 + 230),
                     (int) (Math.sin(counter/(Math.PI * 81)) * Math.sin(counter/(Math.PI * 81)) * 255),

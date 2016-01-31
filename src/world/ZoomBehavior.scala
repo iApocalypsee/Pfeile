@@ -46,13 +46,13 @@ private[world] class ZoomBehavior(val terrain: TerrainLike) {
         val zeroTileComponent = zeroTile.tile.component
         val newWidth = zeroTileComponent.getWidth
         val newHeight = zeroTileComponent.getHeight
-        val zeroTilePosition = zeroTileComponent.getLocation.toPoint
+        val zeroTilePosition = zeroTileComponent.getLocation
 
-        val newX = zeroTilePosition.x + diffX * newWidth / 2 + diffY * newWidth / 2
-        val newY = zeroTilePosition.y + diffX * newHeight / 2 - diffY * newHeight / 2
+        val newX = zeroTilePosition.getX + diffX * newWidth / 2 + diffY * newWidth / 2
+        val newY = zeroTilePosition.getY + diffX * newHeight / 2 - diffY * newHeight / 2
 
         c.getTransformation.scale(factor, factor)
-        c.setLocation(newX, newY)
+        c.setLocation(newX.asInstanceOf[Int], newY.asInstanceOf[Int])
 
 
       } else {

@@ -2,7 +2,7 @@ package comp;
 
 import general.Delegate;
 import general.Main;
-import geom.Vector2;
+import geom.Vector;
 import gui.screen.Screen;
 import scala.Function1;
 import scala.Unit;
@@ -136,12 +136,12 @@ public abstract class Component implements IComponent {
 	 * @deprecated Use {@link Transformation2D#onTranslated()} instead.
 	 */
 	@Deprecated
-	public final Delegate.Delegate<Vector2> onMoved = new Delegate.Delegate<>();
+	public final Delegate.Delegate<Vector> onMoved = new Delegate.Delegate<>();
 
 	/**
 	 * Called when the component's dimensions have changed.
 	 */
-	public final Delegate.Delegate<Vector2> onResize = new Delegate.Delegate<>();
+	public final Delegate.Delegate<Vector> onResize = new Delegate.Delegate<>();
 
 	/**
 	 * Called when any transformation has been done to the component.
@@ -248,8 +248,8 @@ public abstract class Component implements IComponent {
                 transformationChangedSince = true;
             }
             children.values().forEach(component -> {
-                final Vector2 diffTranslation = t.newTranslation().sub(t.oldTranslation());
-                component.move(((int) diffTranslation.x()), ((int) diffTranslation.y()));
+                final Vector diffTranslation = t.newTranslation().difference(t.oldTranslation());
+                component.move(((int) diffTranslation.getX()), ((int) diffTranslation.getY()));
             });
             onTransformed.apply(t);
         });
@@ -293,10 +293,10 @@ public abstract class Component implements IComponent {
 
 	}
 
-	public Component(Vector2 initialPosition, Shape srcShape, Screen backing) {
+	public Component(Vector initialPosition, Shape srcShape, Screen backing) {
 		this();
 		setSourceShape(srcShape);
-		transformation.translate(initialPosition.x(), initialPosition.y());
+		transformation.translate(initialPosition.getX(), initialPosition.getY());
 		setBackingScreen(backing);
 	}
 
@@ -431,8 +431,7 @@ public abstract class Component implements IComponent {
 		setY(y + parent.getY());
 	}
 
-    public Vector2 getLocation() {
-        return Vector2.apply(getX(), getY());
+    public Vector getLocation() { return new Vector(getX(), getY());
     }
 
 	public void setLocation(int x, int y) {
@@ -478,14 +477,14 @@ public abstract class Component implements IComponent {
 		final double newX = getPreciseRectangle().getX();
 		final double newY = getPreciseRectangle().getY();
 
-		final Vector2 newPosition = Vector2.apply((float) newX, (float) newY);
-		final Vector2 oldPosition = Vector2.apply((float) oldX, (float) oldY);
-		final Vector2 delta = newPosition.sub(oldPosition).negated();
+		final Vector newPosition = new Vector(newX, newY);
+		final Vector oldPosition = new Vector(oldX, oldY);
+		final Vector delta = oldPosition.difference(newPosition);
 
 		// Truncate the result. Apparently, the JVM does rounding by it self.
-		transformation.translate((int) delta.x(), (int) delta.y());
+		transformation.translate((int) delta.getX(), (int) delta.getY());
 
-		onResize.apply(new Vector2(width, getHeight()));
+		onResize.apply(new Vector(width, getHeight()));
 	}
 
     /** Does nothing */
@@ -516,13 +515,13 @@ public abstract class Component implements IComponent {
 		final double newX = getPreciseRectangle().getX();
 		final double newY = getPreciseRectangle().getY();
 
-		final Vector2 newPosition = Vector2.apply((float) newX, (float) newY);
-		final Vector2 oldPosition = Vector2.apply((float) oldX, (float) oldY);
-		final Vector2 delta = newPosition.sub(oldPosition).negated();
+		final Vector newPosition = new Vector(newX, newY);
+		final Vector oldPosition = new Vector(oldX, oldY);
+		final Vector delta = oldPosition.difference(newPosition);
 
-		transformation.translate((int) delta.x(), (int) delta.y());
+		transformation.translate((int) delta.getX(), (int) delta.getY());
 
-		onResize.apply(new Vector2(getWidth(), height));
+		onResize.apply(new Vector(getWidth(), height));
 	}
 
 	protected void forceBoundsRecalculation() {

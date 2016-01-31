@@ -4,7 +4,7 @@ import java.awt.Shape
 import java.awt.geom.AffineTransform
 
 import general.Delegate
-import geom.Vector2
+import geom.Vector
 
 import scala.math.toRadians
 
@@ -48,7 +48,7 @@ class Transformation2D {
     * @param y The amount of units to translate it in y-direction.
     * @return This.
     */
-  def translate(x: Double, y: Double) = setTranslation(translation.x + x, translation.y + y)
+  def translate(x: Double, y: Double) = setTranslation(translation.getX + x, translation.getY + y)
 
   /**
     * Rotates the transformation by the degree given.
@@ -63,7 +63,7 @@ class Transformation2D {
     * @param sy The amount of scaling in the y-direction.
     * @return This.
     */
-  def scale(sx: Double, sy: Double): Transformation2D = setScale(scale.x * sx, scale.y * sy)
+  def scale(sx: Double, sy: Double): Transformation2D = setScale(scale.getX * sx, scale.getY * sy)
 
   def scale(fac: Double): Transformation2D = scale(fac, fac)
 
@@ -140,9 +140,9 @@ class Transformation2D {
     _scaleMatrix = AffineTransform.getScaleInstance(sx, sy)
   }
 
-  def translation = Vector2(_translationMatrix.getTranslateX.asInstanceOf[Float], _translationMatrix.getTranslateY.asInstanceOf[Float])
+  def translation = new Vector(_translationMatrix.getTranslateX, _translationMatrix.getTranslateY)
   def rotation = _rotation
-  def scale = Vector2(_scaleMatrix.getScaleX.asInstanceOf[Float], _scaleMatrix.getScaleY.asInstanceOf[Float])
+  def scale = new Vector(_scaleMatrix.getScaleX, _scaleMatrix.getScaleY)
 
   def translationMatrix = new AffineTransform(_translationMatrix)
   def rotationMatrix = new AffineTransform(_rotationMatrix)
@@ -163,10 +163,10 @@ class Transformation2D {
 
 object Transformation2D {
   def applySilently(c: Component, t: Transformation2D): Component = {
-    val translation = t.translation.toPoint
-    c.getTransformation.setTranslationWithoutSideEffect(translation.x, translation.y)
+    val translation = t.translation
+    c.getTransformation.setTranslationWithoutSideEffect(translation.getX, translation.getY)
     c.getTransformation.setRotationWithoutSideEffect(t.rotation)
-    c.getTransformation.setScaleWithoutSideEffect(t.scale.x.asInstanceOf[Int], t.scale.y.asInstanceOf[Int])
+    c.getTransformation.setScaleWithoutSideEffect(t.scale.getX.asInstanceOf[Int], t.scale.getY.asInstanceOf[Int])
     c
   }
 }
@@ -183,14 +183,14 @@ case class RotationChange(oldDegree: Double, newDegree: Double) extends Transfor
   override lazy val deltaMatrix = AffineTransform.getRotateInstance(delta)
 }
 
-case class TranslationChange(oldTranslation: Vector2, newTranslation: Vector2) extends TransformationEvent {
+case class TranslationChange(oldTranslation: Vector, newTranslation: Vector) extends TransformationEvent {
   val delta = newTranslation - oldTranslation
-  override lazy val matrix = AffineTransform.getTranslateInstance(newTranslation.x, newTranslation.y)
-  override lazy val deltaMatrix = AffineTransform.getTranslateInstance(delta.x, delta.y)
+  override lazy val matrix = AffineTransform.getTranslateInstance(newTranslation.getX, newTranslation.getY)
+  override lazy val deltaMatrix = AffineTransform.getTranslateInstance(delta.getX, delta.getY)
 }
 
-case class ScaleChange(oldScale: Vector2, newScale: Vector2) extends TransformationEvent {
-  override lazy val matrix = AffineTransform.getScaleInstance(newScale.x, newScale.y)
+case class ScaleChange(oldScale: Vector, newScale: Vector) extends TransformationEvent {
+  override lazy val matrix = AffineTransform.getScaleInstance(newScale.getX, newScale.getY)
 
   // Todo: Should delta matrix be oriented multiplicatively or additionally?
   override def deltaMatrix = throw new NotImplementedError("Scale delta not implemented yet")

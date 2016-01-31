@@ -4,32 +4,36 @@ class Matrix(m11: Double, m12: Double, m13: Double,
     m21: Double, m22: Double, m23: Double,
     m31: Double, m32: Double, m33: Double) {
 
-    //Contructor without params ==> Identity matrix
-    def this() = this(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0)
-
-    //new Matrix(some angle) = rotation matrix
-    def this(theta: Double) = new Matrix(math.cos(theta), -math.sin(theta), 0.0,
-        math.sin(theta), math.cos(theta), 0.0,
-        0.0, 0.0, 1.0)
-
-    //new Matrix(some vector) = translation matrix
-    def this(translation: Vector) = new Matrix(1.0, 0.0, translation.getX,
-        0.0, 1.0, translation.getY, 0.0, 0.0, 1.0)
-
-    //new Matrix(some x, some y) = translation matrix
-    def this(dx: Double, dy: Double) = new Matrix(new Vector(dx, xy))
+    def apply(row: Int, column: Int) = row match {
+        case 1 => column match {
+            case 1 => m11
+            case 2 => m12
+            case 3 => m13
+            case _ => 0.0
+        }
+        case 2 => column match {
+            case 1 => m21
+            case 2 => m22
+            case 3 => m23
+            case _ => 0.0
+        }
+        case 3 => column match {
+            case 1 => m31
+            case 2 => m32
+            case 3 => m33
+            case _ => 0.0
+        }
+        case _ => 0.0
+    }
 
     def *(other: Matrix) = {
-        val r11 = m11 * other.m11 + m12 * other.m21 + m13 * other.m31
-        val r12 = m11 * other.m12 + m12 * other.m22 + m13 * other.m32
-        val r13 = m11 * other.m13 + m12 * other.m23 + m13 * other.m33
-        val r21 = m21 * other.m11 + m22 * other.m21 + m23 * other.m31
-        val r22 = m21 * other.m12 + m22 * other.m22 + m23 * other.m32
-        val r23 = m21 * other.m13 + m22 * other.m23 + m23 * other.m33
-        val r31 = m31 * other.m11 + m32 * other.m21 + m33 * other.m31
-        val r32 = m31 * other.m12 + m32 * other.m22 + m33 * other.m32
-        val r33 = m31 * other.m13 + m32 * other.m23 + m33 * other.m33
-        new Matrix(r11, r12, r13, r21, r22, r23, r31, r32, r33)
+        var result = Array.ofDim[Double](3, 3)
+        for (i <- 1 to 3; j <- 1 to 3; k <- 1 to 3) {
+            result(i - 1)(k - 1) += this(i, j) * other(j, k)
+        }
+        new Matrix(result(0)(0), result(0)(1), result(0)(2),
+            result(1)(0), result(1)(1), result(1)(2),
+            result(2)(0), result(2)(1), result(2)(2));
     }
 
     def appendTo(other: Matrix) = this * other
@@ -47,6 +51,19 @@ class Matrix(m11: Double, m12: Double, m13: Double,
         new Point(x, y)
     }
 
-    def transform(other: Point) = self * other
-    def transform(other: Vector) = self * other
+    def transform(other: Point) = this * other
+    def transform(other: Vector) = this * other
+}
+
+object Matrix {
+    def newIdentity = new Matrix(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0)
+    def newRotation(theta: Double) = {
+        val c = math.cos(theta)
+        val s = math.sin(theta)
+        new Matrix(c, -s, 0.0, s, c, 0.0, 0.0, 0.0, 1.0)
+    }
+    def newTranslation(dx: Double, dy: Double) = new Matrix(1.0, 0.0, dx,
+        0.0, 1.0, dy, 0.0, 0.0, 1.0)
+    def newScaling(x: Double, y: Double) = new Matrix(x, 0.0, 0.0, 0.0, y, 0.0,
+        0.0, 0.0, 1.0)
 }

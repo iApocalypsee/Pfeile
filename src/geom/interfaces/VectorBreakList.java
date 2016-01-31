@@ -5,6 +5,7 @@ import java.util.List;
 /**
  * @author Josip
  */
+@Deprecated
 public interface VectorBreakList extends List<Vector> {
 
 	/**

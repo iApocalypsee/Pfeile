@@ -69,7 +69,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       if (Main.isEnglish)
         "Populating..."
       else
-        "Bevölkern..."
+        "BevÃ¶lkern..."
     }
 
     /** The implementation of the stage. */
@@ -196,7 +196,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       if (Main.isEnglish)
         "Generating loots..."
       else
-        "Erzeuge Schätze..."
+        "Erzeuge SchÃ¼tze..."
     }
   }
 
@@ -234,7 +234,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       if (Main.isEnglish)
         "Applying other stuff..."
       else
-        "Hinzufügen des Restes..."
+        "HinzufÃ¼gen des Restes..."
     }
   }
 

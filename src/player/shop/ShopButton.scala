@@ -2,7 +2,7 @@ package player.shop
 
 import java.awt._
 
-import _root_.geom.Vector2
+import _root_.geom.Vector
 import comp.{Component, _}
 import general._
 
@@ -15,12 +15,13 @@ import scala.collection.mutable
   * @param article The article to display.
   * @param shopWindow The shop window to which the shop button belongs.
   */
-private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Article, shopWindow: ShopWindow) extends Component(0, 0, 1, 1, shopWindow.component.getBackingScreen) {
+private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Article, shopWindow: ShopWindow)
+  extends Component(0, 0, 1, 1, shopWindow.component.getBackingScreen) {
 
   private[this] def w = ShopButton.Style.fixedWidth()
-  private[this] def h = ShopButton.Style.fixedHeight()
-  private[this] def wdiv2 = ShopButton.Style.fixedWidth() / 2
-  private[this] def hdiv2 = ShopButton.Style.fixedHeight() / 2
+	private[this] def h = ShopButton.Style.fixedHeight()
+	private[this] def wdiv2 = ShopButton.Style.fixedWidth() / 2
+	private[this] def hdiv2 = ShopButton.Style.fixedHeight() / 2
 
   setSourceShape(new Rectangle(-wdiv2, -hdiv2, w, h))
   setParent(shopWindow.window)
@@ -34,10 +35,9 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Art
   textLabel.setParent(this)
 
   private def positionalsUpdate(t: TranslationChange): Unit = {
-    val movPt = t.delta.toPoint
+    val movPt = t.delta
     if(imageDrawLocation != null) {
-      imageDrawLocation.x += movPt.x
-      imageDrawLocation.y += movPt.y
+      imageDrawLocation.move(movPt.getX.asInstanceOf[Int],movPt.getY.asInstanceOf[Int])
     }
   }
 
@@ -50,7 +50,7 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Art
     if (Main.isEnglish)
       s"${cachedItem.getName}:\n${article.price} coins"
     else
-      s"${cachedItem.getName}:\n${article.price} Münzen"
+      s"${cachedItem.getName}:\n${article.price} MÃ¼nzen"
   }
 
   private[this] def recalculateStyleWithArgs(gridX: Int, gridY: Int): Unit = {
@@ -65,25 +65,25 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Art
 
     setRelativeLocation(rawX, rawY)
 
-    val absolutePosition = Vector2(getX, getY)
+    val absolutePosition = new Vector(getX, getY)
 
     val imageSize = buttonStyle.imageSize
     val rawImagePosition = buttonStyle.imagePosition
     val imagePosition = rawImagePosition + absolutePosition
 
-    imageDrawDimension = imageSize.toDimension
-    imageDrawLocation = imagePosition.toPoint
+    imageDrawDimension = new Dimension(imageSize.getX.asInstanceOf[Int], imageSize.getY.asInstanceOf[Int])
+    imageDrawLocation = new Point(imagePosition.getX.asInstanceOf[Int], imagePosition.getY.asInstanceOf[Int])
 
     val font = buttonStyle.font()
     val textBounds = Component.getTextBounds(text, font)
     val textOrientation = buttonStyle.textOrientation()
 
-    val rawTextPosition = Vector2(buttonStyle.textLeftInset() + textOrientation.horizontal.apply(textBounds.getWidth.asInstanceOf[Int], imageSize.x.asInstanceOf[Int]),
-      buttonStyle.textTopInset() + buttonStyle.imageInsets().top + textBounds.height + imageSize.y + textOrientation.vertical.apply(textBounds.height, buttonStyle.textGridCellHeight()))
+    val rawTextPosition = new Vector(buttonStyle.textLeftInset() + textOrientation.horizontal.apply(textBounds.getWidth.asInstanceOf[Int], imageSize.getX.asInstanceOf[Int]),
+      buttonStyle.textTopInset() + buttonStyle.imageInsets().top + textBounds.height + imageSize.getY.asInstanceOf[Int] + textOrientation.vertical.apply(textBounds.height, buttonStyle.textGridCellHeight()))
 
     val textPosition = rawTextPosition + absolutePosition
 
-    textLabel.setLocation(textPosition.toPoint.x, textPosition.toPoint.y)
+    textLabel.setLocation(textPosition.getX.asInstanceOf[Int], textPosition.getY.asInstanceOf[Int])
 
   }
 
@@ -156,14 +156,14 @@ private[shop] object ShopButton {
       * as a Vector2.
       * @return A vector representing the image size inside the button.
       */
-    def imageSize = Vector2(fixedWidth - imageInsets.left - imageInsets.right,
+    def imageSize = new Vector(fixedWidth - imageInsets.left - imageInsets.right,
       fixedHeight - imageInsets.top - imageInsets.bottom - textGridCellHeight - textTopInset)
 
     /**
       * Returns the position of the image relative to the top left corner of the button.
       * @return the position of the image relative to the top left corner of the button.
       */
-    def imagePosition = Vector2(imageInsets.left, imageInsets.top)
+    def imagePosition = new Vector(imageInsets.left, imageInsets.top)
 
     //</editor-fold>
 

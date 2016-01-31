@@ -73,8 +73,8 @@ public interface Collectible {
             return removed;
 
         } else {
-            GameScreen.getInstance().setWarningMessage("Das Inventar ist voll! Maximalgröße: " + inventory.maximumSize()
-                    + " | Aktuelle Größe: " + inventory.currentSize());
+            GameScreen.getInstance().setWarningMessage("Das Inventar ist voll! MaximalgrÃ¶ÃŸe: " + inventory.maximumSize()
+                    + " | Aktuelle GrÃ¶ÃŸe: " + inventory.currentSize());
             GameScreen.getInstance().activateWarningMessage();
             LogFacility.log("The inventory is full: " + inventory.toString() + " at adding: " + loot.toString(), LogFacility.LoggingLevel.Info);
             return false;

@@ -65,7 +65,7 @@ public class DefaultChest extends Chest {
     public void open () {
         getLootUI().changeUI(imageOpenChest);
         isOpen = true;
-        GameScreen.getInstance().setWarningMessage("Kiste geöffnet: Schlüssel wurde aus Inventar entfernt.");
+        GameScreen.getInstance().setWarningMessage("Kiste geÃ¶ffnet: SchlÃ¼ssel wurde aus Inventar entfernt.");
         GameScreen.getInstance().activateWarningMessage();
     }
 }

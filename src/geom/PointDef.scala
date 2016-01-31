@@ -1,12 +1,13 @@
 package geom
 
-import java.awt.Point
+import java.awt.{Point => APoint}
 import java.awt.geom.Point2D
 
 /**
  * A point default implementation for our program.
  * @param tuple The tuple.
  */
+@deprecated("", "2016-01-29")
 class PointDef(tuple: (Double, Double)) extends Point2D {
 
   private var _tuple = (new DoubleRef(tuple._1), new DoubleRef(tuple._2))
@@ -46,6 +47,7 @@ class PointDef(tuple: (Double, Double)) extends Point2D {
 
 }
 
+@deprecated("", "2016-01-29")
 object PointDef {
 
   /**
@@ -53,7 +55,7 @@ object PointDef {
    * @param oldPoint The point object to convert.
    * @return The converted point object.
    */
-  implicit def toPointDef(oldPoint: Point) = {
+  implicit def toPointDef(oldPoint: APoint) = {
     new PointDef((oldPoint.x, oldPoint.y))
   }
 
@@ -63,6 +65,7 @@ object PointDef {
  * A reference class wrapping a double value.
  * @param value The double value to wrap up.
  */
+@deprecated("", "2016-01-29")
 class DoubleRef(var value: Double) {
 
   def ==(other: DoubleRef) = this.value == other.value
@@ -76,6 +79,7 @@ class DoubleRef(var value: Double) {
 
 }
 
+@deprecated("", "2016-01-29")
 object DoubleRef {
   implicit def DoubleRef2Int(x: DoubleRef): Int = x.value.asInstanceOf[Int]
 }

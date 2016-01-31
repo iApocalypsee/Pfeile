@@ -1,10 +1,12 @@
+package resources.gfx.buildings
+
 import java.awt.Point
 import java.io.File
 import javax.imageio.ImageIO
 
 import gui.image.TextureUsage
 
-class BarracksTexture extends TextureUsage {
+object BarracksTexture extends TextureUsage {
 
   override protected def textureLoader = ImageIO.read(new File("src/resources/gfx/buildings/barracks.png"))
 
@@ -22,4 +24,4 @@ class BarracksTexture extends TextureUsage {
 }
 
 // Mandatory for every texture script to return an instance of its usage
-new BarracksTexture
+// new BarracksTexture

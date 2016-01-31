@@ -6,6 +6,7 @@ import scala.math._
  *
  * @author Josip Palavra
  */
+@deprecated("", "2016-01-29")
 case class Vector3(var x: Float, var y: Float, var z: Float) extends FloatVector {
 
   override type VecType = Vector3

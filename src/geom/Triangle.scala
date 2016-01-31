@@ -1,6 +1,6 @@
 package geom
 
-class Triangle(p1: Point, p2: Point, p3: Point) extends ITriangle {
+class Triangle(p1: Point, p2: Point, p3: Point) {
     def getPoint1 = p1
     def getPoint2 = p2
     def getPoint3 = p3
@@ -24,11 +24,11 @@ class Triangle(p1: Point, p2: Point, p3: Point) extends ITriangle {
         val w = x - p1
         if (u isParallel v) {
             //if u is parallel to v, x is only in the triangle if w is parallel to u and v, too
-            u isParallel x
+            u isParallel w
         } else {
             //represent w in terms of u and v:  w = s u + t v
-            val t = (u.y * w.x - u.x * w.y) / (u.y * v.x - u.x * v.y)
-            val s = (v.y * w.x - v.x * w.y) / (u.x * v.y - u.y * v.x)
+            val t = (u.getY * w.getX - u.getX * w.getY) / (u.getY * v.getX - u.getX * v.getY)
+            val s = (v.getY * w.getX - v.getX * w.getY) / (u.getX * v.getY - u.getY * v.getX)
             //point is in triangle iff 0 <= s <= 1, 0 <= t <= 1 and 0 <= s + t <= 1
             (t >= 0 && t <= 1) && (s >= 0 && s <= 1) && (s + t >= 0 && s + t <= 1)
         }

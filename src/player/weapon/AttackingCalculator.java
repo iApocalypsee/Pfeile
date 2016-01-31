@@ -3,7 +3,7 @@ package player.weapon;
 import comp.Component;
 import comp.ImageComponent;
 import general.Main;
-import geom.Vector2;
+import geom.Point;
 import geom.functions.FunctionCollectionEasing;
 import newent.AttackProgress;
 import player.weapon.arrow.AbstractArrow;
@@ -120,7 +120,7 @@ public class AttackingCalculator {
             double posXOldCenter = comp.getPreciseRectangle().getCenterX();
             double posYOldCenter = comp.getPreciseRectangle().getCenterY();
 
-            Point attackedCenter = attackingArrow.getAim().getPositionGui();
+            Point attackedCenter = new Point(attackingArrow.getAim().getPositionGui().getX(), attackingArrow.getAim().getPositionGui().getY());
             double posXAimCenter = attackedCenter.getX();
             double posYAimCenter = attackedCenter.getY();
 
@@ -207,17 +207,18 @@ public class AttackingCalculator {
         final double beginProgress = progress.progress();
         final double progressPerTurn = progress.progressPerTurn();
         final Path2D.Double resultingPath = new Path2D.Double();
-        final Point initialCenterPosition = arrow.getComponent().center();
+        final Point initialCenterPosition = new Point(arrow.getComponent().center().getX(),
+                arrow.getComponent().center().getY());
 
         // Begin of real method execution
-        resultingPath.moveTo(initialCenterPosition.x, initialCenterPosition.y);
+        resultingPath.moveTo(initialCenterPosition.getX(), initialCenterPosition.getY());
 
-        Vector2 sectionBeginPoint = Vector2.apply(initialCenterPosition.x, initialCenterPosition.y);
+        Point sectionBeginPoint = initialCenterPosition;
 
         for(double simulatedProgress = beginProgress; simulatedProgress < 1.0; simulatedProgress += progressPerTurn) {
-            final Vector2 sectionEndPoint = AttackingCalculatorCompanion.sectionEndPoint(
-                    0, sectionBeginPoint, arrow, sectionBeginPoint.toPoint(), TIME_MULTI, arrow.getAim(), progress.event().lengthGUI());
-            resultingPath.lineTo(sectionEndPoint.x(), sectionEndPoint.y());
+            final Point sectionEndPoint = AttackingCalculatorCompanion.sectionEndPoint(
+                    0, sectionBeginPoint, arrow, sectionBeginPoint, TIME_MULTI, arrow.getAim(), progress.event().lengthGUI());
+            resultingPath.lineTo(sectionEndPoint.getX(), sectionEndPoint.getY());
             sectionBeginPoint = sectionEndPoint;
         }
 

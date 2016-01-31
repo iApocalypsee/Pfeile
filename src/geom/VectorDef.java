@@ -7,6 +7,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  * @author Josip
  * @version 13.05.2014
  */
+@Deprecated
 public class VectorDef implements geom.interfaces.Vector, Comparable<VectorDef> {
 
 	/**
@@ -159,11 +160,8 @@ public class VectorDef implements geom.interfaces.Vector, Comparable<VectorDef> 
 	 * Triangulates the vector.
 	 *
 	 * @return The triangle representation of the vector.
+	 *
 	 */
-	@Override
-	public Triangle triangulate() {
-		throw new NotImplementedException();
-	}
 
 	/**
 	 * Compares this object with the specified object for order.  Returns a

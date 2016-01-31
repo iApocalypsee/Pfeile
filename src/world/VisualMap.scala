@@ -124,7 +124,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
         val centeredUpperLeft = center - Vector2(isometric.getWidth / 2, isometric.getHeight / 2)
 
         val relevantDelta = (centeredUpperLeft - tileNormalPosition).toPoint
-        setMapPosition(relevantDelta.x, relevantDelta.y)
+        setMapPosition(relevantDelta.getX.asInstanceOf[Int], relevantDelta.getY.asInstanceOf[Int])
 
       // The visual map can only handle isometric tiles for now.
       case unknownComponent => throw new NotImplementedError(s"Component of tile is ${unknownComponent.getClass.getName}; " +

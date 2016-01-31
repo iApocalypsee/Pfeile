@@ -3,7 +3,6 @@ package player.weapon.arrow;
 import general.LogFacility;
 import general.Main;
 import general.langsupport.English$;
-import general.langsupport.LangDict;
 import general.langsupport.Language;
 import javafx.scene.effect.Light;
 import misc.ImageHelper;
