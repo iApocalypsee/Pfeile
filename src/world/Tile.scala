@@ -112,12 +112,7 @@ abstract class Tile protected(gridX: Int, gridY: Int, val terrain: Terrain) exte
 
   //<editor-fold desc="Directions (north, east, west, south, etc.)">
 
-  private def directionalGet(xdiff: Int, ydiff: Int): Option[Tile] = {
-    if (terrain.isTileValid(gridX + xdiff, getGridY + ydiff))
-      Some(terrain.tileAt(gridX + xdiff, gridY + ydiff))
-    else
-      None
-  }
+  private def directionalGet(xdiff: Int, ydiff: Int) = Option(terrain.tileAt(getGridX + xdiff, getGridY + ydiff))
 
   def north: Option[Tile] = directionalGet(-1, 1)
 
@@ -135,28 +130,18 @@ abstract class Tile protected(gridX: Int, gridY: Int, val terrain: Terrain) exte
 
   def northWest: Option[Tile] = directionalGet(-1, 0)
 
-  /** The neighbors the tile has. */
+  /**
+    * List with every neighboring tile. Not necessarily in order.
+    */
   def neighbors: Seq[Tile] = Seq(north, northEast, east, southEast, south, southWest, west, northWest).flatten
-
-  /** The neighbors of this tile as a Java list. */
   def getNeighbors = neighbors.asJava
 
   //</editor-fold>
 
   //<editor-fold desc="Overrides">
 
-  /** Ditto. */
   override val getGridY = gridY
-  /** Ditto. */
   override val getGridX = gridX
-
-  /**
-    * The component that the representable object uses first. Method is called only once.
-    *
-    * The start component must not be null at first, else it will throw a [[java.lang.IllegalArgumentException]].
-    *
-    * @return A component object which the representable object uses first.
-    */
   override protected def startComponent: Component = new IsometricPolygonTileComponent(this)
 
   //</editor-fold>

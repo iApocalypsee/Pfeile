@@ -73,12 +73,14 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
     val turnSystem = new TurnSystem(turnSystemTeamList)
 
-    turnSystem.onTurnGet += {
-      case playerTeam: CommandTeam =>
-        require(playerTeam.head != null)
-        activePlayer = playerTeam.head
-        GameScreen.getInstance().getMoneyDisplay.retrieveDataFrom(playerTeam.head)
-      case _ => ???
+    turnSystem.onTurnGet += { team =>
+      team match {
+        case playerTeam: CommandTeam =>
+          require(playerTeam.head != null)
+          activePlayer = playerTeam.head
+          GameScreen.getInstance().getMoneyDisplay.retrieveDataFrom(playerTeam.head)
+        case _ => ???
+      }
     }
 
     turnSystem.onGlobalTurnCycleEnded += { () =>

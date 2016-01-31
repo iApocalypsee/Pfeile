@@ -41,7 +41,7 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Art
     }
   }
 
-  getTransformation.onTranslated += positionalsUpdate
+  getTransformation.onTranslated += positionalsUpdate _
   recalculateStyle()
 
   private def recalculateStyle(): Unit = recalculateStyleWithArgs(gridX, gridY)
@@ -50,7 +50,7 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Art
     if (Main.isEnglish)
       s"${cachedItem.getName}:\n${article.price} coins"
     else
-      s"${cachedItem.getName}:\n${article.price} Münzen"
+      s"${cachedItem.getName}:\n${article.price} Mï¿½nzen"
   }
 
   private[this] def recalculateStyleWithArgs(gridX: Int, gridY: Int): Unit = {

@@ -31,10 +31,24 @@ trait DynamicAccessors[A] extends PropertyBase[A] with AccessorStyle[DynamicAcce
     */
   def dynSet = _dynSetter
 
+  /**
+    * Sets a setter function for this property.
+    *
+    * The setter function can change its provided input argument, so use with care.
+    * @param x The new setter (which can override the input argument)
+    */
   protected def dynSet_=(x: A => A) = {
     require(x != null)
     _dynSetter = x
   }
+
+  /**
+    * Sets a setter function which simply produces some side effect.
+    *
+    * The original input value provided to the setter function is not changed at all because of Unit return type.
+    * @param x The side-effect function to apply as setter.
+    */
+  protected def dynPass(x: A => Unit) = dynSet_=({ y => x(y); y })
 
   protected def setDynamicSetter(f: Function[A, A]) = this.dynSet = JavaInterop.asScala(f)
 

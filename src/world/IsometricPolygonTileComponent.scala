@@ -29,7 +29,7 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
   import world.Tile._
 
   // Just make sure that the isometric tile is not being rotated.
-  onTransformed += {
+  onTransformed.register("rotation check") {
     case rotation: RotationChange => throw new UnsupportedOperationException("Rotation not supported on isometric tiles")
     case _ =>
   }

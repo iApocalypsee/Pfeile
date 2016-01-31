@@ -18,7 +18,7 @@ import player.weapon.arrow.AbstractArrow
   */
 class VisualMap(context: PfeileContext) extends Drawable {
 
-  context.turnSystem.onTurnGet += {
+  context.turnSystem.onTurnGet.register("center map") {
     case team: CommandTeam => centerMap(team.head.getGridX, team.head.getGridY)
     case _ =>
   }

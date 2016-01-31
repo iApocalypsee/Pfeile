@@ -4,7 +4,7 @@ import java.awt._
 import java.awt.event.{MouseAdapter, MouseEvent}
 import java.util.concurrent.CopyOnWriteArrayList
 
-import general.property.StaticProperty
+import general.property.{DynamicProperty, StaticProperty}
 import general.{Delegate, LogFacility}
 import gui.FrameContainer
 import gui.screen.Screen
@@ -31,6 +31,8 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
 
   import comp.InternalFrame._
 
+  // <editor-fold desc="Constructor code">
+
   // Check new components if their bounds really are inside the frame's bounds
   onChildAdded += { component =>
     component.getTransformation.onTranslated += { _ =>
@@ -49,15 +51,17 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     case _ => LogFacility.log(s"Frame $this cannot be added to screen; screen not a FrameContainer instance", "Warning")
   }
 
+  this.add(ToplineBar)
+  this.setVisible(false)
+
+  // </editor-fold>
+
   /**
     * The color that the top bar is using.
     * Don't put null in there.
     */
-  val topBarColor = new StaticProperty(FrameStyle.DefaultTopBarColor) {
-    override def staticSetter(x: Color) = {
-      require(x != null)
-      x
-    }
+  val topBarColor = new DynamicProperty(FrameStyle.DefaultTopBarColor) {
+    dynPass (color => require(color != null))
   }
 
   /**
@@ -77,9 +81,9 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     */
   val onOpened = Delegate.createZeroArity
 
-  this << ToplineBar
-
-  /** The close button of the frame. */
+  /**
+    * The close button of the frame.
+    */
   private lazy val closeButton = {
     val ret = new Button(0, 0, backingScreen, "")
     val xInBounds = x + width - FrameStyle.CommonInset - FrameStyle.CloseButtonDimension.width
@@ -91,7 +95,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     ret.setSourceShape(new Rectangle(-widthInBounds / 2, -heightInBounds / 2, widthInBounds, heightInBounds))
 
     // Add the new button to the frame so that it receives (positional) changes.
-    this << ret
+    this.add(ret)
 
     ret.setLocation(xInBounds, yInBounds)
 
@@ -102,7 +106,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     //ret.getTransformation.translate(widthInBounds + xInBounds, heightInBounds + yInBounds)
 
     ret.getBorder.setInnerColor(FrameStyle.CloseButtonColor_Inner)
-    ret.setAdditionalDrawing { (g: Graphics2D) =>
+    ret.setAdditionalDrawing { g =>
       val buttonBounds = ret.getBounds.getBounds
       val inset = FrameStyle.CommonInset
 
@@ -134,7 +138,6 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
   }
 
   override def draw(g: Graphics2D) = {
-
     background.get.drawImage(g, getX, getY, getWidth, getHeight)
 
     val it = comps.iterator()
@@ -158,20 +161,15 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
 
   /**
     * Adds a component to the internal frame.
-    *
-    * @param c The component.
-    * @return Nothing.
+    * @param c The component to be added.
     */
-  def <<(c: Component): Unit = {
+  def add(c: Component): Unit = {
     require(c.getBackingScreen == this.getBackingScreen, s"Backing screens not equal for $this and $c")
     c.setParent(this)
 
     val screen = getBackingScreen
     screen.putAfter(this, c)
   }
-
-  /** Ditto. */
-  def add(c: Component) = this << c
 
   /** The containers that are contained by the frame. */
   def containedComponents = JavaConversions.asScalaBuffer(comps).toList
@@ -197,7 +195,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
 
   }
 
-  this.setVisible(false)
+
 
 }
 

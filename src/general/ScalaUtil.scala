@@ -54,27 +54,35 @@ object ScalaUtil {
        |
      """.stripMargin
 
-  def errorMessage(desc: String, stacktrace: String, vartrace: String): String =
+  def message(header: String, desc: String = "No description available", stacktrace: String = "No stacktrace", vartrace: String = "No vartrace", post: String = ""): String =
     s"""
-       |===== ERROR MESSAGE =====
+       |===== $header =====
        |Description: $desc
        |
        |Stack trace:
        |$stacktrace
        |
        |Var trace (optional):
-       |${if(vartrace == "") "No vartrace" else vartrace}
+       |$vartrace
        |
        |Generated when: ${new Date()}
-       |
-       |Please describe the circumstances of this issue in detail when reporting.
+       |$post
      """.stripMargin
+
+  def errorMessage(desc: String, stacktrace: String = "No stacktrace", vartrace: String = "No vartrace"): String =
+    message("ERROR MESSAGE", desc, stacktrace, vartrace, "Please describe this issue in detail when reporting.")
 
   def errorMessage(desc: String, stacktrace: String): String = errorMessage(desc, stacktrace, "")
 
   def errorMessage(desc: String, t: Throwable, vartrace: String): String = errorMessage(desc, Util.stacktraceString(t), vartrace)
 
+  def errorMessage(desc: String, t: Throwable, vartrace: Map[String, Any]): String = errorMessage(desc, t, varTrace(vartrace))
+
+  def errorMessage(desc: String, vartrace: Map[String, Any]): String = errorMessage(desc, "", varTrace(vartrace))
+
   def errorMessage(desc: String, t: Throwable): String = errorMessage(desc, Util.stacktraceString(t))
+
+  def infoMessage(vtrace: Map[String, Any]) = message("Information", vartrace = ScalaUtil.varTrace(vtrace))
 
   //</editor-fold>
 

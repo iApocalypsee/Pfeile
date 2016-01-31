@@ -137,6 +137,7 @@ public class Main {
         LogFacility.log("Beginning initialization process...", "Info", "initprocess");
 
         LangInitialization.apply();
+        loadLanguageFiles();
         LogFacility.log("LangInitialization done!", "Info", "initprocess");
 
         main = new Main();
@@ -166,9 +167,7 @@ public class Main {
         gameWindow.setVisible(true);
         gameWindow.createBufferStrategy();
 
-	    ArrowSelectionScreenPreSet.getInstance().onScreenLeft.registerJava(event -> {
-            main.disposeInitialResources();
-        });
+	    ArrowSelectionScreenPreSet.getInstance().onScreenLeft.registerJava(event -> main.disposeInitialResources());
 
         LogFacility.log("Pfeile is ready.", "Info", "initprocess");
         LogFacility.putSeparationLine();
@@ -204,7 +203,7 @@ public class Main {
      *
      * @param fullscreen The fullscreen flag.
      */
-    protected static void toggleFullscreen(boolean fullscreen) {
+    public static void toggleFullscreen(boolean fullscreen) {
         if (fullscreen) {
             if (graphicsDevice.getFullScreenWindow() == gameWindow) {
                 LogFacility.log("Already in fullscreen mode.", "Info");
@@ -218,6 +217,28 @@ public class Main {
             }
             graphicsDevice.setFullScreenWindow(null);
         }
+    }
+
+    /**
+     * Gets the translation for given ID and the currently selected language as the translation language.
+     * @param id The translation node ID to look for.
+     * @return A translation, or throws an exception if it is not found.
+     */
+    public static String getTranslation(String id) {
+        return dictionary.getTranslationNow(id, language);
+    }
+
+    /**
+     * Method for loading all language files into the tree dictionary.
+     */
+    private static void loadLanguageFiles() {
+        // Assume the LangTreeDict object has already been constructed
+
+        // Screen language data
+        dictionary.addJsonTranslationsStr("screen/LoadScreen.json");
+
+        // Item language data
+        dictionary.addJsonTranslationsStr("item/ItemsTree.json");
     }
 
     /**

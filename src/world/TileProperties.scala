@@ -1,5 +1,6 @@
 package world
 
+import general.property.StaticProperty
 import player.item.ore.OreDeposit
 
 /**
@@ -7,7 +8,7 @@ import player.item.ore.OreDeposit
   */
 class TileProperties {
 
-  var oreDeposit = Option.empty[OreDeposit]
+  val oreDeposit = new StaticProperty[OreDeposit]
   var placedObject = Option.empty[Placeable]
 
 }
