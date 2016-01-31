@@ -8,24 +8,6 @@ import java.awt.*;
 @Deprecated
 public class FunctionCollection {
 
-    /**
-     * Creates a rectangular polygon.
-     *
-     * @param x      The x position of the polygon.
-     * @param y      The y position of the polygon.
-     * @param width  The width of the rectangle.
-     * @param height Ditto.
-     * @return A polygon with a rectangular shape.
-     */
-    public static Polygon createRectPolygon(int x, int y, int width, int height) {
-        Polygon ret = new Polygon();
-        ret.addPoint(x, y);
-        ret.addPoint(x, y + height);
-        ret.addPoint(x + width, y + height);
-        ret.addPoint(x + width, y);
-        return ret;
-    }
-
     /** Creates a Polygon from every point: <p>
      * <code>Polygon poly = new Polygon();</code> <p>
      *     <code>for (Point point : points)   poly.addPoint(point.x, point.y);</code> <p>
@@ -103,57 +85,6 @@ public class FunctionCollection {
                 throw new IllegalArgumentException("The points are on the same position. The angle can't be calculated! \t" +
                         "(x|y): ( " + x1 + " | " + y1 + " ).");
         }
-    }
-
-    /** this method rounds <code>number</code> to equivalents of 25 */
-    public static long roundTo25 (long number) {
-
-        // Hier ist es immer 0; ohne Aufruf, hat lastDigits = Integer.parseInt(....) probleme
-        if (number <= 9 && number >= -9) {
-            return 0;
-        }
-
-        // Nur mit positiven Zahlen rechnen, im nachhinein dann das Vorzeichen wieder hinzuf�gen (gespeichert in isPositive)
-        boolean isPositive = number > 0;
-
-        number = Math.abs(number);
-
-        String stringNumber = String.valueOf(number);
-
-        // Letzten beiden Ziffern
-        int lastDigits = Integer.parseInt(Character.toString(stringNumber.charAt(stringNumber.length() - 1))) +
-                Integer.parseInt(Character.toString(stringNumber.charAt(stringNumber.length() - 2))) * 10;
-
-        // Letze beiden Stellen wegscheiden
-        number = number / 100;
-        number = number * 100;
-
-        // Hier werden die neuen Stellen wieder hinzugef�gt
-        if (lastDigits >= 0 && lastDigits <= 12) {
-            // number = number + 0;
-        } else if (lastDigits >= 13 && lastDigits <= 37)
-            number = number + 25;
-        else if (lastDigits >= 38 && lastDigits <= 62)
-            number = number + 50;
-        else if (lastDigits >= 63 && lastDigits <= 87)
-            number = number + 75;
-        else if (lastDigits >= 88 && lastDigits <= 99)
-            number = number + 100;
-
-        // Vorzeichen hinzuf�gen und zur�ckgeben
-        return isPositive ? number : -number;
-    }
-
-    public static double clamp(double value, double min, double max) {
-        if(value >= min && value <= max) return value;
-        else if(value < min) return min;
-        else return max;
-    }
-
-    public static float clamp(float value, float min, float max) {
-        if(value >= min && value <= max) return value;
-        else if(value < min) return min;
-        else return max;
     }
 
     public static int clamp(int value, int min, int max) {

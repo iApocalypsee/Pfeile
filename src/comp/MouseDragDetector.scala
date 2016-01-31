@@ -1,9 +1,8 @@
 package comp
 
 import general.Delegate
-import geom.Vector2
+import geom.{Vector, Point}
 
-import java.awt.Point
 import java.awt.event.{MouseAdapter, MouseEvent, MouseMotionAdapter}
 
 /** Components wanting to keep track of being "actively dragged" by the user
@@ -17,7 +16,7 @@ trait MouseDragDetector extends Component {
     * has pressed on the component. <p>
     * Do not try to confuse this with the mouseDragged method.
     */
-  val onMouseDragDetected = Delegate.create[Vector2]
+  val onMouseDragDetected = Delegate.create[Vector]
 
   /** The previous mouse position that has been captured by the detector. */
   @volatile private var prevMousePosition: Point = null
@@ -25,7 +24,7 @@ trait MouseDragDetector extends Component {
   // Code that is necessary to update prevMousePosition.
   addMouseListener(new MouseAdapter {
     override def mousePressed(e: MouseEvent): Unit = {
-      prevMousePosition = e.getPoint
+      prevMousePosition = new Point(e.getPoint)
     }
 
     override def mouseReleased(e: MouseEvent): Unit = {
@@ -37,11 +36,10 @@ trait MouseDragDetector extends Component {
   addMouseMotionListener(new MouseMotionAdapter {
     override def mouseDragged(e: MouseEvent): Unit = {
       if(prevMousePosition ne null) {
-        val vecPrev = new Vector2(prevMousePosition)
-        val vecNow = new Vector2(e.getPoint)
-        val diff = vecNow - vecPrev
+        val now = new Point(e.getPoint)
+        val diff = now - prevMousePosition
         onMouseDragDetected(diff)
-        prevMousePosition = e.getPoint
+        prevMousePosition = new Point(e.getPoint)
       }
     }
   })

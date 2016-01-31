@@ -1,6 +1,6 @@
 package general;
 
-import geom.Vector2;
+import geom.Point;
 import gui.screen.*;
 
 import javax.imageio.ImageIO;
@@ -193,8 +193,8 @@ public class GameWindow extends JFrame {
 		return grid;
 	}
 
-	public Vector2 getCenterPosition() {
-		return new Vector2(getWidth() / 2, getHeight() / 2);
+	public Point getCenterPosition() {
+		return new Point(getWidth() / 2, getHeight() / 2);
 	}
 
 	/**

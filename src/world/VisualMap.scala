@@ -3,7 +3,7 @@ package world
 import java.awt.Graphics2D
 
 import general.{Delegate, LogFacility, Main, PfeileContext}
-import geom.Vector2
+import geom.{Vector, Point}
 import gui.Drawable
 import newent.{CommandTeam, VisionStatus}
 import player.item.Loot
@@ -120,10 +120,10 @@ class VisualMap(context: PfeileContext) extends Drawable {
       case isometric: IsometricPolygonTileComponent =>
 
         val center = Main.getGameWindow.getCenterPosition
-        val tileNormalPosition = Vector2(isometric.normalX, isometric.normalY)
-        val centeredUpperLeft = center - Vector2(isometric.getWidth / 2, isometric.getHeight / 2)
+        val tileNormalPosition = new Vector(isometric.normalX, isometric.normalY)
+        val centeredUpperLeft = center - new Point(isometric.getWidth / 2, isometric.getHeight / 2)
 
-        val relevantDelta = (centeredUpperLeft - tileNormalPosition).toPoint
+        val relevantDelta = (centeredUpperLeft - tileNormalPosition)
         setMapPosition(relevantDelta.getX.asInstanceOf[Int], relevantDelta.getY.asInstanceOf[Int])
 
       // The visual map can only handle isometric tiles for now.

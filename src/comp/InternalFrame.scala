@@ -187,7 +187,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
 
     onMouseDragDetected += { vec =>
       val frame = InternalFrame.this
-      frame.move(vec.x.asInstanceOf[Int], vec.y.asInstanceOf[Int])
+      frame.move(vec.getX.asInstanceOf[Int], vec.getY.asInstanceOf[Int])
     }
 
     override def draw(g: Graphics2D): Unit = {
