@@ -13,7 +13,7 @@ object GuiMovementPrediction {
   /**
     * If a path is displayed right now, the path is going to be reflected in this field.
     */
-  private var m_currentPath = Option.empty[Seq[TileLike]]
+  private var m_currentPath = Option.empty[Seq[Tile]]
 
   /**
     * Implementation logic of the path drawing.
@@ -21,7 +21,7 @@ object GuiMovementPrediction {
     * @param p The path to draw.
     * @param t The terrain to draw for.
     */
-  private def display(p: Path, t: TerrainLike): Unit = synchronized {
+  private def display(p: Path, t: Terrain): Unit = synchronized {
     val optionalPath = Option(p)
 
     m_currentPath = optionalPath.map { primitivePath =>
@@ -63,7 +63,7 @@ object GuiMovementPrediction {
     * @param t The terrain on which the method should operate on. Can be `null` if and
     *          only if the given path is `null`.
     */
-  def replace(@Nullable p: Path, t: TerrainLike): Unit = synchronized {
+  def replace(@Nullable p: Path, t: Terrain): Unit = synchronized {
     erasePath()
     display(p, t)
   }

@@ -41,7 +41,7 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Art
     }
   }
 
-  getTransformation.onTranslated += positionalsUpdate
+  getTransformation.onTranslated += positionalsUpdate _
   recalculateStyle()
 
   private def recalculateStyle(): Unit = recalculateStyleWithArgs(gridX, gridY)

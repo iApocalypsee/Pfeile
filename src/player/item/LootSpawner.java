@@ -12,7 +12,7 @@ import player.item.potion.PotionOfHealing;
 import player.item.potion.PotionOfMovement;
 import player.weapon.arrow.ArrowHelper;
 import world.GrassTile;
-import world.TerrainLike;
+import world.Terrain;
 
 import java.awt.*;
 import java.util.Random;
@@ -191,7 +191,7 @@ public class LootSpawner {
     private Point spawnLoot (int radiusTroops, int radiusPlayers) {
         Point spawnPoint = new Point(-1, -1);
 
-        TerrainLike terrain = context.getWorld().terrain();
+        Terrain terrain = context.getWorld().terrain();
 
         int count = 0;
         int maxCount = PfeileContext.worldSizeX().get() * PfeileContext.worldSizeY().get();

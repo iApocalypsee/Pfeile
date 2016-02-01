@@ -7,18 +7,19 @@ import general.{Delegate, Main, PfeileContext, Property}
 import gui.LifeUI
 import newent.pathfinding.{AStarPathfinder, Pathfinder}
 import player.Life
-import world.WorldLike
+import world.World
 
 /**
   * The KI is not implemented as a intelligent KI. It is just a basic construct, that is similar to the Player class.
   */
-class Bot(world: WorldLike, spawnPoint: Point, name: String)
+class Bot(world: World, spawnPoint: Point, name: String)
     extends Entity(world, spawnPoint.x, spawnPoint.y, name) with CombatUnit with IntelligentArrowSelectionBot with MoneyEarner {
 
   /**
     * The component that the representable object uses first. Method is called only once.
     *
     * The start component must not be null at first, else it will throw a [[java.lang.IllegalArgumentException]].
+ *
     * @return A component object which the representable object uses first.
     */
   override protected def startComponent = new Component {

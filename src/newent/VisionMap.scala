@@ -4,7 +4,7 @@ import comp.Circle
 import general.Delegate
 import newent.VisionMap.{VisionEntry, VisionPromise}
 import player.BoardPositionable
-import world.TileLike
+import world.Tile
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -96,7 +96,7 @@ class VisionMap(val entity: VisionEntity) {
 object VisionMap {
 
   /** Internal class for handling vision of tiles. */
-  private class VisionEntry(val tile: TileLike) {
+  private class VisionEntry(val tile: Tile) {
 
     /** The current vision status. */
     var visionStatus = VisionStatus.Hidden

@@ -86,6 +86,7 @@ public class Main {
     public static Main getMain() {
         return main;
     }
+
     // KONSTRUKTOR ###############################################
     /**
      * Der Konstruktor. Hier stehen keine Hauptaufrufe. Die Hauptaufrufe werden
@@ -98,10 +99,13 @@ public class Main {
     // ################### IMPORTANT #############################
     // ###########################################################
 
+    public static boolean isMute = false;
+
     /**
      * List of possible program arguments to Pfeile:
      *  "-nofullscreen" => Do not enter fullscreen upon program startup.
      *  "-dbgwindows"   => Enables the debug window object.
+     *  "-nosound"      => Disables sound (bug: game-over-sound still played).
      */
     public static void main(String[] arguments) {
 
@@ -109,8 +113,13 @@ public class Main {
         // This line makes it possible for users to specify on the command line that he does
         // not want to enter fullscreen mode.
         boolean activateFullscreen = !Arrays.stream(arguments).anyMatch(arg -> arg.equals("-nofullscreen"));
-
+        // For debug purposes only.
         boolean activateDbgWindows = Arrays.stream(arguments).anyMatch(arg -> arg.equals("-dbgwindows"));
+        // For users who do not want to hear sound.
+        //boolean mute = Arrays.stream(arguments).anyMatch(arg -> arg.equals("-nosound"));
+        // This is not good. SoundPool depends on isMute for being completed.
+        isMute = Arrays.stream(arguments).anyMatch(arg -> arg.equals("-nosound"));
+
         debugWindows.setWindowEnabled(activateDbgWindows);
 
         programStartTime = System.currentTimeMillis();
@@ -128,12 +137,8 @@ public class Main {
         LogFacility.log("Beginning initialization process...", "Info", "initprocess");
 
         LangInitialization.apply();
+        loadLanguageFiles();
         LogFacility.log("LangInitialization done!", "Info", "initprocess");
-
-        //dictionary.addJsonTranslationsStr("item/Arrows.json");
-        //dictionary.addJsonTranslationsStr("item/Items.json");
-        //dictionary.addJsonTranslations(LangDict.testTreeJson());
-        //dictionary.addJsonTranslations(LangDict.testTreeJson2());
 
         main = new Main();
         user = new User(SystemProperties.getComputerName());
@@ -162,9 +167,7 @@ public class Main {
         gameWindow.setVisible(true);
         gameWindow.createBufferStrategy();
 
-	    ArrowSelectionScreenPreSet.getInstance().onScreenLeft.registerJava(event -> {
-            main.disposeInitialResources();
-        });
+	    ArrowSelectionScreenPreSet.getInstance().onScreenLeft.registerJava(event -> main.disposeInitialResources());
 
         LogFacility.log("Pfeile is ready.", "Info", "initprocess");
         LogFacility.putSeparationLine();
@@ -200,7 +203,7 @@ public class Main {
      *
      * @param fullscreen The fullscreen flag.
      */
-    protected static void toggleFullscreen(boolean fullscreen) {
+    public static void toggleFullscreen(boolean fullscreen) {
         if (fullscreen) {
             if (graphicsDevice.getFullScreenWindow() == gameWindow) {
                 LogFacility.log("Already in fullscreen mode.", "Info");
@@ -214,6 +217,28 @@ public class Main {
             }
             graphicsDevice.setFullScreenWindow(null);
         }
+    }
+
+    /**
+     * Gets the translation for given ID and the currently selected language as the translation language.
+     * @param id The translation node ID to look for.
+     * @return A translation, or throws an exception if it is not found.
+     */
+    public static String getTranslation(String id) {
+        return dictionary.getTranslationNow(id, language);
+    }
+
+    /**
+     * Method for loading all language files into the tree dictionary.
+     */
+    private static void loadLanguageFiles() {
+        // Assume the LangTreeDict object has already been constructed
+
+        // Screen language data
+        dictionary.addJsonTranslationsStr("screen/LoadScreen.json");
+
+        // Item language data
+        dictionary.addJsonTranslationsStr("item/ItemsTree.json");
     }
 
     /**
@@ -236,6 +261,11 @@ public class Main {
         return Future$.MODULE$.apply(func(() -> toCompatibleImage(image)), getGlobalExecutionContext());
     }
 
+    /**
+     * Returns the global execution context, mainly for Scala's Future class to be happy about its implicit parameter
+     * which Java cannot fill in because... it's Java.
+     * @return The Scala Future's global execution context.
+     */
     public static ExecutionContext getGlobalExecutionContext() {
         return ExecutionContext.Implicits$.MODULE$.global();
     }

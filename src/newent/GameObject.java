@@ -8,8 +8,8 @@ import general.Delegate;
 import gui.screen.GameScreen;
 import newent.event.LocationChangedEvent;
 import player.BoardPositionable;
-import world.TileLike;
-import world.WorldLike;
+import world.Tile;
+import world.World;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -22,7 +22,7 @@ import java.util.Arrays;
 public abstract class GameObject extends AbstractDisplayRepresentable implements BoardPositionable {
 
     private final boolean isFullOccupy;
-    private final WorldLike world;
+    private final World world;
     private OccupyShape occupiedTiles;
     private int deltaX;
     private int deltaY;
@@ -38,7 +38,7 @@ public abstract class GameObject extends AbstractDisplayRepresentable implements
 
     // <editor-fold desc="Constructors">
 
-    private GameObject(OccupyShape shape, WorldLike world, int initX, int initY, boolean isFullOccupy) {
+    private GameObject(OccupyShape shape, World world, int initX, int initY, boolean isFullOccupy) {
         super();
         this.occupiedTiles = shape;
         this.world = world;
@@ -56,7 +56,7 @@ public abstract class GameObject extends AbstractDisplayRepresentable implements
      * @param y Ditto.
      * @param world The world to place the object in.
      */
-    public GameObject(int x, int y, WorldLike world) {
+    public GameObject(int x, int y, World world) {
         this(transformPointList(new int[]{0}, new int[]{0}), world, x, y, true);
     }
 
@@ -71,22 +71,22 @@ public abstract class GameObject extends AbstractDisplayRepresentable implements
      * @param y2 The lower right border y position.
      * @param world The world to place this game object in.
      */
-    public GameObject(int x1, int y1, int x2, int y2, WorldLike world) {
+    public GameObject(int x1, int y1, int x2, int y2, World world) {
         this(x1, y1, x2, y2, world, true);
     }
 
-    public GameObject(int x1, int y1, int x2, int y2, WorldLike world, boolean isFullOccupy) {
+    public GameObject(int x1, int y1, int x2, int y2, World world, boolean isFullOccupy) {
         this(transformPointList(
                 new int[]{0, world.terrain().width() - x2, world.terrain().width() - x2, 0},
                 new int[]{0, 0, world.terrain().height() - y2, world.terrain().height() - y2}),
                 world, x1, y1, isFullOccupy);
     }
 
-    public GameObject(int[] boundaryPointsX, int[] boundaryPointsY, int initX, int initY, WorldLike world) {
+    public GameObject(int[] boundaryPointsX, int[] boundaryPointsY, int initX, int initY, World world) {
         this(boundaryPointsX, boundaryPointsY, initX, initY, world, true);
     }
 
-    public GameObject(int[] boundaryPointsX, int[] boundaryPointsY, int initX, int initY, WorldLike world, boolean isFullOccupy) {
+    public GameObject(int[] boundaryPointsX, int[] boundaryPointsY, int initX, int initY, World world, boolean isFullOccupy) {
         this(transformPointList(boundaryPointsX, boundaryPointsY), world, initX, initY, isFullOccupy);
     }
 
@@ -120,19 +120,19 @@ public abstract class GameObject extends AbstractDisplayRepresentable implements
         return getDeltaY();
     }
 
-    public WorldLike getWorld() {
+    public World getWorld() {
         return world;
     }
 
-    public WorldLike world() {
+    public World world() {
         return getWorld();
     }
 
-    public TileLike getTileLocation() {
+    public Tile getTileLocation() {
         return world.terrain().getTileAt(deltaX, deltaY);
     }
 
-    public TileLike tileLocation() {
+    public Tile tileLocation() {
         return getTileLocation();
     }
 
@@ -234,7 +234,7 @@ public abstract class GameObject extends AbstractDisplayRepresentable implements
         return new OccupyShape(polygon, xpoints, ypoints);
     }
 
-    public static GameObject createDummyObject(int x, int y, WorldLike world) {
+    public static GameObject createDummyObject(int x, int y, World world) {
         return new GameObject(x, y, world) {
             @Override
             public Component startComponent() {

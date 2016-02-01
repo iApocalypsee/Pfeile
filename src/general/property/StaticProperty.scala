@@ -2,11 +2,24 @@ package general.property
 
 import java.lang
 
-class StaticProperty[A] extends PropertyBase[A] with StaticAccessors[A] {
+class StaticProperty[A](initGetTransform: A => A, initSetTransform: A => A) extends PropertyBase[A] with StaticAccessors[A] {
+
+  private val getTransform = Option(initGetTransform)
+  private val setTransform = Option(initSetTransform)
+
+  def this() = {
+    this(null, null)
+  }
+
   def this(x: A) = {
     this()
     this set x
   }
+
+  override def staticSetter(x: A) = if(setTransform.isDefined) super.staticSetter(setTransform.get.apply(x)) else super.staticSetter(x)
+
+  override def staticGetter(x: A) = if(getTransform.isDefined) super.staticGetter(getTransform.get.apply(x)) else super.staticGetter(x)
+
 }
 
 object StaticProperty {

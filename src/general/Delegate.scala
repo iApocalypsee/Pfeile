@@ -26,9 +26,9 @@ object Delegate {
     private[Delegate] def toScalaFunction(procFun0: ProcFun0) = () => procFun0.call()
   }
 
-  @inline def create[In] = new Delegate[In] with ClearableDelegate
+  def create[In] = new Delegate[In] with ClearableDelegate
 
-  @inline def createZeroArity = new Function0Delegate with ClearableDelegate
+  def createZeroArity = new Function0Delegate with ClearableDelegate
 
   // Inner classes.
   // I made them inner classes so that these classes don't float
@@ -37,7 +37,6 @@ object Delegate {
   /** The base trait of all delegate types. */
   sealed trait DelegateLike {
 
-    /** The type of function that the delegate expects. */
     type FunType
 
     protected var _callbacks = List[Handle]()
@@ -45,13 +44,38 @@ object Delegate {
     /**
       * Registers a callback function to the delegate.
       *
+      * The new name for the callback is determined by its hash code.
+      *
       * @param f The function to register.
       */
-    def +=(f: FunType): Handle = synchronized {
-      val handle = new Handle(f)
+    def +=(f: FunType): Handle = +=(f.hashCode().toString)(f)
+
+    /**
+      * Registers a key-function pair as a callback.
+      *
+      * Many side-effects combined together do not make up very well for debugging, since this is
+      * an implementation of the observer pattern. The debugging programmer cannot oversee registered callbacks
+      * efficiently without attaching some kind of unique name to them.
+      *
+      * So the first entry in the tuple is the "key" to the callback (a.k.a. its name), and the second entry
+      * is the callback itself.
+      *
+      * When adding a callback to the delegate with a name that already exists in the mapping, an exception is thrown.
+      *
+      * `+=` as an infix operator with this parameter list style cannot be used, use explicit `register` method instead.
+      *
+      * @param k The name the callback is assigned.
+      * @param f The actual callback.
+      * @return A handle to that delegate for later disposal. May be ignored.
+      */
+    def +=(k: String)(f: FunType): Handle = synchronized {
+      val handle = new Handle(k, f)
+      assert(!(_callbacks exists (handle => handle.name == k)), ScalaUtil.errorMessage(s"Ambiguous callback (name=$k) in delegate $this"))
       _callbacks = _callbacks ++ List(handle)
       handle
     }
+
+    def +=(df: (String, FunType)): Handle = +=(df._1)(df._2)
 
     /**
       * Registers a callback function to the delegate. <br>
@@ -61,7 +85,15 @@ object Delegate {
       */
     final def register(f: FunType): Handle = +=(f)
 
-    def registerOnce(f: FunType): Handle
+    final def register(df: (String, FunType)): Handle = +=(df._1)(df._2)
+
+    final def register(key: String)(f: FunType): Handle = +=(key)(f)
+
+    def registerOnce(f: FunType): Handle = registerOnce(f.hashCode().toString -> f)
+
+    def registerOnce(df: (String, FunType)): Handle
+
+    def registerOnce(k: String)(f: FunType): Handle = registerOnce(k -> f)
 
     /**
       * Unregisters a callback function from the delegate.
@@ -69,7 +101,7 @@ object Delegate {
       * @param f The function to unregister.
       */
     final def -=(f: FunType): Unit = synchronized {
-      val search = _callbacks.find { _.function == f }
+      val search = _callbacks find { _.function == f }
       search match {
         case Some(handle) =>
           handle.dispose()
@@ -79,7 +111,7 @@ object Delegate {
     }
 
     def -=(h: Handle): Unit = {
-      val isHandled = _callbacks contains h
+      val isHandled = _callbacks.contains(h)
       if (isHandled) {
         h.dispose()
       }
@@ -96,16 +128,15 @@ object Delegate {
     final def unlog(h: Handle): Unit = -=(h)
 
     /** Returns the callbacks of the delegate as an immutable list. */
-    def callbacks = _callbacks.collect {
-      case e => e.function
-    }
+    def callbacks = _callbacks.map(handle => handle.function)
 
     /**
       * A handle which maps to the function.
       * '''Do not construct instances of this class on your own, it is considered internal to the delegate!'''
+      *
       * @param function The function to which the handle maps to.
       */
-    class Handle(val function: FunType) {
+    class Handle(val name: String, val function: FunType) {
 
       private var _disposed = false
 
@@ -120,18 +151,21 @@ object Delegate {
         */
       def dispose(): Unit = {
         if (!isValid) {
-          _callbacks = _callbacks.filterNot(_ == this)
+          _callbacks = _callbacks filterNot (_ == this)
           _disposed = true
         }
       }
     }
 
+    /**
+      * Generates a string with all callback names.
+      */
+    override def toString = s"Delegate(${_callbacks map (handle => handle.name) map (str => s"\'$str\'")})"
+
   }
 
   trait ClearableDelegate extends DelegateLike {
-
     def clear(): Unit = _callbacks = List[Handle]()
-
   }
 
   trait RecursiveCallCheck {
@@ -176,7 +210,9 @@ object Delegate {
       }
     }
 
-    def registerJava(jf: Consumer[In]) = this += (x => jf.accept(x))
+    def registerJava(jf: Consumer[In]) = this.register(x => jf.accept(x))
+
+    def registerJava(key: String, jf: Consumer[In]) = this.register(key, x => jf.accept(x))
 
     /** Registers a routine for this delegate with parameters.
       *
@@ -187,7 +223,11 @@ object Delegate {
       */
     def routine(f: => Unit): Handle = this += { _ => f }
 
-    override def registerOnce(f: FunType): Handle = synchronized {
+    def routine(key: String)(f: => Unit): Handle = this.register(key, _ => f)
+
+    override def registerOnce(df: (String, In => Unit)): Handle = synchronized {
+
+      val (k, f) = df
 
       var handle: Handle = null
 
@@ -196,12 +236,13 @@ object Delegate {
         forwardParam
       }
 
-      handle = new Handle(clearLogic)
+      handle = new Handle(k, clearLogic)
       _callbacks = _callbacks ++ List(handle)
       handle
     }
 
     def registerOnceJava(jf: Consumer[In]): Unit = registerOnce(x => jf.accept(x))
+    def registerOnceJava(key: String, jf: Consumer[In]): Unit = registerOnce(key, x => jf.accept(x))
 
   }
 
@@ -222,9 +263,10 @@ object Delegate {
     }
 
     def registerJava(jf: ProcFun0): Unit = this += ProcFun0.toScalaFunction(jf)
+    def registerJava(key: String, jf: ProcFun0): Unit = this.register(key, ProcFun0.toScalaFunction(jf))
 
-    override def registerOnce(f: FunType): Handle = synchronized {
-
+    override def registerOnce(df: (String, () => Unit)): Handle = synchronized {
+      val (k, f) = df
       var handle: Handle = null
 
       val clearLogic = { () =>
@@ -232,19 +274,20 @@ object Delegate {
         handle.dispose()
       }
 
-      handle = new Handle(clearLogic)
+      handle = new Handle(k, clearLogic)
       _callbacks = _callbacks ++ List(handle)
       handle
     }
 
     def registerOnceJava(jf: ProcFun0): Unit = registerOnce(ProcFun0.toScalaFunction(jf))
+
   }
 
   /**
-    * A standard delegate that accepts an input type and an output type. <p>
+    * A standard delegate that accepts an input type and an output type.
     *
     * Since [[scala.PartialFunction]] is a subclass of (A) => B, I don't need to write a seperate
-    * "PartialFunctionDelegate" class. <p><p>
+    * "PartialFunctionDelegate" class.
     *
     * For Java code, use:
     * {{{
@@ -290,6 +333,7 @@ object Delegate {
     override def +=(f: FunType): Handle = except
 
     override def -=(h: Handle): Unit = except
+
   }
 
   /**

@@ -2,8 +2,8 @@ package player.item.ore
 
 import java.awt.Point
 
-import world.TerrainLike
+import world.Terrain
 
-case class OreSpawnAllocatedEvent(spawnedIn: TerrainLike, point: Point) {
+case class OreSpawnAllocatedEvent(spawnedIn: Terrain, point: Point) {
 
 }

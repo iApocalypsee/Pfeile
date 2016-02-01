@@ -4,7 +4,7 @@ import java.awt.Point
 
 import general.LogFacility
 import player.item.ore.{OreRegistry, OreSpawnAllocatedEvent}
-import world.TerrainLike
+import world.Terrain
 
 import scala.beans.BeanProperty
 
@@ -14,7 +14,7 @@ class OreBrush extends BrushLike {
 
   private var wasAppliedOrePreviouslyNull = false
 
-  override protected def applySideEffects(t: TerrainLike, x: Int, y: Int, centerX: Int, centerY: Int): Unit = {
+  override protected def applySideEffects(t: Terrain, x: Int, y: Int, centerX: Int, centerY: Int): Unit = {
     if(appliedOreNullRoutine()) generateOrePocket(t, x, y)
   }
 
@@ -37,7 +37,7 @@ class OreBrush extends BrushLike {
   /**
     * Method for generating the actual ore pocket for the tile.
     */
-  private def generateOrePocket(t: TerrainLike, x: Int, y: Int) = {
+  private def generateOrePocket(t: Terrain, x: Int, y: Int) = {
     appliedOre.spawner.onSpawnAllocated(new OreSpawnAllocatedEvent(t, new Point(x, y)))
   }
 }

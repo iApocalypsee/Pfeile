@@ -30,7 +30,7 @@ case class OreSpawn(spawnProbability: Double, brushStrokeLength: Double, brushSt
     val depth = FunctionCollection.clamp(Random.nextInt(depthMax), depthMin, depthMax)
 
     for (tile <- e.spawnedIn.tileAtOption(spawnX, spawnY)) {
-      tile.tileProperties.oreDeposit = Option(new OreDeposit(() => oreSpawning.newInstance(), this, oreAmount, depth, tile))
+      tile.tileProperties.oreDeposit := new OreDeposit(() => oreSpawning.newInstance(), this, oreAmount, depth, tile)
     }
   }
 

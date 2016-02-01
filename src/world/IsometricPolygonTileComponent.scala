@@ -7,7 +7,7 @@ import javax.swing.SwingUtilities
 
 import comp.{Component, RotationChange}
 import general.Main
-import general.property.{PropertyBase, StaticProperty}
+import general.property.{DynamicProperty, PropertyBase, StaticProperty}
 import gui.AdjustableDrawing
 import gui.image.TextureAtlas.AtlasPoint
 import gui.screen.GameScreen
@@ -23,13 +23,13 @@ import scala.concurrent.Future
  * Note that this component is not able to rotate! If you attempt a rotation, the component
  * will throw a UnsupportedOperationException, stating that rotation is not supported.
  */
-class IsometricPolygonTileComponent(val isoTile: IsometricPolygonTile) extends Component with AdjustableDrawing with
-  TileComponentLike {
+class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with AdjustableDrawing with
+                                                               TileComponentLike {
 
-  import world.IsometricPolygonTile._
+  import world.Tile._
 
   // Just make sure that the isometric tile is not being rotated.
-  onTransformed += {
+  onTransformed.register("rotation check") {
     case rotation: RotationChange => throw new UnsupportedOperationException("Rotation not supported on isometric tiles")
     case _ =>
   }
@@ -61,12 +61,9 @@ class IsometricPolygonTileComponent(val isoTile: IsometricPolygonTile) extends C
    *
    * On setting this property, the component is trying to calculate the new corner points of the isometric shape.
    */
-  // Lazy because I am using this property currently somewhere before in the code...
-  val tileShape = new StaticProperty(IsometricPolygonTile.TileShape) {
-    override def staticSetter(x: IsometricPolygonTile.IsometricTileRelativeShape) = {
-      cornerRecalculation(x, getX, getY, getWidth, getHeight)
-      x
-    }
+  val tileShape = new DynamicProperty(Tile.TileShape) {
+    // DynSet called every time the property assumes a new value
+    dynSet = { x => cornerRecalculation(x, getX, getY, getWidth, getHeight); x }
   }
 
   private def cornerRecalculation(relativeShape: IsometricTileRelativeShape, x: Int, y: Int, width: Int, height: Int): Unit = {
@@ -110,24 +107,13 @@ class IsometricPolygonTileComponent(val isoTile: IsometricPolygonTile) extends C
 
   //</editor-fold>
 
-  //<editor-fold desc="Gui map moving speed-up?">
-
-  /** Indicates whether this tile is on its actual position.
-    *
-    * This flag is intended to speed up recalculation of the tiles' positional data. It is
-    * set to true whenever the `VisualMap` determines that this component is on the position
-    * the `VisualMap` actually determined for it.
-    */
-  private[world] var isOnActualPosition = true
-
-  //</editor-fold>
-
-  //<editor-fold desc="Texturing (not used yet)">
+  //<editor-fold desc="Texturing">
 
   lazy val texture = isoTile.textureAtlas.getTexture(isoTile.getGridX, isoTile.getGridY, getBounds, atlasImageCutPosition).get
 
   /**
     * For texture atlas: Determines where the upper left corner of the image cut shall be.
+ *
     * @param atlasPoint The atlas point for which the cut should apply.
     * @return The cut point on the atlas image.
     */
@@ -150,7 +136,7 @@ class IsometricPolygonTileComponent(val isoTile: IsometricPolygonTile) extends C
 
   //<editor-fold desc="Visual path prediction">
 
-  private[world] var predictedPath = Option.empty[Seq[TileLike]]
+  private[world] var predictedPath = Option.empty[Seq[Tile]]
 
   private def isTargetForPathPrediction = predictedPath.isDefined
 
@@ -186,6 +172,7 @@ class IsometricPolygonTileComponent(val isoTile: IsometricPolygonTile) extends C
     /**
      * Actual prediction logic. This code is not written inside the future or match statement
      * on purpose.
+ *
      * @param x The entity to predict the path to this tile for.
      * @return Ditto.
      */
@@ -196,7 +183,7 @@ class IsometricPolygonTileComponent(val isoTile: IsometricPolygonTile) extends C
     val prediction = Future {
       entity match {
         case entity: MovableEntity => predictWith(entity)
-        case _ => throw new RuntimeException("Current entity selection is no [[MovableEntity]]")
+        case _ => throw new RuntimeException("Current entity selection is no MovableEntity")
       }
     }
 
@@ -233,7 +220,17 @@ class IsometricPolygonTileComponent(val isoTile: IsometricPolygonTile) extends C
   })
 
   // When the mouse moves over the tile, it should be marked with a grayish-style color.
-  handle({ g => g.setColor(mouseFocusColor.get); g.fill(getBounds) }, isMouseFocused)
+  handle(drawMouseFocused, isMouseFocused)
+
+  /**
+    * Sub-draw method for drawing something when the mouse hovers over the tile.
+ *
+    * @param g Self-evident.
+    */
+  private def drawMouseFocused(g: Graphics2D): Unit = {
+    g.setColor(mouseFocusColor.get)
+    g.fill(getBounds)
+  }
 
   //</editor-fold>
 
@@ -241,15 +238,15 @@ class IsometricPolygonTileComponent(val isoTile: IsometricPolygonTile) extends C
 
   private def drawBorders(g: Graphics2D) = {
     def drawRoutine(colorProperty: PropertyBase[Color], begin: Point, end: Point) = colorProperty ifdef { color =>
-      g.setStroke(isoTile.borderStroke.get)
+      g.setStroke(isoTile.border.stroke.get)
       g.setColor(color)
       g.drawLine(begin.x, begin.y, end.x, end.y)
     }
 
-    drawRoutine(isoTile.northWestBorderColor, cornerPoints.west, cornerPoints.north)
-    drawRoutine(isoTile.northEastBorderColor, cornerPoints.north, cornerPoints.east)
-    drawRoutine(isoTile.southWestBorderColor, cornerPoints.west, cornerPoints.south)
-    drawRoutine(isoTile.southEastBorderColor, cornerPoints.south, cornerPoints.east)
+    drawRoutine(isoTile.border.northWest, cornerPoints.west, cornerPoints.north)
+    drawRoutine(isoTile.border.northEast, cornerPoints.north, cornerPoints.east)
+    drawRoutine(isoTile.border.southWest, cornerPoints.west, cornerPoints.south)
+    drawRoutine(isoTile.border.southEast, cornerPoints.south, cornerPoints.east)
   }
 
   //</editor-fold>
@@ -257,16 +254,37 @@ class IsometricPolygonTileComponent(val isoTile: IsometricPolygonTile) extends C
   //<editor-fold desc="Debug capabilities">
 
   /**
-    * If true, the coordinates of this tile are going to be drawn on top of everything.
+    * Properties related to drawing coordinates on top of the tiles.
     */
-  var isCoordinateDrawn = false
+  private val coordinateDraw = new {
 
-  private val debugCoordinateFont = new Font(Font.MONOSPACED, Font.PLAIN, 10)
+    /**
+      * Flag for drawing the coordinates on top of the tiles.
+      * If true, the coordinates will be drawn.
+      */
+    var isCoordinateDrawn = true
 
-  private def drawCoordinates(g: Graphics2D) = if(isCoordinateDrawn) {
-    g.setFont(debugCoordinateFont)
+    /**
+      * The font used for drawing the debug coordinates of the visible fields.
+      */
+    lazy val debugCoordinateFont = new Font(Font.MONOSPACED, Font.PLAIN, 10)
+
+    /**
+      * The text drawn on top of the tile when drawing coordinates.
+      */
+    def text = s"(${isoTile.getGridX}|${isoTile.getGridY})"
+
+    /**
+      * The text bounds of the tile coordinate string, calculated with the `debugCoordinateFont`.
+      */
+    lazy val textBounds = Component.getTextBounds(text, debugCoordinateFont)
+
+  }
+
+  private def drawCoordinates(g: Graphics2D) = if(coordinateDraw.isCoordinateDrawn) {
+    g.setFont(coordinateDraw.debugCoordinateFont)
     g.setColor(Color.white)
-    g.drawString(s"(${isoTile.getGridX}|${isoTile.getGridY})", getX, getY)
+    g.drawString(coordinateDraw.text, getX + getWidth / 2 - coordinateDraw.textBounds.width / 2, getY + getHeight / 2 + coordinateDraw.textBounds.height / 2)
   }
 
   //</editor-fold>
@@ -274,6 +292,7 @@ class IsometricPolygonTileComponent(val isoTile: IsometricPolygonTile) extends C
   /**
     * Calculates the normal x position for this tile, considering that the center of the (0|0) tile
     * is at screen coordinates (0|0).
+ *
     * @return The x position of the upper left corner of this tile while considering that the map has not been moved
     *         at all.
     */
@@ -282,6 +301,7 @@ class IsometricPolygonTileComponent(val isoTile: IsometricPolygonTile) extends C
   /**
     * Calculates the normal y position for this tile, considering that the center of the (0|0) tile
     * is at screen coordinates (0|0).
+ *
     * @return The y position of the upper left corner of this tile while considering that the map has not been moved
     *         at all.
     */
@@ -289,6 +309,7 @@ class IsometricPolygonTileComponent(val isoTile: IsometricPolygonTile) extends C
 
   /**
     * Sets the position of this tile component to the normal position, to which the given translation is added.
+ *
     * @param leftCornerX How much x units to move this tile additionally.
     * @param leftCornerY How much y units to move this tile additionally.
     */
@@ -300,9 +321,8 @@ class IsometricPolygonTileComponent(val isoTile: IsometricPolygonTile) extends C
     g.setColor(Color.black)
     g.draw(getBounds)
     g.setColor(isoTile.color)
-    //g.fill(getBounds)
     g.drawImage(texture, getX, getY, getWidth, getHeight, null)
-    drawAll(g)
+    //drawAll(g)
     drawBorders(g)
     drawCoordinates(g)
   }

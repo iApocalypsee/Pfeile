@@ -9,7 +9,7 @@ import newent.Entity;
 import newent.InventoryEntity;
 import player.BoardPositionable;
 import player.item.coin.Coin;
-import world.TileLike;
+import world.Tile;
 
 import javax.swing.*;
 import java.awt.*;
@@ -168,12 +168,12 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
     /** Returns the tile on which the Loot is placed.
      *
      * This is what this method is doing: <p>
-     * {@code return (TileLike) Main.getContext().getWorld().terrain().tileAt(gridX, gridY);}
+     * {@code return (Tile) Main.getContext().getWorld().terrain().tileAt(gridX, gridY);}
      *
      * @return the Tile on with the Loot is placed.
      */
-    public TileLike getTile () {
-        return (TileLike) Main.getContext().getWorld().terrain().tileAt(gridX, gridY);
+    public Tile getTile () {
+        return (Tile) Main.getContext().getWorld().terrain().tileAt(gridX, gridY);
     }
 
     /** the outward appearance of a Loot. Use the LootUI to draw an Loot or to change its Component. */

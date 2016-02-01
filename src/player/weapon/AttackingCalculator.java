@@ -8,7 +8,7 @@ import geom.functions.FunctionCollectionEasing;
 import newent.AttackProgress;
 import player.weapon.arrow.AbstractArrow;
 import scala.Tuple2;
-import world.TileLike;
+import world.Tile;
 
 import java.awt.*;
 import java.awt.geom.Path2D;
@@ -158,10 +158,10 @@ public class AttackingCalculator {
             Rectangle2D boundsArrow = attackingArrow.getComponent().getPreciseRectangle();
 
             // refreshing the tile-position
-            TileLike newTile = Main.getContext().getWorld().terrain().findTileJava(
+            Tile newTile = Main.getContext().getWorld().terrain().helper().findTile(
                     boundsArrow.getCenterX(), boundsArrow.getCenterY());
             if (newTile == null) {
-                newTile = Main.getContext().getWorld().terrain().findTileJava(
+                newTile = Main.getContext().getWorld().terrain().helper().findTile(
                         boundsArrow.getCenterX() + 1, boundsArrow.getCenterY() + 1);
             }
 

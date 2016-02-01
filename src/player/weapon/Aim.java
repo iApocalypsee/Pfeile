@@ -3,8 +3,7 @@ package player.weapon;
 
 import general.Main;
 import player.BoardPositionable;
-import world.IsometricPolygonTile;
-import world.TileLike;
+import world.Tile;
 
 import java.awt.*;
 
@@ -63,7 +62,7 @@ public class Aim implements BoardPositionable {
      * @return the center of the attacked Tile
      */
      public Point getPositionGui () {
-        TileLike tile = (TileLike) Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
+        Tile tile = (Tile) Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
         Rectangle rect = tile.getComponent().getBounds().getBounds();
         return new Point((int) rect.getCenterX(), (int) rect.getCenterY());
     }
@@ -77,7 +76,7 @@ public class Aim implements BoardPositionable {
      * @see player.weapon.Aim#getPosXGui()
      * @see player.weapon.Aim#getPosYGui() */
     public Shape getBoundsOfAttackedTile () {
-        TileLike tile = (TileLike) Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
+        Tile tile = (Tile) Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
         return tile.getComponent().getBounds();
     }
 
@@ -89,7 +88,7 @@ public class Aim implements BoardPositionable {
      *
      */
     public double getPosXGui () {
-        TileLike attackedTile = (TileLike) Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
+        Tile attackedTile = (Tile) Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
         return attackedTile.getComponent().getPreciseRectangle().getCenterX();
     }
 
@@ -100,7 +99,7 @@ public class Aim implements BoardPositionable {
      * @see Aim#getPositionGui()
      */
     public double getPosYGui () {
-        TileLike attackedTile = (TileLike) Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
+        Tile attackedTile = (Tile) Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
         return attackedTile.getComponent().getPreciseRectangle().getCenterY();
     }
 
@@ -129,7 +128,7 @@ public class Aim implements BoardPositionable {
      * @see Aim#getDamageRadiusGUIWidth()
      * @see Aim#getDamageRadiusGUIHeight()  */
     public double getDamageRadiusGUIWidth () {
-        return IsometricPolygonTile.TileWidth() * getDamageRadius();
+        return Tile.TileWidth() * getDamageRadius();
     }
 
     /** the height of the damageRadius in pixel for GUI applications: The height of a tile multiplied with its damageRadius.
@@ -137,7 +136,7 @@ public class Aim implements BoardPositionable {
      * @see Aim#getDamageRadiusGUIWidth()
      * @see Aim#getDamageRadiusGUIHeight() */
     public double getDamageRadiusGUIHeight () {
-        return IsometricPolygonTile.TileHeight() * getDamageRadius();
+        return Tile.TileHeight() * getDamageRadius();
     }
 
     /** changes the radius of the attack, in which the attacks effects the surrounding area. <p>

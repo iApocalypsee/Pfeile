@@ -16,8 +16,6 @@ import general.JavaInterop
 trait LazyInit[A] extends PropertyBase[A] {
   self: AccessorStyle[_] =>
 
-  throw new NotImplementedError("Lazy initialization for box object like java.lang.Integer. TODO: Optimize for Java!")
-
   private var alreadyComputed = false
 
   private var _lazyCompute: () => A = failLazyCompute
@@ -41,5 +39,10 @@ trait LazyInit[A] extends PropertyBase[A] {
     }
     alreadyComputed = true
     super.get
+  }
+
+  override def set(x: A) = {
+    if(!alreadyComputed && x != null) alreadyComputed = true
+    super.set(x)
   }
 }

@@ -5,12 +5,12 @@ import java.awt.{Color, Graphics2D, Point}
 import animation.SoundPool
 import comp.Component
 import general._
-import general.property.IntStaticProperty
+import general.property.{DoubleStaticProperty, IntStaticProperty}
 import gui.LifeUI
 import gui.screen.GameOverScreen
 import newent.pathfinding.AStarPathfinder
 import player.Life
-import world.{CoastTile, SeaTile, TileLike, WorldLike}
+import world._
 
 /**
   * Represents a player in the world.
@@ -19,10 +19,7 @@ import world.{CoastTile, SeaTile, TileLike, WorldLike}
   * @param spawnpoint The spawnpoint of the player.
   * @param name The name. If null, a name based on the hash code will be generated.
   */
-class Player(world: WorldLike,
-             spawnpoint: Point,
-             name: String) extends Entity(world, spawnpoint.x, spawnpoint.y, name) with CombatUnit with MoneyEarner {
-
+class Player(world: World, spawnpoint: Point, name: String) extends Entity(world, spawnpoint.x, spawnpoint.y, name) with CombatUnit with MoneyEarner {
 
   //<editor-fold desc="Initialization code">
 
@@ -49,7 +46,9 @@ class Player(world: WorldLike,
     lifeUI.draw(g)
   }
 
-  /** the number of arrows the player an still use from this his/her selected usable <code> PfeileContext.ARROW_NUMBER_FREE_SET </code> inventory */
+  /**
+    * The number of arrows the player an still use from this his/her selected usable <code> PfeileContext.ARROW_NUMBER_FREE_SET </code> inventory
+    */
   lazy val arrowNumberFreeSetUsable = new IntStaticProperty(PfeileContext.arrowNumberFreeSet.get)
 
   val onTurnGet = Delegate.createZeroArity
@@ -60,7 +59,7 @@ class Player(world: WorldLike,
 
     tightenComponentToTile(tileLocation)
 
-    def tightenComponentToTile(t: TileLike): Unit = {
+    def tightenComponentToTile(t: Tile): Unit = {
       val endComponent = t.component
       setSourceShape(endComponent.getSourceShape)
       setParent(t.component)
@@ -73,7 +72,7 @@ class Player(world: WorldLike,
     }
   }
 
-  def tightenComponentToTile(t: TileLike): Unit = {
+  def tightenComponentToTile(t: Tile): Unit = {
     component.asInstanceOf[PlayerComponent].tightenComponentToTile(t)
   }
 
@@ -104,9 +103,9 @@ class Player(world: WorldLike,
 object Player {
 
   /** the maximum life, which a player can have. It is initialized by PreWindowScreen (notice, that the value will be -1.0 before it) */
-  val maximumLife = Property.apply[java.lang.Double]()
+  val maximumLife = new DoubleStaticProperty
 
   /** the life regeneration of a player. It is initialized by PreWindowScreen (before that the value will be -1.0) */
-  val lifeRegeneration = Property.apply[java.lang.Double]()
+  val lifeRegeneration = new DoubleStaticProperty
 
 }

@@ -17,36 +17,49 @@ trait DynamicAccessors[A] extends PropertyBase[A] with AccessorStyle[DynamicAcce
   /**
     * The getter to use. Defaults to returning the input parameter.
     */
-  def dynamicGetter = _dynGetter
+  def dynGet = _dynGetter
 
-  def dynamicGetter_=(x: A => A) = {
+  protected def dynGet_=(x: A => A) = {
     require(x != null)
     _dynGetter = x
   }
-  
-  def setDynamicGetter(f: Function[A, A]): Unit = this.dynamicGetter = JavaInterop.asScala(f)
-  
+
+  protected def setDynamicGetter(f: Function[A, A]): Unit = this.dynGet = JavaInterop.asScala(f)
 
   /**
     * The setter to use. Defaults to returning the input parameter.
     */
-  def dynamicSetter = _dynSetter
+  def dynSet = _dynSetter
 
-  def dynamicSetter_=(x: A => A) = {
+  /**
+    * Sets a setter function for this property.
+    *
+    * The setter function can change its provided input argument, so use with care.
+    * @param x The new setter (which can override the input argument)
+    */
+  protected def dynSet_=(x: A => A) = {
     require(x != null)
     _dynSetter = x
   }
-  
-  def setDynamicSetter(f: Function[A, A]) = this.dynamicSetter = JavaInterop.asScala(f)
-  
 
-  def appendGetter(x: A => A): Unit = dynamicGetter = dynamicGetter andThen x
-  def appendSetter(x: A => A): Unit = dynamicSetter = dynamicSetter andThen x
+  /**
+    * Sets a setter function which simply produces some side effect.
+    *
+    * The original input value provided to the setter function is not changed at all because of Unit return type.
+    * @param x The side-effect function to apply as setter.
+    */
+  protected def dynPass(x: A => Unit) = dynSet_=({ y => x(y); y })
 
-  def appendGetterJava(x: Function[A, A]): Unit = appendGetter(JavaInterop.asScala(x))
-  def appendSetterJava(x: Function[A, A]): Unit = appendSetter(JavaInterop.asScala(x))
+  protected def setDynamicSetter(f: Function[A, A]) = this.dynSet = JavaInterop.asScala(f)
 
-  override def get = dynamicGetter(super.get)
+  protected def appendGet(x: A => A): Unit = dynGet = dynGet andThen x
+  protected def appendSet(x: A => A): Unit = dynSet = dynSet andThen x
 
-  override def set(x: A) = super.set(dynamicSetter(x))
+  protected def appendGetJava(x: Function[A, A]): Unit = appendGet(JavaInterop.asScala(x))
+  protected def appendSetJava(x: Function[A, A]): Unit = appendSet(JavaInterop.asScala(x))
+
+  override def get = dynGet(super.get)
+
+  override def set(x: A) = super.set(dynSet(x))
+
 }

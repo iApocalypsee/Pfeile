@@ -17,8 +17,8 @@ import player.weapon.arrow.AbstractArrow;
 import player.weapon.arrow.ArrowHelper;
 import scala.Option;
 import scala.runtime.AbstractFunction1;
-import world.TerrainLike;
-import world.TileLike;
+import world.Terrain;
+import world.Tile;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -174,7 +174,7 @@ public class AimSelectionScreen extends Screen {
 			this.evt = evt;
 		}
 
-        boolean isTileInRangeOfArrow (TileLike tile, int gridXPlayer, int gridYPlayer) {
+        boolean isTileInRangeOfArrow (Tile tile, int gridXPlayer, int gridYPlayer) {
             AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
             Circle circleAroundPlayer = new Circle(gridXPlayer, gridYPlayer, arrow.getRange());
             return circleAroundPlayer.contains(tile.getGridX(), tile.getGridY());
@@ -184,7 +184,7 @@ public class AimSelectionScreen extends Screen {
 		public void run() {
 			super.run();
             if(!stopFlag) {
-                for (TileLike tileWrapper : Main.getContext().getWorld().terrain().javaTiles()) {
+                for (Tile tileWrapper : Main.getContext().getWorld().terrain().javaTiles()) {
                     if(!tileWrapper.getComponent().getBounds().contains(evt.getPoint()))
                         continue;
 
@@ -235,7 +235,7 @@ public class AimSelectionScreen extends Screen {
 			super.run();
 
 			Player active = Main.getContext().activePlayer();
-			TileLike target = (TileLike) active.world().terrain().tileAt(posX_selectedField, posY_selectedField);
+			Tile target = (Tile) active.world().terrain().tileAt(posX_selectedField, posY_selectedField);
 
 			final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
 
@@ -259,7 +259,7 @@ public class AimSelectionScreen extends Screen {
 
                 arrow.calculateRotation();
 
-				target.take(new AttackEvent(arrow, (TileLike) active.tileLocation(), target, active, arrow.getSpeed()));
+				target.take(new AttackEvent(arrow, (Tile) active.tileLocation(), target, active, arrow.getSpeed()));
 
                 ArrowSelectionScreen.getInstance().updateInventoryList();
 			} else {
@@ -269,7 +269,7 @@ public class AimSelectionScreen extends Screen {
 	}
 
     /** The instance if this class contains all {@link AimSelectionScreen.FieldContainer.ContainedObject} in an ArrayList.
-     * They are used to draw the damageRadius and the selectedTile. Use updateFields(TileLike selectedTile) to reset the damageRadius.
+     * They are used to draw the damageRadius and the selectedTile. Use updateFields(Tile selectedTile) to reset the damageRadius.
      * Use the draw-method of FieldContainer to draw the damageRadius as well as the selectedTile. */
     private class FieldContainer implements Drawable {
 
@@ -292,16 +292,16 @@ public class AimSelectionScreen extends Screen {
         }
 
         /** This updates the damageRadius triggered by {@link AimSelectionScreen.FieldSelectActor}.
-         *  The specified TileLike tileWrapper is the selectedTile. This method is quite performance intensive, so
+         *  The specified Tile tileWrapper is the selectedTile. This method is quite performance intensive, so
          *  use it in an thread. The methods are already synchronized (over the field "containedObjects" from type List<ContainedObject>.*/
-        synchronized void updateFields (TileLike tileWrapper) {
+        synchronized void updateFields (Tile tileWrapper) {
             //Rectangle bounds = tileWrapper.component().getBounds().getBounds();
 
             //boundsSelectedTileExtended = new Polygon();
-            //boundsSelectedTileExtended.addPoint(bounds.x - 1, bounds.y + IsometricPolygonTile.TileHalfHeight());
-            //boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileHalfWidth(), bounds.y - 1);
-            //boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileWidth() + 1, bounds.y + IsometricPolygonTile.TileHalfHeight());
-            //boundsSelectedTileExtended.addPoint(bounds.x + IsometricPolygonTile.TileHalfWidth(), bounds.y + IsometricPolygonTile.TileHeight() + 1);
+            //boundsSelectedTileExtended.addPoint(bounds.x - 1, bounds.y + Tile.TileHalfHeight());
+            //boundsSelectedTileExtended.addPoint(bounds.x + Tile.TileHalfWidth(), bounds.y - 1);
+            //boundsSelectedTileExtended.addPoint(bounds.x + Tile.TileWidth() + 1, bounds.y + Tile.TileHalfHeight());
+            //boundsSelectedTileExtended.addPoint(bounds.x + Tile.TileHalfWidth(), bounds.y + Tile.TileHeight() + 1);
 
             // the outer bounds of the selectedTile
             boundsSelectedTileExtended = tileWrapper.getComponent().getBounds();
@@ -312,7 +312,7 @@ public class AimSelectionScreen extends Screen {
             arrow.getAim().setGridY(posY_selectedField);
 
             final Color unifiedArrowColor = ArrowHelper.getUnifiedColor(arrow.getName());
-            final TerrainLike terrain = Main.getContext().world().terrain();
+            final Terrain terrain = Main.getContext().world().terrain();
             final VisionMap visibleMap = Main.getContext().getActivePlayer().visionMap();
 
             // controls all tiles and if they are visible and the arrow would make damage, a new ContainedObject is added to the list to be drawn.
@@ -325,7 +325,7 @@ public class AimSelectionScreen extends Screen {
                         if (visibleMap.visionStatusOf(x, y) == VisionStatus.Hidden)
                             continue;
                         if (arrow.damageAt(x, y) != 0)
-                            containedObjects.add(new ContainedObject((TileLike) terrain.tileAt(x, y), arrow, unifiedArrowColor));
+                            containedObjects.add(new ContainedObject((Tile) terrain.tileAt(x, y), arrow, unifiedArrowColor));
                     }
                 }
             }
@@ -338,7 +338,7 @@ public class AimSelectionScreen extends Screen {
             private volatile Color impactingColor;
             private volatile Shape bounds;
 
-            private ContainedObject (TileLike tile, AbstractArrow arrow, Color unifiedArrowColor) {
+            private ContainedObject (Tile tile, AbstractArrow arrow, Color unifiedArrowColor) {
                 bounds = tile.getComponent().getBounds();
 
                 // the color is unifiedArrowColor with the alpha value: damage [relative to the maximum damage]
