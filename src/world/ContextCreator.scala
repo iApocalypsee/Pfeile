@@ -156,18 +156,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       context.getWorldLootList.getLootSpawner.spawnAtBeginning()
     }
 
-<<<<<<< HEAD
-
-    /** The name of the stage. */
-    override def stageName: String = {
-      if (Main.isEnglish)
-        "Generating loots..."
-      else
-        "Erzeuge Schütze..."
-    }
-=======
     override def stageName = Main.getTranslation("screen/load/lootGen")
->>>>>>> 3fbc0970b7f04e494a140c9f5dae0ce4894dd0b3
   }
 
   private[ContextCreator] class OtherStuffStage extends StageDescriptable[Unit] {
@@ -213,18 +202,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       context.turnSystem.onTurnGet(context.turnSystem.currentTeam)
     }
 
-    /** The name of the stage. */
-<<<<<<< HEAD
-    override def stageName = {
-      if (Main.isEnglish)
-        "Applying other stuff..."
-      else
-        "Hinzufügen des Restes..."
-    }
-=======
     override def stageName = Main.getTranslation("screen/load/rest")
-
->>>>>>> 3fbc0970b7f04e494a140c9f5dae0ce4894dd0b3
   }
 
 }

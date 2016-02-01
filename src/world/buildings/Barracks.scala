@@ -1,7 +1,5 @@
 package world.buildings
 
-import java.io.File
-
 import comp.ImageComponent
 import gui.image.TextureUsage
 import gui.screen.GameScreen
@@ -14,7 +12,7 @@ class Barracks(world: World, x: Int, y: Int) extends Entity(world, x, y) {
 
 }
 
-class VisualBarracks(barracks: Barracks) extends ImageComponent(0, 0, VisualBarracks.currentUsage, GameScreen.getInstance()) {
+class VisualBarracks(barracks: Barracks) extends ImageComponent(0, 0, VisualBarracks.currentUsage.asInstanceOf[TextureUsage], GameScreen.getInstance()) {
 
   getTransformation.resetTransformation()
 
@@ -31,6 +29,6 @@ class VisualBarracks(barracks: Barracks) extends ImageComponent(0, 0, VisualBarr
 
 object VisualBarracks {
 
-  private val currentUsage = resources.gfx.buildings.BarracksTexture
+  private val currentUsage = null
 
 }
