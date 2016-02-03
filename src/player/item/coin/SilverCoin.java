@@ -60,4 +60,9 @@ public class SilverCoin extends Coin {
     public String getNameGerman () {
         return "Silbermünze";
     }
+
+    @Override
+    protected String getTranslationIdentifier() {
+        return "item/coin/silver";
+    }
 }

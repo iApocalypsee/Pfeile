@@ -60,4 +60,9 @@ public class PlatinumCoin extends Coin {
     public String getNameGerman () {
         return "Platinmünze";
     }
+
+    @Override
+    protected String getTranslationIdentifier() {
+        return "item/coin/platinum";
+    }
 }

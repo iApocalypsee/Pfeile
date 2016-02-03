@@ -14,7 +14,7 @@ public class IceArrow extends AbstractArrow {
 	public static final int INDEX = 4;
 	
 	/** Name des Pfeils */
-	public static final String NAME = "IceArrow";
+	public static final String NAME = "IceArrow", LANG_IDENT = "item/arrow/ice";
 	
 	public static final Color UNIFIED_COLOR = new Color(204, 228, 237);
 	
@@ -56,5 +56,10 @@ public class IceArrow extends AbstractArrow {
     @Override
     public String getNameGerman () {
         return "Eispfeil";
+    }
+
+    @Override
+    protected String getTranslationIdentifier() {
+        return LANG_IDENT;
     }
 }

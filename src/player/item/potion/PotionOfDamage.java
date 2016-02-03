@@ -109,4 +109,9 @@ public class PotionOfDamage extends Potion {
     public String getNameGerman () {
         return "Schadenstrank";
     }
+
+    @Override
+    protected String getTranslationIdentifier() {
+        return "item/potion/damage";
+    }
 }

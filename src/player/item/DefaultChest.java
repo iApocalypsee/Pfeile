@@ -62,6 +62,11 @@ public class DefaultChest extends Chest {
     }
 
     @Override
+    protected String getTranslationIdentifier() {
+        return "item/loot/chest";
+    }
+
+    @Override
     public void open () {
         getLootUI().changeUI(imageOpenChest);
         isOpen = true;

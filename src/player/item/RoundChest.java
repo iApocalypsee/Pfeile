@@ -60,6 +60,11 @@ public class RoundChest extends Chest {
     }
 
     @Override
+    protected String getTranslationIdentifier() {
+        return "item/loot/roundChest";
+    }
+
+    @Override
     public void open () {
         getLootUI().changeUI(imageOpenChest);
         isOpen = true;

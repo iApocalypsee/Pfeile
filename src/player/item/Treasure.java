@@ -1,9 +1,7 @@
 package player.item;
 
 import general.LogFacility;
-import newent.Bot;
 import newent.InventoryEntity;
-import newent.Player;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -69,5 +67,10 @@ public class Treasure extends Loot {
     @Override
     public String getNameGerman () {
         return "Schatz";
+    }
+
+    @Override
+    protected String getTranslationIdentifier() {
+        return "item/loot/treasure";
     }
 }

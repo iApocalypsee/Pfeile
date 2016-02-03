@@ -39,12 +39,17 @@
         "de_DE": "Truhe"
       },
 
+      "roundChest": {
+        "en_EN": "Round chest?",
+        "de_DE": "Rundenkiste?"
+      },
+
       "treasure": {
         "en_EN": "Treasure",
         "de_DE": "Schatz"
       },
 
-      "permanent box": {
+      "permabox": {
         "en_EN": "Box",
         "de_DE": "Kiste"
       }
@@ -61,6 +66,11 @@
       "heal": {
         "en_EN": "Healing potion",
         "de_DE": "Heiltrank"
+      },
+
+      "damage": {
+        "en_EN": "Damage potion",
+        "de_DE": "Trank des Schadens"
       }
 
     },

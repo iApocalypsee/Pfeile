@@ -14,7 +14,7 @@ public class StoneArrow extends AbstractArrow {
 	public static final int INDEX = 3;
 	
 	/** Name des Pfeils */
-	public static final String NAME = "StoneArrow";
+	public static final String NAME = "StoneArrow", LANG_IDENT = "item/arrow/stone";
 	
 	public static final Color UNIFIED_COLOR = new Color(142, 120, 93);
 	
@@ -56,5 +56,10 @@ public class StoneArrow extends AbstractArrow {
     @Override
     public String getNameGerman () {
         return "Steinpfeil";
+    }
+
+    @Override
+    protected String getTranslationIdentifier() {
+        return LANG_IDENT;
     }
 }

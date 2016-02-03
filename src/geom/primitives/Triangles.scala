@@ -1,13 +1,13 @@
 package geom.primitives
 
-import geom.{primitives, Point}
+import geom.{Point, primitives}
 
 /**
 	* Created by philip on 31.01.16.
 	* Implementation of the Triangles primitive which treats the vertex list as flattened list of triangle vertices
 	*/
 class Triangles[Vertex <: Point] extends Primitive[Vertex] {
-	def render = {
+	def render() = {
 		val transformationMatrix = primitives.projectionMatrix * primitives.cameraMatrix * primitives.worldMatrix
 		val transformedVertices = vertices.map(transformationMatrix * _)
 		val xs = transformedVertices.map(_.getX.asInstanceOf[Int])

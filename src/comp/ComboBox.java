@@ -1,10 +1,7 @@
 package comp;
 
 import general.Converter;
-import general.JavaInterop;
 import gui.screen.Screen;
-import scala.Function1;
-import scala.runtime.BoxedUnit;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -71,7 +68,6 @@ public class ComboBox extends Component {
         this.values = values;
 
         init(screenBacking);
-
 
         setWidth(containerLabel.getWidth() + clickButton.getWidth() + STD_INSETS.left + STD_INSETS.right);
         setHeight(containerLabel.getHeight() + selectionList.getHeight());

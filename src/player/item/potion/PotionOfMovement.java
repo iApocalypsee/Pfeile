@@ -89,4 +89,9 @@ public class PotionOfMovement extends Potion {
     public String getNameGerman () {
         return "Trank der Beweglichkeit";
     }
+
+    @Override
+    protected String getTranslationIdentifier() {
+        return "item/potion/movement";
+    }
 }

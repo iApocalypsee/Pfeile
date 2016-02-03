@@ -8,6 +8,8 @@ class IronOre extends ItemOre("IronOre") {
   override def getNameEnglish: String = "Iron ore"
 
   override def getNameGerman: String = "Eisenerz"
+
+  override protected def getTranslationIdentifier = "item/nature/ore/iron"
 }
 
 object IronOre {

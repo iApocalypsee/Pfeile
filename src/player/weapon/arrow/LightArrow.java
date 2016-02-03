@@ -13,7 +13,7 @@ public class LightArrow extends AbstractArrow {
 	/** Index des Lichtpfeils */
 	public static final int INDEX = 6;
 	
-	public static final String NAME = "LightArrow";
+	public static final String NAME = "LightArrow", LANG_IDENT = "item/arrow/light";
 	
 	public static final Color UNIFIED_COLOR = new Color(255, 253, 193);
 	
@@ -54,5 +54,10 @@ public class LightArrow extends AbstractArrow {
     @Override
     public String getNameGerman () {
         return "Lichtpfeil";
+    }
+
+    @Override
+    protected String getTranslationIdentifier() {
+        return LANG_IDENT;
     }
 }

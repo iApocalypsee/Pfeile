@@ -55,4 +55,9 @@ public class KeyDefaultChest extends Item {
     public String getNameGerman () {
         return "Schlüssel (Truhe)";
     }
+
+    @Override
+    protected String getTranslationIdentifier() {
+        return "item/key/default";
+    }
 }

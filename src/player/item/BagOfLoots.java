@@ -1,7 +1,10 @@
 package player.item;
 
 import general.LogFacility;
-import newent.*;
+import newent.Combatant;
+import newent.Entity;
+import newent.EquipmentStrategy;
+import newent.InventoryEntity;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -88,5 +91,10 @@ public class BagOfLoots extends Loot {
     @Override
     public String getNameGerman () {
         return "Warensack";
+    }
+
+    @Override
+    protected String getTranslationIdentifier() {
+        return "item/loot/bag";
     }
 }

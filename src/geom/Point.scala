@@ -21,6 +21,8 @@ class Point(xc: Double, yc: Double) {
 		x = newX
 		y = newY
   }
+
+  def toVector = new Vector(x, y)
 }
 
 object Point {

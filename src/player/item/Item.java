@@ -1,9 +1,8 @@
 package player.item;
 
 import general.Main;
-import general.langsupport.English$;
-import general.langsupport.German$;
 import general.langsupport.Language;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.awt.image.BufferedImage;
 
@@ -17,9 +16,9 @@ public abstract class Item {
 
     /** String <code>name</code> is the unique coding name, like "WaterArrow" in JAVA style. Don't confuse it with the "displayed" names,
      * which are displayed somewhere on the screen to be seen by the user. This need should NOT be seen by the user. */
-	public Item(String name) {
-		if(name == null) throw new NullPointerException();
-		this.name = name;
+	public Item(String codeName) {
+		if(codeName == null) throw new NullPointerException();
+		this.name = codeName;
 	}
 
     /** That is the unique coding name, like "WaterArrow" in JAVA style. Don't confuse it with the "displayed" names,
@@ -56,10 +55,7 @@ public abstract class Item {
      * @return the language this item
      */
     public String getNameDisplayed(Language language) {
-        if (language == German$.MODULE$)
-            return getNameGerman();
-        else
-            return getNameEnglish();
+        throw new NotImplementedException();
     }
 
     /** Returns the name of this item in the language, it is given in <code>Main.getLanguage()</code>.
@@ -68,11 +64,14 @@ public abstract class Item {
      * @return the name of this item for the user
      */
     public String getNameDisplayed() {
-        if (Main.getLanguage() == German$.MODULE$)
-            return getNameGerman();
-        else
-            return getNameEnglish();
+        return Main.getTranslation(getTranslationIdentifier());
     }
+
+    /**
+     * Returns the translation identifier for this item.
+     * @return The translation identifier for this item.
+     */
+    protected abstract String getTranslationIdentifier();
 
     @Override
     public String toString () {

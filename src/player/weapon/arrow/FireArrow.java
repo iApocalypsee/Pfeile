@@ -15,7 +15,7 @@ public class FireArrow extends AbstractArrow {
 	public static final int INDEX = 0;
 	
 	/** Name des Pfeils: */
-	public static final String NAME = "FireArrow";
+	public static final String NAME = "FireArrow", LANG_IDENT = "item/arrow/fire";
 	
 	public static final Color UNIFIED_COLOR = new Color(207, 41, 6);
 	
@@ -55,5 +55,10 @@ public class FireArrow extends AbstractArrow {
     @Override
     public String getNameGerman () {
         return "Feuerpfeil";
+    }
+
+    @Override
+    protected String getTranslationIdentifier() {
+        return LANG_IDENT;
     }
 }

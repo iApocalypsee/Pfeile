@@ -93,6 +93,12 @@ public class FunctionCollection {
         else return max;
     }
 
+    public static double clamp(double value, double min, double max) {
+        if(value >= min && value <= max) return value;
+        else if(value < min) return min;
+        else return max;
+    }
+
     public static int cycleUp(int value, int cap, int step) {
         while(value + step < cap) value += step;
         return value;

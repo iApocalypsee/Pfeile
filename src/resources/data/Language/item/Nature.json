@@ -1,0 +1,19 @@
+{
+  "ownership": "Ignored for now",
+
+  "item": {
+    "nature": {
+      "ore": {
+        "copper": {
+          "de_DE": "Kupfererz",
+          "en_EN": "Copper ore"
+        },
+
+        "iron": {
+          "de_DE": "Eisenerz",
+          "en_EN": "Iron ore"
+        }
+      }
+    }
+  }
+}

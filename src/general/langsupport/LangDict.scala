@@ -466,7 +466,7 @@ object LangDict {
     def /(subnodeId: String): LangNode = {
       val categoryNode = this.asCategory.getOrElse(throw new UnsupportedOperationException)
       val splitPath = subnodeId.split("/")
-      val requestedNode = categoryNode.children.find(_.id == splitPath(0)).getOrElse(throw new NoSuchElementException)
+      val requestedNode = categoryNode.children.find(_.id == splitPath(0)).getOrElse(throw new NoSuchElementException(subnodeId))
 
       if(splitPath.length == 1) requestedNode
       else requestedNode / subnodeId.substring(subnodeId.indexOf("/") + 1)

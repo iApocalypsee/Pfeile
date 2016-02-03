@@ -60,4 +60,9 @@ public class BronzeCoin extends Coin {
     public String getNameGerman () {
         return "Bronzemünze";
     }
+
+    @Override
+    protected String getTranslationIdentifier() {
+        return "item/coin/bronze";
+    }
 }

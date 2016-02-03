@@ -90,4 +90,9 @@ public class PotionOfHealing extends Potion {
     public String getNameGerman () {
         return "Heiltrank";
     }
+
+    @Override
+    protected String getTranslationIdentifier() {
+        return "item/potion/heal";
+    }
 }

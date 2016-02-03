@@ -1,6 +1,7 @@
 package geom.primitives
 
 import geom._
+
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -8,11 +9,12 @@ import scala.collection.mutable.ArrayBuffer
 	* Abstract class for drawing primitives (cf. https://www.opengl.org/wiki/Primitive for further information on primitives)
 	*/
 abstract class Primitive[Vertex <: Point](points: Vertex*) {
+
 	protected var vertices: ArrayBuffer[Vertex] = {
 		var result: ArrayBuffer[Vertex] = new ArrayBuffer[Vertex]()
 		points.copyToBuffer(result)
 		result
 	}
 
-	def render
+	def render(): Unit
 }

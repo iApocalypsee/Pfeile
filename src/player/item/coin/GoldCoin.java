@@ -60,4 +60,9 @@ public class GoldCoin extends Coin {
     public String getNameGerman () {
         return "Goldmünze";
     }
+
+    @Override
+    protected String getTranslationIdentifier() {
+        return "item/coin/gold";
+    }
 }

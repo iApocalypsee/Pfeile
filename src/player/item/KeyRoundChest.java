@@ -55,4 +55,9 @@ public class KeyRoundChest extends Item {
     public String getNameGerman () {
         return "Schlüssel (Rundentruhe)";
     }
+
+    @Override
+    protected String getTranslationIdentifier() {
+        return "item/key/round";
+    }
 }

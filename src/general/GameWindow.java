@@ -1,6 +1,7 @@
 package general;
 
 import geom.Point;
+import geom.primitives.package$;
 import gui.screen.*;
 
 import javax.imageio.ImageIO;
@@ -179,11 +180,16 @@ public class GameWindow extends JFrame {
 		g.setColor(Color.black);
 		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 
-		screenManager.draw(g);
+        final package$ primitivesPackageObj = package$.MODULE$;
+        primitivesPackageObj.setGraphics(g);
+
+        screenManager.draw(g);
 
 		if(Main.isDebug() && grid.isActivated()) {
 			grid.draw(g);
 		}
+
+        primitivesPackageObj.setGraphics(null);
 
 		g.dispose();
 		strat.show();

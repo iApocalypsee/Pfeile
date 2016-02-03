@@ -1,6 +1,6 @@
 package geom.primitives
 
-import geom.{primitives, Point}
+import geom.{Point, primitives}
 
 /**
 	* Created by philip on 31.01.16.
@@ -8,7 +8,7 @@ import geom.{primitives, Point}
 	* from the first vertex to the last, closing off the polygon
 	*/
 class LineLoop[Vertex <: Point] extends Primitive[Vertex] {
-	def render = {
+	def render(): Unit = {
 		val transformationMatrix = primitives.projectionMatrix * primitives.worldMatrix * primitives.cameraMatrix
 		val transformedVertices = vertices.map(transformationMatrix * _)
 		for (i <- vertices.indices) {

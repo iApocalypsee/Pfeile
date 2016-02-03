@@ -14,7 +14,7 @@ public class ShadowArrow extends AbstractArrow {
 	public static final int INDEX = 7;
 	
 	/** Name des Pfeils */
-	public static final String NAME = "ShadowArrow";
+	public static final String NAME = "ShadowArrow", LANG_IDENT = "item/arrow/shadow";
 	
 	public static final Color UNIFIED_COLOR = new Color(0, 0, 0);
 	
@@ -54,5 +54,10 @@ public class ShadowArrow extends AbstractArrow {
     @Override
     public String getNameGerman () {
         return "Schattenpfeil";
+    }
+
+    @Override
+    protected String getTranslationIdentifier() {
+        return LANG_IDENT;
     }
 }

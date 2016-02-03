@@ -31,6 +31,16 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
 
   import comp.InternalFrame._
 
+  /**
+    * Called when the internal frame's close button has been pressed.
+    */
+  val onClosed = Delegate.createZeroArity
+
+  /**
+    * Called when the internal frame has been opened again.
+    */
+  val onOpened = Delegate.createZeroArity
+
   // <editor-fold desc="Constructor code">
 
   // Check new components if their bounds really are inside the frame's bounds
@@ -70,16 +80,6 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
   val background: StaticProperty[ImageLike] = new StaticProperty(new SolidColor(FrameStyle.DefaultBackgroundColor))
 
   @volatile private var comps = new CopyOnWriteArrayList[Component]
-
-  /**
-    * Called when the internal frame's close button has been pressed.
-    */
-  val onClosed = Delegate.createZeroArity
-
-  /**
-    * Called when the internal frame has been opened again.
-    */
-  val onOpened = Delegate.createZeroArity
 
   /**
     * The close button of the frame.

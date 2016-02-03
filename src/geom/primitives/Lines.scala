@@ -1,12 +1,12 @@
 package geom.primitives
 
-import geom.{primitives, Point}
+import geom.{Point, primitives}
 /**
 	* Created by philip on 31.01.16.
 	* Implementation of the Lines primitive, which treats the vertex list as alternating list of starting and ending points of lines
 	*/
 class Lines[Vertex <: Point] extends Primitive[Vertex] {
-	override def render = {
+	override def render() = {
 		val transformMatrix = primitives.projectionMatrix * primitives.cameraMatrix * primitives.worldMatrix
 		val transformedVertices = vertices.map(transformMatrix * _)
 		for (i <- 0 until vertices.size / 2) {

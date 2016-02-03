@@ -158,4 +158,9 @@ public class PermanentBox extends Loot {
             }
         });
     }
+
+    @Override
+    protected String getTranslationIdentifier() {
+        return "item/loot/permabox";
+    }
 }

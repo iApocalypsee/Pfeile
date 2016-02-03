@@ -9,6 +9,8 @@ class CopperOre extends ItemOre("CopperOre") {
   override def getNameEnglish: String = "Copper ore"
 
   override def getNameGerman: String = "Kupfererz"
+
+  override protected def getTranslationIdentifier = "item/nature/ore/copper"
 }
 
 object CopperOre {
