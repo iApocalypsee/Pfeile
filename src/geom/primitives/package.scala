@@ -1,5 +1,7 @@
 package geom
 
+import java.awt.Polygon
+
 import scala.beans.BeanProperty
 
 /**
@@ -26,5 +28,15 @@ package object primitives {
 		val height = graphics.getFontMetrics.getHeight
 		val width = graphics.getFontMetrics.stringWidth(text)
 		graphics.drawString(text, transformed.getX.asInstanceOf[Int] + height / 2, transformed.getY.asInstanceOf[Int] - width / 2)
+	}
+
+	def objectSpaceToProjection(p: Point) = projectionMatrix * cameraMatrix * worldMatrix * p
+	def objectSpaceToProjection(v: Vector) = projectionMatrix.getMatrix * cameraMatrix.getMatrix * worldMatrix.getMatrix * v
+	def pointsToPolygon(points: Point*) = {
+		val transformationMatrix = projectionMatrix * cameraMatrix * worldMatrix
+		val transformedValues = points.map(transformationMatrix * _)
+		val xs = transformedValues.map(_.getX.asInstanceOf[Int]).toArray
+		val ys = transformedValues.map(_.getY.asInstanceOf[Int]).toArray
+		new Polygon(xs, ys, points.length)
 	}
 }
