@@ -28,4 +28,5 @@ class Point(xc: Double, yc: Double) {
 object Point {
 	def isCollinear(a: Point, b: Point, c: Point) = (b - a) isParallel (c - a)
 	def distance(a: Point, b: Point) = (b - a).length
+	def origin = new Point(0.0, 0.0)
 }
