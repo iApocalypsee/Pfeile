@@ -1,13 +1,15 @@
 package world
 
 import java.awt.event.{MouseAdapter, MouseEvent}
-import java.awt.geom.Point2D
-import java.awt.{Color, Font, Graphics2D, Point}
+import java.awt.geom.{Rectangle2D, Point2D}
+import java.awt._
 import javax.swing.SwingUtilities
 
 import comp.{Component, RotationChange}
 import general.Main
-import general.property.{DynamicProperty, PropertyBase, StaticProperty}
+import general.property.StaticProperty
+import _root_.geom.{AffineTransformation, Point, primitives, Vector}
+import _root_.geom.primitives.PrimitiveType
 import gui.AdjustableDrawing
 import gui.image.TextureAtlas.AtlasPoint
 import gui.screen.GameScreen
@@ -36,44 +38,11 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
 
   //<editor-fold desc="Visual appearance">
 
-  /**
-   * The shape from which the component is going to retrieve the corner points.
-   * The corner points are needed to draw border lines on seperate sides.
-   */
-  private val cornerPoints = new {
+  private val corners: Seq[Point] = Seq(new Point(-TileHalfWidth, 0), new Point(0, TileHalfHeight),
+    new Point(TileHalfWidth, 0), new Point(0, -TileHalfHeight))
 
-    var north: Point = null
-    var east: Point = null
-    var south: Point = null
-    var west: Point = null
-
-    def use(x: IsometricTileAbsoluteShape) = {
-      north = x.north
-      east = x.east
-      south = x.south
-      west = x.west
-    }
-
-  }
-
-  /**
-   * The shape of the tile.
-   *
-   * On setting this property, the component is trying to calculate the new corner points of the isometric shape.
-   */
-  val tileShape = new DynamicProperty(Tile.TileShape) {
-    // DynSet called every time the property assumes a new value
-    dynSet = { x => cornerRecalculation(x, getX, getY, getWidth, getHeight); x }
-  }
-
-  private def cornerRecalculation(relativeShape: IsometricTileRelativeShape, x: Int, y: Int, width: Int, height: Int): Unit = {
-    val absoluteShape = relativeShape.construct(x, y, width, height)
-    cornerPoints.use(absoluteShape)
-  }
-
-  onTransformed += { _ =>
-    cornerRecalculation(tileShape.get, getX, getY, getWidth, getHeight)
-  }
+  private val center = new Point(isoTile.getGridX * TileHalfWidth + isoTile.getGridY * TileHalfWidth,
+    -isoTile.getGridX * TileHalfHeight + isoTile.getGridY * TileHalfHeight)
 
   /**
     * The color with which the tile object gets filled as the mouse points on it.
@@ -126,7 +95,7 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
   //<editor-fold desc="Initialization code">
 
   setBackingScreen(GameScreen.getInstance())
-  setSourceShape(tileShape.get.construct(-TileHalfWidth / 2, -TileHalfHeight / 2, TileWidth, TileHeight).polygon)
+  setSourceShape(primitives.pointsToPolygon(corners:_*))
   setName((isoTile.getGridX, isoTile.getGridY).toString())
 
   // Translate so that the tile fits into the grid again.
@@ -187,7 +156,7 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
       }
     }
 
-    prediction.map { pathOption =>
+    prediction.foreach { pathOption =>
       pathOption.map { path =>
         GuiMovementPrediction.replace(path, isoTile.terrain)
       } getOrElse {
@@ -199,9 +168,10 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
   // Only draw a prediction if the tile is actually being targeted
   handle { g =>
     if(isTargetForPathPrediction) {
-      g.setStroke(MoveTargetStroke)
-      g.setColor(MoveTargetColor)
-      g.draw(getBounds)
+      primitives.worldMatrix = AffineTransformation.translation(center - Point.origin)
+      primitives.graphics.setStroke(MoveTargetStroke)
+      primitives.graphics.setColor(MoveTargetColor)
+      primitives.renderPrimitive(PrimitiveType.LINE_LOOP, corners:_*)
     }
   }
 
@@ -228,25 +198,19 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
     * @param g Self-evident.
     */
   private def drawMouseFocused(g: Graphics2D): Unit = {
-    g.setColor(mouseFocusColor.get)
-    g.fill(getBounds)
+    primitives.worldMatrix = AffineTransformation.translation(center - Point.origin)
+    primitives.graphics.setColor(mouseFocusColor.get)
+    primitives.renderPrimitive(PrimitiveType.QUADS, corners:_*)
   }
 
   //</editor-fold>
 
   //<editor-fold desc="Border line drawing">
 
-  private def drawBorders(g: Graphics2D) = {
-    def drawRoutine(colorProperty: PropertyBase[Color], begin: Point, end: Point) = colorProperty ifdef { color =>
-      g.setStroke(isoTile.border.stroke.get)
-      g.setColor(color)
-      g.drawLine(begin.x, begin.y, end.x, end.y)
-    }
-
-    drawRoutine(isoTile.border.northWest, cornerPoints.west, cornerPoints.north)
-    drawRoutine(isoTile.border.northEast, cornerPoints.north, cornerPoints.east)
-    drawRoutine(isoTile.border.southWest, cornerPoints.west, cornerPoints.south)
-    drawRoutine(isoTile.border.southEast, cornerPoints.south, cornerPoints.east)
+  private def drawBorders() = {
+    primitives.graphics.setStroke(isoTile.border.stroke.get)
+    primitives.graphics.setColor(isoTile.border.northWest.get)
+    primitives.renderPrimitive(PrimitiveType.LINE_LOOP, corners:_*)
   }
 
   //</editor-fold>
@@ -281,10 +245,10 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
 
   }
 
-  private def drawCoordinates(g: Graphics2D) = if(coordinateDraw.isCoordinateDrawn) {
-    g.setFont(coordinateDraw.debugCoordinateFont)
-    g.setColor(Color.white)
-    g.drawString(coordinateDraw.text, getX + getWidth / 2 - coordinateDraw.textBounds.width / 2, getY + getHeight / 2 + coordinateDraw.textBounds.height / 2)
+  private def drawCoordinates() = if(coordinateDraw.isCoordinateDrawn) {
+    primitives.graphics.setFont(coordinateDraw.debugCoordinateFont)
+    primitives.graphics.setColor(Color.white)
+    primitives.renderText(Point.origin, coordinateDraw.text)
   }
 
   //</editor-fold>
@@ -318,13 +282,14 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
   }
 
   override def draw(g: Graphics2D): Unit = {
-    g.setColor(Color.black)
-    g.draw(getBounds)
-    g.setColor(isoTile.color)
-    g.drawImage(texture, getX, getY, getWidth, getHeight, null)
-    //drawAll(g)
-    drawBorders(g)
-    drawCoordinates(g)
+    val upperLeft = primitives.objectSpaceToProjection(new Point(-TileHalfWidth, -TileHalfHeight))
+    val diagonal = primitives.objectSpaceToProjection(new Vector(TileWidth, TileHeight))
+    primitives.graphics.setColor(isoTile.color)
+    primitives.graphics.setPaint(
+      new TexturePaint(texture, new Rectangle2D.Double(upperLeft.getX, upperLeft.getY, diagonal.getX, diagonal.getY)))
+    primitives.renderPrimitive(PrimitiveType.QUADS, corners:_*)
+    drawBorders()
+    drawCoordinates()
   }
 }
 

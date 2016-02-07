@@ -168,9 +168,6 @@ abstract class Tile protected(gridX: Int, gridY: Int, val terrain: Terrain) exte
 }
 
 object Tile {
-
-  import scala.math._
-
   //<editor-fold desc="Tile type list">
 
   // Tile type list is used in world generation.
@@ -193,19 +190,6 @@ object Tile {
   lazy val TileWidth = TileHalfWidth * 2
   lazy val TileHalfHeight = 30
   lazy val TileHeight = TileHalfHeight * 2
-  lazy val TileDiagonalLength = sqrt(pow(TileHalfWidth, 2) + pow(TileHalfHeight, 2))
-
-  @deprecated("Use Tile.TileShape instead")
-  val ComponentShape = {
-    val polygon = new Polygon
-    polygon.addPoint(-TileHalfWidth, 0)
-    polygon.addPoint(0, -TileHalfHeight)
-    polygon.addPoint(TileHalfWidth, 0)
-    polygon.addPoint(0, TileHalfHeight)
-    polygon
-  }
-
-  val TileShape = IsometricTileRelativeShape(0.5, 0.5, 0.5, 0.5)
 
   /**
     * The color used when the mouse is pointing at the tile.
@@ -226,36 +210,4 @@ object Tile {
   val StandardDrawStroke = new BasicStroke(2)
 
   //</editor-fold>
-
-  case class IsometricTileAbsoluteShape private[Tile](north: Point, east: Point, south: Point, west: Point) {
-    lazy val polygon: Polygon = {
-      val polygon = new Polygon
-      polygon.addPoint(north.x, north.y)
-      polygon.addPoint(east.x, east.y)
-      polygon.addPoint(south.x, south.y)
-      polygon.addPoint(west.x, west.y)
-      polygon
-    }
-  }
-
-  case class IsometricTileRelativeShape private[Tile](topMove: Double, rightMove: Double, bottomMove: Double, leftMove: Double) {
-
-    private def calculateInsets(dimension: Int, factor: Double): Int = (dimension * factor).asInstanceOf[Int]
-
-    def construct(x: Int, y: Int, width: Int, height: Int): IsometricTileAbsoluteShape = {
-
-      val topInset = calculateInsets(width, topMove)
-      val rightInset = calculateInsets(height, rightMove)
-      val bottomInset = calculateInsets(width, bottomMove)
-      val leftInset = calculateInsets(height, leftMove)
-
-      IsometricTileAbsoluteShape(
-        new Point(x + topInset, y),
-        new Point(x + width, y + rightInset),
-        new Point(x + bottomInset, y + height),
-        new Point(x, y + leftInset))
-    }
-
-  }
-
 }

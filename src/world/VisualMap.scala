@@ -3,7 +3,7 @@ package world
 import java.awt.Graphics2D
 
 import general.{Delegate, LogFacility, Main, PfeileContext}
-import geom.{Vector, Point}
+import geom.{AffineTransformation, Vector, Point}
 import gui.Drawable
 import newent.{CommandTeam, VisionStatus}
 import player.item.Loot
@@ -14,6 +14,7 @@ import player.weapon.arrow.AbstractArrow
   * Takes care of the drawing of the tiles in the given world.
   * Note that objects of this class only can handle tiles that provide a [[world.Tile.IsometricPolygonTileComponent]]
   * as their component representation.
+ *
   * @param context The context on which this object operates.
   */
 class VisualMap(context: PfeileContext) extends Drawable {
@@ -74,8 +75,13 @@ class VisualMap(context: PfeileContext) extends Drawable {
     setMapPosition(getShiftX + shiftX, getShiftY + shiftY)
   }
 
+  def moveMap(t: Vector): Unit = {
+    geom.primitives.cameraMatrix = AffineTransformation.translation(t) * geom.primitives.cameraMatrix
+  }
+
   /**
     * Sets the position of the whole map.
+ *
     * @param x The new x position of the left corner of the map.
     * @param y The new y position of the left corner of the map.
     */
