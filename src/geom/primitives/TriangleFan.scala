@@ -6,7 +6,7 @@ import geom.{Point, primitives}
 	* Created by philip on 31.01.16.
 	* Implementation of the TriangleFan primitive which creates triangles of the first vertex and every group of adjacent (in the Array) vertices
 	*/
-class TriangleFan[Vertex <: Point] extends Primitive[Vertex] {
+class TriangleFan[Vertex <: Point](points: Vertex*) extends Primitive[Vertex](points) {
 	def render() = {
 		val transformationMatrix = primitives.projectionMatrix * primitives.cameraMatrix * primitives.worldMatrix
 		val transformedVertices = vertices.map(transformationMatrix * _)

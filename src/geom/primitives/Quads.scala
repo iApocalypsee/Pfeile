@@ -4,9 +4,10 @@ import geom.{primitives, Point}
 
 /**
 	* Created by philip on 31.01.16.
+	* Implementation of the Quads primitive which interprets the vertex list as flattened list of quadrangle vertices
 	*/
-class Quads[Vertex <: Point](points: Vertex*) extends Primitive[Vertex] {
-	def render = {
+class Quads[Vertex <: Point](points: Vertex*) extends Primitive[Vertex](points) {
+	def render() = {
 		val transformationMatrix = primitives.projectionMatrix * primitives.cameraMatrix * primitives.projectionMatrix
 		val transformedVertices = vertices.map(transformationMatrix * _)
 		val xs = transformedVertices.map(_.getX.asInstanceOf[Int])

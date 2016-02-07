@@ -6,7 +6,7 @@ import geom.{Point, primitives}
 	* Created by philip on 31.01.16.
 	* Implementation of the TriangleStrip primitive which creates a triangle of every group of three adjacent (in the Array) vertices
 	*/
-class TriangleStrip[Vertex <: Point] extends Primitive[Vertex] {
+class TriangleStrip[Vertex <: Point](points: Vertex*) extends Primitive[Vertex](points) {
 	def render() = {
 		val transformationMatrix = primitives.projectionMatrix * primitives.cameraMatrix * primitives.worldMatrix
 		val transformedVertices = vertices.map(transformationMatrix * _)

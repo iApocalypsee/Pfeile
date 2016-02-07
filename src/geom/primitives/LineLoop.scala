@@ -7,7 +7,7 @@ import geom.{Point, primitives}
 	* Implementation of the LineLoop primitive which - like LineStrip - draws lines from one vertex to the next and a line
 	* from the first vertex to the last, closing off the polygon
 	*/
-class LineLoop[Vertex <: Point] extends Primitive[Vertex] {
+class LineLoop[Vertex <: Point](points: Vertex*) extends Primitive[Vertex](points) {
 	def render(): Unit = {
 		val transformationMatrix = primitives.projectionMatrix * primitives.worldMatrix * primitives.cameraMatrix
 		val transformedVertices = vertices.map(transformationMatrix * _)
