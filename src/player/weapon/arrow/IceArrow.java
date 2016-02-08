@@ -25,7 +25,7 @@ public class IceArrow extends AbstractArrow {
 	static {
 		try {
 			img_Ice = ImageIO.read(IceArrow.class.getClassLoader().getResourceAsStream (
-					"resources/gfx/arrow textures/iceArrow.png"));
+					"resources/gfx/arrow_textures/iceArrow.png"));
 		} catch (IOException e) {e.printStackTrace();}
 	}
 	

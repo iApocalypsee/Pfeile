@@ -24,7 +24,7 @@ public class LightningArrow extends AbstractArrow {
 	static {
 		try {
 			img_Lightning = ImageIO.read(LightningArrow.class.getClassLoader().getResourceAsStream (
-					"resources/gfx/arrow textures/lightningArrow.png"));
+					"resources/gfx/arrow_textures/lightningArrow.png"));
 		
 		} catch (IOException e) {
 			e.printStackTrace();

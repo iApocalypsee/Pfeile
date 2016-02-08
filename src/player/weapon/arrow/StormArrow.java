@@ -24,7 +24,7 @@ public class StormArrow extends AbstractArrow {
 	static {
 		try {
 			img_Storm = ImageIO.read(StormArrow.class.getClassLoader().getResourceAsStream (
-					"resources/gfx/arrow textures/stormArrow.png"));
+					"resources/gfx/arrow_textures/stormArrow.png"));
 		} catch (IOException e) {e.printStackTrace();}
 	}
 	

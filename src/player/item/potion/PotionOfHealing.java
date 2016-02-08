@@ -19,7 +19,7 @@ public class PotionOfHealing extends Potion {
     static {
         images = new BufferedImage[3];
 
-        String generalPath = "resources/gfx/item textures/potion textures/potionOfHealing";
+        String generalPath = "resources/gfx/item_textures/potion textures/potionOfHealing";
         String path = "<No path selected>";
         try {
             path = generalPath + "[0].png";

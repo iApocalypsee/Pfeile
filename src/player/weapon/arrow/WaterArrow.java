@@ -24,7 +24,7 @@ public class WaterArrow extends AbstractArrow {
 	static {
 		try {
 			img_Water = ImageIO.read(WaterArrow.class.getClassLoader().getResourceAsStream (
-					"resources/gfx/arrow textures/waterArrow.png"));
+					"resources/gfx/arrow_textures/waterArrow.png"));
 		} catch (IOException e) {e.printStackTrace();}
 	}
 

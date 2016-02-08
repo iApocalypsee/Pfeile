@@ -8,7 +8,7 @@ import scala.collection.mutable
 import scala.util.Random
 
 /**
-  * Base trait for all terrain types.
+  * Base class for all terrain types.
   *
   * With a need to support extensibility, we need a base "interface" so that we can support terrains
   * that are implemented differently.

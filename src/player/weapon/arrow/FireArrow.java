@@ -24,8 +24,8 @@ public class FireArrow extends AbstractArrow {
 	/** Laden des Bildes */
 	static {
 		try {
-			img_Fire = ImageIO.read(FireArrow.class.getClassLoader().getResourceAsStream (
-					"resources/gfx/arrow textures/fireArrow.png"));
+			img_Fire = ImageIO.read(FireArrow.class.getClass().getResourceAsStream (
+					"/resources/gfx/arrow_textures/fireArrow.png"));
 		} catch (IOException e) {e.printStackTrace();}
 	}
 	

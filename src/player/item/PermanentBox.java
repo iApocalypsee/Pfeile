@@ -26,7 +26,7 @@ public class PermanentBox extends Loot {
     private static BufferedImage image;
 
     static {
-        String path = "resources/gfx/item textures/loot textures/permanentBox.png";
+        String path = "resources/gfx/item_textures/loot textures/permanentBox.png";
         try {
             image = ImageIO.read(PermanentBox.class.getClassLoader().getResourceAsStream(path));
         } catch (IOException e) {

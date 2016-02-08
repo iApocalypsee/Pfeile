@@ -20,11 +20,11 @@ public class RoundChest extends Chest {
     private static BufferedImage imageOpenChest;
 
     static {
-        String path = "resources/gfx/item textures/loot textures/roundChest.png";
+        String path = "resources/gfx/item_textures/loot textures/roundChest.png";
         try {
             image = ImageIO.read(RoundChest.class.getClassLoader().getResourceAsStream(path));
 
-            path = "resources/gfx/item textures/loot textures/roundChestOpen.png";
+            path = "resources/gfx/item_textures/loot textures/roundChestOpen.png";
             imageOpenChest = ImageIO.read(RoundChest.class.getClassLoader().getResourceAsStream(path));
         } catch (IOException e) {
             e.printStackTrace();

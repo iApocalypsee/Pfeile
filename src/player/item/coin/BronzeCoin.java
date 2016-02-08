@@ -15,7 +15,7 @@ public class BronzeCoin extends Coin {
     private static BufferedImage image;
 
     static {
-        String path = "resources/gfx/item textures/coin textures/bronzeCoin.png";
+        String path = "resources/gfx/item_textures/coin textures/bronzeCoin.png";
         try {
             image = ImageIO.read(BronzeCoin.class.getClassLoader().getResourceAsStream(path));
         } catch (IOException e) {

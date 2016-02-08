@@ -18,7 +18,7 @@ public class FontLoader {
         /** The font file is ending with <code>.ttf</code> */
         TTF,
         /** font file is ending with <code>.otf</code> */
-        OTF;
+        OTF
     }
 
     /** Returns a new Font using the fontName (= file path) and the size. If the name of the fontFamily doesn't exit, this font is registered.

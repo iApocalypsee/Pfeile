@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /**
  * A standard implementation of a component.
@@ -132,13 +133,6 @@ public abstract class Component implements IComponent {
 	private Function1<Graphics2D, Unit> additionalDrawing = null;
 
 	/**
-	 * Called when the bounds have been moved.
-	 * @deprecated Use {@link Transformation2D#onTranslated()} instead.
-	 */
-	@Deprecated
-	public final Delegate.Delegate<Vector> onMoved = new Delegate.Delegate<>();
-
-	/**
 	 * Called when the component's dimensions have changed.
 	 */
 	public final Delegate.Delegate<Vector> onResize = new Delegate.Delegate<>();
@@ -242,33 +236,38 @@ public abstract class Component implements IComponent {
 		this.status = ComponentStatus.NO_MOUSE;
 		setName(Integer.toString(this.hashCode()));
 
-		transformation.onTranslated().registerJava((TranslationChange t) -> {
-            if (boundsRecalculationIssued)
-            {
-                transformationChangedSince = true;
-            }
-            children.values().forEach(component -> {
-                final Vector diffTranslation = t.newTranslation().difference(t.oldTranslation());
-                component.move(((int) diffTranslation.getX()), ((int) diffTranslation.getY()));
-            });
-            onTransformed.apply(t);
+		transformation.onTranslated().registerJava(new Consumer<TranslationChange>() {
+			public void accept(TranslationChange t) {
+				if (boundsRecalculationIssued)
+				{
+					transformationChangedSince = true;
+				}
+				children.values().forEach(component -> {
+					final Vector diffTranslation = t.newTranslation().difference(t.oldTranslation());
+					component.move(((int) diffTranslation.getX()), ((int) diffTranslation.getY()));
+				});
+				onTransformed.apply(t);
+			}
+		});
+
+		transformation.onScaled().registerJava(new Consumer<ScaleChange>() {
+			public void accept(ScaleChange t) {
+				if (boundsRecalculationIssued) {
+					transformationChangedSince = true;
+				}
+				onTransformed.apply(t);
+			}
         });
 
-		transformation.onScaled().registerJava((ScaleChange t) -> {
-            if (boundsRecalculationIssued)
-            {
-                transformationChangedSince = true;
-            }
-            onTransformed.apply(t);
-        });
-
-		transformation.onRotated().registerJava((RotationChange t) -> {
-            if (boundsRecalculationIssued)
-            {
-                transformationChangedSince = true;
-            }
-            onTransformed.apply(t);
-        });
+		transformation.onRotated().registerJava(new Consumer<RotationChange>(){
+			public void accept(RotationChange t) {
+				if (boundsRecalculationIssued)
+				{
+					transformationChangedSince = true;
+				}
+				onTransformed.apply(t);
+			}
+		});
 	}
 
 	/**
@@ -486,12 +485,6 @@ public abstract class Component implements IComponent {
 
 		onResize.apply(new Vector(width, getHeight()));
 	}
-
-    /** Does nothing */
-    @Deprecated
-    void setWidthDirectly(int width) {
-
-    }
 
 	/**
 	 * @return the height

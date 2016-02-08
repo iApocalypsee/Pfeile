@@ -15,7 +15,7 @@ public class KeyDefaultChest extends Item {
     private static BufferedImage image;
 
     static {
-        String path = "resources/gfx/item textures/loot textures/keyDefaultChest.png";
+        String path = "resources/gfx/item_textures/loot textures/keyDefaultChest.png";
         try {
             image = ImageIO.read(KeyDefaultChest.class.getClassLoader().getResourceAsStream(path));
         } catch (IOException e) {

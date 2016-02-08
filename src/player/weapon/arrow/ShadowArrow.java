@@ -24,7 +24,7 @@ public class ShadowArrow extends AbstractArrow {
 	static {
 		try {
 			img_Shadow = ImageIO.read(ShadowArrow.class.getClassLoader().getResourceAsStream (
-					"resources/gfx/arrow textures/shadowArrow.png"));
+					"resources/gfx/arrow_textures/shadowArrow.png"));
 		} catch (IOException e) {e.printStackTrace();}
 	}
 	

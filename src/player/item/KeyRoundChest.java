@@ -15,7 +15,7 @@ public class KeyRoundChest extends Item {
     private static BufferedImage image;
 
     static {
-        String path = "resources/gfx/item textures/loot textures/keyRoundChest.png";
+        String path = "resources/gfx/item_textures/loot textures/keyRoundChest.png";
         try {
             image = ImageIO.read(KeyRoundChest.class.getClassLoader().getResourceAsStream(path));
         } catch (IOException e) {

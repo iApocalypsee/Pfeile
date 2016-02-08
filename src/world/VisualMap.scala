@@ -12,9 +12,7 @@ import player.weapon.arrow.AbstractArrow
 
 /**
   * Takes care of the drawing of the tiles in the given world.
-  * Note that objects of this class only can handle tiles that provide a [[world.Tile.IsometricPolygonTileComponent]]
-  * as their component representation.
- *
+  *
   * @param context The context on which this object operates.
   */
 class VisualMap(context: PfeileContext) extends Drawable {
@@ -50,12 +48,12 @@ class VisualMap(context: PfeileContext) extends Drawable {
   /** The world that is being displayed currently. */
   private val _displayWorld = context.world
 
-  private val zoom = new ZoomBehavior(_displayWorld.terrain)
-
   /** Returns the current shifting of the map in the x direction. */
   def getShiftY: Int = _vp.getShiftY.asInstanceOf[Int]
   /** Returns the current shifting of the map in the y direction. */
   def getShiftX: Int = _vp.getShiftX.asInstanceOf[Int]
+
+  def getShift: Vector = geom.primitives.cameraMatrix.getDisplacement
 
   def sightType = _sightType
   def getSightType = sightType
@@ -71,8 +69,8 @@ class VisualMap(context: PfeileContext) extends Drawable {
     * @param shiftX The amount of x units to move the map.
     * @param shiftY The amount of y units to move the map.
     */
-  def moveMap(shiftX: Int, shiftY: Int): Unit = {
-    setMapPosition(getShiftX + shiftX, getShiftY + shiftY)
+  def moveMap(shiftX: Double, shiftY: Double): Unit = {
+    moveMap(new Vector(shiftX, shiftY))
   }
 
   def moveMap(t: Vector): Unit = {
@@ -91,8 +89,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
     val shiftX = x - getShiftX
     val shiftY = y - getShiftY
 
-    _vp.setShiftX(x)
-    _vp.setShiftY(y)
+    geom.primitives.cameraMatrix = AffineTransformation.translation(new Vector(x, y))
 
     for (tile <- _displayWorld.terrain.tiles) tile.component match {
       case isometric: IsometricPolygonTileComponent =>
@@ -139,9 +136,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
   }
 
   def zoom(factor: Float): Unit = {
-    //zoom.zoomFrom(Main.getContext.activePlayer.getGridX, Main.getContext.activePlayer.getGridY, factor)
-    //onWorldGuiChanged()
-    LogFacility.log("Zooming currently disabled. Don't rotate your mouse wheel to not see me again.", "Info")
+    geom.primitives.cameraMatrix = geom.primitives.cameraMatrix * factor
   }
 
   /** Draws the whole map. */

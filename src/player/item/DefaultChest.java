@@ -16,11 +16,11 @@ public class DefaultChest extends Chest {
     private static BufferedImage imageOpenChest;
 
     static {
-        String path = "resources/gfx/item textures/loot textures/defaultChest.png";
+        String path = "resources/gfx/item_textures/loot textures/defaultChest.png";
         try {
             image = ImageIO.read(DefaultChest.class.getClassLoader().getResourceAsStream(path));
 
-            path = "resources/gfx/item textures/loot textures/defaultChestOpen.png";
+            path = "resources/gfx/item_textures/loot textures/defaultChestOpen.png";
             imageOpenChest = ImageIO.read(DefaultChest.class.getClassLoader().getResourceAsStream(path));
         } catch (IOException e) {
             e.printStackTrace();

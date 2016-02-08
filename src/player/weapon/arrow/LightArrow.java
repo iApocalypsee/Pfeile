@@ -23,7 +23,7 @@ public class LightArrow extends AbstractArrow {
 	static {
 		try {
 			img_Light = ImageIO.read(LightArrow.class.getClassLoader().getResourceAsStream (
-					"resources/gfx/arrow textures/lightArrow.png"));
+					"resources/gfx/arrow_textures/lightArrow.png"));
 		} catch (IOException e) {e.printStackTrace();}
 	}
 	

@@ -15,7 +15,6 @@ import gui.image.TextureAtlas.AtlasPoint
 import gui.screen.GameScreen
 import newent.MovableEntity
 import newent.pathfinding.Path
-import world.interfaces.TileComponentLike
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -25,8 +24,7 @@ import scala.concurrent.Future
  * Note that this component is not able to rotate! If you attempt a rotation, the component
  * will throw a UnsupportedOperationException, stating that rotation is not supported.
  */
-class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with AdjustableDrawing with
-                                                               TileComponentLike {
+class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with AdjustableDrawing {
 
   import world.Tile._
 
@@ -41,7 +39,7 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
   private val corners: Seq[Point] = Seq(new Point(-TileHalfWidth, 0), new Point(0, TileHalfHeight),
     new Point(TileHalfWidth, 0), new Point(0, -TileHalfHeight))
 
-  private val center = new Point(isoTile.getGridX * TileHalfWidth + isoTile.getGridY * TileHalfWidth,
+  private val _center = new Point(isoTile.getGridX * TileHalfWidth + isoTile.getGridY * TileHalfWidth,
     -isoTile.getGridX * TileHalfHeight + isoTile.getGridY * TileHalfHeight)
 
   /**
@@ -53,26 +51,6 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
 
   //<editor-fold desc="Context-sensitive methods for controlling UI">
 
-  /**
-    * Prepares this component for `VisionStatus.Hidden`
-    */
-  override def adaptHidden(): Unit = {
-    setVisible(false)
-  }
-
-  /**
-    * Prepares this component for `VisionStatus.Revealed`
-    */
-  override def adaptRevealed(): Unit = {
-    setVisible(true)
-  }
-
-  /**
-    * Prepares this component for `VisionStatus.Visible`
-    */
-  override def adaptVisible(): Unit = {
-    setVisible(true)
-  }
 
   //</editor-fold>
 
@@ -168,7 +146,7 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
   // Only draw a prediction if the tile is actually being targeted
   handle { g =>
     if(isTargetForPathPrediction) {
-      primitives.worldMatrix = AffineTransformation.translation(center - Point.origin)
+      primitives.worldMatrix = AffineTransformation.translation(_center - Point.origin)
       primitives.graphics.setStroke(MoveTargetStroke)
       primitives.graphics.setColor(MoveTargetColor)
       primitives.renderPrimitive(PrimitiveType.LINE_LOOP, corners:_*)
@@ -198,7 +176,7 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
     * @param g Self-evident.
     */
   private def drawMouseFocused(g: Graphics2D): Unit = {
-    primitives.worldMatrix = AffineTransformation.translation(center - Point.origin)
+    primitives.worldMatrix = AffineTransformation.translation(_center - Point.origin)
     primitives.graphics.setColor(mouseFocusColor.get)
     primitives.renderPrimitive(PrimitiveType.QUADS, corners:_*)
   }

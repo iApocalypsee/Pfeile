@@ -18,7 +18,7 @@ public class ImageLoader {
      * Try to program your code without loading the same BufferedImage twice. You could also load it as <code>Icon</code>
      * or <code>animation.StaticImage</code> directly.
      *
-     * @param URL the address (e.g. <code>arrow textures/fireArrow.png</code>). The file "resources/gfx/" is automatically
+     * @param URL the address (e.g. <code>arrow_textures/fireArrow.png</code>). The file "resources/gfx/" is automatically
      *            loaded and must <b>not</b> put "resources/gfx" in front of it.
      * @return the BufferedImage or an <code>IOException</code> and therefore <code>null</code>.
      */
@@ -37,7 +37,7 @@ public class ImageLoader {
     /**
      * Loads an Image as {@link javax.swing.ImageIcon}. Compare with {@link animation.ImageLoader#load(String)}
      *
-     * @param URL the String, where the address is: "arrow textures/fireArrow.png". Don't put "resources/gfx/" in front
+     * @param URL the String, where the address is: "arrow_textures/fireArrow.png". Don't put "resources/gfx/" in front
      *            of it; it is added automatically and can lead to embarrassing bugs.
      * @return the loaded Image as ImageIcon
      */
@@ -48,7 +48,7 @@ public class ImageLoader {
     /**
      * Loads an Image as {@link animation.StaticImage}. Compare with {@link animation.ImageLoader#load(String)}
      *
-     * @param URL the String, where the address is: "arrow textures/fireArrow.png". Don't put "resources/gfx/" in front
+     * @param URL the String, where the address is: "arrow_textures/fireArrow.png". Don't put "resources/gfx/" in front
      *            of it; it is added automatically and can lead to embarrassing bugs.
      * @return the loaded Image as StaticImage
      */

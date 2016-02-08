@@ -13,6 +13,9 @@ class AffineTransformation(m: Matrix, t: Vector) {
 	def *(other: AffineTransformation) = new AffineTransformation(m * other.getMatrix, m * other.getDisplacement + t)
 	def after(other: AffineTransformation) = this * other
 
+	def *(other: Double) = new AffineTransformation(m * other, t * other)
+	def scale(other: Double) = this * other
+
 	def inverse = {
 		val inv = m.inverse
 		val vec = m.inverse * t * (-1)

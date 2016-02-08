@@ -25,7 +25,7 @@ public class StoneArrow extends AbstractArrow {
 	static {
 		try {
 			img_Stone = ImageIO.read(StoneArrow.class.getClassLoader().getResourceAsStream (
-					"resources/gfx/arrow textures/stoneArrow.png"));
+					"resources/gfx/arrow_textures/stoneArrow.png"));
 		} catch (IOException e) {e.printStackTrace();}
 	}
 	

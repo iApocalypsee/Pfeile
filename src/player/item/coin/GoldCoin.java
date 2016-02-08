@@ -15,7 +15,7 @@ public class GoldCoin extends Coin {
     private static BufferedImage image;
 
     static {
-        String path = "resources/gfx/item textures/coin textures/goldCoin.png";
+        String path = "resources/gfx/item_textures/coin textures/goldCoin.png";
         try {
             image = ImageIO.read(GoldCoin.class.getClassLoader().getResourceAsStream(path));
         } catch (IOException e) {

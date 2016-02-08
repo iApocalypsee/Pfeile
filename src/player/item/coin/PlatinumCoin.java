@@ -15,7 +15,7 @@ public class PlatinumCoin extends Coin {
     private static BufferedImage image;
 
     static {
-        String path = "resources/gfx/item textures/coin textures/platinumCoin.png";
+        String path = "resources/gfx/item_textures/coin textures/platinumCoin.png";
         try {
             image = ImageIO.read(PlatinumCoin.class.getClassLoader().getResourceAsStream(path));
         } catch (IOException e) {

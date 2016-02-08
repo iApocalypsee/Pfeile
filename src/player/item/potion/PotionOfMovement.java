@@ -18,7 +18,7 @@ public class PotionOfMovement extends Potion {
     static {
         images = new BufferedImage[3];
 
-        String generalPath = "resources/gfx/item textures/potion textures/potionOfMovement";
+        String generalPath = "resources/gfx/item_textures/potion textures/potionOfMovement";
         String path = "";
         try {
             path = generalPath + "[0].png";

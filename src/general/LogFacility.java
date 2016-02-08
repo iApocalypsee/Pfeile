@@ -127,7 +127,7 @@ public final class LogFacility {
 	 * The severity of the message printed to the console. <p>
 	 * Will appear in square brackets in the printout.
 	 */
-	public static enum LoggingLevel {
+	public enum LoggingLevel {
 		Debug, Info, Warning, Error
 	}
 
