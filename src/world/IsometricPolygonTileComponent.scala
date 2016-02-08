@@ -70,8 +70,6 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
   setSourceShape(primitives.pointsToPolygon(isoTile.corners:_*))
   setName((isoTile.getGridX, isoTile.getGridY).toString())
 
-  // Translate so that the tile fits into the grid again.
-  getTransformation.translate(normalX, normalY)
 
   //</editor-fold>
 
@@ -225,40 +223,12 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
 
   //</editor-fold>
 
-  /**
-    * Calculates the normal x position for this tile, considering that the center of the (0|0) tile
-    * is at screen coordinates (0|0).
- *
-    * @return The x position of the upper left corner of this tile while considering that the map has not been moved
-    *         at all.
-    */
-  def normalX = isoTile.getGridX * TileHalfWidth + isoTile.getGridY * TileHalfWidth
-
-  /**
-    * Calculates the normal y position for this tile, considering that the center of the (0|0) tile
-    * is at screen coordinates (0|0).
- *
-    * @return The y position of the upper left corner of this tile while considering that the map has not been moved
-    *         at all.
-    */
-  def normalY = isoTile.getGridX * TileHalfHeight - isoTile.getGridY * TileHalfHeight
-
-  /**
-    * Sets the position of this tile component to the normal position, to which the given translation is added.
- *
-    * @param leftCornerX How much x units to move this tile additionally.
-    * @param leftCornerY How much y units to move this tile additionally.
-    */
-  def setPositionRelativeToMap(leftCornerX: Int, leftCornerY: Int): Unit = {
-    setLocation(normalX + leftCornerX, normalY + leftCornerY)
-  }
-
   override def draw(g: Graphics2D): Unit = {
     val upperLeft = primitives.objectSpaceToProjection(new Point(-TileHalfWidth, -TileHalfHeight))
     val diagonal = primitives.objectSpaceToProjection(new Vector(TileWidth, TileHeight))
     primitives.graphics.setColor(isoTile.color)
-    primitives.graphics.setPaint(
-      new TexturePaint(texture, new Rectangle2D.Double(upperLeft.getX, upperLeft.getY, diagonal.getX, diagonal.getY)))
+    primitives.graphics.setPaint(new TexturePaint(texture,
+      new Rectangle2D.Double(upperLeft.getX, upperLeft.getY, diagonal.getX, diagonal.getY)))
     primitives.renderPrimitive(PrimitiveType.QUADS, isoTile.corners:_*)
     drawBorders()
     drawCoordinates()

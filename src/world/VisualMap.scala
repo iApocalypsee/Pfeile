@@ -100,20 +100,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
   def centerMap(tileX: Int, tileY: Int): Unit = {
     val centerOn = _displayWorld.terrain.tileAt(tileX, tileY)
 
-    centerOn.component match {
-      case isometric: IsometricPolygonTileComponent =>
-
-        val center = Main.getGameWindow.getCenterPosition
-        val tileNormalPosition = new Vector(isometric.normalX, isometric.normalY)
-        val centeredUpperLeft = center - new Point(isometric.getWidth / 2, isometric.getHeight / 2)
-
-        val relevantDelta = centeredUpperLeft - tileNormalPosition
-        setMapPosition(relevantDelta.getX.asInstanceOf[Int], relevantDelta.getY.asInstanceOf[Int])
-
-      // The visual map can only handle isometric tiles for now.
-      case unknownComponent => throw new NotImplementedError(s"Component of tile is ${unknownComponent.getClass.getName}; " +
-        s"Tile#IsometricPolygonTileComponent expected")
-    }
+    primitives.cameraMatrix = AffineTransformation.translation(Point.origin - centerOn.center)
   }
 
   def zoom(factor: Float): Unit = {
