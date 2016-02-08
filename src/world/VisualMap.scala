@@ -2,8 +2,9 @@ package world
 
 import java.awt.Graphics2D
 
-import general.{Delegate, LogFacility, Main, PfeileContext}
-import geom.{AffineTransformation, Vector, Point}
+import general.{Delegate, Main, PfeileContext}
+import geom._
+import geom.primitives.PrimitiveType
 import gui.Drawable
 import newent.{CommandTeam, VisionStatus}
 import player.item.Loot
@@ -28,9 +29,6 @@ class VisualMap(context: PfeileContext) extends Drawable {
     */
   val onWorldGuiChanged = Delegate.createZeroArity
 
-  /** Data object that holds information on how to display the viewport. */
-  private val _vp = new WorldViewport
-
   /** The color which is drawn on top of the tile when it is revealed (but not visible). */
   private val _revealedTileColor = new java.awt.Color(0.0f, 0.0f, 0.0f, 0.2f)
 
@@ -48,12 +46,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
   /** The world that is being displayed currently. */
   private val _displayWorld = context.world
 
-  /** Returns the current shifting of the map in the x direction. */
-  def getShiftY: Int = _vp.getShiftY.asInstanceOf[Int]
-  /** Returns the current shifting of the map in the y direction. */
-  def getShiftX: Int = _vp.getShiftX.asInstanceOf[Int]
-
-  def getShift: Vector = geom.primitives.cameraMatrix.getDisplacement
+  def getShift: Vector = primitives.cameraMatrix.getDisplacement
 
   def sightType = _sightType
   def getSightType = sightType
@@ -74,35 +67,23 @@ class VisualMap(context: PfeileContext) extends Drawable {
   }
 
   def moveMap(t: Vector): Unit = {
-    geom.primitives.cameraMatrix = AffineTransformation.translation(t) * geom.primitives.cameraMatrix
+    primitives.cameraMatrix = AffineTransformation.translation(t) * primitives.cameraMatrix
   }
 
   /**
     * Sets the position of the whole map.
  *
-    * @param x The new x position of the left corner of the map.
-    * @param y The new y position of the left corner of the map.
+    * @param x The new x position of the origin
+    * @param y The new y position of the origin
     */
-  def setMapPosition(x: Int, y: Int): Unit = {
+  def setMapPosition(x: Double, y: Double): Unit = {
     import scala.collection.JavaConversions._
 
-    val shiftX = x - getShiftX
-    val shiftY = y - getShiftY
+    val shiftX = x - getShift.getX
+    val shiftY = y - getShift.getY
 
-    geom.primitives.cameraMatrix = AffineTransformation.translation(new Vector(x, y))
+    primitives.cameraMatrix = AffineTransformation.translation(new Vector(x, y))
 
-    for (tile <- _displayWorld.terrain.tiles) tile.component match {
-      case isometric: IsometricPolygonTileComponent =>
-        isometric.setPositionRelativeToMap(x, y)
-      // The visual map can only handle isometric tiles for now.
-      case unknownComponent => throw new NotImplementedError(s"Component of tile is ${unknownComponent.getClass.getName}; " +
-        s"Tile#IsometricPolygonTileComponent expected")
-    }
-
-    /*
-    context.world.entities.entityList.foreach { entity: EntityLike =>
-      entity.getComponent.move(shiftX, shiftY)
-    }*/
 
     context.getWorldLootList.getLoots.foreach { loot: Loot =>
       loot.getLootUI.relocateGuiPosition()
@@ -110,7 +91,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
 
     // TODO: other weapons (AttackDrawer.getAttackingWeapons()) apart from Arrows need to be moved.
     AttackDrawer.getAttackingArrows.foreach { arrow: AbstractArrow =>
-      arrow.getComponent.move(shiftX, shiftY)
+      arrow.getComponent.move(shiftX.asInstanceOf[Int], shiftY.asInstanceOf[Int])
     }
 
     onWorldGuiChanged()
@@ -126,7 +107,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
         val tileNormalPosition = new Vector(isometric.normalX, isometric.normalY)
         val centeredUpperLeft = center - new Point(isometric.getWidth / 2, isometric.getHeight / 2)
 
-        val relevantDelta = (centeredUpperLeft - tileNormalPosition)
+        val relevantDelta = centeredUpperLeft - tileNormalPosition
         setMapPosition(relevantDelta.getX.asInstanceOf[Int], relevantDelta.getY.asInstanceOf[Int])
 
       // The visual map can only handle isometric tiles for now.
@@ -136,7 +117,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
   }
 
   def zoom(factor: Float): Unit = {
-    geom.primitives.cameraMatrix = geom.primitives.cameraMatrix * factor
+    primitives.projectionMatrix = primitives.projectionMatrix * factor
   }
 
   /** Draws the whole map. */
@@ -172,11 +153,14 @@ class VisualMap(context: PfeileContext) extends Drawable {
         visionStatus = usedVision.visionStatusOf(x, y) if visionStatus != VisionStatus.Hidden
       ) {
         val tile = terrain.tileAt(x, y)
-        tile.component.drawChecked(g)
+        tile.component.draw(primitives.graphics)
 
         if (visionStatus == VisionStatus.Revealed) {
           g.setColor(_revealedTileColor)
           g.fill(tile.component.getBounds)
+          primitives.graphics.setColor(_revealedTileColor)
+          primitives.worldMatrix = AffineTransformation.translation(tile.center - Point.origin)
+          primitives.renderPrimitive(PrimitiveType.QUADS, tile.corners:_*)
         }
       }
 

@@ -1,7 +1,5 @@
 package general;
 
-import world.WorldViewport;
-
 import java.io.Serializable;
 
 /**
@@ -11,16 +9,10 @@ import java.io.Serializable;
 public class User implements Serializable {
 
     private final String username;
-    private final WorldViewport viewport;
 
     public User(String username) {
         if(username == null) throw new NullPointerException();
         this.username = username;
-        this.viewport = new WorldViewport();
-    }
-
-    public WorldViewport getViewport() {
-        return viewport;
     }
 
     public String getUsername() {

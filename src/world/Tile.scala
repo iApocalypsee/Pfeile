@@ -1,9 +1,10 @@
 package world
 
-import java.awt._
+import java.awt.{Color, BasicStroke}
 
 import comp.{Component, DisplayRepresentable}
 import general.property.StaticProperty
+import geom.Point
 import gui.image.TextureAtlas
 import newent.{AttackContainer, GameObject}
 import player.weapon.arrow.{AbstractArrow, ImpactDrawerHandler}
@@ -28,6 +29,9 @@ abstract class Tile protected(gridX: Int, gridY: Int, val terrain: Terrain) exte
     * It should be a generic color that can represent this tile in a proper way.
     */
   def color = textureAtlas.averageColor
+  def center = new Point(gridX * TileHalfWidth + gridY * TileHalfWidth, -gridX * TileHalfHeight + gridY * TileHalfHeight)
+  def corners = Seq(new Point(-TileHalfWidth, 0), new Point(0, TileHalfHeight), new Point(TileHalfWidth, 0),
+    new Point(0, -TileHalfHeight))
 
   /**
     * The texture facility that the tile is using.

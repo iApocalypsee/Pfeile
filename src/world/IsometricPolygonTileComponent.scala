@@ -36,12 +36,6 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
 
   //<editor-fold desc="Visual appearance">
 
-  private val corners: Seq[Point] = Seq(new Point(-TileHalfWidth, 0), new Point(0, TileHalfHeight),
-    new Point(TileHalfWidth, 0), new Point(0, -TileHalfHeight))
-
-  private val _center = new Point(isoTile.getGridX * TileHalfWidth + isoTile.getGridY * TileHalfWidth,
-    -isoTile.getGridX * TileHalfHeight + isoTile.getGridY * TileHalfHeight)
-
   /**
     * The color with which the tile object gets filled as the mouse points on it.
     */
@@ -73,7 +67,7 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
   //<editor-fold desc="Initialization code">
 
   setBackingScreen(GameScreen.getInstance())
-  setSourceShape(primitives.pointsToPolygon(corners:_*))
+  setSourceShape(primitives.pointsToPolygon(isoTile.corners:_*))
   setName((isoTile.getGridX, isoTile.getGridY).toString())
 
   // Translate so that the tile fits into the grid again.
@@ -146,10 +140,10 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
   // Only draw a prediction if the tile is actually being targeted
   handle { g =>
     if(isTargetForPathPrediction) {
-      primitives.worldMatrix = AffineTransformation.translation(_center - Point.origin)
+      primitives.worldMatrix = AffineTransformation.translation(isoTile.center - Point.origin)
       primitives.graphics.setStroke(MoveTargetStroke)
       primitives.graphics.setColor(MoveTargetColor)
-      primitives.renderPrimitive(PrimitiveType.LINE_LOOP, corners:_*)
+      primitives.renderPrimitive(PrimitiveType.LINE_LOOP, isoTile.corners:_*)
     }
   }
 
@@ -176,9 +170,9 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
     * @param g Self-evident.
     */
   private def drawMouseFocused(g: Graphics2D): Unit = {
-    primitives.worldMatrix = AffineTransformation.translation(_center - Point.origin)
+    primitives.worldMatrix = AffineTransformation.translation(isoTile.center - Point.origin)
     primitives.graphics.setColor(mouseFocusColor.get)
-    primitives.renderPrimitive(PrimitiveType.QUADS, corners:_*)
+    primitives.renderPrimitive(PrimitiveType.QUADS, isoTile.corners:_*)
   }
 
   //</editor-fold>
@@ -188,7 +182,7 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
   private def drawBorders() = {
     primitives.graphics.setStroke(isoTile.border.stroke.get)
     primitives.graphics.setColor(isoTile.border.northWest.get)
-    primitives.renderPrimitive(PrimitiveType.LINE_LOOP, corners:_*)
+    primitives.renderPrimitive(PrimitiveType.LINE_LOOP, isoTile.corners:_*)
   }
 
   //</editor-fold>
@@ -265,7 +259,7 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
     primitives.graphics.setColor(isoTile.color)
     primitives.graphics.setPaint(
       new TexturePaint(texture, new Rectangle2D.Double(upperLeft.getX, upperLeft.getY, diagonal.getX, diagonal.getY)))
-    primitives.renderPrimitive(PrimitiveType.QUADS, corners:_*)
+    primitives.renderPrimitive(PrimitiveType.QUADS, isoTile.corners:_*)
     drawBorders()
     drawCoordinates()
   }
