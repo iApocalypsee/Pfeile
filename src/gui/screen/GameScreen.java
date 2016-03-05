@@ -4,7 +4,6 @@ import comp.Button;
 import comp.WarningMessage;
 import general.Main;
 import general.PfeileContext;
-import general.langsupport.LangDict;
 import gui.FrameContainer;
 import gui.FrameContainerObject;
 import gui.MoneyDisplay;
@@ -71,16 +70,11 @@ public class GameScreen extends Screen implements FrameContainer {
 
 	private final FrameContainerObject frameContainerObject = new FrameContainerObject();
 
-    // The language dictionary holding translations from GameScreen.json primarily
-    private final LangDict dictionary;
-
 	/**
 	 * Die Welt, die vom GameScreen gezeichnet wird.
 	 */
 	private GameScreen() {
 		super(GameScreen.SCREEN_NAME, GameScreen.SCREEN_INDEX);
-
-        dictionary = LangDict.fromJsonStr("screen/GameScreen.json");
 
 		setPreprocessedDrawingEnabled(false);
 
@@ -117,10 +111,10 @@ public class GameScreen extends Screen implements FrameContainer {
 
         Thread initThread = new Thread (() -> {
 
-            final String shootStr = dictionary.getTranslationNow("shootButton", Main.getLanguage()),
-                         inventoryStr = dictionary.getTranslationNow("inventoryButton", Main.getLanguage()),
-                         shopStr = dictionary.getTranslationNow("shopButton", Main.getLanguage()),
-                         endTurnStr = dictionary.getTranslationNow("endTurnButton", Main.getLanguage());
+            final String shootStr = Main.tr("shootButton"),
+                         inventoryStr = Main.tr("inventoryButton"),
+                         shopStr = Main.tr("shopButton"),
+                         endTurnStr = Main.tr("endTurnButton");
 
 
             // Initialisierung der Buttons
