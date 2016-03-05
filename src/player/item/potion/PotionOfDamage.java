@@ -94,22 +94,6 @@ public class PotionOfDamage extends Potion {
         return images[getLevel()];
     }
 
-    /**
-     * Returns the name of the item in English for the user
-     */
-    @Override
-    public String getNameEnglish () {
-        return "Damage potion";
-    }
-
-    /**
-     * Returns the name of the item in German for the user
-     */
-    @Override
-    public String getNameGerman () {
-        return "Schadenstrank";
-    }
-
     @Override
     protected String getTranslationIdentifier() {
         return "item/potion/damage";

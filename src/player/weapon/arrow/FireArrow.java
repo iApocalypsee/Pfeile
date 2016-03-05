@@ -41,22 +41,6 @@ public class FireArrow extends AbstractArrow {
 		return img_Fire;
 	}
 
-    /**
-     * Returns the name of the item in English for the user
-     */
-    @Override
-    public String getNameEnglish () {
-        return "Fire arrow";
-    }
-
-    /**
-     * Returns the name of the item in German for the user
-     */
-    @Override
-    public String getNameGerman () {
-        return "Feuerpfeil";
-    }
-
     @Override
     protected String getTranslationIdentifier() {
         return LANG_IDENT;

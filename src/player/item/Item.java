@@ -42,21 +42,6 @@ public abstract class Item {
      */
     public abstract BufferedImage getImage();
 
-    /** Returns the name of the item in English for the user */
-    public abstract String getNameEnglish();
-
-    /** Returns the name of the item in German for the user */
-    public abstract String getNameGerman();
-
-    /** returns <code>getNameGerman()</code> if the parameter <code>language</code> is set to <code>German$.MODULE$</code>;
-     * if not <code>getNameEnglish()</code> will be returned.
-     *
-     * @param language the language the item's name should be displayed (or whatever you want to do with it)
-     * @return the language this item
-     */
-    public String getNameDisplayed(Language language) {
-        throw new NotImplementedException();
-    }
 
     /** Returns the name of this item in the language, it is given in <code>Main.getLanguage()</code>.
      * this code is equal to <code>getNameDisplayed(Main.getLanguage())</code>
@@ -64,7 +49,7 @@ public abstract class Item {
      * @return the name of this item for the user
      */
     public String getNameDisplayed() {
-        return Main.getTranslation(getTranslationIdentifier());
+        return Main.tr(getTranslationIdentifier());
     }
 
     /**

@@ -77,22 +77,6 @@ public class BagOfLoots extends Loot {
         return image;
     }
 
-    /**
-     * Returns the name of the item in English for the user
-     */
-    @Override
-    public String getNameEnglish () {
-        return "Loot bag";
-    }
-
-    /**
-     * Returns the name of the item in German for the user
-     */
-    @Override
-    public String getNameGerman () {
-        return "Warensack";
-    }
-
     @Override
     protected String getTranslationIdentifier() {
         return "item/loot/bag";

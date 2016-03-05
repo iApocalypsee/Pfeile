@@ -42,22 +42,6 @@ public class StoneArrow extends AbstractArrow {
 		return img_Stone;
 	}
 
-    /**
-     * Returns the name of the item in English for the user
-     */
-    @Override
-    public String getNameEnglish () {
-        return "Stone arrow";
-    }
-
-    /**
-     * Returns the name of the item in German for the user
-     */
-    @Override
-    public String getNameGerman () {
-        return "Steinpfeil";
-    }
-
     @Override
     protected String getTranslationIdentifier() {
         return LANG_IDENT;

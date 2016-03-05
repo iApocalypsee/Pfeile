@@ -40,21 +40,6 @@ public class LightArrow extends AbstractArrow {
 		return img_Light;
 	}
 
-    /**
-     * Returns the name of the item in English for the user
-     */
-    @Override
-    public String getNameEnglish () {
-        return "Light arrow";
-    }
-
-    /**
-     * Returns the name of the item in German for the user
-     */
-    @Override
-    public String getNameGerman () {
-        return "Lichtpfeil";
-    }
 
     @Override
     protected String getTranslationIdentifier() {

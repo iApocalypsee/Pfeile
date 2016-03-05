@@ -74,21 +74,6 @@ public class PotionOfMovement extends Potion {
         return images[getLevel()];
     }
 
-    /**
-     * Returns the name of the item in English for the user
-     */
-    @Override
-    public String getNameEnglish () {
-        return "Agility potion";
-    }
-
-    /**
-     * Returns the name of the item in German for the user
-     */
-    @Override
-    public String getNameGerman () {
-        return "Trank der Beweglichkeit";
-    }
 
     @Override
     protected String getTranslationIdentifier() {

@@ -53,22 +53,6 @@ public class Treasure extends Loot {
         return image;
     }
 
-    /**
-     * Returns the name of the item in English for the user
-     */
-    @Override
-    public String getNameEnglish () {
-        return "Treasure";
-    }
-
-    /**
-     * Returns the name of the item in German for the user
-     */
-    @Override
-    public String getNameGerman () {
-        return "Schatz";
-    }
-
     @Override
     protected String getTranslationIdentifier() {
         return "item/loot/treasure";

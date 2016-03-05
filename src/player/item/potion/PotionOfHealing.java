@@ -75,22 +75,6 @@ public class PotionOfHealing extends Potion {
         return images[getLevel()];
     }
 
-    /**
-     * Returns the name of the item in English for the user
-     */
-    @Override
-    public String getNameEnglish () {
-        return "Healing potion";
-    }
-
-    /**
-     * Returns the name of the item in German for the user
-     */
-    @Override
-    public String getNameGerman () {
-        return "Heiltrank";
-    }
-
     @Override
     protected String getTranslationIdentifier() {
         return "item/potion/heal";

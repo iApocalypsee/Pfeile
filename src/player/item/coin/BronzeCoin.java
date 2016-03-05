@@ -45,21 +45,6 @@ public class BronzeCoin extends Coin {
         return image;
     }
 
-    /**
-     * Returns the name of the item in English for the user
-     */
-    @Override
-    public String getNameEnglish () {
-        return "Bronze coin";
-    }
-
-    /**
-     * Returns the name of the item in German for the user
-     */
-    @Override
-    public String getNameGerman () {
-        return "Bronzemünze";
-    }
 
     @Override
     protected String getTranslationIdentifier() {

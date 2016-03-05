@@ -45,22 +45,6 @@ public class GoldCoin extends Coin {
         return image;
     }
 
-    /**
-     * Returns the name of the item in English for the user
-     */
-    @Override
-    public String getNameEnglish () {
-        return "Gold coin";
-    }
-
-    /**
-     * Returns the name of the item in German for the user
-     */
-    @Override
-    public String getNameGerman () {
-        return "Goldmünze";
-    }
-
     @Override
     protected String getTranslationIdentifier() {
         return "item/coin/gold";

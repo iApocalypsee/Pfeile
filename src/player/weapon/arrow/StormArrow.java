@@ -40,22 +40,6 @@ public class StormArrow extends AbstractArrow {
 		return img_Storm;
 	}
 
-    /**
-     * Returns the name of the item in English for the user
-     */
-    @Override
-    public String getNameEnglish () {
-        return "Storm arrow";
-    }
-
-    /**
-     * Returns the name of the item in German for the user
-     */
-    @Override
-    public String getNameGerman () {
-        return "Sturmpfeil";
-    }
-
     @Override
     protected String getTranslationIdentifier() {
         return LANG_IDENT;
