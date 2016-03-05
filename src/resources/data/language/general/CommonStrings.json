@@ -119,5 +119,10 @@
   "money": {
     "en_EN": "Money",
     "de_DE": "Geld"
+  },
+
+  "errorIndexOutOfBounds": {
+    "en_EN": "Error: The selected index (%d) does not exist",
+    "de_DE": "Fehler: Der ausgewählte Index (%d) exisitiert nicht"
   }
 }
