@@ -5,8 +5,6 @@ import comp.Component;
 import comp.*;
 import general.Main;
 import general.PfeileContext;
-import general.langsupport.English$;
-import general.langsupport.Language;
 import newent.InventoryLike;
 import player.weapon.arrow.*;
 
@@ -83,8 +81,6 @@ public class ArrowSelectionScreen extends Screen {
 	
 	private ConfirmDialog confirmDialog;
 
-    private String[] arrowNames;
-
     /** apart form creating a new ArrowSelectionScreen, this also initialized it's values Threaded */
 	public ArrowSelectionScreen() {
 		super(ArrowSelectionScreen.SCREEN_NAME, ArrowSelectionScreen.SCREEN_INDEX);
@@ -99,24 +95,22 @@ public class ArrowSelectionScreen extends Screen {
             /* Y-Position des ersten Buttons (Bildschirm) */
             int posYButtons = 85;
 
-            Language lang = Main.getLanguage();
-
             fireArrowButton = new Button(posXButton, posYButtons, ArrowSelectionScreen.this,
-                    ArrowHelper.getTranslation(FireArrow.INDEX, lang));
+                    Main.tr("fireArrow"));
             waterArrowButton = new Button(posXButton + fireArrowButton.getWidth() + 43, posYButtons, ArrowSelectionScreen.this,
-                    ArrowHelper.getTranslation(WaterArrow.INDEX, lang));
+                    Main.tr("waterArrow"));
             stormArrowButton = new Button(posXButton + (fireArrowButton.getWidth() + 43) * 2, posYButtons, ArrowSelectionScreen.this,
-                    ArrowHelper.getTranslation(StormArrow.INDEX, lang));
+                    Main.tr("stormArrow"));
             stoneArrowButton = new Button(posXButton + (fireArrowButton.getWidth() + 43) * 3, posYButtons, ArrowSelectionScreen.this,
-                    ArrowHelper.getTranslation(StoneArrow.INDEX, lang));
+                    Main.tr("stoneArrow"));
             iceArrowButton = new Button(posXButton + (fireArrowButton.getWidth() + 43) * 4, posYButtons, ArrowSelectionScreen.this,
-                    ArrowHelper.getTranslation(IceArrow.INDEX, lang));
+                    Main.tr("iceArrow"));
             lightningArrowButton = new Button(posXButton + (fireArrowButton.getWidth() + 43) * 5, posYButtons, ArrowSelectionScreen.this,
-                    ArrowHelper.getTranslation(LightningArrow.INDEX, lang));
+                    Main.tr("lightningArrow"));
             lightArrowButton = new Button(posXButton + (fireArrowButton.getWidth() + 43) * 6 , posYButtons, ArrowSelectionScreen.this,
-                    ArrowHelper.getTranslation(LightArrow.INDEX, lang));
+                    Main.tr("lightArrow"));
             shadowArrowButton = new Button(posXButton + (fireArrowButton.getWidth() + 43) * 7, posYButtons, ArrowSelectionScreen.this,
-                    ArrowHelper.getTranslation(ShadowArrow.INDEX, lang));
+                    Main.tr("shadowArrow"));
 
             buttonListArrows.add(fireArrowButton);
             buttonListArrows.add(waterArrowButton);
@@ -155,14 +149,14 @@ public class ArrowSelectionScreen extends Screen {
             arrowList = new ArrayList<>();
 
             final int[] arrowsCount = ArrowHelper.emptyArrowCount();
-            arrowList.add(ArrowHelper.getTranslation(FireArrow.INDEX, lang) + " [" + arrowsCount[FireArrow.INDEX] + "]");
-            arrowList.add(ArrowHelper.getTranslation(WaterArrow.INDEX, lang) + " [" + arrowsCount[WaterArrow.INDEX] + "]");
-            arrowList.add(ArrowHelper.getTranslation(StormArrow.INDEX, lang) + " [" + arrowsCount[StormArrow.INDEX] + "]");
-            arrowList.add(ArrowHelper.getTranslation(StoneArrow.INDEX, lang) + " [" + arrowsCount[StoneArrow.INDEX] + "]");
-            arrowList.add(ArrowHelper.getTranslation(IceArrow.INDEX, lang) + " [" + arrowsCount[IceArrow.INDEX] + "]");
-            arrowList.add(ArrowHelper.getTranslation(LightningArrow.INDEX, lang) + " [" + arrowsCount[LightningArrow.INDEX] + "]");
-            arrowList.add(ArrowHelper.getTranslation(LightArrow.INDEX, lang) + " [" + arrowsCount[LightArrow.INDEX] + "]");
-            arrowList.add(ArrowHelper.getTranslation(ShadowArrow.INDEX, lang) + " [" + arrowsCount[ShadowArrow.INDEX] + "]");
+            arrowList.add(Main.tr("fireArrow") + " [" + arrowsCount[FireArrow.INDEX] + "]");
+            arrowList.add(Main.tr("waterArrow") + " [" + arrowsCount[WaterArrow.INDEX] + "]");
+            arrowList.add(Main.tr("stormArrow") + " [" + arrowsCount[StormArrow.INDEX] + "]");
+            arrowList.add(Main.tr("stoneArrow") + " [" + arrowsCount[StoneArrow.INDEX] + "]");
+            arrowList.add(Main.tr("iceArrow") + " [" + arrowsCount[IceArrow.INDEX] + "]");
+            arrowList.add(Main.tr("lightningArrow") + " [" + arrowsCount[LightningArrow.INDEX] + "]");
+            arrowList.add(Main.tr("lightArrow") + " [" + arrowsCount[LightArrow.INDEX] + "]");
+            arrowList.add(Main.tr("shadowArrow") + " [" + arrowsCount[ShadowArrow.INDEX] + "]");
 
             inventoryList_Width = fireArrowButton.getWidth() + 30;
 
@@ -177,12 +171,9 @@ public class ArrowSelectionScreen extends Screen {
 
 			inventoryList.acceptInput();
 
-            if (lang == English$.MODULE$)
-                selectedArrowBox = new TextBox(Main.getWindowWidth() - (Component.getTextBounds("<Select arrow>", Component.STD_FONT).width + 30) - 37,
-                        300, "<Select arrow>", ArrowSelectionScreen.this);
-            else
-                selectedArrowBox = new TextBox(Main.getWindowWidth() - (Component.getTextBounds("<Pfeil auswählen>", Component.STD_FONT).width + 30) - 37,
-                        300, "<Pfeil auswählen>", ArrowSelectionScreen.this);
+			String text = Main.tr("selectArrow");
+			selectedArrowBox = new TextBox(Main.getWindowWidth() - (Component.getTextBounds(text, Component.STD_FONT).width + 30) - 37,
+					300, text, ArrowSelectionScreen.this);
             selectedArrowBox.setVisible(true);
             selectedArrowBox.setRoundBorder(true);
             selectedArrowBox.setHeight(selectedArrowBox.getHeight() + 1);
@@ -212,31 +203,13 @@ public class ArrowSelectionScreen extends Screen {
                         if (!(ArrowHelper.instanceArrow(selectedIndex).equip())) {
                             final InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
                             if (inventory.maximumSize() - inventory.currentSize() <= 0) {
-                                if (Main.getLanguage() == English$.MODULE$)
-                                    warningMessage.setMessage("Inventory is full: Maximum Size " + inventory.maximumSize());
-                                else
-                                    warningMessage.setMessage("Das Inventar ist voll: Maximale Inventargröße " + inventory.maximumSize());
-                            } else if (Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().get() <= 0){
-                                if (Main.getLanguage() == English$.MODULE$)
-                                    warningMessage.setMessage("The maximum number of arrows (being set before round) has been added. Maximum value: " + PfeileContext.arrowNumberFreeSet().get());
-                                else
-                                    warningMessage.setMessage("Es wurde bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Maximalanzahl: " + PfeileContext.arrowNumberFreeSet().get());
-                                // Es können jetzt beliebig viele Pfeile eines Types ausgewählt werden
-                                // } else if (inventory.maxStack(selectedIndex) >= inventory.getItemCount(selecteddIndex)) {
-                                //    warningMessage.setMessage("Das Inventar kann maximal " + inventory.maxStack(selectedIndex) + " " +
-                                //                        selectedIndex.getSimpleName() + " Pfeile aufnehmen!");
-
+								warningMessage.setMessage(Main.tr("warningInventoryFull", inventory.maximumSize()));
+							} else if (Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().get() <= 0) {
+								warningMessage.setMessage(Main.tr("warningMaxArrows", PfeileContext.arrowNumberFreeSet().get()));
                             } else {
-                                System.err.println("Could not add arrow to inventory (with " +
-                                        (inventory.maximumSize() - inventory.currentSize()) + " remaining space) arrow index: " + selectedIndex);
-
-                                if (Main.getLanguage() == English$.MODULE$)
-                                    warningMessage.setMessage("Could not add arrow to inventory (with " +
-                                        (inventory.maximumSize() - inventory.currentSize()) + " remaining space) arrow index: " + selectedIndex);
-                                else
-                                    warningMessage.setMessage("Pfeil konnte nicht hinzugefügt werden (" +
-                                            (inventory.maximumSize() - inventory.currentSize()) + " sind frei) [Pfeilindex: " + selectedIndex + "]");
-                            }
+								String msg = Main.tr("errorInventoryFull", inventory.maximumSize() - inventory.currentSize());
+								warningMessage.setMessage(msg);
+							}
                             warningMessage.activateMessage();
                         } else {
                             Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().set(Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().get() - 1);
@@ -245,10 +218,7 @@ public class ArrowSelectionScreen extends Screen {
                             updateInventoryList();
                         }
                     } else {
-                        if (Main.getLanguage() == English$.MODULE$)
-                            warningMessage.setMessage("The maximum number of arrows (being set before round) has been added. Maximum value: " + PfeileContext.arrowNumberFreeSet().get());
-                        else
-                            warningMessage.setMessage("Es wurde bereits die maximale Anzahl von freisetzbaren Pfeilen hinzugefügt. Maximalanzahl: " + PfeileContext.arrowNumberFreeSet().get());
+						warningMessage.setMessage(Main.tr("warningMaxArrows", PfeileContext.arrowNumberFreeSet()));
                         warningMessage.activateMessage();
                     }
                     closeConfirmDialogQuestion();
@@ -408,24 +378,6 @@ public class ArrowSelectionScreen extends Screen {
 			}
 		}
 	}
-	
-
-
-	/**
-	 * Opens the "Are you sure?" dialog with specified question.
-	 * @param question The question to display.
-	 */
-    @Deprecated
-	private void openConfirmQuestion (String question) {
-		confirmDialog.setQuestionText(question);
-		confirmDialog.setVisible(true);
-		isConfirmDialogOpen = true;
-
-		for (Button button : buttonList) {
-			button.declineInput();
-		}
-		inventoryList.declineInput();
-	}
 
 	/**
 	 * Closes the "Are you sure?" dialog.
@@ -450,16 +402,15 @@ public class ArrowSelectionScreen extends Screen {
             public void run () {
                 arrowList.clear();
 
-                Language lang = Main.getLanguage();
 				final int[] arrowsCount = ArrowHelper.arrowCountInventory(Main.getContext().getActivePlayer().inventory());
-                arrowList.add(ArrowHelper.getTranslation(FireArrow.INDEX, lang) + " [" + arrowsCount[FireArrow.INDEX] + "]");
-                arrowList.add(ArrowHelper.getTranslation(WaterArrow.INDEX, lang) + " [" + arrowsCount[WaterArrow.INDEX] + "]");
-                arrowList.add(ArrowHelper.getTranslation(StormArrow.INDEX, lang) + " [" + arrowsCount[StormArrow.INDEX] + "]");
-                arrowList.add(ArrowHelper.getTranslation(StoneArrow.INDEX, lang) + " [" + arrowsCount[StoneArrow.INDEX] + "]");
-                arrowList.add(ArrowHelper.getTranslation(IceArrow.INDEX, lang) + " [" + arrowsCount[IceArrow.INDEX] + "]");
-                arrowList.add(ArrowHelper.getTranslation(LightningArrow.INDEX, lang) + " [" + arrowsCount[LightningArrow.INDEX] + "]");
-                arrowList.add(ArrowHelper.getTranslation(LightArrow.INDEX, lang) + " [" + arrowsCount[LightArrow.INDEX] + "]");
-                arrowList.add(ArrowHelper.getTranslation(ShadowArrow.INDEX, lang) + " [" + arrowsCount[ShadowArrow.INDEX] + "]");
+                arrowList.add(Main.tr("fireArrow") + " [" + arrowsCount[FireArrow.INDEX] + "]");
+                arrowList.add(Main.tr("waterArrow") + " [" + arrowsCount[WaterArrow.INDEX] + "]");
+                arrowList.add(Main.tr("stormArrow") + " [" + arrowsCount[StormArrow.INDEX] + "]");
+                arrowList.add(Main.tr("stoneArrow") + " [" + arrowsCount[StoneArrow.INDEX] + "]");
+                arrowList.add(Main.tr("iceArrow") + " [" + arrowsCount[IceArrow.INDEX] + "]");
+                arrowList.add(Main.tr("lightningArrow") + " [" + arrowsCount[LightningArrow.INDEX] + "]");
+                arrowList.add(Main.tr("lightArrow") + " [" + arrowsCount[LightArrow.INDEX] + "]");
+                arrowList.add(Main.tr("shadowArrow") + " [" + arrowsCount[ShadowArrow.INDEX] + "]");
 
                 inventoryList.setItems(arrowList);
             }

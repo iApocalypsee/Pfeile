@@ -50,6 +50,25 @@
   "confirm": {
     "en_EN": "Confirm",
     "de_DE": "Bestätigen"
-  }
+  },
 
+  "selectArrow": {
+    "en_EN": "<Select arrow>",
+    "de_DE": "<Pfeil auswählen>"
+  },
+
+  "warningInventoryFull": {
+    "en_EN": "Inventory is full (size: %d)",
+    "de_DE": "Das Inventar ist voll (Größe: %d)"
+  },
+
+  "warningMaxArrows": {
+    "en_EN": "The maximum number of arbitrarily selectable arrows (%d) has already been added",
+    "de_DE": "Die Anzahl der frei wählbaren Pfeile (%d) ist bereits ausgeschöpft"
+  },
+
+  "errorInventoryFull": {
+    "en_EN": "Error: Could not add arrow to inventory (%d spaces remaining)",
+    "de_DE": "Fehler: Pfeil konnte dem Inventar nicht hinzugefügt werden (%d freie Plätze)"
+  }
 }
