@@ -31,9 +31,4 @@ class LangDict() {
     else
       identifier
   }
-
-  def tr(identifier: String): String = translate(identifier, Main.getLanguage.langCode)
-
-  @annotation.varargs
-  def tr(identifier: String, args: Object*):String = String.format(tr(identifier), args:_*)
 }

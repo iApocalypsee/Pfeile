@@ -8,7 +8,6 @@ import general.Main;
 import general.PfeileContext;
 import general.TimeClock;
 import general.io.FontLoader;
-import general.langsupport.LangDict;
 import newent.*;
 import scala.concurrent.duration.FiniteDuration;
 
@@ -110,49 +109,46 @@ public class PreWindowScreen extends Screen {
     /** position of <code>g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y")</code> */
     private Point fontSmallPosition;
 
-    private static final LangDict dict = new LangDict("general/CommonStrings.json")
-            .addJSON("screen/PreWindowScreen");
-
     private final String strategyGameLabel, authorsLabel, selectSelections;
 
     public PreWindowScreen() {
         super(SCREEN_NAME, SCREEN_INDEX);
 
-        final String defaultSettings = dict.tr("defaultSettings"),
-                     aiStrength = dict.tr("aiStrength"),
-                     initialMoney = dict.tr("initialMoney"),
-                     moneyPerTurn = dict.tr("moneyPerTurn"),
-                     arrowAmountFreeSet = dict.tr("arrowAmountFreeSet"),
-                     arrowAmountPreSet = dict.tr("arrowAmountPreSet"),
-                     maxLife = dict.tr("maxLife"),
-                     lifeRegen = dict.tr("lifeRegen"),
-                     dmgScale = dict.tr("dmgScale"),
-                     turnsPerRound = dict.tr("turnsPerRound"),
-                     timePerTurn = dict.tr("timePerTurn"),
-                     handicap = dict.tr("handicap"),
-                     worldsize = dict.tr("worldsize"),
-                     confirm = dict.tr("confirm"),
-                     done = dict.tr("done");
+        final String defaultSettings = Main.tr("defaultSettings"),
+                     aiStrength = Main.tr("aiStrength"),
+                     initialMoney = Main.tr("initialMoney"),
+                     moneyPerTurn = Main.tr("moneyPerTurn"),
+                     arrowAmountFreeSet = Main.tr("arrowAmountFreeSet"),
+                     arrowAmountPreSet = Main.tr("arrowAmountPreSet"),
+                     maxLife = Main.tr("maxLife"),
+                     lifeRegen = Main.tr("lifeRegen"),
+                     dmgScale = Main.tr("dmgScale"),
+                     turnsPerRound = Main.tr("turnsPerRound"),
+                     timePerTurn = Main.tr("timePerTurn"),
+                     handicap = Main.tr("handicap"),
+                     worldsize = Main.tr("worldsize"),
+                     confirm = Main.tr("confirm"),
+                     done = Main.tr("done");
 
-        final String high = dict.tr("high"),
-                     balanced = dict.tr("balanced"),
-                     low = dict.tr("low"),
-                     huge = dict.tr("huge"),
-                     large = dict.tr("large"),
-                     normal = dict.tr("normal"),
-                     small = dict.tr("small"),
-                     tiny = dict.tr("tiny"),
-                     brutal = dict.tr("brutal"),
-                     strong = dict.tr("strong"),
-                     decent = dict.tr("decent"),
-                     weak = dict.tr("weak"),
-                     miserable = dict.tr("miserable"),
+        final String high = Main.tr("high"),
+                     balanced = Main.tr("balanced"),
+                     low = Main.tr("low"),
+                     huge = Main.tr("huge"),
+                     large = Main.tr("large"),
+                     normal = Main.tr("normal"),
+                     small = Main.tr("small"),
+                     tiny = Main.tr("tiny"),
+                     brutal = Main.tr("brutal"),
+                     strong = Main.tr("strong"),
+                     decent = Main.tr("decent"),
+                     weak = Main.tr("weak"),
+                     miserable = Main.tr("miserable"),
                      balancedHigh = balanced + "-" + high,
                      balancedLow = balanced + "-" + low;
 
-        strategyGameLabel = dict.tr("label_strategyGame");
-        authorsLabel = dict.tr("label_authors");
-        selectSelections = dict.tr("done");
+        strategyGameLabel = Main.tr("label_strategyGame");
+        authorsLabel = Main.tr("label_authors");
+        selectSelections = Main.tr("done");
 
         // Initialise the Components
         confirmButton = new Button(550, 400, this, confirm);
@@ -623,7 +619,7 @@ public class PreWindowScreen extends Screen {
                 return;
             }
             default: {
-                String msg = dict.tr("errorIndexOutOfBounds", selectorComboBox.getSelectedIndex());
+                String msg = Main.tr("errorIndexOutOfBounds", selectorComboBox.getSelectedIndex());
                 openConfirmDialog(msg);
                 System.err.println(msg);
                 System.err.println("at: PreWindowScreen.triggerConfirmButton()\n");
@@ -700,7 +696,7 @@ public class PreWindowScreen extends Screen {
                 break;
             }
             default: {
-                String msg = dict.tr("errorIndexOutOfBounds", selectorComboBox.getSelectedIndex());
+                String msg = Main.tr("errorIndexOutOfBounds", selectorComboBox.getSelectedIndex());
                 openConfirmDialog(msg);
                 System.err.println(msg);
                 System.err.println("at: PreWindowScreen.triggerSelectorComboBoxByIndex\n");

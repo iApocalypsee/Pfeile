@@ -68,7 +68,16 @@ public class Main {
     private static DebugWindows debugWindows = new DebugWindows();
 
     // Central translation instance.
-    private static LangTreeDict dictionary = new LangTreeDict("Pfeile team");
+    private static LangDict dict = new LangDict("general/CommonStrings.json")
+            .addJSON("general/EverythingElse.json")
+            .addJSON("general/GameMeta")
+            .addJSON("item/Arrows.json")
+            .addJSON("item/Items.json")
+            .addJSON("rest/WorldStrings.json")
+            .addJSON("screen/ArrowSelectionScreen.json")
+            .addJSON("screen/ArrowSelectionScreenPreSet.json")
+            .addJSON("screen/GameScreen.json")
+            .addJSON("screen/PreWindowScreen.json");
 
     private static long programStartTime;
 
@@ -137,7 +146,6 @@ public class Main {
         LogFacility.log("Beginning initialization process...", "Info", "initprocess");
 
         LangInitialization.apply();
-        loadLanguageFiles();
         LogFacility.log("LangInitialization done!", "Info", "initprocess");
 
         main = new Main();
@@ -221,24 +229,15 @@ public class Main {
 
     /**
      * Gets the translation for given ID and the currently selected language as the translation language.
-     * @param id The translation node ID to look for.
+     * @param identifier The translation node ID to look for.
      * @return A translation, or throws an exception if it is not found.
      */
-    public static String getTranslation(String id) {
-        return dictionary.getTranslationNow(id, language);
+    public static String tr(String identifier) {
+        return dict.translate(identifier, language.langCode());
     }
 
-    /**
-     * Method for loading all language files into the tree dictionary.
-     */
-    private static void loadLanguageFiles() {
-        // Assume the LangTreeDict object has already been constructed
-
-        // Screen language data
-        dictionary.addJsonTranslationsStr("screen/LoadScreen.json");
-
-        // Item language data
-        dictionary.addJsonTranslationsStr("item/ItemsTree.json");
+    public static String tr(String identifier, Object ...args) {
+        return String.format(tr(identifier), args);
     }
 
     /**

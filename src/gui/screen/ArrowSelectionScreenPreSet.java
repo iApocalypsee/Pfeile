@@ -8,7 +8,6 @@ import general.LogFacility;
 import general.Main;
 import general.PfeileContext;
 import general.io.FontLoader;
-import general.langsupport.LangDict;
 import newent.Player;
 import player.weapon.arrow.*;
 
@@ -80,31 +79,25 @@ public class ArrowSelectionScreenPreSet extends Screen {
     /** The player currently selecting his set of arrows. */
     private Player activePlayer;
 
-    private static final LangDict dict = new LangDict("screen/ArrowSelectionScreen.json")
-            .addJSON("screen/ArrowSelectionScreenPreSet.json")
-            .addJSON("general/CommonStrings.json")
-            .addJSON("item/Arrows.json");
-
     private final String noArrowsStr, chooseVarArrows, chooseOneArrow, chooseFirstLastArrow, noMoreArrows, authorsLabel, strategyGameLabel;
 
     /**
      * Screen für die Pfeilauswahl für vorhersetzbaren Pfeilen.
      * äquivalent zu <code> ArrowSelection </code>.
      */
-    // TODO: Improve the dictionary / json-files for this class. It shouldn't use ArrowSelection.json and the translations should be used on the whole screen.
     private ArrowSelectionScreenPreSet() {
         super(SCREEN_NAME, SCREEN_INDEX);
 
-        chooseVarArrows = dict.tr("defineArrows");
-        chooseOneArrow = dict.tr("defineLastArrow");
-        chooseFirstLastArrow = dict.tr("defineFirstLastArrow");
-        noArrowsStr = dict.tr("noArrows");
-        noMoreArrows = dict.tr("defineNoMoreArrows");
-        strategyGameLabel = dict.tr("label_strategyGame");
-        authorsLabel = dict.tr("label_authors");
+        chooseVarArrows = Main.tr("defineArrows");
+        chooseOneArrow = Main.tr("defineLastArrow");
+        chooseFirstLastArrow = Main.tr("defineFirstLastArrow");
+        noArrowsStr = Main.tr("noArrows");
+        noMoreArrows = Main.tr("defineNoMoreArrows");
+        strategyGameLabel = Main.tr("label_strategyGame");
+        authorsLabel = Main.tr("label_authors");
 
-        final String randomArrow = dict.tr("randomArrow"),
-                     confirm = dict.tr("confirm");
+        final String randomArrow = Main.tr("randomArrow"),
+                     confirm = Main.tr("confirm");
 
         selectedArrows = new LinkedList<>();
         selectedArrows.add(noArrowsStr);
@@ -137,21 +130,21 @@ public class ArrowSelectionScreenPreSet extends Screen {
         int posXButton = 38;
 
         buttonListArrows[0] = new Button(posXButton, posYButtons, this,
-                dict.tr("fireArrow"));
+                Main.tr("fireArrow"));
         buttonListArrows[1] = new Button(posXButton + buttonListArrows[0].getWidth() + 43, posYButtons, this,
-                dict.tr("waterArrow"));
+                Main.tr("waterArrow"));
         buttonListArrows[2] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 2, posYButtons, this,
-                dict.tr("stormArrow"));
+                Main.tr("stormArrow"));
         buttonListArrows[3] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 3, posYButtons, this,
-                dict.tr("stoneArrow"));
+                Main.tr("stoneArrow"));
         buttonListArrows[4] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 4, posYButtons, this,
-                dict.tr("iceArrow"));
+                Main.tr("iceArrow"));
         buttonListArrows[5] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 5, posYButtons, this,
-                dict.tr("lightningArrow"));
+                Main.tr("lightningArrow"));
         buttonListArrows[6] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 6 , posYButtons, this,
-                dict.tr("lightArrow"));
+                Main.tr("lightArrow"));
         buttonListArrows[7] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 7, posYButtons, this,
-                dict.tr("shadowArrow"));
+                Main.tr("shadowArrow"));
 
         // resizing for higher resolutions, if necessary
         for (Button button : buttonListArrows) {
