@@ -9,7 +9,6 @@ import general.Main;
 import general.PfeileContext;
 import general.io.FontLoader;
 import general.langsupport.LangDict;
-import general.langsupport.Language;
 import newent.Player;
 import player.weapon.arrow.*;
 
@@ -17,7 +16,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -82,7 +80,10 @@ public class ArrowSelectionScreenPreSet extends Screen {
     /** The player currently selecting his set of arrows. */
     private Player activePlayer;
 
-    private final LangDict dictionary;
+    private static final LangDict dict = new LangDict("screen/ArrowSelectionScreen.json")
+            .addJSON("screen/ArrowSelectionScreenPreSet.json")
+            .addJSON("general/CommonStrings.json")
+            .addJSON("item/Arrows.json");
 
     private final String noArrowsStr, chooseVarArrows, chooseOneArrow, chooseFirstLastArrow, noMoreArrows, authorsLabel, strategyGameLabel;
 
@@ -94,25 +95,16 @@ public class ArrowSelectionScreenPreSet extends Screen {
     private ArrowSelectionScreenPreSet() {
         super(SCREEN_NAME, SCREEN_INDEX);
 
-        //setBackground(new SolidColor(TRANSPARENT_BACKGROUND));
+        chooseVarArrows = dict.tr("defineArrows");
+        chooseOneArrow = dict.tr("defineLastArrow");
+        chooseFirstLastArrow = dict.tr("defineFirstLastArrow");
+        noArrowsStr = dict.tr("noArrows");
+        noMoreArrows = dict.tr("defineNoMoreArrows");
+        strategyGameLabel = dict.tr("label_strategyGame");
+        authorsLabel = dict.tr("label_authors");
 
-        // FIXME remove redundant translations
-        dictionary = LangDict.fromJsonStr("screen/ArrowSelectionScreen.json");
-        dictionary.addJsonTranslationsStr("screen/ArrowSelectionScreenPreSet.json");
-        dictionary.addJsonTranslationsStr("general/CommonStrings.json");
-
-        final Language lang = Main.getLanguage();
-
-        chooseVarArrows = dictionary.getTranslationNow("defineArrows", lang);
-        chooseOneArrow = dictionary.getTranslationNow("defineLastArrow", lang);
-        chooseFirstLastArrow = dictionary.getTranslationNow("defineFirstLastArrow", lang);
-        noArrowsStr = dictionary.getTranslationNow("noArrows", lang);
-        noMoreArrows = dictionary.getTranslationNow("defineNoMoreArrows", lang);
-        strategyGameLabel = dictionary.getTranslationNow("label_strategyGame", lang);
-        authorsLabel = dictionary.getTranslationNow("label_authors", lang);
-
-        final String randomArrow = dictionary.getTranslationNow("randomArrow", lang),
-                     confirm = dictionary.getTranslationNow("confirm", lang);
+        final String randomArrow = dict.tr("randomArrow"),
+                     confirm = dict.tr("confirm");
 
         selectedArrows = new LinkedList<>();
         selectedArrows.add(noArrowsStr);
@@ -145,21 +137,21 @@ public class ArrowSelectionScreenPreSet extends Screen {
         int posXButton = 38;
 
         buttonListArrows[0] = new Button(posXButton, posYButtons, this,
-                ArrowHelper.getTranslation(FireArrow.INDEX, lang));
+                dict.tr("fireArrow"));
         buttonListArrows[1] = new Button(posXButton + buttonListArrows[0].getWidth() + 43, posYButtons, this,
-                ArrowHelper.getTranslation(WaterArrow.INDEX, lang));
+                dict.tr("waterArrow"));
         buttonListArrows[2] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 2, posYButtons, this,
-                ArrowHelper.getTranslation(StormArrow.INDEX, lang));
+                dict.tr("stormArrow"));
         buttonListArrows[3] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 3, posYButtons, this,
-                ArrowHelper.getTranslation(StoneArrow.INDEX, lang));
+                dict.tr("stoneArrow"));
         buttonListArrows[4] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 4, posYButtons, this,
-                ArrowHelper.getTranslation(IceArrow.INDEX, lang));
+                dict.tr("iceArrow"));
         buttonListArrows[5] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 5, posYButtons, this,
-                ArrowHelper.getTranslation(LightningArrow.INDEX, lang));
+                dict.tr("lightningArrow"));
         buttonListArrows[6] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 6 , posYButtons, this,
-                ArrowHelper.getTranslation(LightArrow.INDEX, lang));
+                dict.tr("lightArrow"));
         buttonListArrows[7] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 7, posYButtons, this,
-                ArrowHelper.getTranslation(ShadowArrow.INDEX, lang));
+                dict.tr("shadowArrow"));
 
         // resizing for higher resolutions, if necessary
         for (Button button : buttonListArrows) {
