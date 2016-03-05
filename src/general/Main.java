@@ -70,14 +70,15 @@ public class Main {
     // Central translation instance.
     private static LangDict dict = new LangDict("general/CommonStrings.json")
             .addJSON("general/EverythingElse.json")
-            .addJSON("general/GameMeta")
+            .addJSON("general/GameMeta.json")
             .addJSON("item/Arrows.json")
             .addJSON("item/Items.json")
             .addJSON("rest/WorldStrings.json")
             .addJSON("screen/ArrowSelectionScreen.json")
             .addJSON("screen/ArrowSelectionScreenPreSet.json")
             .addJSON("screen/GameScreen.json")
-            .addJSON("screen/PreWindowScreen.json");
+            .addJSON("screen/PreWindowScreen.json")
+            .addJSON("screen/WaitingScreen.json");
 
     private static long programStartTime;
 
@@ -117,6 +118,8 @@ public class Main {
      *  "-nosound"      => Disables sound (bug: game-over-sound still played).
      */
     public static void main(String[] arguments) {
+
+        //dict.printTree();
 
         // Determines if the game should switch directly to fullscreen mode.
         // This line makes it possible for users to specify on the command line that he does
