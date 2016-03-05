@@ -46,7 +46,7 @@ public class WaitingScreen extends Screen {
         super(SCREEN_NAME, SCREEN_INDEX);
 
         // The continueButton should be on place as the endTurnButton in GameScreen. It's easier to click in that way...
-        continueButton = new Button(30, Main.getWindowHeight() - 50, this, "Weiter");
+        continueButton = new Button(30, Main.getWindowHeight() - 50, this, Main.tr("next"));
         continueButton.setRoundBorder(true);
         continueButton.iconify(continueImage);
         // It should also have the same size.
@@ -60,7 +60,7 @@ public class WaitingScreen extends Screen {
             }
         });
 
-        label = new Label(0, 85, this, "Warte auf nächsten Spieler:... ");
+        label = new Label(0, 85, this, Main.tr("waitingForNextPlayer"));
         label.setFont(new Font(Component.STD_FONT.getFontName(), Font.ITALIC, 28));
         label.setFontColor(new Color(163, 139, 255, 214));
 
@@ -74,9 +74,9 @@ public class WaitingScreen extends Screen {
         onScreenEnter.registerJava(() -> {
             Team nextTeam = Main.getContext().getTurnSystem().peekNext();
             if (!nextTeam.isBarbarian()) {
-                label.setText("Warte auf nächsten Spieler: " + nextTeam.asCommandTeam().getHead().name());
+                label.setText(Main.tr("waitingForPlayer", nextTeam.asCommandTeam().getHead().name()));
             } else {
-                label.setText("Warte auf nächsten Spieler:... ");
+                label.setText(Main.tr("waitingForNextPlayer"));
             }
             label.setX(circle.getX() + circle.getWidth() + 17);
         });
