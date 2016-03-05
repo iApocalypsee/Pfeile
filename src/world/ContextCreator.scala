@@ -39,7 +39,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
   private[ContextCreator] class InstantiatorStage extends StageDescriptable[Unit] {
 
     /** The name of the stage. */
-    override def stageName = Main.getTranslation("screen/load/createWorld")
+    override def stageName = Main.tr("creationStage")
 
     /** The implementation of the stage. */
     override protected def executeStageImpl() = {
@@ -58,7 +58,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
     */
   private[ContextCreator] class PopulatorStage extends StageDescriptable[Unit] {
 
-    override def stageName = Main.getTranslation("screen/load/populate")
+    override def stageName = Main.tr("populationStage")
 
     /** The implementation of the stage. */
     override protected def executeStageImpl() = {
@@ -140,7 +140,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       }
     }
 
-    override def stageName = Main.getTranslation("screen/load/oreGen")
+    override def stageName = Main.tr("oreGenerationStage")
   }
 
   private[ContextCreator] class LootGenerationStage extends StageDescriptable[Unit] {
@@ -156,7 +156,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       context.getWorldLootList.getLootSpawner.spawnAtBeginning()
     }
 
-    override def stageName = Main.getTranslation("screen/load/lootGen")
+    override def stageName = Main.tr("lootGenerationStage")
   }
 
   private[ContextCreator] class OtherStuffStage extends StageDescriptable[Unit] {
@@ -202,7 +202,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       context.turnSystem.onTurnGet(context.turnSystem.currentTeam)
     }
 
-    override def stageName = Main.getTranslation("screen/load/rest")
+    override def stageName = Main.tr("fineTuningStage")
   }
 
 }
