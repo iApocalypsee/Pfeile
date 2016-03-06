@@ -124,5 +124,10 @@
   "errorIndexOutOfBounds": {
     "en_EN": "Error: The selected index (%d) does not exist",
     "de_DE": "Fehler: Der ausgewählte Index (%d) exisitiert nicht"
+  },
+
+  "shopPrice": {
+    "en_EN": "%s: %d coins",
+    "de_DE": "%s: %d Münzen"
   }
 }

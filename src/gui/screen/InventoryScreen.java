@@ -5,15 +5,12 @@ import comp.Component;
 import comp.List;
 import comp.WarningMessage;
 import general.Main;
-import general.PfeileContext;
 import newent.InventoryLike;
-import player.armour.Armour;
 import player.item.EquippableItem;
 import player.item.Item;
 import player.item.coin.Coin;
 import player.item.coin.CoinHelper;
 import player.item.potion.Potion;
-import player.weapon.Weapon;
 import player.weapon.arrow.AbstractArrow;
 import scala.Tuple2;
 import scala.collection.Seq;
@@ -28,7 +25,6 @@ import java.util.LinkedList;
 /**
  * The <code>InventoryScreen</code> allows the user to choose items out of the inventory of the active player.
  */
-// TODO add language system for Inventory Screen
 public class InventoryScreen extends Screen {
 
     public static final int SCREEN_INDEX = 22;
@@ -62,7 +58,7 @@ public class InventoryScreen extends Screen {
 
         // getItems() can't be used yet as the active player is null
         java.util.List<String> itemList = new ArrayList<>(2);
-        itemList.add("<no items>");
+        itemList.add(Main.tr("noItems"));
 
         inventoryList = new List(50, 70, 200, 350, this, itemList);
 
@@ -82,8 +78,8 @@ public class InventoryScreen extends Screen {
             // Are these three lines of code even necessary? I think that this should be
             // applied by default when no item is to be displayed.
             String selectedName = inventoryList.getItems().get(selectedIndex);
-            if (selectedName.equals("<no items>"))
-                selectedName = "<select item>";
+            if (selectedName.equals(Main.tr("noItems")))
+                selectedName = Main.tr("selectItem");
 
             selectedItem.setText(selectedName);
             selectedItem.iconify(items._2().get(selectedIndex).getImage());
@@ -117,7 +113,7 @@ public class InventoryScreen extends Screen {
                     inventoryList.iconify(i, items._2().get(i).getImage());
             }
 
-            selectedItem.setText("<select item>");
+            selectedItem.setText(Main.tr("selectItem"));
             selectedItem.iconify(null);
             warningMessage.setTransparency(0);
         });
@@ -131,8 +127,8 @@ public class InventoryScreen extends Screen {
 
     private void triggerConfirmButton() {
         // if nothing is selected yet, you don't need to trigger the rest
-        if (selectedItem.getText().equals("<select item>")) {
-            warningMessage.setMessage("You need to select an item first");
+        if (selectedItem.getText().equals(Main.tr("selectItem"))) {
+            warningMessage.setMessage(Main.tr("pleaseSelectItem"));
             warningMessage.activateMessage();
             return;
         }
@@ -143,10 +139,10 @@ public class InventoryScreen extends Screen {
                 if (item instanceof Potion) {
                     Potion potion = (Potion) item;
                     if (!potion.triggerEffect()) {
-                        warningMessage.setMessage(potion.getNameDisplayed() + " couldn't be removed.");
+                        warningMessage.setMessage(Main.tr("unableToRemove", potion.getNameDisplayed()));
                         warningMessage.activateMessage();
                     } else {
-                        warningMessage.setMessage("Used: " + potion.getNameDisplayed());
+                        warningMessage.setMessage(Main.tr("usedPotion", potion.getNameDisplayed()));
                         warningMessage.activateMessage();
                     }
 
@@ -158,25 +154,16 @@ public class InventoryScreen extends Screen {
                     equippedItemSeq.copyToArray(equippedItems);
 
                     if (!equippableItem.equip()) {
-                        warningMessage.setMessage(equippableItem.getNameDisplayed() + " failed to equip.");
+                        warningMessage.setMessage(Main.tr("unableToEquip", equippableItem.getNameDisplayed()));
                         warningMessage.activateMessage();
                     } else {
-                        EquippableItem unequipped = null;
-                        for (EquippableItem equippedItem : equippedItems) {
-                            if (!equippedItemSeq.contains(equippedItem)) {
-                                unequipped = equippedItem;
-                                break;
-                            }
-                        }
-                        if (unequipped == null)
-                            warningMessage.setMessage("Equipped: " + equippableItem.getNameDisplayed());
-                        else
-                            warningMessage.setMessage("Equipped: " + equippableItem.getNameDisplayed() + "; Not Equipped: " + unequipped.getNameDisplayed());
+                        warningMessage.setMessage(Main.tr("equippedItem",
+                                equippableItem.getNameDisplayed()));
                         warningMessage.activateMessage();
                     }
 
                 } else {
-                    warningMessage.setMessage(item.getNameDisplayed() + " can't be used here.");
+                    warningMessage.setMessage(Main.tr("unableToUse", item.getNameDisplayed()));
                     warningMessage.activateMessage();
                 }
                 break;
@@ -233,7 +220,7 @@ public class InventoryScreen extends Screen {
         }
 
         if (itemList.size() == 0)
-            itemList.add("<no items>");
+            itemList.add(Main.tr("noItems"));
 
         return new Tuple2<>(itemList, realItemObjList);
     }

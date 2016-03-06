@@ -40,5 +40,22 @@
   "waterArrow": {
     "en_EN": "Water arrow",
     "de_DE": "Wasserpfeil"
+  },
+
+  "arrowType": {
+    "en_EN": "Type: %s",
+    "de_DE": "Typ: %s"
+  },
+  "damage": {
+    "en_EN": "Damage: %f",
+    "de_DE": "Schaden: %f"
+  },
+  "defence": {
+    "en_EN": "Defence: %f",
+    "de_DE": "Verteidigung: %f"
+  },
+  "speed": {
+    "en_EN": "Speed: %f",
+    "de_DE": "Geschwindigkeit: %f"
   }
 }

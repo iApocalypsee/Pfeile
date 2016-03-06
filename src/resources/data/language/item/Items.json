@@ -27,6 +27,10 @@
     "en_EN": "Chest",
     "de_DE": "Truhe"
   },
+  "roundChest": {
+    "en_EN": "Round chest",
+    "de_DE": "Runde Truhe"
+  },
   "treasure": {
     "en_EN": "Treasure",
     "de_DE": "Schatz"
@@ -44,7 +48,7 @@
     "en_EN": "Agility potion",
     "de_DE": "Trank der Beweglichkeit"
   },
-  "healPotion": {
+  "healingPotion": {
     "en_EN": "Healing potion",
     "de_DE": "Heiltrank"
   },
@@ -53,7 +57,7 @@
     "de_DE": "Schlüssel (Truhe)"
   },
   "keyRoundChest": {
-  "en_EN": "Key (Roundchest)",
-  "de_DE": "Schlüssel (Rundentruhe)"
+  "en_EN": "Key (round chest)",
+  "de_DE": "Schlüssel (runde Truhe)"
   }
 }

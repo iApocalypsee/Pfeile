@@ -71,12 +71,14 @@ public class Main {
     private static LangDict dict = new LangDict("general/CommonStrings.json")
             .addJSON("general/EverythingElse.json")
             .addJSON("general/GameMeta.json")
+            .addJSON("general/Messages.json")
             .addJSON("item/Arrows.json")
             .addJSON("item/Items.json")
             .addJSON("rest/WorldStrings.json")
             .addJSON("screen/ArrowSelectionScreen.json")
             .addJSON("screen/ArrowSelectionScreenPreSet.json")
             .addJSON("screen/GameScreen.json")
+            .addJSON("screen/LoadScreen.json")
             .addJSON("screen/PreWindowScreen.json")
             .addJSON("screen/WaitingScreen.json");
 
@@ -308,14 +310,6 @@ public class Main {
 
     public static long getProgramStartTime() {
         return programStartTime;
-    }
-
-    /** English$.MODULE$ is the default setting.
-     *
-     * @return the language
-     */
-    public static Language getLanguage() {
-        return language;
     }
 
     /** Returns <code>true</code>, if the language is set to english. */

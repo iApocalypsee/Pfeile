@@ -46,12 +46,8 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Art
 
   private def recalculateStyle(): Unit = recalculateStyleWithArgs(gridX, gridY)
 
-  private def constructText(article: Article) = {
-    if (Main.isEnglish)
-      s"${cachedItem.getName}:\n${article.price} coins"
-    else
-      s"${cachedItem.getName}:\n${article.price} Münzen"
-  }
+  private def constructText(article: Article) = Main.tr("shopPrice",  cachedItem.getNameDisplayed,
+    article.price.asInstanceOf[java.lang.Object])
 
   private[this] def recalculateStyleWithArgs(gridX: Int, gridY: Int): Unit = {
 
