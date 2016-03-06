@@ -99,10 +99,10 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
 						// Variables.
 						FrameContainerObject containerObject = GameScreen.getInstance().getFrameContainer();
 						InternalFrame dataFrame = new InternalFrame(50, 50, 135, 125, GameScreen.getInstance());
-						String arrowType = "Arrow type: " + getName();
-						String damage = "Damage: " + getAttackValue();
-						String defense = "Defense: " + getAverageDefence();
-						String speed = "Speed: " + getSpeed();
+						String arrowType = Main.tr("arrowType", getNameDisplayed());
+						String damage = Main.tr("damage", getAttackValue());
+						String defense = Main.tr("defence", getAverageDefence());
+						String speed = Main.tr("speed", getSpeed());
 
 
 						Label arrowTypeLabel = new Label(10, 15, GameScreen.getInstance(), arrowType);

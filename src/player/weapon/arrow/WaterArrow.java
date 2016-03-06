@@ -14,7 +14,7 @@ public class WaterArrow extends AbstractArrow {
 	public static final int INDEX = 1;
 	
 	/** Name des Pfeils */
-	public static final String NAME = "WaterArrow", LANG_IDENT = "item/arrow/water";
+	public static final String NAME = "WaterArrow", LANG_IDENT = "waterArrow";
 	
 	public static final Color UNIFIED_COLOR = new Color(60, 166, 221);
 	

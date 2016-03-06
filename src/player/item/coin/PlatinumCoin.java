@@ -47,6 +47,6 @@ public class PlatinumCoin extends Coin {
 
     @Override
     protected String getTranslationIdentifier() {
-        return "item/coin/platinum";
+        return "platinumCoin";
     }
 }

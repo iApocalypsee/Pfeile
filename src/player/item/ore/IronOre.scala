@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage
 class IronOre extends ItemOre("IronOre") {
   override def getImage: BufferedImage = ???
 
-  override protected def getTranslationIdentifier = "item/nature/ore/iron"
+  override protected def getTranslationIdentifier = "ironOre"
 }
 
 object IronOre {

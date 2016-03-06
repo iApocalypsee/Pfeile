@@ -47,6 +47,6 @@ public class GoldCoin extends Coin {
 
     @Override
     protected String getTranslationIdentifier() {
-        return "item/coin/gold";
+        return "goldCoin";
     }
 }

@@ -1,6 +1,7 @@
 package player.item;
 
 import general.LogFacility;
+import general.Main;
 import gui.screen.GameScreen;
 
 import javax.imageio.ImageIO;
@@ -46,14 +47,14 @@ public class RoundChest extends Chest {
 
     @Override
     protected String getTranslationIdentifier() {
-        return "item/loot/roundChest";
+        return "roundChest";
     }
 
     @Override
     public void open () {
         getLootUI().changeUI(imageOpenChest);
         isOpen = true;
-        GameScreen.getInstance().setWarningMessage("Rundenkiste geöffnet. Schlüssel wurde aus Inventar entfernt.");
+        GameScreen.getInstance().setWarningMessage(Main.tr("roundChestOpened"));
         GameScreen.getInstance().activateWarningMessage();
     }
 }

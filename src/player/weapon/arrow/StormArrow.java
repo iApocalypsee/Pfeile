@@ -14,7 +14,7 @@ public class StormArrow extends AbstractArrow {
 	public static final int INDEX = 2;
 	
 	/** Name des Pfeils */
-	public static final String NAME = "StormArrow", LANG_IDENT = "item/arrow/storm";
+	public static final String NAME = "StormArrow", LANG_IDENT = "stormArrow";
 	
 	public static final Color UNIFIED_COLOR = new Color(141, 237, 195);
 	

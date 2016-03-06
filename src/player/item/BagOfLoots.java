@@ -79,6 +79,6 @@ public class BagOfLoots extends Loot {
 
     @Override
     protected String getTranslationIdentifier() {
-        return "item/loot/bag";
+        return "bagOfLoots";
     }
 }

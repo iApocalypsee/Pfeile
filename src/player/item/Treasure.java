@@ -55,6 +55,6 @@ public class Treasure extends Loot {
 
     @Override
     protected String getTranslationIdentifier() {
-        return "item/loot/treasure";
+        return "treasure";
     }
 }

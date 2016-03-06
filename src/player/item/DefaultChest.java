@@ -1,6 +1,7 @@
 package player.item;
 
 import general.LogFacility;
+import general.Main;
 import gui.screen.GameScreen;
 
 import javax.imageio.ImageIO;
@@ -47,14 +48,14 @@ public class DefaultChest extends Chest {
 
     @Override
     protected String getTranslationIdentifier() {
-        return "item/loot/chest";
+        return "chest";
     }
 
     @Override
     public void open () {
         getLootUI().changeUI(imageOpenChest);
         isOpen = true;
-        GameScreen.getInstance().setWarningMessage("Kiste geöffnet: Schlüssel wurde aus Inventar entfernt.");
+        GameScreen.getInstance().setWarningMessage(Main.tr("chestOpened"));
         GameScreen.getInstance().activateWarningMessage();
     }
 }

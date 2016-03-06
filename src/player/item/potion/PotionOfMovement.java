@@ -77,6 +77,6 @@ public class PotionOfMovement extends Potion {
 
     @Override
     protected String getTranslationIdentifier() {
-        return "item/potion/movement";
+        return "movementPotion";
     }
 }

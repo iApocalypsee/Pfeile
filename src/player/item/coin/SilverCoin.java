@@ -48,6 +48,6 @@ public class SilverCoin extends Coin {
 
     @Override
     protected String getTranslationIdentifier() {
-        return "item/coin/silver";
+        return "silverCoin";
     }
 }

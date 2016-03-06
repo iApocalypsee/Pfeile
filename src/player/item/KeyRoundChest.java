@@ -42,6 +42,6 @@ public class KeyRoundChest extends Item {
 
     @Override
     protected String getTranslationIdentifier() {
-        return "item/key/round";
+        return "keyRoundChest";
     }
 }

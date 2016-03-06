@@ -14,7 +14,7 @@ public class ShadowArrow extends AbstractArrow {
 	public static final int INDEX = 7;
 	
 	/** Name des Pfeils */
-	public static final String NAME = "ShadowArrow", LANG_IDENT = "item/arrow/shadow";
+	public static final String NAME = "ShadowArrow", LANG_IDENT = "shadowArrow";
 	
 	public static final Color UNIFIED_COLOR = new Color(0, 0, 0);
 	

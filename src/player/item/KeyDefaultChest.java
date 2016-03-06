@@ -42,6 +42,6 @@ public class KeyDefaultChest extends Item {
 
     @Override
     protected String getTranslationIdentifier() {
-        return "item/key/default";
+        return "keyDefaultChest";
     }
 }

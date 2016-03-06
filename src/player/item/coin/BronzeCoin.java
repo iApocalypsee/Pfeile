@@ -48,6 +48,6 @@ public class BronzeCoin extends Coin {
 
     @Override
     protected String getTranslationIdentifier() {
-        return "item/coin/bronze";
+        return "bronzeCoin";
     }
 }

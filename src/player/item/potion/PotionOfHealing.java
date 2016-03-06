@@ -77,6 +77,6 @@ public class PotionOfHealing extends Potion {
 
     @Override
     protected String getTranslationIdentifier() {
-        return "item/potion/heal";
+        return "healingPotion";
     }
 }

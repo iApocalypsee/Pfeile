@@ -13,7 +13,7 @@ public class LightArrow extends AbstractArrow {
 	/** Index des Lichtpfeils */
 	public static final int INDEX = 6;
 	
-	public static final String NAME = "LightArrow", LANG_IDENT = "item/arrow/light";
+	public static final String NAME = "LightArrow", LANG_IDENT = "lightArrow";
 	
 	public static final Color UNIFIED_COLOR = new Color(255, 253, 193);
 	

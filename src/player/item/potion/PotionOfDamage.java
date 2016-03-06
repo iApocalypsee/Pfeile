@@ -96,6 +96,6 @@ public class PotionOfDamage extends Potion {
 
     @Override
     protected String getTranslationIdentifier() {
-        return "item/potion/damage";
+        return "damagePotion";
     }
 }

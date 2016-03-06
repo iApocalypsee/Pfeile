@@ -20,9 +20,6 @@ public final class ArrowHelper {
 
     private static BufferedImage[] arrowImages;
 
-    // [Language: 0=English 1=German][arrowIndex]
-    private static String[][] arrowNames;
-
     /**
      * the number of different types of arrows. It's equal 8.
      */
@@ -44,42 +41,6 @@ public final class ArrowHelper {
         arrowImages[ShadowArrow.INDEX] = new ShadowArrow().getImage();
 
         LogFacility.log("Arrow images loaded.", "Info", "initprocess");
-
-        /* That only uses valuable computing time
-
-        LangDict dict = LangDict.fromJsonStr("item/Arrows.json");
-        Language language = Main.getLanguage();
-
-        String[] arrowNames = new String[ArrowHelper.NUMBER_OF_ARROW_TYPES];
-        arrowNames[FireArrow.INDEX] = dict.getTranslationNow("FireArrow", language);
-        arrowNames[WaterArrow.INDEX] = dict.getTranslationNow("WaterArrow", language);
-        arrowNames[StoneArrow.INDEX] = dict.getTranslationNow("StoneArrow", language);
-        arrowNames[StormArrow.INDEX] = dict.getTranslationNow("StormArrow", language);
-        arrowNames[IceArrow.INDEX] = dict.getTranslationNow("IceArrow", language);
-        arrowNames[LightningArrow.INDEX] = dict.getTranslationNow("LightningArrow", language);
-        arrowNames[LightArrow.INDEX] = dict.getTranslationNow("LightArrow", language);
-        arrowNames[ShadowArrow.INDEX] = dict.getTranslationNow("ShadowArrow", language);
-        */
-
-        // This implementation is much faster
-        // [Number of languages: 0=English, 1=German][number of arrows]
-        arrowNames = new String[2][NUMBER_OF_ARROW_TYPES];
-        arrowNames[0][FireArrow.INDEX] = "Fire arrow";
-        arrowNames[1][FireArrow.INDEX] = "Feuerpfeil";
-        arrowNames[0][WaterArrow.INDEX] = "Water arrow";
-        arrowNames[1][WaterArrow.INDEX] = "Wasserpfeil";
-        arrowNames[0][IceArrow.INDEX] = "Ice arrow";
-        arrowNames[1][IceArrow.INDEX] = "Eispfeil";
-        arrowNames[0][LightningArrow.INDEX] = "Lightening arrow";
-        arrowNames[1][LightningArrow.INDEX] = "Blitzpfeil";
-        arrowNames[0][StoneArrow.INDEX] = "Stone arrow";
-        arrowNames[1][StoneArrow.INDEX] = "Steinpfeil";
-        arrowNames[0][StormArrow.INDEX] = "Storm arrow";
-        arrowNames[1][StormArrow.INDEX] = "Sturmpfeil";
-        arrowNames[0][LightArrow.INDEX] = "Light arrow";
-        arrowNames[1][LightArrow.INDEX] = "Lichtpfeil";
-        arrowNames[0][ShadowArrow.INDEX] = "Shadow arrow";
-        arrowNames[1][ShadowArrow.INDEX] = "Schattenpfeil";
     }
 
     /**
@@ -106,36 +67,6 @@ public final class ArrowHelper {
             case LightArrow.NAME:
                 return LightArrow.class;
             case ShadowArrow.NAME:
-                return ShadowArrow.class;
-            default:
-                return null;
-        }
-    }
-
-    /**
-     * Methode vergleicht den �bergebenen int - Wert (der PfeilIndex)
-     * '...Arrow.INDEX' und gibt das jeweilige class-Object zur�ck '...Arrow.class' *
-     *
-     * @see <code> reformArrow(String selectedArrow) </code>
-     */
-    public static Class<? extends AbstractArrow> reformArrow(int selectedArrowIndex) {
-
-        switch (selectedArrowIndex) {
-            case FireArrow.INDEX:
-                return FireArrow.class;
-            case WaterArrow.INDEX:
-                return WaterArrow.class;
-            case StormArrow.INDEX:
-                return StormArrow.class;
-            case StoneArrow.INDEX:
-                return StoneArrow.class;
-            case IceArrow.INDEX:
-                return IceArrow.class;
-            case LightningArrow.INDEX:
-                return LightningArrow.class;
-            case LightArrow.INDEX:
-                return LightArrow.class;
-            case ShadowArrow.INDEX:
                 return ShadowArrow.class;
             default:
                 return null;
@@ -197,37 +128,6 @@ public final class ArrowHelper {
             case LightArrow.INDEX:
                 return new LightArrow();
             case ShadowArrow.INDEX:
-                return new ShadowArrow();
-            default:
-                return null;
-        }
-    }
-
-    /**
-     * Methode vergleicht den übergebenen String - Wert (der Pfeilname: Arrow.NAME)
-     * und erzeugt eine neue Instanz der Klasse dieser Klasse.
-     * Bei keiner Übereinstimmung wird <code> null </code> zurückgeben.
-     *
-     * @see <code> reformArrow(String selectedArrow).newInstance() </code>
-     * @see <code> instanceArrow(String selectedArrow) </code>
-     */
-    public static AbstractArrow instanceArrow(String selectedArrowName) {
-        switch (selectedArrowName) {
-            case FireArrow.NAME:
-                return new FireArrow();
-            case WaterArrow.NAME:
-                return new WaterArrow();
-            case StormArrow.NAME:
-                return new StormArrow();
-            case StoneArrow.NAME:
-                return new StoneArrow();
-            case IceArrow.NAME:
-                return new IceArrow();
-            case LightningArrow.NAME:
-                return new LightningArrow();
-            case LightArrow.NAME:
-                return new LightArrow();
-            case ShadowArrow.NAME:
                 return new ShadowArrow();
             default:
                 return null;
@@ -413,28 +313,5 @@ public final class ArrowHelper {
      */
     public static BufferedImage getArrowImage(int selectedArrow, float scaleFactor) {
         return ImageHelper.scaleBufferedImage(getArrowImage(selectedArrow), scaleFactor, scaleFactor, Image.SCALE_SMOOTH);
-    }
-
-    /** Returns the translated name of arrow depending on the index of the arrow "FireArrow.INDEX" and the language "English$.MODULES$" */
-    public static String getTranslation (int arrowIndex, Language language) {
-        if (language == English$.MODULE$)
-            return arrowNames[0][arrowIndex];
-        else
-            return arrowNames[1][arrowIndex];
-    }
-
-    public static String getTranslation (int arrowIndex, boolean isEnglish) {
-        if (isEnglish)
-            return arrowNames[0][arrowIndex];
-        else
-            return arrowNames[1][arrowIndex];
-    }
-
-    /** Returns the translated name of the arrow by arrow.INDEX in the language <code>Main.getLanguage()</code> */
-    public static String getTranslation (int arrowIndex) {
-        if (Main.getLanguage() == English$.MODULE$)
-            return arrowNames[0][arrowIndex];
-        else
-            return arrowNames[1][arrowIndex];
     }
 }

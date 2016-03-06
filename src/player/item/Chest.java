@@ -138,7 +138,7 @@ public abstract class Chest extends Loot {
                                     if (removed) {
                                         open();
                                     } else {
-                                        GameScreen.getInstance().setWarningMessage("Du brauchst einen Schlüssel, um eine Kiste zu öffnen. You need a key to open a chest!");
+                                        GameScreen.getInstance().setWarningMessage(Main.tr("keyRequired"));
                                         GameScreen.getInstance().activateWarningMessage();
                                     }
                                 }
