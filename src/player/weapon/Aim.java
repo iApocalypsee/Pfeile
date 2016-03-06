@@ -62,7 +62,7 @@ public class Aim implements BoardPositionable {
      * @return the center of the attacked Tile
      */
      public Point getPositionGui () {
-        Tile tile = (Tile) Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
+        Tile tile = Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
         Rectangle rect = tile.getComponent().getBounds().getBounds();
         return new Point((int) rect.getCenterX(), (int) rect.getCenterY());
     }
@@ -76,7 +76,7 @@ public class Aim implements BoardPositionable {
      * @see player.weapon.Aim#getPosXGui()
      * @see player.weapon.Aim#getPosYGui() */
     public Shape getBoundsOfAttackedTile () {
-        Tile tile = (Tile) Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
+        Tile tile = Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
         return tile.getComponent().getBounds();
     }
 
@@ -88,7 +88,7 @@ public class Aim implements BoardPositionable {
      *
      */
     public double getPosXGui () {
-        Tile attackedTile = (Tile) Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
+        Tile attackedTile = Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
         return attackedTile.getComponent().getPreciseRectangle().getCenterX();
     }
 
@@ -99,7 +99,7 @@ public class Aim implements BoardPositionable {
      * @see Aim#getPositionGui()
      */
     public double getPosYGui () {
-        Tile attackedTile = (Tile) Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
+        Tile attackedTile = Main.getContext().getWorld().terrain().tileAt(getGridX(), getGridY());
         return attackedTile.getComponent().getPreciseRectangle().getCenterY();
     }
 

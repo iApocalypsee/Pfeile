@@ -12,7 +12,7 @@ public interface IntelligentArrowSelectionBot {
 
     /** This method is adding all arrowsPreSet to the inventory of the Bot. Right now every arrow is selected randomly.
      * Later, in this method an intelligent algorithm can be found. */
-    public default void selectArrowsPreSet () {
+    default void selectArrowsPreSet() {
         Random randomGen = new Random();
 
         Bot bot;

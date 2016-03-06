@@ -235,7 +235,7 @@ public class AimSelectionScreen extends Screen {
 			super.run();
 
 			Player active = Main.getContext().activePlayer();
-			Tile target = (Tile) active.world().terrain().tileAt(posX_selectedField, posY_selectedField);
+			Tile target = active.world().terrain().tileAt(posX_selectedField, posY_selectedField);
 
 			final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
 
@@ -259,7 +259,7 @@ public class AimSelectionScreen extends Screen {
 
                 arrow.calculateRotation();
 
-				target.take(new AttackEvent(arrow, (Tile) active.tileLocation(), target, active, arrow.getSpeed()));
+				target.take(new AttackEvent(arrow, active.tileLocation(), target, active, arrow.getSpeed()));
 
                 ArrowSelectionScreen.getInstance().updateInventoryList();
 			} else {
@@ -325,7 +325,7 @@ public class AimSelectionScreen extends Screen {
                         if (visibleMap.visionStatusOf(x, y) == VisionStatus.Hidden)
                             continue;
                         if (arrow.damageAt(x, y) != 0)
-                            containedObjects.add(new ContainedObject((Tile) terrain.tileAt(x, y), arrow, unifiedArrowColor));
+                            containedObjects.add(new ContainedObject(terrain.tileAt(x, y), arrow, unifiedArrowColor));
                     }
                 }
             }
