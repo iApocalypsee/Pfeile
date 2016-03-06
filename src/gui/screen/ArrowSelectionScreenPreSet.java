@@ -17,6 +17,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * This Screen is used to set the Arrows before the Game (<code>PfeileContext.arrowNumberPreSet</code>). It directly replaces
@@ -38,7 +39,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
     Button [] buttonListArrows = new Button[8];
     private List arrowListSelected;
     private ConfirmDialog confirmDialog;
-    public LinkedList<String> selectedArrows;
+    public LinkedList<AbstractArrow> selectedArrows;
 
 	private static ArrowSelectionScreenPreSet instance = null;
 
@@ -79,7 +80,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
     /** The player currently selecting his set of arrows. */
     private Player activePlayer;
 
-    private final String noArrowsStr, chooseVarArrows, chooseOneArrow, chooseFirstLastArrow, noMoreArrows, authorsLabel, strategyGameLabel;
+    private final String chooseVarArrows, chooseOneArrow, chooseFirstLastArrow, noMoreArrows, authorsLabel, strategyGameLabel;
 
     /**
      * Screen für die Pfeilauswahl für vorhersetzbaren Pfeilen.
@@ -91,7 +92,6 @@ public class ArrowSelectionScreenPreSet extends Screen {
         chooseVarArrows = Main.tr("defineArrows");
         chooseOneArrow = Main.tr("defineLastArrow");
         chooseFirstLastArrow = Main.tr("defineFirstLastArrow");
-        noArrowsStr = Main.tr("noArrows");
         noMoreArrows = Main.tr("defineNoMoreArrows");
         strategyGameLabel = Main.tr("label_strategyGame");
         authorsLabel = Main.tr("label_authors");
@@ -100,9 +100,9 @@ public class ArrowSelectionScreenPreSet extends Screen {
                      confirm = Main.tr("confirm");
 
         selectedArrows = new LinkedList<>();
-        selectedArrows.add(noArrowsStr);
 
-        arrowListSelected = new List(50, 200, 200, 350, this, selectedArrows);
+        arrowListSelected = new List(50, 200, 200, 350, this, selectedArrows.stream()
+                .map(AbstractArrow::getNameDisplayed).collect(Collectors.toList()));
         arrowListSelected.setName("arrowListSelected");
 
         remainingArrows = new Label(Main.getWindowWidth() - 232, Main.getWindowHeight() - 200, this, chooseVarArrows);
@@ -214,10 +214,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
                             && arrowListSelected.isAcceptingInput()) {
                     arrowListSelected.triggerListeners(eClicked);
                     selectedArrows.remove(arrowListSelected.getSelectedIndex());
-                    if (selectedArrows.isEmpty()) {
-                        selectedArrows.add(noArrowsStr);
-                    }
-                    setArrowListSelected(selectedArrows);
+                    arrowListSelected.removeListEntry(arrowListSelected.getSelectedIndex());
                     remainingArrows.setText(getRemainingArrowsString());
                 }
             }
@@ -235,11 +232,6 @@ public class ArrowSelectionScreenPreSet extends Screen {
         else if(getRemainingArrows() == 1 && PfeileContext.arrowNumberPreSet().get() == 1) return chooseFirstLastArrow;
         else if(getRemainingArrows() == 1) return chooseOneArrow;
         else return noMoreArrows;
-    }
-
-    private void setArrowListSelected(LinkedList<String> selectedArrows) {
-        arrowListSelected = new List (arrowListSelected.getX(), arrowListSelected.getY(),
-                arrowListSelected.getWidth(), arrowListSelected.getHeight(), this, selectedArrows);
     }
 
     /**
@@ -269,26 +261,27 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
     private void resetArrowList () {
         selectedArrows.clear();
-        selectedArrows.add(noArrowsStr);
-        setArrowListSelected(selectedArrows);
+        arrowListSelected.removeAllListEntries();
         remainingArrows.setText(getRemainingArrowsString());
     }
 
     private class ButtonHelper extends MouseAdapter {
         @Override
         public void mouseReleased (MouseEvent e) {
-            for (Button buttonListArrow : buttonListArrows) {
-                if (buttonListArrow.getPreciseRectangle().contains(e.getPoint())) {
-                    if (PfeileContext.arrowNumberPreSet().get() > selectedArrows.size()) {
-                        if (selectedArrows.get(0).equals(noArrowsStr)) {
-                            selectedArrows.remove(0);
-                        }
-                        selectedArrows.add(buttonListArrow.getText());
-                        remainingArrows.setText(getRemainingArrowsString());
-                        setArrowListSelected(selectedArrows);
-                    }
-                }
+            for (int i = 0; i < ArrowHelper.NUMBER_OF_ARROW_TYPES; ++i) {
+               if (buttonListArrows[i].getPreciseRectangle().contains(e.getPoint())) {
+                   selectArrow(ArrowHelper.instanceArrow(i));
+                   return;
+               }
             }
+        }
+    }
+
+    private void selectArrow(AbstractArrow a) {
+        if (PfeileContext.arrowNumberPreSet().get() > selectedArrows.size()) {
+            selectedArrows.add(a);
+            arrowListSelected.appendListEntry(a.getNameDisplayed());
+            remainingArrows.setText(getRemainingArrowsString());
         }
     }
 
@@ -342,16 +335,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
     /** the button randomButton is executed (also pressing "r"). A randomly selected Arrow is added to the inventory. */
     private void triggerRandomButton () {
         java.util.Random randomGen = new Random();
-        String arrow = ArrowHelper.arrowIndexToName(randomGen.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES));
-
-        if (PfeileContext.arrowNumberPreSet().get() > selectedArrows.size()) {
-            if (selectedArrows.get(0).equals(noArrowsStr)) {
-                selectedArrows.remove(0);
-            }
-            selectedArrows.add(arrow);
-            remainingArrows.setText(getRemainingArrowsString());
-            setArrowListSelected(selectedArrows);
-        }
+        selectArrow(ArrowHelper.instanceArrow(randomGen.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES)));
     }
 
     /** Changes the player and the GUI */
@@ -375,10 +359,10 @@ public class ArrowSelectionScreenPreSet extends Screen {
      * Player by calling {@link player.weapon.Weapon#equip()}.
      */
     private void doAddingArrows (Player player) {
-        for (String selectedArrow : selectedArrows) {
-            if (!ArrowHelper.instanceArrow(selectedArrow).equip(player))
-                LogFacility.log("Cannot add " + selectedArrow + " at " + LogFacility.getCurrentMethodLocation(), LogFacility.LoggingLevel.Error);
-        }
+        selectedArrows.forEach(a -> {
+            if (!a.equip(player))
+                LogFacility.log("Cannot add " + a.getNameDisplayed(), LogFacility.LoggingLevel.Error);
+        });
     }
 
     @Override
@@ -393,14 +377,9 @@ public class ArrowSelectionScreenPreSet extends Screen {
         // by pressing "KeyEvent.VK_SPACE" all arrows are added randomly
         else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             java.util.Random randomGen = new Random();
-            if (selectedArrows.get(0).equals(noArrowsStr)) {
-                selectedArrows.remove(0);
-            }
             while (selectedArrows.size() < PfeileContext.arrowNumberPreSet().get()) {
-                selectedArrows.add(ArrowHelper.arrowIndexToName(randomGen.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES)));
+                selectArrow(ArrowHelper.instanceArrow(randomGen.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES)));
             }
-            remainingArrows.setText(getRemainingArrowsString());
-            setArrowListSelected(selectedArrows);
         }
     }
 

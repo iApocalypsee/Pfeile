@@ -9,7 +9,6 @@ import misc.ItemInitialization
 import newent.Player
 import player.item.ore.{CopperOre, IronOre, OreRegistry}
 import player.shop.ShopInitializer
-import player.weapon.arrow.ArrowHelper
 import world.brush.OreBrush
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -69,7 +68,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       var isSpawnValid: Boolean = false
       val terrain = context.world.terrain
 
-      do {
+      while (!isSpawnValid) {
         var tile: Tile = terrain.tileAt(randomGen.nextInt(terrain.width), randomGen.nextInt(terrain.height))
           .asInstanceOf[Tile]
         if (spawnPoint == null && tile.isInstanceOf[GrassTile]) {
@@ -84,7 +83,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
             isSpawnValid = true
           }
         }
-      } while (!isSpawnValid)
+      }
 
       val act = new Player(context.world, spawnPoint, Main.getUser.getUsername)
       val opponent = new Player(context.world, spawnPointEnemy, "Opponent")
@@ -101,14 +100,14 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       PreWindowScreen.correctArrowNumber(entityManager.javaEntityList)
 
       // adding Arrows:
-      LoadingWorldScreen.getInstance.getAddingArrowList(0).forEach(JavaInterop.asJava((selectedArrow) => {
-        if (!ArrowHelper.instanceArrow(selectedArrow).equip(act))
+      LoadingWorldScreen.getInstance.getAddingArrowList(0).foreach((selectedArrow) => {
+        if (!selectedArrow.equip(act))
           LogFacility.log("Cannot add " + selectedArrow + " at " + LogFacility.getCurrentMethodLocation, LogFacility.LoggingLevel.Error)
-      }))
-      LoadingWorldScreen.getInstance.getAddingArrowList(1).forEach(JavaInterop.asJava((selectedArrow) => {
-        if (!ArrowHelper.instanceArrow(selectedArrow).equip(opponent))
+      })
+      LoadingWorldScreen.getInstance.getAddingArrowList(1).foreach((selectedArrow) => {
+        if (!selectedArrow.equip(opponent))
           LogFacility.log("Cannot add " + selectedArrow + " at " + LogFacility.getCurrentMethodLocation, LogFacility.LoggingLevel.Error)
-      }))
+      })
     }
   }
 

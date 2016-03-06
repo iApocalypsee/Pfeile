@@ -8,10 +8,12 @@ import animation.ImageLoader
 import comp.Component.ComponentStatus
 import comp.{Button, Component, Label}
 import general._
+import player.weapon.arrow.AbstractArrow
 import world.ContextCreator
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.collection.JavaConverters._
 
 /**
  *
@@ -36,16 +38,16 @@ object LoadingWorldScreen extends Screen("LoadingScreen", 222) {
     }
   })
 
-  private val addingArrowList = new Array[java.util.List[String]](2)
-  addingArrowList(0) = new util.LinkedList[String]()
-  addingArrowList(1) = new util.LinkedList[String]()
+  private val addingArrowList = new Array[Seq[AbstractArrow]](2)
+  addingArrowList(0) = Seq()
+  addingArrowList(1) = Seq()
 
   /** The key is the name of the player: either <code>Main.getUser().getUsername()</code> or "Opponent". */
-  def setAddingArrowList (key: String, selectedArrows: java.util.List[String]) = {
+  def setAddingArrowList (key: String, selectedArrows: java.util.List[AbstractArrow]) = {
     if (key.equals(Main.getUser.getUsername)) {
-      addingArrowList(0) = new util.ArrayList[String](selectedArrows)
+      addingArrowList(0) = selectedArrows.asScala.toSeq
     } else if (key.equals("Opponent")) {
-      addingArrowList(1) = new util.ArrayList[String](selectedArrows)
+      addingArrowList(1) = selectedArrows.asScala.toSeq
     } else {
       throw new IllegalArgumentException("Unknown player name/key " + key + ": Must be either " + Main.getUser.getUsername + " or " + "Opponent.")
     }
