@@ -25,7 +25,7 @@ public class SoundLoader {
         Clip audioClip = null;
         AudioInputStream audioInputStream = null;
         try {
-            audioInputStream = AudioSystem.getAudioInputStream(new File("src/" + URL));
+            audioInputStream = AudioSystem.getAudioInputStream(new File("bin/" + URL));
             AudioFormat audioFormat = audioInputStream.getFormat();
             int size = (int) (audioFormat.getFrameSize() * audioInputStream.getFrameLength());
             byte[] audio = new byte[size];
