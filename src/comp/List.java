@@ -165,7 +165,7 @@ public class List extends Component {
 	 * @param text The text to append.
 	 */
 	public void appendListEntry(String text) {
-		putListEntry(text, items.size() - 1);
+		putListEntry(text, items.size());
 	}
 
 	/**
