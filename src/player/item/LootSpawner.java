@@ -37,8 +37,8 @@ public class LootSpawner {
     public LootSpawner(PfeileContext context) {
         this.context = context;
         random = new Random();
-        // there should be at least 10 loots at the beginning of the game
-        numberOfSpawnsAtBeginning = 10 + random.nextInt(20);
+        // there should be at least 23 loots at the beginning of the game
+        numberOfSpawnsAtBeginning = 23 + random.nextInt(20);
 
         context.getTurnSystem().getRoundOperations().onRoundEnded().registerJava(() -> {
             spawningRoundChest();

@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * This is the Screen in which some PfeileContext values like worldSize are set. It replaces the old PreWindow.
+ * TODO there should be a button to select how many loots are spawning or valuable their content is.
  */
 public class PreWindowScreen extends Screen {
     public static final int SCREEN_INDEX = 21;
@@ -79,6 +80,12 @@ public class PreWindowScreen extends Screen {
     /** SpinnerModel for choosing "Gold pro Zug" */
     private RangeSpinnerModel spinnerModelGoldPerTurn;
 
+    /** enter the name of the player */
+    private TextBox boxPlayer;
+
+    /** enter the name of the opponent */
+    private TextBox boxOpponent;
+
     /** backgroundColor */
     private static final Color TRANSPARENT_BACKGROUND = new Color(39, 47, 69, 204);
 
@@ -115,7 +122,7 @@ public class PreWindowScreen extends Screen {
         super(SCREEN_NAME, SCREEN_INDEX);
 
         final String defaultSettings = Main.tr("defaultSettings"),
-                     aiStrength = Main.tr("aiStrength"),
+                     aiStrength = Main.tr("aiStrength"), //in the translation is a spelling error
                      initialMoney = Main.tr("initialMoney"),
                      moneyPerTurn = Main.tr("moneyPerTurn"),
                      arrowAmountFreeSet = Main.tr("arrowAmountFreeSet"),
@@ -128,7 +135,7 @@ public class PreWindowScreen extends Screen {
                      handicap = Main.tr("handicap"),
                      worldsize = Main.tr("worldsize"),
                      confirm = Main.tr("confirm"),
-                     done = Main.tr("done");
+                     done = Main.tr("done"); // --> TODO to "ready" for unique key-input
 
         final String high = Main.tr("high"),
                      balanced = Main.tr("balanced"),
@@ -154,8 +161,8 @@ public class PreWindowScreen extends Screen {
         confirmButton = new Button(550, 400, this, confirm);
         confirmButton.setRoundBorder(true);
 
-        readyButton = new Button(Main.getWindowWidth() - 220, Main.getWindowHeight() - 150, this, done);
-        standardButton = new Button(readyButton.getX(), readyButton.getY() - 100, this, defaultSettings);
+        readyButton = new Button(Main.getWindowWidth() - 220, Main.getWindowHeight() - 95, this, done);
+        standardButton = new Button(readyButton.getX(), readyButton.getY() - 60, this, defaultSettings);
         readyButton.setWidth(standardButton.getWidth());
 
         final String[] labelValues = {
@@ -233,6 +240,16 @@ public class PreWindowScreen extends Screen {
         spinner = new Spinner<>(boxSelectHigh.getX(), selectorComboBox.getY(), this, spinnerModelPreSet);
         spinner.setVisible(false);
 
+        //TODO: Translation for Player 1 & 2; key input is missing; player name must be saved and used (e.g. in ArrowSelectionScreenPreSet)
+        boxPlayer = new TextBox(standardButton.getX(), standardButton.getY() - 150, "Player 1", this);
+        boxPlayer.setWidth(standardButton.getWidth());
+        boxPlayer.setHeight(standardButton.getHeight());
+
+        boxOpponent = new TextBox(boxPlayer.getX(), boxPlayer.getY() + 60, "Player 2", this);
+        boxOpponent.setWidth(boxPlayer.getWidth());
+        boxOpponent.setHeight(boxPlayer.getHeight());
+
+        // Logo
         colorBig = new Color (159, 30, 29);
         colorMiddle = new Color (213, 191, 131);
         colorSmall = new Color (205, 212, 228);
@@ -282,6 +299,8 @@ public class PreWindowScreen extends Screen {
         readyButton.declineInput();
         standardButton.declineInput();
         confirmButton.declineInput();
+        boxPlayer.declineInput();
+        boxOpponent.declineInput();
         selectorComboBox.declineInput();
         boxSelectHandicapKI.declineInput();
         boxSelectHandicapPlayer.declineInput();
@@ -302,6 +321,8 @@ public class PreWindowScreen extends Screen {
         readyButton.acceptInput();
         standardButton.acceptInput();
         confirmButton.acceptInput();
+        boxPlayer.acceptInput();
+        boxOpponent.acceptInput();
         selectorComboBox.acceptInput();
         if (boxSelectHandicapKI.isVisible()) {
             boxSelectHandicapKI.acceptInput();
@@ -338,17 +359,30 @@ public class PreWindowScreen extends Screen {
 
     @Override
     public void keyPressed (KeyEvent e) {
-        // Standardeinstellungen --> standardButton
-        if (e.getKeyCode() == KeyEvent.VK_S) {
-            triggerStandardButton();
-        }
-        // Fertig --> readyButton
-        else if (e.getKeyCode() == KeyEvent.VK_F) {
-            triggerReadyButton();
-        }
-        // Bestätigen --> confirmButton
-        else if (e.getKeyCode() == KeyEvent.VK_B) {
-            triggerConfirmButton(null);
+        if (Main.isEnglish()) {
+            // Standardeinstellungen
+            if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_SPACE)
+                triggerStandardButton();
+
+            // Fertig-Button
+            if (e.getKeyCode() == KeyEvent.VK_F)
+                triggerReadyButton();
+
+            // Bestätigen
+            if (e.getKeyCode() == KeyEvent.VK_C || e.getKeyCode() == KeyEvent.VK_ENTER)
+                triggerConfirmButton(null);
+
+        } else {
+            if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_SPACE)
+                triggerStandardButton();
+
+            // Fertig-Button
+            if (e.getKeyCode() == KeyEvent.VK_R)
+                triggerReadyButton();
+
+            // Bestätigen
+            if (e.getKeyCode() == KeyEvent.VK_B || e.getKeyCode() == KeyEvent.VK_ENTER)
+                triggerConfirmButton(null);
         }
     }
 
@@ -741,7 +775,8 @@ public class PreWindowScreen extends Screen {
     }
 
     /** this updates arrowNumberFreeSetUsable (from Player and Bot)
-     * Only use this method directly after added all Players (and Bots) to the entityList */
+     * Only use this method directly after added all Players (and Bots) to the entityList
+     * TODO: List<GameObject> doesn't fit here</GameObject>*/
     public static void correctArrowNumber (List<GameObject> entities) {
 	    for(GameObject e : entities) {
 		    if(e instanceof Player) {
@@ -757,15 +792,12 @@ public class PreWindowScreen extends Screen {
     }
 
     @Override
-    public void mouseMoved(MouseEvent e)
-    {
+    public void mouseMoved(MouseEvent e){
         super.mouseMoved(e);
-        //test_image.setCenteredLocation(e.getX(), e.getY());
     }
 
     @Override
     public void draw (Graphics2D g) {
-
         super.draw(g);
 
         // Backgound
@@ -795,6 +827,8 @@ public class PreWindowScreen extends Screen {
         for (Label label : labels)
             label.draw(g);
         selectorComboBox.draw(g);
+        boxPlayer.draw(g);
+        boxOpponent.draw(g);
         confirmButton.draw(g);
         standardButton.draw(g);
         readyButton.draw(g);

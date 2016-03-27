@@ -11,6 +11,7 @@ object LangInitialization {
     // Just call those singletons so that they are being initialized. Don't
     // do anything with them yet.
     // TODO Find another way to initialize those singletons.
+    // TODO The language initialization should be threaded.
     English
     German
   }

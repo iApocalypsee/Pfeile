@@ -5,6 +5,8 @@ import gui.screen.Screen;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
+/** FIXME: TextBox must be able to decide weather the key input is for TextBox or other functions on that screen. Therefore, TextBox must be selected somehow first.
+ */
 public class TextBox extends Component {
 
 	/**

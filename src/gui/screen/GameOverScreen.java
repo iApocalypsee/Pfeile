@@ -53,7 +53,7 @@ public class GameOverScreen extends Screen {
         // von g.drawString("Game Over", 50 - scaleCenter.x, 300 - scaleCenter.y);
         scaleCenter = new Point((int) (50 + 0.5 * comp.Component.getTextBounds("Game Over", font_GameOver).getWidth()), (int) (300 + 0.5 * Component.getTextBounds("Game Over", font_GameOver).getHeight()));
 
-        closeGame = new Button(Main.getWindowWidth() - 150, Main.getWindowHeight() - 100, this, "Beenden");
+        closeGame = new Button(Main.getWindowWidth() - 170, Main.getWindowHeight() - 100, this, "Close Game");
 
         closeGame.addMouseListener(new MouseAdapter() {
             @Override
@@ -86,9 +86,7 @@ public class GameOverScreen extends Screen {
         calcTimeThread.setPriority(4);
         calcTimeThread.setDaemon(true);
 
-        onScreenEnter.registerJava(() -> {
-            calcTimeThread.start();
-        });
+        onScreenEnter.registerJava(calcTimeThread:: start);
     }
 
     /** returns the Color of the String "You Lose!". It uses "timer", calculated by the Thread, to change the Color in

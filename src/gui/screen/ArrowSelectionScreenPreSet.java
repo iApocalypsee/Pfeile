@@ -228,9 +228,12 @@ public class ArrowSelectionScreenPreSet extends Screen {
     }
 
     private String getRemainingArrowsString() {
-        if(getRemainingArrows() > 1) return String.format(chooseVarArrows, getRemainingArrows());
-        else if(getRemainingArrows() == 1 && PfeileContext.arrowNumberPreSet().get() == 1) return chooseFirstLastArrow;
-        else if(getRemainingArrows() == 1) return chooseOneArrow;
+        if(getRemainingArrows() > 1)
+            return String.format(chooseVarArrows, getRemainingArrows());
+        else if(getRemainingArrows() == 1 && PfeileContext.arrowNumberPreSet().get() == 1)
+            return chooseFirstLastArrow;
+        else if(getRemainingArrows() == 1)
+            return chooseOneArrow;
         else return noMoreArrows;
     }
 
