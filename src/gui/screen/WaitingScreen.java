@@ -85,9 +85,12 @@ public class WaitingScreen extends Screen {
     @Override
     public void keyPressed (KeyEvent event) {
         int code = event.getKeyCode();
-        if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_W || code == KeyEvent.VK_SPACE) {
+        if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_SPACE)
             onLeavingScreen(GameScreen.SCREEN_INDEX);
-        }
+        else if (Main.isEnglish() && code == KeyEvent.VK_N)
+            onLeavingScreen(GameScreen.SCREEN_INDEX);
+        else if (!Main.isEnglish() && code == KeyEvent.VK_W)
+            onLeavingScreen(GameScreen.SCREEN_INDEX);
     }
 
     @Override

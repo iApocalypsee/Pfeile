@@ -17,6 +17,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 /**
  * This is the Screen in which some PfeileContext values like worldSize are set. It replaces the old PreWindow.
@@ -117,6 +118,16 @@ public class PreWindowScreen extends Screen {
     private Point fontSmallPosition;
 
     private final String strategyGameLabel, authorsLabel, selectSelections;
+
+    private ComboBox test;
+    private Button reloadCombobox = new Button(1000, 400, this, "Reload test combobox");
+
+    private void reloadTestCombobox() {
+        test = new ComboBox(1000, 500, 300, 100, this, new String[]{"Test 1", "Test 2", "3. Test"});
+        test.setVisible(true);
+        this.forcePullFront(test);
+        this.forcePullFront(reloadCombobox);
+    }
 
     public PreWindowScreen() {
         super(SCREEN_NAME, SCREEN_INDEX);
@@ -286,6 +297,11 @@ public class PreWindowScreen extends Screen {
         });
 
         selectorComboBox.registerOnItemSelected(this::triggerSelectorComboBoxByIndex);
+
+        reloadTestCombobox();
+        this.forcePullFront(test);
+        this.forcePullFront(reloadCombobox);
+
     }
 
     /**
@@ -833,5 +849,9 @@ public class PreWindowScreen extends Screen {
         standardButton.draw(g);
         readyButton.draw(g);
         confirmDialog.draw(g);
+
+        reloadCombobox.draw(g);
+        test.draw(g);
+
     }
 }

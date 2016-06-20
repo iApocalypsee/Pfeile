@@ -2,7 +2,6 @@ package gui.screen
 
 import java.awt.event.{KeyEvent, MouseAdapter, MouseEvent}
 import java.awt.{Color, Font, Graphics2D}
-import java.util
 
 import animation.ImageLoader
 import comp.Component.ComponentStatus
@@ -11,9 +10,9 @@ import general._
 import player.weapon.arrow.AbstractArrow
 import world.ContextCreator
 
+import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.collection.JavaConverters._
 
 /**
  *
@@ -29,9 +28,8 @@ object LoadingWorldScreen extends Screen("LoadingScreen", 222) {
   def hasLoaded: Boolean = isLoaded
 
   // GO-Button
-  val goButton = new Button(Main.getWindowWidth - 150, Main.getWindowHeight - 90, this, "GO...")
+  val goButton = new Button(Main.getWindowWidth - 150, Main.getWindowHeight - 90, ImageLoader.load("comp/continueButton.png"), this, "GO...")
   goButton.declineInput()
-  goButton.iconify(ImageLoader.load("comp/continueButton.png"))
   goButton.addMouseListener(new MouseAdapter {
     override def mouseReleased(e: MouseEvent): Unit = {
       triggerGoButton()

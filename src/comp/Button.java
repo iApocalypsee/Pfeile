@@ -15,19 +15,37 @@ public class Button extends Component {
 	 */
 	private String text;
 
+    /** The distance between the image and the text. */
+    private int insetsBetween = 3;
+    
+    private Insets insets = new Insets(6, 8, 8, 5);
+
 	/**
 	 * Ein optionales Bild, das mit dem Text dargestellt werden kann.
 	 */
 	private BufferedImage optImage = null;
 
+    /**
+     * The width and height of the text used with the selected font.
+     */
+    private Dimension textDimension;
+
     private Font font = Component.STD_FONT;
 
 	public Button(int x, int y, Screen backing, String text) {
-		super(x, y, Component.getTextBounds(text, Component.STD_FONT).width + 50,
-				Component.getTextBounds(text, Component.STD_FONT).height + 25,
-				backing);
+		super(x, y, backing);
 		this.text = text;
+        calculateTextDimension();
+        recalculateDimension();
 	}
+
+    public Button (int x, int y, BufferedImage icon, Screen backing, String text) {
+        super(x, y, backing);
+        this.text = text;
+        optImage = icon;
+        calculateTextDimension();
+        recalculateDimension();
+    }
 	
 	/**
 	 * Gibt den Text des Buttons zurück.
@@ -43,6 +61,7 @@ public class Button extends Component {
 	 */
 	public void setText(String t) {
 		text = t;
+        calculateTextDimension();
 		recalculateDimension();
 	}
 	
@@ -64,6 +83,7 @@ public class Button extends Component {
      */
     public void setFont(Font font) {
         this.font = font;
+        calculateTextDimension();
         recalculateDimension();
     }
 
@@ -71,53 +91,59 @@ public class Button extends Component {
     public Font getFont() {
         return font;
     }
+
+    /** Calculates the width and height the text uses. */
+    private void calculateTextDimension() {
+        // leerer Text bei text == null
+        if(text != null) {
+            textDimension = Component.getTextBounds(text, font);
+        } else {
+            textDimension = new Dimension(0, font.getSize());
+        }
+
+    }
 	
-	/**
-	 * Berechnet die Bounds des Buttons neu.
-	 */
+	/** Berechnet die Bounds des Buttons neu. <b>Vorher muss gegebenenfalls noch <code>calculateTextDimension()</code> aufgerufen werden.</b>*/
 	void recalculateDimension() {
-		Dimension d;
-		// leerer Text bei text == null
-		if(text != null) {
-			d = Component.getTextBounds(text, font);
-		} else {
-			d = Component.getTextBounds("", font);
-		}
-		
 		if(optImage != null) {
-			setWidth(STD_INSETS.left + optImage.getWidth() + 
-					STD_INSETS.left + d.width + STD_INSETS.right);
-			if(optImage.getHeight() < d.height) {
-				setHeight(STD_INSETS.top + d.height + STD_INSETS.bottom);
+			setWidth(insets.left + optImage.getWidth() +
+                    insetsBetween + textDimension.width + insets.right);
+            if(optImage.getHeight() < textDimension.height) {
+				setHeight(insets.top + textDimension.height + insets.bottom);
 			} else {
-				setHeight(STD_INSETS.top + optImage.getHeight() + STD_INSETS.bottom);
+				setHeight(insets.top + optImage.getHeight() + insets.bottom);
 			}
 		} else {
-			setWidth(STD_INSETS.left + d.width + STD_INSETS.right);
-			setHeight(STD_INSETS.top + d.height + STD_INSETS.bottom);
+			setWidth(insets.left + textDimension.width + insets.right);
+			setHeight(insets.top + textDimension.height + insets.bottom);
 		}
 	}
 
-	@Override
-	public void draw(Graphics2D g) {
-        if (isVisible()) {
-            getBorder().draw(g);
-            g.setColor(Color.white);
-            g.setFont(font);
+    /** Returns the insets of this Button. By default, it differs from Component.STD_INSETS. */
+    public Insets getInsets() {
+        return insets;
+    }
 
-            if(optImage == null) {
-                g.drawString(text, getX() + 10, getY() + 20);
-            } else {
-                g.drawImage(optImage, getX() + STD_INSETS.left, getY() + STD_INSETS.top,
-                        optImage.getWidth(), optImage.getHeight(), null);
-                g.drawString(text, getX() + STD_INSETS.left + optImage.getWidth() + STD_INSETS.left,
-                        getY() + STD_INSETS.top + 20);
-            }
+    /** Changes the insets of this Button and recalculates its dimension. */
+    public void setInsets(Insets insets) {
+        this.insets = insets;
+        recalculateDimension();
+    }
 
-	        if(getAdditionalDrawing() != null) {
-		        getAdditionalDrawing().apply(g);
-	        }
-        }
+    /** the distance between the image and the text. If there's is no image, that property has no impact at all. */
+    public int getInsetsBetween() {
+        return insetsBetween;
+    }
+
+    /** Changes the distance between image and text. If there's no image, the change won't have any effect until an image has been added.
+     *  If this Button contains an image, the new dimension is calculated and set.
+     *
+     * @param inset the gap between image and text
+     */
+    public void setInsetsBetween(int inset) {
+        insetsBetween = inset;
+        if (optImage != null)
+            recalculateDimension();
     }
 	
 	/** setzt, ob das Rechteck rund ist oder nicht */
@@ -129,4 +155,26 @@ public class Button extends Component {
 	public boolean isRoundBorder () {
 		return getBorder().isRoundedBorder();
 	}
+
+    @Override
+    public void draw(Graphics2D g) {
+        if (isVisible()) {
+            getBorder().draw(g);
+            g.setColor(Color.white);
+            g.setFont(font);
+
+            if(optImage == null) {
+                g.drawString(text, getX() + insets.left, (int) (getY() + insets.top + textDimension.getHeight()));
+            } else {
+                g.drawImage(optImage, getX() + insets.left, getY() + insets.top,
+                        optImage.getWidth(), optImage.getHeight(), null);
+                g.drawString(text, getX() + insets.left + optImage.getWidth() + insetsBetween,
+                        (int) (getY() + insets.top + textDimension.getHeight()));
+            }
+
+            if(getAdditionalDrawing() != null) {
+                getAdditionalDrawing().apply(g);
+            }
+        }
+    }
 }

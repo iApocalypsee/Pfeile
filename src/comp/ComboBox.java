@@ -17,6 +17,7 @@ import java.util.function.Consumer;
  * ComboBox is just for String
  */
 public class ComboBox extends Component {
+
     /** the Strings for the <code> selectionList </code> */
     private String [] values;
     /** the Strings for the <code> selectionList </code> */
@@ -75,8 +76,9 @@ public class ComboBox extends Component {
     }
 
     private void init (Screen screenBacking) {
+
         if (values.length > 0) {
-            // l�ngsten Eintrag herausfinden und diese L�nge verwenden
+            // Find longest string, use its width
             FontRenderContext frc = new FontRenderContext(new AffineTransform(), true, true);
             double width = 0;
             int index = 0;
@@ -88,7 +90,7 @@ public class ComboBox extends Component {
             }
             containerLabel = new Label(getX(), getY(), screenBacking, values[index]);
         } else
-            containerLabel = new Label(getX(), getY(), screenBacking, "              ");
+            containerLabel = new Label(getX(), getY(), screenBacking, "              "); // if there are no values yet, the comboBox must still have a reasonable dimension
         containerLabel.setNoMouseColor(Color.black);
         containerLabel.setVisible(true);
         containerLabel.declineInput();

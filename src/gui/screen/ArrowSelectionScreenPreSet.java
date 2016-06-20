@@ -124,46 +124,44 @@ public class ArrowSelectionScreenPreSet extends Screen {
                 fontMiddlePosition.y + comp.Component.getTextBounds(authorsLabel, fontSmall).height + 10);
 
 
+        // Compare the following initialisation process with ArrowSelectionScreen, since the design is the same.
+
         /** Y-Position des ersten Buttons (Bildschirm) */
         int posYButtons = 60;
         /** X-Position des ersten Buttons (Screen) */
         int posXButton = 38;
+        /** the distance between the arrow buttons */
+        int gap = 45;
 
-        buttonListArrows[0] = new Button(posXButton, posYButtons, this,
-                Main.tr("fireArrow"));
-        buttonListArrows[1] = new Button(posXButton + buttonListArrows[0].getWidth() + 43, posYButtons, this,
-                Main.tr("waterArrow"));
-        buttonListArrows[2] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 2, posYButtons, this,
-                Main.tr("stormArrow"));
-        buttonListArrows[3] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 3, posYButtons, this,
-                Main.tr("stoneArrow"));
-        buttonListArrows[4] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 4, posYButtons, this,
-                Main.tr("iceArrow"));
-        buttonListArrows[5] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 5, posYButtons, this,
-                Main.tr("lightningArrow"));
-        buttonListArrows[6] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 6 , posYButtons, this,
-                Main.tr("lightArrow"));
-        buttonListArrows[7] = new Button(posXButton + (buttonListArrows[0].getWidth() + 43) * 7, posYButtons, this,
-                Main.tr("shadowArrow"));
+        buttonListArrows[0] = new Button(posXButton, posYButtons, ArrowHelper.getArrowImage(FireArrow.INDEX, 0.8f),
+                ArrowSelectionScreenPreSet.this, Main.tr("fireArrow"));
+        buttonListArrows[1] = new Button(posXButton + buttonListArrows[0].getWidth() + gap, posYButtons, ArrowHelper.getArrowImage(WaterArrow.INDEX, 0.8f),
+                ArrowSelectionScreenPreSet.this, Main.tr("waterArrow"));
+        buttonListArrows[2] = new Button(posXButton + (buttonListArrows[0].getWidth() + gap) * 2, posYButtons, ArrowHelper.getArrowImage(StormArrow.INDEX, 0.8f),
+                ArrowSelectionScreenPreSet.this, Main.tr("stormArrow"));
+        buttonListArrows[3] = new Button(posXButton + (buttonListArrows[0].getWidth() + gap) * 3, posYButtons, ArrowHelper.getArrowImage(StoneArrow.INDEX, 0.8f),
+                ArrowSelectionScreenPreSet.this, Main.tr("stoneArrow"));
+        buttonListArrows[4] = new Button(posXButton + (buttonListArrows[0].getWidth() + gap) * 4, posYButtons, ArrowHelper.getArrowImage(IceArrow.INDEX, 0.8f),
+                ArrowSelectionScreenPreSet.this, Main.tr("iceArrow"));
+        buttonListArrows[5] = new Button(posXButton + (buttonListArrows[0].getWidth() + gap) * 5, posYButtons, ArrowHelper.getArrowImage(LightningArrow.INDEX, 0.8f),
+                ArrowSelectionScreenPreSet.this, Main.tr("lightningArrow"));
+        buttonListArrows[6] = new Button(posXButton + (buttonListArrows[0].getWidth() + gap) * 6 , posYButtons, ArrowHelper.getArrowImage(LightArrow.INDEX, 0.8f),
+                ArrowSelectionScreenPreSet.this, Main.tr("lightArrow"));
+        buttonListArrows[7] = new Button(posXButton + (buttonListArrows[0].getWidth() + gap) * 7, posYButtons, ArrowHelper.getArrowImage(ShadowArrow.INDEX, 0.8f),
+                ArrowSelectionScreenPreSet.this, Main.tr("shadowArrow"));
 
-        // resizing for higher resolutions, if necessary
-        for (Button button : buttonListArrows) {
-            button.setWidth(button.getWidth() * Main.getWindowWidth() / 1366);
-            button.setX(button.getX() * Main.getWindowWidth() / 1366);
+        // resizing for higher resolutions, if necessary. The Resolution changes with mini-screens as well, but the Strings of the names can't be read probably.
+        if (Main.getWindowWidth() != 1366) {
+            for (Button button : buttonListArrows) {
+                button.setWidth(button.getWidth() * Main.getWindowWidth() / 1366);
+                button.setX(button.getX() * Main.getWindowWidth() / 1366);
+            }
         }
 
-        buttonListArrows [0].iconify(ArrowHelper.getArrowImage(FireArrow.INDEX, 0.8f));
-        buttonListArrows [1].iconify(ArrowHelper.getArrowImage(WaterArrow.INDEX, 0.8f));
-        buttonListArrows [2].iconify(ArrowHelper.getArrowImage(StormArrow.INDEX, 0.8f));
-        buttonListArrows [3].iconify(ArrowHelper.getArrowImage(StoneArrow.INDEX, 0.8f));
-        buttonListArrows [4].iconify(ArrowHelper.getArrowImage(IceArrow.INDEX, 0.8f));
-        buttonListArrows [5].iconify(ArrowHelper.getArrowImage(LightningArrow.INDEX, 0.8f));
-        buttonListArrows [6].iconify(ArrowHelper.getArrowImage(LightArrow.INDEX, 0.8f));
-        buttonListArrows [7].iconify(ArrowHelper.getArrowImage(ShadowArrow.INDEX, 0.8f));
-
+        ButtonHelper buttonHelper = new ButtonHelper();
         for (Button button : buttonListArrows) {
-            button.setWidth(buttonListArrows[7].getWidth() + 14);
-            button.addMouseListener(new ButtonHelper());
+            //button.setWidth(buttonListArrows[7].getWidth() + 14);
+            button.addMouseListener(buttonHelper);
         }
 
         playerName = new Label(40, Main.getWindowHeight() - 85, this, Main.getUser().getUsername());

@@ -178,71 +178,78 @@ public abstract class Component implements IComponent {
 	public static final Insets STD_INSETS = new Insets(7, 7, 10, 7);
 
 	/**
-	 * Creates an empty component with an empty rectangle as a source shape.
+	 * Creates an empty component with an empty rectangle as a source shape. Do not use. Any matrix transformation will fail.
+     * Only use this constructor, if you change the srcShape with viable bounds.
+     * @deprecated Invalid srcShape used. Set the srcShape before any transformation is applied.
 	 */
+    @Deprecated
 	public Component() {
-		mouseListeners = new LinkedList<>();
-		mouseMotionListeners = new LinkedList<>();
+        this(new Rectangle());
+	}
 
-		srcShape = new Rectangle();
+    public Component(Shape sourceShape) {
+        mouseListeners = new LinkedList<>();
+        mouseMotionListeners = new LinkedList<>();
 
-		border = new Border();
-		border.setComponent(this);
+        setSourceShape(sourceShape);
 
-		addMouseMotionListener(new MouseMotionAdapter() {
-			@Override
-			public void mouseMoved(MouseEvent arg0) {
-				if (status != ComponentStatus.MOUSE) {
-					status = ComponentStatus.MOUSE;
-				}
-			}
+        border = new Border();
+        border.setComponent(this);
 
-			@Override
-			public void mouseDragged(MouseEvent e) {
-				if(status != ComponentStatus.CLICK) {
-					status = ComponentStatus.CLICK;
-				}
-			}
-		});
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent arg0) {
+                if (status != ComponentStatus.MOUSE) {
+                    status = ComponentStatus.MOUSE;
+                }
+            }
 
-		addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                if(status != ComponentStatus.CLICK) {
+                    status = ComponentStatus.CLICK;
+                }
+            }
+        });
 
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-				if (status != ComponentStatus.NOT_AVAILABLE && status != ComponentStatus.MOUSE) {
-					status = ComponentStatus.MOUSE;
-				}
-				mouseFocused = true;
-			}
+        addMouseListener(new MouseAdapter() {
 
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-				if (status != ComponentStatus.NOT_AVAILABLE && status != ComponentStatus.NO_MOUSE) {
-					status = ComponentStatus.NO_MOUSE;
-				}
-				mouseFocused = false;
-			}
+            @Override
+            public void mouseEntered(MouseEvent arg0) {
+                if (status != ComponentStatus.NOT_AVAILABLE && status != ComponentStatus.MOUSE) {
+                    status = ComponentStatus.MOUSE;
+                }
+                mouseFocused = true;
+            }
 
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-				if (status != ComponentStatus.CLICK) {
-					status = ComponentStatus.CLICK;
-				}
-			}
+            @Override
+            public void mouseExited(MouseEvent arg0) {
+                if (status != ComponentStatus.NOT_AVAILABLE && status != ComponentStatus.NO_MOUSE) {
+                    status = ComponentStatus.NO_MOUSE;
+                }
+                mouseFocused = false;
+            }
 
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-				if (status != ComponentStatus.MOUSE) {
-					status = ComponentStatus.MOUSE;
-				}
-			}
+            @Override
+            public void mousePressed(MouseEvent arg0) {
+                if (status != ComponentStatus.CLICK) {
+                    status = ComponentStatus.CLICK;
+                }
+            }
 
-		});
+            @Override
+            public void mouseReleased(MouseEvent arg0) {
+                if (status != ComponentStatus.MOUSE) {
+                    status = ComponentStatus.MOUSE;
+                }
+            }
 
-		this.status = ComponentStatus.NO_MOUSE;
-		setName(Integer.toString(this.hashCode()));
+        });
 
-		transformation.onTranslated().registerJava((TranslationChange t) -> {
+        this.status = ComponentStatus.NO_MOUSE;
+        setName(Integer.toString(this.hashCode()));
+
+        transformation.onTranslated().registerJava((TranslationChange t) -> {
             if (boundsRecalculationIssued)
             {
                 transformationChangedSince = true;
@@ -254,7 +261,7 @@ public abstract class Component implements IComponent {
             onTransformed.apply(t);
         });
 
-		transformation.onScaled().registerJava((ScaleChange t) -> {
+        transformation.onScaled().registerJava((ScaleChange t) -> {
             if (boundsRecalculationIssued)
             {
                 transformationChangedSince = true;
@@ -262,14 +269,26 @@ public abstract class Component implements IComponent {
             onTransformed.apply(t);
         });
 
-		transformation.onRotated().registerJava((RotationChange t) -> {
+        transformation.onRotated().registerJava((RotationChange t) -> {
             if (boundsRecalculationIssued)
             {
                 transformationChangedSince = true;
             }
             onTransformed.apply(t);
         });
-	}
+    }
+
+    /** A component initialized with this constructor will have (width = 1) and (height = 1). Use with care. It is a point.
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param backing the screen, in which the component is drawn
+     */
+    public Component(int x, int y, Screen backing) {
+        this(new Rectangle(-1, -1, 2, 2));
+        transformation.translate(x, y);
+        setBackingScreen(backing);
+    }
 
 	/**
 	 * Eine Component. Fügt diese Component auch sofort zu der Auflistung von
@@ -282,20 +301,13 @@ public abstract class Component implements IComponent {
 	 * @param backing Der dahinter liegende Screen, der die Component verwaltet.
 	 */
 	public Component(int x, int y, int width, int height, Screen backing) {
-
-		this();
-
-		// The component's model is now in its own model space.
-		setSourceShape(new Rectangle(-width / 2, -height / 2, width, height));
+		this(new Rectangle(-width / 2, -height / 2, width, height));
 		transformation.translate(x, y);
-
 		setBackingScreen(backing);
-
 	}
 
 	public Component(Vector initialPosition, Shape srcShape, Screen backing) {
-		this();
-		setSourceShape(srcShape);
+		this(srcShape);
 		transformation.translate(initialPosition.getX(), initialPosition.getY());
 		setBackingScreen(backing);
 	}
@@ -465,7 +477,9 @@ public abstract class Component implements IComponent {
 	}
 
 	public void setWidth(int width) {
-        if(width == 0) throw new IllegalArgumentException("Illegal width of 0: Shape implosion");
+        if(width == 0)
+            throw new IllegalArgumentException("Illegal width of 0: Shape implosion");
+
 		double scaleFactor = width / getPreciseRectangle().getWidth();
 		//int oldWidth = (int) (srcShape.getBounds().width * transformation.scale().x());
 
@@ -614,10 +628,9 @@ public abstract class Component implements IComponent {
 	 */
 	public static Dimension getTextBounds(String text, Font f) {
 		AffineTransform affinetransform = new AffineTransform();
-		FontRenderContext frc = new FontRenderContext(affinetransform, true,
-				true);
-		return new Dimension((int) (f.getStringBounds(text, frc)).getWidth(),
-				(int) (f.getStringBounds(text, frc).getHeight()));
+		FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
+        Rectangle2D rect = f.getStringBounds(text, frc);
+		return new Dimension((int) rect.getWidth(), (int) rect.getHeight());
 	}
 
 	/**

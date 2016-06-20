@@ -17,6 +17,7 @@ class Transformation2D {
   private var _rotationMatrix = new AffineTransform
   private var _scaleMatrix = new AffineTransform
 
+  /** in degree*/
   private var _rotation = 0.0
 
   val onTranslated = Delegate.create[TranslationChange]
@@ -44,6 +45,7 @@ class Transformation2D {
 
   /**
     * Applies a translation to the transformation.
+ *
     * @param x The amount of units to translate it in x-direction.
     * @param y The amount of units to translate it in y-direction.
     * @return This.
@@ -51,7 +53,8 @@ class Transformation2D {
   def translate(x: Double, y: Double) = setTranslation(translation.getX + x, translation.getY + y)
 
   /**
-    * Rotates the transformation by the degree given.
+    * Rotates the transformation by the <b>degree</b> given.
+    *
     * @param angle The angle, in degrees.
     * @return This.
     */
@@ -59,6 +62,7 @@ class Transformation2D {
 
   /**
     * Scales the transformation.
+    *
     * @param sx The amount of scaling in the x-direction.
     * @param sy The amount of scaling in the y-direction.
     * @return This.
@@ -71,6 +75,7 @@ class Transformation2D {
     * Sets the absolute translation.
     * __Use with care when this [[comp.Transformation2D]] object is used by a [[comp.Component]].
     * '''I am not going to watch the use of this function, so I won't fix bugs that arise out of the use of it.'''__
+ *
     * @param x The x position to set the translation to.
     * @param y The y position to set the translation to.
     * @return This.
@@ -92,7 +97,8 @@ class Transformation2D {
   }
 
   /**
-   * Sets the absolute rotation.
+   * Sets the absolute rotation. <b>(in degrees)</b>
+   *
    * @param angle The new angle to set the transformation's rotation to.
    * @return This.
    */
@@ -123,6 +129,7 @@ class Transformation2D {
 
   /**
    * Sets the absolute scale of this transformation.
+   *
    * @param sx The scale in x-direction.
    * @param sy The scale in y-direction.
    * @return This.
