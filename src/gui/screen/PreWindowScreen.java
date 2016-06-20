@@ -114,17 +114,18 @@ public class PreWindowScreen extends Screen {
     /** position of <code>g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y")</code> */
     private Point fontSmallPosition;
 
-    private final String strategyGameLabel, authorsLabel, selectSelections;
+    private final String pfeileLabel, strategyGameLabel, authorsLabel, selectSelections;
 
+    // <<< Test code >>>
     private ComboBox test;
     private Button reloadCombobox = new Button(1000, 400, this, "Reload test combobox");
-
     private void reloadTestCombobox() {
         test = new ComboBox(1000, 500, 300, 100, this, new String[]{"Test 1", "Test 2", "3. Test"});
         test.setVisible(true);
         this.forcePullFront(test);
         this.forcePullFront(reloadCombobox);
     }
+    // <<< Test code ende >>>
 
     public PreWindowScreen() {
         super(SCREEN_NAME, SCREEN_INDEX);
@@ -161,6 +162,7 @@ public class PreWindowScreen extends Screen {
                      balancedHigh = balanced + "-" + high,
                      balancedLow = balanced + "-" + low;
 
+        pfeileLabel = "Pfeile";
         strategyGameLabel = Main.tr("label_strategyGame");
         authorsLabel = Main.tr("label_authors");
         selectSelections = Main.tr("done");
@@ -815,7 +817,7 @@ public class PreWindowScreen extends Screen {
 
         g.setColor(colorBig);
         g.setFont(fontBig);
-        g.drawString("Pfeile", fontBigPosition.x, fontBigPosition.y);
+        g.drawString(pfeileLabel, fontBigPosition.x, fontBigPosition.y);
         g.setColor(colorMiddle);
         g.setFont(fontMiddle);
         g.drawString(strategyGameLabel, fontMiddlePosition.x, fontMiddlePosition.y);

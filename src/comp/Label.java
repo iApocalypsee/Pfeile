@@ -42,7 +42,7 @@ public class Label extends Component {
     private int imageTextInset = Component.STD_INSETS.left;
 
     public Label(int x, int y, Screen backing, String text) {
-        super(x, y, 0, 0, backing);
+        super(x, y, backing);
         this.textSequence = new TextSequence(text);
         textDrawLocation = new Point(getX(), getY());
         imageDrawScale = new Dimension();

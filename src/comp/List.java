@@ -42,7 +42,7 @@ public class List extends Component {
 
 	public final Delegate.Delegate<Integer> onItemSelected = new Delegate.Delegate<>();
 
-	static final Insets STD_INSETS = new Insets(7, 4, 7, 8);
+	static final Insets INSETS = new Insets(8, 4, 7, 11);
 
 	public List(int x, int y, int width, int height, Screen backing, java.util.List<String> items) {
 		super(x, y, width, height, backing);
@@ -108,7 +108,7 @@ public class List extends Component {
             }
 
 			// I need to set the position in the correct order.
-			build.move(STD_INSETS.right, STD_INSETS.top + previousLabelsTotalHeight);
+			build.move(INSETS.right, INSETS.top + previousLabelsTotalHeight);
 
 			// If the label is inside the boundaries of the list, then it should be visible...
 			build.setVisible((build.getY() + build.getHeight()) < (this.getY() + this.getHeight()));
@@ -149,9 +149,9 @@ public class List extends Component {
     private void realignLabels() {
         for(int i = 0; i < listItems.size(); i++) {
 
-            int previousLabelsTotalHeight = STD_INSETS.top;
+            int previousLabelsTotalHeight = INSETS.top;
             for(int prevLabelIter = 0; prevLabelIter < i; prevLabelIter++) {
-                previousLabelsTotalHeight += listItems.get(prevLabelIter).getHeight() + STD_INSETS.top;
+                previousLabelsTotalHeight += listItems.get(prevLabelIter).getHeight() + INSETS.top;
             }
 
             final Label currentLabel = listItems.get(i);
@@ -203,7 +203,7 @@ public class List extends Component {
     }
 	
 	/**
-	 * Returns a Dimension with the bounds of the list calculated from the labels with STD_INSETS.
+	 * Returns a Dimension with the bounds of the list calculated from the labels with INSETS.
      * The bounds returned by this list should always be equal or smaller to current bounds.
      *
      * @see comp.List#tfits_static(java.util.List)
@@ -215,37 +215,36 @@ public class List extends Component {
                 width = label.getWidth();
             height = height + label.getHeight();
 		}
-        width = width + STD_INSETS.right + STD_INSETS.left;
-        height = height + STD_INSETS.bottom + STD_INSETS.top;
+        width = width + INSETS.right + INSETS.left;
+        height = height + INSETS.bottom + INSETS.top * 2;
 
 		return new Dimension(width, height);
 	}
 
     /**
-     * Notice the difference to {@link List#tfits()}: No STD_INSETS are added, a list of strings is used instead of labels,
+     * Notice the difference to {@link List#tfits()}: No INSETS are added, a list of strings is used instead of labels,
      * which only allows the {@link comp.Component#STD_FONT} to be used without BufferedImage.
      *
      * @param elems the list
-     * @return a dimension, which would contain the list [as labels] with {@link comp.List#STD_INSETS}.
+     * @return a dimension, which would contain the list [as labels] with {@link comp.List#INSETS}.
      */
 	static Dimension tfits_static(java.util.List<String> elems) {
-		int width = 0, height = 0;
         if (elems.isEmpty()) {
-            Dimension bounds = new Dimension(Component.getTextBounds("   ", STD_FONT));
-            return new Dimension(bounds.width + Component.STD_INSETS.right + Component.STD_INSETS.left,
-                    bounds.height + Component.STD_INSETS.top + Component.STD_INSETS.bottom);
+            Dimension bounds = new Dimension(15, STD_FONT.getSize());
+            return new Dimension(bounds.width + INSETS.right + INSETS.left,
+                    bounds.height + INSETS.top + INSETS.bottom);
         }
+
+        int width = 0, height = 0;
 
 		for (String s : elems) {
 			Dimension bounds = getTextBounds(s, STD_FONT);
-            bounds = new Dimension(bounds.width + Component.STD_INSETS.right + Component.STD_INSETS.left,
-                                   bounds.height + Component.STD_INSETS.top + Component.STD_INSETS.bottom);
 			if (width < bounds.width)
 				width = bounds.width;
 			height = height + bounds.height;
 		}
-        width = width + STD_INSETS.right + STD_INSETS.left;
-        height = height + STD_INSETS.top + STD_INSETS.bottom;
+        width = width + INSETS.right + INSETS.left;
+        height = height + INSETS.top * 2 + INSETS.bottom;
 
 		return new Dimension(width, height);
 	}
