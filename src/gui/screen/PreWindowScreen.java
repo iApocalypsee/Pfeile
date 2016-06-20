@@ -87,9 +87,6 @@ public class PreWindowScreen extends Screen {
     /** enter the name of the opponent */
     private TextBox boxOpponent;
 
-    /** backgroundColor */
-    private static final Color TRANSPARENT_BACKGROUND = new Color(39, 47, 69, 204);
-
     /** Font for "Pfeile", printed in the upper right corner */
     private Font fontBig;
 
@@ -815,10 +812,6 @@ public class PreWindowScreen extends Screen {
     @Override
     public void draw (Graphics2D g) {
         super.draw(g);
-
-        // Backgound
-        g.setColor(TRANSPARENT_BACKGROUND);
-        g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 
         g.setColor(colorBig);
         g.setFont(fontBig);

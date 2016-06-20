@@ -57,7 +57,7 @@ public class Border implements Drawable {
 	/**
 	 * Das vom Border umgebende Component. Lesegeschütztes Feld.
 	 */
-	private IComponent surr;
+	private Component surr;
 	
 	private BasicStroke stroke;
 
@@ -66,7 +66,7 @@ public class Border implements Drawable {
 	 * Hintergrund.
 	 */
 	public Border() {
-		this(Color.black, Color.gray);
+		this(new Color(0x565461), new Color(0xA9A9A9));
 	}
 	
 	/**
@@ -77,10 +77,9 @@ public class Border implements Drawable {
 	public Border(Color inner, Color outer) {
 		this.inner = inner;
 		this.outer = outer;
-		click = Color.orange;
-		hover = Color.cyan;
-		na = Color.darkGray;
-		recalcHover();
+		click = new Color(0x7B00FF);
+        hover = new Color(0x8E6CD8);
+		na = new Color(0xD3D3D3);
 		stroke = new BasicStroke(2);
         arcHeight = 3;
         arcWidth = 4;
@@ -102,7 +101,6 @@ public class Border implements Drawable {
 	
 	public void setInnerColor(Color insideColor) {
 		this.inner = insideColor;
-		recalcHover();
 	}
 	
 	public final boolean isRoundedBorder() {
@@ -119,10 +117,17 @@ public class Border implements Drawable {
 	
 	public void setClickColor(Color clickColor) {
 		this.click = clickColor;
-        recalcHover();
 	}
-	
-	public Color getNotAvailableColor() {
+
+    public Color getHover() {
+        return hover;
+    }
+
+    public void setHover(Color hover) {
+        this.hover = hover;
+    }
+
+    public Color getNotAvailableColor() {
 		return na;
 	}
 	
@@ -134,14 +139,14 @@ public class Border implements Drawable {
 	 * Setzt die Component, um die herum die Border gezeichnet werden soll.
 	 * @param surrounding Die neue Component.
 	 */
-	public final void setComponent(IComponent surrounding) {
+	public final void setComponent(Component surrounding) {
 		this.surr = surrounding;
 	}
 	
 	/**
-	 * Berechnet die Farbe für den Zustand ComponentStatus.MOUSE neu.
+	 * Berechnet die Farbe für den Zustand ComponentStatus.MOUSE neu. Es wird der Mittelwert aus <code>getInnerColor()</code> und <code>getClickColor()</code> gebildet.
 	 */
-	void recalcHover() {
+	public void recalcHover() {
 		hover = new Color(
 				Math.round((inner.getRed() + click.getRed()) / 2),
 				Math.round((inner.getGreen() + click.getGreen()) / 2),
@@ -156,11 +161,18 @@ public class Border implements Drawable {
 	@Override
 	public void draw(Graphics2D g) {
 		g.setColor(inner);
+
+        // TODO: Implement an option where rounded borders are drawn, without creating a new component.
+
+        /*
 		if(roundedBorder) {
 			g.fillRoundRect(surr.getX(), surr.getY(), surr.getWidth(), surr.getHeight(), arcWidth, arcHeight);
 		} else {
 			g.fillRect(surr.getX(), surr.getY(), surr.getWidth(), surr.getHeight());
 		}
+		*/
+
+        g.fill(surr.getBounds());
 		
 		switch(surr.getStatus()) {
 		case NO_MOUSE:
@@ -181,6 +193,7 @@ public class Border implements Drawable {
 		}
 		
 		g.setStroke(stroke);
+
 		/*
 		if(roundedBorder) {
 			g.drawRoundRect(surr.getX(), surr.getY(), surr.getWidth(), surr.getHeight(), arcWidth, arcHeight);
@@ -188,6 +201,7 @@ public class Border implements Drawable {
 			g.drawRect(surr.getX(), surr.getY(), surr.getWidth(), surr.getHeight());
 		}
 		*/
+
 		g.draw(surr.getBounds());
 	}
 	

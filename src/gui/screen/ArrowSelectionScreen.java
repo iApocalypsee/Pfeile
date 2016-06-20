@@ -57,8 +57,6 @@ public class ArrowSelectionScreen extends Screen {
 	private boolean isConfirmDialogOpen = false;
 
     private Button fireArrowButton, waterArrowButton, iceArrowButton, stormArrowButton, lightningArrowButton, lightArrowButton, shadowArrowButton, stoneArrowButton;
-	
-	private static final Color TRANSPARENT_BACKGROUND = new Color(0, 0, 0, 185);
 
 	/** This is when the background need to be darkened. [an Dialog is open] */
 	private static final Color COLOR_IS_CONFIRM_DIALOG_OPEN = new Color(0, 0, 0, 0.13f);
@@ -248,9 +246,6 @@ public class ArrowSelectionScreen extends Screen {
 	@Override
 	public void draw(Graphics2D g) {
 		super.draw(g);
-		
-		g.setColor(TRANSPARENT_BACKGROUND);
-		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 
         GameScreen.getInstance().getMap().draw(g);
         AttackingScreen.getInstance().getAttackDrawer().draw(g);

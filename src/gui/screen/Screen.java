@@ -166,9 +166,9 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * @param g Der Grafikkontext
 	 */
 	public void draw(Graphics2D g) {
-		g.setColor(Color.black);
-		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
-		background.drawImage(g, 0, 0, Main.getWindowWidth(), Main.getWindowHeight());
+		//g.setColor(Color.black);
+		//g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
+		//background.drawImage(g, 0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 		
 		if(preprocessedDrawingEnabled) {
 			getComponents().forEach(c -> c.drawChecked(g));

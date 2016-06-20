@@ -95,6 +95,8 @@ public class WaitingScreen extends Screen {
 
     @Override
     public void draw (Graphics2D g) {
+        super.draw(g);
+
         continueButton.draw(g);
         label.draw(g);
         circle.draw(g);
