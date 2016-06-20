@@ -17,6 +17,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 /**
  * This is the Screen in which some PfeileContext values like worldSize are set. It replaces the old PreWindow.
@@ -86,9 +87,6 @@ public class PreWindowScreen extends Screen {
     /** enter the name of the opponent */
     private TextBox boxOpponent;
 
-    /** backgroundColor */
-    private static final Color TRANSPARENT_BACKGROUND = new Color(39, 47, 69, 204);
-
     /** Font for "Pfeile", printed in the upper right corner */
     private Font fontBig;
 
@@ -116,7 +114,18 @@ public class PreWindowScreen extends Screen {
     /** position of <code>g.drawString("von Josip Palavra und Daniel Schmaus", fontSmallPosition.x, fontSmallPosition.y")</code> */
     private Point fontSmallPosition;
 
-    private final String strategyGameLabel, authorsLabel, selectSelections;
+    private final String pfeileLabel, strategyGameLabel, authorsLabel, selectSelections;
+
+    // <<< Test code >>>
+    private ComboBox test;
+    private Button reloadCombobox = new Button(1000, 400, this, "Reload test combobox");
+    private void reloadTestCombobox() {
+        test = new ComboBox(1000, 500, 300, 100, this, new String[]{"Test 1", "Test 2", "3. Test"});
+        test.setVisible(true);
+        this.forcePullFront(test);
+        this.forcePullFront(reloadCombobox);
+    }
+    // <<< Test code ende >>>
 
     public PreWindowScreen() {
         super(SCREEN_NAME, SCREEN_INDEX);
@@ -153,6 +162,7 @@ public class PreWindowScreen extends Screen {
                      balancedHigh = balanced + "-" + high,
                      balancedLow = balanced + "-" + low;
 
+        pfeileLabel = "Pfeile";
         strategyGameLabel = Main.tr("label_strategyGame");
         authorsLabel = Main.tr("label_authors");
         selectSelections = Main.tr("done");
@@ -286,6 +296,11 @@ public class PreWindowScreen extends Screen {
         });
 
         selectorComboBox.registerOnItemSelected(this::triggerSelectorComboBoxByIndex);
+
+        reloadTestCombobox();
+        this.forcePullFront(test);
+        this.forcePullFront(reloadCombobox);
+
     }
 
     /**
@@ -800,13 +815,9 @@ public class PreWindowScreen extends Screen {
     public void draw (Graphics2D g) {
         super.draw(g);
 
-        // Backgound
-        g.setColor(TRANSPARENT_BACKGROUND);
-        g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
-
         g.setColor(colorBig);
         g.setFont(fontBig);
-        g.drawString("Pfeile", fontBigPosition.x, fontBigPosition.y);
+        g.drawString(pfeileLabel, fontBigPosition.x, fontBigPosition.y);
         g.setColor(colorMiddle);
         g.setFont(fontMiddle);
         g.drawString(strategyGameLabel, fontMiddlePosition.x, fontMiddlePosition.y);
@@ -833,5 +844,9 @@ public class PreWindowScreen extends Screen {
         standardButton.draw(g);
         readyButton.draw(g);
         confirmDialog.draw(g);
+
+        reloadCombobox.draw(g);
+        test.draw(g);
+
     }
 }

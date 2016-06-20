@@ -33,6 +33,8 @@ public class GameWindow extends JFrame {
 
 	private final CoordinateGrid grid = new CoordinateGrid(0, 0);
 
+    private final Color backgroundColor = new Color(7, 3, 31);
+
 	/**
 	 * Konstruktor von GameWindow.
 	 */
@@ -177,7 +179,7 @@ public class GameWindow extends JFrame {
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-		g.setColor(Color.black);
+		g.setColor(backgroundColor);
 		g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
 
         final package$ primitivesPackageObj = package$.MODULE$;

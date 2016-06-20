@@ -229,10 +229,10 @@ public class InventoryScreen extends Screen {
     public void draw (Graphics2D g) {
         super.draw(g);
 
-        inventoryList.draw(g);
-        confirmButton.draw(g);
-        cancelButton.draw(g);
-        selectedItem.draw(g);
+        inventoryList.drawChecked(g);
+        confirmButton.drawChecked(g);
+        cancelButton.drawChecked(g);
+        selectedItem.drawChecked(g);
         warningMessage.draw(g);
     }
 }

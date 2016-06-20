@@ -17,6 +17,7 @@ import java.util.function.Consumer;
  * ComboBox is just for String
  */
 public class ComboBox extends Component {
+
     /** the Strings for the <code> selectionList </code> */
     private String [] values;
     /** the Strings for the <code> selectionList </code> */
@@ -60,7 +61,8 @@ public class ComboBox extends Component {
         if (getHeight() < containerLabel.getHeight() + selectionList.getHeight() + STD_INSETS.bottom + STD_INSETS.top)
             setHeight(containerLabel.getHeight() + selectionList.getHeight() + STD_INSETS.bottom + STD_INSETS.top);
 
-        selectionList.setWidth(getWidth());
+        if (selectionList.getWidth() < containerLabel.getWidth() + STD_INSETS.left)
+            selectionList.setWidth(containerLabel.getWidth() + STD_INSETS.left);
     }
 
     public ComboBox (int x, int y, Screen screenBacking, String [] values) {
@@ -71,12 +73,15 @@ public class ComboBox extends Component {
 
         setWidth(containerLabel.getWidth() + clickButton.getWidth() + STD_INSETS.left + STD_INSETS.right);
         setHeight(containerLabel.getHeight() + selectionList.getHeight());
-        selectionList.setWidth(getWidth());
+
+        if (selectionList.getWidth() < containerLabel.getWidth() + STD_INSETS.left)
+            selectionList.setWidth(containerLabel.getWidth() + STD_INSETS.left);
     }
 
     private void init (Screen screenBacking) {
+
         if (values.length > 0) {
-            // l�ngsten Eintrag herausfinden und diese L�nge verwenden
+            // Find longest string, use its width
             FontRenderContext frc = new FontRenderContext(new AffineTransform(), true, true);
             double width = 0;
             int index = 0;
@@ -88,15 +93,14 @@ public class ComboBox extends Component {
             }
             containerLabel = new Label(getX(), getY(), screenBacking, values[index]);
         } else
-            containerLabel = new Label(getX(), getY(), screenBacking, "              ");
+            containerLabel = new Label(getX(), getY(), screenBacking, "              "); // if there are no values yet, the comboBox must still have a reasonable dimension
         containerLabel.setNoMouseColor(Color.black);
         containerLabel.setVisible(true);
         containerLabel.declineInput();
 
-        clickButton = new Button(getX() + containerLabel.getWidth() + STD_INSETS.left + STD_INSETS.right, getY(), screenBacking, "");
+        clickButton = new Button(getX() + containerLabel.getWidth() + STD_INSETS.left + STD_INSETS.right, getY(), icon, screenBacking, "");
         clickButton.setVisible(true);
         clickButton.setRoundBorder(false);
-        clickButton.iconify(icon);
 
         selectionList = new comp.List(getX(), getY() + clickButton.getHeight(), screenBacking, Converter.convertToList(values));
         selectionList.setVisible(false);

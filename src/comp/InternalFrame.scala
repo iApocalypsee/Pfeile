@@ -77,14 +77,14 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
   /**
     * The background used by the frame. Can be transparent, but does not have to be.
     */
-  val background: StaticProperty[ImageLike] = new StaticProperty(new SolidColor(FrameStyle.DefaultBackgroundColor))
+  val background = new StaticProperty[ImageLike](new SolidColor(FrameStyle.DefaultBackgroundColor))
 
   @volatile private var comps = new CopyOnWriteArrayList[Component]
 
   /**
     * The close button of the frame.
     */
-  private lazy val closeButton = {
+  private lazy val closeButton: Button = {
     val ret = new Button(0, 0, backingScreen, "")
     val xInBounds = x + width - FrameStyle.CommonInset - FrameStyle.CloseButtonDimension.width
     val yInBounds = y + FrameStyle.CommonInset
@@ -192,11 +192,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
       g.setColor(FrameStyle.DefaultTopBarColor)
       g.fill(getBounds)
     }
-
   }
-
-
-
 }
 
 object InternalFrame {
