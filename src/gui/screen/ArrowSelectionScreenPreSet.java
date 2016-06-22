@@ -134,21 +134,21 @@ public class ArrowSelectionScreenPreSet extends Screen {
         int gap = 45;
 
         buttonListArrows[0] = new Button(posXButton, posYButtons, ArrowHelper.getArrowImage(FireArrow.INDEX, 0.8f),
-                ArrowSelectionScreenPreSet.this, Main.tr("fireArrow"));
+                ArrowSelectionScreenPreSet.this, Main.tr("FireArrow"));
         buttonListArrows[1] = new Button(posXButton + buttonListArrows[0].getWidth() + gap, posYButtons, ArrowHelper.getArrowImage(WaterArrow.INDEX, 0.8f),
-                ArrowSelectionScreenPreSet.this, Main.tr("waterArrow"));
+                ArrowSelectionScreenPreSet.this, Main.tr("WaterArrow"));
         buttonListArrows[2] = new Button(posXButton + (buttonListArrows[0].getWidth() + gap) * 2, posYButtons, ArrowHelper.getArrowImage(StormArrow.INDEX, 0.8f),
-                ArrowSelectionScreenPreSet.this, Main.tr("stormArrow"));
+                ArrowSelectionScreenPreSet.this, Main.tr("StormArrow"));
         buttonListArrows[3] = new Button(posXButton + (buttonListArrows[0].getWidth() + gap) * 3, posYButtons, ArrowHelper.getArrowImage(StoneArrow.INDEX, 0.8f),
-                ArrowSelectionScreenPreSet.this, Main.tr("stoneArrow"));
+                ArrowSelectionScreenPreSet.this, Main.tr("StoneArrow"));
         buttonListArrows[4] = new Button(posXButton + (buttonListArrows[0].getWidth() + gap) * 4, posYButtons, ArrowHelper.getArrowImage(IceArrow.INDEX, 0.8f),
-                ArrowSelectionScreenPreSet.this, Main.tr("iceArrow"));
+                ArrowSelectionScreenPreSet.this, Main.tr("IceArrow"));
         buttonListArrows[5] = new Button(posXButton + (buttonListArrows[0].getWidth() + gap) * 5, posYButtons, ArrowHelper.getArrowImage(LightningArrow.INDEX, 0.8f),
-                ArrowSelectionScreenPreSet.this, Main.tr("lightningArrow"));
+                ArrowSelectionScreenPreSet.this, Main.tr("LightningArrow"));
         buttonListArrows[6] = new Button(posXButton + (buttonListArrows[0].getWidth() + gap) * 6 , posYButtons, ArrowHelper.getArrowImage(LightArrow.INDEX, 0.8f),
-                ArrowSelectionScreenPreSet.this, Main.tr("lightArrow"));
+                ArrowSelectionScreenPreSet.this, Main.tr("LightArrow"));
         buttonListArrows[7] = new Button(posXButton + (buttonListArrows[0].getWidth() + gap) * 7, posYButtons, ArrowHelper.getArrowImage(ShadowArrow.INDEX, 0.8f),
-                ArrowSelectionScreenPreSet.this, Main.tr("shadowArrow"));
+                ArrowSelectionScreenPreSet.this, Main.tr("ShadowArrow"));
 
         // resizing for higher resolutions, if necessary. The Resolution changes with mini-screens as well, but the Strings of the names can't be read probably.
         if (Main.getWindowWidth() != 1366) {
