@@ -1,11 +1,14 @@
 package player.shop
 
 import java.util.function.Predicate
+import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
+import general.JavaInterop.JavaPrimitives._
+import general.JavaInterop._
 import newent._
 import world.World
 
-import scala.compat.java8.FunctionConverters._
+import scala.collection.JavaConverters._
 
 /**
   * Common trait for a seller of goods.
@@ -27,7 +30,7 @@ abstract class Trader(world: World, spawnX: Int, spawnY: Int, name: String) exte
     *
     * @return The mapping of Article to the number of that article he possesses.
     */
-  def stock: Map[Article, Int]
+  def stock: IMap[Article, JavaInt]
 
   /**
     * Counts how many specified articles the trader has.
@@ -35,15 +38,10 @@ abstract class Trader(world: World, spawnX: Int, spawnY: Int, name: String) exte
     * @param f The article predicate.
     * @return The count of the predicate.
     */
-  def supply(f: Article => Boolean): Int = stock.foldLeft(0) { (count, keyValue) =>
+  def supplies(f: Predicate[Article]): Int = stock.asScala.foldLeft(0) { (count, keyValue) =>
     val (article, amount) = keyValue
-    if (f(article)) count + amount else count
+    if (f.test(article)) count + amount else count
   }
-
-  /**
-    * @see [[player.shop.Trader#supply(java.util.function.Predicate)]]
-    */
-  def supply(f: Predicate[Article]): Int = supply(asScalaFromPredicate(f))
 
   /**
     * Removes `amount` articles from the trader to be put in a seq and returned altogether.
@@ -53,24 +51,21 @@ abstract class Trader(world: World, spawnX: Int, spawnY: Int, name: String) exte
     * @param amount How many articles to remove and put into the returned seq.
     * @return The seq of removed articles.
     */
-  protected def retrieve(article: Article => Boolean, amount: Int = 1): Seq[Article]
-
-  /**
-    * @see [[player.shop.Trader#retrieve(java.util.function.Predicate, int)]]
-    */
-  protected def retrieve(article: Predicate[Article], amount: Int): Seq[Article] = retrieve(asScalaFromPredicate(article), amount)
+  protected def retrieve(article: Predicate[Article], amount: Int = 1): IList[Article]
 
   // <editor-fold desc="Overrides">
 
-  override def articles: Seq[Article] = stock.keys.toSeq
+  override def articles: IList[Article] = stock.keySet().toImmutableList
 
-  override def sell(to: MoneyEarner, article: Article => Boolean, amount: Int = 1): Boolean = {
-    if (!isAvailable(article)) false
+  override def sell(to: MoneyEarner, article: Predicate[Article], amount: Int = 1): Boolean = {
+    if (!isAvailable(article))
+      false
     else {
       val soldItems = retrieve(article)
-      val paymentSuccessful = to.account.pay(soldItems./:(0) { (carryOver, article) => carryOver + article.price }, this)
+      val paymentSuccessful = to.account.pay(soldItems.asScala.foldLeft(0) { (carryOver, article) => carryOver + article.price }, this)
       if (paymentSuccessful) {
-        for (soldArticle <- soldItems) to.inventory.put(soldArticle.item())
+        for (soldArticle <- soldItems.asScala)
+          to.inventory.put(soldArticle.item())
         true
       }
       else false
@@ -83,7 +78,7 @@ abstract class Trader(world: World, spawnX: Int, spawnY: Int, name: String) exte
     * @param f The article predicate.
     * @return If the article predicate is at least once in the trader's stock, `true`.
     */
-  override def isAvailable(f: Article => Boolean): Boolean = supply(f) > 0
+  override def isAvailable(f: Predicate[Article]): Boolean = supplies(f) > 0
 
   // </editor-fold>
 

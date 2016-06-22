@@ -1,10 +1,15 @@
 package player.shop
 
 import java.awt.event.{MouseAdapter, MouseEvent}
+import java.util.function._
+import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
 import general.{LogFacility, Main}
 import newent.MoneyEarner
 import player.item.Item
+
+import scala.collection.JavaConverters._
+import scala.compat.java8.FunctionConverters._
 
 /**
   * Central object for code to interact with the shop system.
@@ -58,14 +63,14 @@ object ShopCentral extends TraderLike {
     */
   def find(article: Article): Option[Article] = ArticleCollection.find(article)
 
-  def articles: Seq[Article] = ArticleCollection.articles
+  def articles: IList[Article] = ArticleCollection.articles.asJava
 
   /**
     * Checks if the given article is in the trader's stock.
     * @param f The article predicate.
     * @return If the article predicate is at least once in the trader's stock, `true`.
     */
-  override def isAvailable(f: (Article) => Boolean): Boolean = articles.exists(f)
+  override def isAvailable(f: Predicate[Article]): Boolean = articles.asScala.exists(f.asScala)
 
   /**
     * Sells the specified article to the given entity.
@@ -74,7 +79,7 @@ object ShopCentral extends TraderLike {
     * @param amount How many articles to sell. Based on this value, the total's transaction value is calculated.
     * @return Was the transaction successful?
     */
-  override def sell(to: MoneyEarner, article: (Article) => Boolean, amount: Int): Boolean = {
+  override def sell(to: MoneyEarner, article: Predicate[Article], amount: Int): Boolean = {
 
     //<editor-fold desc='Failure cases'>
 
@@ -103,8 +108,8 @@ object ShopCentral extends TraderLike {
       * @return Depends.
       */
     def onAvailable(): Boolean = {
-      val sortedArticles = articles.sorted
-      val queriedArticles = for (i <- 0 until amount) yield sortedArticles.find(article).get
+      val sortedArticles = articles.asScala.sorted
+      val queriedArticles = for (i <- 0 until amount) yield sortedArticles.find(article.asScala).get
       val totalTransactionValue = queriedArticles.foldRight(0) { _.price + _ }
       if (to.purse.numericValue < totalTransactionValue) onNotSufficientClientMoney(queriedArticles)
       else onSuccess(totalTransactionValue, queriedArticles)

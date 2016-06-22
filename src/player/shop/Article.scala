@@ -34,6 +34,7 @@ case class Article(private[shop] val item: () => Item, price: Int, keywords: Seq
 
   /**
     * Additional constructor for Java interop.
+    *
     * @param itemConstruction The function which constructs the actual item, Java fashion.
     * @param price The price to pay for one construction of specified item.
     * @param keywords Optional keywords to make it easier to find it in GUI or code.
@@ -44,6 +45,7 @@ case class Article(private[shop] val item: () => Item, price: Int, keywords: Seq
 
   /**
     * Additional constructor for Java interop.
+    *
     * @param itemConstruction The function which constructs the actual item, Java fashion.
     * @param price The price to pay for one construction of specified item.
     */
@@ -58,7 +60,6 @@ case class Article(private[shop] val item: () => Item, price: Int, keywords: Seq
   @BeanProperty lazy val shopButtonAttributes = new VisualArticleAttributes
 
 }
-
 
 private case class DefiniteArticle(initializedItem: Item, price: Int, keywords: Seq[String])
 
@@ -101,12 +102,12 @@ class VisualArticleAttributes private[shop] {
 object VisualArticleAttributes {
 
   /**
-   * Returns a function that is used to determine whether the shop button correspondent to this article
-   * is visible in the shop window.
-   *
-   * @param forWho For who to check.
-   * @return A function for a filter call.
-   */
+    * Returns a function that is used to determine whether the shop button correspondent to this article
+    * is visible in the shop window.
+    *
+    * @param forWho For who to check.
+    * @return A function for a filter call.
+    */
   private[shop] def filterArticlesFunction(forWho: Entity) = (x: Article) => {
     val attribs = x.shopButtonAttributes
     attribs.isAvailable(forWho)

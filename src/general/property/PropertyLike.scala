@@ -1,6 +1,8 @@
 package general.property
 
-import java.util.function.Supplier
+import java.util.function.{Consumer, Supplier}
+
+import scala.compat.java8.FunctionConverters.asScalaFromConsumer
 
 /**
   * The most abstract trait for properties.
@@ -17,7 +19,7 @@ trait PropertyLike[A] {
 
   def ifdef(x: A => Unit)
 
-  // def ifdef(javafun: Consumer[A]): Unit = ifdef(JavaInterop.asScala(javafun))
+  def ifdefj(x: Consumer[A]) = ifdef(asScalaFromConsumer(x))
 
   def isDefined = option.isDefined
 
@@ -28,6 +30,7 @@ trait PropertyLike[A] {
 
 /**
   * Normal set behavior. Evaluates given variable instantly.
+ *
   * @tparam A The type of variable to hold.
   */
 trait EagerEval[A] extends PropertyLike[A] with SetEvalStyle[EagerEval[A]] {
@@ -38,6 +41,7 @@ trait EagerEval[A] extends PropertyLike[A] with SetEvalStyle[EagerEval[A]] {
 /**
   * Trait which declares that setting this property does not evaluate the given argument in the set method,
   * but evaluates it just then as it is really required.
+ *
   * @tparam A The type of variable to hold.
   */
 trait LazyEval[A] extends PropertyLike[A] with SetEvalStyle[EagerEval[A]] {

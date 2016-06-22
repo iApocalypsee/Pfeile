@@ -3,7 +3,7 @@ package comp
 import java.awt.image.BufferedImage
 import java.awt.{Color, Graphics2D}
 
-import general.Property
+import general.property.StaticProperty
 
 /**
   * Everything that can be described as an image can inherit this trait.
@@ -12,6 +12,7 @@ trait ImageLike {
 
   /**
     * The image that is going to get drawn.
+    *
     * @return The image representation.
     */
   def image: BufferedImage
@@ -40,6 +41,7 @@ trait ImageLike {
 
 /**
   * Ditto.
+  *
   * @param image The image to be displayed.
   */
 class StaticImage(override val image: BufferedImage) extends ImageLike
@@ -47,7 +49,8 @@ class StaticImage(override val image: BufferedImage) extends ImageLike
 /**
  * Establishes a keyframe animation with several keyframes.
  * The keyframes switch with every draw call, so that it creates the illusion of movement.
- * @param keyframeStrip The image in which all steps of the animations are saved.
+  *
+  * @param keyframeStrip The image in which all steps of the animations are saved.
  * @param keyframes How many keyframes does this animation contain?
  * @param startKeyframe The start keyframe. Zero is the first keyframe.
  */
@@ -77,7 +80,8 @@ class KeyframeAnimation(keyframeStrip: BufferedImage, keyframes: Int, startKeyfr
 
   /**
    * Causes the animation to step to the next keyframe.
-   * @return The next keyframe as an image.
+    *
+    * @return The next keyframe as an image.
    */
   override def nextKeyframe(): BufferedImage = {
     currentKeyframeIndex += 1
@@ -87,7 +91,8 @@ class KeyframeAnimation(keyframeStrip: BufferedImage, keyframes: Int, startKeyfr
 
   /**
    * Causes the animation to step to the previous keyframe.
-   * @return The previous keyframe as an image.
+    *
+    * @return The previous keyframe as an image.
    */
   override def previousKeyframe(): BufferedImage = {
     currentKeyframeIndex -= 1
@@ -97,7 +102,8 @@ class KeyframeAnimation(keyframeStrip: BufferedImage, keyframes: Int, startKeyfr
 
   /**
    * Returns the image on which the animation currently is.
-   * @return The current keyframe.
+    *
+    * @return The current keyframe.
    */
   override def image = partitions(currentKeyframeIndex)
 
@@ -110,15 +116,17 @@ object KeyframeAnimation {
 
 /**
   * Creates an image filled with one color.
+  *
   * @param startColor The color to fill the image with initially. Can be changed later through the color property.
   */
 class SolidColor(startColor: Color) extends ImageLike {
 
-  val color = Property(startColor)
-  color.appendSetter { color =>
-    require(color != null)
-    cachedImage = newImage(color)
-    color
+  val color = new StaticProperty(startColor) {
+    override def staticSetter(x: Color) = {
+      require(x != null)
+      cachedImage = newImage(x)
+      x
+    }
   }
 
   private var cachedImage: BufferedImage = null

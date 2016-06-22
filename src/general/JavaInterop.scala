@@ -1,12 +1,42 @@
 package general
 
+import java.util
 import java.util.concurrent.Executors
 import java.util.function.{BiConsumer, BiFunction, Consumer, Supplier}
-import java.util.{Optional, function}
+import java.util.stream.Collectors
+import java.util.{Collections, List => IList, Map => IMap, Optional, Set => ISet, function}
 
 import scala.concurrent.Future
 
 object JavaInterop {
+
+  object JavaPrimitives {
+    type JavaInt = java.lang.Integer
+    type JavaFloat = java.lang.Float
+    type JavaDouble = java.lang.Double
+    type JavaLong = java.lang.Long
+    type JavaByte = java.lang.Byte
+    type JavaShort = java.lang.Short
+    type JavaChar = java.lang.Character
+  }
+
+  implicit class StreamOp[A](val stream: java.util.stream.Stream[A]) extends AnyVal {
+    def asList = stream.collect(Collectors.toList())
+  }
+
+  implicit class ICollectionOp[A](val sub: java.util.Collection[A]) extends AnyVal {
+
+    private def listImpl: java.util.List[A] = new util.ArrayList[A]()
+
+    def toList: IList[A] = {
+      val newList = listImpl
+      newList.addAll(sub)
+      newList
+    }
+
+    def toImmutableList: IList[A] = Collections.unmodifiableList(toList)
+
+  }
 
   import java.lang
 

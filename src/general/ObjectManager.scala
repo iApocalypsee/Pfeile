@@ -36,7 +36,11 @@ class ObjectManager[A] {
     * @tparam R The return type of the function.
     * @return The transformed function accepting a weak reference.
     */
-  private def asWeakAppl[R](f: A => R) = f.compose[WeakReference[A]](_.get())
+  private def asWeakAppl[R](f: A => R) = { (weakRef: WeakReference[A]) =>
+    f(weakRef.get())
+    //f.compose[WeakReference[A]](_.get())
+  }
+
   
   def weakRefObjects = _objects.toSeq
   def objects = _objects.map(_.get()).toSeq
