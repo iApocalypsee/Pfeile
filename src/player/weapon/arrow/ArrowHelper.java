@@ -1,10 +1,6 @@
 package player.weapon.arrow;
 
 import general.LogFacility;
-import general.Main;
-import general.langsupport.English$;
-import general.langsupport.Language;
-import javafx.scene.effect.Light;
 import misc.ImageHelper;
 import newent.InventoryLike;
 import player.item.Item;
@@ -13,12 +9,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * @author Daniel
- * @version 11.05.2014
+ * <code>ArrowHelper</code> provides useful methods for the arrow classes. It contains a lot of different classes for
+ * comparisons (e.g. for getting indexes, classes and names from each other), provides the arrow-images and lot's of
+ * other helpful stuff.
  */
 public final class ArrowHelper {
 
-    private static BufferedImage[] arrowImages;
+    private static AbstractArrow[] arrows;
 
     /**
      * the number of different types of arrows. It's equal 8.
@@ -30,75 +27,119 @@ public final class ArrowHelper {
      * (before using {@link ArrowHelper#getArrowImage(int)}
      */
     public ArrowHelper() {
-        arrowImages = new BufferedImage[NUMBER_OF_ARROW_TYPES];
-        arrowImages[FireArrow.INDEX] = new FireArrow().getImage();
-        arrowImages[WaterArrow.INDEX] = new WaterArrow().getImage();
-        arrowImages[StormArrow.INDEX] = new StormArrow().getImage();
-        arrowImages[StoneArrow.INDEX] = new StoneArrow().getImage();
-        arrowImages[IceArrow.INDEX] = new IceArrow().getImage();
-        arrowImages[LightningArrow.INDEX] = new LightningArrow().getImage();
-        arrowImages[LightArrow.INDEX] = new LightArrow().getImage();
-        arrowImages[ShadowArrow.INDEX] = new ShadowArrow().getImage();
+        arrows = new AbstractArrow[NUMBER_OF_ARROW_TYPES];
+        arrows[FireArrow.INDEX] = new FireArrow();
+        arrows[WaterArrow.INDEX] = new WaterArrow();
+        arrows[StormArrow.INDEX] = new StormArrow();
+        arrows[StoneArrow.INDEX] = new StoneArrow();
+        arrows[IceArrow.INDEX] = new IceArrow();
+        arrows[LightningArrow.INDEX] = new LightningArrow();
+        arrows[LightArrow.INDEX] = new LightArrow();
+        arrows[ShadowArrow.INDEX] = new ShadowArrow();
 
         LogFacility.log("Arrow images loaded.", "Info", "initprocess");
     }
 
     /**
      * Compares the given string with all known arrow classes and passes corresponding
-     * class object back.
+     * class object back. Not only the coding name of the arrow (getName()), but also the displayed name
+     * is tested.
      *
-     * @param selectedArrow The arrow string.
+     * @param selectedArrow The name of the arrow (getName() and getNameDisplayed() both are possible)
      * @return A class object, or null, if no string matches.
      */
-    public static Class<? extends AbstractArrow> reformArrow(String selectedArrow) {
-        switch (selectedArrow) {
-            case FireArrow.NAME:
-                return FireArrow.class;
-            case WaterArrow.NAME:
-                return WaterArrow.class;
-            case StormArrow.NAME:
-                return StormArrow.class;
-            case StoneArrow.NAME:
-                return StoneArrow.class;
-            case IceArrow.NAME:
-                return IceArrow.class;
-            case LightningArrow.NAME:
-                return LightningArrow.class;
-            case LightArrow.NAME:
-                return LightArrow.class;
-            case ShadowArrow.NAME:
-                return ShadowArrow.class;
-            default:
-                return null;
-        }
+    public static Class<? extends AbstractArrow> reformArrow (String selectedArrow) {
+        if (selectedArrow.equals(arrows[FireArrow.INDEX].getName()) ||
+                selectedArrow.equals(arrows[FireArrow.INDEX].getNameDisplayed()))
+            return FireArrow.class;
+
+        else if (selectedArrow.equals(arrows[WaterArrow.INDEX].getName()) ||
+                 selectedArrow.equals(arrows[WaterArrow.INDEX].getNameDisplayed()))
+            return WaterArrow.class;
+
+        else if (selectedArrow.equals(arrows[StoneArrow.INDEX].getName()) ||
+                 selectedArrow.equals(arrows[StoneArrow.INDEX].getNameDisplayed()))
+            return StoneArrow.class;
+
+        else if (selectedArrow.equals(arrows[StormArrow.INDEX].getName()) ||
+                 selectedArrow.equals(arrows[StormArrow.INDEX].getNameDisplayed()))
+            return StormArrow.class;
+
+        else if (selectedArrow.equals(arrows[IceArrow.INDEX].getName()) ||
+                 selectedArrow.equals(arrows[IceArrow.INDEX].getNameDisplayed()))
+            return IceArrow.class;
+
+        else if (selectedArrow.equals(arrows[LightningArrow.INDEX].getName()) ||
+                 selectedArrow.equals(arrows[LightningArrow.INDEX].getNameDisplayed()))
+            return LightningArrow.class;
+
+        else if (selectedArrow.equals(arrows[LightArrow.INDEX].getName()) ||
+                 selectedArrow.equals(arrows[LightArrow.INDEX].getNameDisplayed()))
+            return LightArrow.class;
+
+        else
+            return ShadowArrow.class;
     }
 
-    /**
-     * Methode vergleicht den �bergebenen int - Wert (der PfeilIndex)
-     * '...Arrow.INDEX' und gibt den jeweiligen Namen des Pfeils: '...Arrow.NAME' zur�ck
+    /** This method returns the name of arrow with the <code>selectedArrowIndex</code> (e.g. FireArrow.INDEX).
+     * If <code>isCodingName</code> is set to be <code>true</code>, the unique coding name of the arrow (defined in
+     * item as <code>getName()</code>) is returned. If <code>false</code> is choosen, the returned name
+     * is the name displayed for the user (defined as <code>getNameDisplayed()</code> in <code>Item</code>.
      *
-     * @see <code> reformArrow(String selectedArrow) </code>
+     * @param selectedArrowIndex the index of arrow (e.g. StoneArrow.INDEX)
+     * @param isCodingName true, if the returned value should be the unique coding name (getName()); false
+     *                     for the displayed name
+     * @return the name of arrow
      */
-    public static String arrowIndexToName(int selectedArrowIndex) {
+    public static String arrowIndexToName (int selectedArrowIndex, boolean isCodingName) {
         switch (selectedArrowIndex) {
             case FireArrow.INDEX:
-                return FireArrow.NAME;
+                if (isCodingName)
+                    return arrows[FireArrow.INDEX].getName();
+                else
+                    return arrows[FireArrow.INDEX].getNameDisplayed();
+
             case WaterArrow.INDEX:
-                return WaterArrow.NAME;
+                if (isCodingName)
+                    return arrows[WaterArrow.INDEX].getName();
+                else
+                    return arrows[WaterArrow.INDEX].getNameDisplayed();
+
             case StormArrow.INDEX:
-                return StormArrow.NAME;
+                if (isCodingName)
+                    return arrows[StormArrow.INDEX].getName();
+                else
+                    return arrows[StormArrow.INDEX].getNameDisplayed();
+
             case StoneArrow.INDEX:
-                return StoneArrow.NAME;
+                if (isCodingName)
+                    return arrows[StoneArrow.INDEX].getName();
+                else
+                    return arrows[StoneArrow.INDEX].getNameDisplayed();
+
             case IceArrow.INDEX:
-                return IceArrow.NAME;
+                if (isCodingName)
+                    return arrows[IceArrow.INDEX].getName();
+                else
+                    return arrows[IceArrow.INDEX].getNameDisplayed();
+
             case LightningArrow.INDEX:
-                return LightningArrow.NAME;
+                if (isCodingName)
+                    return arrows[LightningArrow.INDEX].getName();
+                else
+                    return arrows[LightningArrow.INDEX].getNameDisplayed();
+
             case LightArrow.INDEX:
-                return LightArrow.NAME;
-            case ShadowArrow.INDEX:
-                return ShadowArrow.NAME;
+                if (isCodingName)
+                    return arrows[LightArrow.INDEX].getName();
+                else
+                    return arrows[LightArrow.INDEX].getNameDisplayed();
+
             default:
-                return null;
+                if (isCodingName)
+                    return arrows[ShadowArrow.INDEX].getName();
+                else
+                    return arrows[ShadowArrow.INDEX].getNameDisplayed();
         }
     }
 
@@ -110,7 +151,7 @@ public final class ArrowHelper {
      * @see <code> reformArrow(String selectedArrow).newInstance() </code>
      * @see <code> instanceArrow(String selectedArrow) </code>
      */
-    public static AbstractArrow instanceArrow(int selectedArrowIndex) {
+    public static AbstractArrow instanceArrow (int selectedArrowIndex) {
 
         switch (selectedArrowIndex) {
             case FireArrow.INDEX:
@@ -127,10 +168,8 @@ public final class ArrowHelper {
                 return new LightningArrow();
             case LightArrow.INDEX:
                 return new LightArrow();
-            case ShadowArrow.INDEX:
-                return new ShadowArrow();
             default:
-                return null;
+                return new ShadowArrow();
         }
     }
 
@@ -139,7 +178,7 @@ public final class ArrowHelper {
      * werden kann.
      *
      * @param arrow the class of the Arrow, which is extends AbstractArrow
-     * @return the instanced Arrow
+     * @return the instanced Arrow, or null, if there has been an Exception thrown from JAVA intern classes.
      */
     public static AbstractArrow instanceArrow(Class<? extends AbstractArrow> arrow) {
         try {
@@ -150,34 +189,45 @@ public final class ArrowHelper {
         return null;
     }
 
-    /**
-     * Methode vergleicht den �bergebenen Pfeilnamen
-     * '...Arrow.NAME' und gibt den jeweiligen Index des Pfeils: '...Arrow.INDEX' zur�ck;
-     * wenn der Pfeilname nicht existiert: -1
+    /** The name of arrows (both the unique coding name and the displayed user name are possible parameters) is used to
+     * determine the index of that error. For example, if <code>arrowNameToIndex("FireArrow")</code> or
+     * <code>arrowNameToIndex("Feuerpfeil")</code> (if language is set to German), the method will return
+     * <code>FireArrow.INDEX</code>
      *
-     * @see <code> arrowIndexToName (String selectedArrowIndex) </code>
+     * @param selectedArrow the name of the arrow (both getName() and getNameDisplayed() are possible)
+     * @return the index of that arrow
      */
-    public static int arrowNameToIndex(String selectedArrow) {
-        switch (selectedArrow) {
-            case FireArrow.NAME:
-                return FireArrow.INDEX;
-            case WaterArrow.NAME:
-                return WaterArrow.INDEX;
-            case StormArrow.NAME:
-                return StormArrow.INDEX;
-            case StoneArrow.NAME:
-                return StoneArrow.INDEX;
-            case IceArrow.NAME:
-                return IceArrow.INDEX;
-            case LightningArrow.NAME:
-                return LightningArrow.INDEX;
-            case LightArrow.NAME:
-                return LightArrow.INDEX;
-            case ShadowArrow.NAME:
-                return ShadowArrow.INDEX;
-            default:
-                return -1;
-        }
+    public static int arrowNameToIndex (String selectedArrow) {
+        if (selectedArrow.equals(arrows[FireArrow.INDEX].getName()) ||
+                selectedArrow.equals(arrows[FireArrow.INDEX].getNameDisplayed()))
+            return FireArrow.INDEX;
+
+        else if (selectedArrow.equals(arrows[WaterArrow.INDEX].getName()) ||
+                selectedArrow.equals(arrows[WaterArrow.INDEX].getNameDisplayed()))
+            return WaterArrow.INDEX;
+
+        else if (selectedArrow.equals(arrows[StoneArrow.INDEX].getName()) ||
+                selectedArrow.equals(arrows[StoneArrow.INDEX].getNameDisplayed()))
+            return StoneArrow.INDEX;
+
+        else if (selectedArrow.equals(arrows[StormArrow.INDEX].getName()) ||
+                selectedArrow.equals(arrows[StormArrow.INDEX].getNameDisplayed()))
+            return StormArrow.INDEX;
+
+        else if (selectedArrow.equals(arrows[IceArrow.INDEX].getName()) ||
+                selectedArrow.equals(arrows[IceArrow.INDEX].getNameDisplayed()))
+            return IceArrow.INDEX;
+
+        else if (selectedArrow.equals(arrows[LightningArrow.INDEX].getName()) ||
+                selectedArrow.equals(arrows[LightningArrow.INDEX].getNameDisplayed()))
+            return LightningArrow.INDEX;
+
+        else if (selectedArrow.equals(arrows[LightArrow.INDEX].getName()) ||
+                selectedArrow.equals(arrows[LightArrow.INDEX].getNameDisplayed()))
+            return LightArrow.INDEX;
+
+        else
+            return ShadowArrow.INDEX;
     }
 
     /**
@@ -192,8 +242,8 @@ public final class ArrowHelper {
      * (it's 8 like the number of kinds of arrows).
      */
     public static int[] arrowCountInventory(final InventoryLike inventory) {
-
         int[] arrowsCount = new int[NUMBER_OF_ARROW_TYPES];
+
         for (Item item : inventory.javaItems()) {
             if (item instanceof FireArrow)
                 arrowsCount[FireArrow.INDEX]++;
@@ -215,12 +265,18 @@ public final class ArrowHelper {
         return arrowsCount;
     }
 
-    public static int[] emptyArrowCount() {
+    /** returns an empty int array of length <code>ArrowHelper.NUMBER_OF_ARROW_TYPES</code>. */
+    public static int[] emptyArrowCount () {
+        /*
         final int[] array = new int[NUMBER_OF_ARROW_TYPES];
         for(int i = 0; i < array.length; i++) {
             array[i] = 0;
         }
         return array;
+        */
+
+        // the array is automatically filled with 0 after the initialization.
+        return new int[NUMBER_OF_ARROW_TYPES];
     }
 
     /**
@@ -230,7 +286,7 @@ public final class ArrowHelper {
      * @param arrowIndex the index of the arrow like anyArrow.ARROW_INDEX
      * @return UNIFIED_COLOR - the standard Color of an arrow
      */
-    public static Color getUnifiedColor(int arrowIndex) {
+    public static Color getUnifiedColor (int arrowIndex) {
         switch (arrowIndex) {
             case FireArrow.INDEX:
                 return FireArrow.UNIFIED_COLOR;
@@ -246,10 +302,8 @@ public final class ArrowHelper {
                 return ShadowArrow.UNIFIED_COLOR;
             case IceArrow.INDEX:
                 return IceArrow.UNIFIED_COLOR;
-            case LightningArrow.INDEX:
-                return LightningArrow.UNIFIED_COLOR;
             default:
-                return null;
+                return LightningArrow.UNIFIED_COLOR;
         }
     }
 
@@ -260,7 +314,7 @@ public final class ArrowHelper {
      * @param arrowClass Any class extends AbstractArrow
      * @return UNIFIED_COLOR - the standard Color of an arrow
      */
-    public static Color getUnifiedColor(Class<? extends AbstractArrow> arrowClass) {
+    public static Color getUnifiedColor (Class<? extends AbstractArrow> arrowClass) {
         if (arrowClass.equals(FireArrow.class))
             return FireArrow.UNIFIED_COLOR;
         else if (arrowClass.equals(WaterArrow.class))
@@ -275,10 +329,8 @@ public final class ArrowHelper {
             return LightningArrow.UNIFIED_COLOR;
         else if (arrowClass.equals(LightArrow.class))
             return LightArrow.UNIFIED_COLOR;
-        else if (arrowClass.equals(ShadowArrow.class))
-            return ShadowArrow.UNIFIED_COLOR;
         else
-            return null;
+            return ShadowArrow.UNIFIED_COLOR;
     }
 
     /**
@@ -292,13 +344,13 @@ public final class ArrowHelper {
         return getUnifiedColor(ArrowHelper.arrowNameToIndex(arrowName));
     }
 
-    /**
-     * gibt ein Bild des Pfeils des Indexes <code> selectedArrow </code> zur�ck;
+    /** Returns the image of the arrow. If you want to draw that image lot's of times, it's recommended to save it
+     * locally to save computing time.
      *
      * @see ArrowHelper#getArrowImage(int, float)
      */
     public static BufferedImage getArrowImage(int selectedArrow) {
-        return arrowImages[selectedArrow];
+        return arrows[selectedArrow].getImage();
     }
 
     /**

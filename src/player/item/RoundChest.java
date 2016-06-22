@@ -44,12 +44,6 @@ public class RoundChest extends Chest {
         return image;
     }
 
-
-    @Override
-    protected String getTranslationIdentifier() {
-        return "roundChest";
-    }
-
     @Override
     public void open () {
         getLootUI().changeUI(imageOpenChest);

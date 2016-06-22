@@ -1,9 +1,9 @@
 {
-  "copperOre": {
+  "CopperOre": {
     "de_DE": "Kupfererz",
     "en_EN": "Copper ore"
   },
-  "ironOre": {
+  "IronOre": {
     "de_DE": "Eisenerz",
     "en_EN": "Iron ore"
   }

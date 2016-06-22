@@ -74,9 +74,4 @@ public class PotionOfHealing extends Potion {
     public BufferedImage getImage () {
         return images[getLevel()];
     }
-
-    @Override
-    protected String getTranslationIdentifier() {
-        return "healingPotion";
-    }
 }

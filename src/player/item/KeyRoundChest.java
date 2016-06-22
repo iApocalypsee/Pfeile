@@ -39,9 +39,4 @@ public class KeyRoundChest extends Item {
     public BufferedImage getImage () {
         return image;
     }
-
-    @Override
-    protected String getTranslationIdentifier() {
-        return "keyRoundChest";
-    }
 }

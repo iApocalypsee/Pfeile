@@ -62,14 +62,4 @@ public class PotionOfPoison extends Potion {
         // TODO: The effect is missing.
         return false;
     }
-
-    /**
-     * Returns the translation identifier for this item.
-     *
-     * @return The translation identifier for this item: "poisonPotion"
-     */
-    @Override
-    protected String getTranslationIdentifier () {
-        return "poisonPotion";
-    }
 }

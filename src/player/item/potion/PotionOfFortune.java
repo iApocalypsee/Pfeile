@@ -64,14 +64,4 @@ public class PotionOfFortune extends Potion {
         // TODO: increase the chance of finding good and more items in loots during this turn.
         return false;
     }
-
-    /**
-     * Returns the translation identifier for this item.
-     *
-     * @return The translation identifier for this item.
-     */
-    @Override
-    protected String getTranslationIdentifier () {
-        return "fortunePotion";
-    }
 }

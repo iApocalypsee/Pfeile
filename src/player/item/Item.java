@@ -45,21 +45,8 @@ public abstract class Item {
      * @return the name of this item for the user
      */
     public String getNameDisplayed() {
-        return Main.tr(getTranslationIdentifier());
+        return Main.tr(name);
     }
-
-    /**
-     * Returns the translation identifier for this item.
-     * @return The translation identifier for this item.
-     * @deprecated in a future commit, the method getTranslationIdentifier() will be removed. This method is completly
-     *             useless, since every item must already have an name. Consequently you can identify every item by it's
-     *             name, which must be unique. However, this property is already defined by the use as "name only for
-     *             programming purposes". <code>getNameDisplayed()</code> will <code>return Main.tr(name);</code> soon.
-     *             The JSON-classes must be changed though, but it's worth, because it's hard to handle three different
-     *             names.
-     */
-    @Deprecated
-    protected abstract String getTranslationIdentifier();
 
     /**
      * Use rather <code>getName()</code>, or <code>getNameDisplayed()</code> instead.

@@ -52,9 +52,4 @@ public class Treasure extends Loot {
     public BufferedImage getImage () {
         return image;
     }
-
-    @Override
-    protected String getTranslationIdentifier() {
-        return "treasure";
-    }
 }

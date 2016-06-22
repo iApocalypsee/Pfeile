@@ -2,62 +2,75 @@
 
   "ownership": "Pfeile team",
 
-  "bronzeCoin": {
+
+  "BronzeCoin": {
     "en_EN": "Bronze coin",
     "de_DE": "Bronzemünze"
   },
-  "silverCoin": {
+  "SilverCoin": {
     "en_EN": "Silver coin",
     "de_DE": "Silbermünze"
   },
-  "goldCoin": {
+  "GoldCoin": {
     "en_EN": "Gold coin",
     "de_DE": "Goldmünze"
   },
-  "platinumCoin": {
+  "PlatinumCoin": {
     "en_EN": "Platinum coin",
     "de_DE": "Platinmünze"
   },
 
-  "bagOfLoots": {
+
+  "BagOfLoots": {
     "en_EN": "Loot bag",
     "de_DE": "Warensack"
   },
-  "chest": {
+  "Chest": {
     "en_EN": "Chest",
     "de_DE": "Truhe"
   },
-  "roundChest": {
+  "RoundChest": {
     "en_EN": "Round chest",
-    "de_DE": "Runde Truhe"
+    "de_DE": "Rundentruhe"
   },
-  "treasure": {
+  "Treasure": {
     "en_EN": "Treasure",
     "de_DE": "Schatz"
   },
-  "permanentBox":  {
+  "PermanentBox":  {
     "en_EN": "Box",
     "de_DE": "Kiste"
   },
 
-  "damagePotion": {
+
+  "PotionOfFortune": {
+    "en_EN": "Fortune potion",
+    "de_DE": "Glückstrank"
+  },
+  "PotionOfDamage": {
     "en_EN": "Damage potion",
     "de_DE": "Schadenstrank"
   },
-  "movementPotion": {
+  "PotionOfMovement": {
     "en_EN": "Agility potion",
     "de_DE": "Trank der Beweglichkeit"
   },
-  "healingPotion": {
+  "PotionOfHealing": {
     "en_EN": "Healing potion",
     "de_DE": "Heiltrank"
   },
-  "keyDefaultChest": {
+  "PotionOfPoison": {
+    "en_EN": "Poison",
+    "de_DE": "Gift"
+  },
+
+
+  "Key_DefaultChest": {
     "en_EN": "Key (Chest)",
     "de_DE": "Schlüssel (Truhe)"
   },
-  "keyRoundChest": {
-  "en_EN": "Key (round chest)",
-  "de_DE": "Schlüssel (runde Truhe)"
+  "Key_RoundChest": {
+    "en_EN": "Key (round chest)",
+    "de_DE": "Schlüssel (Rundentruhe)"
   }
 }

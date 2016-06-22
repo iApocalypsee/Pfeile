@@ -13,11 +13,6 @@ import scala.beans.BeanProperty
   * @param item The buyable item. Is a function because the item has to be reconstructed every time
   *             an entity buys this article.
   * @param price Ditto.
-  * @param availableWhen Function determining whether the article can be bought by the specified entity.
-  *                      This function does not need to check whether this entity has enough money
-  *                      to buy this article. This is considered to be done internally in the shop package.
-  * @param visibleWhen Function determining whether the article can be seen by the specified entity in the shop window.
-  *                    This is not as important as the other parameters.
   * @param keywords Optional keywords with which this article can be found easier.
   */
 case class Article(private[shop] val item: () => Item, price: Int, keywords: Seq[String] = Seq()) {

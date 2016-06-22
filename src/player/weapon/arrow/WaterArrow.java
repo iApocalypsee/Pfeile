@@ -10,16 +10,15 @@ import java.io.IOException;
  * @version 25.11.2013
  */
 public class WaterArrow extends AbstractArrow {
+
 	/** Index des Wasserpfeils */
 	public static final int INDEX = 1;
-	
-	/** Name des Pfeils */
-	public static final String NAME = "WaterArrow", LANG_IDENT = "waterArrow";
 	
 	public static final Color UNIFIED_COLOR = new Color(60, 166, 221);
 	
 	/** Bild des Pfeils */
 	private static BufferedImage img_Water;
+
 	/** Laden des Bildes */
 	static {
 		try {
@@ -30,7 +29,7 @@ public class WaterArrow extends AbstractArrow {
 
 	/** ruft den Konstrucktor von 'AbstractArrow' auf */
 	public WaterArrow() {
-		super(55f, 40f, 17, 0.0125f, 0.0125f, 0.065f, 0.13f, 3.1, 6.0f, NAME);
+		super(55f, 40f, 17, 0.0125f, 0.0125f, 0.065f, 0.13f, 3.1, 6.0f, "WaterArrow");
 	}
 	
 	/** Gibt das Bild des Wasserpfeiles zur�ck 
@@ -39,9 +38,4 @@ public class WaterArrow extends AbstractArrow {
 	public BufferedImage getImage () {
 		return img_Water;
 	}
-
-    @Override
-    protected String getTranslationIdentifier() {
-        return LANG_IDENT;
-    }
 }
