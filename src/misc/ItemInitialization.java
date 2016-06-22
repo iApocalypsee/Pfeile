@@ -48,6 +48,7 @@ public class ItemInitialization {
         new PotionOfMovement();
         new PotionOfDamage();
         new PotionOfPoison();
+        new PotionOfFortune();
     }
 
     /** Initialization of other items, not listed yet. */
