@@ -47,6 +47,7 @@ public class ItemInitialization {
         new PotionOfHealing();
         new PotionOfMovement();
         new PotionOfDamage();
+        new PotionOfPoison();
     }
 
     /** Initialization of other items, not listed yet. */
