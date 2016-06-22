@@ -1,9 +1,6 @@
 package player.item;
 
 import general.Main;
-import general.langsupport.Language;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.awt.image.BufferedImage;
 
 /** An empty item class for now.
@@ -12,7 +9,7 @@ import java.awt.image.BufferedImage;
  */
 public abstract class Item {
 
-	private String name;
+	private final String name;
 
     /** String <code>name</code> is the unique coding name, like "WaterArrow" in JAVA style. Don't confuse it with the "displayed" names,
      * which are displayed somewhere on the screen to be seen by the user. This need should NOT be seen by the user. */
