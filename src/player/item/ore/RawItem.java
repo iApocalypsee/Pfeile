@@ -1,4 +1,6 @@
-package player.item;
+package player.item.ore;
+
+import player.item.Item;
 
 /**
  * Created by jolecaric on 01/07/15.

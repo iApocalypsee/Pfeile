@@ -1,7 +1,5 @@
 package player.item.ore
 
-import player.item.RawItem
-
 /**
   * Base class for all ores.
   * @param name The name of the ore.
