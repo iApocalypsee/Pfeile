@@ -99,7 +99,7 @@ abstract class AbstractList[A <: Component] extends Component {
   /**
     * Removes a specific element from the list, and recomputes the bounds and the positions again.
     */
-  def removeElement(x: A): Boolean = removeElement(_ == x)
+  def removeElement(x: A): Boolean = removeElement((c: A) => c == x)
 
   /**
     * Removes a specific element matching with given predicate function 'f'.

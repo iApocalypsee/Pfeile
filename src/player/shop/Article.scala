@@ -7,26 +7,49 @@ import newent.{Entity, Player}
 import player.item.Item
 
 import scala.beans.BeanProperty
+import scala.compat.java8.JFunction0
 
 /**
   * Collects information essential to an article in the shop.
+  *
+  * This class basically wraps the construction of an item and provides additional information when an entity wants
+  * to purchase the underlying item.
+  * In this case, the trader checks if the customer has enough money, then constructs the item via given function
+  * ([[player.shop.Article#item()]]) and hands the constructed item back to the customer, who is now obliged to pay the specified price
+  * in the Article object.
+  *
   * @param item The buyable item. Is a function because the item has to be reconstructed every time
   *             an entity buys this article.
   * @param price Ditto.
-  * @param availableWhen Function determining whether the article can be bought by the specified entity.
+  * @param availableWhen (Old description, may be ignored) Function determining whether the article can be bought by the specified entity.
   *                      This function does not need to check whether this entity has enough money
   *                      to buy this article. This is considered to be done internally in the shop package.
-  * @param visibleWhen Function determining whether the article can be seen by the specified entity in the shop window.
+  * @param visibleWhen (Old description, may be ignored) Function determining whether the article can be seen by the specified entity in the shop window.
   *                    This is not as important as the other parameters.
   * @param keywords Optional keywords with which this article can be found easier.
+  *                 Keywords may be necessary to find the given item again in a list, a keyword could be the name of the actual item.
+  *                 I will rework the keyword array for transparent use.
   */
 case class Article(private[shop] val item: () => Item, price: Int, keywords: Seq[String] = Seq()) {
 
-  private[shop] def cachedItem = item()
+  /**
+    * Additional constructor for Java interop.
+    * @param itemConstruction The function which constructs the actual item, Java fashion.
+    * @param price The price to pay for one construction of specified item.
+    * @param keywords Optional keywords to make it easier to find it in GUI or code.
+    */
+  def this(itemConstruction: JFunction0[Item], price: Int, keywords: Array[String]) = {
+    this(itemConstruction.asInstanceOf[() => Item], price: Int, keywords)
+  }
 
-  // This constructor's only difference to the previous one is the last argument: it's an array,
-  // for Java interop.
-  def this(item: () => Item, price: Int, keywords: Array[String]) = this(item, price, keywords.toSeq)
+  /**
+    * Additional constructor for Java interop.
+    * @param itemConstruction The function which constructs the actual item, Java fashion.
+    * @param price The price to pay for one construction of specified item.
+    */
+  def this(itemConstruction: JFunction0[Item], price: Int) = this(itemConstruction, price, Array.empty[String])
+
+  private[shop] def cachedItem = item()
 
   def name = cachedItem.getName
 
@@ -35,6 +58,7 @@ case class Article(private[shop] val item: () => Item, price: Int, keywords: Seq
   @BeanProperty lazy val shopButtonAttributes = new VisualArticleAttributes
 
 }
+
 
 private case class DefiniteArticle(initializedItem: Item, price: Int, keywords: Seq[String])
 
@@ -65,6 +89,7 @@ class VisualArticleAttributes private[shop] {
 
   /**
     * Returns true if this article is available for the given entity.
+ *
     * @param forWho Explanatory.
     * @return A boolean value.
     * @see [[player.shop.VisualArticleAttributes#notAvailableReason()]]
@@ -78,6 +103,7 @@ object VisualArticleAttributes {
   /**
    * Returns a function that is used to determine whether the shop button correspondent to this article
    * is visible in the shop window.
+ *
    * @param forWho For who to check.
    * @return A function for a filter call.
    */

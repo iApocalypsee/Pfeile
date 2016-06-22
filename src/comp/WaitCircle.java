@@ -87,10 +87,12 @@ public class WaitCircle extends AnimationLike {
         }
     }
 
+    /*
     @Override
     public BufferedImage getImage() {
         return ImageLike$class.getImage(this);
     }
+    */
 
     @Override
     public BufferedImage previousKeyframe() {
@@ -104,7 +106,7 @@ public class WaitCircle extends AnimationLike {
 
     @Override
     public void drawImage(Graphics2D g, int x, int y, int width, int height) {
-        ImageLike$class.drawImage(this, g, x, y, width, height);
+        super.drawImage(g, x, y, width, height);
         image = nextKeyframe();
         angle += anglePerDrawing;
     }

@@ -1,8 +1,6 @@
 package general.property
 
-import java.util.function.{Consumer, Supplier}
-
-import general.JavaInterop
+import java.util.function.Supplier
 
 /**
   * The most abstract trait for properties.
@@ -19,7 +17,7 @@ trait PropertyLike[A] {
 
   def ifdef(x: A => Unit)
 
-  def ifdef(javafun: Consumer[A]): Unit = ifdef(JavaInterop.asScala(javafun))
+  // def ifdef(javafun: Consumer[A]): Unit = ifdef(JavaInterop.asScala(javafun))
 
   def isDefined = option.isDefined
 

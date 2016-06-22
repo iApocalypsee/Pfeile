@@ -86,10 +86,12 @@ case class Property[A] private (private var value: Option[A]) {
     setter_=(_setter andThen x)
     this
   }
+  /*
   def appendSetter(javafun: Function[A, A]): Property[A] = {
     appendSetter(x => javafun(x))
     this
   }
+  */
 
   def validation = _validation
   def validation_=(x: A => Option[String]): Unit = {

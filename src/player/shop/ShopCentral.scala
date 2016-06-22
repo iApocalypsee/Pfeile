@@ -129,7 +129,7 @@ object ShopCentral extends TraderLike {
     * @param from Who is paying?
     * @param moneyAmount The money to receive.
     */
-  override protected def receive(from: MoneyEarner, moneyAmount: Int): Unit = {
+  override def receive(from: MoneyEarner, moneyAmount: Int): Unit = {
     // Do nothing, the central shop is assumed to have no money pockets.
     // Infinitely rich maybe?
     from.purse.spend(moneyAmount)

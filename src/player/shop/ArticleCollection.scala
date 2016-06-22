@@ -6,6 +6,7 @@ import scala.collection.mutable
 
 /**
   * Object collecting all articles.
+  * Articles collected by this object are availably only '''to the central shop''' (a.k.a. the shop button in GameScreen).
   */
 private[shop] object ArticleCollection {
 
@@ -34,7 +35,7 @@ private[shop] object ArticleCollection {
     filtered.nonEmpty match {
       case true =>
         if (filtered.length > 1) LogFacility.log(s"Multiple articles for query {$article} found", "Warning")
-        Some(filtered(0))
+        Option(filtered.head)
       case false => None
     }
   }
