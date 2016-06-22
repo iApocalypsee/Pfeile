@@ -73,10 +73,4 @@ public class PotionOfMovement extends Potion {
     public BufferedImage getImage () {
         return images[getLevel()];
     }
-
-
-    @Override
-    protected String getTranslationIdentifier() {
-        return "movementPotion";
-    }
 }

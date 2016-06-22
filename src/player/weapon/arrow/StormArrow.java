@@ -10,16 +10,15 @@ import java.io.IOException;
  * @version 25.11.2013
  */
 public class StormArrow extends AbstractArrow {
+
 	/** Index des Sturmpfeils */
 	public static final int INDEX = 2;
-	
-	/** Name des Pfeils */
-	public static final String NAME = "StormArrow", LANG_IDENT = "stormArrow";
 	
 	public static final Color UNIFIED_COLOR = new Color(141, 237, 195);
 	
 	/** Bild des Pfeils */
 	private static BufferedImage img_Storm;
+
 	/** Laden des Bildes */
 	static {
 		try {
@@ -30,7 +29,7 @@ public class StormArrow extends AbstractArrow {
 	
 	/** ruft den Konstrucktor von 'AbstractArrow' auf */
 	public StormArrow() {
-		super(51f, 38f, 30, 0.0575f, 0.01f, 0.6f, 0.08f, 3.3, 10f, NAME);
+		super(51f, 38f, 30, 0.0575f, 0.01f, 0.6f, 0.08f, 3.3, 10f, "StormArrow");
 	}
 	
 	/** Gibt das Bild vom Sturmpfeil zur�ck 
@@ -39,9 +38,4 @@ public class StormArrow extends AbstractArrow {
 	public BufferedImage getImage () {
 		return img_Storm;
 	}
-
-    @Override
-    protected String getTranslationIdentifier() {
-        return LANG_IDENT;
-    }
 }

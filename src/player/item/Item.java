@@ -1,9 +1,6 @@
 package player.item;
 
 import general.Main;
-import general.langsupport.Language;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.awt.image.BufferedImage;
 
 /** An empty item class for now.
@@ -12,26 +9,24 @@ import java.awt.image.BufferedImage;
  */
 public abstract class Item {
 
-	private String name;
+	private final String name;
 
     /** String <code>name</code> is the unique coding name, like "WaterArrow" in JAVA style. Don't confuse it with the "displayed" names,
      * which are displayed somewhere on the screen to be seen by the user. This need should NOT be seen by the user. */
 	public Item(String codeName) {
-		if(codeName == null) throw new NullPointerException();
+		if(codeName == null)
+            throw new NullPointerException();
+
 		this.name = codeName;
 	}
 
-    /** That is the unique coding name, like "WaterArrow" in JAVA style. Don't confuse it with the "displayed" names,
+    /** That is the <b>unique coding name</b>, like "WaterArrow" in JAVA style. Don't confuse it with the "displayed" names,
      * which are displayed somewhere on the screen to be seen by the user. This need should NOT be seen by the user.
      *
      * @return the name for programming purposes
      */
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
     /**
@@ -44,20 +39,21 @@ public abstract class Item {
 
 
     /** Returns the name of this item in the language, it is given in <code>Main.getLanguage()</code>.
-     * this code is equal to <code>getNameDisplayed(Main.getLanguage())</code>
+     * this code is equal to <code>getNameDisplayed(Main.getLanguage())</code>. This name changes depending on the
+     * language and is therefore not unique.
      *
      * @return the name of this item for the user
      */
     public String getNameDisplayed() {
-        return Main.tr(getTranslationIdentifier());
+        return Main.tr(name);
     }
 
     /**
-     * Returns the translation identifier for this item.
-     * @return The translation identifier for this item.
+     * Use rather <code>getName()</code>, or <code>getNameDisplayed()</code> instead.
+     * This method right now is the same as <code>getName()</code>, but it is not recommended to use this method.
+     *
+     * @return the unique coding name. Not the name that is displayed.
      */
-    protected abstract String getTranslationIdentifier();
-
     @Override
     public String toString () {
         return getName();

@@ -10,16 +10,15 @@ import java.io.IOException;
  * @version 25.11.2013
  */
 public class ShadowArrow extends AbstractArrow {
+
 	/** Index des Schattenpfeils */
 	public static final int INDEX = 7;
-	
-	/** Name des Pfeils */
-	public static final String NAME = "ShadowArrow", LANG_IDENT = "shadowArrow";
 	
 	public static final Color UNIFIED_COLOR = new Color(0, 0, 0);
 	
 	/** Bild des Pfeils */
 	private static BufferedImage img_Shadow;
+
 	/** Laden des Bildes */
 	static {
 		try {
@@ -30,7 +29,7 @@ public class ShadowArrow extends AbstractArrow {
 	
 	/** ruft den Konstrucktor von 'AbstractArrow' auf */
 	public ShadowArrow() {
-		super(57f, 25f, 32, 0.0675f, 0.005f, 0.085f, 0.03f, 6.5, 5.3f, NAME);
+		super(57f, 25f, 32, 0.0675f, 0.005f, 0.085f, 0.03f, 6.5, 5.3f, "ShadowArrow");
 	}
 	
 	/** Gibt das Bild des Schattenpfeils zur�ck 
@@ -39,9 +38,4 @@ public class ShadowArrow extends AbstractArrow {
 	public BufferedImage getImage () {
 		return img_Shadow;
 	}
-
-    @Override
-    protected String getTranslationIdentifier() {
-        return LANG_IDENT;
-    }
 }

@@ -3,9 +3,9 @@ package player.item.ore
 import java.awt.image.BufferedImage
 
 class IronOre extends ItemOre("IronOre") {
+
   override def getImage: BufferedImage = ???
 
-  override protected def getTranslationIdentifier = "ironOre"
 }
 
 object IronOre {

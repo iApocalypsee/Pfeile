@@ -100,21 +100,21 @@ public class ArrowSelectionScreen extends Screen {
             int gap = 45;
 
             fireArrowButton = new Button(posXButton, posYButtons, ArrowHelper.getArrowImage(FireArrow.INDEX, 0.8f),
-                    ArrowSelectionScreen.this, Main.tr("fireArrow"));
+                    ArrowSelectionScreen.this, Main.tr("FireArrow"));
             waterArrowButton = new Button(posXButton + fireArrowButton.getWidth() + gap, posYButtons, ArrowHelper.getArrowImage(WaterArrow.INDEX, 0.8f),
-                    ArrowSelectionScreen.this, Main.tr("waterArrow"));
+                    ArrowSelectionScreen.this, Main.tr("WaterArrow"));
             stormArrowButton = new Button(posXButton + (fireArrowButton.getWidth() + gap) * 2, posYButtons, ArrowHelper.getArrowImage(StormArrow.INDEX, 0.8f),
-                    ArrowSelectionScreen.this, Main.tr("stormArrow"));
+                    ArrowSelectionScreen.this, Main.tr("StormArrow"));
             stoneArrowButton = new Button(posXButton + (fireArrowButton.getWidth() + gap) * 3, posYButtons, ArrowHelper.getArrowImage(StoneArrow.INDEX, 0.8f),
-                    ArrowSelectionScreen.this, Main.tr("stoneArrow"));
+                    ArrowSelectionScreen.this, Main.tr("StoneArrow"));
             iceArrowButton = new Button(posXButton + (fireArrowButton.getWidth() + gap) * 4, posYButtons, ArrowHelper.getArrowImage(IceArrow.INDEX, 0.8f),
-                    ArrowSelectionScreen.this, Main.tr("iceArrow"));
+                    ArrowSelectionScreen.this, Main.tr("IceArrow"));
             lightningArrowButton = new Button(posXButton + (fireArrowButton.getWidth() + gap) * 5, posYButtons, ArrowHelper.getArrowImage(LightningArrow.INDEX, 0.8f),
-                    ArrowSelectionScreen.this, Main.tr("lightningArrow"));
+                    ArrowSelectionScreen.this, Main.tr("LightningArrow"));
             lightArrowButton = new Button(posXButton + (fireArrowButton.getWidth() + gap) * 6 , posYButtons, ArrowHelper.getArrowImage(LightArrow.INDEX, 0.8f),
-                    ArrowSelectionScreen.this, Main.tr("lightArrow"));
+                    ArrowSelectionScreen.this, Main.tr("LightArrow"));
             shadowArrowButton = new Button(posXButton + (fireArrowButton.getWidth() + gap) * 7, posYButtons, ArrowHelper.getArrowImage(ShadowArrow.INDEX, 0.8f),
-                    ArrowSelectionScreen.this, Main.tr("shadowArrow"));
+                    ArrowSelectionScreen.this, Main.tr("ShadowArrow"));
 
             buttonListArrows.add(fireArrowButton);
             buttonListArrows.add(waterArrowButton);
@@ -162,7 +162,7 @@ public class ArrowSelectionScreen extends Screen {
             inventoryList.setVisible(true);
 
 	        inventoryList.onItemSelected.registerJava((Integer selectedIndex) -> {
-		        String selectedArrowName = ArrowHelper.arrowIndexToName(selectedIndex);
+		        String selectedArrowName = ArrowHelper.arrowIndexToName(selectedIndex, false);
 		        selectedArrowBox.setEnteredText(selectedArrowName);
 	        });
 

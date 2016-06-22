@@ -2,45 +2,39 @@
   "ownership": "Pfeile team",
 
 
-  "fireArrow": {
+  "FireArrow": {
     "en_EN": "Fire arrow",
     "de_DE": "Feuerpfeil"
   },
-
-  "iceArrow": {
+  "IceArrow": {
     "en_EN": "Ice arrow",
     "de_DE": "Eispfeil"
   },
-
-  "lightArrow": {
+  "LightArrow": {
     "en_EN": "Light arrow",
     "de_DE": "Lichtpfeil"
   },
-
-  "lightningArrow": {
+  "LightningArrow": {
     "en_EN": "Lightning arrow",
     "de_DE": "Blitzpfeil"
   },
-
-  "shadowArrow": {
+  "ShadowArrow": {
     "en_EN": "Shadow arrow",
     "de_DE": "Schattenpfeil"
   },
-
-  "stoneArrow": {
+  "StoneArrow": {
     "en_EN": "Stone arrow",
     "de_DE": "Steinpfeil"
   },
-
-  "stormArrow": {
+  "StormArrow": {
     "en_EN": "Storm arrow",
     "de_DE": "Sturmpfeil"
   },
-
-  "waterArrow": {
+  "WaterArrow": {
     "en_EN": "Water arrow",
     "de_DE": "Wasserpfeil"
   },
+
 
   "arrowType": {
     "en_EN": "Type: %s",

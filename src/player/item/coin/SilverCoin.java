@@ -44,10 +44,4 @@ public class SilverCoin extends Coin {
     public BufferedImage getImage () {
         return image;
     }
-
-
-    @Override
-    protected String getTranslationIdentifier() {
-        return "silverCoin";
-    }
 }

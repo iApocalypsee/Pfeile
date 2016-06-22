@@ -89,7 +89,7 @@ class VisualArticleAttributes private[shop] {
 
   /**
     * Returns true if this article is available for the given entity.
- *
+    *
     * @param forWho Explanatory.
     * @return A boolean value.
     * @see [[player.shop.VisualArticleAttributes#notAvailableReason()]]
@@ -103,7 +103,7 @@ object VisualArticleAttributes {
   /**
    * Returns a function that is used to determine whether the shop button correspondent to this article
    * is visible in the shop window.
- *
+   *
    * @param forWho For who to check.
    * @return A function for a filter call.
    */

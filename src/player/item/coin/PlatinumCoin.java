@@ -44,9 +44,4 @@ public class PlatinumCoin extends Coin {
     public BufferedImage getImage () {
         return image;
     }
-
-    @Override
-    protected String getTranslationIdentifier() {
-        return "platinumCoin";
-    }
 }

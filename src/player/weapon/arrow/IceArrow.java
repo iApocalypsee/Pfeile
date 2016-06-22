@@ -10,11 +10,9 @@ import java.io.IOException;
  * @version 25.11.2013
  */
 public class IceArrow extends AbstractArrow {
+
 	/** Index des Eispfeils */
 	public static final int INDEX = 4;
-	
-	/** Name des Pfeils */
-	public static final String NAME = "IceArrow", LANG_IDENT = "iceArrow";
 	
 	public static final Color UNIFIED_COLOR = new Color(204, 228, 237);
 	
@@ -32,7 +30,7 @@ public class IceArrow extends AbstractArrow {
 	
 	/** ruft den Konstrucktor von 'AbstractArrow' auf */
 	public IceArrow() {
-		super(64f, 32f, 15, 0.035f, 0.025f, 0.13f, 0.06f, 5, 4.6f, NAME);
+		super(64f, 32f, 15, 0.035f, 0.025f, 0.13f, 0.06f, 5, 4.6f, "IceArrow");
 	}
 	
 	/** Gibt das Bild des Eispfeiles zur�ck 
@@ -41,9 +39,4 @@ public class IceArrow extends AbstractArrow {
 	public BufferedImage getImage () {
 		return img_Ice;
 	}
-
-    @Override
-    protected String getTranslationIdentifier() {
-        return LANG_IDENT;
-    }
 }

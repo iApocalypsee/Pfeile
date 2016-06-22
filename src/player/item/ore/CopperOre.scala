@@ -6,7 +6,6 @@ class CopperOre extends ItemOre("CopperOre") {
 
   override def getImage: BufferedImage = ???
 
-  override protected def getTranslationIdentifier = "copperOre"
 }
 
 object CopperOre {

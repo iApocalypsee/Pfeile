@@ -76,9 +76,4 @@ public class BagOfLoots extends Loot {
     public BufferedImage getImage () {
         return image;
     }
-
-    @Override
-    protected String getTranslationIdentifier() {
-        return "bagOfLoots";
-    }
 }
