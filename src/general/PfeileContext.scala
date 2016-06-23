@@ -147,6 +147,9 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     */
   def entitySelection = EntitySelection
 
+  /** JAVA-Version of entitySelection() */
+  def getEntitySelection = EntitySelection
+
   object EntitySelection {
 
     private var _selectedEntity: Entity = activePlayer

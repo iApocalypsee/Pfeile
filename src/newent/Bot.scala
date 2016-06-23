@@ -105,6 +105,8 @@ class Bot(world: World, spawnPoint: Point, name: String)
    /** The initial amount of gold that the earner gets. __Must not be below 0__.
      * <code> Defined as MoneyValues.START_MONEY</code>. */
    override protected def initialMoney: Int = MoneyValues.startMoney()
+
+  override val poison: Poison = new Poison(this, 0.1f)
 }
 
 object Bot {
