@@ -38,7 +38,7 @@ public class FontLoader {
             return new Font(fontName, Font.PLAIN, (int) size);
 
         Font customFont;
-        InputStream inputStream;
+        InputStream inputStream = null;
         try {
             if (fontType == FontType.TTF)
                 inputStream = FontLoader.class.getClassLoader().getResourceAsStream("resources/data/fonts/" + fontName + ".ttf");
@@ -71,13 +71,20 @@ public class FontLoader {
                 LogFacility.log("Cannot find file: " + "resources/data/fonts/" + fontName + ".otf", LogFacility.LoggingLevel.Error);
             customFont = comp.Component.STD_FONT.deriveFont(size);
         }
-        //finally {
+        finally {
             // actually this is useless, because "inputStream.close()" is an empty method.
-            //    assert inputStream != null;
-            //    try {
-            //        inputStream.close();
-            //    } catch (IOException e) { e.printStackTrace(); }
-        //}
+            // Actually this is necessary, since subclasses are overriding the close method for proper disposal
+            // of system resources.
+            // You do not know at compile time what type the instance is going to be of, but you can definitely be
+            // sure it does something for releasing the lock on the file.
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         return customFont;
     }
 

@@ -1,7 +1,7 @@
 package newent
 
+import general.Delegate
 import general.property.IntStaticProperty
-import general.{Delegate, traitarg}
 import player.item._
 import player.item.coin._
 
@@ -29,6 +29,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
 
   /**
     * Transaction manager of this object.
+    * This object handles actual payment and enlists all transactions that have been made by this money earner.
     */
   @BeanProperty val account = new Transactions
   
@@ -241,8 +242,6 @@ trait MoneyEarner extends Entity with InventoryEntity {
      override def toString: String = "Transaction (by " + name + ")"
   }
 
-
-
   //</editor-fold>
 
   //<editor-fold desc="MoneyEarner trait arguments">
@@ -250,9 +249,9 @@ trait MoneyEarner extends Entity with InventoryEntity {
    override def toString: String = "MoneyEarner: " + name
 
    /** The initial gold per turn amount that the earner gets. __Must not be below 0__. */
-  @traitarg protected def initialMoneyPerTurn: Int
+  protected def initialMoneyPerTurn: Int
   /** The initial amount of gold that the earner gets. __Must not be below 0__. */
-  @traitarg protected def initialMoney: Int
+  protected def initialMoney: Int
 
   //</editor-fold>
 
