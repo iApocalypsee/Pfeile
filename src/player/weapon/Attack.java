@@ -1,7 +1,7 @@
 package player.weapon;
 
 /**
- *
+ * TODO: For future use to decide between attacking types like blunt, sharp, magical or elemental
  */
 public class Attack {
 

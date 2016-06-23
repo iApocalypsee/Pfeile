@@ -3,7 +3,7 @@ package player.weapon;
 import player.armour.Defence;
 import player.item.EquippableItem;
 
-public abstract class Weapon extends EquippableItem implements Defence {
+public abstract class Weapon extends EquippableItem implements Defence, PoisonedWeapon {
 	
 	/**
 	 * The attack value of the weapon in the category armingType.
@@ -17,8 +17,12 @@ public abstract class Weapon extends EquippableItem implements Defence {
     private float defenceStabbing;
     private float defenceMagic;
 
+    /** the higher this value, the stronger the effect. Initialized with 0. */
+    private int amountOfPoison;
+
     /**
-     * creating a new weapon with the defence value <code>0</code> in every {@link ArmingType} category.
+     * Creating a new weapon with the defence value <code>0</code> in every {@link ArmingType} category.
+     * The amount of poison damage is initialed with 0 as well.
      *
      * @param name the name of the weapon
      * @param attackVal the attack value of the weapon in the category <code>armingType</code>
@@ -29,7 +33,7 @@ public abstract class Weapon extends EquippableItem implements Defence {
 	}
 
     /**
-     * Creating a new Weapon.
+     * Creating a new Weapon without any poison effects.
      *
      * @param name the name of the weapon
      * @param attackValue the attack value of the weapon in the category <code>armingType</code>
@@ -45,6 +49,7 @@ public abstract class Weapon extends EquippableItem implements Defence {
         this.defenceCutting = defenceCutting;
         this.defenceStabbing = defenceStabbing;
         this.defenceMagic = defenceMagic;
+        amountOfPoison = 0;
     }
 
     /** the attack value of the weapon in the category {@link Weapon#getArmingType()}*/
@@ -114,5 +119,27 @@ public abstract class Weapon extends EquippableItem implements Defence {
     @Override
     public void setDefenceMagic (float defenceMagic) {
         this.defenceMagic = defenceMagic;
+    }
+
+    /** Returns the amount of poison used to strengthen this weapon. The higher value, the more toxic is this Weapon */
+    @Override
+    public int getPoisonedAmount () {
+        return amountOfPoison;
+    }
+
+    /**
+     * Sets the poison to the defined value.
+     */
+    @Override
+    public void setPoisonedAmount (int amountOfPoison) {
+        this.amountOfPoison = amountOfPoison;
+    }
+
+    /**
+     * Changes the amount of poison used to strengthen this weapon.
+     */
+    @Override
+    public void changePoisonedAmount (int changeValue) {
+        amountOfPoison += changeValue;
     }
 }

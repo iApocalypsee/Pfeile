@@ -4,6 +4,7 @@ import general.LogFacility;
 import general.Main;
 import gui.screen.GameScreen;
 import player.item.coin.CoinHelper;
+import player.item.coin.GoldCoin;
 import player.item.ore.CopperOre;
 import player.item.ore.IronOre;
 import player.item.potion.PotionOfDamage;
@@ -95,5 +96,7 @@ public class DefaultChest extends Chest {
 
         if (ranGen.nextFloat() < fortuneStat/100.0f)
             add(CoinHelper.getCoins((int) (fortuneStat * ranGen.nextFloat())));
+        if (ranGen.nextFloat() < 0.0001f * fortuneStat)
+            add(new GoldCoin());
     }
 }

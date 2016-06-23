@@ -51,7 +51,7 @@ public class Poison {
         turnsAfterPoisoning = 0;
     }
 
-    /** The poison shows it's effects at the beginning of the living entities turn */
+    /** Reduces the life of the person. The poison shows it's effects at the beginning of the living entities turn. */
     private void calculatePoisonEffects () {
         entity.getLife().changeLife(-poisonStat * 0.5);
         reducePoison();
@@ -66,13 +66,13 @@ public class Poison {
             poisonStat = 0;
         else if (poisonStat - change < poisonStat)
             poisonStat = poisonStat - change;
-        // the poisonStat can't increase
+        // the poisonStat can't increase except with poisoned(int amount)
     }
 
     /** Slightly increases the poison effect. Well, actually it is only slowing down the decrease. This effect should
      * resemble the effect, that most poisons need to time to achieve their maximum strength. */
     private float turnCurve () {
-        float increase = -(turnsAfterPoisoning - 2)^2 + 5;
+        float increase = - (turnsAfterPoisoning - 2.5f) * (turnsAfterPoisoning - 2.5f) + 6f;
         if (increase > 0)
             return increase;
         else

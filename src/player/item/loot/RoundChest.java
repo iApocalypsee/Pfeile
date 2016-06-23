@@ -4,6 +4,7 @@ import general.LogFacility;
 import general.Main;
 import gui.screen.GameScreen;
 import player.item.coin.BronzeCoin;
+import player.item.coin.GoldCoin;
 import player.item.coin.SilverCoin;
 import player.item.ore.CopperOre;
 import player.item.ore.IronOre;
@@ -95,5 +96,7 @@ public class RoundChest extends Chest {
             else
                 add(new BronzeCoin());
         }
+        if (ranGen.nextFloat() < 0.0004f * fortuneStat)
+            add(new GoldCoin());
     }
 }

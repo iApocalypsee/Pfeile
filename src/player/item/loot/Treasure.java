@@ -5,6 +5,7 @@ import general.Main;
 import newent.InventoryEntity;
 import player.item.coin.BronzeCoin;
 import player.item.coin.SilverCoin;
+import player.item.ore.CopperOre;
 import player.item.ore.IronOre;
 import player.item.potion.PotionOfFortune;
 
@@ -86,11 +87,21 @@ public class Treasure extends Loot {
         if (fortuneStat > 12)
             add(new IronOre());
 
+        if (fortuneStat > 8)
+            if (ranGen.nextFloat() < 0.03f * fortuneStat) {
+                add(new CopperOre());
+                add(new CopperOre());
+            }
+
         for (int i = 0; i < fortuneStat/2; i++) {
             if (ranGen.nextFloat() < 0.98f)
                 add(new BronzeCoin());
             else
                 add(new IronOre());
+        }
+
+        if (ranGen.nextFloat() < 0.05f * fortuneStat) {
+            add(new SilverCoin());
         }
     }
 }

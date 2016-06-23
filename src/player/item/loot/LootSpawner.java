@@ -7,9 +7,9 @@ import newent.GameObject;
 import newent.Player;
 import newent.Team;
 import player.item.coin.*;
-import player.item.potion.PotionOfDamage;
-import player.item.potion.PotionOfHealing;
-import player.item.potion.PotionOfMovement;
+import player.item.ore.CopperOre;
+import player.item.ore.IronOre;
+import player.item.potion.*;
 import player.weapon.arrow.ArrowHelper;
 import world.GrassTile;
 import world.Terrain;
@@ -93,6 +93,11 @@ public class LootSpawner {
         // adding something. Here from everything one.
         spawnedChest.add(new PotionOfHealing((byte) (random.nextInt(3))));
         spawnedChest.add(new PotionOfMovement((byte) (random.nextInt(3))));
+        if (random.nextFloat() < 0.1f)
+            spawnedChest.add(new PotionOfFortune((byte) (random.nextInt(3))));
+        if (random.nextFloat() < 0.035f)
+            spawnedChest.add(new PotionOfPoison((byte) (random.nextInt(3))));
+
         if (random.nextFloat() < 0.2f)
             spawnedChest.add(new PlatinumCoin());
         for (int i = 0; i < random.nextInt(7); i++)
@@ -135,7 +140,7 @@ public class LootSpawner {
 
         // if it's a Treasure just add money
         if (spawnedLoot instanceof Treasure) {
-            BronzeCoin[] coins = CoinHelper.getCoins(random.nextInt(150) + 10);
+            BronzeCoin[] coins = CoinHelper.getCoins(random.nextInt(200) + 20);
             for (BronzeCoin coin : coins)
                 spawnedLoot.add(coin);
 
@@ -144,6 +149,9 @@ public class LootSpawner {
 
             if (random.nextFloat() < 0.01)
                 spawnedLoot.add(new GoldCoin());
+
+            if (random.nextFloat() < 0.001)
+                spawnedLoot.add(new PlatinumCoin());
 
             // with the possibility of 15% a PotionOfDamage is added.
             if (random.nextFloat() < 0.15)
@@ -157,17 +165,30 @@ public class LootSpawner {
             if (random.nextFloat() < 0.3)
                 spawnedLoot.add(new PotionOfHealing((byte) (random.nextInt(3))));
             else
-                spawnedLoot.add(new PotionOfMovement((byte) (random.nextInt(3))));
+                spawnedLoot.add(new PotionOfMovement((byte) (random.nextInt(2))));
 
-            BronzeCoin[] coins = CoinHelper.getCoins(random.nextInt(50));
+            BronzeCoin[] coins = CoinHelper.getCoins(random.nextInt(80));
             for (BronzeCoin coin : coins)
                 spawnedLoot.add(coin);
 
-            for (int i = 0; i < random.nextInt(18); i++)
+            for (int i = 0; i < random.nextInt(3); i++)
                 spawnedLoot.add(new SilverCoin());
 
-            if (random.nextFloat() < 0.15)
+            if (random.nextFloat() < 0.15f)
                 spawnedLoot.add(new PotionOfDamage((byte) (random.nextInt(3))));
+            if (random.nextFloat() < 0.06f)
+                spawnedLoot.add(new PotionOfPoison((byte) (random.nextInt(2))));
+            if (random.nextFloat() < 0.03f)
+                spawnedLoot.add(new PotionOfFortune((byte) (random.nextInt(3))));
+            if (random.nextFloat() < 0.01f)
+                spawnedLoot.add(new PotionOfFortune((byte) (random.nextInt(3))));
+
+            if (random.nextFloat() < 0.7f) {
+                for (int i = 0; i < random.nextInt(6); i++)
+                    spawnedLoot.add(new IronOre());
+            }
+            if (random.nextFloat() < 0.4f)
+                spawnedLoot.add(new CopperOre());
 
             if (random.nextFloat() < 0.15f)
                 spawnedLoot.add(new KeyDefaultChest());

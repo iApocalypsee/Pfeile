@@ -65,6 +65,6 @@ public class PotionOfFortune extends Potion {
     public boolean triggerEffect () {
         Random ranGen = new Random();
         Main.getContext().getActivePlayer().changeFortuneStat(8 * (getLevel() + 1) + ranGen.nextInt(5 + getLevel()));
-        return true;
+        return remove();
     }
 }

@@ -1,13 +1,19 @@
 package player.item.potion;
 
 import general.LogFacility;
+import general.Main;
+import player.item.Item;
+import player.weapon.arrow.AbstractArrow;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 
 /**
- * This is a potion, which allows the arrows, which have been or will be shoot during this round, to be poisoned.
+ * This is a potion, which allows the arrows, which adds an poison effect to all arrows in the inventory of the
+ * active player (the player using the potion). This effect is permanent right now, but the amount of poison added by
+ * this effect is small (level 0: +5; level 1: +9; level 2: +13).
  */
 public class PotionOfPoison extends Potion {
 
@@ -59,7 +65,13 @@ public class PotionOfPoison extends Potion {
      */
     @Override
     public boolean triggerEffect () {
-        // TODO: The effect is missing.
-        return false;
+        final List<Item> items = Main.getContext().getActivePlayer().inventory().javaItems();
+        for (Item item: items) {
+            if (item instanceof AbstractArrow) {
+                AbstractArrow arrow = (AbstractArrow) item;
+                arrow.changePoisonedAmount((int) ((getLevel() + 1.65) * 3.6));
+            }
+        }
+        return remove();
     }
 }

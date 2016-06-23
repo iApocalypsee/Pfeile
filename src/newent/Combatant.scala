@@ -4,7 +4,6 @@ package newent
   *
   * Well, not <b>all</b> aspects are implemented yet, but there are more to come.
   * This trait is just a standard.
-  *
   */
 trait Combatant extends AttackContainer with HasEquipment with Aggressor {
 

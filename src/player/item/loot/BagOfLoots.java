@@ -93,6 +93,9 @@ public class BagOfLoots extends Loot {
 
         if (ranGen.nextFloat() * fortuneStat/100.0f > 0.6f)
             add(new PotionOfPoison((byte) 1));
+        if (ranGen.nextFloat() < 0.014f * fortuneStat)
+            add(new PotionOfPoison((byte) 3));
+
         add(CoinHelper.getCoins(ranGen.nextInt(fortuneStat)));
     }
 }

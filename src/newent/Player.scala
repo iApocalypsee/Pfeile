@@ -122,7 +122,7 @@ class Player(world: World, spawnpoint: Point, name: String) extends Entity(world
 
   override protected def initialMoney: Int = MoneyValues.startMoney()
 
-  override protected def initialTeam = new CommandTeam(this, "Team of "+this.name)
+  override protected def initialTeam = new CommandTeam(this, "Team of " + this.name)
 
   //</editor-fold>
   override lazy val poison: Poison = new Poison(this, 0.1f)

@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
+/** TODO: Change the superclass from Item to GameObject
  * Anything dropped by enemies or every chest or treasure is extended from Loot. Loot is a subclass of {@link Item}.
  */
 public abstract class Loot extends Item implements BoardPositionable, Collectible {
