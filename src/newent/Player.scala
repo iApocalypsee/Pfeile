@@ -125,7 +125,7 @@ class Player(world: World, spawnpoint: Point, name: String) extends Entity(world
   override protected def initialTeam = new CommandTeam(this, "Team of "+this.name)
 
   //</editor-fold>
-  override val poison: Poison = new Poison(this, 0.1f)
+  override lazy val poison: Poison = new Poison(this, 0.1f)
 }
 
 object Player {

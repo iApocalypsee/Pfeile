@@ -9,12 +9,12 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
- * Loads images in different formats: {@link java.awt.image.BufferedImage}, {@link javax.swing.ImageIcon} and {@link animation.StaticImage}.
+ * Loads images in different formats: {@link java.awt.image.BufferedImage} and {@link javax.swing.ImageIcon}.
  */
 public class ImageLoader {
 
     /**
-     * Loads an Image as BufferedImage. You should save the BufferedImage as <code>static</code> or as {@link animation.StaticImage}.
+     * Loads an Image as BufferedImage. You should save the BufferedImage as <code>static</code>.
      * Try to program your code without loading the same BufferedImage twice. You could also load it as <code>Icon</code>
      * or <code>animation.StaticImage</code> directly.
      *
@@ -46,17 +46,6 @@ public class ImageLoader {
     }
 
     /**
-     * Loads an Image as {@link animation.StaticImage}. Compare with {@link animation.ImageLoader#load(String)}
-     *
-     * @param URL the String, where the address is: "arrow textures/fireArrow.png". Don't put "resources/gfx/" in front
-     *            of it; it is added automatically and can lead to embarrassing bugs.
-     * @return the loaded Image as StaticImage
-     */
-    public static StaticImage loadStatic (String URL) {
-        return new StaticImage(load(URL));
-    }
-
-    /**
      * Returns a new ImageIcon based upon an the BufferedImage instance.
      *
      * @param image the BufferedImage
@@ -64,20 +53,6 @@ public class ImageLoader {
      */
     public static ImageIcon toIcon (BufferedImage image) {
         return new ImageIcon(image);
-    }
-
-    /**
-     * If the imageIcon isn't loaded as <code>Image</code> use:
-     * <code>new StaticImage(ImageLoader.toBufferedImageNotContained(imageIcon))</code>.
-     * Generally, this method is faster e.g. if the ImageIcon already contains an BufferedImage.
-     *
-     * @param imageIcon the ImageIcon which need to be an <code>StaticImage</code>.
-     * @return the StaticImage
-     *
-     * @see animation.ImageLoader#toBufferedImageNotContained(javax.swing.ImageIcon)
-     */
-    public static StaticImage toStaticImage (ImageIcon imageIcon) {
-        return new StaticImage(toBufferedImage(imageIcon));
     }
 
     /**

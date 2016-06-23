@@ -19,11 +19,14 @@ projectFilesBackup/
 saves/
 .idea/
 .settings/
+project
+target
 Pfeile.iml
 Pfeile project.iml
 
 # files....
 javadocexport.xml
+build.sbt
 .cache
 .project
 .classpath

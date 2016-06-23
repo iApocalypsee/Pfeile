@@ -8,7 +8,6 @@ import player.item.loot.Loot;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.List;
 
 /**
  * Any Potion. Override the PotionUI for the correct look. To change the GUI-Position of an Potion use {@link player.item.potion.PotionUI}
@@ -103,7 +102,7 @@ public abstract class Potion extends Item implements Drawable {
         }
 
         // secondly the loots
-        List<Loot> lootList = Main.getContext().getWorldLootList().getLoots();
+        java.util.List<Loot> lootList = Main.getContext().getWorldLootList().getLoots();
         for (Loot loot : lootList) {
             for (Item item : loot.getStoredItems()) {
                 if (this.equals(item)) {

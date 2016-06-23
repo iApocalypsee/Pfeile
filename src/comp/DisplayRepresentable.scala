@@ -1,6 +1,6 @@
 package comp
 
-/** An object that can be represented by a [[comp.IComponent]] object.
+/** An object that can be represented by a [[comp.Component]] object.
   *
   * The component of the [[comp.DisplayRepresentable]] object can be changed easily by just calling
   * the setter.

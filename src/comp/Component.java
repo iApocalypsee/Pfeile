@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * A standard implementation of a component.
  */
-public abstract class Component implements IComponent {
+public abstract class Component {
 
 	/**
 	 * Zeigt den Status an, in welchem das Steuerelement sich befindet.
@@ -311,6 +311,8 @@ public abstract class Component implements IComponent {
 		transformation.translate(initialPosition.getX(), initialPosition.getY());
 		setBackingScreen(backing);
 	}
+
+    public abstract void draw(Graphics2D g);
 
 	private boolean isBoundsRecomputeNeeded() {
 		return /*visible && */(transformationChangedSince || bounds == null) && boundsRecalculationIssued;
@@ -854,12 +856,10 @@ public abstract class Component implements IComponent {
 		this.additionalDrawing = additionalDrawing;
 	}
 
-	@Override
 	public void removeMouseWheelListener(MouseWheelListener mouseWheelListener) {
 		mouseWheelListeners.remove(mouseWheelListener);
 	}
 
-	@Override
 	public void addMouseWheelListener(MouseWheelListener mouseWheelListener) {
 		mouseWheelListeners.add(mouseWheelListener);
 	}
