@@ -140,7 +140,7 @@ public class LootSpawner {
 
         // if it's a Treasure just add money
         if (spawnedLoot instanceof Treasure) {
-            BronzeCoin[] coins = CoinHelper.getCoins(random.nextInt(200) + 20);
+            BronzeCoin[] coins = CoinHelper.getCoins(random.nextInt(200) + 5);
             for (BronzeCoin coin : coins)
                 spawnedLoot.add(coin);
 

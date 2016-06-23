@@ -101,8 +101,7 @@ abstract class Tile protected(gridX: Int, gridY: Int, val terrain: Terrain) exte
         case _ => takeImmediately(e)
       }
 
-    }
-    else {
+    } else {
       filteredEntityList ++= terrain.world.entities.helper.getEntitiesAt(this)
     }
 

@@ -2,6 +2,7 @@ package newent
 
 import general.{LogFacility, Main, PfeileContext}
 import gui.screen.GameScreen
+import newent.event.AttackEvent
 import player.Life
 import player.item.Item
 import player.item.loot.BagOfLoots
@@ -35,6 +36,13 @@ trait LivingEntity extends Entity with AttackContainer {
   /** Every living entity can be poisoned. The implementation of the LivingEntity itself has to instance the value. */
   val poison: Poison
 
+  /** This returns the class, which handles the damage taken by the LivingEntity. It also keeps track of the amount of
+    * poison and the poison resistance.
+    *
+    * @return the Poison class of this LivingEntity
+    */
+  def getPoisonStat = poison
+
   /**
     * Puts the loot bag for this entity into the world.
     */
@@ -48,6 +56,11 @@ trait LivingEntity extends Entity with AttackContainer {
     if (bagOfLoots.getStoredItems.size() > 0) {
       Main.getContext.getWorldLootList.add(bagOfLoots)
     }
+  }
+
+  // If a living entity is attacked, the poison effect must be triggered.
+  onImpact += { att: AttackEvent =>
+    getPoisonStat.poisoned(att.weapon.getPoisonedAmount)
   }
 
   onDamage += { event =>
