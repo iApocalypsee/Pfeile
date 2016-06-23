@@ -121,6 +121,15 @@
     "de_DE": "Geld"
   },
 
+  "noItems": {
+    "en_EN": "no items",
+    "de_DE": "keine Items"
+  },
+  "selectItem": {
+    "en_EN": "Select an item",
+    "de_DE": "Wähle ein item aus"
+  },
+
   "errorIndexOutOfBounds": {
     "en_EN": "Error: The selected index (%d) does not exist",
     "de_DE": "Fehler: Der ausgewählte Index (%d) exisitiert nicht"

@@ -6,9 +6,6 @@ import newent.Bot;
 import newent.GameObject;
 import newent.Player;
 import newent.Team;
-import player.item.DefaultChest;
-import player.item.RoundChest;
-import player.item.Treasure;
 import player.item.coin.*;
 import player.item.potion.PotionOfDamage;
 import player.item.potion.PotionOfHealing;
@@ -22,7 +19,7 @@ import java.util.Random;
 
 
 /**
- * Every Loot spawns by this class. The loot is automatically added to {@link player.item.WorldLootList}.
+ * Every Loot spawns by this class. The loot is automatically added to {@link WorldLootList}.
  * LootSpawner is created in WorldLootList. Do not create it twice.
  */
 public class LootSpawner {
@@ -85,7 +82,7 @@ public class LootSpawner {
         }
     }
 
-    /** This spawns the {@link player.item.RoundChest}. It is triggered every time <code>ArrowSelectionScreenPreSet</code>
+    /** This spawns the {@link RoundChest}. It is triggered every time <code>ArrowSelectionScreenPreSet</code>
      * is left. The position is set by {@link LootSpawner#spawnLoot(int, int)} with <code>4</code> and <code>5</code>.
      */
     private void spawningRoundChest () {

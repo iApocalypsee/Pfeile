@@ -19,14 +19,14 @@ public abstract class Chest extends Loot {
     protected boolean isOpen;
 
     /**
-     * Create a new Chest with the given parameter. Look to {@link player.item.Loot} for further information.
+     * Create a new Chest with the given parameter. Look to {@link Loot} for further information.
      *
      * @param gridX the x-position of the tile, where the chest should be placed
      * @param gridY and the y-position
      * @param lootUI the outward appearance of the chest
      * @param name the name of the Chest ("Round Chest" or "Default Chest")
-     * @see player.item.Loot#Loot(int, int, LootUI, String)
-     * @see player.item.Loot#Loot(int, int, String)
+     * @see Loot#Loot(int, int, LootUI, String)
+     * @see Loot#Loot(int, int, String)
      * @see Chest#Chest(int, int, String)
      */
     protected Chest (int gridX, int gridY, LootUI lootUI, String name) {
@@ -35,14 +35,14 @@ public abstract class Chest extends Loot {
     }
 
     /**
-     * Create a new Chest with the given parameter. Look to {@link player.item.Loot} for further information.
+     * Create a new Chest with the given parameter. Look to {@link Loot} for further information.
      * You should set the LookUI later in the constructor, when all methods are available.
      *
      * @param gridX the x-position of the tile, where the chest should be placed
      * @param gridY and the y-position
      * @param name the name of the Chest ("Round Chest" or "Default Chest")
-     * @see player.item.Loot#Loot(int, int, LootUI, String)
-     * @see player.item.Loot#Loot(int, int, String)
+     * @see Loot#Loot(int, int, LootUI, String)
+     * @see Loot#Loot(int, int, String)
      * @see Chest#Chest(int, int, LootUI, String)
      * */
     protected Chest (int gridX, int gridY, String name) {
@@ -51,7 +51,7 @@ public abstract class Chest extends Loot {
 
     /** you need to open a chest.
      * <p>
-     * <b>Call {@link player.item.LootUI#changeUI(java.awt.image.BufferedImage)} at the end. </b>*/
+     * <b>Call {@link LootUI#changeUI(java.awt.image.BufferedImage)} at the end. </b>*/
     public abstract void open();
 
     @Override
@@ -62,7 +62,7 @@ public abstract class Chest extends Loot {
     /**
      * This adds a MouseListener [mouseReleased] to the loot, which registers a click at the component. After triggering
      * this mouseListener, a Thread is created, which controls that the selectedEntity and the loot are placed on the same
-     * tile. The same Thread calls the <code>collect</code> method from {@link player.item.Collectible}, which also removes
+     * tile. The same Thread calls the <code>collect</code> method from {@link Collectible}, which also removes
      * the loot from being drawn anymore (if it has been successfully collect).
      * <p>The MouseListener added by this method also triggers the <code>additionalContent()</code>method</p>
      * <p>

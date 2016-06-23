@@ -45,6 +45,8 @@ class Swordsman(world: World, spawnPosition: Point, team: Team)
   override protected def initialTeam = team
 
   override def toString: String = "Swordsman: " + name
+
+  override val poison: Poison = new Poison(this, 0.08f)
 }
 
 object Swordsman {

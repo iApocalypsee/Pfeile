@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
- * You need to possess such a key to open an {@link player.item.DefaultChest}.
+ * You need to possess such a key to open an {@link DefaultChest}.
  */
 public class KeyDefaultChest extends Item {
 

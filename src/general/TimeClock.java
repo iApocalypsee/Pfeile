@@ -6,8 +6,6 @@ import gui.screen.*;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.Duration$;
 import scala.concurrent.duration.FiniteDuration;
-import scala.runtime.AbstractFunction0;
-import scala.runtime.BoxedUnit;
 
 import java.awt.*;
 
@@ -86,9 +84,12 @@ public class TimeClock extends Component implements Runnable {
                 case InventoryScreen.SCREEN_INDEX:
                     context.getTurnSystem().increment();
                     break;
+                case WaitingScreen.SCREEN_INDEX:
+                    throw new IllegalStateException("TimeClock must be paused during the Waiting Screen. " +
+                            "There is no active player during WaitingScreen, even though a player is assigned.");
                 default:
                     LogFacility.log("Time out! The active Screen is neither GameScreen nor Arrow-/AimSelectionScreen or InventoryScreen. " +
-                            "Register it!   ActiveScreen... " + sm.getActiveScreen(), LogFacility.LoggingLevel.Error);
+                            "Register it! ActiveScreen... " + sm.getActiveScreen(), LogFacility.LoggingLevel.Debug);
             }
         });
 

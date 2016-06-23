@@ -8,8 +8,6 @@ import newent.EquipmentStrategy;
 import newent.InventoryEntity;
 import player.item.EquippableItem;
 import player.item.Item;
-import player.item.Loot;
-import player.item.LootUI;
 import player.item.coin.CoinHelper;
 import player.item.potion.PotionOfPoison;
 
@@ -19,7 +17,7 @@ import java.io.IOException;
 import java.util.Random;
 
 /**
- * Loots dropped by dead enemies or creeps are BagOfLoots, no {@link player.item.Treasure}.
+ * Loots dropped by dead enemies or creeps are BagOfLoots, no {@link Treasure}.
  */
 public class BagOfLoots extends Loot {
 
@@ -42,7 +40,7 @@ public class BagOfLoots extends Loot {
      * the deadEntity was equipped with (if it is a Combatant) is added to BagOfLoots, too.
      *
      * @param deadEntity the entity, which dropped a BagOfLoots (--> usually a dead Entity)
-     * @see player.item.Loot#Loot(int, int, LootUI, String)
+     * @see Loot#Loot(int, int, LootUI, String)
      * @see BagOfLoots#BagOfLoots(int, int) */
     public BagOfLoots (Entity deadEntity) {
         super(deadEntity.getGridX(), deadEntity.getGridY(), "BagOfLoots [from " + deadEntity.name() + "]");
@@ -68,7 +66,7 @@ public class BagOfLoots extends Loot {
      *
      * @param gridX the x-position of the tile, where the <code>BagOfLoots</code> should be placed
      * @param gridY and the y-position
-     * @see player.item.Loot#Loot(int, int, String)
+     * @see Loot#Loot(int, int, String)
      * @see BagOfLoots#BagOfLoots(newent.Entity)
      */
     public BagOfLoots (int gridX, int gridY) {

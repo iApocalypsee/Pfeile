@@ -4,7 +4,7 @@ import general.Main;
 import gui.Drawable;
 import newent.InventoryLike;
 import player.item.Item;
-import player.item.Loot;
+import player.item.loot.Loot;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

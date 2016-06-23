@@ -3,7 +3,8 @@ package newent
 import general.{LogFacility, Main, PfeileContext}
 import gui.screen.GameScreen
 import player.Life
-import player.item.{BagOfLoots, Item}
+import player.item.Item
+import player.item.loot.BagOfLoots
 import player.weapon.RangedWeapon
 
 import scala.collection.JavaConversions
@@ -31,6 +32,9 @@ trait LivingEntity extends Entity with AttackContainer {
   /** Returns <code>additionalDrops</code> as JavaList.  */
   final def additionalDropsAsJava = JavaConversions.seqAsJavaList(additionalDrops)
 
+  /** Every living entity can be poisoned. The implementation of the LivingEntity itself has to instance the value. */
+  val poison: Poison
+
   /**
     * Puts the loot bag for this entity into the world.
     */
@@ -40,7 +44,7 @@ trait LivingEntity extends Entity with AttackContainer {
     for(item <- additionalDrops)
       bagOfLoots.add(item)
 
-    // only drop a loot, if it had content.
+    // only drop a loot, if it has content.
     if (bagOfLoots.getStoredItems.size() > 0) {
       Main.getContext.getWorldLootList.add(bagOfLoots)
     }

@@ -3,10 +3,10 @@ package world
 import java.awt.Graphics2D
 
 import general.{Delegate, LogFacility, Main, PfeileContext}
-import geom.{Vector, Point}
+import geom.{Point, Vector}
 import gui.Drawable
 import newent.{CommandTeam, VisionStatus}
-import player.item.Loot
+import player.item.loot.Loot
 import player.weapon.AttackDrawer
 import player.weapon.arrow.AbstractArrow
 

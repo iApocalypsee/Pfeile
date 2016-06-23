@@ -3,7 +3,7 @@ package general
 import general.property.{FloatStaticProperty, IntStaticProperty}
 import gui.screen.GameScreen
 import newent.{CommandTeam, Entity, Player}
-import player.item.WorldLootList
+import player.item.loot.WorldLootList
 import world.World
 
 /**
@@ -146,6 +146,9 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     * Access to the current selection of entities.
     */
   def entitySelection = EntitySelection
+
+  /** JAVA-Version of entitySelection() */
+  def getEntitySelection = EntitySelection
 
   object EntitySelection {
 
