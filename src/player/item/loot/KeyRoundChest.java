@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
- * You need to possess such a key to open an {@link player.item.RoundChest}.
+ * You need to possess such a key to open an {@link RoundChest}.
  */
 public class KeyRoundChest extends Item {
 

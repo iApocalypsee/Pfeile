@@ -20,7 +20,7 @@ import java.util.Random;
  * as {@link comp.ImageComponent} in {@link LootUI}. Treasures generally contain more Coins then Chest.
  *
  * @see Chest
- * @see player.item.DefaultChest
+ * @see DefaultChest
  * */
 public class Treasure extends Loot {
 

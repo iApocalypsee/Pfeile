@@ -1,0 +1,25 @@
+{
+
+  "ownership": "Pfeile team",
+
+  "remainingArrows": {
+    "en_EN": "Remaining arrows: ",
+    "de_DE": "Übrige Pfeile: "
+  },
+
+  "confirm": {
+    "en_EN": "Confirm",
+    "de_DE": "Bestätigen"
+  },
+
+  "label_strategyGame": {
+    "en_EN": "A strategy game",
+    "de_DE": "Ein Strategiespiel"
+  },
+
+  "label_authors": {
+    "en_EN": "by Josip Palavra and Daniel Schmaus",
+    "de_DE": "von Josip Palavra und Daniel Schmaus"
+  }
+
+}

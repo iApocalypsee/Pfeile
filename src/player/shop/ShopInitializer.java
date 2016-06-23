@@ -1,8 +1,7 @@
 package player.shop;
 
 import general.JavaInterop;
-import gui.screen.GameScreen;
-import player.item.KeyDefaultChest;
+import player.item.loot.KeyDefaultChest;
 import player.item.potion.PotionOfDamage;
 import player.item.potion.PotionOfHealing;
 import player.item.potion.PotionOfMovement;

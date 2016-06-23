@@ -1,8 +1,8 @@
 package misc;
 
 import general.LogFacility;
-import player.item.*;
 import player.item.coin.*;
+import player.item.loot.*;
 import player.item.potion.*;
 
 /**

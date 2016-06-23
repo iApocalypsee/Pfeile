@@ -6,7 +6,6 @@ import gui.screen.GameScreen;
 import newent.InventoryEntity;
 import newent.InventoryLike;
 import player.item.Item;
-import player.item.Loot;
 import player.item.coin.Coin;
 
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.List;
 /**
  * Any Loot is collectible. So it has to be removed from the world and added to the inventory of the player.
  * Notice, that every loot is a container and not the loot itself is added to the inventory,
- * but their {@link player.item.Loot#getStoredItems()}.
+ * but their {@link Loot#getStoredItems()}.
  */
 public interface Collectible {
 
@@ -32,7 +31,7 @@ public interface Collectible {
      *
      * @param inventory the inventory
      * @param loot the loot
-     * @return <code>true</code> - if loot could be successfully added to the inventory and the loot removed from {@link player.item.WorldLootList}
+     * @return <code>true</code> - if loot could be successfully added to the inventory and the loot removed from {@link WorldLootList}
      *
      * @see Collectible#collect(newent.InventoryEntity)
      */

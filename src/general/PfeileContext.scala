@@ -3,7 +3,7 @@ package general
 import general.property.{FloatStaticProperty, IntStaticProperty}
 import gui.screen.GameScreen
 import newent.{CommandTeam, Entity, Player}
-import player.item.WorldLootList
+import player.item.loot.WorldLootList
 import world.World
 
 /**

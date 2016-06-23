@@ -3,7 +3,8 @@ package newent
 import general.{LogFacility, Main, PfeileContext}
 import gui.screen.GameScreen
 import player.Life
-import player.item.{BagOfLoots, Item}
+import player.item.Item
+import player.item.loot.BagOfLoots
 import player.weapon.RangedWeapon
 
 import scala.collection.JavaConversions

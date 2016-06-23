@@ -72,6 +72,9 @@ public class WaitingScreen extends Screen {
         label.setX(circle.getX() + circle.getWidth() + 17);
 
         onScreenEnter.registerJava(() -> {
+            // During the WaitingScreen there is no active player (even though, he is assigned).
+            Main.getContext().getTimeClock().stop();
+
             Team nextTeam = Main.getContext().getTurnSystem().peekNext();
             if (!nextTeam.isBarbarian()) {
                 label.setText(Main.tr("waitingForPlayer", nextTeam.asCommandTeam().getHead().name()));
@@ -79,6 +82,11 @@ public class WaitingScreen extends Screen {
                 label.setText(Main.tr("waitingForNextPlayer"));
             }
             label.setX(circle.getX() + circle.getWidth() + 17);
+        });
+        onScreenLeft.registerJava(jf -> {
+            // After the WaitingScreen, TimeClock begins to count.
+            Main.getContext().getTimeClock().reset();
+            Main.getContext().getTimeClock().start();
         });
     }
 

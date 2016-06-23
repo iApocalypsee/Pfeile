@@ -1,0 +1,55 @@
+{
+  "ownership": "Pfeile team",
+
+
+  "FireArrow": {
+    "en_EN": "Fire arrow",
+    "de_DE": "Feuerpfeil"
+  },
+  "IceArrow": {
+    "en_EN": "Ice arrow",
+    "de_DE": "Eispfeil"
+  },
+  "LightArrow": {
+    "en_EN": "Light arrow",
+    "de_DE": "Lichtpfeil"
+  },
+  "LightningArrow": {
+    "en_EN": "Lightning arrow",
+    "de_DE": "Blitzpfeil"
+  },
+  "ShadowArrow": {
+    "en_EN": "Shadow arrow",
+    "de_DE": "Schattenpfeil"
+  },
+  "StoneArrow": {
+    "en_EN": "Stone arrow",
+    "de_DE": "Steinpfeil"
+  },
+  "StormArrow": {
+    "en_EN": "Storm arrow",
+    "de_DE": "Sturmpfeil"
+  },
+  "WaterArrow": {
+    "en_EN": "Water arrow",
+    "de_DE": "Wasserpfeil"
+  },
+
+
+  "arrowType": {
+    "en_EN": "Type: %s",
+    "de_DE": "Typ: %s"
+  },
+  "damage": {
+    "en_EN": "Damage: %f",
+    "de_DE": "Schaden: %f"
+  },
+  "defence": {
+    "en_EN": "Defence: %f",
+    "de_DE": "Verteidigung: %f"
+  },
+  "speed": {
+    "en_EN": "Speed: %f",
+    "de_DE": "Geschwindigkeit: %f"
+  }
+}
