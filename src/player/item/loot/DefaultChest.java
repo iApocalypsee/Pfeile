@@ -1,4 +1,4 @@
-package player.item;
+package player.item.loot;
 
 import general.LogFacility;
 import general.Main;
@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.Random;
 
 /**
- * This is the usual chest (compared to {@link player.item.RoundChest}. It can be found and opened by players and bots.
+ * This is the usual chest (compared to {@link RoundChest}. It can be found and opened by players and bots.
  * */
 public class DefaultChest extends Chest {
 

@@ -1,32 +1,33 @@
-package player.item;
+package player.item.loot;
 
 import general.LogFacility;
+import player.item.Item;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
- * You need to possess such a key to open an {@link player.item.RoundChest}.
+ * You need to possess such a key to open an {@link player.item.DefaultChest}.
  */
-public class KeyRoundChest extends Item {
+public class KeyDefaultChest extends Item {
 
     /** the texture of a Key. */
     private static BufferedImage image;
 
     static {
-        String path = "resources/gfx/item textures/loot textures/keyRoundChest.png";
+        String path = "resources/gfx/item textures/loot textures/keyDefaultChest.png";
         try {
-            image = ImageIO.read(KeyRoundChest.class.getClassLoader().getResourceAsStream(path));
+            image = ImageIO.read(KeyDefaultChest.class.getClassLoader().getResourceAsStream(path));
         } catch (IOException e) {
             e.printStackTrace();
-            LogFacility.log("The BufferedImage of class KeyRoundChest couldn't be loaded! Path: " + path,
+            LogFacility.log("The BufferedImage of class KeyDefaultChest couldn't be loaded! Path: " + path,
                     LogFacility.LoggingLevel.Error);
         }
     }
 
-    public KeyRoundChest () {
-        super("Key_RoundChest");
+    public KeyDefaultChest () {
+        super("Key_DefaultChest");
     }
 
     /**

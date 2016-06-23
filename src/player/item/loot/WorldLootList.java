@@ -1,4 +1,4 @@
-package player.item;
+package player.item.loot;
 
 import general.JavaInterop;
 import general.LogFacility;
@@ -92,7 +92,7 @@ public class WorldLootList implements Drawable {
      * Returns the ArrayList of all Loots. Do not change the list; just use it if you want to find loots or change loots
      *
      * @return the list
-     * @see player.item.WorldLootList#getVisibleLoots()
+     * @see WorldLootList#getVisibleLoots()
      */
     public List<Loot> getLoots () {
         return lootList;

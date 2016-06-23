@@ -1,4 +1,4 @@
-package player.item;
+package player.item.loot;
 
 import general.LogFacility;
 import general.Main;
@@ -6,6 +6,10 @@ import newent.Combatant;
 import newent.Entity;
 import newent.EquipmentStrategy;
 import newent.InventoryEntity;
+import player.item.EquippableItem;
+import player.item.Item;
+import player.item.Loot;
+import player.item.LootUI;
 import player.item.coin.CoinHelper;
 import player.item.potion.PotionOfPoison;
 
@@ -39,7 +43,7 @@ public class BagOfLoots extends Loot {
      *
      * @param deadEntity the entity, which dropped a BagOfLoots (--> usually a dead Entity)
      * @see player.item.Loot#Loot(int, int, LootUI, String)
-     * @see player.item.BagOfLoots#BagOfLoots(int, int) */
+     * @see BagOfLoots#BagOfLoots(int, int) */
     public BagOfLoots (Entity deadEntity) {
         super(deadEntity.getGridX(), deadEntity.getGridY(), "BagOfLoots [from " + deadEntity.name() + "]");
 
@@ -65,7 +69,7 @@ public class BagOfLoots extends Loot {
      * @param gridX the x-position of the tile, where the <code>BagOfLoots</code> should be placed
      * @param gridY and the y-position
      * @see player.item.Loot#Loot(int, int, String)
-     * @see player.item.BagOfLoots#BagOfLoots(newent.Entity)
+     * @see BagOfLoots#BagOfLoots(newent.Entity)
      */
     public BagOfLoots (int gridX, int gridY) {
         super(gridX, gridY, "BagOfLoots");

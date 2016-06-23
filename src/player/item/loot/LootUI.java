@@ -1,4 +1,4 @@
-package player.item;
+package player.item.loot;
 
 import comp.Component;
 import comp.ImageComponent;

@@ -1,4 +1,4 @@
-package player.item;
+package player.item.loot;
 
 import general.LogFacility;
 import general.Main;
@@ -19,7 +19,7 @@ import java.util.Random;
  * placed, the treasure will be added to the inventory (after confirming the content). The Bounds of a treasure are saved
  * as {@link comp.ImageComponent} in {@link LootUI}. Treasures generally contain more Coins then Chest.
  *
- * @see player.item.Chest
+ * @see Chest
  * @see player.item.DefaultChest
  * */
 public class Treasure extends Loot {

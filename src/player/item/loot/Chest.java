@@ -1,8 +1,9 @@
-package player.item;
+package player.item.loot;
 
 import general.Main;
 import gui.screen.GameScreen;
 import newent.*;
+import player.item.*;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -26,7 +27,7 @@ public abstract class Chest extends Loot {
      * @param name the name of the Chest ("Round Chest" or "Default Chest")
      * @see player.item.Loot#Loot(int, int, LootUI, String)
      * @see player.item.Loot#Loot(int, int, String)
-     * @see player.item.Chest#Chest(int, int, String)
+     * @see Chest#Chest(int, int, String)
      */
     protected Chest (int gridX, int gridY, LootUI lootUI, String name) {
         super(gridX, gridY, lootUI, name);
@@ -42,7 +43,7 @@ public abstract class Chest extends Loot {
      * @param name the name of the Chest ("Round Chest" or "Default Chest")
      * @see player.item.Loot#Loot(int, int, LootUI, String)
      * @see player.item.Loot#Loot(int, int, String)
-     * @see player.item.Chest#Chest(int, int, LootUI, String)
+     * @see Chest#Chest(int, int, LootUI, String)
      * */
     protected Chest (int gridX, int gridY, String name) {
         this(gridX, gridY, null, name);

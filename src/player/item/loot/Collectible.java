@@ -1,10 +1,12 @@
-package player.item;
+package player.item.loot;
 
 import general.LogFacility;
 import general.Main;
 import gui.screen.GameScreen;
 import newent.InventoryEntity;
 import newent.InventoryLike;
+import player.item.Item;
+import player.item.Loot;
 import player.item.coin.Coin;
 
 import java.util.ArrayList;
@@ -32,7 +34,7 @@ public interface Collectible {
      * @param loot the loot
      * @return <code>true</code> - if loot could be successfully added to the inventory and the loot removed from {@link player.item.WorldLootList}
      *
-     * @see player.item.Collectible#collect(newent.InventoryEntity)
+     * @see Collectible#collect(newent.InventoryEntity)
      */
     default boolean defaultCollect (InventoryLike inventory, Loot loot) {
         // controlling if the inventory is full, is already done by "put(item)".

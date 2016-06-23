@@ -1,4 +1,4 @@
-package player.item;
+package player.item.loot;
 
 import comp.ImageComponent;
 import general.Main;
@@ -8,6 +8,7 @@ import gui.screen.GameScreen;
 import newent.Entity;
 import newent.InventoryEntity;
 import player.BoardPositionable;
+import player.item.Item;
 import player.item.coin.Coin;
 import world.Tile;
 
@@ -44,7 +45,7 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
      * @param gridX the x-position of tile where the loot should be placed
      * @param gridY the y-position of the where the loot should be placed
      * @param name the name of the item
-     * @see player.item.Loot#Loot(int, int, LootUI, String)
+     * @see Loot#Loot(int, int, LootUI, String)
      */
     protected Loot (int gridX, int gridY, String name) {
         this(gridX, gridY, null, name);
@@ -100,7 +101,7 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
     /**
      * This adds a MouseListener [mouseReleased] to the loot, which registers a click at the component. After triggering
      * this mouseListener, a Thread is created, which controls that the selectedEntity and the loot are placed on the same
-     * tile. The same Thread calls the <code>collect</code> method from {@link player.item.Collectible}, which also removes
+     * tile. The same Thread calls the <code>collect</code> method from {@link Collectible}, which also removes
      * the loot from being drawn anymore (if it has been successfully collect).
      * <p>The MouseListener, which is added by this method, also triggers the <code>additionalContent()</code> method.</p>
      * <p>

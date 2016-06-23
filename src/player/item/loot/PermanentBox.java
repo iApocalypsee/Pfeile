@@ -1,4 +1,4 @@
-package player.item;
+package player.item.loot;
 
 import general.LogFacility;
 import general.Main;
@@ -6,6 +6,7 @@ import gui.screen.GameScreen;
 import newent.Entity;
 import newent.InventoryEntity;
 import newent.Player;
+import player.item.Item;
 import player.item.coin.Coin;
 
 import javax.imageio.ImageIO;
@@ -37,7 +38,7 @@ public class PermanentBox extends Loot {
     }
 
     /**
-     * The LootUI will be created automatically, based on {@link player.item.Loot#createUI()}
+     * The LootUI will be created automatically, based on {@link Loot#createUI()}
      * You can override the lootUI later.
      *
      * @param gridX the x-position of tile where the loot should be placed
@@ -107,7 +108,7 @@ public class PermanentBox extends Loot {
     /**
      * This adds a MouseListener [mouseReleased] to the loot, which registers a click at the component. After triggering
      * this mouseListener, a Thread is created, which controls that the selectedEntity and the loot are placed on the same
-     * tile. The same Thread calls the <code>collect</code> method from {@link player.item.Collectible}, which also removes
+     * tile. The same Thread calls the <code>collect</code> method from {@link Collectible}, which also removes
      * the loot from being drawn anymore (if it has been successfully collect).
      * <p>
      * If the <code>lootUI</code>/<code>getLootUI()</code> is <code>null</code>, the method returns doing nothing.

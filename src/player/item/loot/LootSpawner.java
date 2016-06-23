@@ -1,4 +1,4 @@
-package player.item;
+package player.item.loot;
 
 import comp.Circle;
 import general.PfeileContext;
@@ -6,6 +6,9 @@ import newent.Bot;
 import newent.GameObject;
 import newent.Player;
 import newent.Team;
+import player.item.DefaultChest;
+import player.item.RoundChest;
+import player.item.Treasure;
 import player.item.coin.*;
 import player.item.potion.PotionOfDamage;
 import player.item.potion.PotionOfHealing;
@@ -83,7 +86,7 @@ public class LootSpawner {
     }
 
     /** This spawns the {@link player.item.RoundChest}. It is triggered every time <code>ArrowSelectionScreenPreSet</code>
-     * is left. The position is set by {@link player.item.LootSpawner#spawnLoot(int, int)} with <code>4</code> and <code>5</code>.
+     * is left. The position is set by {@link LootSpawner#spawnLoot(int, int)} with <code>4</code> and <code>5</code>.
      */
     private void spawningRoundChest () {
         Point spawnPoint = spawnLoot(5, 7);
@@ -182,7 +185,7 @@ public class LootSpawner {
      * Selects random fields until one has been found where no entity is in the near. If there is no possible field
      * (after there has been a lot of tries (worldSizeX * worldSizeY tries) to spawn - <code>radiusTroops</code> and
      * <code>radiusPlayer</code> is reduced by one to prohibit an endless loop.
-     * A loot cannot spawn, if there is a <code>SeaTile</code> or {@link player.item.LootSpawner#isEntityNear(int, int, int, int)} returns true.
+     * A loot cannot spawn, if there is a <code>SeaTile</code> or {@link LootSpawner#isEntityNear(int, int, int, int)} returns true.
      *
      * @param radiusTroops the radius where troops stops the loot from spawning.
      * @param radiusPlayers the radius where players and bots stops the loot from spawning.

@@ -1,4 +1,4 @@
-package player.item;
+package player.item.loot;
 
 import general.LogFacility;
 import general.Main;
