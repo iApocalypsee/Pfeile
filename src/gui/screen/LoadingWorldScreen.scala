@@ -78,6 +78,7 @@ object LoadingWorldScreen extends Screen("LoadingScreen", 222) {
     val creator = new ContextCreator(worldWidth, worldHeight)
 
     // Every time the stage changes, the label has to be changed as well.
+    // FIXME: the name must already change, when the stage is entered
     creator.onStageDone += { stageCompleted => 
       GUI.stageLabel.setText(stageCompleted.stage.stageName)
     }

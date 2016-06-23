@@ -91,9 +91,14 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
       }
 
       // Then the entities.
+      world.entities.entityList.foreach { entity =>
+        entity.onTurnCycleEnded
+      }
+      /*
       for(entity <- world.entities.entityList) {
         entity.onTurnCycleEnded
       }
+      */
 
       values.turnCycleCount += 1
     }

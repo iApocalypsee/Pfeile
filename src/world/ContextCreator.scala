@@ -97,6 +97,9 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       entityManager += act
       entityManager += opponent
 
+      act.onTurnEnded += { () => act.resetFortuneStat() }
+      opponent.onTurnEnded += { () => opponent.resetFortuneStat() }
+
       PreWindowScreen.correctArrowNumber(entityManager.javaEntityList)
 
       // adding Arrows:

@@ -1,5 +1,6 @@
 package general.langsupport
 
+import general.LogFacility
 import org.json4s._
 import org.json4s.native.JsonMethods._
 
@@ -25,16 +26,16 @@ class LangDict() {
     data \ identifier \ locale match {
       case JNothing => data \ identifier \ "en_EN" match {
         case JNothing =>
-          System.err.printf("Translation identifier not found: %s\n", identifier)
+          LogFacility.logCurrentStackTrace("Translation identifier not found: " + identifier, LogFacility.LoggingLevel.Error)
           identifier
         case JString(s) => s
         case _ =>
-          System.err.printf("Translation identifier not found: %s\n", identifier)
+          LogFacility.logCurrentStackTrace("Translation identifier not found: " + identifier, LogFacility.LoggingLevel.Error)
           identifier
       }
       case JString(s) => s
       case _ =>
-        System.err.printf("Translation identifier not found: %s\n", identifier)
+        LogFacility.logCurrentStackTrace("Translation identifier not found: " + identifier, LogFacility.LoggingLevel.Error)
         identifier
     }
   }

@@ -1,11 +1,17 @@
 package player.item;
 
 import general.LogFacility;
+import general.Main;
 import newent.InventoryEntity;
+import player.item.coin.BronzeCoin;
+import player.item.coin.SilverCoin;
+import player.item.ore.IronOre;
+import player.item.potion.PotionOfFortune;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Random;
 
 /**
  * The treasure contains some valuables and can be found by either Player or Bot. The difference to chests is, that
@@ -51,5 +57,40 @@ public class Treasure extends Loot {
     @Override
     public BufferedImage getImage () {
         return image;
+    }
+
+    /**
+     * If the player has an increased fortune stat during this turn, this method, will add additional content.
+     * Additional content only works with the active player.
+     */
+    @Override
+    public void additionalContent () {
+        Random ranGen = new Random();
+        int fortuneStat = Main.getContext().getActivePlayer().getFortuneStat();
+
+        if (fortuneStat > 110)
+            if (ranGen.nextFloat() < 0.2f)
+                add(new PotionOfFortune((byte) 3));
+        if (fortuneStat > 60) {
+            if (ranGen.nextFloat() < 0.1f)
+                add(new KeyRoundChest());
+        }
+        if (fortuneStat > 30) {
+            if (ranGen.nextFloat() < 0.2f)
+                add(new SilverCoin());
+        }
+        if (fortuneStat > 17) {
+            if (ranGen.nextFloat() < 0.15f)
+                add(new KeyRoundChest());
+        }
+        if (fortuneStat > 12)
+            add(new IronOre());
+
+        for (int i = 0; i < fortuneStat/2; i++) {
+            if (ranGen.nextFloat() < 0.98f)
+                add(new BronzeCoin());
+            else
+                add(new IronOre());
+        }
     }
 }

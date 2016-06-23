@@ -18,6 +18,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -83,11 +84,25 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
         listOfContent.add(item);
     }
 
+    /** Adds an array of items to the drops of this loot.
+     *
+     * @param items the items
+     */
+    public void add (Item[] items) {
+        Collections.addAll(listOfContent, items);
+    }
+
+    /** Adds a list of items to the drops of this loot. */
+    public void add (List<Item> items) {
+        listOfContent.addAll(items);
+    }
+
     /**
      * This adds a MouseListener [mouseReleased] to the loot, which registers a click at the component. After triggering
      * this mouseListener, a Thread is created, which controls that the selectedEntity and the loot are placed on the same
      * tile. The same Thread calls the <code>collect</code> method from {@link player.item.Collectible}, which also removes
      * the loot from being drawn anymore (if it has been successfully collect).
+     * <p>The MouseListener, which is added by this method, also triggers the <code>additionalContent()</code> method.</p>
      * <p>
      * If the <code>lootUI</code>/<code>getLootUI()</code> is <code>null</code>, the method returns doing nothing.
      */
@@ -105,6 +120,8 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
                         // only trigger collect, when the selectedEntity is on the same tile as the loot
                         if (Loot.this.getGridX() == selectedEntity.getGridX() && Loot.this.getGridY() == selectedEntity.getGridY()) {
                             if (selectedEntity instanceof InventoryEntity) {
+                                // add additional drops (fortune-stat)
+                                additionalContent();
                                 if (collect((InventoryEntity) selectedEntity))
                                     lootUI.component.removeMouseListener(this);
                             }
@@ -175,6 +192,13 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
     public Tile getTile () {
         return Main.getContext().getWorld().terrain().tileAt(gridX, gridY);
     }
+
+    /**
+     * If the player has an increased fortune stat during this turn, this method, will add additional content.
+     * Additional content only works with the stats of the active player. This method is triggered by the MouseListeners,
+     * which also controls the collect mechanism.
+     */
+    protected abstract void additionalContent();
 
     /** the outward appearance of a Loot. Use the LootUI to draw an Loot or to change its Component. */
     public LootUI getLootUI () {

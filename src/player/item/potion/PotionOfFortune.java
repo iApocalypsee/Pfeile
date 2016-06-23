@@ -1,13 +1,15 @@
 package player.item.potion;
 
 import general.LogFacility;
+import general.Main;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Random;
 
 /**
- * This potion will increase the change of finding good items in loots during this round. It also increases the maximum
+ * This potion will increase the change of finding good items in loots until the end of this round. It also increases the maximum
  * number of items, which can be found from a chest, treasure, etc.
  */
 public class PotionOfFortune extends Potion {
@@ -61,7 +63,8 @@ public class PotionOfFortune extends Potion {
      */
     @Override
     public boolean triggerEffect () {
-        // TODO: increase the chance of finding good and more items in loots during this turn.
-        return false;
+        Random ranGen = new Random();
+        Main.getContext().getActivePlayer().changeFortuneStat(8 * (getLevel() + 1) + ranGen.nextInt(5 + getLevel()));
+        return true;
     }
 }

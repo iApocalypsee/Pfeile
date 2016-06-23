@@ -25,6 +25,34 @@ class Player(world: World, spawnpoint: Point, name: String) extends Entity(world
 
   hasSelfTracking = true
 
+  /** The probability of finding good and more items in loots for this player. The value is set to 0 after each
+    * turn. Increase the value by using <code>PotionOfFortune</code>.
+    */
+  private var fortuneStat = 0
+
+  /**
+    * Resets the fortune value to 0. Used at the end of each turn to stop the effects of <code>PotionOfFortune</code>
+    */
+  def resetFortuneStat(): Unit = {
+    fortuneStat = 0
+  }
+
+  /** Changes the value (dosn't set!) of the fortune the player has. The higher this value, the more and the better
+    * items the player will find. This value is reset after each turn to 0.
+    *
+    * @param value the value the luck of player should change.
+    */
+  def changeFortuneStat(value: Int): Unit = {
+    fortuneStat += value
+  }
+
+  /** Returns the value of the fortune stat for this player. The value is set to 0 after each turn. Use
+    * <code>changeFortuneStat(int value)</code> to change the stat.
+    *
+    * @return the value of the fortune stat
+    */
+  def getFortuneStat: Int = fortuneStat
+
   // Delegate registration only valid after initialization of the actual life object.
   life.onDeath += { () =>
     Main.getContext.getTimeClock.stop()

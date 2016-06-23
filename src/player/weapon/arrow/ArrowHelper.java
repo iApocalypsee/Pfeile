@@ -7,7 +7,6 @@ import player.item.Item;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-
 /**
  * <code>ArrowHelper</code> provides useful methods for the arrow classes. It contains a lot of different classes for
  * comparisons (e.g. for getting indexes, classes and names from each other), provides the arrow-images and lot's of

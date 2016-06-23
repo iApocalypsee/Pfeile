@@ -3,10 +3,16 @@ package player.item;
 import general.LogFacility;
 import general.Main;
 import gui.screen.GameScreen;
+import player.item.coin.BronzeCoin;
+import player.item.coin.SilverCoin;
+import player.item.ore.CopperOre;
+import player.item.ore.IronOre;
+import player.weapon.arrow.ArrowHelper;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Random;
 
 /**
  * A round chest is chest, which only appears once a round. It contains the most striking weapons, but it must be
@@ -50,5 +56,44 @@ public class RoundChest extends Chest {
         isOpen = true;
         GameScreen.getInstance().setWarningMessage(Main.tr("roundChestOpened"));
         GameScreen.getInstance().activateWarningMessage();
+    }
+
+    /**
+     * If the player has an increased fortune stat during this turn, this method, will add additional content.
+     * Additional content only works with the active player.
+     */
+    @Override
+    public void additionalContent () {
+        Random ranGen = new Random();
+        int fortuneStat = Main.getContext().getActivePlayer().getFortuneStat();
+
+        if (fortuneStat > 100) {
+            if (ranGen.nextFloat() < 0.35f)
+                add(new KeyRoundChest());
+        }
+        if (fortuneStat > 80) {
+            if (ranGen.nextFloat() < 0.7f)
+                add(ArrowHelper.instanceArrow(ranGen.nextInt(ArrowHelper.NUMBER_OF_ARROW_TYPES)));
+        }
+        if (fortuneStat > 22) {
+            if (ranGen.nextFloat() < 0.3f)
+                add(new KeyDefaultChest());
+        }
+        if (fortuneStat > 10) {
+            if (ranGen.nextFloat() < 0.4f) {
+                for (int i = 0; i < ranGen.nextInt(7); i++) {
+                    if (ranGen.nextFloat() > 0.3f)
+                        add(new IronOre());
+                    else
+                        add(new CopperOre());
+                }
+            }
+        }
+        for (int i = 0; i < fortuneStat; i++) {
+            if (ranGen.nextFloat() < 0.01f)
+                add(new SilverCoin());
+            else
+                add(new BronzeCoin());
+        }
     }
 }

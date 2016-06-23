@@ -52,7 +52,7 @@ public class InventoryScreen extends Screen {
     public InventoryScreen () {
         super(SCREEN_NAME, SCREEN_INDEX);
 
-        selectedItem = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 380, this, "<select items>");
+        selectedItem = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 380, this, Main.tr("selectItem"));
         selectedItem.declineInput();
         selectedItem.setRoundBorder(true);
 

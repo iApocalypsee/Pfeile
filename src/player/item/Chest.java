@@ -7,7 +7,6 @@ import newent.*;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.util.List;
 
 /**
@@ -64,6 +63,7 @@ public abstract class Chest extends Loot {
      * this mouseListener, a Thread is created, which controls that the selectedEntity and the loot are placed on the same
      * tile. The same Thread calls the <code>collect</code> method from {@link player.item.Collectible}, which also removes
      * the loot from being drawn anymore (if it has been successfully collect).
+     * <p>The MouseListener added by this method also triggers the <code>additionalContent()</code>method</p>
      * <p>
      * If the <code>lootUI</code>/<code>getLootUI()</code> is <code>null</code>, the method returns doing nothing.
      * <p>
@@ -136,6 +136,8 @@ public abstract class Chest extends Loot {
                                     }
 
                                     if (removed) {
+                                        // adding additional drops (depending on the fortune-stat)
+                                        additionalContent();
                                         open();
                                     } else {
                                         GameScreen.getInstance().setWarningMessage(Main.tr("keyRequired"));

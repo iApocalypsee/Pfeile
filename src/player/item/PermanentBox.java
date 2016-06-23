@@ -20,6 +20,7 @@ import java.util.List;
 /**
  * This is a Chest, which can't be removed from the map by clicking at it twice. It isn't a real chest - it's more like
  * a box, because you don't need a key to open it. That's why it isn't a subclass of <code>Chest</code>.
+ * This is a subclass of Loot, which doesn't drop additional content.
  */
 public class PermanentBox extends Loot {
 
@@ -141,5 +142,14 @@ public class PermanentBox extends Loot {
                 }
             }
         });
+    }
+
+    /**
+     * If the player has an increased fortune stat during this turn, this method, will add additional content.
+     * Additional content only works with the active player.
+     */
+    @Override
+    public void additionalContent () {
+        // A permanent box is not allowed to have additional drops.
     }
 }

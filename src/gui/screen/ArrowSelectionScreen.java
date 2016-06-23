@@ -146,14 +146,14 @@ public class ArrowSelectionScreen extends Screen {
             arrowList = new ArrayList<>();
 
             final int[] arrowsCount = ArrowHelper.emptyArrowCount();
-            arrowList.add(Main.tr("fireArrow") + " [" + arrowsCount[FireArrow.INDEX] + "]");
-            arrowList.add(Main.tr("waterArrow") + " [" + arrowsCount[WaterArrow.INDEX] + "]");
-            arrowList.add(Main.tr("stormArrow") + " [" + arrowsCount[StormArrow.INDEX] + "]");
-            arrowList.add(Main.tr("stoneArrow") + " [" + arrowsCount[StoneArrow.INDEX] + "]");
-            arrowList.add(Main.tr("iceArrow") + " [" + arrowsCount[IceArrow.INDEX] + "]");
-            arrowList.add(Main.tr("lightningArrow") + " [" + arrowsCount[LightningArrow.INDEX] + "]");
-            arrowList.add(Main.tr("lightArrow") + " [" + arrowsCount[LightArrow.INDEX] + "]");
-            arrowList.add(Main.tr("shadowArrow") + " [" + arrowsCount[ShadowArrow.INDEX] + "]");
+            arrowList.add(Main.tr("FireArrow") + " [" + arrowsCount[FireArrow.INDEX] + "]");
+            arrowList.add(Main.tr("WaterArrow") + " [" + arrowsCount[WaterArrow.INDEX] + "]");
+            arrowList.add(Main.tr("StormArrow") + " [" + arrowsCount[StormArrow.INDEX] + "]");
+            arrowList.add(Main.tr("StoneArrow") + " [" + arrowsCount[StoneArrow.INDEX] + "]");
+            arrowList.add(Main.tr("IceArrow") + " [" + arrowsCount[IceArrow.INDEX] + "]");
+            arrowList.add(Main.tr("LightningArrow") + " [" + arrowsCount[LightningArrow.INDEX] + "]");
+            arrowList.add(Main.tr("LightArrow") + " [" + arrowsCount[LightArrow.INDEX] + "]");
+            arrowList.add(Main.tr("ShadowArrow") + " [" + arrowsCount[ShadowArrow.INDEX] + "]");
 
             inventoryList_Width = fireArrowButton.getWidth() + 30;
 
@@ -397,14 +397,14 @@ public class ArrowSelectionScreen extends Screen {
                 arrowList.clear();
 
 				final int[] arrowsCount = ArrowHelper.arrowCountInventory(Main.getContext().getActivePlayer().inventory());
-                arrowList.add(Main.tr("fireArrow") + " [" + arrowsCount[FireArrow.INDEX] + "]");
-                arrowList.add(Main.tr("waterArrow") + " [" + arrowsCount[WaterArrow.INDEX] + "]");
-                arrowList.add(Main.tr("stormArrow") + " [" + arrowsCount[StormArrow.INDEX] + "]");
-                arrowList.add(Main.tr("stoneArrow") + " [" + arrowsCount[StoneArrow.INDEX] + "]");
-                arrowList.add(Main.tr("iceArrow") + " [" + arrowsCount[IceArrow.INDEX] + "]");
-                arrowList.add(Main.tr("lightningArrow") + " [" + arrowsCount[LightningArrow.INDEX] + "]");
-                arrowList.add(Main.tr("lightArrow") + " [" + arrowsCount[LightArrow.INDEX] + "]");
-                arrowList.add(Main.tr("shadowArrow") + " [" + arrowsCount[ShadowArrow.INDEX] + "]");
+                arrowList.add(Main.tr("FireArrow") + " [" + arrowsCount[FireArrow.INDEX] + "]");
+                arrowList.add(Main.tr("WaterArrow") + " [" + arrowsCount[WaterArrow.INDEX] + "]");
+                arrowList.add(Main.tr("StormArrow") + " [" + arrowsCount[StormArrow.INDEX] + "]");
+                arrowList.add(Main.tr("StoneArrow") + " [" + arrowsCount[StoneArrow.INDEX] + "]");
+                arrowList.add(Main.tr("IceArrow") + " [" + arrowsCount[IceArrow.INDEX] + "]");
+                arrowList.add(Main.tr("LightningArrow") + " [" + arrowsCount[LightningArrow.INDEX] + "]");
+                arrowList.add(Main.tr("LightArrow") + " [" + arrowsCount[LightArrow.INDEX] + "]");
+                arrowList.add(Main.tr("ShadowArrow") + " [" + arrowsCount[ShadowArrow.INDEX] + "]");
 
                 inventoryList.setItems(arrowList);
             }

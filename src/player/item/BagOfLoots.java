@@ -1,14 +1,18 @@
 package player.item;
 
 import general.LogFacility;
+import general.Main;
 import newent.Combatant;
 import newent.Entity;
 import newent.EquipmentStrategy;
 import newent.InventoryEntity;
+import player.item.coin.CoinHelper;
+import player.item.potion.PotionOfPoison;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Random;
 
 /**
  * Loots dropped by dead enemies or creeps are BagOfLoots, no {@link player.item.Treasure}.
@@ -75,5 +79,18 @@ public class BagOfLoots extends Loot {
     @Override
     public BufferedImage getImage () {
         return image;
+    }
+
+    /**
+     * If the player has an increased fortune stat during this turn, this method, will add additional content.
+     */
+    @Override
+    public void additionalContent () {
+        Random ranGen = new Random();
+        int fortuneStat = Main.getContext().getActivePlayer().getFortuneStat();
+
+        if (ranGen.nextFloat() * fortuneStat/100.0f > 0.6f)
+            add(new PotionOfPoison((byte) 1));
+        add(CoinHelper.getCoins(ranGen.nextInt(fortuneStat)));
     }
 }
