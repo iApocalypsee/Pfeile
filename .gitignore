@@ -14,9 +14,9 @@ hs_err_pid*
 doc/
 bin/
 lib/
-out
-projectFilesBackup
-saves
+out/
+projectFilesBackup/
+saves/
 .idea/
 .settings/
 Pfeile.iml
