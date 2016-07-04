@@ -144,4 +144,9 @@ class SolidColor(startColor: Color) extends ImageLike {
     if (cachedImage == null) cachedImage = newImage(color.get)
     cachedImage
   }
+
+  override def drawImage(g: Graphics2D, x: Int, y: Int, width: Int, height: Int) = {
+    g.setColor(color.get)
+    g.fillRect(x, y, width, height)
+  }
 }

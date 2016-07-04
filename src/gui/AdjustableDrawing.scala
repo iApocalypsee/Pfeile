@@ -1,97 +1,102 @@
 package gui
 
 import java.awt.Graphics2D
+import java.util.function._
+import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
 import scala.collection.mutable
+import scala.compat.java8.FunctionConverters._
 
 /**
- * Represents an object to which individual drawing commands
- * can be appended.
- * @author Josip Palavra
- */
-trait AdjustableDrawing {
+  * An object to which additional drawing commands may be given to be executed before or after
+  * the actual draw method of implementing class.
+  *
+  * Functionality is exposed through the methods `preDraw` and `postDraw`, which add given draw function
+  * to the respective storage buffer for later execution.
+  */
+trait AdjustableDrawing extends comp.Component {
 
-  // The function definitions
-  private val _drawQueue = new mutable.Queue[DrawingEntry]
+  // <editor-fold desc="Draw queues">
 
-  /**
-   * Draws all individual
-   * @param g The graphics object to apply to all function bodies.
-   */
-  def drawAll(g: Graphics2D) {
-    _drawQueue foreach(i => {
-      // only if the condition is true, execute the drawing body
-      if(i.condition.apply()) {
-        i.func.apply(g)
-      }
-    })
-  }
+  private val m_preDraw = new mutable.ArrayBuffer[DrawingEntry]
+
+  private val m_postDraw = new mutable.ArrayBuffer[DrawingEntry]
 
   /**
-   * Appends a new drawing function to the object, which executes only when the
-   * condition param is returning true.
-   * @param drawfunc The drawing function.
-   * @param condition The condition. Optional parameter, defaults to true.
-   * @return A handle with which the draw function can be removed and the status of the
-   *         functions can be seen.
-   */
-  def handle(drawfunc: (Graphics2D) => Unit, condition: () => Boolean = () => true): AdjustableDrawingHandle = {
-    val newEntry = new DrawingEntry(-1, drawfunc, condition)
+    * Generic append function to generate a cancellable drawing handle.
+    * @param to The buffer to append the new drawing entry to.
+    * @param f The actual draw function.
+    * @param condition Condition to be checked before applying given draw function.
+    * @return A handle that may be cancelled at a future point in time or may be completely ignored.
+    */
+  def appendElement(to: mutable.ArrayBuffer[DrawingEntry], f: Graphics2D => Unit, condition: () => Boolean): AdjustableDrawingHandle = {
+    val newEntry = new DrawingEntry(-1, f, condition, to)
+    to += newEntry
+    newEntry.index = to.indexOf(newEntry)
 
-    // append the new entry
-    _drawQueue enqueue newEntry
-    newEntry.index = _drawQueue.indexOf(newEntry)
+    // Refresh all of the index data, because it is invalid now
+    to foreach(i => i.index = to.indexOf(i))
 
-    // refresh all of the index data, because it is invalid now
-    _drawQueue foreach(i => i.index = _drawQueue.indexOf(i))
     new AdjustableDrawingHandle(newEntry)
   }
 
-  /**
-   * Removes all instances that are equal to the parameter.
-   * @param that The handle to remove.
-   * @throws NoSuchElementException if no such element exists.
-   */
-  def remove(that: AdjustableDrawingHandle): Unit = {
-    val index = _drawQueue indexOf that
-    if(index == -1) throw new NoSuchElementException
-    _drawQueue.dequeueAll(i => that.entry equals i)
+  // </editor-fold>
+
+  abstract override def draw(g: Graphics2D): Unit = {
+    m_preDraw foreach { entry  => if(entry.condition()) entry.func(g) }
+    super.draw(g)
+    m_postDraw foreach { entry => if(entry.condition()) entry.func(g) }
   }
 
-}
+  def preDraw(f: Consumer[Graphics2D], condition: Supplier[Boolean] = () => true) = appendElement(m_preDraw, f.asScala, condition.asScala)
 
-/**
- * Represents a drawing entry in the "individual" drawing queue.
- * @param index The index
- * @param func The function to tie to.
- */
-private class DrawingEntry private[gui](var index: Int, val func: (Graphics2D) => Unit,
-                                         val condition: () => Boolean)
+  def postDraw(f: Consumer[Graphics2D], condition: Supplier[Boolean] = () => true) = appendElement(m_postDraw, f.asScala, condition.asScala)
 
-class AdjustableDrawingHandle private[gui](private[gui] val entry: DrawingEntry) {
+  // <editor-fold desc="Nested classes">
+
+  class AdjustableDrawingHandle private[AdjustableDrawing](private[AdjustableDrawing] val entry: DrawingEntry) {
+
+    /**
+      * @return The index of the function in the drawing queue of the AdjustableDrawing
+      * object.
+      */
+    def index = entry.index
+
+    /**
+      * @return The function used to draw the object individually.
+      */
+    def function = entry.func
+
+    /**
+      * @return The condition which must be satisfied first for the draw function to get called.
+      */
+    def condition = entry.condition
+
+    /**
+      * Apply the graphics object to the function body of this handle.
+      *
+      * @param g The graphics object.
+      */
+    def apply(g: Graphics2D) = entry.func(g)
+
+    /**
+      * Removes this handle from the draw queue it has been assigned to.
+      */
+    def dispose(): Unit = {
+      entry.storage -= entry
+    }
+
+  }
 
   /**
-   * Returns the index of the function in the drawing queue of the <code>AdjustableDrawing</code>
-   * object.
-   * @return The index of the function.
-   */
-  def index = entry.index
+    * Represents a drawing entry in the "individual" drawing queue.
+    *
+    * @param index The index
+    * @param func The function to tie to.
+    */
+  private[AdjustableDrawing] class DrawingEntry private[AdjustableDrawing](var index: Int, val func: (Graphics2D) => Unit,
+                                          val condition: () => Boolean, val storage: mutable.ArrayBuffer[DrawingEntry])
 
-  /**
-   * Returns the function used to draw the object individually.
-   */
-  def function = entry.func
-
-  /**
-   * Returns the condition.
-   * @return The condition.
-   */
-  def condition = entry.condition
-
-  /**
-   * Apply the graphics object to the function body of this handle.
-   * @param g The graphics object.
-   */
-  def apply(g: Graphics2D) = entry.func.apply(g)
+  // </editor-fold>
 
 }

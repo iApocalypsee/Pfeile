@@ -4,6 +4,7 @@ import java.awt.Point
 
 import general._
 import general.io.StageDescriptable
+import general.property.IntStaticProperty
 import gui.screen._
 import misc.ItemInitialization
 import newent.Player
@@ -18,8 +19,8 @@ import scala.util.Random
 
 class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
 
-  lazy val sizeX = Property(initWidth)
-  lazy val sizeY = Property(initHeight)
+  lazy val sizeX = new IntStaticProperty(initWidth)
+  lazy val sizeY = new IntStaticProperty(initHeight)
 
   private var context: PfeileContext = null
 

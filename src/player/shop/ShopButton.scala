@@ -5,11 +5,13 @@ import java.awt._
 import _root_.geom.Vector
 import comp.{Component, _}
 import general._
+import general.property.DynamicProperty
 
 import scala.collection.mutable
 
 /**
   * GUI representation of the shop button.
+  *
   * @param gridX The x position in the grid of listed shop buttons.
   * @param gridY The y position in the grid of listed shop buttons.
   * @param article The article to display.
@@ -86,7 +88,7 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Art
   override def draw(g: Graphics2D): Unit = {
     getBorder.draw(g)
 
-    textLabel.setFontColor(article.shopButtonAttributes.textColor)
+    textLabel.setFontColor(article.shopButtonAttributes.textColor.get)
     textLabel.draw(g)
 
     g.drawImage(cachedItem.getImage, imageDrawLocation.x, imageDrawLocation.y, imageDrawDimension.width, imageDrawDimension.height, null)
@@ -101,6 +103,7 @@ private[shop] object ShopButton {
 
     /**
       * The setter function that every property in the [[player.shop.ShopButton.Style]] object.
+      *
       * @tparam A The datatype the setter is expecting.
       * @return A setter with side effects special to the ShopButtons.
       */
@@ -111,13 +114,15 @@ private[shop] object ShopButton {
 
     /**
       * Creates a property with the common setter described above.
+      *
       * @param startValue The start value of the property.
       * @tparam A The datatype of the property
       * @return A property with [[player.shop.ShopButton.Style$#commonSetSideEffect()]] applied.
       */
     private def commonProperty[A](startValue: A) = {
-      val prop = Property(startValue)
-      prop appendSetter commonSetSideEffect[A]
+      val prop = new DynamicProperty(startValue) {
+        dynSet = commonSetSideEffect[A]
+      }
       prop
     }
 
@@ -150,6 +155,7 @@ private[shop] object ShopButton {
     /**
       * Calculates the size of the image contained by the shop button and returns it
       * as a Vector2.
+      *
       * @return A vector representing the image size inside the button.
       */
     def imageSize = new Vector(fixedWidth - imageInsets.left - imageInsets.right,
@@ -157,6 +163,7 @@ private[shop] object ShopButton {
 
     /**
       * Returns the position of the image relative to the top left corner of the button.
+      *
       * @return the position of the image relative to the top left corner of the button.
       */
     def imagePosition = new Vector(imageInsets.left, imageInsets.top)

@@ -1,6 +1,6 @@
 package newent
 
-import general.Property
+import general.property.StaticProperty
 
 /**
   * Any entity that can contain some sort of statistics to represent itself.
@@ -8,7 +8,9 @@ import general.Property
   */
 trait StatisticalEntity extends Entity {
 
-  /** The statistics object in which every statistical occurrence is collected. */
+  /**
+    * The statistics object in which every statistical occurrence is collected.
+    */
   lazy val statistics = {
     val initAttribs = initialAttribute
     alignInitialAttributes(initAttribs)
@@ -21,9 +23,7 @@ trait StatisticalEntity extends Entity {
     * The method just gets called once to initialize an underlying field.
     */
   protected def initialAttribute: Attributes = new Attributes {
-    override protected def initialCurrent(initObject: Current): Current = initObject
-
-    override protected def initialLasting(initObject: Lasting): Lasting = initObject
+    override protected def initialAttribs(initObject: Table) = initObject
   }
 
   /**
@@ -31,14 +31,23 @@ trait StatisticalEntity extends Entity {
     * of the [[newent.Attributes]] object.
     * Subclasses are not required to override this method, but if they do, they __have to__
     * call `super.alignInitialAttributes(x)` to guarantee the success of the attribute mechanism.
+ *
     * @param x The attributes to be changed.
     */
   protected def alignInitialAttributes(x: Attributes): Unit = {}
 
 }
 
+/**
+  * Wrapper class around the attributes object.
+  *
+  * Wrapping is necessary for adding statistical methods later; these would not fit the Attributes class
+  * but more a separate class devoted to statistics alone.
+ *
+  * @param at The attribute object to pull the data from.
+  */
 class StatisticsRecorder(at: Attributes) {
 
-  lazy val attributes = Property.withValidation(at)
+  lazy val attributes = new StaticProperty(at)
 
 }

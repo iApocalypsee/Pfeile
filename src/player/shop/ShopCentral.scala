@@ -21,7 +21,7 @@ object ShopCentral extends TraderLike {
   private def subscribeShopButtonCallbacks(s: Seq[ShopButton]): Unit = {
     for (button <- s) button.addMouseListener(new MouseAdapter {
       override def mouseReleased(e: MouseEvent): Unit = {
-        ShopCentral.sell(Main.getContext.activePlayer, _ == button.article)
+        ShopCentral.sell(Main.getContext.activePlayer, article => article == button.article)
       }
     })
   }

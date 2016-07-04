@@ -2,8 +2,6 @@ package general.property
 
 import java.util.function.Supplier
 
-import general.JavaInterop
-
 /**
   * Initializes a property lazily to a default value.
   * Be aware that the lazy behavior is only triggered once. After the property has been initialized lazily, most
@@ -18,22 +16,22 @@ trait LazyInit[A] extends PropertyBase[A] {
 
   private var alreadyComputed = false
 
-  private var _lazyCompute: () => A = failLazyCompute
+  private var _lazyCompute = failLazyCompute
 
-  private def failLazyCompute = () => throw new ExceptionInInitializerError("No lazy computation available or already used")
+  private def failLazyCompute: Supplier[A] = () => throw new ExceptionInInitializerError("No lazy computation available or already used")
 
   def lazyCompute = _lazyCompute
-  def lazyCompute_=(x: () => A) = if (!alreadyComputed) {
+  def lazyCompute_=(x: Supplier[A]) = if (!alreadyComputed) {
     require(x != null)
     _lazyCompute = x
   }
 
-  def getLazyCompute = JavaInterop.asJava(lazyCompute)
-  def setLazyCompute(javafun: Supplier[A]) = if (!alreadyComputed) lazyCompute = JavaInterop.asScala(javafun)
+  def getLazyCompute = lazyCompute
+  def setLazyCompute(x: Supplier[A]) = this.lazyCompute = x
 
   override def get = {
     if (isEmpty && !alreadyComputed) {
-      val lazyComputation = lazyCompute()
+      val lazyComputation = lazyCompute.get()
       lazyCompute = failLazyCompute
       this set lazyComputation
     }

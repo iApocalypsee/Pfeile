@@ -4,7 +4,7 @@ import java.util
 import java.util.concurrent.Executors
 import java.util.function.{BiConsumer, BiFunction, Consumer, Supplier}
 import java.util.stream.Collectors
-import java.util.{Collections, List => IList, Map => IMap, Optional, Set => ISet, function}
+import java.util.{Collections, Deque => IDeque, List => IList, Map => IMap, Optional, Set => ISet, function}
 
 import scala.concurrent.Future
 
@@ -26,7 +26,9 @@ object JavaInterop {
 
   implicit class ICollectionOp[A](val sub: java.util.Collection[A]) extends AnyVal {
 
-    private def listImpl: java.util.List[A] = new util.ArrayList[A]()
+    private def listImpl: IList[A] = new util.ArrayList[A]()
+    private def setImpl: ISet[A] = new util.HashSet[A]()
+    private def dequeImpl: IDeque[A] = new util.ArrayDeque[A]()
 
     def toList: IList[A] = {
       val newList = listImpl
@@ -34,7 +36,27 @@ object JavaInterop {
       newList
     }
 
-    def toImmutableList: IList[A] = Collections.unmodifiableList(toList)
+    def toSet: ISet[A] = {
+      val newSet = setImpl
+      newSet.addAll(sub)
+      newSet
+    }
+
+    def toDeque: IDeque[A] = {
+      val newDeque = dequeImpl
+      newDeque.addAll(sub)
+      newDeque
+    }
+
+    def toImmutableList: IList[A] = sub match {
+      case list: IList[A] => Collections.unmodifiableList(list)
+      case _ => Collections.unmodifiableList(toList)
+    }
+
+    def toImmutableSet: ISet[A] = sub match {
+      case set: ISet[A] => Collections.unmodifiableSet(set)
+      case _ => Collections.unmodifiableSet(toSet)
+    }
 
   }
 

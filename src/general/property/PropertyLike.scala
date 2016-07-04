@@ -2,8 +2,6 @@ package general.property
 
 import java.util.function.{Consumer, Supplier}
 
-import scala.compat.java8.FunctionConverters.asScalaFromConsumer
-
 /**
   * The most abstract trait for properties.
   * @tparam A The type of variable to hold.
@@ -17,15 +15,17 @@ trait PropertyLike[A] {
 
   def option: Option[A]
 
-  def ifdef(x: A => Unit)
-
-  def ifdefj(x: Consumer[A]) = ifdef(asScalaFromConsumer(x))
+  def ifdef(x: Consumer[A])
 
   def isDefined = option.isDefined
 
   def isEmpty = option.isEmpty
 
   @inline def orElse[B >: A](alternative: => Option[B]) = option.orElse(alternative)
+}
+
+object PropertyLike {
+  implicit def getImplicitly[A](x: PropertyLike[A]): A = x.get
 }
 
 /**

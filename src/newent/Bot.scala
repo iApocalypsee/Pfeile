@@ -3,7 +3,8 @@ package newent
 import java.awt.{Color, Graphics2D, Point}
 
 import comp.Component
-import general.{Delegate, Main, PfeileContext, Property}
+import general.property.{DoubleStaticProperty, IntStaticProperty}
+import general.{Delegate, Main, PfeileContext}
 import gui.LifeUI
 import newent.pathfinding.{AStarPathfinder, Pathfinder}
 import player.Life
@@ -88,7 +89,7 @@ class Bot(world: World, spawnPoint: Point, name: String)
   }
 
   /** the number of arrows the player an still use from this his/her selected usable <code> PfeileContext.ARROW_NUMBER_FREE_SET </code> inventory */
-  val arrowNumberFreeSetUsable = Property(PfeileContext.arrowNumberFreeSet.get)
+  val arrowNumberFreeSetUsable = new IntStaticProperty(PfeileContext.arrowNumberFreeSet.get)
 
   /**
     * the power of this KI: <p>
@@ -111,8 +112,8 @@ class Bot(world: World, spawnPoint: Point, name: String)
 
 object Bot {
   /** The standard maximum life of a bot */
-  val maximumLife = Property.apply[java.lang.Double]()
+  val maximumLife = new DoubleStaticProperty
 
   /** The standard life regeneration a bot has */
-  val lifeRegeneration = Property.apply[java.lang.Double]()
+  val lifeRegeneration = new DoubleStaticProperty
 }

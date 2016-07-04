@@ -1,7 +1,13 @@
 package general.property
 
+import java.util.function._
+import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
+
+import scala.compat.java8.FunctionConverters._
+
 /**
   * The most basic trait of a property is the get and set branch.
+  *
   * @tparam A The type of property. No variance by design.
   */
 trait PropertyBase[A] extends PropertyLike[A] with EagerEval[A] {
@@ -16,6 +22,6 @@ trait PropertyBase[A] extends PropertyLike[A] with EagerEval[A] {
 
   override def option = value
 
-  override def ifdef(x: A => Unit) = option.foreach(x)
+  override def ifdef(x: Consumer[A]) = option.foreach(x.asScala)
 
 }

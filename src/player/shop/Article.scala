@@ -2,7 +2,7 @@ package player.shop
 
 import java.awt.Color
 
-import general.Property
+import general.property.StaticProperty
 import newent.{Entity, Player}
 import player.item.Item
 
@@ -68,7 +68,7 @@ class VisualArticleAttributes private[shop] {
   /**
     * The color being used for drawing the name of the article in the shop button.
     */
-  val textColor = Property(Color.white)
+  val textColor = new StaticProperty(Color.white)
 
   /**
     * Defines a function which can return a string describing why the given entity
@@ -79,14 +79,14 @@ class VisualArticleAttributes private[shop] {
     * In ShopWindow, if this article is not available (meaning this function returns a Some), the corresponding
     * shop button is grayed out, but still visible to the entity.
     */
-  val notAvailableReason: Property[Entity => Option[String]] = Property(_ => None)
+  val notAvailableReason = new StaticProperty[Entity => Option[String]](_ => None)
 
   /**
     * Defines a function which can return a boolean describing if the given article should be seen
     * by the given player.
     * In practice, this only affects the ShopWindow GUI.
     */
-  val isVisibleToEntity: Property[Player => Boolean] = Property(_ => true)
+  val isVisibleToEntity = new StaticProperty[Player => Boolean](_ => true)
 
   /**
     * Returns true if this article is available for the given entity.

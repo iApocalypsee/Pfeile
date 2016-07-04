@@ -1,39 +1,30 @@
 package newent
 
 import general._
+import general.property.StaticProperty
 
-/** Represents the current state of the entity. */
+/**
+  * Represents the current, generic state of the entity.
+  */
 abstract class Attributes {
 
-  /** The current properties of the entity. */
-  lazy val current: Property[Current] = {
-    val startObject = initialCurrent(new Current)
-    require(startObject != null)
-    Property.withValidation(startObject)
+  /**
+    * The current properties of the entity.
+    */
+  lazy val current = new StaticProperty[Table]() {
+    val startObject = initialAttribs(new Table)
+
+    override def staticSetter(x: Table) = {
+      require(startObject != null)
+      require(isTableOkay(x))
+      x
+    }
   }
 
-  /** The lasting properties of the entity. */
-  lazy val lasting: Property[Lasting] = {
-    val startObject = initialLasting(new Lasting)
-    require(startObject != null)
-    Property.withValidation(startObject)
-  }
+  protected def isTableOkay(t: Table) = true
 
-  /** Checks if the new current object has enough metadata objects. */
-  lazy val currentDataCheck = Property.withValidation[Current => Boolean] { _: Current => true }
-  /** Checks if the new lasting object has enough metadata objects. */
-  lazy val lastingDataCheck = Property.withValidation[Lasting => Boolean] { _: Lasting => true }
+  protected def initialAttribs(initObject: Table): Table
 
-  // Pass the new set object to the currentDataCheck function to validate it.
-  current appendSetter { x => require(currentDataCheck.get.apply(x)); x }
-  lasting appendSetter { x => require(lastingDataCheck.get.apply(x)); x }
-
-  protected def initialCurrent(initObject: Current): Current
-
-  protected def initialLasting(initObject: Lasting): Lasting
-
-  class Current extends Metadatable
-
-  class Lasting extends Metadatable
+  class Table extends Metadatable
 
 }

@@ -33,8 +33,8 @@ public class Label extends Component {
     private Point textDrawLocation;
     private Point imageDrawLocation;
     private Dimension imageDrawScale;
-    // ATTENTION: Considers only ONE LINE OF TEXT FOR WIDTH AND HEIGHT. NOT MORE.
-    private Dimension textDrawScale;
+    // ATTENTION: Considers only ONE LINE OF TEXT FOR HEIGHT. NOT MORE.
+    private int textDrawScale;
 
     public static final Insets STD_INSETS = new Insets(5, 5, 5, 6);
 
@@ -182,43 +182,37 @@ public class Label extends Component {
 
     private void recalculateInternalData() {
         Dimension d = textSequence.formattedDimension();
+
+        // Considers the whole string to be written in one line, does not care about new line chars
+        textDrawScale = Component.getTextBounds(getText(), font).height;
+
         if(optImage != null) {
             imageDrawLocation = new Point(getX(), getY());
             textDrawLocation = new Point(imageDrawLocation.x + imageTextInset + imageDrawScale.width, getY() + d.height + STD_INSETS.top);
         } else {
-            textDrawLocation = new Point(getX(), getY() + d.height);
+            textDrawLocation = new Point(getX(), getY());
         }
     }
 
     /**
      * Returns a dimension with new suitable bounds.
+     * Also resets some of the text-related positions and dimensions.
      */
-    private Dimension recalculateBounds () {
-        String text = getText();
-        Dimension d = new TextSequence(text).formattedDimension();
-
+    private Dimension recalculateBounds() {
         recalculateInternalData();
 
+        final Dimension d = textSequence.formattedDimension();
+
         if (optImage != null) {
-
-            imageDrawLocation = new Point(getX(), getY());
-            textDrawLocation = new Point(imageDrawLocation.x + imageTextInset + imageDrawScale.width, getY() + d.height + STD_INSETS.top);
-
-            if (d.height > imageDrawScale.height)
-                d.setSize(d.width + imageDrawScale.width + imageTextInset, d.height);
-            else
-                d.setSize(d.width + imageDrawScale.width + imageTextInset, imageDrawScale.height);
-
-        } else {
-            textDrawLocation = new Point(getX(), getY() + d.height);
+            // If image is larger than current height, assign height of image as new label height.
+            // Assign new width to label based on given text.
+            d.setSize(d.width + imageDrawScale.width + imageTextInset, d.height > imageDrawScale.height ? d.height : imageDrawScale.height);
         }
 
-        textDrawScale = d;
-
-//        // adding STD_INSETS
-//        d.setSize(d.getWidth() + STD_INSETS.right + STD_INSETS.left, d.getHeight() + STD_INSETS.top + STD_INSETS.bottom);
         return d;
     }
+
+    // <editor-fold desc="Getters and setters">
 
     public String getText() {
         return textSequence.getSourceString();
@@ -292,6 +286,8 @@ public class Label extends Component {
         this.backgroundColor = backgroundColor;
     }
 
+    // </editor-fold>
+
     class TextSequence implements Drawable {
 
         private java.util.List<String> textTokens;
@@ -311,7 +307,7 @@ public class Label extends Component {
         @Override
         public void draw(Graphics2D g) {
             for(int i = 0; i < textTokens.size(); i++) {
-                int yInset = i * textDrawScale.height;
+                final int yInset = i * textDrawScale + textDrawScale;
                 g.drawString(textTokens.get(i), textDrawLocation.x, textDrawLocation.y + yInset);
             }
         }
@@ -331,8 +327,10 @@ public class Label extends Component {
             int longestWidth = 0;
             for(String s : textTokens) {
                 final Dimension textBounds = Component.getTextBounds(s, getFont());
-                if(textBounds.width > longestWidth)
+                if(textBounds.width > longestWidth) {
                     longest = s;
+                    longestWidth = textBounds.width;
+                }
             }
             return longest;
         }

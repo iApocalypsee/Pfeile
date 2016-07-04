@@ -184,6 +184,20 @@ trait TransformationEvent {
   def isDelta = !deltaMatrix.isIdentity
 }
 
+object TransformationEvent {
+
+  lazy val InvalidRotation: PartialFunction[TransformationEvent, Unit] = {
+    case rotation: RotationChange => throw new UnsupportedOperationException("Rotation not supported")
+    case _ =>
+  }
+
+  lazy val InvalidScale: PartialFunction[TransformationEvent, Unit] = {
+    case scale: ScaleChange => throw new UnsupportedOperationException("Scaling not supported")
+    case _ =>
+  }
+
+}
+
 case class RotationChange(oldDegree: Double, newDegree: Double) extends TransformationEvent {
   val delta = newDegree - oldDegree
   override lazy val matrix = AffineTransform.getRotateInstance(newDegree)

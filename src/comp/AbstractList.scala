@@ -1,18 +1,38 @@
 package comp
 
-import java.awt.{Dimension, Point}
+import java.awt.{Color, Dimension, Graphics2D, Point}
+import java.util.function._
+import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
 import general.LogFacility
 
 import scala.collection.mutable
+import scala.compat.java8.FunctionConverters._
 
-abstract class AbstractList[A <: Component] extends Component {
+abstract class AbstractList[A <: Component] extends Component(new java.awt.Rectangle(-1, -1, 2, 2)) {
 
   // Easier access to the AbstractList instance from inner classes
   private val outer = this
 
   // Listing of all elements.
   private val m_elements = mutable.ArrayBuffer[Element]()
+
+  // <editor-fold desc="Initialization code">
+
+  onTransformed += { evt =>
+    m_elements foreach { elem => elem.recalculateSupposedPosition() }
+  }
+
+  // </editor-fold>
+
+  // <editor-fold desc="Coloring">
+
+  // The background used to draw the inside of the list.
+  protected var background: ImageLike = new SolidColor(new Color(0x565461))
+
+  protected def elementColor()
+
+  // </editor-fold>
 
   //<editor-fold desc="Dimensions of AbstractList itself">
 
@@ -32,15 +52,13 @@ abstract class AbstractList[A <: Component] extends Component {
     val componentHeightsAccumulated = m_elements.foldLeft(0) { (heightSoFar, elem) => heightSoFar + elem.component.getHeight }
 
     val widestComponentWidth = m_elements.foldLeft(0) { (width, elem) =>
-      if(elem.component.getWidth > width) elem.component.getWidth
+      if (elem.component.getWidth > width) elem.component.getWidth
       else width
     }
 
-    val betweenElementsInsets = if(elementCount == 0) 0 else (elementCount - 1) * elementInset
+    val betweenElementsInsets = if (elementCount == 0) 0 else (elementCount - 1) * elementInset
 
-    val insets = topInset + bottomInset + betweenElementsInsets
-
-    val resultingHeight = insets + componentHeightsAccumulated
+    val resultingHeight = topInset + bottomInset + betweenElementsInsets + componentHeightsAccumulated
     val resultingWidth = leftInset + rightInset + widestComponentWidth
 
     new Dimension(resultingWidth, resultingHeight)
@@ -48,7 +66,7 @@ abstract class AbstractList[A <: Component] extends Component {
   }
 
   /**
-    * Recalculates most of the dimensions and position data of the GUI list as well as of the component
+    * Recalculates most of the dimensions and position data of the GUI list as well as of the components
     * governed by this list.
     */
   private def refreshDimensions(): Unit = {
@@ -65,6 +83,7 @@ abstract class AbstractList[A <: Component] extends Component {
   //<editor-fold desc="Addition and removal of elements"
 
   private def preAddCheck(x: A): Unit = {
+    require(x != null)
     require(!m_elements.contains(x),
       s"""
          |Component already present in list.
@@ -79,12 +98,17 @@ abstract class AbstractList[A <: Component] extends Component {
        """.stripMargin)
   }
 
+  private def postAdd(x: A): Unit = {
+    refreshDimensions()
+  }
+
   /**
     * Adds an element to the end of the list and recalculates the bounds.
     */
   def appendElement(x: A): Unit = {
     preAddCheck(x)
     m_elements += Element(x)
+    postAdd(x)
   }
 
   /**
@@ -94,19 +118,29 @@ abstract class AbstractList[A <: Component] extends Component {
   def prependElement(x: A): Unit = {
     preAddCheck(x)
     m_elements prepend Element(x)
+    postAdd(x)
+  }
+
+  /**
+    * Applies a function to every element of this GUI list.
+    *
+    * @param x The function to apply.
+    */
+  def foreach(x: Consumer[A]): Unit = {
+    m_elements.foreach(elem => x.accept(elem.component))
   }
 
   /**
     * Removes a specific element from the list, and recomputes the bounds and the positions again.
     */
-  def removeElement(x: A): Boolean = removeElement((c: A) => c == x)
+  def removeElement(x: A): Boolean = removeElement(asJavaPredicate((c: A) => c == x))
 
   /**
     * Removes a specific element matching with given predicate function 'f'.
     * Recomputes the bounds and the positions on successful removal.
     */
-  def removeElement(f: A => Boolean): Boolean = {
-    val satisfyingMatch = m_elements.find(elem => f(elem.component))
+  def removeElement(f: Predicate[A]): Boolean = {
+    val satisfyingMatch = m_elements.find(elem => f.test(elem.component))
 
     satisfyingMatch.foreach { removedElement =>
       onRemovedInternal(removedElement)
@@ -173,7 +207,7 @@ abstract class AbstractList[A <: Component] extends Component {
     * Callback for subclasses to override when an element has been successfully determined
     * to be removed from the GUI list.
     */
-  protected def onRemoved(x: Element): Unit = { }
+  protected def onRemoved(x: Element): Unit = {}
 
   //</editor-fold>
 
@@ -219,14 +253,15 @@ abstract class AbstractList[A <: Component] extends Component {
 
     private[AbstractList] val transformHandler = component.onTransformed += { transform =>
 
-      LogFacility.logMethodWithMessage(
-        s"""
-           |$transform invalid. Make sure you don't apply any transformation to a component
-           |that has been added to a list component. Otherwise it would break the list layout quite
-           |noticeably.
+      if(!transform.isInstanceOf[TranslationChange]) {
+        LogFacility.logMethodWithMessage(
+          s"""
+             |$transform invalid. Make sure you don't apply any transformation to a component
+             |that has been added to a list component. Otherwise it would break the list layout quite
+             |noticeably.
          """.stripMargin)
-
-      throw new NotImplementedError("Implement cancellation of transformation in class TransformationEvent")
+        throw new NotImplementedError("Implement cancellation of transformation in class TransformationEvent")
+      }
 
     }
 
@@ -262,6 +297,9 @@ abstract class AbstractList[A <: Component] extends Component {
 
       m_supposedPosition = new Point(valueX, valueY)
 
+      component.setX(valueX)
+      component.setY(valueY)
+
     }
 
     //</editor-fold>
@@ -279,4 +317,44 @@ abstract class AbstractList[A <: Component] extends Component {
 
   //</editor-fold>
 
+}
+
+class NormalList extends AbstractList[Label] {
+
+  /**
+    * Inset from the last element to the bottom of the list in pixels.
+    */
+  override def bottomInset = 10
+
+  /**
+    * Inset from the right, applied to all components in the list.
+    */
+  override def rightInset = 10
+
+  /**
+    * Inset in between elements in pixels.
+    */
+  override def elementInset = 5
+
+  /**
+    * Inset from the first element to the top of the list in pixels.
+    */
+  override def topInset = 10
+
+  /**
+    * Inset from the left, applied to all components in the list.
+    */
+  override def leftInset = 10
+
+  override def draw(g: Graphics2D) = {
+
+    background.drawImage(g, getX, getY, getWidth, getHeight)
+
+    foreach { (label: comp.Label) =>
+      label.draw(g)
+    }
+
+  }
+
+  override protected def elementColor() = ???
 }

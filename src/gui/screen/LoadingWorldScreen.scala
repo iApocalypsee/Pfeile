@@ -7,6 +7,7 @@ import animation.ImageLoader
 import comp.Component.ComponentStatus
 import comp.{Button, Component, Label}
 import general._
+import general.property.StaticProperty
 import player.weapon.arrow.AbstractArrow
 import world.ContextCreator
 
@@ -89,10 +90,10 @@ object LoadingWorldScreen extends Screen("LoadingScreen", 222) {
         GUI.stageLabel.setText("Fertig!")
     }
     // Return the creator as a property.
-    Property.withValidation(creator)
+    new StaticProperty(creator)
   }
 
-  private lazy val contextCreationFuture = Property[Future[PfeileContext]]()
+  private lazy val contextCreationFuture = new StaticProperty[Future[PfeileContext]]()
 
   onScreenEnter += { () =>
     val creationProcedure: Future[PfeileContext] = worldCreation().createWorld()

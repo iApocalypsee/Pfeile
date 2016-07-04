@@ -36,6 +36,8 @@ class Vector(xc: Double, yc: Double) {
       - y * other.getX)
 
   def dot(x: Vector) = this.x * x.x + this.y * x.y
+
+  override def toString = s"Vector(x=$x, y=$y, length=$length)"
 }
 
 object Vector {

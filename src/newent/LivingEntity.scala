@@ -1,5 +1,7 @@
 package newent
 
+import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet, _}
+
 import general.{LogFacility, Main, PfeileContext}
 import gui.screen.GameScreen
 import newent.event.AttackEvent
@@ -7,8 +9,6 @@ import player.Life
 import player.item.Item
 import player.item.loot.BagOfLoots
 import player.weapon.RangedWeapon
-
-import scala.collection.JavaConversions
 
 /**
   * An entity that has its own life status.
@@ -18,7 +18,9 @@ import scala.collection.JavaConversions
   */
 trait LivingEntity extends Entity with AttackContainer {
 
-  /** The life of the entity. */
+  /**
+    * The life of the entity.
+    */
   val life: Life
 
   /** The life of the entity. */
@@ -26,12 +28,9 @@ trait LivingEntity extends Entity with AttackContainer {
 
   /**
     * Override this method to add items, which drop, if the LivingEntity dies. For example, a wolf doesn't have an
-    * inventory, but should drop tooth/fur. If the method is not overridden, it returns an empty Seq.
+    * inventory, but should drop tooth/fur. If the method is not overridden, it returns an empty list.
     */
-  def additionalDrops = Seq.empty[Item]
-
-  /** Returns <code>additionalDrops</code> as JavaList.  */
-  final def additionalDropsAsJava = JavaConversions.seqAsJavaList(additionalDrops)
+  def additionalDrops = Collections.emptyList[Item]()
 
   /** Every living entity can be poisoned. The implementation of the LivingEntity itself has to instance the value. */
   val poison: Poison
@@ -49,8 +48,7 @@ trait LivingEntity extends Entity with AttackContainer {
   private def putLootBag(): Unit = {
     val bagOfLoots = new BagOfLoots(this)
 
-    for(item <- additionalDrops)
-      bagOfLoots.add(item)
+    bagOfLoots.add(additionalDrops)
 
     // only drop a loot, if it has content.
     if (bagOfLoots.getStoredItems.size() > 0) {

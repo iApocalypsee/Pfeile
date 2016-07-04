@@ -2,8 +2,7 @@ package player.item.loot;
 
 import comp.ImageComponent;
 import general.Main;
-import general.Property;
-import general.PropertyWorkaround;
+import general.property.LazyStaticProperty;
 import gui.screen.GameScreen;
 import newent.Entity;
 import newent.InventoryEntity;
@@ -33,7 +32,7 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
     protected int gridY;
 
     /** Subclasses must override this value */
-    private final Property<LootUI> lootUI = PropertyWorkaround.apply();
+    private final LazyStaticProperty<LootUI> lootUI = new LazyStaticProperty<>();
 
     /** everything, that is stored inside this loot and can be received by collecting this Loot. */
     protected final List<Item> listOfContent;
@@ -65,7 +64,7 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
             addCollectListener(this.lootUI.get());
             lootUI.setOnTile(getTile());
         } else {
-            this.lootUI.setLazyInit(() -> {
+            this.lootUI.setLazyCompute(() -> {
                 final LootUI returnedUI = createUI();
                 // Only after LootUI has been created, the mouseListener for collecting the Loot can be added.
                 addCollectListener(returnedUI);

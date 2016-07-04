@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * A standard implementation of a component.
  */
-public abstract class Component {
+public class Component {
 
 	/**
 	 * Zeigt den Status an, in welchem das Steuerelement sich befindet.
@@ -312,7 +312,8 @@ public abstract class Component {
 		setBackingScreen(backing);
 	}
 
-    public abstract void draw(Graphics2D g);
+    public void draw(Graphics2D g) {
+    }
 
 	private boolean isBoundsRecomputeNeeded() {
 		return /*visible && */(transformationChangedSince || bounds == null) && boundsRecalculationIssued;

@@ -2,6 +2,7 @@ package general;
 
 import animation.SoundEffectTimeClock;
 import comp.Component;
+import general.property.StaticProperty;
 import gui.screen.*;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.Duration$;
@@ -57,8 +58,7 @@ public class TimeClock extends Component implements Runnable {
 
 	public final Delegate.Function0Delegate onTimeOver = new Delegate.Function0Delegate();
 
-
-    private static Property<FiniteDuration> _turnTime = Property.withValidation();
+    private static StaticProperty<FiniteDuration> _turnTime = new StaticProperty<>();
 
 	// KONSTURCKTOR
 	public TimeClock (PfeileContext context) {
