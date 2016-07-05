@@ -3,7 +3,7 @@ package player.item.loot;
 import general.Main;
 import gui.screen.GameScreen;
 import newent.*;
-import player.item.*;
+import player.item.Item;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -113,7 +113,7 @@ public abstract class Chest extends Loot {
 
                                     InventoryLike inventory = ((CombatUnit) selectedEntity).inventory();
 
-                                    List<Item> inventoryList = inventory.javaItems();
+                                    List<Item> inventoryList = inventory.getItems();
                                     if (Chest.this instanceof DefaultChest) {
                                         for (Item item : inventoryList) {
                                             if (item instanceof KeyDefaultChest) {

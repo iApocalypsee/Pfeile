@@ -86,7 +86,7 @@ trait MoneyEarner extends Entity with InventoryEntity {
         def recur(moneyLeft: Int): Unit = {
           if(moneyLeft <= 0) return
 
-          val sortedCoins = CoinHelper.getSortedCoins(inventory.javaItems)
+          val sortedCoins = CoinHelper.getSortedCoins(inventory.getItems)
           val bronzes = sortedCoins(0).toList
           val silvers = sortedCoins(1).toList
           val golds = sortedCoins(2).toList

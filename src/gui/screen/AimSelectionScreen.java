@@ -15,8 +15,6 @@ import newent.event.AttackEvent;
 import player.item.Item;
 import player.weapon.arrow.AbstractArrow;
 import player.weapon.arrow.ArrowHelper;
-import scala.Option;
-import scala.runtime.AbstractFunction1;
 import world.Terrain;
 import world.Tile;
 
@@ -26,6 +24,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 public class AimSelectionScreen extends Screen {
@@ -235,18 +234,17 @@ public class AimSelectionScreen extends Screen {
 			super.run();
 
 			Player active = Main.getContext().activePlayer();
-			Tile target = active.world().terrain().tileAt(posX_selectedField, posY_selectedField);
+			Tile target = active.getWorld().getTerrain().tileAt(posX_selectedField, posY_selectedField);
 
 			final AbstractArrow arrow = ArrowHelper.instanceArrow(ArrowSelectionScreen.getInstance().getSelectedIndex());
 
-			Option<Item> opt = active.inventory().remove(new AbstractFunction1<Item, Object>() {
-				@Override
-				public Object apply(Item v1) {
-					return v1.getName().equals(arrow.getName());
-				}
-			});
+            if(arrow == null) {
+                throw new NullPointerException("Arrow instantiation failed during shoot thread execution");
+            }
 
-			if(opt.isDefined()) {
+            final Optional<Item> opt = active.getInventory().remove(item -> item.getName().equals(arrow.getName()));
+
+            if(opt.isPresent()) {
                 arrow.getAim().setGridX(posX_selectedField);
                 arrow.getAim().setGridY(posY_selectedField);
 

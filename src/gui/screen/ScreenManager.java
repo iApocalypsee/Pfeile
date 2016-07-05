@@ -3,8 +3,8 @@ package gui.screen;
 import gui.Drawable;
 
 import java.awt.*;
-import java.util.Date;
 import java.util.Hashtable;
+import java.util.Optional;
 
 /**
  * Der ScreenManager verwaltet die einzelnen Screens. Er ist daf�r zust�ndig,
@@ -21,9 +21,9 @@ import java.util.Hashtable;
  */
 public final class ScreenManager implements Drawable {
 
-	private Screen activeScreen;
+	private Screen activeScreen, transitioning = null;
 	private Hashtable<Integer, Screen> screens = new Hashtable<Integer, Screen>();
-	private Date lastScreenChange;
+	private long lastScreenChange;
 
 	/**
 	 * Erstellt eine neue Instanz des ScreenManagers.
@@ -36,36 +36,56 @@ public final class ScreenManager implements Drawable {
 	public Screen getActiveScreen() {
 		return activeScreen;
 	}
-	
-	public int getActiveScreenIndex() {
+
+    public Optional<Screen> getTransitioning() {
+        return Optional.ofNullable(transitioning);
+    }
+
+    public int getActiveScreenIndex() {
 		return activeScreen.SCREEN_INDEX;
 	}
 
 	/**
 	 * @param activeScreen the activeScreen to set
 	 * @throws RuntimeException wenn kein Screen anhand des Index gefunden werden kann
+     * @deprecated Use requestScreenChange() instead.
+     * Changing the active screen in parallel incurs consequences.
+     * A better solution is to request a screen change; this request is then processed at the beginning of
+     * another update cycle.
 	 */
+    @Deprecated
 	public void setActiveScreen(Screen activeScreen) {
 		if(getScreens().containsValue(activeScreen)) {
             if (this.activeScreen != null)
                 this.activeScreen.onScreenLeft.apply(new Screen.ScreenChangedEvent(activeScreen.SCREEN_INDEX));
-            lastScreenChange = new Date();
+            lastScreenChange = System.currentTimeMillis();
             this.activeScreen = activeScreen;
             activeScreen.onScreenEnter.apply();
 		} else throw new IllegalArgumentException("Screen is not listed!");
 	}
-	
-	/**
-	 * Legt den aktiven Screen anhand des Index fest.
-	 * @param index
-	 * @throws RuntimeException wenn kein Screen anhand des Index gefunden werden kann
-	 */
-	public synchronized void setActiveScreen(int index) {
-		if(getScreens().containsKey(index)) {
-			setActiveScreen(screens.get(index));
-		} else throw new IllegalArgumentException("No screen could be found at position " + index + ". " + 
-			"Make sure the target screen is listed in the table.");
-	}
+
+    /**
+     * Like 'setActiveScreen()', only that given screen is becoming active screen when the next update cycle begins.
+     * This setup attempts to avoid threading problems that might occur with AWT mouse events and the main thread.
+     * @param to The screen to change to.
+     */
+    public void requestScreenChange(Screen to) {
+        if(to == null) throw new NullPointerException();
+        if(transitioning == to) return;
+        if(transitioning == null && screens.containsValue(to)) {
+            transitioning = to;
+        } else {
+            throw new IllegalArgumentException("ScreenManager already promising to Screen '" + transitioning + "'");
+        }
+    }
+
+    /**
+     * Same as 'requestScreenChange(Screen)', only with plain integer indexing.
+     * @param to The screen to change to, referenced by integer index.
+     */
+    public void requestScreenChange(int to) {
+        requestScreenChange(screens.get(to));
+    }
 
 	/**
 	 * @return the screens
@@ -85,21 +105,30 @@ public final class ScreenManager implements Drawable {
 	 * Passt den letzten Zeitpunkt zur�ck, an dem ein Screen gewechselt wurde.
 	 * @return the lastScreenChange
 	 */
-	public Date getLastScreenChange() {
+	public long getLastScreenChange() {
 		return lastScreenChange;
 	}
 
-	/**
-	 * Setzt den Zeitpunkt, an dem ein Screen gewechselt wird.
-	 * @param lastScreenChange the lastScreenChange to set
-	 */
-	void setLastScreenChange(Date lastScreenChange) {
-		this.lastScreenChange = lastScreenChange;
-	}
+    /**
+     * Processes the request for a screen change, if any exists.
+     */
+    public void screenCycle() {
+        if(transitioning != null) {
+            if(activeScreen != null) {
+                activeScreen.onScreenLeft.apply(new Screen.ScreenChangedEvent(transitioning.SCREEN_INDEX));
+                activeScreen = transitioning;
+                lastScreenChange = System.currentTimeMillis();
+                activeScreen.onScreenEnter.apply();
+                transitioning = null;
+            } else {
+                throw new IllegalStateException("No active screen paired with no screen to transition into");
+            }
+        }
+    }
 
 	@Override
 	public void draw(Graphics2D g) {
         // It's not necessary to check; every Screen is initialized
-		getActiveScreen().drawChecked(g);
+		activeScreen.drawChecked(g);
 	}
 }

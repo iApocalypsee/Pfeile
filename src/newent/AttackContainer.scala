@@ -1,11 +1,10 @@
 package newent
 
-import general.{Delegate, Main, PfeileContext}
+import general.JavaInterop.JavaPrimitives.JavaDouble
+import general._
 import newent.event.AttackEvent
 import player.BoardPositionable
-import player.weapon.arrow.AbstractArrow
 
-import scala.collection.JavaConverters._
 import scala.collection.{JavaConversions, mutable}
 
 /**
@@ -23,7 +22,16 @@ trait AttackContainer extends BoardPositionable {
 
   private var _attackList = mutable.ArrayBuffer[AttackProgress]()
 
+  /**
+    * Called when the attack container recognizes an incoming attack.
+    *
+    * The argument provides information on when the attack will impact.
+    */
   val onAttacked = Delegate.create[AttackProgress]
+
+  // Note: Difference between 'onImpact' and 'onDamage' unclear, since both
+  //       events take an 'AttackEvent' as argument
+
   val onImpact = Delegate.create[AttackEvent]
 
   /**
@@ -34,12 +42,33 @@ trait AttackContainer extends BoardPositionable {
     */
   val onDamage = Delegate.create[AttackEvent]
 
+  /**
+    * Queues given attack for later impact.
+    *
+    * If given attack is to impact in the very current round, the impact will/should trigger
+    * after every player has completed their turns.
+    *
+    * @param e The attack to queue for later consideration.
+    */
   def take(e: AttackEvent): Unit = {
+    if(Main.isDebug) {
+      LogFacility.log(s"Attempting to queue attack... (attack=$e)", "Debug")
+    }
+
     val progress = new AttackProgress(e)
     _attackList += progress
     onAttacked(progress)
+
+    if(Main.isDebug) {
+      LogFacility.log(s"Attack successfully queued. (attack=$e)", "Debug")
+    }
   }
 
+  /**
+    * Causes the attack container to suffer immediate consequences from given attack.
+    *
+    * @param e The attack to be considered as immediately suffering from.
+    */
   def takeImmediately(e: AttackEvent): Unit = {
     onDamage(e)
   }
@@ -47,6 +76,10 @@ trait AttackContainer extends BoardPositionable {
   def queuedAttacks = _attackList.toList
   def getQueuedAttacks = JavaConversions.seqAsJavaList(queuedAttacks)
 
+  /**
+    * Should be called at end of every round.
+    * Updates data related to attack events (timers, damage, etc.)
+    */
   final def updateQueues(): Unit = {
     _attackList foreach { p =>
       p.updateProgress()
@@ -59,57 +92,6 @@ trait AttackContainer extends BoardPositionable {
       }
     }
   }
-}
-
-object AttackContainer {
-
-  /** Returns all entities in the current world (in PfeileContext) that are AttackContainer objects. */
-  def allACEntities(): Seq[AttackContainer] = Main.getContext.getWorld.entities.entityList.collect {
-    case x: AttackContainer => x
-  }
-
-  /**
-    * Collects all attack container entities and tiles from this context.
-    * @param context The context to retrieve all attack containers from.
-    * @return A list of all attack containers in this context.
-    */
-  def allAttackContainers(context: PfeileContext): Seq[AttackContainer] = {
-    context.world.terrain.tiles ++: allAttackContainerEntities(context)
-  }
-
-  private def allAttackContainerEntities(context: PfeileContext): Seq[AttackContainer] = {
-    context.world.entities.entityList.collect { case ac: AttackContainer => ac }
-  }
-
-  /**
-    * Returns all attack containers in this context in a Java iterable.
-    * @param context The context to retrieve all attack containers from.
-    * @return A list containing all attack containers in this context.
-    */
-  def getAllAttackContainers(context: PfeileContext): java.util.List[AttackContainer] = allAttackContainers(context).asJava
-
-  /**
-    * Returns all attack progresses triggered by an instance of an arrow.
-    * @param acs The attack containers.
-    * @return Attack progresses caused by arrow attacks.
-    */
-  def arrowAttackProgresses(acs: Seq[AttackContainer]) = acs.map(ac => ac.queuedAttacks.collect {
-    case progress if progress.event.weapon.isInstanceOf[AbstractArrow] => progress
-  })
-
-  /** Ditto. */
-  def javaAllACEntities() = allACEntities().asJava
-
-  /**
-    * Returns all attack containers in the game.
-    *
-    * Right now, the list of attack containers includes the entities as well as the tiles.
-    */
-  def allAttackContainers(): Seq[AttackContainer] = allAttackContainers(Main.getContext)
-
-  /** Ditto. */
-  def javaAllAttackContainers() = allAttackContainers().asJava
-
 }
 
 /**
@@ -126,7 +108,7 @@ class AttackProgress(val event: AttackEvent, private var _progress: Double) {
    * Called when the attack progresses by a little bit.
    * The argument in the delegate provides the delta (how much the attack progressed).
    */
-  val onProgressed = Delegate.create[java.lang.Double]
+  val onProgressed = Delegate.create[JavaDouble]
 
   val progressPerTurn = event.travelSpeed / event.geographicalLength
 
@@ -139,7 +121,7 @@ class AttackProgress(val event: AttackEvent, private var _progress: Double) {
   /** Returns the progress of the attack in percent. */
   def progress = _progress
 
-  /** Returns the number of turns, the attack needs to come to it's destination. It's the rounded up reciprocal of progressPerTurn. */
+  /** Returns the number of turns, the attack needs to come to it's destination. */
   def numberOfTurns = {
     Math.ceil(1.0 / progressPerTurn).asInstanceOf[Int]
   }

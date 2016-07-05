@@ -1,22 +1,22 @@
 package newent
 
+import java.util.function._
+import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet, _}
+
+import general.JavaInterop._
 import general.{Delegate, LogFacility, Main}
 import world.Tile
 
-import scala.collection.{JavaConversions, mutable}
+import scala.collection.JavaConverters._
+import scala.compat.java8.OptionConverters._
+import scala.compat.java8._
 
-/** Base trait for all entity managers.
-  *
-  * I expect many changes inside of derived EntityManager classes, so
-  * let's make an abstract base trait for it directly.
-  *
-  * @author Josip Palavra
-  */
+// Self-evident.
 class EntityManager {
 
-  private var _entityList = mutable.MutableList[GameObject]()
+  private val m_entityList = new ArrayList[GameObject]
 
-  /** Called when an entity has been registered. */
+  // Self-evident actually.
   val onEntityRegistered = Delegate.create[GameObject]
   val onEntityUnlogged = Delegate.create[GameObject]
 
@@ -25,64 +25,31 @@ class EntityManager {
     onEntityUnlogged += { entity => LogFacility.log(s"Entity unlogged: $entity") }
   }
 
-  /** Registers an entity to the manager.
-    *
-    * @param e The entity to add.
-    */
-  def +=(e: GameObject): Unit = {
-    _entityList += e
+  def register(e: GameObject): Unit = {
+    m_entityList add e
     onEntityRegistered(e)
   }
 
-  // Ditto.
-  def register(e: GameObject) = +=(e)
-
-  /**
-    * Removes the specified game object from the manager.
-    *
-    * @param e The game object to remove.
-    */
-  def -=(e: GameObject): Unit = {
+  def unlog(e: GameObject): Unit = {
     val prev = entityList
-    sortOut { _ ne e }
+    sortOut { _ == e }
     if(prev.diff(entityList).nonEmpty) onEntityUnlogged(e)
   }
 
   /**
-    * Does the same as `-=`
-    *
-    * @param e Ditto.
-    */
-  def unlog(e: GameObject) = -=(e)
-
-  /**
     * The listing of all game objects currently registered in the manager.
     */
-  def entityList: Seq[GameObject] = _entityList.toSeq
+  def entityList: Seq[GameObject] = m_entityList.asScala
 
-  /**
-    * Java interop method for easier access to the game object list.
-    */
-  def javaEntityList = JavaConversions.seqAsJavaList(entityList)
+  def getEntityList: IList[GameObject] = m_entityList.toImmutableList
 
   /**
     * Removes all entities that satisfy given predicate.
     *
-    * @param f The filter function. If the function returns <code>false</code> for
-    *          a given entity, that entity is going to be removed.
+    * @param f The filter function. If the function returns `true` for
+    *          a given game object, that game object is going to be removed.
     */
-  def sortOut(f: GameObject => Boolean): Unit = _entityList = _entityList filter f
-
-  /**
-    * Removes all entities that do not satisfy given predicate.
-    *
-    * In contrast to the [[newent.EntityManager#sortOut(scala.Function1)]] method, this one removes the entity
-    * if it '''satisfies''' a predicate, in other words, if the entity returns <code>false</code>, it is being
-    * kept in the manager.
-    *
-    * @param f The filter function.
-    */
-  def sortOutNot(f: GameObject => Boolean): Unit = sortOut(f andThen { b => !b })
+  def sortOut(f: Predicate[GameObject]): Unit = m_entityList removeIf f
 
   /**
     * Returns the helper object for this entity manager, containing helper methods for easier entity handling.
@@ -90,20 +57,33 @@ class EntityManager {
   def helper = Helper
 
   /**
-    * Any helper functions can go in here.
+    * Any helper functions related to make finding certain entities easier can go in here.
     */
   object Helper {
 
-    def getEntitiesAt(x: Int, y: Int) = entityList.filter(entity => entity.getGridX == x && entity.getGridY == y)
-    def getEntitiesAt(t: Tile): Seq[GameObject] = {
+    /**
+      * Collects exclusively the game objects whose position matches given position or whose shape contains
+      * given coordinate.
+      */
+    def getEntitiesAt(x: Int, y: Int): IList[GameObject] = getEntityList.parallelStream.filter(entity => entity.getGridX == x && entity.getGridY == y).toImmutableList
+
+    def getEntitiesAt(t: Tile): IList[GameObject] = {
       require(t != null)
-      entityList.filter(_.tileLocation == t)
+      getEntityList.stream.filter(_.tileLocation == t).toImmutableList
     }
 
-    def getPlayers = entityList.collect { case p: Player => p }
-    def getPlayerByName(name: String) = this.getPlayers.find(_.name == name)
+    def getPlayers: IList[Player] = entityList.collect { case p: Player => p }.asJava
 
+    def getPlayerByName(name: String): Optional[Player] = {
+      val playerList = getPlayers.asScala
+      val maybePlayer = playerList.filter(_.name == name)
 
+      assert(maybePlayer.size <= 1, s"Multiple players registered with name '$name'")
+
+      maybePlayer.headOption.asJava
+    }
+
+    def getAllAttackContainers: IList[AttackContainer] = entityList.collect({ case x: AttackContainer => x }).map(_.asInstanceOf[AttackContainer]).asJava
 
   }
 

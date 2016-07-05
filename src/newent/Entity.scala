@@ -52,5 +52,6 @@ abstract class Entity(@NotNull world: World, initX: Int, initY: Int, @Nullable n
 trait InventoryEntity extends Entity {
 
   val inventory: InventoryLike = new DefaultInventory
+  def getInventory = inventory
 
 }

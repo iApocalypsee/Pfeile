@@ -1,8 +1,8 @@
 package player.weapon;
 
+import general.Main;
 import gui.Drawable;
 import newent.AttackContainer;
-import newent.AttackContainer$;
 import newent.AttackProgress;
 import player.weapon.arrow.AbstractArrow;
 import scala.collection.JavaConversions;
@@ -28,7 +28,7 @@ public class AttackDrawer implements Drawable {
      * @return the AttackProgress of all attacking AbstractArrows
      */
     public static List<AttackProgress> getAttackProgressesOfArrows () {
-        List <AttackContainer> attackContainerList = AttackContainer$.MODULE$.javaAllAttackContainers();
+        List <AttackContainer> attackContainerList = Main.getContext().getWorld().getEntities().helper().getAllAttackContainers();
         List <AttackProgress> filteredProgresses = new LinkedList<>();
 
         for (AttackContainer anAttackContainerList : attackContainerList) {
@@ -64,7 +64,9 @@ public class AttackDrawer implements Drawable {
     public static List<Weapon> getAttackingWeapons () {
         List<Weapon> attackingWeapons = new LinkedList<>();
 
-        for (AttackContainer attackContainer : AttackContainer$.MODULE$.javaAllAttackContainers()) {
+        final List<AttackContainer> allAttackContainers = Main.getContext().getWorld().getEntities().helper().getAllAttackContainers();
+
+        for (AttackContainer attackContainer : allAttackContainers) {
             for (AttackProgress attackProgress : attackContainer.getQueuedAttacks()) {
                 attackingWeapons.add(attackProgress.event().weapon());
             }

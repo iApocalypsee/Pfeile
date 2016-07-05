@@ -243,7 +243,7 @@ public final class ArrowHelper {
     public static int[] arrowCountInventory(final InventoryLike inventory) {
         int[] arrowsCount = new int[NUMBER_OF_ARROW_TYPES];
 
-        for (Item item : inventory.javaItems()) {
+        for (Item item : inventory.getItems()) {
             if (item instanceof FireArrow)
                 arrowsCount[FireArrow.INDEX]++;
             else if (item instanceof WaterArrow)

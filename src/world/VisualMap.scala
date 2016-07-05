@@ -1,6 +1,7 @@
 package world
 
 import java.awt.Graphics2D
+import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
 import general.{Delegate, LogFacility, Main, PfeileContext}
 import geom.{Point, Vector}

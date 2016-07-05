@@ -65,7 +65,7 @@ public class PotionOfPoison extends Potion {
      */
     @Override
     public boolean triggerEffect () {
-        final List<Item> items = Main.getContext().getActivePlayer().inventory().javaItems();
+        final List<Item> items = Main.getContext().getActivePlayer().inventory().getItems();
         for (Item item: items) {
             if (item instanceof AbstractArrow) {
                 AbstractArrow arrow = (AbstractArrow) item;

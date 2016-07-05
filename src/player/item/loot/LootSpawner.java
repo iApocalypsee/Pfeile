@@ -255,7 +255,7 @@ public class LootSpawner {
      * @return <code>true</code> - if there is any entity near the position (<code>posX</code>|<code>posY</code>) in the radius
      */
     private boolean isEntityNear (int posX, int posY, int radiusTroops, int radiusPlayers) {
-        java.util.List<GameObject> entityList = context.getWorld().entities().javaEntityList();
+        java.util.List<GameObject> entityList = context.getWorld().entities().getEntityList();
 
         for (GameObject entity : entityList) {
             if (entity instanceof Player || entity instanceof Bot) {

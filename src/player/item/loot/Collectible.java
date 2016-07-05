@@ -37,7 +37,7 @@ public interface Collectible {
      */
     default boolean defaultCollect (InventoryLike inventory, Loot loot) {
         // controlling if the inventory is full, is already done by "put(item)".
-        if (inventory.currentSize() + loot.getStoredItems().size() <= inventory.maximumSize()) {
+        if (inventory.currentSize() + loot.getStoredItems().size() <= inventory.capacity()) {
 
             for (Item item : loot.getStoredItems()) {
                 // must return true
@@ -74,7 +74,7 @@ public interface Collectible {
             return removed;
 
         } else {
-            GameScreen.getInstance().setWarningMessage("Das Inventar ist voll! Maximalgröße: " + inventory.maximumSize()
+            GameScreen.getInstance().setWarningMessage("Das Inventar ist voll! Maximalgröße: " + inventory.capacity()
                     + " | Aktuelle Größe: " + inventory.currentSize());
             GameScreen.getInstance().activateWarningMessage();
             LogFacility.log("The inventory is full: " + inventory.toString() + " at adding: " + loot.toString(), LogFacility.LoggingLevel.Info);

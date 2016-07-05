@@ -134,7 +134,7 @@ public class InventoryScreen extends Screen {
         }
 
         InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
-        for (Item item : inventory.javaItems()) {
+        for (Item item : inventory.getItems()) {
             if (selectedItem.getText().equals(item.getNameDisplayed())) {
                 if (item instanceof Potion) {
                     Potion potion = (Potion) item;
@@ -195,7 +195,7 @@ public class InventoryScreen extends Screen {
 
         InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
         // filtering the inventory: only items, which aren't arrows should be added.
-        for(Item item : inventory.javaItems()) {
+        for(Item item : inventory.getItems()) {
             if (!(item instanceof AbstractArrow)) {
                 if (!(item instanceof Coin)) {
                     // the name

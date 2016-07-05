@@ -2,13 +2,15 @@ package general
 
 import java.util
 import java.util.concurrent.Executors
-import java.util.function.{BiConsumer, BiFunction, Consumer, Supplier}
-import java.util.stream.Collectors
-import java.util.{Collections, Deque => IDeque, List => IList, Map => IMap, Optional, Set => ISet, function}
+import java.util.function._
+import java.util.stream.{Collectors, Stream => IStream}
+import java.util.{Collection => ICollection, Collections, Deque => IDeque, List => IList, Map => IMap, Optional, Set => ISet, function}
 
 import scala.concurrent.Future
 
 object JavaInterop {
+
+  // <editor-fold desc="Scala wraps around Java constructs">
 
   object JavaPrimitives {
     type JavaInt = java.lang.Integer
@@ -20,32 +22,43 @@ object JavaInterop {
     type JavaChar = java.lang.Character
   }
 
-  implicit class StreamOp[A](val stream: java.util.stream.Stream[A]) extends AnyVal {
-    def asList = stream.collect(Collectors.toList())
+  // <editor-fold desc="Collections and streams implicits">
+
+  implicit class StreamOp[A](val stream: IStream[A]) extends AnyVal {
+    def toList = stream.collect(Collectors.toList())
+    def toSet = stream.collect(Collectors.toSet())
+    def toImmutableList = Collections.unmodifiableList(toList)
+    def toImmutableSet = Collections.unmodifiableSet(toSet)
   }
 
-  implicit class ICollectionOp[A](val sub: java.util.Collection[A]) extends AnyVal {
+  implicit class ICollectionOp[A](val sub: ICollection[A]) extends AnyVal {
 
     private def listImpl: IList[A] = new util.ArrayList[A]()
     private def setImpl: ISet[A] = new util.HashSet[A]()
     private def dequeImpl: IDeque[A] = new util.ArrayDeque[A]()
 
-    def toList: IList[A] = {
-      val newList = listImpl
-      newList.addAll(sub)
-      newList
+    def toList: IList[A] = sub match {
+      case as: IList[A] => as
+      case _ =>
+        val newList = listImpl
+        newList.addAll(sub)
+        newList
     }
 
-    def toSet: ISet[A] = {
-      val newSet = setImpl
-      newSet.addAll(sub)
-      newSet
+    def toSet: ISet[A] = sub match {
+      case as: ISet[A] => as
+      case _ =>
+        val newSet = setImpl
+        newSet.addAll(sub)
+        newSet
     }
 
-    def toDeque: IDeque[A] = {
-      val newDeque = dequeImpl
-      newDeque.addAll(sub)
-      newDeque
+    def toDeque: IDeque[A] = sub match {
+      case as: IDeque[A] => as
+      case _ =>
+        val newDeque = dequeImpl
+        newDeque.addAll(sub)
+        newDeque
     }
 
     def toImmutableList: IList[A] = sub match {
@@ -58,7 +71,30 @@ object JavaInterop {
       case _ => Collections.unmodifiableSet(toSet)
     }
 
+    def head = sub.stream.findFirst().get()
+    def headOption = sub.stream.findFirst()
+
   }
+
+  // </editor-fold>
+
+  // <editor-fold desc="Java function wraps">
+
+  implicit class PredicateOp[A](val predicate: Predicate[A]) extends AnyVal {
+    def apply(x: A) = predicate.test(x)
+  }
+
+  implicit class SupplierOp[A](val supplier: Supplier[A]) extends AnyVal {
+    def apply() = supplier.get()
+  }
+
+  implicit class ConsumerOp[A](val consumer: Consumer[A]) extends AnyVal {
+    def apply(x: A) = consumer.accept(x)
+  }
+
+  // </editor-fold>
+
+  // </editor-fold>
 
   import java.lang
 

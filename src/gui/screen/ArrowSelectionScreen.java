@@ -199,12 +199,12 @@ public class ArrowSelectionScreen extends Screen {
                     if (Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().get() > 0) {
                         if (!(ArrowHelper.instanceArrow(selectedIndex).equip())) {
                             final InventoryLike inventory = Main.getContext().getActivePlayer().inventory();
-                            if (inventory.maximumSize() - inventory.currentSize() <= 0) {
-								warningMessage.setMessage(Main.tr("warningInventoryFull", inventory.maximumSize()));
+                            if (inventory.capacity() - inventory.currentSize() <= 0) {
+								warningMessage.setMessage(Main.tr("warningInventoryFull", inventory.capacity()));
 							} else if (Main.getContext().getActivePlayer().arrowNumberFreeSetUsable().get() <= 0) {
 								warningMessage.setMessage(Main.tr("warningMaxArrows", PfeileContext.arrowNumberFreeSet().get()));
                             } else {
-								String msg = Main.tr("errorInventoryFull", inventory.maximumSize() - inventory.currentSize());
+								String msg = Main.tr("errorInventoryFull", inventory.capacity() - inventory.currentSize());
 								warningMessage.setMessage(msg);
 							}
                             warningMessage.activateMessage();
@@ -336,12 +336,12 @@ public class ArrowSelectionScreen extends Screen {
 				selectedIndex = ShadowArrow.class;
 			}
 			if (cancelButton.getBounds().contains(e.getPoint())) {
-				//onLeavingScreen(GameScreen.SCREEN_INDEX);
+				onLeavingScreen(GameScreen.SCREEN_INDEX);
 			} 
 			if (confirmButton.getBounds().contains(e.getPoint())) {
 				if (!selectedArrowBox.getEnteredText().equals(selectedArrowBox.getStdText())) {
                     for (int i = 0; i < inventory.currentSize(); i++) {
-                        if (inventory.javaItems().get(i).getClass() == ArrowHelper.reformArrow(selectedArrowBox.getEnteredText())) {
+                        if (inventory.getItems().get(i).getClass() == ArrowHelper.reformArrow(selectedArrowBox.getEnteredText())) {
                             selectedIndex = ArrowHelper.reformArrow(selectedArrowBox.getEnteredText());
 	                        onLeavingScreen(AimSelectionScreen.SCREEN_INDEX);
 	                        break;

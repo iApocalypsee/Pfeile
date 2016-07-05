@@ -95,13 +95,13 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       context.setActivePlayer(act)
 
       val entityManager = context.world.entities
-      entityManager += act
-      entityManager += opponent
+      entityManager register act
+      entityManager register opponent
 
       act.onTurnEnded += { () => act.resetFortuneStat() }
       opponent.onTurnEnded += { () => opponent.resetFortuneStat() }
 
-      PreWindowScreen.correctArrowNumber(entityManager.javaEntityList)
+      PreWindowScreen.correctArrowNumber(entityManager.getEntityList)
 
       // adding Arrows:
       LoadingWorldScreen.getInstance.getAddingArrowList(0).foreach((selectedArrow) => {
@@ -189,7 +189,8 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       ShopInitializer.initalizeShop()
 
       context.turnSystem.onTurnEnded.register("turn end screen change") { team =>
-        Main.getGameWindow.getScreenManager.setActiveScreen(AttackingScreen.SCREEN_INDEX)
+        //Main.getGameWindow.getScreenManager.requestScreenChange(AttackingScreen.SCREEN_INDEX)
+        Main.getGameWindow.getScreenManager.requestScreenChange(WaitingScreen.SCREEN_INDEX)
       }
 
       // initialize MoneyDisplay --> it will actualize it's string, if the money of a entity has been changed.

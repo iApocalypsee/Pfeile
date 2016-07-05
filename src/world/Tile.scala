@@ -1,15 +1,19 @@
 package world
 
 import java.awt._
+import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
 import comp.{Component, DisplayRepresentable}
+import general.JavaInterop._
 import general.property.StaticProperty
 import gui.image.TextureAtlas
 import newent.{AttackContainer, GameObject}
 import player.weapon.arrow.{AbstractArrow, ImpactDrawerHandler}
 
 import scala.collection.JavaConverters._
-import scala.collection.{JavaConversions, mutable}
+import scala.collection.mutable
+import scala.compat.java8.OptionConverters._
+import scala.compat.java8._
 
 /**
   * Base trait for all tiles.
@@ -95,14 +99,15 @@ abstract class Tile protected(gridX: Int, gridY: Int, val terrain: Terrain) exte
       // The attack impacts and it is an AbstractArrow, so we can register a new ImpactDrawer
       ImpactDrawerHandler.addImpactDrawer(e)
 
+      this.takeImmediately(e)
+
       // Every entity has to take the attack. The damage system will eventually calculate 0 damage, but the list doesn't need to be filtered
       terrain.world.entities.entityList.foreach {
         case x: AttackContainer => x.takeImmediately(e)
-        case _ => takeImmediately(e)
       }
 
     } else {
-      filteredEntityList ++= terrain.world.entities.helper.getEntitiesAt(this)
+      filteredEntityList ++= terrain.world.entities.helper.getEntitiesAt(this).asScala
     }
 
   }
@@ -113,27 +118,29 @@ abstract class Tile protected(gridX: Int, gridY: Int, val terrain: Terrain) exte
 
   private def directionalGet(xdiff: Int, ydiff: Int) = Option(terrain.tileAt(getGridX + xdiff, getGridY + ydiff))
 
-  def north: Option[Tile] = directionalGet(-1, 1)
-
-  def northEast: Option[Tile] = directionalGet(0, 1)
-
+  def west: Option[Tile] = directionalGet(-1, -1)
   def east: Option[Tile] = directionalGet(1, 1)
-
+  def north: Option[Tile] = directionalGet(-1, 1)
+  def south: Option[Tile] = directionalGet(1, -1)
+  def northWest: Option[Tile] = directionalGet(-1, 0)
+  def northEast: Option[Tile] = directionalGet(0, 1)
+  def southWest: Option[Tile] = directionalGet(0, -1)
   def southEast: Option[Tile] = directionalGet(1, 0)
 
-  def south: Option[Tile] = directionalGet(1, -1)
-
-  def southWest: Option[Tile] = directionalGet(0, -1)
-
-  def west: Option[Tile] = directionalGet(-1, -1)
-
-  def northWest: Option[Tile] = directionalGet(-1, 0)
+  def getWest = west.asJava
+  def getEast = east.asJava
+  def getNorth = north.asJava
+  def getSouth = south.asJava
+  def getNorthWest = northWest.asJava
+  def getNorthEast = northEast.asJava
+  def getSouthWest = southWest.asJava
+  def getSouthEast = southEast.asJava
 
   /**
     * List with every neighboring tile. Not necessarily in order.
     */
   def neighbors: Seq[Tile] = Seq(north, northEast, east, southEast, south, southWest, west, northWest).flatten
-  def getNeighbors = neighbors.asJava
+  def getNeighbors: IList[Tile] = neighbors.asJava.toImmutableList
 
   //</editor-fold>
 
@@ -152,15 +159,9 @@ abstract class Tile protected(gridX: Int, gridY: Int, val terrain: Terrain) exte
 
   /**
     * Gets all game objects that are currently on this tile.
-    *
-    * @return Every game object currently stationed on this tile.
     */
-  def entities: Seq[GameObject] = terrain.world.entities.helper.getEntitiesAt(this)
-
-  /**
-    * Java interop method for the entity list.
-    */
-  def javaEntities = JavaConversions.seqAsJavaList(entities)
+  def entities: Seq[GameObject] = getEntities.asScala.toSeq
+  def getEntities: IList[GameObject] = terrain.world.entities.helper.getEntitiesAt(this)
 
   override def toString = s"(x=$getGridX|y=$getGridY) - ${getClass.getName}"
 

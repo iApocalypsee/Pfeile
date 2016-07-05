@@ -47,7 +47,7 @@ public class BagOfLoots extends Loot {
 
         if (deadEntity instanceof InventoryEntity) {
             InventoryEntity entity = (InventoryEntity) deadEntity;
-            for (Item item : entity.inventory().javaItems()) {
+            for (Item item : entity.inventory().getItems()) {
                 add(item);
             }
             entity.inventory().clear();

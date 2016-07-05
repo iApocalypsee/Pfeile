@@ -1,18 +1,32 @@
 package newent
 
+import java.util.function._
+import java.util.{Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet, _}
+
+import general.JavaInterop._
 import player.item.{Item, PutItemAmount}
 
+import scala.collection.JavaConverters._
 import scala.collection.{JavaConversions, mutable}
+import scala.compat.java8.FunctionConverters._
+import scala.compat.java8.OptionConverters._
+import scala.compat.java8._
 
-/**
-  * Base trait for all inventory classes.
-  *
-  * @author Josip Palavra
-  */
+// Self-explanatory, I guess. Except for that it is an interface with some default implementations...
 trait InventoryLike {
 
+  /**
+    * Puts the item in the inventory, returning a boolean if the method was successful in doing that.
+    *
+    * @param i The item to add to the inventory.
+    */
   def put(i: Item): Boolean
 
+  /**
+    * Experimental DSL for me (playing around with Scala a little :D).
+    *
+    * @param putItemAmount The DSL brick to interpret.
+    */
   def put(putItemAmount: PutItemAmount): Unit = putItemAmount.putInto(this)
 
   /**
@@ -21,22 +35,26 @@ trait InventoryLike {
     * @param f The selector function.
     * @return The item that satisfied the predicate, if any.
     */
-  def remove(f: (Item) => Boolean): Option[Item] = remove(f, 1).headOption
+  def remove(f: Predicate[Item]): Optional[Item] = remove(f, 1).headOption
 
   /**
     * Removes given items with an amount.
+    *
     * @param f The selector function.
     * @param amount How many items be removed from the inventory.
-    * @return
+    * @return A list of all removed items.
+    *         This list may not have up to `amount` elements for obvious reasons.
     */
-  def remove(f: Item => Boolean, amount: Int): Seq[Item]
+  def remove(f: Predicate[Item], amount: Int): IList[Item]
 
-  /** Removes the item f. If it has been found, it will be removed from the inventory and returned. If the item is
-    * listed several times only the first one is removed.
+  /**
+    * Removes the item f. If it has been found, it will be removed from the inventory and returned. If the item is
+    * listed several times only the first occurrence is removed.
+    *
     * @param f any item
-    * @return the removed item or <code>null</code> if the item doesn't exist
+    * @return the removed item or an empty option if the item does not exist
     */
-  def remove(f: Item): Option[Item] = remove(_ == f)
+  def remove(f: Item): Optional[Item] = remove(_ == f)
 
   /* Removes every item from the list, which is from the same instance as <code>Item f</code>. */
   //def removeAllInstanceOf(f: Item): Unit
@@ -49,7 +67,7 @@ trait InventoryLike {
     * @param f The selector function.
     * @return The removed items from the inventory.
     */
-  def removeAll(f: (Item) => Boolean): Seq[Item]
+  def removeAll(f: Predicate[Item]): IList[Item]
 
   /**
     * Tries to find a specified item that satisfies given predicate.
@@ -58,41 +76,53 @@ trait InventoryLike {
     * @return An item that satisfies a predicate, if any. If nothing has been found,
     *         [[scala.None]] is returned.
     */
-  def find(f: (Item) => Boolean): Option[Item]
+  def find(f: Predicate[Item]): Optional[Item]
 
   def items: Seq[Item]
-  def javaItems = JavaConversions.seqAsJavaList(items)
+  def getItems: IList[Item] = JavaConversions.seqAsJavaList(items)
 
-  /** The maximum size of the inventory. */
-  def maximumSize = Integer.MAX_VALUE
+  /**
+    * The maximum size of the inventory.
+    * `Integer.MAX_VALUE` is not appropriate all of the time, it should be made a constant that can be set
+    * through the constructor.
+    */
+  def capacity = Integer.MAX_VALUE
 
+  /**
+    * Number of how many items are currently stored inside the inventory.
+    */
   def currentSize = items.size
 
-  /** Removes every item from the inventory. The inventory will be empty afterwards.  */
+  /**
+    * Removes every item from the inventory. The inventory will be empty afterwards.
+    */
   def clear(): Unit
 
   override def toString: String = {
-    "Inventory [size: " + currentSize + "/" + maximumSize + "]"
+    "Inventory [size: " + currentSize + "/" + capacity + "]"
   }
 
 }
 
+/**
+  * Default inventory implementation.
+  */
 class DefaultInventory extends InventoryLike {
 
   private var _list = mutable.ArrayBuffer[Item]()
 
   override def put(i: Item): Boolean = {
-    if (maximumSize > currentSize) {
+    if (capacity > currentSize) {
       _list += i
       true
     }
     else {
-      System.err.println("Inventory.maximumSize reached. Cannot put Item " + i.getName)
+      System.err.println("Inventory.capacity reached. Cannot put Item " + i.getName)
       false
     }
   }
 
-  override def remove(f: (Item) => Boolean, amount: Int): Seq[Item] = {
+  override def remove(f: Predicate[Item], amount: Int): IList[Item] = {
     var removeCount = 0
     val filtered = _list.filterNot(item => {
       if (removeCount < amount && f(item)) {
@@ -101,13 +131,14 @@ class DefaultInventory extends InventoryLike {
       }
       else false
     })
+    val old = _list
     _list = filtered
-    _list diff filtered
+    (old diff filtered).asJava
   }
 
-  override def removeAll(f: (Item) => Boolean): Seq[Item] = remove(f, Int.MaxValue)
+  override def removeAll(f: Predicate[Item]): IList[Item] = remove(f, Int.MaxValue)
 
-  override def find(f: (Item) => Boolean): Option[Item] = _list find f
+  override def find(f: Predicate[Item]): Optional[Item] = (_list find f.asScala).asJava
 
   override def items = _list.toList
 

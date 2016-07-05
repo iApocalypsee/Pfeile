@@ -214,7 +214,7 @@ public abstract class Screen implements Drawable, MouseListener,
 	 * @param toScreen Der Index des zu betretenden Screens
 	 */
 	public void onLeavingScreen(int toScreen) {
-        manager.setActiveScreen(toScreen);
+        manager.requestScreenChange(toScreen);
 	}
 
 	public void mousePressed(MouseEvent e) {

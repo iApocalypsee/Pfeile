@@ -167,6 +167,7 @@ public class GameWindow extends JFrame {
 	 * 'draw'-Methode auf
 	 */
 	public void update() {
+        screenManager.screenCycle();
 		Keys.updateKeys();
 	}
 
