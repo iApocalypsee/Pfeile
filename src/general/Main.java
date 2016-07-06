@@ -2,6 +2,8 @@ package general;
 
 import akka.actor.ActorSystem;
 import animation.SoundPool;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import general.io.PreInitStage;
 import general.langsupport.*;
 import gui.screen.ArrowSelectionScreenPreSet;
@@ -14,8 +16,6 @@ import scala.concurrent.Future$;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
-
-import static general.JavaInterop.func;
 
 public class Main {
 
@@ -63,7 +63,7 @@ public class Main {
     private static Language language = English.instance();
 
 	// The actor system taking care of threaded actors.
-	private static ActorSystem actorSystem = ActorSystem.create("system");
+	private static ActorSystem actorSystem;
 
     private static DebugWindows debugWindows = new DebugWindows();
 
@@ -134,6 +134,9 @@ public class Main {
         // This is not good. SoundPool depends on isMute for being completed.
         isMute = Arrays.stream(arguments).anyMatch(arg -> arg.equals("-nosound"));
 
+        final Config akkaConfig = ConfigFactory.parseString("akka {\nloglevel = \"DEBUG\" \n}");
+        actorSystem = ActorSystem.create("system", akkaConfig);
+
         debugWindows.setWindowEnabled(activateDbgWindows);
 
         programStartTime = System.currentTimeMillis();
@@ -194,7 +197,7 @@ public class Main {
         // stop all melodies
         //SoundPool.stop_allMelodies();
 
-        actorSystem.shutdown();
+        actorSystem.terminate();
 
         // There is no other way, that closes the games.
         // Some Threads were still running in background, that continued the game without seeing a screen.
@@ -262,7 +265,8 @@ public class Main {
     }
 
     public static Future<BufferedImage> askForCompatibleImage(BufferedImage image) {
-        return Future$.MODULE$.apply(func(() -> toCompatibleImage(image)), getGlobalExecutionContext());
+        final scala.compat.java8.JFunction0<BufferedImage> convert = () -> toCompatibleImage(image);
+        return Future$.MODULE$.apply(convert, getGlobalExecutionContext());
     }
 
     /**
