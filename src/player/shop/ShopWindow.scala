@@ -10,6 +10,7 @@ import gui.screen.GameScreen
 
 import scala.beans.BeanProperty
 import scala.collection.JavaConversions
+import scala.collection.JavaConverters._
 import scala.collection.parallel.immutable.ParVector
 
 /**
@@ -70,7 +71,7 @@ class ShopWindow(articles: Seq[Article], val representing: TraderLike) extends D
   }
 
   def articleComponents: Seq[Component] = tempArticleComponents.get().toVector
-  def getArticleComponents: Seq[Component] = articleComponents
+  def getArticleComponents: JList[Component] = articleComponents.asJava
 
   /**
     * Maps given articles to a collection of components that can be used to display the articles

@@ -1,8 +1,10 @@
 package general.property
 
 import java.util.function._
+import java.util.{Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
-import general.JavaInterop
+import scala.compat.java8.FunctionConverters._
+import scala.compat.java8._
 
 /**
   * Accessor style for properties which get/set branch can be changed dynamically.
@@ -24,7 +26,7 @@ trait DynamicAccessors[A] extends PropertyBase[A] with AccessorStyle[DynamicAcce
     _dynGetter = x
   }
 
-  protected def setDynamicGetter(f: Function[A, A]): Unit = this.dynGet = JavaInterop.asScala(f)
+  protected def setDynamicGetter(f: Function[A, A]): Unit = this.dynGet = f.asScala
 
   /**
     * The setter to use. Defaults to returning the input parameter.
@@ -50,13 +52,13 @@ trait DynamicAccessors[A] extends PropertyBase[A] with AccessorStyle[DynamicAcce
     */
   protected def dynPass(x: A => Unit) = dynSet_=({ y => x(y); y })
 
-  protected def setDynamicSetter(f: Function[A, A]) = this.dynSet = JavaInterop.asScala(f)
+  protected def setDynamicSetter(f: Function[A, A]) = this.dynSet = f.asScala
 
   protected def appendGet(x: A => A): Unit = dynGet = dynGet andThen x
   protected def appendSet(x: A => A): Unit = dynSet = dynSet andThen x
 
-  protected def appendGetJava(x: Function[A, A]): Unit = appendGet(JavaInterop.asScala(x))
-  protected def appendSetJava(x: Function[A, A]): Unit = appendSet(JavaInterop.asScala(x))
+  protected def appendGetJava(x: Function[A, A]): Unit = appendGet(x.asScala)
+  protected def appendSetJava(x: Function[A, A]): Unit = appendSet(x.asScala)
 
   override def get = dynGet(super.get)
 

@@ -1,11 +1,12 @@
 package player.item.loot;
 
-import general.JavaInterop;
 import general.LogFacility;
 import general.PfeileContext;
 import gui.Drawable;
-import newent.*;
-import scala.collection.Seq;
+import newent.CommandTeam;
+import newent.Player;
+import newent.VisionMap;
+import newent.VisionStatus;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -47,11 +48,10 @@ public class WorldLootList implements Drawable {
 
         // every time, when the location of a player has changed, the list of every not-hidden loot must update itself.
         // ==> {@link WorldLootList#updateVisibleLoot()} is registered to the "onLocationChanged"-Delegate of every Player.
-        final Seq<Team> teamSeq = context.getTurnSystem().teams().apply();
-        teamSeq.foreach(JavaInterop.asScala(team -> {
+        context.getTurnSystem().getTeams().forEach(team -> {
             Player player = ((CommandTeam) team).getHead();
             player.onLocationChanged.registerJava(locationChangedEvent -> updateVisibleLoot());
-        }));
+        });
     }
 
     /**

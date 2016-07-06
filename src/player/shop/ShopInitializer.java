@@ -1,6 +1,5 @@
 package player.shop;
 
-import general.JavaInterop;
 import player.item.loot.KeyDefaultChest;
 import player.item.potion.PotionOfDamage;
 import player.item.potion.PotionOfHealing;
@@ -28,10 +27,10 @@ public class ShopInitializer {
      * adds Articles to Shop
      */
     private static void addArticles () {
-        ShopCentral.addArticle(JavaInterop.asScala(() -> new PotionOfMovement((byte) 1)), 28);
-        ShopCentral.addArticle(JavaInterop.asScala(() -> new PotionOfMovement((byte) 0)), 15);
-        ShopCentral.addArticle(JavaInterop.asScala(() -> new PotionOfDamage((byte) 1)), 45);
-        ShopCentral.addArticle(JavaInterop.asScala(() -> new PotionOfHealing((byte) 0)), 50);
-        ShopCentral.addArticle(JavaInterop.asScala(() -> new KeyDefaultChest()), 100);
+        ShopCentral.addArticle(() -> new PotionOfMovement((byte) 1), 28);
+        ShopCentral.addArticle(() -> new PotionOfMovement((byte) 0), 15);
+        ShopCentral.addArticle(() -> new PotionOfDamage((byte) 1), 45);
+        ShopCentral.addArticle(() -> new PotionOfHealing((byte) 0), 50);
+        ShopCentral.addArticle(KeyDefaultChest::new, 100);
     }
 }

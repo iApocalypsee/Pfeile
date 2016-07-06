@@ -69,6 +69,7 @@ public class Label extends Component {
         getTransformation().onTransformed().registerJava(transformationEvent -> recalculateInternalData());
 
         declineInput();
+
         setName("Label " + hashCode());
     }
 
@@ -341,6 +342,31 @@ public class Label extends Component {
             final Optional<Integer> accumulatedHeight = textTokens.stream().map(string -> Component.getTextBounds(string, getFont()).height)
                                                                            .reduce((c, e) -> c + e);
             return new Dimension(widthOfLongest, accumulatedHeight.get());
+        }
+
+        /**
+         * Realigns the label's text so that the text fits into given width in pixels.
+         * @param newWidth The new width to align the text to.
+         */
+        public void splitWidthAlign(int newWidth) {
+            textTokens.clear();
+            splitWidthAlignImpl(newWidth, sourceString.replaceAll("\n", ""));
+        }
+
+        private void splitWidthAlignImpl(final int newWidth, final String carry) {
+            final Dimension cleanStringDim = Component.getTextBounds(carry, font);
+
+            final double roughSplit = (double) newWidth / cleanStringDim.width;
+
+            final int estimateSplit = roughSplit < 1 ? (int) (carry.length() * roughSplit) : -1;
+
+            if(estimateSplit == -1) return;
+
+            final String appendNow = carry.substring(0, estimateSplit);
+
+            textTokens.add(appendNow);
+
+            if(estimateSplit < carry.length() - 1) splitWidthAlignImpl(newWidth, carry.substring(estimateSplit));
         }
 
     }

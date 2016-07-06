@@ -44,7 +44,8 @@ object ShopCentral extends TraderLike {
 
   //</editor-fold>
 
-  def addArticle(item: () => Item, price: Int): Unit = addArticle(Article(item, price))
+  //def addArticle(item: () => Item, price: Int): Unit =
+  def addArticle(item: Supplier[Item], price: Int): Unit = addArticle(Article(item.asScala, price))
   def addArticle(article: Article): Unit = {
     ArticleCollection.addArticle(article)
   }
