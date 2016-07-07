@@ -650,6 +650,10 @@ public class Component {
 		return false;
 	}
 
+    public static Rectangle originCenteredRectangle(int w, int h) {
+        return new Rectangle(-w / 2, -h / 2, w, h);
+    }
+
 	/**
 	 * Veranlasst das Steuerelement, wieder Input zu akzeptieren.
 	 */

@@ -62,6 +62,8 @@ public abstract class Screen implements Drawable, MouseListener,
             boundsDrawOrange = new Color(255, 200, 0, 155),
             boundsDrawFillString = new Color(0, 100, 155, 255);
 
+    private Robot robot;
+
 	protected static boolean isLeftMousePressed;
 	protected static boolean isRightMousePressed;
 
@@ -73,7 +75,13 @@ public abstract class Screen implements Drawable, MouseListener,
 	public Screen(String n, int i) {
 		SCREEN_INDEX = i;
 		name = n;
-		manager.getScreens().put(SCREEN_INDEX, this);
+        try {
+            robot = new Robot();
+        } catch (AWTException e) {
+            e.printStackTrace();
+            throw new RuntimeException("AWT robot could not be constructed.");
+        }
+        manager.getScreens().put(SCREEN_INDEX, this);
 	}
 
 	/**

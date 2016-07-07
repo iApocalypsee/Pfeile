@@ -4,18 +4,22 @@ import java.awt.{Color, Dimension, Graphics2D, Point}
 import java.util.function._
 import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
+import general.JavaInterop._
 import general.LogFacility
 
+import scala.collection.JavaConverters._
 import scala.collection.mutable
-import scala.compat.java8.FunctionConverters._
 
-abstract class AbstractList[A <: Component] extends Component(new java.awt.Rectangle(-1, -1, 2, 2)) {
+abstract class AbstractList[A <: Component] extends Component(Component.originCenteredRectangle(2, 2)) {
 
   // Easier access to the AbstractList instance from inner classes
   private val outer = this
 
   // Listing of all elements.
   private val m_elements = mutable.ArrayBuffer[Element]()
+
+  def elements = m_elements.map(elem => elem.component)
+  def getElements = elements.asJava.toImmutableList
 
   // <editor-fold desc="Initialization code">
 
@@ -29,8 +33,6 @@ abstract class AbstractList[A <: Component] extends Component(new java.awt.Recta
 
   // The background used to draw the inside of the list.
   protected var background: ImageLike = new SolidColor(new Color(0x565461))
-
-  protected def elementColor()
 
   // </editor-fold>
 
@@ -99,6 +101,7 @@ abstract class AbstractList[A <: Component] extends Component(new java.awt.Recta
   }
 
   private def postAdd(x: A): Unit = {
+    x.setParent(this)
     refreshDimensions()
   }
 
@@ -133,11 +136,21 @@ abstract class AbstractList[A <: Component] extends Component(new java.awt.Recta
   /**
     * Removes a specific element from the list, and recomputes the bounds and the positions again.
     */
-  def removeElement(x: A): Boolean = removeElement(asJavaPredicate((c: A) => c == x))
+  def removeElement(x: A): Boolean = removeElement((c: A) => c == x)
+
+  /**
+    * Removes one specific element by index.
+    *
+    * @param idx The element referenced by index to remove.
+    * @return If the element has been successfully removed, `true`.
+    */
+  def removeElement(idx: Int): Boolean = removeElement(c => m_elements.indexOf(c) == idx)
 
   /**
     * Removes a specific element matching with given predicate function 'f'.
     * Recomputes the bounds and the positions on successful removal.
+    *
+    * @return If at least one element got removed, `true`.
     */
   def removeElement(f: Predicate[A]): Boolean = {
     val satisfyingMatch = m_elements.find(elem => f.test(elem.component))
@@ -149,6 +162,26 @@ abstract class AbstractList[A <: Component] extends Component(new java.awt.Recta
     }
 
     satisfyingMatch.isDefined
+  }
+
+  /**
+    * Removes all elements which satisfy given predicate. Recomputes the bounds on successful removal.
+    *
+    * Code for this function is essentially a copy-paste of [[comp.AbstractList#removeElement(java.util.function.Predicate)]].
+    *
+    * @param f The predicate to test all labels against.
+    * @return If at least one element got removed, `true`.
+    */
+  def removeElementsWith(f: Predicate[A]): Boolean = {
+    val satisfyingMatch = m_elements.filter(elem => f.test(elem.component))
+
+    satisfyingMatch.foreach { removedElement =>
+      onRemovedInternal(removedElement)
+      onRemoved(removedElement)
+      postRemoved(removedElement)
+    }
+
+    satisfyingMatch.nonEmpty
   }
 
   /**
@@ -319,6 +352,21 @@ abstract class AbstractList[A <: Component] extends Component(new java.awt.Recta
 
 }
 
+object AbstractList {
+
+  /**
+    * Scala trait for mixing in if I ever get too lazy to enter inset values myself again.
+    */
+  trait DefaultInsets[A <: Component] extends AbstractList[A] {
+    override def topInset = 5
+    override def leftInset = 5
+    override def rightInset = 5
+    override def bottomInset = 5
+    override def elementInset = 0
+  }
+
+}
+
 class NormalList extends AbstractList[Label] {
 
   /**
@@ -356,5 +404,4 @@ class NormalList extends AbstractList[Label] {
 
   }
 
-  override protected def elementColor() = ???
 }

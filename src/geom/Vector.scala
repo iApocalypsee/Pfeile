@@ -77,4 +77,6 @@ object Vector {
     */
   def nlerp(start: Vector, end: Vector, a: Double): Vector = lerp(start, end, a).normalized
 
+  def awtPoint(vec: Vector) = new java.awt.Point(vec.x.asInstanceOf[Int], vec.y.asInstanceOf[Int])
+
 }

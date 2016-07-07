@@ -127,6 +127,8 @@ public class PreWindowScreen extends Screen {
     }
     private comp.NormalList list2;
     private comp.Label multilineLabel = new comp.Label(400, 400, this, "Multiline\nstring that should be\nawesome to read.");
+
+    private comp.ComboBox2 cb2 = new comp.ComboBox2(500, 500, 100, this);
     // <<< Test code ende >>>
 
     public PreWindowScreen() {
@@ -304,12 +306,16 @@ public class PreWindowScreen extends Screen {
         this.forcePullFront(reloadCombobox);
         list2 = new NormalList();
 
+        list2.setBackingScreen(this);
         list2.appendElement(new Label(0, 0, this, "First element"));
         list2.appendElement(new Label(0, 0, this, "Second element"));
         list2.appendElement(new Label(0, 0, this, "Third element"));
         list2.setX(250);
         list2.setY(300);
-        list2.setBackingScreen(this);
+
+        cb2.appendElement("Hello");
+        cb2.appendElement("Fooey");
+        cb2.appendElement("SHIIIIT");
 
     }
 
@@ -862,6 +868,7 @@ public class PreWindowScreen extends Screen {
 
         reloadCombobox.draw(g);
         test.draw(g);
+        cb2.drawChecked(g);
 
     }
 }

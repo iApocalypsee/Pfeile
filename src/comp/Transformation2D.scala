@@ -128,6 +128,16 @@ class Transformation2D {
   }
 
   /**
+    * Assigns the data given by the other transformation to this transformation, so that `this == other`.
+    * @param other The other transformation to copy the data from.
+    */
+  def assign(other: Transformation2D): Unit = {
+    setTranslation(other.translation.getX, other.translation.getY)
+    setRotation(other.rotation)
+    setScale(other.scale.getX, other.scale.getY)
+  }
+
+  /**
    * Sets the absolute scale of this transformation.
    *
    * @param sx The scale in x-direction.

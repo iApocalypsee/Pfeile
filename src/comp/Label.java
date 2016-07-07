@@ -173,12 +173,13 @@ public class Label extends Component {
     }
 
     /** Resets the width and the height of a label, if the labels' content has changed. */
-    protected void recalculateDimension () {
+    protected Dimension recalculateDimension () {
         Dimension dimension = recalculateBounds();
         if (dimension.width > getWidth())
             setWidth(dimension.width);
         if (dimension.height > getHeight())
             setHeight(dimension.height);
+        return dimension;
     }
 
     private void recalculateInternalData() {
@@ -225,7 +226,11 @@ public class Label extends Component {
 
     public void setFont (Font font) {
         this.font = font;
-        recalculateDimension();
+
+        final Dimension newTextBounds = recalculateDimension();
+        final Transformation2D stashedTransform = getTransformation().copy();
+        setSourceShape(Component.originCenteredRectangle(newTextBounds.width, newTextBounds.height));
+        getTransformation().assign(stashedTransform);
     }
 
     /**
