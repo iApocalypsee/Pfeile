@@ -12,7 +12,6 @@ import gui.screen.Screen
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.compat.java8.FunctionConverters._
-import scala.compat.java8._
 
 /**
   * Second implementation of a combo box, hopefully with fewer bugs and fewer needs to rewrite combo box code.
@@ -70,6 +69,34 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
   def getElements = m_elements.asJava.toImmutableList
 
   /**
+    * Is the underlying combo box list visible?
+    */
+  def isExpanded = ComboxBoxList.isVisible
+
+  /**
+    * Is the underlying combo box list not visible?
+    */
+  def isCollapsed = !isExpanded
+
+  /**
+    * Expands or collapses the underlying list, depending on whether it is visible or not.
+    */
+  def negateListVisibility(): Unit = {
+    ExpandCollapseButton.negatePush()
+    ComboxBoxList.negateVisibility()
+  }
+
+  /**
+    * Opens the underlying list of the combo box, if not already open.
+    */
+  def expand(): Unit = if(isCollapsed) negateListVisibility()
+
+  /**
+    * Closes the underlying list of the combo box, if not already closed.
+    */
+  def collapse(): Unit = if(isExpanded) negateListVisibility()
+
+  /**
     * Selects an element by index.
     * If no element corresponds to given index, the method fails silently.
     *
@@ -91,7 +118,10 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
     val ret = new Label(0, 0, getBackingScreen, text)
     ret.setText(text)
     ret.addMouseListener(new MouseAdapter {
-      override def mouseReleased(e: MouseEvent) = select(m_elements.indexOf(ret.getText))
+      override def mouseReleased(e: MouseEvent) = {
+        select(m_elements.indexOf(ret.getText))
+        negateListVisibility()
+      }
     })
     ret
   }
@@ -296,10 +326,7 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
       getBackingScreen.putAfter(outer, this)
     }
 
-    def onClick(): Unit = {
-      negatePush()
-      ComboxBoxList.negateVisibility()
-    }
+    def onClick(): Unit = negateListVisibility()
 
     private def drawTriangle(g: Graphics2D): Unit = {
       // Recalculation of triangle points should be in update loop, if only it existed...
@@ -344,7 +371,7 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
     val InsetTopBottomTriangle = (SizeCollapseButton - HeightTriangle) / 2
 
     val InsetTopDisplayLabel = 3
-    val InsetLeftDisplayLabel = 3
+    val InsetLeftDisplayLabel = 5
 
     /**
       * How fast the triangle changes the direction it is pointing to.
@@ -368,7 +395,7 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
       * The stuff with which the triangle gets filled when it is being drawn.
       * See documentation of `LinearGradientPaint` for this.
       */
-    val PaintTriangle = new LinearGradientPaint(-4, -7, 3, 0, Array(0.0f, 0.5f, 1.0f), Array(new Color(0, 0, 55), new Color(0, 155, 155), new Color(122, 122, 122)))
+    val PaintTriangle = new LinearGradientPaint(-24, -27, 23, 20, Array(0.0f, 0.2f, 1.0f), Array(new Color(0, 0, 55), new Color(0, 155, 155), new Color(255, 255, 50)))
 
   }
 
