@@ -5,11 +5,11 @@ import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, 
 
 import general.JavaInterop._
 import general.{Delegate, LogFacility, Main}
+import player.shop.Trader
 import world.Tile
 
 import scala.collection.JavaConverters._
 import scala.compat.java8.OptionConverters._
-import scala.compat.java8._
 
 // Self-evident.
 class EntityManager {
@@ -55,6 +55,7 @@ class EntityManager {
     * Returns the helper object for this entity manager, containing helper methods for easier entity handling.
     */
   def helper = Helper
+  def getHelper = helper
 
   /**
     * Any helper functions related to make finding certain entities easier can go in here.
@@ -84,6 +85,8 @@ class EntityManager {
     }
 
     def getAllAttackContainers: IList[AttackContainer] = entityList.collect({ case x: AttackContainer => x }).map(_.asInstanceOf[AttackContainer]).asJava
+
+    def getAllTraders: IList[Trader] = entityList.collect { case x: Trader => x }.asJava
 
   }
 

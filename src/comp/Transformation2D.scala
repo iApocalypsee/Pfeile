@@ -30,6 +30,8 @@ class Transformation2D {
   onRotated += { x => onTransformed(x) }
   onScaled += { x => onTransformed(x) }
 
+  def applyTransformation(x: TransformationEvent): Unit = x.applyTransformation(this)
+
   /**
    * Resets the whole transformation, so that every stat is cleaned.
    *
@@ -129,6 +131,7 @@ class Transformation2D {
 
   /**
     * Assigns the data given by the other transformation to this transformation, so that `this == other`.
+    *
     * @param other The other transformation to copy the data from.
     */
   def assign(other: Transformation2D): Unit = {
@@ -192,6 +195,7 @@ trait TransformationEvent {
   def matrix: AffineTransform
   def deltaMatrix: AffineTransform
   def isDelta = !deltaMatrix.isIdentity
+  def applyTransformation(x: Transformation2D): Unit
 }
 
 object TransformationEvent {
@@ -212,17 +216,32 @@ case class RotationChange(oldDegree: Double, newDegree: Double) extends Transfor
   val delta = newDegree - oldDegree
   override lazy val matrix = AffineTransform.getRotateInstance(newDegree)
   override lazy val deltaMatrix = AffineTransform.getRotateInstance(delta)
+
+  override def applyTransformation(x: Transformation2D) = {
+    x.rotate(delta)
+  }
 }
 
 case class TranslationChange(oldTranslation: Vector, newTranslation: Vector) extends TransformationEvent {
   val delta = newTranslation - oldTranslation
   override lazy val matrix = AffineTransform.getTranslateInstance(newTranslation.getX, newTranslation.getY)
   override lazy val deltaMatrix = AffineTransform.getTranslateInstance(delta.getX, delta.getY)
+
+  override def applyTransformation(x: Transformation2D) = {
+    x.translate(delta.getX, delta.getY)
+  }
 }
 
 case class ScaleChange(oldScale: Vector, newScale: Vector) extends TransformationEvent {
+  val delta = new Vector(newScale.getX / oldScale.getX, newScale.getY / oldScale.getY)
   override lazy val matrix = AffineTransform.getScaleInstance(newScale.getX, newScale.getY)
 
-  // Todo: Should delta matrix be oriented multiplicatively or additionally?
-  override def deltaMatrix = throw new NotImplementedError("Scale delta not implemented yet")
+  // Multiplicative delta matrix.
+  override def deltaMatrix = AffineTransform.getScaleInstance(delta.getX, delta.getY)
+
+  override def applyTransformation(x: Transformation2D) = {
+    // Following line causes a few problems with components and their positions.
+    // So scale events will not propagate.
+    //x.scale(delta.getX, delta.getY)
+  }
 }

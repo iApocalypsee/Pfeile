@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -131,14 +132,7 @@ public class Component {
 	 */
 	private Function1<Graphics2D, Unit> additionalDrawing = null;
 
-	/**
-	 * Called when the bounds have been moved.
-	 * @deprecated Use {@link Transformation2D#onTranslated()} instead.
-	 */
-	@Deprecated
-	public final Delegate.Delegate<Vector> onMoved = new Delegate.Delegate<>();
-
-	/**
+    /**
 	 * Called when the component's dimensions have changed.
 	 */
 	public final Delegate.Delegate<Vector> onResize = new Delegate.Delegate<>();
@@ -249,32 +243,12 @@ public class Component {
         this.status = ComponentStatus.NO_MOUSE;
         setName(Integer.toString(this.hashCode()));
 
-        transformation.onTranslated().registerJava((TranslationChange t) -> {
+        onTransformed.registerJava(event -> {
+            children.values().forEach(component -> event.applyTransformation(component.transformation));
             if (boundsRecalculationIssued)
             {
                 transformationChangedSince = true;
             }
-            children.values().forEach(component -> {
-                final Vector diffTranslation = t.newTranslation().difference(t.oldTranslation());
-                component.move(((int) diffTranslation.getX()), ((int) diffTranslation.getY()));
-            });
-            onTransformed.apply(t);
-        });
-
-        transformation.onScaled().registerJava((ScaleChange t) -> {
-            if (boundsRecalculationIssued)
-            {
-                transformationChangedSince = true;
-            }
-            onTransformed.apply(t);
-        });
-
-        transformation.onRotated().registerJava((RotationChange t) -> {
-            if (boundsRecalculationIssued)
-            {
-                transformationChangedSince = true;
-            }
-            onTransformed.apply(t);
         });
     }
 
@@ -504,13 +478,7 @@ public class Component {
 		onResize.apply(new Vector(width, getHeight()));
 	}
 
-    /** Does nothing */
-    @Deprecated
-    void setWidthDirectly(int width) {
-
-    }
-
-	/**
+    /**
 	 * @return the height
 	 */
 	public int getHeight() {
@@ -789,6 +757,11 @@ public class Component {
 		return transformation;
 	}
 
+    /**
+     * Copies data of given transformation to the transformation of this component without triggering
+     * any listeners or events.
+     * @param transformation The data to be copied to this component's transformation.
+     */
 	protected void reproduceTransformation(Transformation2D transformation) {
 		Transformation2D.applySilently(this, transformation);
 		transformationChangedSince = true;
@@ -820,28 +793,30 @@ public class Component {
      * @return The bound's center.
      */
 	public Point center() {
-		/*
-		java.util.List<Vector2> vectorList = new LinkedList<>();
-		for(PathIterator pi = getBounds().getPathIterator(null); !pi.isDone(); pi.next()) {
-			final float[] coords = new float[6];
-			pi.currentSegment(coords);
-			vectorList.add(new Vector2(coords[0], coords[1]));
-		}
-
-		float sum_x = 0f;
-		float sum_y = 0f;
-		for(Vector2 vec : vectorList) {
-			sum_x += vec.x();
-			sum_y += vec.y();
-		}
-
-		float balancePointX = sum_x / vectorList.size();
-		float balancePointY = sum_y / vectorList.size();
-		*/
-
         final Rectangle2D preciseRectangle = getPreciseRectangle();
         return new Point((int) preciseRectangle.getCenterX(), (int) preciseRectangle.getCenterY());
 	}
+
+    public Point balanceCenter() {
+        java.util.List<Vector> vectorList = new LinkedList<>();
+        for(PathIterator pi = getBounds().getPathIterator(null); !pi.isDone(); pi.next()) {
+            final float[] coords = new float[6];
+            pi.currentSegment(coords);
+            vectorList.add(new Vector(coords[0], coords[1]));
+        }
+
+        float sum_x = 0f;
+        float sum_y = 0f;
+        for(Vector vec : vectorList) {
+            sum_x += vec.getX();
+            sum_y += vec.getY();
+        }
+
+        final float balancePointX = sum_x / vectorList.size();
+        final float balancePointY = sum_y / vectorList.size();
+
+        return new Point((int) balancePointX, (int) balancePointY);
+    }
 
 	/**
 	 * Returns the routine that draws additional things on to the screen that belong

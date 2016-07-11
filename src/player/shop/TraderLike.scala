@@ -29,6 +29,8 @@ trait TraderLike {
     */
   def isAvailable(f: Predicate[Article]): Boolean
 
+  def sell(to: MoneyEarner, article: Predicate[Article]): Boolean = this.sell(to, article, 1)
+
   /**
     * Sells the specified article to the given entity.
     *
@@ -37,7 +39,7 @@ trait TraderLike {
     * @param amount How many articles to sell. Based on this value, the total's transaction value is calculated.
     * @return Was the transaction successful?
     */
-  def sell(to: MoneyEarner, article: Predicate[Article], amount: Int = 1): Boolean
+  def sell(to: MoneyEarner, article: Predicate[Article], amount: Int): Boolean
 
   /**
     * A listing of all articles that the trader can sell.

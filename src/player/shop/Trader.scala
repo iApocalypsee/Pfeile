@@ -1,7 +1,7 @@
 package player.shop
 
 import java.util.function.Predicate
-import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
+import java.util.{Deque => IDeque, List => IList, Map => IMap, Optional, Queue => IQueue, Set => ISet}
 
 import general.JavaInterop.JavaPrimitives._
 import general.JavaInterop._
@@ -44,6 +44,13 @@ abstract class Trader(world: World, spawnX: Int, spawnY: Int, name: String) exte
   }
 
   /**
+    * Retrieves one given article from the trader to be put in an optional.
+    *
+    * @param article The article that is to be queued.
+    */
+  protected def retrieve(article: Predicate[Article]): Optional[Article] = retrieve(article, 1).headOption
+
+  /**
     * Removes `amount` articles from the trader to be put in a seq and returned altogether.
     * '''DO NOT FORGET TO REMOVE THE ARTICLES FROM THE UNDERLYING LIST IN THE IMPLEMENTATION.'''
     *
@@ -51,20 +58,20 @@ abstract class Trader(world: World, spawnX: Int, spawnY: Int, name: String) exte
     * @param amount How many articles to remove and put into the returned seq.
     * @return The seq of removed articles.
     */
-  protected def retrieve(article: Predicate[Article], amount: Int = 1): IList[Article]
+  protected def retrieve(article: Predicate[Article], amount: Int): IList[Article]
 
   // <editor-fold desc="Overrides">
 
   override def articles: IList[Article] = stock.keySet().toImmutableList
 
-  override def sell(to: MoneyEarner, article: Predicate[Article], amount: Int = 1): Boolean = {
+  override def sell(to: MoneyEarner, article: Predicate[Article], amount: Int): Boolean = {
     if (!isAvailable(article))
       false
     else {
-      val soldItems = retrieve(article)
-      val paymentSuccessful = to.account.pay(soldItems.asScala.foldLeft(0) { (carryOver, article) => carryOver + article.price }, this)
+      val soldItems = retrieve(article, amount).asScala
+      val paymentSuccessful = to.account.pay(soldItems.foldLeft(0) { (carryOver, article) => carryOver + article.price }, this)
       if (paymentSuccessful) {
-        for (soldArticle <- soldItems.asScala)
+        for (soldArticle <- soldItems)
           to.inventory.put(soldArticle.item())
         true
       }

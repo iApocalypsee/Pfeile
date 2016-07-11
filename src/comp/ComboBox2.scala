@@ -52,9 +52,28 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
   m_display.setRelativeX(Values.InsetLeftDisplayLabel)
   m_display.setRelativeY(Values.InsetTopDisplayLabel)
 
-  getBackingScreen.forcePullFront(m_display)
   ComboxBoxList.initialize()
   ExpandCollapseButton.initialize()
+
+  getBackingScreen.forcePullFront(m_display)
+
+  onResize += { vec =>
+    recomputePositions()
+    recomputeDimensions()
+  }
+
+  collapse()
+
+  private def recomputePositions(): Unit = {
+    ExpandCollapseButton.setRelativeX(this.getWidth - ExpandCollapseButton.getWidth)
+    // Scale changes do not automatically propagate through the chain.
+    ComboxBoxList.setRelativeX(0)
+    m_display.setRelativeX(Values.InsetLeftDisplayLabel)
+  }
+
+  private def recomputeDimensions(): Unit = {
+    ComboxBoxList.setWidth(this.getWidth)
+  }
 
   // </editor-fold>
 
@@ -180,7 +199,6 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
   override def draw(g: Graphics2D) = {
     g.setColor(Values.ColorBackground)
     g.fill(getBounds)
-    g.setColor(Values.ColorText)
   }
 
   /**
@@ -233,7 +251,9 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
       * When in range of ]0.5, 1.0], the triangle should be facing upwards.
       * When 0.5, the triangle should degenerate to a line.
       */
-    private var m_pushFactor = 0.0
+    // Initial value of 0.5 makes sure the triangle's insets are correct when it is displayed
+    // to the user for the first time.
+    private var m_pushFactor = 0.5
 
     /**
       * How fast the triangle changes the direction it is pointing to.
@@ -376,11 +396,12 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
     /**
       * How fast the triangle changes the direction it is pointing to.
       *
+      * Set this value to `0.05` for good results; value may vary slightly based on frames per second
+      * (since triangle recalculation is packed into the draw hierarchy).
+      *
       * @see [[comp.ComboBox2.ExpandCollapseButton]]
       */
     val DeltaInterpolationTriangle = 0.05
-
-    val ColorTriangle = Color.blue
 
     val ColorBackground = Color.darkGray
 
@@ -395,7 +416,8 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
       * The stuff with which the triangle gets filled when it is being drawn.
       * See documentation of `LinearGradientPaint` for this.
       */
-    val PaintTriangle = new LinearGradientPaint(-24, -27, 23, 20, Array(0.0f, 0.2f, 1.0f), Array(new Color(0, 0, 55), new Color(0, 155, 155), new Color(255, 255, 50)))
+    //val PaintTriangle = new LinearGradientPaint(-24, -27, 23, 20, Array(0.0f, 0.2f, 1.0f), Array(new Color(0, 0, 55), new Color(0, 155, 155), new Color(255, 255, 50)))
+    val PaintTriangle = new LinearGradientPaint(-24, -27, 23, 20, Array(0.0f, 0.2f, 1.0f), Array(new Color(55, 55, 55), new Color(155, 155, 155), new Color(122, 122, 188)))
 
   }
 
