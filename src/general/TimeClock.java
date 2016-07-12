@@ -56,7 +56,7 @@ public class TimeClock extends Component implements Runnable {
     /** this String displays the time */
 	private String timePrintString = "null";
 
-	public final Delegate.Function0Delegate onTimeOver = new Delegate.Function0Delegate();
+	public final Function0Delegate onTimeOver = new Function0Delegate();
 
     private static StaticProperty<FiniteDuration> _turnTime = new StaticProperty<>();
 

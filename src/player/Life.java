@@ -1,6 +1,7 @@
 package player;
 
 import general.Delegate;
+import general.Function0Delegate;
 import newent.Player;
 
 /**
@@ -13,10 +14,10 @@ public class Life {
 	private double life;
 
 	/** Called when the life has been changed. */
-	public final Delegate.Delegate<LifeChangedEvent> onLifeChanged = new Delegate.Delegate<>();
+	public final Delegate<LifeChangedEvent> onLifeChanged = new Delegate<>();
 
     /** Called when the life is equal to or under 0. This happens, then the livingEntity dies. */
-	public final Delegate.Function0Delegate onDeath = new Delegate.Function0Delegate();
+	public final Function0Delegate onDeath = new Function0Delegate();
 
 	/**
 	 * Creates a new instance from the Life class with customized preferences.

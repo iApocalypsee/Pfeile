@@ -22,7 +22,7 @@ public abstract class LootUI implements Drawable {
 
     protected Component component;
     private Tile tilePosition;
-    private Delegate.DelegateLike.Handle activeCallback;
+    private Delegate.Handle activeCallback;
 
     public LootUI (Component component) {
         this.component = component;

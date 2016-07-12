@@ -135,17 +135,17 @@ public class Component {
     /**
 	 * Called when the component's dimensions have changed.
 	 */
-	public final Delegate.Delegate<Vector> onResize = new Delegate.Delegate<>();
+	public final Delegate<Vector> onResize = new Delegate<>();
 
 	/**
 	 * Called when any transformation has been done to the component.
 	 */
-	public final Delegate.Delegate<TransformationEvent> onTransformed = transformation.onTransformed();
+	public final Delegate<TransformationEvent> onTransformed = transformation.onTransformed();
 
     /**
      * Called when a child has been added to this component.
      */
-    public final Delegate.Delegate<Component> onChildAdded = new Delegate.Delegate<>();
+    public final Delegate<Component> onChildAdded = new Delegate<>();
 
 	/**
 	 * Indicates whether the mouse is inside the components' bounds or not.

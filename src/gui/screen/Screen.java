@@ -5,6 +5,7 @@ import comp.Component.ComponentStatus;
 import comp.ImageLike;
 import comp.SolidColor;
 import general.Delegate;
+import general.Function0Delegate;
 import general.Main;
 import geom.functions.FunctionCollection;
 import gui.Drawable;
@@ -41,8 +42,8 @@ public abstract class Screen implements Drawable, MouseListener,
 	protected String name;
 	protected ScreenManager manager = Main.getGameWindow().getScreenManager();
 
-    public final Delegate.Function0Delegate onScreenEnter = new Delegate.Function0Delegate();
-    public final Delegate.Delegate<ScreenChangedEvent> onScreenLeft = new Delegate.Delegate<>();
+    public final Function0Delegate onScreenEnter = new Function0Delegate();
+    public final Delegate<ScreenChangedEvent> onScreenLeft = new Delegate<>();
 
 	private List<Component> components = new CopyOnWriteArrayList<>();
 	public final int SCREEN_INDEX;

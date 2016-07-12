@@ -42,6 +42,8 @@ class Vector(xc: Double, yc: Double) {
 
 object Vector {
 
+  final val onShit = general.Delegate.create[java.lang.Integer]
+
   /**
     * Standard linear interpolation between two vectors involving an interpolation factor.
     * @param start The starting vector.

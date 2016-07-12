@@ -6,12 +6,15 @@ import java.util.function._
 import java.util.{Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
 import general.Delegate
+import general.JavaInterop.JavaPrimitives._
 import general.JavaInterop._
 import gui.screen.Screen
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.compat.java8.FunctionConverters._
+
+case class ElementSelect(elementString: String, index: Int)
 
 /**
   * Second implementation of a combo box, hopefully with fewer bugs and fewer needs to rewrite combo box code.
@@ -30,7 +33,7 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
     * Called when an element has been selected.
     * Argument will contain the index of the element as well as the element itself.
     */
-  val onElementSelected = Delegate.create[(String, Int)]
+  val onElementSelected = Delegate.create[(String, JavaInt)]
 
   private val height = Values.SizeCollapseButton
   private val outer = this
@@ -123,9 +126,9 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
     */
   def select(idx: Int): Unit = {
     m_elements.zipWithIndex.find(elem => elem._2 == idx).foreach { tuple =>
-      val (text, _) = tuple
+      val (text, index) = tuple
       m_display.setText(text)
-      onElementSelected(tuple)
+      onElementSelected((text, index))
     }
   }
 

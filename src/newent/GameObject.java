@@ -5,6 +5,7 @@ import comp.Component;
 import comp.ImageLikeComponent;
 import comp.SolidColor;
 import general.Delegate;
+import general.Function0Delegate;
 import gui.screen.GameScreen;
 import newent.event.LocationChangedEvent;
 import player.BoardPositionable;
@@ -30,11 +31,11 @@ public abstract class GameObject extends AbstractDisplayRepresentable implements
     /**
      * Called when the position of this game object changes.
      */
-    public final Delegate.Delegate<LocationChangedEvent> onLocationChanged = new Delegate.Delegate<>();
+    public final Delegate<LocationChangedEvent> onLocationChanged = new Delegate<>();
 
-    public final Delegate.Function0Delegate onTurnCycleEnded = Delegate.createZeroArity();
+    public final Function0Delegate onTurnCycleEnded = Delegate.createZeroArity();
 
-    public final Delegate.Function0Delegate onTurnEnded = Delegate.createZeroArity();
+    public final Function0Delegate onTurnEnded = Delegate.createZeroArity();
 
     // <editor-fold desc="Constructors">
 

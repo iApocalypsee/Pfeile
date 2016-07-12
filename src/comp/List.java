@@ -40,7 +40,7 @@ public class List extends Component {
 	 */
 	private int selectedIndex = 0;
 
-	public final Delegate.Delegate<Integer> onItemSelected = new Delegate.Delegate<>();
+	public final Delegate<Integer> onItemSelected = new Delegate<>();
 
 	static final Insets INSETS = new Insets(8, 4, 7, 11);
 
