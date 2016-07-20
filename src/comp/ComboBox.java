@@ -1,6 +1,5 @@
 package comp;
 
-import general.Converter;
 import gui.screen.Screen;
 
 import javax.imageio.ImageIO;
@@ -11,6 +10,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 /**
@@ -102,7 +102,7 @@ public class ComboBox extends Component {
         clickButton.setVisible(true);
         clickButton.setRoundBorder(false);
 
-        selectionList = new comp.List(getX(), getY() + clickButton.getHeight(), screenBacking, Converter.convertToList(values));
+        selectionList = new comp.List(getX(), getY() + clickButton.getHeight(), screenBacking, Arrays.asList(values));
         selectionList.setVisible(false);
         selectionList.declineInput();
 

@@ -1,16 +1,23 @@
 package comp
 
+import java.awt.event.{MouseAdapter, MouseEvent}
 import java.awt.{Color, Dimension, Graphics2D, Point}
 import java.util.function._
 import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
+import general.JavaInterop.JavaPrimitives.JavaInt
 import general.JavaInterop._
-import general.LogFacility
+import general.{Delegate, LogFacility}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 abstract class AbstractList[A <: Component] extends Component(Component.originCenteredRectangle(2, 2)) {
+
+  /**
+    * Called when an element of the list has been selected.
+    */
+  val onElementSelected = Delegate.create[(A, JavaInt)]
 
   // Easier access to the AbstractList instance from inner classes
   private val outer = this
@@ -20,6 +27,11 @@ abstract class AbstractList[A <: Component] extends Component(Component.originCe
 
   def elements = m_elements.map(elem => elem.component)
   def getElements = elements.asJava.toImmutableList
+
+  private def select(idx: Int): Unit = {
+    val optComponent = elements.zipWithIndex.find({ case (e, i) => idx == i }).map({ case (e, i) => e })
+    optComponent.foreach(component => onElementSelected(component, elements.indexOf(component)))
+  }
 
   // <editor-fold desc="Initialization code">
 
@@ -102,6 +114,11 @@ abstract class AbstractList[A <: Component] extends Component(Component.originCe
 
   private def postAdd(x: A): Unit = {
     x.setParent(this)
+    x.addMouseListener(new MouseAdapter {
+      override def mouseReleased(e: MouseEvent) = {
+        select(elements.indexOf(x))
+      }
+    })
     refreshDimensions()
   }
 
@@ -182,6 +199,13 @@ abstract class AbstractList[A <: Component] extends Component(Component.originCe
     }
 
     satisfyingMatch.nonEmpty
+  }
+
+  /**
+    * Removes every element of this list.
+    */
+  def clear(): Unit = {
+    removeElementsWith(_ => true)
   }
 
   /**

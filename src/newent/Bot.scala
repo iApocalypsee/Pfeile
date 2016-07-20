@@ -8,7 +8,7 @@ import general.{Delegate, Main, PfeileContext}
 import gui.LifeUI
 import newent.pathfinding.{AStarPathfinder, Pathfinder}
 import player.Life
-import world.World
+import world.{CoastTile, SeaTile, World}
 
 /**
   * The KI is not implemented as a intelligent KI. It is just a basic construct, that is similar to the Player class.
@@ -72,7 +72,11 @@ class Bot(world: World, spawnPoint: Point, name: String)
   override def defaultMovementPoints: Int = 4
 
   /** This is just the same as the player has */
-  override val pathfinderLogic: Pathfinder = new AStarPathfinder(20, { t => true })
+  override val pathfinderLogic: Pathfinder = new AStarPathfinder(20, {
+    case sea: SeaTile => false
+    case coast: CoastTile => false
+    case anythingElse => true
+  })
 
   private var _localVisionPoint = visionMap.grantVision(getGridX, getGridY, 5)
 

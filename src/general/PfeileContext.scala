@@ -1,10 +1,14 @@
 package general
 
+import java.util.{Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
+
 import general.property.{FloatStaticProperty, IntStaticProperty}
 import gui.screen.GameScreen
 import newent.{CommandTeam, Entity, Player}
 import player.item.loot.WorldLootList
 import world.World
+
+import scala.collection.JavaConverters._
 
 /**
   * The game mechanics of "Pfeile" in its own class. <p>
@@ -66,12 +70,10 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     */
   lazy val turnSystem = {
 
-    val turnSystemTeamList = () => {
+    val turnSystem = new TurnSystem(() => {
       val players = world.entities.entityList.collect({ case p: Player => p })
-      players.map(player => player.belongsTo.team)
-    }
-
-    val turnSystem = new TurnSystem(turnSystemTeamList)
+      players.map(player => player.belongsTo.team).asJava
+    })
 
     turnSystem.onTurnGet += { team =>
       team match {
@@ -109,7 +111,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   def getTurnSystem = turnSystem
 
   def activePlayer = _activePlayer
-  def activePlayerOption = Option(world)
+  def activePlayerOption = Option(activePlayer)
   def activePlayer_=(p: Player): Unit = {
     _activePlayer = p
     entitySelection.selectedEntity = p

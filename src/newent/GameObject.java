@@ -157,8 +157,8 @@ public abstract class GameObject extends AbstractDisplayRepresentable implements
      * @param y Ditto.
      */
     public boolean isOccupyingPosition(int x, int y) {
-        int checkX = ((x - deltaX) & (world.terrain().width() - 1));
-        int checkY = ((y - deltaY) & (world.terrain().height() - 1));
+        int checkX = ((x - deltaX) % (world.terrain().width()));
+        int checkY = ((y - deltaY) % (world.terrain().height()));
         if(isFullOccupy) return occupiedTiles.isOccupyingPositionFull(checkX, checkY);
         else return occupiedTiles.isOccupyingPositionBorder(checkX, checkY);
     }
@@ -166,8 +166,8 @@ public abstract class GameObject extends AbstractDisplayRepresentable implements
     public void move(int dx, int dy) {
         int oldDeltaX = this.deltaX;
         int oldDeltaY = this.deltaY;
-        this.deltaX = (this.deltaX + dx) & (world.terrain().width() - 1);
-        this.deltaY = (this.deltaY + dy) & (world.terrain().height() - 1);
+        this.deltaX = (this.deltaX + dx) % (world.terrain().width());
+        this.deltaY = (this.deltaY + dy) % (world.terrain().height());
         onLocationChanged.apply(new LocationChangedEvent(oldDeltaX, oldDeltaY, this.deltaX, this.deltaY, this));
     }
 

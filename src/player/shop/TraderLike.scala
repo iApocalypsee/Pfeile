@@ -50,6 +50,11 @@ trait TraderLike {
   def articles: IList[Article]
 
   /**
+    * @see [[player.shop.TraderLike#articles()]]
+    */
+  def getArticles = articles
+
+  /**
     * Abstraction method for receiving money.
     *
     * @param from Who is paying the trader?

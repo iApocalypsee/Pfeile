@@ -10,6 +10,10 @@ object JavaInterop {
 
   // <editor-fold desc="Scala wraps around Java constructs">
 
+  object Implicits {
+    implicit lazy val actorSystem = Main.getActorSystem
+  }
+
   // Aliases for Java java.lang.Number derivatives
   object JavaPrimitives {
     type JavaInt = java.lang.Integer
@@ -36,18 +40,27 @@ object JavaInterop {
     private def setImpl: ISet[A] = new util.HashSet[A]()
     private def dequeImpl: IDeque[A] = new util.ArrayDeque[A]()
 
+    /**
+      * Copies the contents of given collection to a new, mutable list.
+      */
     def toList: IList[A] = {
       val newList = listImpl
       newList.addAll(sub)
       newList
     }
 
+    /**
+      * Copies the contents of given collection to a new, mutable set.
+      */
     def toSet: ISet[A] = {
       val newSet = setImpl
       newSet.addAll(sub)
       newSet
     }
 
+    /**
+      * Copies the contents of given collection to a new, mutable deque.
+      */
     def toDeque: IDeque[A] = {
       val newDeque = dequeImpl
       newDeque.addAll(sub)

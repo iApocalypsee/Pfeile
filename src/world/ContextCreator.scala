@@ -1,7 +1,9 @@
 package world
 
 import java.awt.Point
+import java.util.{Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
+import general.JavaInterop._
 import general._
 import general.io.StageDescriptable
 import general.property.IntStaticProperty

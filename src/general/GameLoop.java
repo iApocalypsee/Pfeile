@@ -1,5 +1,8 @@
 package general;
 
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 /**
  * A really efficient working game loop. The only drawback is (I think atleast)
  * that it is optimized for real time games, not turn based games like our game.
@@ -9,6 +12,13 @@ package general;
 public class GameLoop {
 
 	public static final double SECOND_AS_NANO = 1000000000.0, SECOND_AS_MILLI = 1000.0;
+
+    /**
+     * The queue of every callback scheduled to be called once by the main thread.
+     * Every element is called at the beginning of an update cycle, the queue will be cleared after that.
+     */
+    private static final Queue<VoidConsumer> onceScheduled = new LinkedBlockingQueue<>(),
+                                             regularScheduled = new LinkedBlockingQueue<>();
 
 	private static boolean runFlag = false;
 
@@ -28,10 +38,10 @@ public class GameLoop {
 			if(currTime >= nextTime) {
 				// assign the time for the next update
 				nextTime += delta;
-				Main.getGameWindow().update();
+				update();
 
 				if((currTime < nextTime) || (skippedFrames > maxSkippedFrames)) {
-					Main.getGameWindow().draw();
+					draw();
 					skippedFrames = 1;
 				} else {
 					skippedFrames++;
@@ -59,4 +69,40 @@ public class GameLoop {
 	public static void setRunFlag(boolean runFlag) {
 		GameLoop.runFlag = runFlag;
 	}
+
+    /**
+     * Schedules given callback for one-time execution at the next update cycle.
+     * @param callback The callback to be executed in the main thread at the beginning of the next
+     *                 update cycle. This callback will get deleted after the call.
+     */
+    public static void scheduleOnce(VoidConsumer callback) {
+        onceScheduled.offer(callback);
+    }
+
+    /**
+     * Schedules given callback for execution every time the game loop enters the update stage.
+     * @param callback The callback to be executed in the main thread
+     */
+    public static void schedule(VoidConsumer callback) {
+        regularScheduled.offer(callback);
+    }
+
+    /**
+     * Update logic.
+     */
+    private static void update() {
+        regularScheduled.forEach(VoidConsumer::call);
+        onceScheduled.forEach(VoidConsumer::call);
+        onceScheduled.clear();
+
+        Main.getGameWindow().update();
+    }
+
+    /**
+     * Self-explanatory.
+     */
+    private static void draw() {
+        Main.getGameWindow().draw();
+    }
+
 }

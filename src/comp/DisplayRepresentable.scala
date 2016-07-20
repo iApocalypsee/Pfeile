@@ -1,44 +1,50 @@
 package comp
 
-/** An object that can be represented by a [[comp.Component]] object.
+/**
+  * An object that can be represented by a [[comp.Component]] object.
   *
   * The component of the [[comp.DisplayRepresentable]] object can be changed easily by just calling
   * the setter.
   */
 trait DisplayRepresentable {
 
-  /** The component. Is going to be lazily initialized in the getter. */
-  private var _component: Component = null
+  /**
+    * The component. Is going to be lazily initialized in the getter.
+    */
+  private var m_component = null.asInstanceOf[Component]
 
-  /** Returns the component of the representable object. */
+  /**
+    * Returns the component of the representable object.
+    */
   def component: Component = {
     // Lazy initialization of the component, because some components rely
-    // on data that is initiialized maybe afterwards.
-    if(_component == null) {
-      val start = startComponent
-      require(start != null)
-      _component = start
+    // on data that is initialized maybe afterwards.
+    if(m_component == null) {
+      component = startComponent
     }
-    _component
+    m_component
   }
 
-  /** Sets the representing component. */
+  /**
+    * Sets the represented component.
+    */
   def component_=(a: Component) = {
     require(a != null)
-    _component = a
+    m_component = a
   }
 
-  // Ditto.
   def getComponent = component
   def setComponent(a: Component) = this.component = a
 
-  /** The component that the representable object uses first. Method is called only once.
-    *
+  /**
+    * The component that the representable object uses first. Method is called only once.
     * The start component must not be null at first, else it will throw a [[java.lang.IllegalArgumentException]].
-    * @return A component object which the representable object uses first.
     */
   protected def startComponent: Component
 
 }
 
+/**
+  * This class exists for compatibility reasons.
+  */
 abstract class AbstractDisplayRepresentable extends DisplayRepresentable

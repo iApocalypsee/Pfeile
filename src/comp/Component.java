@@ -172,13 +172,10 @@ public class Component {
 	public static final Insets STD_INSETS = new Insets(7, 7, 10, 7);
 
 	/**
-	 * Creates an empty component with an empty rectangle as a source shape. Do not use. Any matrix transformation will fail.
-     * Only use this constructor, if you change the srcShape with viable bounds.
-     * @deprecated Invalid srcShape used. Set the srcShape before any transformation is applied.
+	 * Creates an empty component with a shape resembling that of a 2px wide point as a source shape.
 	 */
-    @Deprecated
 	public Component() {
-        this(new Rectangle());
+        this(new Rectangle(-1, -1, 2, 2));
 	}
 
     public Component(Shape sourceShape) {
@@ -259,7 +256,7 @@ public class Component {
      * @param backing the screen, in which the component is drawn
      */
     public Component(int x, int y, Screen backing) {
-        this(new Rectangle(-1, -1, 2, 2));
+        this();
         transformation.translate(x, y);
         setBackingScreen(backing);
     }
@@ -433,7 +430,7 @@ public class Component {
 
 	public void setRelativeLocation(int x, int y) {
 		if(parent == null) throw new NullPointerException("Parent of component is null.");
-		setLocation(x + parent.getSimplifiedBounds().x, y + parent.getSimplifiedBounds().y);
+		setLocation(x + ((int) parent.getPreciseRectangle().getX()), y + ((int) parent.getPreciseRectangle().getY()));
 	}
 
     public void setCenteredLocation(int x, int y) {
@@ -571,18 +568,6 @@ public class Component {
 
 		transformation.resetTransformation();
 		transformation.setTranslationWithoutSideEffect(srcShapeParam.getBounds2D().getWidth() / 2, srcShapeParam.getBounds2D().getHeight() / 2);
-	}
-
-	/**
-	 * Erstellt eine neue Instanz eines Rechtecks. In diesen werden Position,
-	 * Breite und Höhe vereinfacht zusammengefasst. Mit jedem Aufruf dieser
-	 * Methode wird eine neue Instanz eines Rechtecks erstellt.
-	 *
-	 * @return Ein neues Rechteck mit der vereinfachten BoundingBox.
-	 */
-	@Deprecated
-	public Rectangle getSimplifiedBounds() {
-		return getBounds().getBounds();
 	}
 
 	public Rectangle2D getPreciseRectangle() {
@@ -826,7 +811,7 @@ public class Component {
 	 * so do not depend on the additional drawing routine to be drawn for every subclass
 	 * of Component.
 	 *
-	 * @return The chunk of code representing the additional drawing commands for the component.
+	 * @return The chunk of code represented the additional drawing commands for the component.
 	 */
 	public Function1<Graphics2D, Unit> getAdditionalDrawing() {
 		return additionalDrawing;

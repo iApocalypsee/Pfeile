@@ -1,37 +1,46 @@
 package general
 
+import java.util.function._
+import java.util.{Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
+
+import general.JavaInterop._
 import gui.screen.ArrowSelectionScreenPreSet
 import newent.{CommandTeam, Team}
 
-import scala.collection.JavaConversions
 import scala.collection.JavaConverters._
 
 /**
   * Takes care of that the turn mechanics apply correctly to the players.
   * @constructor Creates a new turn system with the attached player list.
   * @param teams Function that returns the player list.
-  *                   The player list needs to be pulled every time freshly.
-  *                   This class cannot rely on a static reference, it needs to
-  *                   have fresh information about who is still in the game
-  *                   and who is already out.
+  *              The player list needs to be pulled every time freshly.
+  *              This class cannot rely on a static reference, it needs to
+  *              have fresh information about who is still in the game
+  *              and who is already out.
   * @param teamToBeginIndex The index of the player to begin. Defaults to the
   *                           first player mentioned in the list (has the index 0).
   */
-class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
+class TurnSystem(val teams: Supplier[IList[Team]], teamToBeginIndex: Int) {
+
+  def this(teams: Supplier[IList[Team]]) = this(teams, 0)
+
+  /**
+    * Called when it's another player's turn.
+    */
+  val onTurnGet = Delegate.create[Team]
 
   /**
     * Called when a turn has been ended.
     */
   val onTurnEnded = Delegate.create[Team]
 
-  onTurnEnded += { team =>
-    team.asCommandTeam.head.onTurnEnded
+  onTurnGet += { team =>
+    team.asCommandTeamOpt.foreach(cmdTeam => cmdTeam.head.onTurnGet())
   }
 
-  /**
-    * Called when it's another player's turn.
-    */
-  val onTurnGet = Delegate.create[Team]
+  onTurnEnded += { team =>
+    team.asCommandTeamOpt.foreach(cmdTeam => cmdTeam.head.onTurnEnded())
+  }
 
   /**
     * Called when every player completed their moves in this turn.
@@ -62,7 +71,7 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
     *
     * @return <code>JavaConversions.seqAsJavaList(teams().apply())</code>
     */
-  def getTeams = JavaConversions.seqAsJavaList(teams())
+  def getTeams = teams()
 
   /**
     * The list of teams is searched for the team of the active player.
@@ -71,7 +80,7 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
     */
   def getTeamOfActivePlayer: CommandTeam = {
     val activePlayer = Main.getContext.getActivePlayer
-    teams().collect({case x: CommandTeam => x}).find(team => team.isInTeam(activePlayer)) getOrElse {
+    teams().asScala.collect({ case x: CommandTeam => x }).find(team => team.isInTeam(activePlayer)) getOrElse {
       throw new RuntimeException("The team of the active player " + activePlayer.name + " could not be found!")
     }
   }
@@ -79,9 +88,9 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
   def getCommandTeams = commandTeams.asJava
 
   /**
-   * @return a List with all CommandTeams. Should have size 2 with two players...
-   */
-  def commandTeams = teams().collect({ case x: CommandTeam => x })
+    * @return a List with all CommandTeams. Should have size 2 with two players...
+    */
+  def commandTeams = teams().asScala.collect({ case x: CommandTeam => x })
 
   def getHeadOfCommandTeams = headOfCommandTeams.asJava
 
@@ -116,7 +125,7 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
     * Returns the first team in the turn system.
     * @return The first team in the turn system.
     */
-  def firstTeam = teams()(teamToBeginIndex)
+  def firstTeam = teams().get(teamToBeginIndex)
 
   /**
     * Finds the player that follows the given player in the turn system.
@@ -134,7 +143,7 @@ class TurnSystem(val teams: () => Seq[Team], teamToBeginIndex: Int = 0) {
 
     val isOutOfRange = searchFromIndex + 1 >= list.size
     if (isOutOfRange) (list.head, true)
-    else (list(searchFromIndex + 1), false)
+    else (list.get(searchFromIndex + 1), false)
   }
 
   /**

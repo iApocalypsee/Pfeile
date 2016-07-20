@@ -8,7 +8,6 @@ import gui.FrameContainer;
 import gui.FrameContainerObject;
 import gui.MoneyDisplay;
 import player.shop.ShopCentral;
-import player.shop.ShopCentral$;
 import player.shop.ShopWindow;
 import player.weapon.AttackingCalculator;
 import world.VisualMap;
@@ -175,7 +174,7 @@ public class GameScreen extends Screen implements FrameContainer {
 
     public ShopWindow getShopWindow() {
         if(shopWindow == null) {
-            shopWindow = new ShopWindow(ShopCentral.articles(), ShopCentral$.MODULE$);
+            shopWindow = new ShopWindow(ShopCentral.instance());
         }
         return shopWindow;
     }

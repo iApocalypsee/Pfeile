@@ -4,6 +4,7 @@ import java.awt._
 
 import _root_.geom.Vector
 import comp.{Component, _}
+import general.JavaInterop.JavaPrimitives.JavaInt
 import general._
 import general.property.DynamicProperty
 
@@ -39,7 +40,7 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Art
   private def positionalsUpdate(t: TranslationChange): Unit = {
     val movPt = t.delta
     if(imageDrawLocation != null) {
-      imageDrawLocation.move(movPt.getX.asInstanceOf[Int],movPt.getY.asInstanceOf[Int])
+      imageDrawLocation.setLocation(imageDrawLocation.x + movPt.getX.asInstanceOf[Int], imageDrawLocation.y + movPt.getY.asInstanceOf[Int])
     }
   }
 
@@ -48,8 +49,8 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Art
 
   private def recalculateStyle(): Unit = recalculateStyleWithArgs(gridX, gridY)
 
-  private def constructText(article: Article) = Main.tr("shopPrice",  cachedItem.getNameDisplayed,
-    article.price.asInstanceOf[java.lang.Object])
+  private def constructText(article: Article) = Main.tr("shopPrice", cachedItem.getNameDisplayed,
+    article.price.asInstanceOf[JavaInt])
 
   private[this] def recalculateStyleWithArgs(gridX: Int, gridY: Int): Unit = {
 
@@ -99,7 +100,7 @@ private[shop] object ShopButton {
 
   object Style {
 
-    //<editor-fold desc='Property initialization (not important)'>
+    // <editor-fold desc="Property initialization (not important)">
 
     /**
       * The setter function that every property in the [[player.shop.ShopButton.Style]] object.
@@ -126,9 +127,9 @@ private[shop] object ShopButton {
       prop
     }
 
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc='In relation to the button itself'>
+    // <editor-fold desc="In relation to the button itself">
 
     val fixedWidth = commonProperty(75)
 
@@ -144,9 +145,9 @@ private[shop] object ShopButton {
 
     val textOrientation = commonProperty(new Orientation(HorizontalOrientation.Centered, VerticalOrientation.Top))
 
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc='Common values'>
+    // <editor-fold desc="Common values">
 
     val font = commonProperty(Component.STD_FONT)
 
@@ -156,7 +157,7 @@ private[shop] object ShopButton {
       * Calculates the size of the image contained by the shop button and returns it
       * as a Vector2.
       *
-      * @return A vector representing the image size inside the button.
+      * @return A vector represented the image size inside the button.
       */
     def imageSize = new Vector(fixedWidth - imageInsets.left - imageInsets.right,
       fixedHeight - imageInsets.top - imageInsets.bottom - textGridCellHeight - textTopInset)
@@ -168,11 +169,11 @@ private[shop] object ShopButton {
       */
     def imagePosition = new Vector(imageInsets.left, imageInsets.top)
 
-    //</editor-fold>
+    // </editor-fold>
 
   }
 
-  //<editor-fold desc='Shop button object management'>
+  // <editor-fold desc="Shop button object management">
 
   private val buttonBuffer = mutable.MutableList[ShopButton]()
 
@@ -187,6 +188,6 @@ private[shop] object ShopButton {
     LogFacility.log("Recalculated styles of every shop button", "Debug")
   }
 
-  //</editor-fold>
+  // </editor-fold>
 
 }

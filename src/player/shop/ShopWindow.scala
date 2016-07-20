@@ -1,30 +1,36 @@
 package player.shop
 
 import java.awt.{Graphics2D, Insets}
-import java.util.concurrent.atomic.AtomicReference
-import java.util.{List => JList}
+import java.util.{Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
 import comp._
+import general.JavaInterop._
 import general._
 import gui.screen.GameScreen
 
 import scala.beans.BeanProperty
-import scala.collection.JavaConversions
 import scala.collection.JavaConverters._
-import scala.collection.parallel.immutable.ParVector
+import scala.collection.mutable
 
 /**
-  * The main shop window through which every input is directed while shopping.
+  * A window with which the articles that are on sale can be reviewed.
+  *
+  * @constructor Constructs a new window displaying the buyable contents of given trader.
   */
-class ShopWindow(articles: Seq[Article], val representing: TraderLike) extends DisplayRepresentable {
-
-  /**
-    * Additional constructor for Java lists.
-    * @param javaArticles The list of articles to display. Java-form.
-    */
-  def this(javaArticles: JList[Article], representing: TraderLike) = this(JavaConversions.asScalaBuffer(javaArticles), representing)
+class ShopWindow(val represented: TraderLike) extends DisplayRepresentable {
 
   import player.shop.ShopWindow._
+
+  private def articles = represented.articles.asScala
+
+  /**
+    * Subset of the components that are being held by the internal window.
+    */
+  private val m_articleComponents = mutable.ArrayBuffer.empty[ShopButton]
+
+  def articleComponents: Seq[Component] = m_articleComponents.toSeq
+
+  def getArticleComponents: IList[Component] = articleComponents.asJava.toImmutableList
 
   //<editor-fold desc="Main components: region and frame">
 
@@ -54,13 +60,15 @@ class ShopWindow(articles: Seq[Article], val representing: TraderLike) extends D
   //<editor-fold desc="Events">
 
   /**
-    * Called when the components representing the articles have been recomputed.
+    * Called when the components represented the articles have been recomputed.
+    * The argument will be an immutable list of the new components that have been generated on this
+    * generation pass.
     */
-  val onArticleComponentsRebuilt = Delegate.create[SwapEvent[Seq[Component]]]
+  val onArticleComponentsRebuilt = Delegate.create[IList[Component]]
 
   //</editor-fold>
 
-  private val tempArticleComponents = new AtomicReference(new ParVector[Component])
+  // <editor-fold desc="Initialization code">
 
   // Every time the window opens, the article buttons should be recomputed again.
   // Who knows if something has changed?
@@ -70,8 +78,12 @@ class ShopWindow(articles: Seq[Article], val representing: TraderLike) extends D
     rebuildArticleComponents()
   }
 
-  def articleComponents: Seq[Component] = tempArticleComponents.get().toVector
-  def getArticleComponents: JList[Component] = articleComponents.asJava
+  parentComponent.setVisible(false)
+  accessObjectManagement.manage(this)
+
+  // </editor-fold>
+
+  // <editor-fold desc="Shop button generation">
 
   /**
     * Maps given articles to a collection of components that can be used to display the articles
@@ -93,39 +105,39 @@ class ShopWindow(articles: Seq[Article], val representing: TraderLike) extends D
     }
   }
 
+  /**
+    * Actual rebuilding of the GUI components used to display the articles to the caller.
+    * In the process, every shop button will be destroyed and replaced by a new one.
+    */
   def rebuildArticleComponents(): Unit = {
-    val oldComponents = tempArticleComponents.get().toVector
-    clearOldArticleGUI()
     val shopButtons = articleComponentCollection(articles)
-    for(component <- shopButtons) {
-      component.setName(articleComponentName(component))
-    }
-    val newComponents = ParVector(shopButtons:_*)
-    tempArticleComponents.set(newComponents)
-    onArticleComponentsRebuilt(SwapEvent(oldComponents, newComponents.toVector))
+    shopButtons.foreach(button => button.setName(articleComponentName(button)))
+
+    clearOldArticleGUI()
+
+    m_articleComponents ++= shopButtons
+
+    // Since Java collections are invariant...
+    onArticleComponentsRebuilt(shopButtons.map(_.asInstanceOf[Component]).asJava.toImmutableList)
   }
 
   private def clearOldArticleGUI(): Unit = {
-    if(tempArticleComponents.get().nonEmpty) {
-      for(component <- tempArticleComponents.get()) {
-        component.getBackingScreen.remove(component)
-      }
-      tempArticleComponents.set(ParVector.empty)
-    }
+    m_articleComponents.foreach(component => component.getBackingScreen.remove(component))
+    m_articleComponents.clear()
   }
+
+  // </editor-fold>
 
   /**
     * The component that the representable object uses first. Method is called only once.
     *
     * The start component must not be null at first, else it will throw a [[IllegalArgumentException]].
+    *
     * @return A component object which the representable object uses first.
     */
   override protected def startComponent: Component = parentComponent
 
-  parentComponent.setVisible(false)
-  accessObjectManagement.manage(this)
-
-  override def toString = s"ShopWindow(tempArticleComponents=$tempArticleComponents, representing=$representing)"
+  override def toString = s"ShopWindow(articleComponents=$m_articleComponents, represented=$represented)"
 
 }
 

@@ -14,8 +14,6 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.compat.java8.FunctionConverters._
 
-case class ElementSelect(elementString: String, index: Int)
-
 /**
   * Second implementation of a combo box, hopefully with fewer bugs and fewer needs to rewrite combo box code.
   *
@@ -122,6 +120,8 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
     * Selects an element by index.
     * If no element corresponds to given index, the method fails silently.
     *
+    * This method will not trigger any mouse listeners of children lists, labels or other components by default.
+    *
     * @param idx The element to select, zero-based.
     */
   def select(idx: Int): Unit = {
@@ -139,12 +139,6 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
   private def newLabel(text: String): Label = {
     val ret = new Label(0, 0, getBackingScreen, text)
     ret.setText(text)
-    ret.addMouseListener(new MouseAdapter {
-      override def mouseReleased(e: MouseEvent) = {
-        select(m_elements.indexOf(ret.getText))
-        negateListVisibility()
-      }
-    })
     ret
   }
 
@@ -175,6 +169,13 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
     m_elements.remove(idx)
     ComboxBoxList.removeElement(idx)
     postRemove()
+  }
+
+  /**
+    * Removes every element of this combo box.
+    */
+  def clear(): Unit = {
+    removeElementsWith(_ => true)
   }
 
   /**
@@ -214,6 +215,15 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
     setWidth(outer.getWidth)
     setHeight(outer.getHeight)
 
+    onElementSelected += { kv =>
+      negateListVisibility()
+
+      val (component, index) = kv
+      val newDisplayText = component.getText
+      m_display.setText(newDisplayText)
+      ComboBox2.this.onElementSelected((newDisplayText, index))
+    }
+
     /**
       * @see [[comp.ComboBox2.ExpandCollapseButton#initialize()]]
       */
@@ -228,6 +238,9 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
     // A quirk in the 'Consolas' font requires the top insets to be a little bit less than normal.
     override def topInset = super.topInset - 4
 
+    /**
+      * Width fixed to parent component, in this case, ComboBox2. Height stays variable.
+      */
     override protected def recalculatedDimensions = {
       new java.awt.Dimension(outer.getWidth, super.recalculatedDimensions.height)
     }

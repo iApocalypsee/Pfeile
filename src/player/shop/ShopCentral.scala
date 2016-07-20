@@ -4,31 +4,57 @@ import java.awt.event.{MouseAdapter, MouseEvent}
 import java.util.function._
 import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
+import akka.actor.{Actor, Props}
 import general.{LogFacility, Main}
 import newent.MoneyEarner
 import player.item.Item
 
+import scala.beans.BeanProperty
 import scala.collection.JavaConverters._
 import scala.compat.java8.FunctionConverters._
 
 /**
-  * Central object for code to interact with the shop system.
+  * Central shop for players.
+  *
+  * This shop is a construct seperated from the other traders in the game; further, this shop is accessible at any
+  * time from anywhere by every player and has no limits on how many items may be purchased.
   */
 object ShopCentral extends TraderLike {
 
-  //<editor-fold desc="ShopWindow representation and article component coordination">
+  def instance = this
 
-  private def subscribeShopButtonCallbacks(s: Seq[ShopButton]): Unit = {
-    for (button <- s) button.addMouseListener(new MouseAdapter {
-      override def mouseReleased(e: MouseEvent): Unit = {
-        ShopCentral.sell(Main.getContext.activePlayer, article => article == button.article)
-      }
-    })
-  }
+  /**
+    * Taking care of shop central business asynchronously.
+    * Right now I don't really care about code that does not exhibit Actor behavior; if
+    * called code screws synchronization up, I won't be fixing it soon.
+    * Data races? I don't care.
+    * Deadlocks? Should be no problem.
+    */
+  private[ShopCentral] class AsyncWorker extends Actor {
 
-  ShopWindow.objectManagement.applyOnEnter {
-    // Only execute for that window if that window is representing the ShopCentral.
-    case window if window.representing == this =>
+    override def receive = {
+      case AsyncWorkerMessages.Clicked(button)        => onShopButtonClicked(button)
+      case AsyncWorkerMessages.GuiEstablished(window) => onShopWindowRegistered(window)
+      case other                                      => unhandled(other)
+    }
+
+    /**
+      * Called when a shop button has been clicked.
+      *
+      * @param button The shop button that has been clicked on.
+      */
+    private def onShopButtonClicked(button: ShopButton): Unit = {
+      // Match the article of the button to the article in the shop central and sell it.
+      ShopCentral.sell(Main.getContext.activePlayer, article => article == button.article)
+    }
+
+    /**
+      * Called when a new shop window has been registered to the GUI system.
+      * Given shop window will satisfy `window.represented == ShopCentral`.
+      *
+      * @param window The new shop window.
+      */
+    private def onShopWindowRegistered(window: ShopWindow): Unit = {
 
       // For every article component that is existing right now, register the listener.
       // The already computed components are not affected by the onArticleComponentRebuilt callback subscription
@@ -36,29 +62,68 @@ object ShopCentral extends TraderLike {
 
       // For every article component that is computed later, register the listener as well
       window.onArticleComponentsRebuilt += { swap =>
-        subscribeShopButtonCallbacks(swap.newObj.collect({ case s: ShopButton => s }))
+        subscribeShopButtonCallbacks(swap.asScala.collect({ case s: ShopButton => s }))
       }
 
+    }
+
+  }
+
+  /**
+    * Collection of all messages to the async worker actor.
+    */
+  object AsyncWorkerMessages {
+
+    case class Clicked(button: ShopButton)
+
+    /**
+      * Sent for processing in [[player.shop.ShopCentral.AsyncWorker#onShopWindowRegistered(player.shop.ShopWindow)]]
+      */
+    case class GuiEstablished(window: ShopWindow)
+
+  }
+
+  /**
+    * Reference to the allocated worker.
+    */
+  @BeanProperty val asyncWorkerRef = Main.getActorSystem.actorOf(Props(new AsyncWorker))
+
+  // <editor-fold desc="ShopWindow representation and article component coordination">
+
+  private def subscribeShopButtonCallbacks(s: Seq[ShopButton]): Unit = {
+    for (button <- s) {
+      button.addMouseListener(new MouseAdapter {
+        override def mouseReleased(e: MouseEvent): Unit = {
+          asyncWorkerRef ! AsyncWorkerMessages.Clicked(button)
+        }
+      })
+    }
+  }
+
+  ShopWindow.objectManagement.applyOnEnter {
+    // Only execute for that window if that window is represented the ShopCentral.
+    case window if window.represented == this =>
+      asyncWorkerRef ! AsyncWorkerMessages.GuiEstablished(window)
     case _ =>
   }
 
-  //</editor-fold>
+  // </editor-fold>
 
-  //def addArticle(item: () => Item, price: Int): Unit =
-  def addArticle(item: Supplier[Item], price: Int): Unit = addArticle(Article(item.asScala, price))
-  def addArticle(article: Article): Unit = {
-    ArticleCollection.addArticle(article)
+  def addArticle(item: Supplier[Item], price: Int): Unit = {
+    ArticleCollection.addArticle(Article(item.asScala, price))
   }
 
   /**
     * Finds all articles that fulfill a certain condition.
+    *
     * @param f Selector function.
     * @return All articles that comply to the selector function.
     */
-  def find(f: (Article) => Boolean): Seq[Article] = ArticleCollection.find(f)
+  def find(f: Predicate[Article]): Seq[Article] = ArticleCollection.find(f.asScala)
 
   /**
     * Finds a certain article.
+    *
     * @param article The article to look for.
     * @return Ditto.
     */
@@ -68,6 +133,7 @@ object ShopCentral extends TraderLike {
 
   /**
     * Checks if the given article is in the trader's stock.
+    *
     * @param f The article predicate.
     * @return If the article predicate is at least once in the trader's stock, `true`.
     */
@@ -75,6 +141,7 @@ object ShopCentral extends TraderLike {
 
   /**
     * Sells the specified article to the given entity.
+    *
     * @param to The entity to sell to.
     * @param article The article to sell.
     * @param amount How many articles to sell. Based on this value, the total's transaction value is calculated.
@@ -86,6 +153,7 @@ object ShopCentral extends TraderLike {
 
     /**
       * Called when the client has not enough money to pay for queried items.
+      *
       * @return False, definitely.
       */
     def onNotSufficientClientMoney(wishlist: Seq[Article]): Boolean = {
@@ -95,6 +163,7 @@ object ShopCentral extends TraderLike {
 
     /**
       * Called when the given article does not exist in the shop central.
+      *
       * @return False, definitely.
       */
     def onNotAvailable(): Boolean = {
@@ -106,6 +175,7 @@ object ShopCentral extends TraderLike {
 
     /**
       * Called when given item is available.
+      *
       * @return Depends.
       */
     def onAvailable(): Boolean = {
@@ -118,6 +188,7 @@ object ShopCentral extends TraderLike {
 
     /**
       * Called when everything has been processed and nothing is in between the handshake anymore.
+      *
       * @return True, definitely.
       */
     def onSuccess(transactionValue: Int, articles: Seq[Article]): Boolean = {
@@ -132,6 +203,7 @@ object ShopCentral extends TraderLike {
 
   /**
     * Abstraction method for receiving money.
+    *
     * @param from Who is paying?
     * @param moneyAmount The money to receive.
     */

@@ -1,8 +1,12 @@
 package general
 
+import java.util.UUID
 import java.util.function.Consumer
 
-import general.Delegate.ProcFun0
+@FunctionalInterface
+trait VoidConsumer {
+  def call(): Unit
+}
 
 /**
   * An implementation of the observer pattern.
@@ -15,23 +19,11 @@ import general.Delegate.ProcFun0
   * of Java programmers know them, indeed...).
   *
   * It is recommended that you use the factory methods, but if you really need mixin
-  * traits, go ahead and call the constructors for the [[general.Delegate.DelegateLike]] types directly.
+  * traits, go ahead and call the constructors for the [[general.DelegateLike]] types directly.
   */
 object Delegate {
-
-  @FunctionalInterface
-  trait ProcFun0 {
-    def call(): Unit
-  }
-
-  object ProcFun0 {
-    private[general] def toScalaFunction(procFun0: ProcFun0) = () => procFun0.call()
-  }
-
   def create[In] = new Delegate[In] with ClearableDelegate
-
   def createZeroArity = new Function0Delegate with ClearableDelegate
-
 }
 
 /**
@@ -50,7 +42,7 @@ sealed trait DelegateLike {
     *
     * @param f The function to register.
     */
-  def +=(f: FunType): Handle = +=(f.hashCode().toString)(f)
+  def +=(f: FunType): Handle = +=(UUID.randomUUID().toString)(f)
 
   /**
     * Registers a key-function pair as a callback.
@@ -189,14 +181,14 @@ trait RecursiveCallCheck {
 
   /**
     * Is this check instance allowed a caller to enter already?
- *
+    *
     * @return A boolean.
     */
   final def processing = _isProcessing
 
   /**
     * Only to be set by subclassing classes.
- *
+    *
     * @param x The new boolean value.
     */
   protected final def processing_=(x: Boolean): Unit = _isProcessing = x
@@ -205,6 +197,7 @@ trait RecursiveCallCheck {
 
 /**
   * Mixin trait for every delegate accepting one argument.
+  *
   * @tparam In The type of parameter.
   */
 trait ParameterizedDelegate[In] extends DelegateLike with RecursiveCallCheck {
@@ -213,11 +206,11 @@ trait ParameterizedDelegate[In] extends DelegateLike with RecursiveCallCheck {
 
   def apply(arg: In): Unit = {
     checkRecursion()
-    if(processing) return
+    if (processing) return
     processing = true
     try callbacks foreach {
       case pf: PartialFunction[In, Any] => if (pf.isDefinedAt(arg)) pf(arg) else throw new MatchError(this)
-      case reg_f: ((In) => Any) => reg_f(arg)
+      case reg_f: ((In) => Any)         => reg_f(arg)
     }
     finally {
       processing = false
@@ -258,7 +251,7 @@ trait NonParameterizedDelegate extends DelegateLike with RecursiveCallCheck {
 
   def apply(): Unit = {
     checkRecursion()
-    if(processing) return
+    if (processing) return
     processing = true
     try callbacks foreach {
       _()
@@ -268,8 +261,8 @@ trait NonParameterizedDelegate extends DelegateLike with RecursiveCallCheck {
     }
   }
 
-  def registerJava(jf: ProcFun0): Unit = this += ProcFun0.toScalaFunction(jf)
-  def registerJava(key: String, jf: ProcFun0): Unit = this.register(key, ProcFun0.toScalaFunction(jf))
+  def registerJava(jf: VoidConsumer): Unit = this += (() => jf.call())
+  def registerJava(key: String, jf: VoidConsumer): Unit = this.register(key, () => jf.call())
 
   override def registerOnce(df: (String, () => Unit)): Handle = synchronized {
     val (k, f) = df
@@ -285,7 +278,7 @@ trait NonParameterizedDelegate extends DelegateLike with RecursiveCallCheck {
     handle
   }
 
-  def registerOnceJava(jf: ProcFun0): Unit = registerOnce(ProcFun0.toScalaFunction(jf))
+  def registerOnceJava(jf: VoidConsumer): Unit = registerOnce(() => jf.call())
 
 }
 

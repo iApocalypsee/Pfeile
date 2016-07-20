@@ -1,5 +1,8 @@
 package newent.pathfinding
 
+import java.util.{Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
+
+import general.{LogFacility, ScalaUtil}
 import newent.MovableEntity
 import world.Tile
 
@@ -11,7 +14,7 @@ import scala.math._
  *
  * @author Josip Palavra
  */
-class AStarPathfinder(val maxSearchDepth: Int, val excludes: (Tile) => Boolean) extends Pathfinder {
+class AStarPathfinder(val maxSearchDepth: Int, val excludes: Tile => Boolean) extends Pathfinder {
 
   private val closed = mutable.ArrayBuffer[Node]()
   private val open = new SortedList
@@ -24,7 +27,6 @@ class AStarPathfinder(val maxSearchDepth: Int, val excludes: (Tile) => Boolean) 
     * @return An optional path.
     */
   override def findPath(moveable: MovableEntity, tx: Int, ty: Int): Option[Path] = {
-
     import scala.util.control.Breaks.{break, breakable}
 
     val terrain = moveable.tileLocation.terrain
@@ -45,7 +47,6 @@ class AStarPathfinder(val maxSearchDepth: Int, val excludes: (Tile) => Boolean) 
 
     breakable {
       while (open.list.nonEmpty) {
-
 
         // Pull out the first node in our open list, this is determined to
         // be the most likely to be the next step based on our heuristic
@@ -133,9 +134,27 @@ class AStarPathfinder(val maxSearchDepth: Int, val excludes: (Tile) => Boolean) 
     var target = nodes(tx)(ty)
     while(target ne nodes(sx)(sy)) {
       // FIXME: This line sometimes causes NullPointerExceptions [at moveTowards]
-      stepList.+=:(Path.Step(target.x, target.y, terrain.tileAt(target.x, target.y).requiredMovementPoints))
+      // Bug hunt: try to prepend the step to the list of needed steps.
+      // If null pointer exception, log var map below and rethrow.
+      try Path.Step(target.x, target.y, terrain.tileAt(target.x, target.y).requiredMovementPoints) +=: stepList
+      catch {
+        case ex: NullPointerException =>
+          LogFacility.log(ScalaUtil.errorMessage("NullPointerException in AStarPathfinder", ex, Map(
+            "tileAt(target.x, target.y)" -> terrain.tileAt(target.x, target.y),
+            "target.x" -> target.x,
+            "target.y" -> target.y,
+            "stepList" -> stepList,
+            "target" -> target,
+            "sx" -> sx,
+            "sy" -> sy
+          )))
+          throw ex
+      }
       target = target.parent
     }
+
+    // Prepend the starting position (with required movement points set as zero).
+    Path.Step(sx, sy, 0) +=: stepList
 
     // That's it.
     Some(Path(stepList.toSeq))
