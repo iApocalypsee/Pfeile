@@ -183,7 +183,7 @@ public class AimSelectionScreen extends Screen {
 		public void run() {
 			super.run();
             if(!stopFlag) {
-                for (Tile tileWrapper : Main.getContext().getWorld().terrain().javaTiles()) {
+                for (Tile tileWrapper : Main.getContext().getWorld().terrain().getTiles()) {
                     if(!tileWrapper.getComponent().getBounds().contains(evt.getPoint()))
                         continue;
 

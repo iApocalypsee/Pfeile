@@ -1,15 +1,16 @@
 package world
 
+import java.awt._
 import java.awt.event.{MouseAdapter, MouseEvent}
-import java.awt.geom.Point2D
-import java.awt.{Color, Font, Graphics2D, Point}
+import java.awt.geom.Rectangle2D
+import java.util.{Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 import javax.swing.SwingUtilities
 
-import comp.{Component, TransformationEvent}
+import comp.Component
+import general.JavaInterop._
 import general.Main
 import general.property.{DynamicProperty, PropertyBase, StaticProperty}
 import gui.AdjustableDrawing
-import gui.image.TextureAtlas.AtlasPoint
 import gui.screen.GameScreen
 import newent.MovableEntity
 import newent.pathfinding.Path
@@ -20,15 +21,12 @@ import scala.concurrent.Future
 
 /**
   * The component that is responsible for drawing the isometric shape of the tile.
-  * Note that this component is not able to rotate! If you attempt a rotation, the component
-  * will throw a UnsupportedOperationException, stating that rotation is not supported.
   */
+// Rotate 126.5° for Bavaria style
+// Rotate ???.?° for card game
 class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with AdjustableDrawing with TileComponentLike {
 
   import world.Tile._
-
-  // Just make sure that the isometric tile is not being rotated.
-  onTransformed += "IsometricPolygonTileComponent Rotation check" -> TransformationEvent.InvalidRotation
 
   //<editor-fold desc="Visual appearance">
 
@@ -63,18 +61,27 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
   }
 
   private def cornerRecalculation(relativeShape: IsometricTileRelativeShape, x: Int, y: Int, width: Int, height: Int): Unit = {
-    val absoluteShape = relativeShape.construct(x, y, width, height)
+    val absoluteShape = relativeShape.construct(0, 0, width, height)
     cornerPoints.use(absoluteShape)
-  }
-
-  onTransformed += { _ =>
-    cornerRecalculation(tileShape.get, getX, getY, getWidth, getHeight)
   }
 
   /**
     * The color with which the tile object gets filled as the mouse points on it.
     */
   val mouseFocusColor = new StaticProperty(DefaultMouseFocusColor)
+
+  //</editor-fold>
+
+  //<editor-fold desc="Initialization code">
+
+  setBackingScreen(GameScreen.getInstance())
+  setSourceShape(tileShape.get.construct(-TileHalfWidth / 2, -TileHalfHeight / 2, TileWidth, TileHeight).polygon)
+  setName((isoTile.getGridX, isoTile.getGridY).toString())
+
+  cornerRecalculation(tileShape.get, 4282, 234279, getSourceShape.getBounds.width, getSourceShape.getBounds.height)
+
+  // Translate so that the tile fits into the grid again.
+  getTransformation.translate(normalX, normalY)
 
   //</editor-fold>
 
@@ -105,28 +112,8 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
 
   //<editor-fold desc="Texturing">
 
-  lazy val texture = isoTile.textureAtlas.getTexture(isoTile.getGridX, isoTile.getGridY, getBounds, atlasImageCutPosition).get
-
-  /**
-    * For texture atlas: Determines where the upper left corner of the image cut shall be.
-    *
-    * @param atlasPoint The atlas point for which the cut should apply.
-    * @return The cut point on the atlas image.
-    */
-  private def atlasImageCutPosition(atlasPoint: AtlasPoint) =
-    new Point2D.Double(atlasPoint.x * TileHalfWidth + atlasPoint.y * TileHalfWidth,
-      atlasPoint.x * TileHalfHeight - atlasPoint.y * TileHalfHeight)
-
-  //</editor-fold>
-
-  //<editor-fold desc="Initialization code">
-
-  setBackingScreen(GameScreen.getInstance())
-  setSourceShape(tileShape.get.construct(-TileHalfWidth / 2, -TileHalfHeight / 2, TileWidth, TileHeight).polygon)
-  setName((isoTile.getGridX, isoTile.getGridY).toString())
-
-  // Translate so that the tile fits into the grid again.
-  getTransformation.translate(normalX, normalY)
+  private lazy val baseTexture = isoTile.textureAtlas.baseImage
+  private lazy val textureGradient = new TexturePaint(baseTexture, new Rectangle2D.Double(0, 0, baseTexture.getWidth, baseTexture.getHeight))
 
   //</editor-fold>
 
@@ -315,12 +302,16 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
 
   override def draw(g: Graphics2D): Unit = {
     super.draw(g)
-    g.setColor(Color.black)
-    g.draw(getBounds)
-    g.setColor(isoTile.color)
-    g.drawImage(texture, getX, getY, getWidth, getHeight, null)
-    drawBorders(g)
+    g.useMatrix(getTransformation.localConcatenatedMatrix) {
+      val oldGrad = g.getPaint
+      g.setPaint(textureGradient)
+      g.fill(getSourceShape)
+      g.setPaint(oldGrad)
+      drawBorders(g)
+    }
+
     drawCoordinates(g)
   }
+
 }
 

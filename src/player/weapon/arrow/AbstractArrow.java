@@ -237,7 +237,7 @@ public abstract class AbstractArrow extends RangedWeapon implements BoardPositio
      * <p> <code>rotation = FunctionCollection.angle(...getCenterX(), ...getCenterY(), getAim().getPosXGui(), getAim().getPosYGui());</code>
      */
     public void calculateRotation () {
-        getComponent().rotateDegree(Math.toDegrees(FunctionCollection.angle(
+        getComponent().rotateDeg(Math.toDegrees(FunctionCollection.angle(
 				getComponent().getPreciseRectangle().getCenterX(), getComponent().getPreciseRectangle().getCenterY(), getAim().getPosXGui(), getAim().getPosYGui())));
     }
 

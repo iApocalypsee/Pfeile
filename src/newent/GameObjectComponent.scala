@@ -7,7 +7,7 @@ import java.util.{Collection => ICollection, Deque => IDeque, List => IList, Map
 
 import akka.actor.ActorDSL._
 import akka.actor._
-import com.sun.istack.internal.{NotNull, Nullable}
+import com.sun.istack.internal.Nullable
 import com.sun.javafx.geom.{Line2D => FXLINE2D}
 import comp.Component
 import general.JavaInterop.Implicits._
@@ -158,6 +158,8 @@ class GameObjectComponent(private val tie: GameObject) extends Component {
 
     private var lerpFactor = 0.0
 
+    private var followFlag = false
+
     /**
       * How many positions should be computed in advance.
       */
@@ -177,10 +179,12 @@ class GameObjectComponent(private val tie: GameObject) extends Component {
       iterator = null
       subdivs.clear()
       vertices.clear()
+      followFlag = false
       beginUsedIndex = 0
     }
 
-    private def isFollowing = subdivs.nonEmpty
+    //private def isFollowing = !subdivs.lastOption.exists(vec => vec == vertices.last)
+    private def isFollowing = followFlag
 
     /**
       * Clears previous computations and prepares the actor for calculating the
@@ -190,6 +194,7 @@ class GameObjectComponent(private val tie: GameObject) extends Component {
       */
     private def prepareComputation(pi: PathIterator): Unit = {
       clearCalculation()
+      followFlag = true
       iterator = pi
       for (_ <- 1 to safetyNet) self ! AsyncMessages.Precompute
     }
@@ -200,7 +205,11 @@ class GameObjectComponent(private val tie: GameObject) extends Component {
     private def fetch(): Option[Vector2] = {
       self ! AsyncMessages.Precompute
       // Dequeue first element, I want an Option
-      if(isFollowing) subdivs.dequeueFirst(_ => true) else None
+      val retOpt = subdivs.dequeueFirst(_ => true)
+      if(retOpt.contains(vertices.last) && iterator == null) {
+        followFlag = false
+      }
+      retOpt
     }
 
     /**
@@ -232,13 +241,14 @@ class GameObjectComponent(private val tie: GameObject) extends Component {
 
     private def precomputeInterpolation(): Unit = {
 
-      if(vertices.size <= beginUsedIndex + 2) return
+      //if(vertices.size <= beginUsedIndex + 1) return
+      if(beginUsedIndex + 2 > vertices.size) return
 
       val beginInterpolate = vertices(beginUsedIndex)
       val endInterpolate = vertices(beginUsedIndex + 1)
 
       def interpolateOverLength = (endInterpolate - beginInterpolate).length
-      def interpolationSpeedPerPass = interpolateOverLength / 150
+      def interpolationSpeedPerPass = interpolateOverLength / 300
 
       val factorAccum = if(interpolateOverLength < 2) 1.5 else 0.05 * interpolationSpeedPerPass + 0.001
 
@@ -271,6 +281,10 @@ class GameObjectComponent(private val tie: GameObject) extends Component {
     */
   private val inbox = Inbox.create(actorSystem)
 
+  def followNewPath(@Nullable it: PathIterator): Unit = {
+    Option(it).foreach(i => usedMoveImpl ! AsyncMessages.PrepareComputation(i))
+  }
+
   /**
     * Makes the component's center position follow a defined path.
     *
@@ -280,8 +294,8 @@ class GameObjectComponent(private val tie: GameObject) extends Component {
     *
     * @param x The path to follow up.
     */
-  def followNewPath(@NotNull x: Path2D): Unit = {
-    usedMoveImpl ! AsyncMessages.PrepareComputation(x.getPathIterator(null, 0.01))
+  def followNewPath(@Nullable x: java.awt.Shape): Unit = {
+    followNewPath(Option(x).map(y => y.getPathIterator(null, 0.01)).orNull)
   }
 
   /**
@@ -315,7 +329,7 @@ class GameObjectComponent(private val tie: GameObject) extends Component {
 
     // Whole bunch of mappings (get from the path to the center points of the components of the tiles)
     // Get the tail because of prerequisite listed in documentation.
-    val steps: List[Step] = path.asScala.toList.tail
+    val steps: List[Step] = path.asScala.toList
     val tileSteps: List[Tile] = steps.map(step => tie.world.terrain.tileAt(step.x, step.y))
     val tileCenterPoints: List[AwtPoint] = tileSteps.map(tile => tile.component.center)
 
@@ -363,12 +377,14 @@ class GameObjectComponent(private val tie: GameObject) extends Component {
     optRetrieval.foreach(retrieval => setCenteredLocation(retrieval.getX.asInstanceOf[Int], retrieval.getY.asInstanceOf[Int]))
   }
 
+  private val followReceiver = Inbox.create(actorSystem)
+
   /**
     * Returns true if the component is currently being moved on a defined path (supplied with `followNewPath(...)`).
     */
   def isFollowingPath(): Boolean = {
-    inbox.send(usedMoveImpl, AsyncMessages.IsFollowing)
-    blocking { inbox.receive(1 day).asInstanceOf[Boolean] }
+    followReceiver.send(usedMoveImpl, AsyncMessages.IsFollowing)
+    blocking { followReceiver.receive(1 day).asInstanceOf[Boolean] }
   }
 
   def clearPathComputation(): Unit = {
@@ -408,5 +424,22 @@ class GameObjectComponent(private val tie: GameObject) extends Component {
     * @todo Supply values for easy fine-tuning.
     */
   private object Values
+
+}
+
+object GameObjectComponent {
+
+  def javaFxPathIteratorAsAwtPathIterator(x: com.sun.javafx.geom.PathIterator): PathIterator = new PathIterator {
+    override def next() = x.next()
+    override def currentSegment(coords: Array[Float]) = x.currentSegment(coords)
+    override def currentSegment(coords: Array[Double]) = {
+      val fcoords = Array.ofDim[Float](coords.length)
+      val ret = x.currentSegment(fcoords)
+      for(i <- fcoords.indices) coords(i) = fcoords(i)
+      ret
+    }
+    override def isDone = x.isDone
+    override def getWindingRule = x.getWindingRule
+  }
 
 }

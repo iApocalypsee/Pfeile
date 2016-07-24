@@ -1,9 +1,10 @@
 package world
 
-import java.util
+import java.util.{Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet, _}
 
 import world.brush.TileTypeBrush
 
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.util.Random
 
@@ -50,48 +51,17 @@ class Terrain(val world: World, val width: Int, val height: Int) {
     * @param y The y coordinate.
     * @return The tile at the specified coordinate.
     */
-  def tileAt(x: Int, y: Int) = {
-    if(isTileValid(x, y)) _tiles(x)(y)
-    else null
-  }
-
+  def tileAt(x: Int, y: Int) = if(isTileValid(x, y)) _tiles(x)(y) else null
   def tileAtOption(x: Int, y: Int) = Option(tileAt(x, y))
 
   def getTileAt(x: Int, y: Int): Tile = tileAt(x, y)
+  def getOptionalTile(x: Int, y: Int) = Optional of tileAt(x, y)
 
   /**
     * Returns the tiles in a one dimensional list.
     */
-  def tiles: List[Tile] = {
-    val ret = mutable.MutableList[Tile]()
-    for (y <- 0 until height) {
-      for (x <- 0 until width) {
-        ret += tileAt(x, y)
-      }
-    }
-    ret.toList
-  }
-
-  /**
-    * This method is intended for internal use.
-    * @param x The x position of a tile.
-    * @param y The y position of a tile.
-    * @return The index in the list for given tile, or -1 if it does not exist.
-    */
-  def indexOf(x: Int, y: Int): Int = tiles.indexOf(tileAt(x, y))
-
-  /**
-    * Ditto.
-    */
-  def javaTiles: util.ArrayList[Tile] = {
-    val ret = new java.util.ArrayList[Tile](height * width)
-    for (y <- 0 until height) {
-      for (x <- 0 until width) {
-        ret.add(tileAt(x, y))
-      }
-    }
-    ret
-  }
+  def tiles: List[Tile] = _tiles.flatten.toList
+  def getTiles: IList[Tile] = tiles.asJava
 
   /**
     * Sets the tile type at the given position to the specified tile.
@@ -101,7 +71,7 @@ class Terrain(val world: World, val width: Int, val height: Int) {
     * @param t The new tile type to set to.
     */
   def setTileAt(x: Int, y: Int, t: Tile): Unit = {
-    require(t ne null)
+    require(t != null)
     _tiles(x)(y) = t
   }
 
@@ -170,7 +140,7 @@ class Terrain(val world: World, val width: Int, val height: Int) {
       * @param posY the y-position on the screen / of a component
       * @return The tile at given coordinates, or null if no tile can be found at these particular screen coordinates.
       */
-    def findTile(posX: Double, posY: Double): Tile = tiles.find(tile => tile.component.getBounds.contains(posX, posY)).getOrElse(null.asInstanceOf[Tile])
+    def findTile(posX: Double, posY: Double): Tile = tiles.find(tile => tile.component.getBounds.contains(posX, posY)).orNull
 
   }
 

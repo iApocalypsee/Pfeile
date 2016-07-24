@@ -15,7 +15,11 @@ class Vector(xc: Double, yc: Double) {
   def *(factor: Double) = new Vector(x * factor, y * factor);
   def /(factor: Double) = new Vector(x / factor, y / factor);
   def *(other: Vector) = x * other.getX + y * other.getY
-  def equals(other: Vector) = (this - other).isZero
+
+  override def equals(other: Any) = other match {
+    case that: Vector => (this - that).isZero
+    case anything => super.equals(anything)
+  }
 
   def squaredLength = this * this
   def length = math.sqrt(squaredLength)

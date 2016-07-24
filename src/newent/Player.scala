@@ -1,9 +1,11 @@
 package newent
 
+import java.awt.geom.PathIterator
 import java.awt.{Color, Graphics2D, Point}
 import java.util.{Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
 import animation.SoundPool
+import com.sun.javafx.geom.Path2D
 import comp.{Component, DisplayRepresentable}
 import general._
 import general.property.{DoubleStaticProperty, IntStaticProperty}
@@ -127,7 +129,21 @@ class Player(world: World, spawnpoint: Point, name: String) extends Entity(world
   //</editor-fold>
 
   override protected def onTraverseSteps(traversedTiles: MovedEvent) = {
+
+    /**
+      * A GUI path for testing purposes. This path can be followed by the component at any time.
+      */
+    def testPath: PathIterator = {
+      val path = new Path2D()
+      path.moveTo(500, 500)
+      path.lineToRel(200, 200)
+      path.lineToRel(100, -500)
+      path.curveToRel(-500, 100, 100, 100, -125, -150)
+      GameObjectComponent.javaFxPathIteratorAsAwtPathIterator(path.getPathIterator(null))
+    }
+
     component.followNewPath(traversedTiles.steps)
+    
   }
 
   class PlayerComponent extends GameObjectComponent(this) {
@@ -155,9 +171,7 @@ class Player(world: World, spawnpoint: Point, name: String) extends Entity(world
 
       // Hook for making the player image follow the path defined by its MovableEntity.path
       if(isFollowingPath()) keepFollowingPath()
-      else {
-        tightenComponentToTile(tileLocation)
-      }
+      else tightenComponentToTile(tileLocation)
 
     }
 

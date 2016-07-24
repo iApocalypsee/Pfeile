@@ -446,6 +446,30 @@ public class Component {
 		move(dp.x, dp.y);
 	}
 
+    /**
+     * Returns the rotation of this component in degrees.
+     * Note that not every component tends to support rotation or scaling.
+     */
+    public double getRotation() {
+        return transformation.rotation();
+    }
+
+    public void rotateDeg(double degAngle) {
+        transformation.rotate(degAngle);
+    }
+
+    public void rotateRad(double radAngle) {
+        transformation.rotate(Math.toDegrees(radAngle));
+    }
+
+    public void setRotationDeg(double degAngle) {
+        transformation.setRotation(degAngle);
+    }
+
+    public void setRotationRad(double radAngle) {
+        transformation.setRotation(Math.toDegrees(radAngle));
+    }
+
 	public int getWidth() {
 		return (int) getBounds().getBounds2D().getWidth();
 	}

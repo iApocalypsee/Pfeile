@@ -13,7 +13,9 @@ interface PoisonedWeapon {
     void setPoisonedAmount (int amountOfPoison);
 
     /** Changes the amount of poison used to strengthen this weapon. */
-    void changePoisonedAmount (int changeValue);
+    default void changePoisonedAmount (int changeValue) {
+        setPoisonedAmount(getPoisonedAmount() + changeValue);
+    }
 
     /** Removes all poison effects */
     default void removePoisonedEffect () {

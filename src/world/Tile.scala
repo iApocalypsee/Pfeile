@@ -13,7 +13,6 @@ import player.weapon.arrow.{AbstractArrow, ImpactDrawerHandler}
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.compat.java8.OptionConverters._
-import scala.compat.java8._
 
 /**
   * Base trait for all tiles.
@@ -189,9 +188,9 @@ object Tile {
 
   //<editor-fold desc="Visual appearance">
 
-  lazy val TileHalfWidth = 60
+  lazy val TileHalfWidth = 90
   lazy val TileWidth = TileHalfWidth * 2
-  lazy val TileHalfHeight = 30
+  lazy val TileHalfHeight = 45
   lazy val TileHeight = TileHalfHeight * 2
   lazy val TileDiagonalLength = sqrt(pow(TileHalfWidth, 2) + pow(TileHalfHeight, 2))
 

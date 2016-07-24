@@ -11,7 +11,7 @@ import gui.image.TextureAtlas.AtlasPoint
 import scala.collection.mutable
 import scala.util.{Failure, Success, Try}
 
-class TextureAtlas(baseImage: BufferedImage) {
+class TextureAtlas(val baseImage: BufferedImage) {
 
   private val m_map = mutable.Map[AtlasPoint, BufferedImage]()
 

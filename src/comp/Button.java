@@ -158,23 +158,21 @@ public class Button extends Component {
 
     @Override
     public void draw(Graphics2D g) {
-        if (isVisible()) {
-            getBorder().draw(g);
-            g.setColor(Color.white);
-            g.setFont(font);
+        getBorder().draw(g);
+        g.setColor(Color.white);
+        g.setFont(font);
 
-            if(optImage == null) {
-                g.drawString(text, getX() + insets.left, (int) (getY() + insets.top + textDimension.getHeight()));
-            } else {
-                g.drawImage(optImage, getX() + insets.left, getY() + insets.top,
-                        optImage.getWidth(), optImage.getHeight(), null);
-                g.drawString(text, getX() + insets.left + optImage.getWidth() + insetsBetween,
-                        (int) (getY() + insets.top + textDimension.getHeight()));
-            }
+        if(optImage == null) {
+            g.drawString(text, getX() + insets.left, (int) (getY() + insets.top + textDimension.getHeight()));
+        } else {
+            g.drawImage(optImage, getX() + insets.left, getY() + insets.top,
+                    optImage.getWidth(), optImage.getHeight(), null);
+            g.drawString(text, getX() + insets.left + optImage.getWidth() + insetsBetween,
+                    (int) (getY() + insets.top + textDimension.getHeight()));
+        }
 
-            if(getAdditionalDrawing() != null) {
-                getAdditionalDrawing().apply(g);
-            }
+        if(getAdditionalDrawing() != null) {
+            getAdditionalDrawing().apply(g);
         }
     }
 }

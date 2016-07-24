@@ -3,7 +3,7 @@ package world
 import java.awt.Graphics2D
 import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
-import general.{Delegate, LogFacility, Main, PfeileContext}
+import general._
 import geom.{Point, Vector}
 import gui.Drawable
 import newent.{CommandTeam, VisionStatus}
@@ -51,8 +51,6 @@ class VisualMap(context: PfeileContext) extends Drawable {
   /** The world that is being displayed currently. */
   private val _displayWorld = context.world
 
-  private val zoom = new ZoomBehavior(_displayWorld.terrain)
-
   /** Returns the current shifting of the map in the x direction. */
   def getShiftY: Int = _vp.getShiftY.asInstanceOf[Int]
   /** Returns the current shifting of the map in the y direction. */
@@ -67,22 +65,20 @@ class VisualMap(context: PfeileContext) extends Drawable {
   def setSightType(s: SightType) = this.sightType = s
 
   /**
-    * Moves the visual.
-    *
-    * @param shiftX The amount of x units to move the map.
-    * @param shiftY The amount of y units to move the map.
+    * Schedules the main thread to update the tiles to their new positions as defined
+    * by the parameters.
+    * This method translates the entire map by given vector.
     */
   def moveMap(shiftX: Int, shiftY: Int): Unit = {
     setMapPosition(getShiftX + shiftX, getShiftY + shiftY)
   }
 
   /**
-    * Sets the position of the whole map.
- *
-    * @param x The new x position of the left corner of the map.
-    * @param y The new y position of the left corner of the map.
+    * Schedules the main thread to update the tiles to their new positions as defined
+    * by the parameters.
+    * This method sets the absolute translation of the entire map.
     */
-  def setMapPosition(x: Int, y: Int): Unit = {
+  def setMapPosition(x: Int, y: Int): Unit = GameLoop.scheduleOnce(() => {
     import scala.collection.JavaConversions._
 
     val shiftX = x - getShiftX
@@ -99,11 +95,6 @@ class VisualMap(context: PfeileContext) extends Drawable {
         s"Tile#IsometricPolygonTileComponent expected")
     }
 
-    /*
-    context.world.entities.entityList.foreach { entity: EntityLike =>
-      entity.getComponent.move(shiftX, shiftY)
-    }*/
-
     context.getWorldLootList.getLoots.foreach { loot: Loot =>
       loot.getLootUI.relocateGuiPosition()
     }
@@ -114,7 +105,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
     }
 
     onWorldGuiChanged()
-  }
+  })
 
   def centerMap(tileX: Int, tileY: Int): Unit = {
     val centerOn = _displayWorld.terrain.tileAt(tileX, tileY)
@@ -126,7 +117,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
         val tileNormalPosition = new Vector(isometric.normalX, isometric.normalY)
         val centeredUpperLeft = center - new Point(isometric.getWidth / 2, isometric.getHeight / 2)
 
-        val relevantDelta = (centeredUpperLeft - tileNormalPosition)
+        val relevantDelta = centeredUpperLeft - tileNormalPosition
         setMapPosition(relevantDelta.getX.asInstanceOf[Int], relevantDelta.getY.asInstanceOf[Int])
 
       // The visual map can only handle isometric tiles for now.

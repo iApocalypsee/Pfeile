@@ -30,8 +30,6 @@ class Transformation2D {
   onRotated += { x => onTransformed(x) }
   onScaled += { x => onTransformed(x) }
 
-  def applyTransformation(x: TransformationEvent): Unit = x.applyTransformation(this)
-
   /**
    * Resets the whole transformation, so that every stat is cleaned.
    *
@@ -83,14 +81,12 @@ class Transformation2D {
     * @return This.
     */
   def setTranslation(x: Double, y: Double) = {
-
     val old = translation
     setTranslationWithoutSideEffect(x, y)
-    val firedEvent = TranslationChange(old, translation)
+    val firedEvent = TranslationChange(old, translation, this)
     if(firedEvent.isDelta) {
       onTranslated(firedEvent)
     }
-
     this
   }
 
@@ -107,11 +103,10 @@ class Transformation2D {
   def setRotation(angle: Double) = {
     val old = _rotation
     setRotationWithoutSideEffect(angle)
-    val firedEvent = RotationChange(old, _rotation)
+    val firedEvent = RotationChange(old, _rotation, this)
     if(firedEvent.isDelta) {
       onRotated(firedEvent)
     }
-
     this
   }
 
@@ -150,9 +145,10 @@ class Transformation2D {
   def setScale(sx: Double, sy: Double) = {
     val old = scale
     setScaleWithoutSideEffect(sx, sy)
-    val firedEvent = ScaleChange(old, scale)
-    // TODO Delta check? See TransformationEvent#isDelta
-    onScaled(ScaleChange(old, scale))
+    val firedEvent = ScaleChange(old, scale, this)
+    if(firedEvent.isDelta) {
+      onScaled(firedEvent)
+    }
     this
   }
 
@@ -192,6 +188,7 @@ object Transformation2D {
 }
 
 trait TransformationEvent {
+  def applied: Transformation2D
   def matrix: AffineTransform
   def deltaMatrix: AffineTransform
   def isDelta = !deltaMatrix.isIdentity
@@ -212,17 +209,18 @@ object TransformationEvent {
 
 }
 
-case class RotationChange(oldDegree: Double, newDegree: Double) extends TransformationEvent {
+case class RotationChange(oldDegree: Double, newDegree: Double, override val applied: Transformation2D) extends TransformationEvent {
   val delta = newDegree - oldDegree
   override lazy val matrix = AffineTransform.getRotateInstance(newDegree)
   override lazy val deltaMatrix = AffineTransform.getRotateInstance(delta)
 
+  // TODO Children rotation should be taken care of as well, children should be translated around the center of applied transform
   override def applyTransformation(x: Transformation2D) = {
     x.rotate(delta)
   }
 }
 
-case class TranslationChange(oldTranslation: Vector, newTranslation: Vector) extends TransformationEvent {
+case class TranslationChange(oldTranslation: Vector, newTranslation: Vector, override val applied: Transformation2D) extends TransformationEvent {
   val delta = newTranslation - oldTranslation
   override lazy val matrix = AffineTransform.getTranslateInstance(newTranslation.getX, newTranslation.getY)
   override lazy val deltaMatrix = AffineTransform.getTranslateInstance(delta.getX, delta.getY)
@@ -232,7 +230,7 @@ case class TranslationChange(oldTranslation: Vector, newTranslation: Vector) ext
   }
 }
 
-case class ScaleChange(oldScale: Vector, newScale: Vector) extends TransformationEvent {
+case class ScaleChange(oldScale: Vector, newScale: Vector, override val applied: Transformation2D) extends TransformationEvent {
   val delta = new Vector(newScale.getX / oldScale.getX, newScale.getY / oldScale.getY)
   override lazy val matrix = AffineTransform.getScaleInstance(newScale.getX, newScale.getY)
 

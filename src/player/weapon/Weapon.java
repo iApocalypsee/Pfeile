@@ -135,11 +135,4 @@ public abstract class Weapon extends EquippableItem implements Defence, Poisoned
         this.amountOfPoison = amountOfPoison;
     }
 
-    /**
-     * Changes the amount of poison used to strengthen this weapon.
-     */
-    @Override
-    public void changePoisonedAmount (int changeValue) {
-        amountOfPoison += changeValue;
-    }
 }

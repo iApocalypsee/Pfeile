@@ -1,5 +1,7 @@
 package general
 
+import java.awt.geom.AffineTransform
+import java.awt.{Graphics2D, Paint, Shape}
 import java.util
 import java.util.concurrent.Executors
 import java.util.function._
@@ -84,6 +86,38 @@ object JavaInterop {
 
   // </editor-fold>
 
+  // <editor-fold desc="Graphics goodies">
+
+  implicit class Graphics2DOp(val g: Graphics2D) extends AnyVal {
+
+    private def use[A, U](x: U, g: () => U, s: U => Unit)(f: => A): A = {
+      require(x != null)
+      val o = g()
+      s(x)
+      val r = f
+      s(o)
+      r
+    }
+
+    /**
+      * Pushes a matrix on top of the "stack" of the Graphics2D object.
+      * The matrix specified as `m` is available to given graphics context inside the given code block.
+      *
+      * @param m The matrix to be pushed on top of the stack.
+      * @param f The code block to use the pushed matrix.
+      * @tparam A The return type of the code block that uses the pushed matrix.
+      * @return The return value of the code block.
+      */
+    def useMatrix[A](m: AffineTransform)(f: => A) = use(m, g.getTransform, g.setTransform)(f)
+
+    def usePaint[A](p: Paint)(f: => A): A = use(p, g.getPaint, g.setPaint)(f)
+
+    def useClip[A](s: Shape)(f: => A): A = use(s, g.getClip, g.setClip)(f)
+
+  }
+
+  // </editor-fold>
+
   // <editor-fold desc="Java function goodies">
 
   implicit class PredicateOp[A](val predicate: Predicate[A]) extends AnyVal {
@@ -92,6 +126,8 @@ object JavaInterop {
 
   implicit class SupplierOp[A](val supplier: Supplier[A]) extends AnyVal {
     def apply() = supplier.get()
+    def consume(f: A => Unit): VoidConsumer = () => f(supplier.get())
+    def andThen[B](f: A => B): Supplier[B] = () => f(supplier.get())
   }
 
   implicit class ConsumerOp[A](val consumer: Consumer[A]) extends AnyVal {
