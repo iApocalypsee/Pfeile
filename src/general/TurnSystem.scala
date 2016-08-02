@@ -80,8 +80,15 @@ class TurnSystem(val teams: Supplier[IList[Team]], teamToBeginIndex: Int) {
     */
   def getTeamOfActivePlayer: CommandTeam = {
     val activePlayer = Main.getContext.getActivePlayer
-    teams().asScala.collect({ case x: CommandTeam => x }).find(team => team.isInTeam(activePlayer)) getOrElse {
-      throw new RuntimeException("The team of the active player " + activePlayer.name + " could not be found!")
+    commandTeams.find(team => team.isInTeam(activePlayer)) getOrElse {
+      throw new RuntimeException(ScalaUtil.errorMessage(
+        s"""
+           |Active player could not be found in member list of any team.
+           |Check initialization; has the player really been set as team leader?
+         """.stripMargin, Map(
+          "activePlayer" -> activePlayer,
+          "commandTeams" -> commandTeams
+        )))
     }
   }
 

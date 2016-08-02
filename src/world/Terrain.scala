@@ -76,6 +76,16 @@ class Terrain(val world: World, val width: Int, val height: Int) {
   }
 
   /**
+    * Overwrites the contents of the tile array with grass fields.
+    */
+  def generatePlain(): Unit = {
+    for(x <- 0 until width;
+        y <- 0 until height) {
+      _tiles(x)(y) = new GrassTile(x, y, this)
+    }
+  }
+
+  /**
     * Generates the world with a random seed.
     *
     * @param seed The seed to use for the world generation algorithm.

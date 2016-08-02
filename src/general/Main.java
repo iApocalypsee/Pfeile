@@ -37,16 +37,10 @@ public class Main {
     private static GraphicsDevice graphicsDevice;
 
     /**
-     * Ditto.
-     * @see Main#isDebug
-     */
-    private static boolean debug = true;
-
-    /**
      * Determines whether Pfeile is running in debug mode.
      */
     public static boolean isDebug() {
-        return debug;
+        return true;
     }
 
     private static Main main;

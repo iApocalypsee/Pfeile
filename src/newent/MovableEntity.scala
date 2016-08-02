@@ -6,10 +6,10 @@ import geom.functions.FunctionCollection
 import newent.pathfinding.{DefaultPathfinder, Path, Pathfinder}
 import world.Tile
 
+import scala.annotation.tailrec
 import scala.beans.BeanProperty
 import scala.collection.JavaConverters._
 import scala.compat.java8.OptionConverters._
-import scala.compat.java8._
 
 /**
   * An entity which movement is limited by how many movement points it has available.
@@ -84,16 +84,6 @@ trait MovableEntity extends Entity with StatisticalEntity {
   def addMovementPoints(additionalMovementPoints: Int) = currentMovementPoints += additionalMovementPoints
 
   /**
-    * Moves the entity by specified x and y coordinates.
-    * Does not move the entity directly to given tile, but rather calculates a path towards
-    * given tile.
-    *
-    * @param x The amount of units to go the x direction.
-    * @param y The amount of units to go the y direction.
-    */
-  override def move(x: Int, y: Int): Unit = moveTowards(getGridX + x, getGridY + y)
-
-  /**
     * Tells the entity to move towards the specified position.
     *
     * @param x The x position.
@@ -111,31 +101,34 @@ trait MovableEntity extends Entity with StatisticalEntity {
     * If no path is set, this method does nothing.
     */
   def moveAlong(): Unit = synchronized(
-    if (_currentPath.isDefined) {
-      var path = _currentPath.get.steps.toList
 
-      // Utility variable for indicating if the while loop should terminate
-      var moveBreakCondition = false
+    if (_currentPath.isDefined) {
 
       // Last step the entity has made during this moveAlong() call.
       // Required for firing the MovedEvent.
       var lastStep: Path.Step = null
 
-      // Actual moving.
-      while (!moveBreakCondition) {
-        // If no more steps are to be done
-        if (path.isEmpty) moveBreakCondition = true
-        else {
+      var path = _currentPath.get.steps.toList
+
+      @tailrec def moveAlgorithm(path: List[Path.Step]): List[Path.Step] = {
+        if (path.nonEmpty) {
+
           val nextStep = path.head
           if (nextStep.reqMovementPoints <= currentMovementPoints) {
             _currentMovementPoints -= nextStep.reqMovementPoints
             setGridPosition(nextStep.x, nextStep.y)
-            path = path.tail
             lastStep = nextStep
           }
-          else moveBreakCondition = true
+          else return path
+
+          moveAlgorithm(path.tail)
+
+        } else {
+          return path
         }
       }
+
+      path = moveAlgorithm(path)
 
       // Call the 'onTraverseSteps' callback if this entity has crossed at least one tile.
       val walked = _currentPath.get.steps diff path
@@ -153,7 +146,8 @@ trait MovableEntity extends Entity with StatisticalEntity {
         } else {
           None
         }
-    })
+    }
+  )
 
   onTurnEnded += { () =>
     // Before resetting movement points, move this entity as far as it can still get

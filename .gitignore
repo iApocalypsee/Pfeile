@@ -26,7 +26,6 @@ Pfeile project.iml
 
 # files....
 javadocexport.xml
-build.sbt
 .cache
 .project
 .classpath

@@ -26,7 +26,7 @@ class AStarPathfinder(val maxSearchDepth: Int, val excludes: Tile => Boolean) ex
     * @param ty The target y position.
     * @return An optional path.
     */
-  override def findPath(moveable: MovableEntity, tx: Int, ty: Int): Option[Path] = {
+  override def findPath(moveable: MovableEntity, tx: Int, ty: Int): Option[Path] = synchronized {
     import scala.util.control.Breaks.{break, breakable}
 
     val terrain = moveable.tileLocation.terrain

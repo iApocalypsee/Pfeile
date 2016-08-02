@@ -176,10 +176,10 @@ object Tile {
   // Every subclass of Tile puts a java.lang.Class
   // object of itself into this list.
 
-  private[this] val _tileTypeList = mutable.MutableList[Class[_ <: Tile]]()
+  private[this] val _tileTypeList = mutable.Set[Class[_ <: Tile]]()
 
   private def appendToTileTypeList(t: Class[_ <: Tile]): Unit = {
-    if (!_tileTypeList.contains(t)) _tileTypeList += t
+    _tileTypeList += t
   }
 
   def tileTypeList = _tileTypeList.toList

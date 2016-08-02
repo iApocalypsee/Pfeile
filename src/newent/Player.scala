@@ -128,7 +128,11 @@ class Player(world: World, spawnpoint: Point, name: String) extends Entity(world
 
   //</editor-fold>
 
+  private var gameLoopUpdateHandle: GameLoop.UpdateHandle = null
+
   override protected def onTraverseSteps(traversedTiles: MovedEvent) = {
+
+    super.onTraverseSteps(traversedTiles)
 
     /**
       * A GUI path for testing purposes. This path can be followed by the component at any time.
@@ -143,6 +147,10 @@ class Player(world: World, spawnpoint: Point, name: String) extends Entity(world
     }
 
     component.followNewPath(traversedTiles.steps)
+
+    if(gameLoopUpdateHandle != null) {
+      gameLoopUpdateHandle.invalidate()
+    }
     
   }
 

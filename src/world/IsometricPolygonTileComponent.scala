@@ -245,7 +245,7 @@ class IsometricPolygonTileComponent(val isoTile: Tile) extends Component with Ad
       * Flag for drawing the coordinates on top of the tiles.
       * If true, the coordinates will be drawn.
       */
-    var isCoordinateDrawn = true
+    var isCoordinateDrawn = false
 
     /**
       * The font used for drawing the debug coordinates of the visible fields.

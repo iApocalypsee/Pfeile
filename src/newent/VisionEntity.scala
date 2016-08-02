@@ -57,7 +57,7 @@ trait VisionEntity extends Entity {
   /**
     * Releases the current self tracking vision point, if it exists.
     */
-  private def releaseVisionPoint(): Unit = {
+  private def releaseVisionPoint(): Unit = if(hasSelfTracking) {
     for(visionPoint <- m_selfVisionPoint) visionPoint.releaseVision()
   }
 
@@ -66,7 +66,7 @@ trait VisionEntity extends Entity {
     * @param gridX Ditto.
     * @param gridY Ditto.
     */
-  private def refreshSelfTracking(gridX: Int, gridY: Int): Unit = {
+  protected def refreshSelfTracking(gridX: Int, gridY: Int): Unit = if(hasSelfTracking) {
     releaseVisionPoint()
     m_selfVisionPoint = Some(visionMap.grantVision(gridX, gridY, visionRadius))
   }
