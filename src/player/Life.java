@@ -2,7 +2,10 @@ package player;
 
 import general.Delegate;
 import general.Function0Delegate;
+import geom.functions.FunctionCollection;
 import newent.Player;
+
+import java.io.Serializable;
 
 /**
  * Contains only data relevant to life of an entity.
@@ -108,11 +111,7 @@ public class Life {
      */
     public void changeLife (double changeOfLife) {
         final double oldLife = this.life;
-        this.life = this.life + changeOfLife;
-        if (this.life < 0)
-            this.life = 0;
-        else if (this.life > lifeMax)
-            this.life = lifeMax;
+        this.life = FunctionCollection.clamp(changeOfLife, 0, this.lifeMax);
         onLifeChanged.apply(new LifeChangedEvent(oldLife, this.life));
     }
 
@@ -129,7 +128,9 @@ public class Life {
 	 * This class is just an event class that carries information to the delegates. It should not
 	 * execute any code beforehand.
 	 */
-	public final class LifeChangedEvent {
+	public final class LifeChangedEvent implements Serializable {
+
+        private static final long serialVersionUID = 1L;
 
         private final double oldLife;
         private final double newLife;

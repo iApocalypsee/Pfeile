@@ -1,8 +1,13 @@
 package general
 
 import java.util.Date
+import java.util.concurrent.TimeUnit
+
+import akka.actor._
 
 import scala.collection.JavaConversions
+import scala.concurrent.duration.FiniteDuration
+import scala.reflect.ClassTag
 
 object ScalaUtil {
 
@@ -95,15 +100,30 @@ object ScalaUtil {
 
   def stringRepresentation(any: Any, x: Map[String, Any]): String = stringRepresentation(objectDesc(any), x)
 
-  /*
-  def stringRepresentation(x: Any): String = stringRepresentation(x, x.getClass.getDeclaredFields.map(field => {
-    field.setAccessible(true)
-    (field.getName, field.get(x))
-  }).toMap)
-  */
-
   def objectDesc(x: Any) = /*s"${x.getClass.getAnnotations.foldLeft("") { (c, a) => s"$c @${a.annotationType().getName}" }}" +*/
     s"${x.getClass.getName}@${x.hashCode()}"
+
+  def awaitReply[A](msg: AnyRef, target: ActorRef, timeout: FiniteDuration, retType: Class[A]): A = {
+    awaitReply(Inbox.create(JavaInterop.Implicits.actorSystem), msg, target, timeout, retType)
+  }
+
+  def awaitReply[A](sender: Inbox, msg: AnyRef, target: ActorRef, timeout: FiniteDuration, retType: Class[A]): A = {
+    require(sender != null)
+    sender.send(target, msg)
+    retType.cast(sender.receive(timeout))
+  }
+
+  def awaitReply[A](msg: AnyRef, target: ActorRef, timeoutMillis: Long, retType: Class[A]): A = {
+    awaitReply(msg, target, FiniteDuration(timeoutMillis, TimeUnit.MILLISECONDS), retType)
+  }
+
+  def awaitReply[A](sender: Inbox, msg: AnyRef, target: ActorRef, timeout: FiniteDuration)(implicit clsEvidence: ClassTag[A]): A = {
+    awaitReply(sender, msg, target, timeout, clsEvidence.runtimeClass).asInstanceOf[A]
+  }
+
+  def awaitReply[A](msg: AnyRef, target: ActorRef, timeout: FiniteDuration)(implicit clsEvidence: ClassTag[A]): A = {
+    awaitReply[A](Inbox.create(JavaInterop.Implicits.actorSystem), msg, target, timeout)
+  }
 
   //</editor-fold>
 

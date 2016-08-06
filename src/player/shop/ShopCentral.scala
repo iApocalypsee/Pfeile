@@ -4,12 +4,16 @@ import java.awt.event.{MouseAdapter, MouseEvent}
 import java.util.function._
 import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
-import akka.actor.{Actor, Props}
+import akka.actor._
+import ActorDSL._
 import general.{LogFacility, Main}
+import general.JavaInterop._
+import general.JavaInterop.Implicits.actorSystem
 import newent.MoneyEarner
 import player.item.Item
 
 import scala.beans.BeanProperty
+import scala.collection.mutable
 import scala.collection.JavaConverters._
 import scala.compat.java8.FunctionConverters._
 
@@ -22,6 +26,15 @@ import scala.compat.java8.FunctionConverters._
 object ShopCentral extends TraderLike {
 
   def instance = this
+
+  private val m_articles = mutable.Buffer.empty[Article]
+
+  /**
+    * Reference to the allocated worker.
+    */
+  @BeanProperty val asyncWorkerRef = actor(new AsyncWorker)
+
+  // <editor-fold desc="Worker actor">
 
   /**
     * Taking care of shop central business asynchronously.
@@ -83,10 +96,7 @@ object ShopCentral extends TraderLike {
 
   }
 
-  /**
-    * Reference to the allocated worker.
-    */
-  @BeanProperty val asyncWorkerRef = Main.getActorSystem.actorOf(Props(new AsyncWorker))
+  // </editor-fold>
 
   // <editor-fold desc="ShopWindow representation and article component coordination">
 
@@ -110,7 +120,7 @@ object ShopCentral extends TraderLike {
   // </editor-fold>
 
   def addArticle(item: Supplier[Item], price: Int): Unit = {
-    ArticleCollection.addArticle(Article(item.asScala, price))
+    m_articles += Article(item.asScala, price)
   }
 
   /**
@@ -119,17 +129,9 @@ object ShopCentral extends TraderLike {
     * @param f Selector function.
     * @return All articles that comply to the selector function.
     */
-  def find(f: Predicate[Article]): Seq[Article] = ArticleCollection.find(f.asScala)
+  def filter(f: Predicate[Article]) = m_articles.filter(f.asScala).asJava
 
-  /**
-    * Finds a certain article.
-    *
-    * @param article The article to look for.
-    * @return Ditto.
-    */
-  def find(article: Article): Option[Article] = ArticleCollection.find(article)
-
-  def articles: IList[Article] = ArticleCollection.articles.asJava
+  def articles: IList[Article] = m_articles.asJava.toImmutableList
 
   /**
     * Checks if the given article is in the trader's stock.

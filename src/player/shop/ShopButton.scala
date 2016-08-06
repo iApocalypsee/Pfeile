@@ -19,32 +19,30 @@ import scala.collection.mutable
   * @param shopWindow The shop window to which the shop button belongs.
   */
 private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Article, shopWindow: ShopWindow)
-  extends Component(0, 0, 1, 1, shopWindow.component.getBackingScreen) {
+  extends Component {
 
   private[this] def w = ShopButton.Style.fixedWidth()
 	private[this] def h = ShopButton.Style.fixedHeight()
-	private[this] def wdiv2 = ShopButton.Style.fixedWidth() / 2
-	private[this] def hdiv2 = ShopButton.Style.fixedHeight() / 2
+	private[this] def wdiv2 = w / 2
+	private[this] def hdiv2 = h / 2
 
+  setBackingScreen(shopWindow.component.getBackingScreen)
   setSourceShape(new Rectangle(-wdiv2, -hdiv2, w, h))
   setParent(shopWindow.window)
 
   private var imageDrawLocation = new Point(0, 0)
   private var imageDrawDimension = new Dimension(0, 0)
+  private val textLabel = new comp.Label(0, 0, getBackingScreen, constructText(article))
 
   private val cachedItem = article.cachedItem
 
-  private val textLabel = new comp.Label(0, 0, getBackingScreen, constructText(article))
   textLabel.setParent(this)
 
-  private def positionalsUpdate(t: TranslationChange): Unit = {
-    val movPt = t.delta
-    if(imageDrawLocation != null) {
-      imageDrawLocation.setLocation(imageDrawLocation.x + movPt.getX.asInstanceOf[Int], imageDrawLocation.y + movPt.getY.asInstanceOf[Int])
-    }
+  getTransformation.onTranslated += { translation =>
+    val moveVec = translation.delta
+    imageDrawLocation.setLocation(imageDrawLocation.x + moveVec.getX.asInstanceOf[Int], imageDrawLocation.y + moveVec.getY.asInstanceOf[Int])
   }
 
-  getTransformation.onTranslated += positionalsUpdate _
   recalculateStyle()
 
   private def recalculateStyle(): Unit = recalculateStyleWithArgs(gridX, gridY)
