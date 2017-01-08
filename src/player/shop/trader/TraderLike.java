@@ -1,6 +1,7 @@
-package player.shop;
+package player.shop.trader;
 
 import newent.MoneyEarner;
+import player.shop.Article;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -56,10 +57,9 @@ public interface TraderLike {
 
     /**
      * Abstraction method for receiving money.
-     *
-     * @param from Who is paying the trader?
+     *  @param from Who is paying the trader?
      * @param moneyAmount How much money to receive.
      */
-    void receive(MoneyEarner from, int moneyAmount);
+    boolean receive(MoneyEarner from, int moneyAmount);
 
 }

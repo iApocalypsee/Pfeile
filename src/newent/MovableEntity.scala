@@ -21,7 +21,7 @@ trait MovableEntity extends Entity with StatisticalEntity {
     * Defaults to a standard A-Star pathfinder.
     * Can be overridden for more control over the pathfinding algorithm.
     *
-    * @see [[newent.pathfinding.DefaultPathfinder$]]
+    * @see [[newent.pathfinding.DefaultPathfinder]]
     */
   def pathfinderLogic: Pathfinder = DefaultPathfinder
 

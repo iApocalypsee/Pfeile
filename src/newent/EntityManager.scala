@@ -5,7 +5,7 @@ import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, 
 
 import general.JavaInterop._
 import general.{Delegate, LogFacility, Main}
-import player.shop.Trader
+import player.shop.trader.Trader
 import world.Tile
 
 import scala.collection.JavaConverters._

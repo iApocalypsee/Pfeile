@@ -7,6 +7,7 @@ import comp._
 import general.JavaInterop._
 import general._
 import gui.screen.GameScreen
+import player.shop.trader.TraderLike
 
 import scala.beans.BeanProperty
 import scala.collection.JavaConverters._

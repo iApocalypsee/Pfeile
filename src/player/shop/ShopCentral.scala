@@ -4,17 +4,18 @@ import java.awt.event.{MouseAdapter, MouseEvent}
 import java.util.function._
 import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
+import akka.actor.ActorDSL._
 import akka.actor._
-import ActorDSL._
-import general.{LogFacility, Main}
-import general.JavaInterop._
 import general.JavaInterop.Implicits.actorSystem
+import general.JavaInterop._
+import general.{LogFacility, Main}
 import newent.MoneyEarner
 import player.item.Item
+import player.shop.trader.TraderLike
 
 import scala.beans.BeanProperty
-import scala.collection.mutable
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 import scala.compat.java8.FunctionConverters._
 
 /**
@@ -209,7 +210,7 @@ object ShopCentral extends TraderLike {
     * @param from Who is paying?
     * @param moneyAmount The money to receive.
     */
-  override def receive(from: MoneyEarner, moneyAmount: Int): Unit = {
+  override def receive(from: MoneyEarner, moneyAmount: Int): Boolean = {
     // Do nothing, the central shop is assumed to have no money pockets.
     // Infinitely rich maybe?
     from.purse.spend(moneyAmount)

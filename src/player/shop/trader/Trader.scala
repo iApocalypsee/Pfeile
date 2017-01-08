@@ -1,11 +1,12 @@
-package player.shop
+package player.shop.trader
 
 import java.util.function.Predicate
-import java.util.{Deque => IDeque, List => IList, Map => IMap, Optional, Queue => IQueue, Set => ISet}
+import java.util.{Optional, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
 import general.JavaInterop.JavaPrimitives._
 import general.JavaInterop._
 import newent._
+import player.shop.Article
 import world.World
 
 import scala.collection.JavaConverters._
@@ -18,7 +19,8 @@ import scala.collection.JavaConverters._
   * All subclasses of this class have a default money per turn of 0, meaning that they don't gain any money when
   * a turn/round/whenever the money is paid has been completed.
   */
-abstract class Trader(world: World, spawnX: Int, spawnY: Int, name: String) extends Entity(world, spawnX, spawnY, name) with MoneyEarner with TraderLike {
+abstract class Trader(world: World, spawnX: Int, spawnY: Int, name: String)
+      extends Entity(world, spawnX, spawnY, name) with MoneyEarner with TraderLike with MovableEntity {
 
   // A trader should not have the ability to earn money per turn.
   purse.moneyPerTurn = 0
@@ -49,6 +51,22 @@ abstract class Trader(world: World, spawnX: Int, spawnY: Int, name: String) exte
     * @param article The article that is to be queued.
     */
   protected def retrieve(article: Predicate[Article]): Optional[Article] = retrieve(article, 1).headOption
+
+  /**
+    * Abstraction method for receiving money.
+    *
+    * @param from        Who is paying the trader?
+    * @param moneyAmount How much money to receive.
+    */
+  override def receive(from: MoneyEarner, moneyAmount: Int): Boolean = {
+    require(moneyAmount > 0)
+    if(!from.purse.spend(moneyAmount))
+      return false
+    else {
+      this.purse.give(moneyAmount)
+      return true
+    }
+  }
 
   /**
     * Removes `amount` articles from the trader to be put in a seq and returned altogether.

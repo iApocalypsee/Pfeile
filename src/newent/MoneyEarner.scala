@@ -47,6 +47,9 @@ trait MoneyEarner extends Entity with InventoryEntity {
       */
     def numericValue = CoinHelper.getValue(getCoins)
 
+    /** the total amount of money the money earner has */
+    def getMoney = numericValue
+
     private var _gpt = initialMoneyPerTurn
     private var _money = initialMoney
 
@@ -56,13 +59,13 @@ trait MoneyEarner extends Entity with InventoryEntity {
 
     /**
       * Sets how much money the money earner gets per turn.
-      * @param x The amount of money the earner gets per turn.
+      * @param newMoneyPerTurn The new amount of money the earner gets per turn.
       */
-    def moneyPerTurn_=(x: Int) = {
-      _gpt = x
+    def moneyPerTurn_=(newMoneyPerTurn: Int) = {
+      _gpt = newMoneyPerTurn
       //LogFacility.log(s"${this} earning ${_gpt} money per turn now", "Debug")
     }
-    def setMoneyPerTurn(x: Int): Unit = moneyPerTurn_=(x)
+    def setMoneyPerTurn(newMoneyPerTurn: Int): Unit = moneyPerTurn_=(newMoneyPerTurn)
 
     /** The amount of gold that the earner has. */
     def coins: Seq[Coin] = inventory.items.collect {
@@ -95,13 +98,13 @@ trait MoneyEarner extends Entity with InventoryEntity {
           val bronzePayable = if(moneyLeft < bronzes.size) moneyLeft else bronzes.size
 
           def cascade() = {
-            if(bronzes.size == 0) {
+            if(bronzes.isEmpty) {
               // Switch to silver coins
-              if(silvers.size == 0) {
+              if(silvers.isEmpty) {
                 // Switch to golds
-                if(golds.size == 0) {
+                if(golds.isEmpty) {
                   // Switch to platins
-                  if(platins.size == 0) {
+                  if(platins.isEmpty) {
                     throw new RuntimeException("Not enough money but check still passed. New type of coin?")
                   } else {
                     val convertedGoldAmount = PlatinumCoin.VALUE / GoldCoin.VALUE

@@ -53,6 +53,7 @@ public class Poison {
 
     /** Reduces the life of the person. The poison shows it's effects at the beginning of the living entities turn. */
     private void calculatePoisonEffects () {
+        // Change the multiplier of 0.5 here to increase or decrease poison damage.
         entity.getLife().changeLife(-poisonStat * 0.5);
         reducePoison();
     }
