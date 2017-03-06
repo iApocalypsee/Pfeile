@@ -1,13 +1,18 @@
 package player.shop
 
 import java.awt.Color
+import java.util.function.{Predicate, Supplier}
+import java.util.{Optional, Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue,
+Set => ISet}
 
+import general.JavaInterop.JavaPrimitives._
+import general.JavaInterop._
+import general.Main
 import general.property.StaticProperty
 import newent.{Entity, Player}
 import player.item.Item
 
 import scala.beans.BeanProperty
-import scala.compat.java8.JFunction0
 
 /**
   * Collects information essential to an article in the shop.
@@ -15,53 +20,44 @@ import scala.compat.java8.JFunction0
   * This class basically wraps the construction of an item and provides additional information when an entity wants
   * to purchase the underlying item.
   * In this case, the trader checks if the customer has enough money, then constructs the item via given function
-  * ([[player.shop.Article#item()]]) and hands the constructed item back to the customer, who is now obliged to pay the specified price
+  * ([[player.shop.Article#item()]]) and hands the constructed item back to the customer, who is now obliged to pay
+  * the specified price
   * in the Article object.
   *
-  * @param item The buyable item. Is a function because the item has to be reconstructed every time
-  *             an entity buys this article.
-  * @param price Ditto.
-  * @param availableWhen (Old description, may be ignored) Function determining whether the article can be bought by the specified entity.
-  *                      This function does not need to check whether this entity has enough money
-  *                      to buy this article. This is considered to be done internally in the shop package.
-  * @param visibleWhen (Old description, may be ignored) Function determining whether the article can be seen by the specified entity in the shop window.
-  *                    This is not as important as the other parameters.
+  * @param item     The buyable item. Is a function because the item has to be reconstructed every time
+  *                 an entity buys this article.
+  * @param price    Ditto.
   * @param keywords Optional keywords with which this article can be found easier.
-  *                 Keywords may be necessary to find the given item again in a list, a keyword could be the name of the actual item.
+  *                 Keywords may be necessary to find the given item again in a list, a keyword could be the name of
+  *                 the actual item.
   *                 I will rework the keyword array for transparent use.
   */
-case class Article(private[shop] val item: () => Item, price: Int, keywords: Seq[String] = Seq()) {
+case class Article(private[shop] val item: Supplier[Item], price: Int, keywords: Array[String]) {
 
-  /**
-    * Additional constructor for Java interop.
-    *
-    * @param itemConstruction The function which constructs the actual item, Java fashion.
-    * @param price The price to pay for one construction of specified item.
-    * @param keywords Optional keywords to make it easier to find it in GUI or code.
-    */
-  def this(itemConstruction: JFunction0[Item], price: Int, keywords: Array[String]) = {
-    this(itemConstruction.asInstanceOf[() => Item], price: Int, keywords)
-  }
-
-  /**
-    * Additional constructor for Java interop.
-    *
-    * @param itemConstruction The function which constructs the actual item, Java fashion.
-    * @param price The price to pay for one construction of specified item.
-    */
-  def this(itemConstruction: JFunction0[Item], price: Int) = this(itemConstruction, price, Array.empty[String])
+  def this(item: Supplier[Item], price: Int) = this(item, price, Array.empty)
 
   private[shop] def cachedItem = item()
 
-  def name = cachedItem.getName
+  def name: String = cachedItem.getName
 
-  private[shop] def toDefiniteArticle = DefiniteArticle(item(), price, keywords)
+  def nameDisplayed: String = cachedItem.getNameDisplayed
+
+  /**
+    * The text that will be displayed in a shop for this article.
+    * This string may incorporate information about the article such as the price, worth, usage, etc.
+    */
+  def shopText: String = Main.tr("shopPrice", cachedItem.getNameDisplayed, price.asInstanceOf[JavaInt])
 
   @BeanProperty lazy val shopButtonAttributes = new VisualArticleAttributes
 
+
+
 }
 
-private case class DefiniteArticle(initializedItem: Item, price: Int, keywords: Seq[String])
+/*
+
+
+ */
 
 class VisualArticleAttributes private[shop] {
 
@@ -73,20 +69,21 @@ class VisualArticleAttributes private[shop] {
   /**
     * Defines a function which can return a string describing why the given entity
     * cannot buy this article.
-    * If this function returns a [[scala.Some]], then the article is assumed to be not buyable.
-    * For Java, if you want to return [[scala.None]], use [[general.JavaInterop#scalaNone]].
+    * An entity may buy this article if the function returns an empty optional, and may not buy it if
+    * the function returns a non-empty optional, stating the reason why the entity may not buy this article.
     *
     * In ShopWindow, if this article is not available (meaning this function returns a Some), the corresponding
     * shop button is grayed out, but still visible to the entity.
     */
-  val notAvailableReason = new StaticProperty[Entity => Option[String]](_ => None)
+  val notAvailableReason = new StaticProperty[java.util.function.Function[Entity, Optional[String]]](_ => Optional
+    .empty[String])
 
   /**
     * Defines a function which can return a boolean describing if the given article should be seen
     * by the given player.
     * In practice, this only affects the ShopWindow GUI.
     */
-  val isVisibleToEntity = new StaticProperty[Player => Boolean](_ => true)
+  val isVisibleToEntity = new StaticProperty[Predicate[Player]](_ => true)
 
   /**
     * Returns true if this article is available for the given entity.
@@ -95,7 +92,7 @@ class VisualArticleAttributes private[shop] {
     * @return A boolean value.
     * @see [[player.shop.VisualArticleAttributes#notAvailableReason()]]
     */
-  def isAvailable(forWho: Entity): Boolean = notAvailableReason()(forWho).isEmpty
+  def isAvailable(forWho: Entity): Boolean = !notAvailableReason(forWho).isPresent
 
 }
 

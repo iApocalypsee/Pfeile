@@ -121,7 +121,7 @@ object ShopCentral extends TraderLike {
   // </editor-fold>
 
   def addArticle(item: Supplier[Item], price: Int): Unit = {
-    m_articles += Article(item.asScala, price)
+    m_articles += Article(item, price, Array())
   }
 
   /**
@@ -160,7 +160,7 @@ object ShopCentral extends TraderLike {
       * @return False, definitely.
       */
     def onNotSufficientClientMoney(wishlist: Seq[Article]): Boolean = {
-      LogFacility.log(s"Client $to has not enough money for paying ${amount}x of ${wishlist.map { _.toDefiniteArticle }}", "Info", "shop")
+      LogFacility.log(s"Client $to has not enough money for paying ${amount}x of ${wishlist}", "Info", "shop")
       false
     }
 

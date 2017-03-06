@@ -3,10 +3,10 @@ package general
 import java.awt.geom.AffineTransform
 import java.awt.{Graphics2D, Paint, Shape}
 import java.util
-import java.util.concurrent.Executors
+import java.util.concurrent.{Callable, Executors}
 import java.util.function._
 import java.util.stream.{Collectors, Stream => IStream}
-import java.util.{Collection => ICollection, Collections, Deque => IDeque, List => IList, Map => IMap, Set => ISet}
+import java.util.{Collections, Optional, Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Set => ISet}
 
 object JavaInterop {
 
@@ -27,13 +27,27 @@ object JavaInterop {
     type JavaChar = java.lang.Character
   }
 
+  // Aliases for commonly used Java classes and interfaces.
+  object JavaAliases {
+    type ICollection[A] = java.util.Collection[A]
+    type IList[A] = java.util.List[A]
+    type ISet[A] = java.util.Set[A]
+    type IQueue[A] = java.util.Queue[A]
+    type IDeque[A] = java.util.Deque[A]
+    type IMap[K, V] = java.util.Map[K, V]
+    type IIterator[E] = java.util.Iterator[E]
+    type JavaVector[A] = java.util.Vector[A]
+
+    type JavaFunction[A, B] = java.util.function.Function[A, B]
+  }
+
   // <editor-fold desc="Collection and stream goodies">
 
   implicit class StreamOp[A](val stream: IStream[A]) extends AnyVal {
-    def toList = stream.collect(Collectors.toList())
-    def toSet = stream.collect(Collectors.toSet())
-    def toImmutableList = Collections.unmodifiableList(toList)
-    def toImmutableSet = Collections.unmodifiableSet(toSet)
+    def toList: IList[A] = stream.collect(Collectors.toList())
+    def toSet: ISet[A] = stream.collect(Collectors.toSet())
+    def toImmutableList: IList[A] = Collections.unmodifiableList(toList)
+    def toImmutableSet: ISet[A] = Collections.unmodifiableSet(toSet)
   }
 
   implicit class ICollectionOp[A](val sub: ICollection[A]) extends AnyVal {
@@ -79,8 +93,8 @@ object JavaInterop {
       case _ => Collections.unmodifiableSet(toSet)
     }
 
-    def head = headOption.get()
-    def headOption = sub.stream.findFirst()
+    def head: A = headOption.get()
+    def headOption: Optional[A] = sub.stream.findFirst()
 
   }
 
@@ -108,7 +122,7 @@ object JavaInterop {
       * @tparam A The return type of the code block that uses the pushed matrix.
       * @return The return value of the code block.
       */
-    def useMatrix[A](m: AffineTransform)(f: => A) = use(m, g.getTransform, g.setTransform)(f)
+    def useMatrix[A](m: AffineTransform)(f: => A): A = use(m, g.getTransform, g.setTransform)(f)
 
     def usePaint[A](p: Paint)(f: => A): A = use(p, g.getPaint, g.setPaint)(f)
 
@@ -121,24 +135,24 @@ object JavaInterop {
   // <editor-fold desc="Java function goodies">
 
   implicit class PredicateOp[A](val predicate: Predicate[A]) extends AnyVal {
-    def apply(x: A) = predicate.test(x)
+    def apply(x: A): Boolean = predicate.test(x)
   }
 
   implicit class SupplierOp[A](val supplier: Supplier[A]) extends AnyVal {
-    def apply() = supplier.get()
+    def apply(): A = supplier.get()
     def consume(f: A => Unit): VoidConsumer = () => f(supplier.get())
     def andThen[B](f: A => B): Supplier[B] = () => f(supplier.get())
   }
 
   implicit class ConsumerOp[A](val consumer: Consumer[A]) extends AnyVal {
-    def apply(x: A) = consumer.accept(x)
+    def apply(x: A): Unit = consumer.accept(x)
   }
 
   // </editor-fold>
 
   // </editor-fold>
 
-  def asCallable(x: Runnable) = Executors.callable(x)
+  def asCallable(x: Runnable): Callable[AnyRef] = Executors.callable(x)
 
   def scalaNone = None
 

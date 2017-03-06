@@ -3,7 +3,6 @@ package comp
 import java.awt.event.{MouseAdapter, MouseEvent}
 import java.awt.{Color, Dimension, Graphics2D, Point}
 import java.util.function._
-import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
 import general.JavaInterop.JavaPrimitives.JavaInt
 import general.JavaInterop._

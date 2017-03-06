@@ -1,87 +1,113 @@
 package player.shop
 
 import java.awt._
+import java.util.{Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
 import _root_.geom.Vector
 import comp.{Component, _}
-import general.JavaInterop.JavaPrimitives.JavaInt
+import general.JavaInterop._
 import general._
-import general.property.DynamicProperty
+import general.property.StaticProperty
 
 import scala.collection.mutable
 
 /**
   * GUI representation of the shop button.
   *
-  * @param gridX The x position in the grid of listed shop buttons.
-  * @param gridY The y position in the grid of listed shop buttons.
-  * @param article The article to display.
+  * Internally, the shop button stores a cached instance of the item that is represented by the article.
+  *
+  * @param initGridX  The x position in the grid of listed shop buttons.
+  * @param initGridY  The y position in the grid of listed shop buttons.
+  * @param article    The article to display.
   * @param shopWindow The shop window to which the shop button belongs.
   */
-private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Article, shopWindow: ShopWindow)
-  extends Component {
+private[shop] class ShopButton private(initGridX: Int, initGridY: Int, val article: Article, private val shopWindow:
+ShopWindow) extends Component {
 
   private[this] def w = ShopButton.Style.fixedWidth()
-	private[this] def h = ShopButton.Style.fixedHeight()
-	private[this] def wdiv2 = w / 2
-	private[this] def hdiv2 = h / 2
+
+  private[this] def h = ShopButton.Style.fixedHeight()
 
   setBackingScreen(shopWindow.component.getBackingScreen)
-  setSourceShape(new Rectangle(-wdiv2, -hdiv2, w, h))
+  setSourceShape(new Rectangle(-(w / 2), -(h / 2), w, h))
   setParent(shopWindow.window)
 
   private var imageDrawLocation = new Point(0, 0)
   private var imageDrawDimension = new Dimension(0, 0)
-  private val textLabel = new comp.Label(0, 0, getBackingScreen, constructText(article))
+
+  /**
+    * The label containing the description of the article itself.
+    */
+  private val textLabel = new comp.Label(0, 0, getBackingScreen, article.shopText)
 
   private val cachedItem = article.cachedItem
 
   textLabel.setParent(this)
 
-  getTransformation.onTranslated += { translation =>
+  getTransformation.onTranslated.register(s"${this} onTranslated") { translation =>
     val moveVec = translation.delta
-    imageDrawLocation.setLocation(imageDrawLocation.x + moveVec.getX.asInstanceOf[Int], imageDrawLocation.y + moveVec.getY.asInstanceOf[Int])
+    val x = imageDrawLocation.x + moveVec.getX.asInstanceOf[Int]
+    val y = imageDrawLocation.y + moveVec.getY.asInstanceOf[Int]
+    imageDrawLocation.setLocation(x, y)
   }
 
   recalculateStyle()
 
-  private def recalculateStyle(): Unit = recalculateStyleWithArgs(gridX, gridY)
+  /**
+    * Recalculates the dimensions of the article image and the location of
+    * $ - the shop button itself
+    * $ - the article image
+    * $ - the article label.
+    */
+  private def recalculateStyle(): Unit = recalculateStyleWithArgs(initGridX, initGridY)
 
-  private def constructText(article: Article) = Main.tr("shopPrice", cachedItem.getNameDisplayed,
-    article.price.asInstanceOf[JavaInt])
-
-  private[this] def recalculateStyleWithArgs(gridX: Int, gridY: Int): Unit = {
-
-    val text = article.item().getNameDisplayed
-    val buttonStyle = ShopButton.Style
-    val xInset = shopWindow.getWindow.getX
-    val yInset = shopWindow.getWindow.getY
-
-    val rawX = gridX * (buttonStyle.fixedWidth() + buttonStyle.insetsBetweenEach().left + buttonStyle.insetsBetweenEach().right) + ShopWindow.ButtonsInsetsInsideWindow.left
-    val rawY = gridY * (buttonStyle.fixedHeight() + buttonStyle.insetsBetweenEach().top + buttonStyle.insetsBetweenEach().bottom) + ShopWindow.ButtonsInsetsInsideWindow.top
+  /**
+    * Recalculates the shop button location itself.
+    * This is the only method where a shop window grid location must be provided. All other UI-related
+    * calculations are based on what location this method calculates.
+    */
+  private def recalculateShopButtonLocation(newGridX: Int, newGridY: Int): Unit = {
+    val rawX = newGridX * (ShopButton.Style.fixedWidth() + ShopButton.Style.insetsBetweenEach().left + ShopButton.Style
+      .insetsBetweenEach().right) + ShopWindow.ButtonsInsetsInsideWindow.left
+    val rawY = newGridY * (ShopButton.Style.fixedHeight() + ShopButton.Style.insetsBetweenEach().top + ShopButton.Style
+      .insetsBetweenEach().bottom) + ShopWindow.ButtonsInsetsInsideWindow.top
 
     setRelativeLocation(rawX, rawY)
+  }
 
+  private def recalculateImageLocationAndDimension(imageSize: Vector, rawImagePosition: Vector): Unit = {
     val absolutePosition = new Vector(getX, getY)
-
-    val imageSize = buttonStyle.imageSize
-    val rawImagePosition = buttonStyle.imagePosition
     val imagePosition = rawImagePosition + absolutePosition
 
     imageDrawDimension = new Dimension(imageSize.getX.asInstanceOf[Int], imageSize.getY.asInstanceOf[Int])
     imageDrawLocation = new Point(imagePosition.getX.asInstanceOf[Int], imagePosition.getY.asInstanceOf[Int])
+  }
 
-    val font = buttonStyle.font()
+  private def recalculateLabelPosition(imageSize: Vector, font: Font, textOrientation: Orientation): Unit = {
+    val text = article.item().getNameDisplayed
     val textBounds = Component.getTextBounds(text, font)
-    val textOrientation = buttonStyle.textOrientation()
 
-    val rawTextPosition = new Vector(buttonStyle.textLeftInset() + textOrientation.horizontal.apply(textBounds.getWidth.asInstanceOf[Int], imageSize.getX.asInstanceOf[Int]),
-      buttonStyle.textTopInset() + buttonStyle.imageInsets().top + textBounds.height + imageSize.getY.asInstanceOf[Int] + textOrientation.vertical.apply(textBounds.height, buttonStyle.textGridCellHeight()))
+    val rawTextPosition = new Vector(
+      ShopButton.Style.textLeftInset() + textOrientation.horizontal.apply(textBounds.getWidth.asInstanceOf[Int],
+        imageSize.getX.asInstanceOf[Int]),
+      ShopButton.Style.textTopInset() + ShopButton.Style.imageInsets().top + textBounds.height + imageSize.getY
+        .asInstanceOf[Int] + textOrientation.vertical.apply(textBounds.height, ShopButton.Style.textGridCellHeight()))
 
-    val textPosition = rawTextPosition + absolutePosition
+    val finalLabelPosition = rawTextPosition + new Vector(getX, getY)
 
-    textLabel.setLocation(textPosition.getX.asInstanceOf[Int], textPosition.getY.asInstanceOf[Int])
+    textLabel.setLocation(finalLabelPosition.getX.asInstanceOf[Int], finalLabelPosition.getY.asInstanceOf[Int])
+  }
 
+  /**
+    * Recalculates the position and dimensions of this shop button in regards to given grid positions
+    * in the shop window.
+    *
+    * The gridX and gridY parameters describe where the shop button should be located in the `ShopWindow` frame.
+    */
+  private[this] def recalculateStyleWithArgs(newGridX: Int, newGridY: Int): Unit = {
+    recalculateShopButtonLocation(newGridX, newGridY)
+    recalculateImageLocationAndDimension(ShopButton.Style.imageSize, ShopButton.Style.imagePosition)
+    recalculateLabelPosition(ShopButton.Style.imageSize, ShopButton.Style.font, ShopButton.Style.textOrientation)
   }
 
   override def draw(g: Graphics2D): Unit = {
@@ -90,8 +116,11 @@ private[shop] class ShopButton private (gridX: Int, gridY: Int, val article: Art
     textLabel.setFontColor(article.shopButtonAttributes.textColor.get)
     textLabel.draw(g)
 
-    g.drawImage(cachedItem.getImage, imageDrawLocation.x, imageDrawLocation.y, imageDrawDimension.width, imageDrawDimension.height, null)
+    g.drawImage(cachedItem.getImage, imageDrawLocation.x, imageDrawLocation.y, imageDrawDimension.width,
+      imageDrawDimension.height, null)
   }
+
+  override def toString = s"ShopButton(article=$article, shopWindow=$shopWindow)"
 }
 
 private[shop] object ShopButton {
@@ -101,26 +130,18 @@ private[shop] object ShopButton {
     // <editor-fold desc="Property initialization (not important)">
 
     /**
-      * The setter function that every property in the [[player.shop.ShopButton.Style]] object.
-      *
-      * @tparam A The datatype the setter is expecting.
-      * @return A setter with side effects special to the ShopButtons.
-      */
-    private def commonSetSideEffect[A] = { (x: A) =>
-      issueRecalculation()
-      x
-    }
-
-    /**
       * Creates a property with the common setter described above.
       *
       * @param startValue The start value of the property.
       * @tparam A The datatype of the property
       * @return A property with [[player.shop.ShopButton.Style$#commonSetSideEffect()]] applied.
       */
-    private def commonProperty[A](startValue: A) = {
-      val prop = new DynamicProperty(startValue) {
-        dynSet = commonSetSideEffect[A]
+    private def commonProperty[A](startValue: A): StaticProperty[A] = {
+      val prop = new StaticProperty(startValue) {
+        override def staticSetter(x: A): A = {
+          issueRecalculation()
+          x
+        }
       }
       prop
     }
@@ -129,27 +150,28 @@ private[shop] object ShopButton {
 
     // <editor-fold desc="In relation to the button itself">
 
-    val fixedWidth = commonProperty(75)
+    val fixedWidth: StaticProperty[Int] = commonProperty(75)
 
-    val fixedHeight = commonProperty(100)
+    val fixedHeight: StaticProperty[Int] = commonProperty(100)
 
-    val imageInsets = commonProperty(new Insets(10, 10, 10, 10))
+    val imageInsets: StaticProperty[Insets] = commonProperty(new Insets(10, 10, 10, 10))
 
-    val textLeftInset = commonProperty(10)
+    val textLeftInset: StaticProperty[Int] = commonProperty(10)
 
-    val textTopInset = commonProperty(0)
+    val textTopInset: StaticProperty[Int] = commonProperty(0)
 
-    val textGridCellHeight = commonProperty(15)
+    val textGridCellHeight: StaticProperty[Int] = commonProperty(15)
 
-    val textOrientation = commonProperty(new Orientation(HorizontalOrientation.Centered, VerticalOrientation.Top))
+    val textOrientation: StaticProperty[Orientation] = commonProperty(
+      new Orientation(HorizontalOrientation.Centered, VerticalOrientation.Top))
 
     // </editor-fold>
 
     // <editor-fold desc="Common values">
 
-    val font = commonProperty(Component.STD_FONT)
+    val font: StaticProperty[Font] = commonProperty(Component.STD_FONT)
 
-    val insetsBetweenEach = commonProperty(new Insets(5, 35, 5, 35))
+    val insetsBetweenEach: StaticProperty[Insets] = commonProperty(new Insets(5, 35, 5, 35))
 
     /**
       * Calculates the size of the image contained by the shop button and returns it
@@ -181,6 +203,9 @@ private[shop] object ShopButton {
     button
   }
 
+  /**
+    * Recalculates every shop button's look.
+    */
   private def issueRecalculation(): Unit = {
     for (button <- buttonBuffer) button.recalculateStyle()
     LogFacility.log("Recalculated styles of every shop button", "Debug")
