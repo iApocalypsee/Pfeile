@@ -35,7 +35,7 @@ public class WorldLootList implements Drawable {
 
     /** creating a new WorldLootList with the default size 18 [as java.util.ArrayList].
      * It also creates a new List for every visible Loot (from the view of the activePlayer) and registers
-     * the {@link WorldLootList#updateVisibleLoot()} to {@link newent.Entity#onLocationChanged()} and
+     * the {@link WorldLootList#updateVisibleLoot()} to {@link newent.Player#onLocationChanged} and
      * {@link general.TurnSystem#onTurnGet()}.
      * */
     public WorldLootList (PfeileContext context) {
@@ -82,9 +82,10 @@ public class WorldLootList implements Drawable {
 
         if (removed) {
             updateVisibleLoot();
-        } else
-            LogFacility.log("Can't remove loot!" + lootList.toString(), LogFacility.LoggingLevel.Error);
-
+        } else {
+            LogFacility.log("Can't remove loot!: Loot: " + collectedLoot.toString() + " from List: " + lootList.toString(),
+                    LogFacility.LoggingLevel.Error);
+        }
         return removed;
     }
 

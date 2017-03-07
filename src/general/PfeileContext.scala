@@ -1,7 +1,5 @@
 package general
 
-import java.util.{Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
-
 import general.property.{FloatStaticProperty, IntStaticProperty}
 import gui.screen.GameScreen
 import newent.{CommandTeam, Entity, Player}
@@ -96,11 +94,6 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
       world.entities.entityList.foreach { entity =>
         entity.onTurnCycleEnded
       }
-      /*
-      for(entity <- world.entities.entityList) {
-        entity.onTurnCycleEnded
-      }
-      */
 
       values.turnCycleCount += 1
     }
@@ -138,11 +131,10 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
   /**
     * It's the list of every loot, which is placed somewhere in the world. Use it to draw all loots, or to get a Loot.
- *
+    *
     * @return the <code>WorldLootList</code> for the whole world.
     */
-  def getWorldLootList = _worldLootList
-
+  def getWorldLootList: WorldLootList = _worldLootList
 
   /**
     * Access to the current selection of entities.
@@ -213,7 +205,7 @@ object PfeileContext {
   val arrowNumberFreeSet = new IntStaticProperty
 
   /** this is the total number of arrows. It's <code>arrowNumberFreeSet + arrowNumberPreSet</code>*/
-  def arrowNumberTotal = arrowNumberFreeSet.get + arrowNumberPreSet.get
+  def arrowNumberTotal: Int = arrowNumberFreeSet.get + arrowNumberPreSet.get
 
   /**
     * The number of turns per round. A turn of a player ends when the user presses the endTurn-Button;
