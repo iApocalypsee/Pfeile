@@ -31,7 +31,7 @@ public class PotionOfHealing extends Potion {
 
         } catch (IOException e) {
             e.printStackTrace();
-            LogFacility.log("Image of PotionOfHealing could not be loaded: " + path);
+            LogFacility.log("Image of PotionOfHealing could not be loaded: " + path, LogFacility.LoggingLevel.Error);
         }
     }
 

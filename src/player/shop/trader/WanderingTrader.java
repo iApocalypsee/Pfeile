@@ -1,11 +1,18 @@
 package player.shop.trader;
 
 import comp.Component;
+import comp.ImageComponent;
+import general.LogFacility;
 import general.Main;
+import gui.screen.GameScreen;
 import player.shop.Article;
 import world.GrassTile;
 import world.Terrain;
 
+import javax.imageio.ImageIO;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -13,22 +20,48 @@ import java.util.stream.Stream;
 /**
  * This is a trader. He can wander around. <p>
  * The money per turn changes with a normal distribution approximately between -initialMoneyPerTurn and
- * +initialMoneyPerTurn
+ * +initialMoneyPerTurn.
+ * The value {@link WanderingTrader#initialMoney()} defines the amount of money the trader has at the beginning.
+ * It affects e.g. the ability to exchange money or to buy need stock items. <p>
+ * The value {@link WanderingTrader#initialMoneyPerTurn()} determines how the money of the trader changes independently
+ * from the money the Trader earns from sells to players. Since it changes per turn with a gaussian normal distribution
+ * it must be internally scaled with {@link WanderingTrader#GAUSSIAN_DISTRIBUTION_NORMINATION_FACTOR} to accomplish a
+ * probability integral of 1. Every input and output value of initialMoneyPerTurn will be internally scaled and do not
+ * effect the in/output.
  */
+ // TODO: add exchanging abilities and add new items in the stock depending on the money the trader has.
 public class WanderingTrader extends Trader {
 
     private int initialMoney;
     private double initialMoneyPerTurn;
+    /** the distribution function needs to be stretched in order to get a proper moneyPerTurnChange. It's approximately
+     *  sqrt(2*PI) ~ 2.5 */
+    private static final double GAUSSIAN_DISTRIBUTION_NORMINATION_FACTOR = Math.sqrt(2*Math.PI);
     private Random random;
+    private ImageComponent imageComponent;
 
     /** The articles, which the trader can sell, and the number of articles */
     private Map<Article, Integer> stock;
 
+    // load the buffered image of a wandering trader in a static context:
+    private static BufferedImage img;
+    static {
+        final String path = "resources/gfx/entities/friendly/wanderingTrader.png";
+        try {
+            img = ImageIO.read(WanderingTrader.class.getClassLoader().getResourceAsStream(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+            LogFacility.log("Image of Wandering Trader failed to load: " + path, LogFacility.LoggingLevel.Error);
+        }
+    }
+
+    // Constructor
+
     /**
      * This creates a new Wandering Trader without a stock.
      *
-     * @param spawnX x position
-     * @param spawnY y position
+     * @param spawnX x position in the world grid
+     * @param spawnY y position in the world grid
      * @param initialMoney the money the trader has at the beginning
      * @param initialMoneyPerTurn the change of money per turn.
      * @param name the name of the trader
@@ -37,8 +70,8 @@ public class WanderingTrader extends Trader {
         super(Main.getContext().getWorld(), spawnX, spawnY, name);
 
         this.initialMoney = initialMoney;
-        //Due to the standard deviation of 1.0 used by the JAVA libery, the values generated have to scaled
-        this.initialMoneyPerTurn = initialMoneyPerTurn / 2.5;
+        //Due to the standard deviation of 1.0 used by the JAVA library, the values generated have to scaled
+        this.initialMoneyPerTurn = initialMoneyPerTurn / GAUSSIAN_DISTRIBUTION_NORMINATION_FACTOR;
 
         random = new Random();
         onTurnEnded.registerJava(() -> {
@@ -47,14 +80,20 @@ public class WanderingTrader extends Trader {
         onTurnCycleEnded.registerJava(this :: movement);
 
         stock = new HashMap<>();
+
+        final Rectangle2D tileBounds = getTile().getComponent().getPreciseRectangle();
+        imageComponent = new ImageComponent(0, 0, img, GameScreen.getInstance());
+        // only center the imageComponent after the initialisation as description of the constructor of ImageComponent suggests.
+        imageComponent.setCenteredLocation((int) tileBounds.getCenterX(), (int) tileBounds.getCenterY());
+        setComponent(imageComponent);
     }
 
     /**
      * This creates a new Wandering Trader with the articles in his stock.
      *
-     * @poram articles articles the articles the trader should have at the beginning
-     * @param spawnX x position
-     * @param spawnY y position
+     * @param articles articles the articles the trader should have at the beginning
+     * @param spawnX x position in the world grid
+     * @param spawnY y position in the world grid
      * @param initialMoney the money the trader has at the beginning
      * @param initialMoneyPerTurn the change of money per turn.
      * @param name the name of the trader
@@ -64,7 +103,10 @@ public class WanderingTrader extends Trader {
         stock = articles;
     }
 
-    /** returns the new money per turn. Approximately between +initialMoneyPerTurn and -initialMoneyPerTurn */
+    // Methods
+
+    /** returns the new money per turn. It's distributed by the Gaussian Function. Very likely to be between
+     * +/- initialMoneyPerTurn */
     private int moneyPerTurnChanger () {
         int newMoneyPerTurn = (int) (random.nextGaussian() * initialMoneyPerTurn);
         if (getPurse().getMoney() - newMoneyPerTurn < 0)
@@ -98,7 +140,8 @@ public class WanderingTrader extends Trader {
 
     @Override
     public int initialMoneyPerTurn () {
-        return 0;
+        // We need to rescale the moneyPerTurn property to get proper values for classes outside of WanderingTrader
+        return (int) (initialMoneyPerTurn * GAUSSIAN_DISTRIBUTION_NORMINATION_FACTOR);
     }
 
     @Override
@@ -136,7 +179,6 @@ public class WanderingTrader extends Trader {
 
     @Override
     public Component startComponent () {
-        // TODO: the component for drawing the trader
-        return null;
+        return  imageComponent;
     }
 }

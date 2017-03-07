@@ -30,7 +30,7 @@ public class PotionOfMovement extends Potion {
 
         } catch (IOException e) {
             e.printStackTrace();
-            LogFacility.log("Image of PotionOfMovement could not be loaded: " + path);
+            LogFacility.log("Image of PotionOfMovement could not be loaded: " + path, LogFacility.LoggingLevel.Error);
         }
     }
 

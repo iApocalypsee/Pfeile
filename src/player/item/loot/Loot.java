@@ -9,7 +9,6 @@ import newent.InventoryEntity;
 import player.BoardPositionable;
 import player.item.Item;
 import player.item.coin.Coin;
-import world.Tile;
 
 import javax.swing.*;
 import java.awt.*;
@@ -182,17 +181,6 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
         });
     }
 
-    /** Returns the tile on which the Loot is placed.
-     *
-     * This is what this method is doing: <p>
-     * {@code return (Tile) Main.getContext().getWorld().terrain().tileAt(gridX, gridY);}
-     *
-     * @return the Tile on with the Loot is placed.
-     */
-    public Tile getTile () {
-        return Main.getContext().getWorld().terrain().tileAt(gridX, gridY);
-    }
-
     /**
      * If the player has an increased fortune stat during this turn, this method, will add additional content.
      * Additional content only works with the stats of the active player. This method is triggered by the MouseListeners,
@@ -222,7 +210,7 @@ public abstract class Loot extends Item implements BoardPositionable, Collectibl
      *
      * @return a LookUI object based on an ImageComponent
      */
-    protected LootUI createUI () {
+    LootUI createUI () {
         Rectangle2D tileBounds = getTile().getComponent().getPreciseRectangle();
 
         ImageComponent component = new ImageComponent(

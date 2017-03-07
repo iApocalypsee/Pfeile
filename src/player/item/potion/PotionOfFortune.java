@@ -32,7 +32,7 @@ public class PotionOfFortune extends Potion {
 
         } catch (IOException e) {
             e.printStackTrace();
-            LogFacility.log("Image of PotionOfFortune could not be loaded: " + path);
+            LogFacility.log("Image of PotionOfFortune could not be loaded: " + path, LogFacility.LoggingLevel.Error);
         }
     }
 
