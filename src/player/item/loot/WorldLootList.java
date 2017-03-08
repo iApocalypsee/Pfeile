@@ -36,7 +36,7 @@ public class WorldLootList implements Drawable {
     /** creating a new WorldLootList with the default size 18 [as java.util.ArrayList].
      * It also creates a new List for every visible Loot (from the view of the activePlayer) and registers
      * the {@link WorldLootList#updateVisibleLoot()} to {@link newent.Player#onLocationChanged} and
-     * {@link general.TurnSystem#onTurnGet()}.
+     * {@link general.TurnSystem#onTurnGet()}. s sdf
      * */
     public WorldLootList (PfeileContext context) {
         this.context = context;

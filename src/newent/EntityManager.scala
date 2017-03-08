@@ -12,6 +12,7 @@ import scala.collection.JavaConverters._
 import scala.compat.java8.OptionConverters._
 
 // Self-evident.
+// TODO: save the players in extra fields for a much faster access once an army is registered.
 class EntityManager {
 
   private val m_entityList = new ArrayList[GameObject]

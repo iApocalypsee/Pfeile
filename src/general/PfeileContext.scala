@@ -4,6 +4,7 @@ import general.property.{FloatStaticProperty, IntStaticProperty}
 import gui.screen.GameScreen
 import newent.{CommandTeam, Entity, Player}
 import player.item.loot.WorldLootList
+import player.shop.trader.WanderingTraderList
 import world.World
 
 import scala.collection.JavaConverters._
@@ -135,6 +136,15 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     * @return the <code>WorldLootList</code> for the whole world.
     */
   def getWorldLootList: WorldLootList = _worldLootList
+
+  // lazy initialization: only after TurnSystem!
+  private lazy val _wanderingTradersList = new WanderingTraderList(this)
+
+  /** Every WanderingTrader is added to that ArrayList. Use this list e.g. for drawing all visible wandering traders.
+    *
+    * @return the WanderingTraderList. permitted as single instance only: this instance.
+    */
+  def getWanderingTraders: WanderingTraderList = _wanderingTradersList
 
   /**
     * Access to the current selection of entities.

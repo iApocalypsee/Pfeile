@@ -29,7 +29,7 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
   addStage(new InstantiatorStage)
   addStage(new PopulatorStage)
   addStage(new OreGenerationStage)
-  addStage(new LootGenerationStage)
+  addStage(new LootTraderGenerationStage)
   addStage(new OtherStuffStage)
 
   def createWorld(): Future[PfeileContext] = Future {
@@ -148,13 +148,21 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
     override def stageName = Main.tr("oreGenerationStage")
   }
 
-  private[ContextCreator] class LootGenerationStage extends StageDescriptable[Unit] {
+  private[ContextCreator] class LootTraderGenerationStage extends StageDescriptable[Unit] {
 
     override protected def executeStageImpl(): Unit = {
 
       // the loot gets initialized before WorldLootList (--> LootSpawner) uses them. The Main-Thread should not need
       // to wait for the images to load.
       ItemInitialization.initializeLoots()
+
+      // initialization of the wandering traders and spawning them can be made parallel, there're any dependencies.
+      //val traderGenerator = new Thread(() => {
+        context.getWanderingTraders.spawnInitialTraders()
+        LogFacility.log("Traders initialized", LogFacility.LoggingLevel.Info)
+      //}, "WanderingTrader Initializer&Spawner Thread")
+      //traderGenerator.setPriority(Thread.MAX_PRIORITY)
+      //traderGenerator.start()
 
       // Finally, I need to ensure that WorldLootList and LootSpawner are initialized to register their methods.
       // (scala lazy val WorldLootList). Furthermore, some loots have to spawn at the beginning.

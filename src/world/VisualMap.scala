@@ -13,7 +13,7 @@ import player.weapon.arrow.AbstractArrow
 
 /**
   * Takes care of the drawing of the tiles in the given world.
-  * Note that objects of this class only can handle tiles that provide a [[world.Tile.IsometricPolygonTileComponent]]
+  * Note that objects of this class only can handle tiles that provide an isometric polygon tile component
   * as their component representation.
  *
   * @param context The context on which this object operates.
@@ -193,6 +193,7 @@ class VisualMap(context: PfeileContext) extends Drawable {
       drawTiles(g)
       drawEntities(g)
       context.getWorldLootList.draw(g)
+      context.getWanderingTraders.draw(g)
     }
   }
 

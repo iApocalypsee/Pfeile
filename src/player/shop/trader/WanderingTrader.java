@@ -4,16 +4,20 @@ import comp.Component;
 import comp.ImageComponent;
 import general.LogFacility;
 import general.Main;
+import gui.Drawable;
 import gui.screen.GameScreen;
 import player.shop.Article;
 import world.GrassTile;
 import world.Terrain;
+import world.World;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -29,8 +33,10 @@ import java.util.stream.Stream;
  * probability integral of 1. Every input and output value of initialMoneyPerTurn will be internally scaled and do not
  * effect the in/output.
  */
- // TODO: add exchanging abilities and add new items in the stock depending on the money the trader has.
-public class WanderingTrader extends Trader {
+ // TODO: add exchanging abilities and add new items in the stock depending on the money the trader has
+ // TODO: Interaction of the Trader with the user must be made possible (Mouse Event)
+ // TODO: wandering trader image must be moved, when the world is moved. Need extra class for that.
+public class WanderingTrader extends Trader implements Drawable {
 
     private int initialMoney;
     private double initialMoneyPerTurn;
@@ -64,10 +70,11 @@ public class WanderingTrader extends Trader {
      * @param spawnY y position in the world grid
      * @param initialMoney the money the trader has at the beginning
      * @param initialMoneyPerTurn the change of money per turn.
+     * @param world the world, necessary parameter in the initialization process, after that, you can use <code>Main.getContext().getWorld()</code>
      * @param name the name of the trader
      */
-    public WanderingTrader (int spawnX, int spawnY, int initialMoney, int initialMoneyPerTurn, String name) {
-        super(Main.getContext().getWorld(), spawnX, spawnY, name);
+    public WanderingTrader (int spawnX, int spawnY, int initialMoney, int initialMoneyPerTurn, World world, String name) {
+        super(world, spawnX, spawnY, name);
 
         this.initialMoney = initialMoney;
         //Due to the standard deviation of 1.0 used by the JAVA library, the values generated have to scaled
@@ -81,7 +88,7 @@ public class WanderingTrader extends Trader {
 
         stock = new HashMap<>();
 
-        final Rectangle2D tileBounds = getTile().getComponent().getPreciseRectangle();
+        final Rectangle2D tileBounds = world.getTerrain().getTileAt(spawnX, spawnY).getComponent().getPreciseRectangle();
         imageComponent = new ImageComponent(0, 0, img, GameScreen.getInstance());
         // only center the imageComponent after the initialisation as description of the constructor of ImageComponent suggests.
         imageComponent.setCenteredLocation((int) tileBounds.getCenterX(), (int) tileBounds.getCenterY());
@@ -96,10 +103,12 @@ public class WanderingTrader extends Trader {
      * @param spawnY y position in the world grid
      * @param initialMoney the money the trader has at the beginning
      * @param initialMoneyPerTurn the change of money per turn.
+     * @param world the world. <code>Main.getContext().getWorld()</code>. It's an necessary parameter, because of a
+     *              NullPointerException during the Initialization Process.
      * @param name the name of the trader
      */
-    public WanderingTrader (Map<Article, Integer> articles, int spawnX, int spawnY, int initialMoney, int initialMoneyPerTurn, String name) {
-        this(spawnX, spawnY, initialMoney, initialMoneyPerTurn, name);
+    public WanderingTrader (Map<Article, Integer> articles, int spawnX, int spawnY, int initialMoney, int initialMoneyPerTurn, World world, String name) {
+        this(spawnX, spawnY, initialMoney, initialMoneyPerTurn, world, name);
         stock = articles;
     }
 
@@ -178,7 +187,17 @@ public class WanderingTrader extends Trader {
     }
 
     @Override
+    public String toString() {
+        return "Wandering Trader (" + getGridX() + "|" + getGridY() + ")";
+    }
+
+    @Override
     public Component startComponent () {
         return  imageComponent;
+    }
+
+    @Override
+    public void draw (Graphics2D g) {
+        imageComponent.draw(g);
     }
 }
