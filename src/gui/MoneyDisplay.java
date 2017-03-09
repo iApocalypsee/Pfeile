@@ -73,10 +73,11 @@ public class MoneyDisplay extends Component {
      * changes the String of MoneyDisplay. </n>
      */
     public void initializeDataActualization (PfeileContext context) {
-        context.getTurnSystem().getHeadOfCommandTeams().forEach((player) -> {
-            // A thread is way too overkill for such a tiny computation.
-            player.onMoneyChanged().registerJava(() -> setMoney(player.getPurse().numericValue()));
-        });
+        // This will avoid a ConcurrentModificationException
+        newent.Player player = context.getWorld().getEntities().getPlayer();
+        newent.Player opponent = context.getWorld().getEntities().getOpponent();
+        player.onMoneyChanged().registerJava(() -> setMoney(player.getPurse().numericValue()));
+        opponent.onMoneyChanged().registerJava(() -> setMoney(opponent.getPurse().numericValue()));
     }
 
     @Override

@@ -2,6 +2,7 @@ package player.shop.trader;
 
 import comp.Component;
 import comp.ImageComponent;
+import general.Delegate;
 import general.LogFacility;
 import general.Main;
 import gui.Drawable;
@@ -9,11 +10,11 @@ import gui.screen.GameScreen;
 import player.shop.Article;
 import world.GrassTile;
 import world.Terrain;
+import world.Tile;
 import world.World;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
@@ -44,7 +45,7 @@ public class WanderingTrader extends Trader implements Drawable {
      *  sqrt(2*PI) ~ 2.5 */
     private static final double GAUSSIAN_DISTRIBUTION_NORMINATION_FACTOR = Math.sqrt(2*Math.PI);
     private Random random;
-    private ImageComponent imageComponent;
+    private WanderingTraderUI graphicRepresentation;
 
     /** The articles, which the trader can sell, and the number of articles */
     private Map<Article, Integer> stock;
@@ -88,11 +89,10 @@ public class WanderingTrader extends Trader implements Drawable {
 
         stock = new HashMap<>();
 
-        final Rectangle2D tileBounds = world.getTerrain().getTileAt(spawnX, spawnY).getComponent().getPreciseRectangle();
-        imageComponent = new ImageComponent(0, 0, img, GameScreen.getInstance());
         // only center the imageComponent after the initialisation as description of the constructor of ImageComponent suggests.
-        imageComponent.setCenteredLocation((int) tileBounds.getCenterX(), (int) tileBounds.getCenterY());
-        setComponent(imageComponent);
+        graphicRepresentation = new WanderingTraderUI();
+        graphicRepresentation.setOnTile(world.getTerrain().getTileAt(spawnX, spawnY));
+        setComponent(graphicRepresentation);
     }
 
     /**
@@ -193,11 +193,51 @@ public class WanderingTrader extends Trader implements Drawable {
 
     @Override
     public Component startComponent () {
-        return  imageComponent;
+        return  graphicRepresentation;
     }
 
     @Override
     public void draw (Graphics2D g) {
-        imageComponent.draw(g);
+        graphicRepresentation.draw(g);
+    }
+
+    // graphic representation class: WanderingTraderUI
+
+    /**
+     *  Every wanderingTrader is represented by a WanderingTraderUI, which is a subclass ImageComponent, but allows to
+     *  further functionality. This is needed to resolve e.g. map movement coherently.
+     */
+    private class WanderingTraderUI extends ImageComponent{
+        private Tile tilePosition;
+        private Delegate.Handle activeCallback;
+
+        /** creates a new WanderingTraderUI (registered at GameScreen) at the position: (x, y) */
+        private WanderingTraderUI (int x, int y) {
+            super(x, y, img, GameScreen.getInstance());
+            setListenerTransparent(true);
+        }
+
+        /** creates a new WanderingTraderUI at the position (0|0). It will be registered to the Screen GameScreen. */
+        private WanderingTraderUI () {
+            this(0, 0);
+        }
+
+        private void setOnTile (Tile tile) {
+            if(tilePosition != null) {
+                activeCallback.dispose();
+                activeCallback = null;
+            }
+            this.tilePosition = tile;
+            if(tilePosition != null) {
+                activeCallback = tilePosition.getComponent().onTransformed.registerJava(transformationEvent -> {
+                    relocateGuiPosition();
+                });
+            }
+        }
+
+        private void relocateGuiPosition() {
+            Point centerPoint = tilePosition.component().center();
+            setLocation(centerPoint.x - getWidth() / 2, centerPoint.y - getHeight() / 2);
+        }
     }
 }

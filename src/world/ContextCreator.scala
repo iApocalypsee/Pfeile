@@ -97,8 +97,10 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       context.setActivePlayer(act)
 
       val entityManager = context.world.entities
-      entityManager register act
-      entityManager register opponent
+      entityManager.register(act)
+      entityManager.register(opponent)
+      entityManager.definePlayer(act)
+      entityManager.defineOpponent(opponent)
 
       act.onTurnEnded += { () => act.resetFortuneStat() }
       opponent.onTurnEnded += { () => opponent.resetFortuneStat() }
@@ -157,12 +159,12 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       ItemInitialization.initializeLoots()
 
       // initialization of the wandering traders and spawning them can be made parallel, there're any dependencies.
-      //val traderGenerator = new Thread(() => {
+      val traderGenerator = new Thread(() => {
         context.getWanderingTraders.spawnInitialTraders()
-        LogFacility.log("Traders initialized", LogFacility.LoggingLevel.Info)
-      //}, "WanderingTrader Initializer&Spawner Thread")
-      //traderGenerator.setPriority(Thread.MAX_PRIORITY)
-      //traderGenerator.start()
+        LogFacility.log("Wandering traders initialized", LogFacility.LoggingLevel.Info)
+      }, "WanderingTrader Initializer&Spawner Thread")
+      traderGenerator.setPriority(Thread.MAX_PRIORITY)
+      traderGenerator.start()
 
       // Finally, I need to ensure that WorldLootList and LootSpawner are initialized to register their methods.
       // (scala lazy val WorldLootList). Furthermore, some loots have to spawn at the beginning.
