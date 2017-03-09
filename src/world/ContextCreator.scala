@@ -97,8 +97,6 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       context.setActivePlayer(act)
 
       val entityManager = context.world.entities
-      entityManager.register(act)
-      entityManager.register(opponent)
       entityManager.definePlayer(act)
       entityManager.defineOpponent(opponent)
 
@@ -169,6 +167,11 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
       // Finally, I need to ensure that WorldLootList and LootSpawner are initialized to register their methods.
       // (scala lazy val WorldLootList). Furthermore, some loots have to spawn at the beginning.
       context.getWorldLootList.getLootSpawner.spawnAtBeginning()
+
+      // make sure, that all traders have spawned.
+      // join() is important in order to avoid a seldom ConcurrentModificationException in WanderingTraderList.
+      // updateVisibleWanderingTraders(), draw() and register() and TurnSystem can collide, when lots of traders are generated.
+      traderGenerator.join()
     }
 
     override def stageName = Main.tr("lootGenerationStage")

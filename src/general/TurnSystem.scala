@@ -118,7 +118,7 @@ class TurnSystem(val teams: Supplier[IList[Team]], teamToBeginIndex: Int) {
     onTurnEnded(_currentPlayer)
     val (nextPlayer, turnCycleCompleted) = findNextFrom(_currentPlayer)
     _currentPlayer = nextPlayer
-    if (turnCycleCompleted) onGlobalTurnCycleEnded()
+    if (turnCycleCompleted) onGlobalTurnCycleEnded.apply()
     onTurnGet(_currentPlayer)
   }
 

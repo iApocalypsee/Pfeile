@@ -6,11 +6,12 @@ import gui.Drawable;
 import newent.CommandTeam;
 import newent.Player;
 import newent.VisionMap;
+import player.item.loot.KeyDefaultChest;
 import player.item.loot.KeyRoundChest;
 import player.item.loot.WorldLootList;
-import player.item.potion.PotionOfFortune;
-import player.item.potion.PotionOfHealing;
-import player.item.potion.PotionOfPoison;
+import player.item.ore.CopperOre;
+import player.item.ore.IronOre;
+import player.item.potion.*;
 import player.shop.Article;
 import world.GrassTile;
 import world.Terrain;
@@ -99,15 +100,82 @@ public class WanderingTraderList implements Drawable {
 
     /** Generates a HashMap, the stock of a new wandering trader. It only contains random items and an random amount. */
     private Map<Article, Integer> generateRandomStock () {
-        Map<Article, Integer> stock = new HashMap<>();
+        Map<Article, Integer> stock = new HashMap<>(10); // maximum number of articles; stock may have the same item multiple times
+        Random random = new Random();
 
-        // TODO: Create a random stock. The code here is rather for testing purposes.
-        stock.put(new Article(() -> new PotionOfHealing((byte) 3), 37), 4);
-        stock.put(new Article(() -> new PotionOfPoison((byte) 2), 40), 4);
-        stock.put(new Article(() -> new PotionOfFortune((byte) 1), 16), 3);
-        stock.put(new Article(() -> new KeyRoundChest(), 250), 1);
+        // at least four different articles
+        stock.put(createRandomArticle(0.05f), 6 + random.nextInt(7));
+        stock.put(createRandomArticle(0.12f), 2 + random.nextInt(2));
+        stock.put(createRandomArticle(0.5f), 1 + random.nextInt(2));
+        stock.put(createRandomArticle(0.9f), 1);
 
-        return stock;
+        // possibly some more
+        if (random.nextFloat() < 0.8f)
+            stock.put(createRandomArticle(0.07f), 4 + random.nextInt(3));
+        if (random.nextFloat() < 0.6f)
+            stock.put(createRandomArticle(0.2f), 3 + random.nextInt(2));
+        if (random.nextFloat() < 0.4f)
+            stock.put(createRandomArticle(0.3f), 2 + random.nextInt(2));
+        if (random.nextFloat() < 0.3f)
+            stock.put(createRandomArticle(0.17f), 3 + random.nextInt(4));
+        if (random.nextFloat() < 0.25f)
+            stock.put(createRandomArticle(0.6f), 1 + random.nextInt(3));
+        if (random.nextFloat() < 0.2f)
+            stock.put(createRandomArticle(0.8f), 1 + random.nextInt(2));
+
+        // Checking for multiple articles
+        // multiple items will not override the same key, since they are different objects (functions)
+        List<String> itemNames = new ArrayList<>(10); // number of possible different articles
+        Map<Article, Integer> sortedStock = new HashMap<>(10);
+        for (Article article : stock.keySet()) {
+            String name = article.cachedItem().getName();
+            if (!itemNames.contains(name)) {
+                itemNames.add(name);
+                sortedStock.put(article, stock.get(article));
+            } // if the same item is contained twice, the second one, will not be added to sortedStock
+        }
+
+        return sortedStock;
+    }
+
+    /** Creates an article with random probability. The higher the parameter <code>rarity</code>, the higher the change,
+     * that rare articles are added.
+     *
+     * @param rarity between 0 and 1 - changes the probability for rare and good articles
+     * @return a new randomized article
+     */
+    // TODO: changes prizes to be more adequate, compare with Loots and internal shop
+    // TODO: add weapons and armors
+    private Article createRandomArticle (float rarity) {
+        assert rarity >= 0 && rarity <= 1;
+        Random random = new Random();
+        float prop = random.nextFloat();
+
+        // the higher values are for the if-calls should correspond to rarer items. --> articles higher in that code part are rarer
+        if (prop * rarity > 0.98f) {
+            return new Article(() -> new KeyRoundChest(), 280 + random.nextInt(60));
+        } else if (prop * rarity > 0.94f) {
+            return new Article(() -> new KeyDefaultChest(), 90 + random.nextInt(80));
+        } else if (prop * rarity > 0.87f) {
+            byte level = (byte) (Math.floor(random.nextFloat() * rarity * 2.9));
+            return new Article(() -> new PotionOfHealing(level), 12 + random.nextInt(10) + level * (8 * random.nextInt(3)));
+        } else if (prop * rarity > 0.82f) {
+            byte level = (byte) (Math.floor(random.nextFloat() * rarity * 2.8));
+            return new Article(() -> new PotionOfPoison(level), 20 + random.nextInt(4) + level * (10 + random.nextInt(5)));
+        } else if (prop * rarity > 0.76f) {
+            byte level = (byte) (Math.floor(random.nextFloat() * rarity * 2.7));
+            return new Article(() -> new PotionOfDamage(level), 25 + random.nextInt(7) + level * (9 + random.nextInt(4)));
+        } else if (prop * rarity > 0.68f) {
+            byte level = (byte) (Math.floor(random.nextFloat() * rarity * 2.9));
+            return new Article(() -> new PotionOfMovement(level), 15 + random.nextInt(3) + level * (8 + random.nextInt(6)));
+        } else if (prop * rarity > 0.61f) {
+            byte level = (byte) (Math.floor(random.nextFloat() * rarity * 2.75));
+            return new Article(() -> new PotionOfFortune(level), 11 + random.nextInt(20) + level * (6 + random.nextInt(9)));
+        } else if (prop * rarity > 0.3f) {
+            return new Article(() -> new CopperOre(), 4 + random.nextInt(3));
+        } else {
+            return new Article(() -> new IronOre(), 4 + random.nextInt(4));
+        }
     }
 
     /** registers a new WanderingTrader in the list. Do not register the same trader twice.*/

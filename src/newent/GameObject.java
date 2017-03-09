@@ -18,6 +18,8 @@ import java.util.Arrays;
 /**
  * Superclass for every object that can be positioned on the map with no
  * constraints on the game object's actual size on the map.
+ * Every Entity is automatically registered to EntityManager, if the constructor of GameObject is called (e.g. via super).
+ *
  * @since 14.11.15
  */
 public abstract class GameObject extends AbstractDisplayRepresentable implements BoardPositionable {

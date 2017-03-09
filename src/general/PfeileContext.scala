@@ -2,7 +2,7 @@ package general
 
 import general.property.{FloatStaticProperty, IntStaticProperty}
 import gui.screen.GameScreen
-import newent.{CommandTeam, Entity, Player}
+import newent._
 import player.item.loot.WorldLootList
 import player.shop.trader.WanderingTraderList
 import world.World
@@ -41,11 +41,13 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   /**
     * The player that is currently in control of the computer running this game.
     */
+  @volatile
   private var _activePlayer: Player = null
 
   /**
     * The world which is currently loaded in.
     */
+  @volatile
   private var _world: World = null
 
   //</editor-fold>
@@ -74,13 +76,19 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
       players.map(player => player.belongsTo.team).asJava
     })
 
-    turnSystem.onTurnGet += { team =>
+    turnSystem.onTurnGet += { team: Team =>
       team match {
         case playerTeam: CommandTeam =>
           require(playerTeam.head != null)
           activePlayer = playerTeam.head
           GameScreen.getInstance().getMoneyDisplay.retrieveDataFrom(playerTeam.head)
         case _ => ???
+      }
+    }
+
+    turnSystem.onTurnEnded += { _: Team =>
+      _world.entities.entityList.foreach { entity: GameObject =>
+        entity.onTurnEnded.apply()
       }
     }
 
@@ -93,7 +101,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
       // Then the entities.
       world.entities.entityList.foreach { entity =>
-        entity.onTurnCycleEnded
+        entity.onTurnCycleEnded.apply()
       }
 
       values.turnCycleCount += 1

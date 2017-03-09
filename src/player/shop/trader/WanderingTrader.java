@@ -82,10 +82,10 @@ public class WanderingTrader extends Trader implements Drawable {
         this.initialMoneyPerTurn = initialMoneyPerTurn / GAUSSIAN_DISTRIBUTION_NORMINATION_FACTOR;
 
         random = new Random();
-        onTurnEnded.registerJava(() -> {
+        onTurnCycleEnded.registerJava(() -> {
             this.getPurse().setMoneyPerTurn(moneyPerTurnChanger());
+            this.movement();
         });
-        onTurnCycleEnded.registerJava(this :: movement);
 
         stock = new HashMap<>();
 
@@ -168,17 +168,19 @@ public class WanderingTrader extends Trader implements Drawable {
         // only create a new way point, if there isn't an old already.
         if (!getCurrentPath().isPresent()) {
             // TODO: it may be better to define an amount of turns to wait
-            // Probability of 70% to stay for one turn cycle.
-            if(random.nextFloat() < 0.3f) {
+            // Probability of 60% to stay for one turn cycle.
+            if(random.nextFloat() < 0.4f) {
                 // waited enough, let's go
                 final Terrain world = Main.getContext().getWorld().getTerrain();
 
                 for (int i = 0; i < 200; i++) {
                     int x = random.nextInt(world.width());
                     int y = random.nextInt(world.height());
+                    Tile tile = world.getTileAt(x, y);
 
-                    if (world.getTileAt(x, y) instanceof GrassTile) {
+                    if (tile instanceof GrassTile) {
                         moveTowards(x, y);
+                        graphicRepresentation.setOnTile(tile);
                         break;
                     }
                 }
@@ -207,7 +209,7 @@ public class WanderingTrader extends Trader implements Drawable {
      *  Every wanderingTrader is represented by a WanderingTraderUI, which is a subclass ImageComponent, but allows to
      *  further functionality. This is needed to resolve e.g. map movement coherently.
      */
-    private class WanderingTraderUI extends ImageComponent{
+    private class WanderingTraderUI extends ImageComponent {
         private Tile tilePosition;
         private Delegate.Handle activeCallback;
 
@@ -222,6 +224,7 @@ public class WanderingTrader extends Trader implements Drawable {
             this(0, 0);
         }
 
+        /** moves the component onto the new tile. Changes the position of the component and changes the delegate handler.*/
         private void setOnTile (Tile tile) {
             if(tilePosition != null) {
                 activeCallback.dispose();
@@ -235,6 +238,7 @@ public class WanderingTrader extends Trader implements Drawable {
             }
         }
 
+        /** sets the position of the component into the center of the associated tile. */
         private void relocateGuiPosition() {
             Point centerPoint = tilePosition.component().center();
             setLocation(centerPoint.x - getWidth() / 2, centerPoint.y - getHeight() / 2);

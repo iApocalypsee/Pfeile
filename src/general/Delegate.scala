@@ -3,6 +3,8 @@ package general
 import java.util.UUID
 import java.util.function.Consumer
 
+import general.LogFacility.LoggingLevel
+
 @FunctionalInterface
 trait VoidConsumer {
   def call(): Unit
@@ -140,7 +142,7 @@ sealed trait DelegateLike {
     /**
       * Removes the handle from the delegate. <p>
       * The function enables the caller to remove the function he once added to the delegate.
-      * If the function does not exist anymore or the [[general.Delegate.Delegate#dispose( )]] method has been called already,
+      * If the function does not exist anymore or the [[general.Delegate#dispose( )]] method has been called already,
       * no action is done.
       */
     def dispose(): Unit = {
@@ -174,8 +176,8 @@ trait RecursiveCallCheck {
 
   def checkRecursion(): Unit = {
     if (_isProcessing) {
-      LogFacility.logCurrentStackTrace("Recursive processing detected at", "Warning")
-      throw new RuntimeException
+      LogFacility.logCurrentStackTrace("Recursive processing detected at", LoggingLevel.Error)
+      throw new RuntimeException("Recursive processing detected in Delegate.")
     }
   }
 
@@ -314,7 +316,7 @@ class Delegate[In](callbackList: List[(In) => Unit]) extends ParameterizedDelega
 }
 
 /**
-  * An implementation of an immutable delegate. Mixin trait for [[general.Delegate.DelegateLike]].
+  * An implementation of an immutable delegate. Mixin trait for [[general.DelegateLike]].
   * <p>
   * Use this trait like so:
   * {{{
@@ -323,7 +325,7 @@ class Delegate[In](callbackList: List[(In) => Unit]) extends ParameterizedDelega
   * <p>
   * Immutable delegates are delegates to which no callbacks can be registered.
   * The delegate only redirects to the functions it knows and does not accept any other functions.
-  * Using mutating methods of [[general.Delegate.DelegateLike]] will cause a [[java.lang.UnsupportedOperationException]] to be thrown.
+  * Using mutating methods of [[general.DelegateLike]] will cause a [[java.lang.UnsupportedOperationException]] to be thrown.
   */
 trait ImmutableDelegate extends DelegateLike {
 

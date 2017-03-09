@@ -109,6 +109,7 @@ class EntityManager {
   /**
     * The listing of all game objects currently registered in the manager.
     */
+  @volatile
   def entityList: Seq[GameObject] = m_entityList.asScala
 
   def getEntityList: IList[GameObject] = m_entityList.toImmutableList
