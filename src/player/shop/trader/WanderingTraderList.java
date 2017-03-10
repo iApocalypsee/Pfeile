@@ -100,33 +100,39 @@ public class WanderingTraderList implements Drawable {
 
     /** Generates a HashMap, the stock of a new wandering trader. It only contains random items and an random amount. */
     private Map<Article, Integer> generateRandomStock () {
-        Map<Article, Integer> stock = new HashMap<>(10); // maximum number of articles; stock may have the same item multiple times
+        int maximumNumberOfArticles = 13; // number of calls "put(createRandomArticle(...), ...)"
+
+        Map<Article, Integer> stock = new HashMap<>(maximumNumberOfArticles);
         Random random = new Random();
 
-        // at least four different articles
+        // at least some different articles (a few could be removed later)
         stock.put(createRandomArticle(0.05f), 6 + random.nextInt(7));
-        stock.put(createRandomArticle(0.12f), 2 + random.nextInt(2));
-        stock.put(createRandomArticle(0.5f), 1 + random.nextInt(2));
-        stock.put(createRandomArticle(0.9f), 1);
+        stock.put(createRandomArticle(0.18f), 3 + random.nextInt(2));
+        stock.put(createRandomArticle(0.32f), 3 + random.nextInt(6));
+        stock.put(createRandomArticle(0.63f), 3 + random.nextInt(1));
+        stock.put(createRandomArticle(0.74f), 1 + random.nextInt(3));
+        stock.put(createRandomArticle(0.92f), 1);
 
         // possibly some more
         if (random.nextFloat() < 0.8f)
-            stock.put(createRandomArticle(0.07f), 4 + random.nextInt(3));
+            stock.put(createRandomArticle(0.07f), 4 + random.nextInt(4));
         if (random.nextFloat() < 0.6f)
-            stock.put(createRandomArticle(0.2f), 3 + random.nextInt(2));
+            stock.put(createRandomArticle(0.28f), 3 + random.nextInt(2));
         if (random.nextFloat() < 0.4f)
-            stock.put(createRandomArticle(0.3f), 2 + random.nextInt(2));
+            stock.put(createRandomArticle(0.36f), 3 + random.nextInt(2));
         if (random.nextFloat() < 0.3f)
-            stock.put(createRandomArticle(0.17f), 3 + random.nextInt(4));
+            stock.put(createRandomArticle(0.47f), 3 + random.nextInt(4));
         if (random.nextFloat() < 0.25f)
-            stock.put(createRandomArticle(0.6f), 1 + random.nextInt(3));
+            stock.put(createRandomArticle(0.66f), 1 + random.nextInt(3));
         if (random.nextFloat() < 0.2f)
-            stock.put(createRandomArticle(0.8f), 1 + random.nextInt(2));
+            stock.put(createRandomArticle(0.88f), 2 + random.nextInt(2));
+        if (random.nextFloat() < 0.1f)
+            stock.put(createRandomArticle(0.98f), 1 + random.nextInt(1));
 
         // Checking for multiple articles
         // multiple items will not override the same key, since they are different objects (functions)
-        List<String> itemNames = new ArrayList<>(10); // number of possible different articles
-        Map<Article, Integer> sortedStock = new HashMap<>(10);
+        List<String> itemNames = new ArrayList<>(maximumNumberOfArticles);
+        Map<Article, Integer> sortedStock = new HashMap<>(maximumNumberOfArticles);
         for (Article article : stock.keySet()) {
             String name = article.cachedItem().getName();
             if (!itemNames.contains(name)) {
@@ -149,29 +155,29 @@ public class WanderingTraderList implements Drawable {
     private Article createRandomArticle (float rarity) {
         assert rarity >= 0 && rarity <= 1;
         Random random = new Random();
-        float prop = random.nextFloat();
+        float prop = 0.5f * (random.nextFloat() + rarity);
 
         // the higher values are for the if-calls should correspond to rarer items. --> articles higher in that code part are rarer
-        if (prop * rarity > 0.98f) {
+        if (prop > 0.98f) {
             return new Article(() -> new KeyRoundChest(), 280 + random.nextInt(60));
-        } else if (prop * rarity > 0.94f) {
+        } else if (prop > 0.94f) {
             return new Article(() -> new KeyDefaultChest(), 90 + random.nextInt(80));
-        } else if (prop * rarity > 0.87f) {
+        } else if (prop > 0.87f) {
             byte level = (byte) (Math.floor(random.nextFloat() * rarity * 2.9));
             return new Article(() -> new PotionOfHealing(level), 12 + random.nextInt(10) + level * (8 * random.nextInt(3)));
-        } else if (prop * rarity > 0.82f) {
+        } else if (prop > 0.82f) {
             byte level = (byte) (Math.floor(random.nextFloat() * rarity * 2.8));
             return new Article(() -> new PotionOfPoison(level), 20 + random.nextInt(4) + level * (10 + random.nextInt(5)));
-        } else if (prop * rarity > 0.76f) {
+        } else if (prop > 0.76f) {
             byte level = (byte) (Math.floor(random.nextFloat() * rarity * 2.7));
             return new Article(() -> new PotionOfDamage(level), 25 + random.nextInt(7) + level * (9 + random.nextInt(4)));
-        } else if (prop * rarity > 0.68f) {
+        } else if (prop > 0.68f) {
             byte level = (byte) (Math.floor(random.nextFloat() * rarity * 2.9));
             return new Article(() -> new PotionOfMovement(level), 15 + random.nextInt(3) + level * (8 + random.nextInt(6)));
-        } else if (prop * rarity > 0.61f) {
+        } else if (prop > 0.61f) {
             byte level = (byte) (Math.floor(random.nextFloat() * rarity * 2.75));
             return new Article(() -> new PotionOfFortune(level), 11 + random.nextInt(20) + level * (6 + random.nextInt(9)));
-        } else if (prop * rarity > 0.3f) {
+        } else if (prop > 0.3f) {
             return new Article(() -> new CopperOre(), 4 + random.nextInt(3));
         } else {
             return new Article(() -> new IronOre(), 4 + random.nextInt(4));
