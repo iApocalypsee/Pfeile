@@ -168,8 +168,10 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
 
     def selectedEntity = _selectedEntity
     def selectedEntity_=(x: Entity): Unit = {
-      if (x == null) _selectedEntity = activePlayer
-      else _selectedEntity = x
+      _selectedEntity.synchronized {
+        if (x == null) _selectedEntity = activePlayer
+        else _selectedEntity = x
+      }
     }
 
     def resetSelection(): Unit = {

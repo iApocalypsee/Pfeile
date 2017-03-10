@@ -14,7 +14,7 @@ import scala.compat.java8.OptionConverters._
 // Self-evident.
 class EntityManager {
 
-  private val m_entityList = new ArrayList[GameObject]
+  private val m_entityList = new ArrayList[GameObject](20)
 
   // Self-evident actually.
   val onEntityRegistered = Delegate.create[GameObject]
@@ -26,8 +26,10 @@ class EntityManager {
   }
 
   def register(e: GameObject): Unit = {
-    m_entityList.add(e)
-    onEntityRegistered(e)
+    m_entityList.synchronized {
+      m_entityList.add(e)
+      onEntityRegistered(e)
+    }
   }
 
   // local save of the player and the opponent. Provides an much faster access, once armies are registered.
@@ -100,16 +102,17 @@ class EntityManager {
   }
 
   def unlog(e: GameObject): Unit = {
-    val prev = entityList
-    sortOut { _ == e }
-    if(prev.diff(entityList).nonEmpty)
-      onEntityUnlogged(e)
+    m_entityList.synchronized {
+      val prev = entityList
+      sortOut { _ == e }
+      if(prev.diff(entityList).nonEmpty)
+        onEntityUnlogged(e)
+    }
   }
 
   /**
     * The listing of all game objects currently registered in the manager.
     */
-  @volatile
   def entityList: Seq[GameObject] = m_entityList.asScala
 
   def getEntityList: IList[GameObject] = m_entityList.toImmutableList
@@ -147,6 +150,16 @@ class EntityManager {
     def getPlayers: IList[Player] = entityList.collect { case p: Player => p }.asJava
 
     def getPlayerByName(name: String): Optional[Player] = {
+      // it't possible to remove the != null checks, because any use of this method would occur after defining player and opponent
+      if (player != null) {
+        if (player.name.equals(name))
+          return Optional.of(player)
+      }
+      else if (opponent != null) {
+        if (opponent.name.equals(name))
+          return Optional.of(player)
+      }
+
       val playerList = getPlayers.asScala
       val maybePlayer = playerList.filter(_.name == name)
 
