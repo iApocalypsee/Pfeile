@@ -19,7 +19,7 @@ public class ItemInitialization {
 
     /** Creates a single instance for each <code>Coin</code> and <code>Potion</code>.
      *  This method is threaded. The priority is lower then {@link Thread#NORM_PRIORITY}, because the initialization
-     *  doesn't need to be ready before using Coins and Potions.
+     *  doesn't need to be ready before using Coins and Potions (so takes quite a long time to load the items, though).
      *  <b><code>Loot</code> can't be loaded during Initialization process due to references to the not-yet-existing
      *  Tile-System</b>. Loots are loaded later in the game during creating WorldLootList/LootSpawner.
      */
@@ -34,7 +34,7 @@ public class ItemInitialization {
         });
         x.setDaemon(true);
         x.setName("Item Initialization");
-        x.setPriority(1);
+        x.setPriority(2);
         x.start();
     }
 

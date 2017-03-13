@@ -61,7 +61,7 @@ public final class LogFacility {
 	}
 
 	public static void putSeparationLine() {
-		System.out.println("------------------------------------------------------------------\n");
+		System.out.println("-----------------------------------------------------------------------------\n");
 	}
 
 	/**

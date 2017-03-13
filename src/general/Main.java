@@ -85,11 +85,16 @@ public class Main {
     public static void main(String[] arguments) {
         programStartTime = System.currentTimeMillis();
 
-        main = new Main();
-        user = new User(SystemProperties.getComputerName());
+        Thread startThread = new Thread(() -> {
+            main = new Main();
+            user = new User(SystemProperties.getComputerName());
 
-        System.out.println("\nRunning Pfeile on... " + user.getUsername() + "\n");
-        SystemProperties.printSystemProperties();
+            System.out.println("\nRunning Pfeile on... " + user.getUsername() + "\n");
+            SystemProperties.printSystemProperties();
+        }, "StartThread");
+        startThread.setPriority(Thread.MAX_PRIORITY);
+        startThread.setDaemon(true);
+        startThread.start();
 
         // Determines if the game should switch directly to fullscreen mode.
         // This line makes it possible for users to specify on the command line that he does
@@ -102,11 +107,11 @@ public class Main {
         // For users who do not want to hear sound.
         isMute = Arrays.stream(arguments).anyMatch(arg -> arg.equals("-nosound"));
 
-        LogFacility.log("Beginning initialization process...", "Info", "init process");
-
         // This will load the background melodies of SoundPool and SoundEffectTimeClock in an Thread and start to play
         // the main melodie, if it's ready.
         SoundPool.isLoaded();
+
+        LogFacility.log("Beginning initialization process...", "Info", "init process");
 
         final Config akkaConfig = ConfigFactory.parseString("akka {\nloglevel = \"DEBUG\" \n}");
         actorSystem = ActorSystem.create("system", akkaConfig);
@@ -118,26 +123,28 @@ public class Main {
             LogFacility.log("Activated debug windows. ", LogFacility.LoggingLevel.Debug, "init process");
         }
 
-        dict = new LangDict("general/CommonStrings.json")
-                        .addJSON("general/EverythingElse.json")
-                        .addJSON("general/GameMeta.json")
-                        .addJSON("general/Messages.json")
-                        .addJSON("item/Arrows.json")
-                        .addJSON("item/Items.json")
-                        .addJSON("rest/WorldStrings.json")
-                        .addJSON("screen/ArrowSelectionScreen.json")
-                        .addJSON("screen/ArrowSelectionScreenPreSet.json")
-                        .addJSON("screen/GameScreen.json")
-                        .addJSON("screen/LoadScreen.json")
-                        .addJSON("screen/PreWindowScreen.json")
-                        .addJSON("screen/WaitingScreen.json");
-        LangInitialization.apply();
-        LogFacility.log("LangInitialization done!", "Info", "init process");
+        Thread langInit = new Thread(() -> {
+            dict = LangInitialization.loadLanguageFiles();
+            LogFacility.log("JSON directories for the language system loaded.", LogFacility.LoggingLevel.Info, "init process");
+
+            LangInitialization.apply();
+            LogFacility.log("LangInitialization done!", "Info", "init process");
+        }, "LangInitThread");
+        langInit.setDaemon(true);
+        langInit.setPriority(4);
+        langInit.start();
 
         PreInitStage.execute(); // save game directory etc.
         LogFacility.log("PreInitStage done!", "Info", "init process");
 
         gameWindow = new GameWindow();
+        LogFacility.log("Instance of GameWindow & ScreenManager created.", LogFacility.LoggingLevel.Info, "init process");
+
+        // wait for the language system to finish. Screens and items need the language system for their names, so make
+        // sure, that the language initialization has finished before. The language initialization is quite fast, though.
+        try {
+            langInit.join();
+        } catch (InterruptedException e) { e.printStackTrace(); }
 
         // initialize Weapons and Armours (internally threaded)
         Thread arrowInitializationThread = ArmingInitialization.initialize();
@@ -154,12 +161,15 @@ public class Main {
         gameWindow.setVisible(true);
         LogFacility.log("GameWindow ready. Activated Fullscreen: " + isFullscreen, "Info", "init process");
 
-        LogFacility.log("Pfeile is ready.", "Info", "init process");
+        LogFacility.log("Pfeile is ready...", "Info", "init process");
         LogFacility.putSeparationLine();
 
         // Let's start the game
         main.runGame();
+
+        System.out.println();
         LogFacility.putSeparationLine();
+        LogFacility.log("Exiting Pfeile.", LogFacility.LoggingLevel.Info, "closing process");
 
         // begin of a softer process, than just calling System.exit(0)
         gameWindow.dispose();

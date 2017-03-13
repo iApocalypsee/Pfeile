@@ -4,13 +4,19 @@ import general.LogFacility;
 
 import java.io.File;
 
-/**
- * @author Josip Palavra
- */
+/** Before the game loads the gui components (or asynchronous to it) some class must be loaded. This will provide the
+ *  method {@link PreInitStage#execute()} to do this. It also provides the save game directory and the folder structure
+ *  for that. FolderStructure contains the static final File {@link FolderStructure#SAVEGAMES}.*/
 public class PreInitStage {
 
+	/** Executes every pre init entry such as save games. If possible the process is threaded.
+	 *  Creating or locating the save game directory is executed in the Thread "SaveGameDictThread". */
 	public static void execute() {
-		makeSavegameDirectory();
+		Thread saveDicThread = new Thread(() -> {
+			makeSavegameDirectory();
+		}, "SaveGameDictThread");
+		saveDicThread.setDaemon(true);
+		saveDicThread.start();
 	}
 
 	/**
@@ -21,6 +27,7 @@ public class PreInitStage {
 	 * @throws java.lang.RuntimeException if the savegame directory does not exist
 	 * and it cannot be created for some reason.
 	 */
+	// TODO: use or store the save game values somewhere
 	private static void makeSavegameDirectory () {
 		File f = FolderStructure.SAVEGAMES;
 		if(!f.exists()) {

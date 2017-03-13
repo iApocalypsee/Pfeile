@@ -134,7 +134,7 @@ public class ArrowSelectionScreen extends Screen {
                 }
             }
 
-            warningMessage = new WarningMessage("No warning yet", 40, GameWindow.WIDTH - 105, this);
+            warningMessage = new WarningMessage("No warning yet", 40, GameWindow.HEIGHT - 105, this);
             warningMessage.setFont(warningMessage.getFont().deriveFont(Component.STD_FONT.getSize() * 2f));
 
             MouseHandler mListener = new MouseHandler();
@@ -252,24 +252,20 @@ public class ArrowSelectionScreen extends Screen {
         AttackingScreen.getInstance().getAttackDrawer().draw(g);
 
         Main.getContext().getTimeClock().draw(g);
-		
-		// Zeichnen der Pfeilauswahl-Buttons
+
 		for (Button buttonListArrow : buttonListArrows) {
 			buttonListArrow.draw(g);
 		}
-		
-		// Zeichen des Pfeilinventars
+
 		inventoryList.draw(g);
-		
-		// Zeichnen der Auswahlbox
+
 		selectedArrowBox.draw(g);
 		
 		if (isConfirmDialogOpen) {
 			g.setColor(COLOR_IS_CONFIRM_DIALOG_OPEN);
 			g.fillRect(0, 0, GameWindow.WIDTH, GameWindow.HEIGHT);
 		}
-		
-		// Zeichnen der Button zur Auswahl
+
 		for (Button button : buttonList) {
 			button.draw(g);
 		} 
@@ -297,7 +293,7 @@ public class ArrowSelectionScreen extends Screen {
 		return selectedIndex;
 	}
 	
-	/** Listener f�r die Buttons */
+	/** A Listener for handling the mouse events triggered by clicking at the buttons */
 	private class MouseHandler extends MouseAdapter {
 
 		@Override
