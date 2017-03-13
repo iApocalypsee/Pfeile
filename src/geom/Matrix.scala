@@ -66,4 +66,23 @@ object Matrix {
         0.0, 1.0, dy, 0.0, 0.0, 1.0)
     def newScaling(x: Double, y: Double) = new Matrix(x, 0.0, 0.0, 0.0, y, 0.0,
         0.0, 0.0, 1.0)
+
+  import breeze.linalg._
+
+  def identity = DenseMatrix[(Double, Double, Double, Double), Double](
+    (1, 0, 0, 0),
+    (0, 1, 0, 0),
+    (0, 0, 1, 0),
+    (0, 0, 0, 1)
+  )
+
+
+
+  def perspective(top: Double, right: Double, bottom: Double, left: Double, near: Double, far: Double) = DenseMatrix[(Double, Double, Double, Double), Double](
+    ((2 * near) / (right - left), 0, (right + left) / (right - left), 0),
+    (0, (2 * near) / (top - bottom), (top + bottom) / (top - bottom), 0),
+    (0, 0, -(far + near) / far - near, (-2 * far * near) / (far - near)),
+    (0, 0, -1, 0)
+  )
+
 }

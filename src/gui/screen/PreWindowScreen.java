@@ -116,17 +116,9 @@ public class PreWindowScreen extends Screen {
 
     private final String pfeileLabel, strategyGameLabel, authorsLabel, selectSelections;
 
-    // <<< Test code >>>
-    private ComboBox test;
-    private Button reloadCombobox = new Button(1000, 400, this, "Reload test combobox");
-    private void reloadTestCombobox() {
-        test = new ComboBox(1000, 500, 300, 100, this, new String[]{"Test 1", "Test 2", "3. Test"});
-        test.setVisible(true);
-        this.forcePullFront(test);
-        this.forcePullFront(reloadCombobox);
-    }
+    // Test code.
     private comp.NormalList list2;
-    private comp.Label multilineLabel = new comp.Label(400, 400, this, "Multiline\nstring that should be\nawesome to read.");
+    private comp.NormalList list3;
 
     private comp.ComboBox2 cb2 = new comp.ComboBox2(500, 500, 100, this);
     // <<< Test code ende >>>
@@ -301,9 +293,6 @@ public class PreWindowScreen extends Screen {
 
         selectorComboBox.registerOnItemSelected(this::triggerSelectorComboBoxByIndex);
 
-        reloadTestCombobox();
-        this.forcePullFront(test);
-        this.forcePullFront(reloadCombobox);
         list2 = new NormalList();
 
         list2.setBackingScreen(this);
@@ -312,6 +301,32 @@ public class PreWindowScreen extends Screen {
         list2.appendElement(new Label(0, 0, this, "Third element"));
         list2.setX(250);
         list2.setY(300);
+
+        list3 = new NormalList();
+
+        list3.setBackingScreen(this);
+        list3.setX(500);
+        list3.setY(600);
+        list3.appendElement(new Label(0, 0, this, "First element"));
+        list3.appendElement(new Label(0, 0, this, "Second element"));
+        list3.appendElement(new Label(0, 0, this, "Third element"));
+        list3.setVisible(true);
+        list3.acceptInput();
+        list3.forEveryContainedComponent(label -> {
+            label.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    System.out.println("Pressed label " + label.getText());
+                }
+            });
+            forcePullFront(label);
+        });
+
+        forcePullFront(list2);
+        forcePullFront(list3);
+
+        add(list2);
+        add(list3);
 
         cb2.appendElement("Hello");
         cb2.appendElement("Fooey");
@@ -845,8 +860,7 @@ public class PreWindowScreen extends Screen {
 
         g.setFont(Component.STD_FONT);
 
-        list2.draw(g);
-        multilineLabel.draw(g);
+
 
         // Components
         boxSelectKI.draw(g);
@@ -866,9 +880,9 @@ public class PreWindowScreen extends Screen {
         readyButton.draw(g);
         confirmDialog.draw(g);
 
-        reloadCombobox.draw(g);
-        test.draw(g);
         cb2.drawChecked(g);
+        list2.drawChecked(g);
+        list3.drawChecked(g);
 
     }
 }

@@ -2,13 +2,13 @@ package player.shop
 
 import java.awt.event.{MouseAdapter, MouseEvent}
 import java.util.function._
-import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
 import akka.actor.ActorDSL._
 import akka.actor._
 import general.JavaInterop.Implicits.actorSystem
 import general.JavaInterop._
 import general.{LogFacility, Main}
+import general.JavaInterop.JavaAliases._
 import newent.MoneyEarner
 import player.item.Item
 import player.shop.trader.TraderLike
@@ -21,7 +21,7 @@ import scala.compat.java8.FunctionConverters._
 /**
   * Central shop for players.
   *
-  * This shop is a construct seperated from the other traders in the game; further, this shop is accessible at any
+  * This shop is a construct separated from the other traders in the game; further, this shop is accessible at any
   * time from anywhere by every player and has no limits on how many items may be purchased.
   */
 object ShopCentral extends TraderLike {
@@ -33,7 +33,7 @@ object ShopCentral extends TraderLike {
   /**
     * Reference to the allocated worker.
     */
-  @BeanProperty val asyncWorkerRef = actor(new AsyncWorker)
+  @BeanProperty val asyncWorkerRef: ActorRef = actor(new AsyncWorker)
 
   // <editor-fold desc="Worker actor">
 
@@ -88,6 +88,10 @@ object ShopCentral extends TraderLike {
     */
   object AsyncWorkerMessages {
 
+    /**
+      * Sent to the worker when a `ShopButton` has been clicked.
+      * @param button The button that has been clicked.
+      */
     case class Clicked(button: ShopButton)
 
     /**
@@ -121,7 +125,7 @@ object ShopCentral extends TraderLike {
   // </editor-fold>
 
   def addArticle(item: Supplier[Item], price: Int): Unit = {
-    m_articles += Article(item, price, Array())
+    m_articles += Article(item, price)
   }
 
   /**
@@ -130,7 +134,7 @@ object ShopCentral extends TraderLike {
     * @param f Selector function.
     * @return All articles that comply to the selector function.
     */
-  def filter(f: Predicate[Article]) = m_articles.filter(f.asScala).asJava
+  def filter(f: Predicate[Article]): IList[Article] = m_articles.filter(f.asScala).asJava
 
   def articles: IList[Article] = m_articles.asJava.toImmutableList
 
@@ -160,7 +164,7 @@ object ShopCentral extends TraderLike {
       * @return False, definitely.
       */
     def onNotSufficientClientMoney(wishlist: Seq[Article]): Boolean = {
-      LogFacility.log(s"Client $to has not enough money for paying ${amount}x of ${wishlist}", "Info", "shop")
+      LogFacility.log(s"Client $to has not enough money for paying ${amount}x of ${wishlist.map { article => article.nameDisplayed }}", "Info", "shop")
       false
     }
 

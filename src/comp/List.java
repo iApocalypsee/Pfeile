@@ -63,7 +63,9 @@ public class List extends Component {
 			getBorder().draw(g);
 			
 			for (int i = getFirstDisplayIndex(); i < getLastDisplayIndex(); i++) {
-				listItems.get(i).draw(g);
+				if(i < listItems.size()) {
+					listItems.get(i).draw(g);
+				}
 			}
 		}
 	}

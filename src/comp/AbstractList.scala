@@ -4,6 +4,7 @@ import java.awt.event.{MouseAdapter, MouseEvent}
 import java.awt.{Color, Dimension, Graphics2D, Point}
 import java.util.function._
 
+import general.JavaInterop.JavaAliases._
 import general.JavaInterop.JavaPrimitives.JavaInt
 import general.JavaInterop._
 import general.{Delegate, LogFacility}
@@ -24,8 +25,8 @@ abstract class AbstractList[A <: Component] extends Component(Component.originCe
   // Listing of all elements.
   private val m_elements = mutable.ArrayBuffer[Element]()
 
-  def elements = m_elements.map(elem => elem.component)
-  def getElements = elements.asJava.toImmutableList
+  def elements = m_elements.map(elem => elem.component).toList
+  def getElements: IList[A] = elements.asJava.toImmutableList
 
   private def select(idx: Int): Unit = {
     val optComponent = elements.zipWithIndex.find({ case (e, i) => idx == i }).map({ case (e, i) => e })
@@ -107,7 +108,14 @@ abstract class AbstractList[A <: Component] extends Component(Component.originCe
          |Make sure you don't add the same component twice over, it would
          | a) make no sense and
          | b) make debugging more difficult.
-         |If you are appending the same component twice on purpose, overthink your design choice.
+         |If you are appending the same component twice on purpose, rethink your design choice.
+       """.stripMargin)
+    require(x.getBackingScreen == this.getBackingScreen,
+      s"""
+         |Backing screen of list '$this' does not match backing screen of component to add to list '$x'.
+         | - implementingClass='${this.getClass.getName}'
+         | - this.backingScreen='${this.getBackingScreen}'
+         | - component.backingScreen='${x.getBackingScreen}'
        """.stripMargin)
   }
 
@@ -122,30 +130,38 @@ abstract class AbstractList[A <: Component] extends Component(Component.originCe
   }
 
   /**
-    * Adds an element to the end of the list and recalculates the bounds.
+    * Removing code redundancies by encapsulating the insert operation.
     */
-  def appendElement(x: A): Unit = {
+  private def insertElementImpl(x: A)(insertOp: Element => Unit): Unit = {
     preAddCheck(x)
-    m_elements += Element(x)
+    insertOp(Element(x))
     postAdd(x)
   }
+
+  /**
+    * Adds an element to the end of the list and recalculates the bounds.
+    */
+  def appendElement(x: A): Unit = insertElementImpl(x)(m_elements += _)
 
   /**
     * Adds an element to the beginning of the list and recalculates the bounds.
     * I presume you will rarely need this method, but it's there if you need it, so: go nuts.
     */
-  def prependElement(x: A): Unit = {
-    preAddCheck(x)
-    m_elements prepend Element(x)
-    postAdd(x)
-  }
+  def prependElement(x: A): Unit = insertElementImpl(x)(m_elements prepend _)
+
+  /**
+    * Adds the specified element to the list at specified position, according to ArrayBuffer insert rules.
+    * @param x The element to add to the list.
+    * @param index The index where the element should be placed.
+    */
+  def addElement(x: A, index: Int): Unit = insertElementImpl(x)(m_elements.insert(index, _))
 
   /**
     * Applies a function to every element of this GUI list.
     *
     * @param x The function to apply.
     */
-  def foreach(x: Consumer[A]): Unit = {
+  def forEveryContainedComponent(x: Consumer[A]): Unit = {
     m_elements.foreach(elem => x.accept(elem.component))
   }
 
@@ -410,18 +426,20 @@ class NormalList extends AbstractList[Label] {
   /**
     * Inset from the first element to the top of the list in pixels.
     */
-  override def topInset = 10
+  override def topInset = 5
 
   /**
     * Inset from the left, applied to all components in the list.
     */
   override def leftInset = 10
 
+
+
   override def draw(g: Graphics2D) = {
 
     background.drawImage(g, getX, getY, getWidth, getHeight)
 
-    foreach { (label: comp.Label) =>
+    forEveryContainedComponent { (label: comp.Label) =>
       label.draw(g)
     }
 

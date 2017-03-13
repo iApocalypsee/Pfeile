@@ -82,23 +82,13 @@ public class Main {
     // MOST IMPORTANT METHODS ####################################
     // ###########################################################
 
-    /**
-     * F�hrt nicht die main-Funktion aus, sondern gibt eine Referenz auf das
-     * Main-Objekt zur�ck.
-     *
-     * @return Referenz auf das Main-Objekt. Von hier aus kann auf fast alles
-     * zugegriffen werden.
-     */
     public static Main getMain() {
         return main;
     }
 
     // KONSTRUKTOR ###############################################
-    /**
-     * Der Konstruktor. Hier stehen keine Hauptaufrufe. Die Hauptaufrufe werden
-     * in <code>foo()</code> get�tigt.
-     */
-    private Main() {}
+    private Main() {
+    }
 
     // ###########################################################
     // HIER STEHEN DIE HAUPTAUFRUFE ##############################

@@ -24,7 +24,7 @@ abstract class Tile protected(gridX: Int, gridY: Int, val terrain: Terrain) exte
   require(terrain != null)
 
   // Add this particular class object to the tile type list if not in list yet
-  Tile.appendToTileTypeList(this.getClass)
+  Tile.m_tileTypeList += this.getClass
 
   /**
     * Returns the color that is used to represent the isometric tile.
@@ -176,13 +176,9 @@ object Tile {
   // Every subclass of Tile puts a java.lang.Class
   // object of itself into this list.
 
-  private[this] val _tileTypeList = mutable.Set[Class[_ <: Tile]]()
+  private val m_tileTypeList = mutable.Set[Class[_ <: Tile]]()
 
-  private def appendToTileTypeList(t: Class[_ <: Tile]): Unit = {
-    _tileTypeList += t
-  }
-
-  def tileTypeList = _tileTypeList.toList
+  def tileTypeList = m_tileTypeList.toList
 
   //</editor-fold>
 

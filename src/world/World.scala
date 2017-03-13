@@ -28,6 +28,8 @@ class World(width: Int, height: Int) {
     */
   def name: String = hashCode().toString
 
-  terrain.generate(new scala.util.Random().nextLong())
+  def generateDefault(): Unit = {
+    terrain.generate(new scala.util.Random().nextLong())
+  }
 
 }

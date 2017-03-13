@@ -19,12 +19,9 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.Random
 
-class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
+class ContextCreator(val worldSizeX: Int, val worldSizeY: Int) extends StageOrganized {
 
-  lazy val sizeX = new IntStaticProperty(initWidth)
-  lazy val sizeY = new IntStaticProperty(initHeight)
-
-  private var context: PfeileContext = null
+  private var context: PfeileContext = _
 
   addStage(new InstantiatorStage)
   addStage(new PopulatorStage)
@@ -37,17 +34,18 @@ class ContextCreator(initWidth: Int, initHeight: Int) extends StageOrganized {
     context
   }
 
-  /** Instantiates the world with its terrain. */
+  /**
+    * Instantiates the world with terrain.
+    */
   private[ContextCreator] class InstantiatorStage extends StageDescriptable[Unit] {
 
-    /** The name of the stage. */
     override def stageName = Main.tr("creationStage")
 
-    /** The implementation of the stage. */
     override protected def executeStageImpl() = {
       val context = new PfeileContext(new PfeileContext.Values)
-      val world = new World(sizeX(), sizeY())
+      val world = new World(worldSizeX, worldSizeY)
       context.world = world
+      world.generateDefault()
       ContextCreator.this.context = context
     }
 

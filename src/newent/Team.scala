@@ -1,6 +1,16 @@
 package newent
 
 import general.LogFacility
+import general.JavaInterop._
+import general.JavaInterop.JavaPrimitives._
+import general.JavaInterop.Implicits._
+
+import scala.collection.JavaConverters._
+import scala.compat.java8._
+import FunctionConverters._
+import OptionConverters._
+import java.util.function._
+import java.util.{Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet, _}
 
 /**
   * Object being able of grouping entities together which mix in the [[newent.CanHoldTeamContract]] trait.
@@ -8,34 +18,36 @@ import general.LogFacility
   */
 sealed abstract class Team protected {
 
-  private var _members = List[CanHoldTeamContract]()
+  private var m_members = new HashSet[CanHoldTeamContract]
 
-  /** All members of the team. */
-  def members = _members
-  def getMembers = members
+  /** the extra damage is added as multiplier to the damage */
+  private var extraDamage: Double = 1
+
+  def members: ISet[CanHoldTeamContract] = m_members.toImmutableSet
+  def getMembers: ISet[CanHoldTeamContract] = members
 
   /**
     * Causes the specified object to join the team.
     * @param x The object to be integrated into the team.
     */
-  def integrate(x: CanHoldTeamContract): Unit = {
+  def integrate(x: CanHoldTeamContract): Boolean = {
     require(x != null)
-    _members = _members ++ List(x)
-    x.onJoinedTeam(this)
+    m_members.add(x)
   }
 
-  /* Not yet, implementation follows later on...
+  def kick(x: CanHoldTeamContract): Boolean = !kick(_ == x).isEmpty
+
   /**
-   * Kicks the specified object out of the team.
-   * @param x The team member to kick.
-   */
-  def kick(x: CanHoldTeamContract) = kick(_ == x)
-  def kick(selector: CanHoldTeamContract => Boolean): Unit = {
-    _members = _members filterNot selector
+    * Removes all team members who satisfy given predicate, and returns these in a list.
+    */
+  def kick(selector: Predicate[CanHoldTeamContract]): IList[CanHoldTeamContract] = {
+    val iter = m_members.asScala
+    val compare = iter.clone()
+    iter.retain(selector.negate.asScala)
+    compare.diff(iter).asJavaCollection.toList
   }
-  */
 
-  def isInTeam(x: CanHoldTeamContract): Boolean = _members.contains(x)
+  def isInTeam(x: CanHoldTeamContract): Boolean = m_members.contains(x)
 
   /** Returns true if this team is the barbarian one. (--> CommandTeam -> false)*/
   def isBarbarian: Boolean
@@ -53,9 +65,6 @@ sealed abstract class Team protected {
    * @return An option with this team as a command team, if this object really is a CommandTeam object.
    */
   def asCommandTeamOpt = Option(asCommandTeam)
-
-  /** the extra damage is added as multiplier to the damage */
-  private var extraDamage: Double = 1
 
   /**
     * The extra damage, that every member of this team does.
@@ -120,9 +129,13 @@ class CommandTeam(val head: Player, val name: String) extends Team {
    * @param x The object to be integrated into the team. If it is
    *          an object of type [[newent.Player]], it is ignored.
    */
-  override def integrate(x: CanHoldTeamContract): Unit = {
-    if (!x.isInstanceOf[Player] || x == head) super.integrate(x)
-    else LogFacility.log(x.toString + " can not be added to command team " + name, "Info")
+  override def integrate(x: CanHoldTeamContract): Boolean = {
+    if (!x.isInstanceOf[Player] || x == head)
+      super.integrate(x)
+    else {
+      LogFacility.log(x.toString + " can not be added to command team " + name, "Info")
+      false
+    }
   }
 
   def getHead = head

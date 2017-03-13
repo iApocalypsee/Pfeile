@@ -147,7 +147,7 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
     */
   def appendElement(x: String): Unit = {
     m_elements += x
-    if (m_display.getText == Values.EmptyText) m_display.setText(x)
+    if (m_display.getText == Values.EmptyText && m_elements.size == 1) m_display.setText(x)
     // Label's position will get recomputed inside the AbstractList
     ComboxBoxList.appendElement(newLabel(x))
   }
@@ -263,8 +263,8 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
 
     /**
       * Interpolation factor for 'original => target'.
-      * When in range of [0.0, 0.5[, the triangle should be facing downwards.
-      * When in range of ]0.5, 1.0], the triangle should be facing upwards.
+      * When in range of [0.0, 0.5), the triangle should be facing downwards.
+      * When in range of (0.5, 1.0], the triangle should be facing upwards.
       * When 0.5, the triangle should degenerate to a line.
       */
     // Initial value of 0.5 makes sure the triangle's insets are correct when it is displayed
@@ -278,10 +278,10 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
     private var m_newHeightsNeeded = false
 
     // Middle point of expand-collapse triangle.
-    private var m_mid: AwtPoint = null
+    private var m_mid: AwtPoint = _
     // Same for left and right.
-    private var m_left: AwtPoint = null
-    private var m_right: AwtPoint = null
+    private var m_left: AwtPoint = _
+    private var m_right: AwtPoint = _
 
     // <editor-fold desc="Constructor initialization">
 
@@ -311,9 +311,9 @@ class ComboBox2(x: Int, y: Int, initComboBoxWidth: Int, backing: Screen) extends
     def rightOriginal = leftOriginal + new geom.Vector(Values.WidthTriangle, 0)
 
     // Where the individual points of the triangle should be when the triangle fully unfolds.
-    def midTarget = midOriginal + new geom.Vector(0, -Values.HeightTriangle)
-    def leftTarget = leftOriginal + new geom.Vector(0, Values.HeightTriangle)
-    def rightTarget = rightOriginal + new geom.Vector(0, Values.HeightTriangle)
+    def midTarget: Vector2 = midOriginal + new geom.Vector(0, -Values.HeightTriangle)
+    def leftTarget: Vector2 = leftOriginal + new geom.Vector(0, Values.HeightTriangle)
+    def rightTarget: Vector2 = rightOriginal + new geom.Vector(0, Values.HeightTriangle)
 
     /**
       * Changes the push/triangle interpolation factor based on given delta and issues a flag

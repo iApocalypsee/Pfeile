@@ -53,10 +53,9 @@ case class Article(private[shop] val item: Supplier[Item], price: Int, keywords:
 
 }
 
-/*
-
-
- */
+object Article {
+  def apply(item: Supplier[Item], price: Int) = new Article(item, price)
+}
 
 class VisualArticleAttributes private[shop] {
 
