@@ -6,7 +6,6 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import general.io.PreInitStage;
 import general.langsupport.*;
-import gui.screen.ArrowSelectionScreenPreSet;
 import misc.ArmingInitialization;
 import misc.ItemInitialization;
 import scala.concurrent.ExecutionContext;
@@ -17,95 +16,65 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
+/** The Main class of Pfeile. The main-method of class Main initializes the game, controlls the run&update loop of the
+  * draw method and provides some static references for important other classes. */
 public class Main {
 
-    // NUR INTIALISIERUNG - WIE WERTE UND VARIABLEN ###############
-
-    /** the width of the displayed window
-     * @return getMaximumWindowBounds().width
-     * @see general.Main#getWindowHeight()
-     * @see general.Main#getWindowDimensions() */
-    public static int getWindowWidth() { return getWindowDimensions().width; }
-    
-    /** the height of the displayed window
-     * @return getMaximumWindowBounds().height
-     * @see Main#getWindowHeight()
-     * @see Main#getWindowDimensions() */
-    public static int getWindowHeight() { return getWindowDimensions().height; }
-
+    /** The static reference to the GameWindow. */
     private static GameWindow gameWindow;
-    private static GraphicsDevice graphicsDevice;
 
-    /**
-     * Determines whether Pfeile is running in debug mode.
-     */
+    /** Determines whether Pfeile is running in debug mode. */
     public static boolean isDebug() {
-        return true;
+        return false;
     }
 
+    /** main instance */
     private static Main main;
 
-    // Just user data. User data is not intertwined with game data.
-	// The game data uses data from user, but the user does not use any data from world.
+    /** Just user data. User data is not intertwined with game data.
+	  * The game data uses data from user, but the user does not use any data from world. */
     private static User user;
 
 	// The game context in which the game currently is.
 	// Every time a game is started, the context variable should be non-null.
 	private static PfeileContext context = null;
 
-    // The language the user speaks (or is supposed to speak).
+    /** The language the user speaks (or is supposed to speak). */
     private static Language language = English.instance();
 
-	// The actor system taking care of threaded actors.
+	/** The actor system taking care of threaded actors. */
 	private static ActorSystem actorSystem;
 
-    private static DebugWindows debugWindows = new DebugWindows();
+    /** Central translation instance. */
+    private static LangDict dict = null;
 
-    // Central translation instance.
-    private static LangDict dict = new LangDict("general/CommonStrings.json")
-            .addJSON("general/EverythingElse.json")
-            .addJSON("general/GameMeta.json")
-            .addJSON("general/Messages.json")
-            .addJSON("item/Arrows.json")
-            .addJSON("item/Items.json")
-            .addJSON("rest/WorldStrings.json")
-            .addJSON("screen/ArrowSelectionScreen.json")
-            .addJSON("screen/ArrowSelectionScreenPreSet.json")
-            .addJSON("screen/GameScreen.json")
-            .addJSON("screen/LoadScreen.json")
-            .addJSON("screen/PreWindowScreen.json")
-            .addJSON("screen/WaitingScreen.json");
+    /** Only load the sound system / sound files, if isMute is true. isMute is changed depending on the arguments of
+     * the main method. */
+    public static boolean isMute = false;
 
+    /** System.currentTimeMillis() at the start of the game. */
     private static long programStartTime;
 
-    // DONE WITH ALL VARIABLES;
-    // MOST IMPORTANT METHODS ####################################
-    // ###########################################################
+    // DONE WITH ALL VARIABLES INITIALIZATION
 
     /**
-     * F�hrt nicht die main-Funktion aus, sondern gibt eine Referenz auf das
-     * Main-Objekt zur�ck.
+     * Only returns the instance of the main object.
      *
-     * @return Referenz auf das Main-Objekt. Von hier aus kann auf fast alles
-     * zugegriffen werden.
+     * @return returns the reference of the main object.
      */
     public static Main getMain() {
         return main;
     }
 
-    // KONSTRUKTOR ###############################################
+    // Constructor
+
     /**
-     * Der Konstruktor. Hier stehen keine Hauptaufrufe. Die Hauptaufrufe werden
-     * in <code>foo()</code> get�tigt.
+     * an empty constructor, creates the main instance {@link Main#getMain()}.
+     * The code is executed in the main method.
      */
     private Main() {}
 
-    // ###########################################################
-    // HIER STEHEN DIE HAUPTAUFRUFE ##############################
-    // ################### IMPORTANT #############################
-    // ###########################################################
-
-    public static boolean isMute = false;
+    // MAIN METHOD
 
     /**
      * List of possible program arguments to Pfeile:
@@ -114,52 +83,61 @@ public class Main {
      *  "-nosound"      => Disables sound (bug: game-over-sound still played).
      */
     public static void main(String[] arguments) {
+        programStartTime = System.currentTimeMillis();
 
-        //dict.printTree();
+        main = new Main();
+        user = new User(SystemProperties.getComputerName());
+
+        System.out.println("\nRunning Pfeile on... " + user.getUsername() + "\n");
+        SystemProperties.printSystemProperties();
 
         // Determines if the game should switch directly to fullscreen mode.
         // This line makes it possible for users to specify on the command line that he does
         // not want to enter fullscreen mode.
-        boolean activateFullscreen = !Arrays.stream(arguments).anyMatch(arg -> arg.equals("-nofullscreen"));
+        boolean activateFullscreen = Arrays.stream(arguments).noneMatch(arg -> arg.equals("-nofullscreen"));
+
         // For debug purposes only.
         boolean activateDbgWindows = Arrays.stream(arguments).anyMatch(arg -> arg.equals("-dbgwindows"));
+
         // For users who do not want to hear sound.
-        //boolean mute = Arrays.stream(arguments).anyMatch(arg -> arg.equals("-nosound"));
-        // This is not good. SoundPool depends on isMute for being completed.
         isMute = Arrays.stream(arguments).anyMatch(arg -> arg.equals("-nosound"));
 
-        final Config akkaConfig = ConfigFactory.parseString("akka {\nloglevel = \"DEBUG\" \n}");
-        actorSystem = ActorSystem.create("system", akkaConfig);
-
-        debugWindows.setWindowEnabled(activateDbgWindows);
-
-        programStartTime = System.currentTimeMillis();
-
-        GraphicsEnvironment environmentG = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        LogFacility.log("Beginning initialization process...", "Info", "init process");
 
         // This will load the background melodies of SoundPool and SoundEffectTimeClock in an Thread and start to play
         // the main melodie, if it's ready.
         SoundPool.isLoaded();
 
-        System.out.println("Running Pfeile on... " + SystemProperties.getComputerName() + "\n");
+        final Config akkaConfig = ConfigFactory.parseString("akka {\nloglevel = \"DEBUG\" \n}");
+        actorSystem = ActorSystem.create("system", akkaConfig);
 
-        SystemProperties.printSystemProperties();
+        // if deactivated, save time and resources.
+        if (activateDbgWindows) {
+            DebugWindows debugWindows = new DebugWindows();
+            debugWindows.enable();
+            LogFacility.log("Activated debug windows. ", LogFacility.LoggingLevel.Debug, "init process");
+        }
 
-        LogFacility.log("Beginning initialization process...", "Info", "initprocess");
-
+        dict = new LangDict("general/CommonStrings.json")
+                        .addJSON("general/EverythingElse.json")
+                        .addJSON("general/GameMeta.json")
+                        .addJSON("general/Messages.json")
+                        .addJSON("item/Arrows.json")
+                        .addJSON("item/Items.json")
+                        .addJSON("rest/WorldStrings.json")
+                        .addJSON("screen/ArrowSelectionScreen.json")
+                        .addJSON("screen/ArrowSelectionScreenPreSet.json")
+                        .addJSON("screen/GameScreen.json")
+                        .addJSON("screen/LoadScreen.json")
+                        .addJSON("screen/PreWindowScreen.json")
+                        .addJSON("screen/WaitingScreen.json");
         LangInitialization.apply();
-        LogFacility.log("LangInitialization done!", "Info", "initprocess");
+        LogFacility.log("LangInitialization done!", "Info", "init process");
 
-        main = new Main();
-        user = new User(SystemProperties.getComputerName());
+        PreInitStage.execute(); // save game directory etc.
+        LogFacility.log("PreInitStage done!", "Info", "init process");
 
-        PreInitStage.execute();
-
-        LogFacility.log("PreInitStage done!", "Info", "initprocess");
-
-        graphicsDevice = environmentG.getDefaultScreenDevice();
         gameWindow = new GameWindow();
-        LogFacility.log("GameWindow instantiated.", "Info", "initprocess");
 
         // initialize Weapons and Armours (internally threaded)
         Thread arrowInitializationThread = ArmingInitialization.initialize();
@@ -168,66 +146,52 @@ public class Main {
         ItemInitialization.initialize();
 
         gameWindow.initializeScreens(arrowInitializationThread);
-        LogFacility.log("Screens initialized.", "Info", "initprocess");
-
-        GameWindow.adjustWindow(gameWindow);
-        toggleFullscreen(activateFullscreen);
+        LogFacility.log("Screens initialized.", "Info", "init process");
 
         // window showing process
-        gameWindow.setVisible(true);
+        boolean isFullscreen = GameWindow.adjustWindow(gameWindow, activateFullscreen);
         gameWindow.createBufferStrategy();
+        gameWindow.setVisible(true);
+        LogFacility.log("GameWindow ready. Activated Fullscreen: " + isFullscreen, "Info", "init process");
 
-	    ArrowSelectionScreenPreSet.getInstance().onScreenLeft.registerJava(event -> main.disposeInitialResources());
-
-        LogFacility.log("Pfeile is ready.", "Info", "initprocess");
+        LogFacility.log("Pfeile is ready.", "Info", "init process");
         LogFacility.putSeparationLine();
 
-        // starten wir das Spiel
+        // Let's start the game
         main.runGame();
+        LogFacility.putSeparationLine();
 
-        // sanftes Schlie�en des GameWindows anstelle des harten System.exit(0)
+        // begin of a softer process, than just calling System.exit(0)
         gameWindow.dispose();
+        LogFacility.log("Disposed GameWindow.", LogFacility.LoggingLevel.Info, "closing process");
 
         // stop all melodies
-        //SoundPool.stop_allMelodies();
+        SoundPool.stop_allMelodies();
+        LogFacility.log("Stopped sound system.", LogFacility.LoggingLevel.Info, "closing process");
 
         actorSystem.terminate();
+        LogFacility.log("Terminated actor system. ", LogFacility.LoggingLevel.Info, "closing process");
 
         // There is no other way, that closes the games.
         // Some Threads were still running in background, that continued the game without seeing a screen.
         System.exit(0);
     }
 
-    // ############ RUN GAME
+    // RUN GAME
 
+    /** Starts the run loop with a defined update speed in seconds. The update speed is 1/refreshRate of
+     * the display (or 1/60.0 if unknown)*/
     private void runGame() {
-        GameLoop.run(1 / 60.0);
+        // the refresh rate of the display measured in Hertz.
+        int refreshRate = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode().getRefreshRate();
+        // if the display only runs at 30Hz, we can reduce the update speed to 1/30.
+        if (refreshRate != DisplayMode.REFRESH_RATE_UNKNOWN)
+            GameLoop.run(1 / (double) refreshRate);
+        else
+            GameLoop.run(1 / 60.0);
     }
 
-    // #########################################################
-    // METHODEN: v. a. alle Threads ############################
-    // #########################################################
-
-    /**
-     * Toggles between fullscreen mode and windowed mode.
-     *
-     * @param fullscreen The fullscreen flag.
-     */
-    public static void toggleFullscreen(boolean fullscreen) {
-        if (fullscreen) {
-            if (graphicsDevice.getFullScreenWindow() == gameWindow) {
-                LogFacility.log("Already in fullscreen mode.", "Info");
-                return;
-            }
-            graphicsDevice.setFullScreenWindow(gameWindow);
-        } else {
-            if (graphicsDevice.getFullScreenWindow() != gameWindow) {
-                LogFacility.log("Already in windowed mode.", "Info");
-                return;
-            }
-            graphicsDevice.setFullScreenWindow(null);
-        }
-    }
+    // general methods, threads
 
     /**
      * Gets the translation for given ID and the currently selected language as the translation language.
@@ -248,9 +212,12 @@ public class Main {
      * @return A compatible buffered image, or the same image if the data model is already compatible with the system.
      */
     public static BufferedImage toCompatibleImage(BufferedImage image) {
-        if(image.getColorModel().equals(graphicsDevice.getDefaultConfiguration().getColorModel())) return image;
+        GraphicsConfiguration graphicsConfig = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+
+        if(image.getColorModel().equals(graphicsConfig.getColorModel()))
+            return image;
         else {
-            final BufferedImage compatibleImage = graphicsDevice.getDefaultConfiguration().createCompatibleImage(image.getWidth(), image.getHeight(), image.getTransparency());
+            final BufferedImage compatibleImage = graphicsConfig.createCompatibleImage(image.getWidth(), image.getHeight(), image.getTransparency());
             final Graphics2D graphics = (Graphics2D) compatibleImage.getGraphics();
             graphics.drawImage(image, 0, 0, null);
             graphics.dispose();
@@ -258,6 +225,7 @@ public class Main {
         }
     }
 
+    /** Returns a future object to compute asynchronous an compatible buffered image {@link Main#toCompatibleImage(BufferedImage)}*/
     public static Future<BufferedImage> askForCompatibleImage(BufferedImage image) {
         final scala.compat.java8.JFunction0<BufferedImage> convert = () -> toCompatibleImage(image);
         return Future$.MODULE$.apply(convert, getGlobalExecutionContext());
@@ -272,36 +240,24 @@ public class Main {
         return ExecutionContext.Implicits$.MODULE$.global();
     }
 
-    // ########################################################################
-    // UNIMPORTANT METHODS -- NOT USED METHODS -- DEPRECATED METHODS ##########
-    // ########################################################################
+    // UNIMPORTANT METHODS -- NOT USED METHODS -- DEPRECATED METHODS
 
     /**
-     * Called when there are some additional resources to return to the OS.
+     * Called when there are some additional resources to return to the OS. The call
      * Right now, there are no resources we need to release explicitly.
      */
-    private void disposeInitialResources() {
+    void disposeInitialResources () {
+        LogFacility.log("Initial resources disposed. ", LogFacility.LoggingLevel.Debug, "init process");
     }
 
-    // ########################################
-    // GETTERS ################################
-    // SETTERS ################################
-    // ########################################
+    // GETTERS & SETTERS
 
-    /**
-     * Abmessungen des Fensters: <code> new Rectangle (0, 0, Main.getWindowWidth(), Main.getWindowHeight()); </code>
-     */
-    public static Rectangle getWindowDimensions() {
-        return GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-    }
-
-    /**
-     * GETTER: GameWindow
-     */
+    /** GETTER: GameWindow */
     public static GameWindow getGameWindow() {
         return gameWindow;
     }
 
+    /** Returns the User of the system. Only providing some knowledge about the host (host name etc.). */
     public static User getUser() {
         return user;
     }
@@ -320,16 +276,23 @@ public class Main {
      * <b>DO NOT USE THIS OBJECT UNTIL IT HAS BEEN INITIALIZED!</b>
      */
 	public static PfeileContext getContext() {
-        if(context == null) throw new NullPointerException();
+        if(context == null)
+            throw new NullPointerException("PfeileContext is not yet initialized. Wait for ContextCreator to finish in order to use PfeileContext");
 		return context;
 	}
 
+	/** returns the central static instance of the actor system. */
 	public static ActorSystem getActorSystem() {
 		return actorSystem;
 	}
 
+	/** sets the PfeileContext of this game. Does nothing, if <code>Main.getContext() != null</code> because it would
+     * unforeseeable consequences. It is required, that context != null. */
 	public static void setContext(PfeileContext context) {
-		scala.Predef.require(context != null);
-		Main.context = context;
+		if (Main.context == null && context != null)
+		    Main.context = context;
+		else
+		    LogFacility.log("Cannot change PfeileContext: Old context: " + Main.context + "; new Context: " + context,
+                    LogFacility.LoggingLevel.Warning);
 	}
 }

@@ -55,19 +55,6 @@ public class List extends Component {
         this(x, y, tfits_static(items).width, tfits_static(items).height, backing, items);
     }
 
-	@Override
-	public void draw(Graphics2D g) {
-		
-		if(isVisible()) {
-			
-			getBorder().draw(g);
-			
-			for (int i = getFirstDisplayIndex(); i < getLastDisplayIndex(); i++) {
-				listItems.get(i).draw(g);
-			}
-		}
-	}
-
 	public java.util.List<String> getItems() {
 		return Collections.unmodifiableList(items);
 	}
@@ -266,7 +253,7 @@ public class List extends Component {
 		return ldi;
 	}
 	
-	/**
+	/** The first display index of an empty list is 0.
 	 * @return the opposite of {@link List#getLastDisplayIndex()}
 	 */
 	int getFirstDisplayIndex() {
@@ -289,10 +276,7 @@ public class List extends Component {
 		return selectedIndex;
 	}
 	
-	/**
-	 * Gibt den Index zur�ck, der ganz oben in der Liste noch dargestellt werden kann.
-	 * @return
-	 */
+	/** @return the upper index (the smallest one), which still can be displayed */
 	public int getTopIndex() {
 		return topIndex;
 	}
@@ -318,8 +302,7 @@ public class List extends Component {
 		return getBorder().isRoundedBorder();
 	}
 	
-	/**
-	 * Veranlasst die komplette Liste, wieder Input zu akzeptieren.
+	/** Accepts input for the whole list
 	 * @see #declineInput
 	 */
 	@Override
@@ -330,8 +313,7 @@ public class List extends Component {
 		}
 	}
 	
-	/**
-	 * Veranlasst das die Liste, keinen Input mehr zu akzeptieren.
+	/** The whole list cannot accept any input
 	 * @see #acceptInput
 	 */
 	@Override
@@ -343,7 +325,7 @@ public class List extends Component {
 		super.declineInput(); 
 	}
 
-    /** setzt den ausgewählten Wert auf index */
+    /** Changes the selected index to selected index */
     public void setSelectedIndex (int index) {
         selectedIndex = index;
     }
@@ -405,6 +387,17 @@ public class List extends Component {
     public boolean contains (String element) {
         return items.contains(element);
     }
+
+	@Override
+	public void draw(Graphics2D g) {
+		if(isVisible()) {
+			getBorder().draw(g);
+
+			for (int i = getFirstDisplayIndex(); i < getLastDisplayIndex(); i++) {
+				listItems.get(i).draw(g);
+			}
+		}
+	}
 
 	@Override
 	public String toString() {

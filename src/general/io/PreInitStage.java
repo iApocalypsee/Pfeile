@@ -27,12 +27,12 @@ public class PreInitStage {
 			boolean isDirectoryMade = f.mkdir();
 
 			if (isDirectoryMade) {
-				LogFacility.log("Savegame directory created at: " + f.getAbsolutePath(), "Info", "initprocess");
+				LogFacility.log("Savegame directory created at: " + f.getAbsolutePath(), "Info", "init process");
 			} else {
 				throw new RuntimeException("Savegame directory could not be created!");
 			}
 		} else {
-			LogFacility.log("Savegame directory located at: " + f.getAbsolutePath(), "Info", "initprocess");
+			LogFacility.log("Savegame directory located at: " + f.getAbsolutePath(), "Info", "init process");
 		}
 	}
 }
@@ -47,7 +47,6 @@ class FolderStructure {
 	 */
 	public static final File SAVEGAMES = new File("saves/");
 
-	private FolderStructure() {
-	}
+	private FolderStructure() {}
 
 }

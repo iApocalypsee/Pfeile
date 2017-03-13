@@ -80,7 +80,7 @@ class Player(world: World, spawnpoint: Point, name: String) extends Entity(world
 
   /** The life of the player. Use the getter <code>getLife()</code> (defined in LivingEntity) */
   override lazy val life = new Life(Player.maximumLife.get, Player.lifeRegeneration.get, Player.maximumLife.get)
-  private lazy val lifeUI = new LifeUI(Main.getWindowWidth - 200, Main.getWindowHeight - 150, life)
+  private lazy val lifeUI = new LifeUI(GameWindow.WIDTH - 200, GameWindow.HEIGHT - 150, life)
   /** This draws the life (lifeBar and values) to the right-hand corner */
   def drawLifeUI(g: Graphics2D) = {
     lifeUI.draw(g)

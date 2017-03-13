@@ -4,6 +4,7 @@ import comp.Button;
 import comp.Component;
 import comp.List;
 import comp.WarningMessage;
+import general.GameWindow;
 import general.Main;
 import newent.InventoryLike;
 import player.item.EquippableItem;
@@ -52,7 +53,7 @@ public class InventoryScreen extends Screen {
     public InventoryScreen () {
         super(SCREEN_NAME, SCREEN_INDEX);
 
-        selectedItem = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 380, this, Main.tr("selectItem"));
+        selectedItem = new Button(GameWindow.WIDTH - 300, GameWindow.HEIGHT - 380, this, Main.tr("selectItem"));
         selectedItem.declineInput();
         selectedItem.setRoundBorder(true);
 
@@ -62,11 +63,11 @@ public class InventoryScreen extends Screen {
 
         inventoryList = new List(50, 70, 200, 350, this, itemList);
 
-        cancelButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 220, this, "Cancel");
+        cancelButton = new Button(GameWindow.WIDTH - 300, GameWindow.HEIGHT - 220, this, "Cancel");
 
-        confirmButton = new Button(Main.getWindowWidth() - 300, Main.getWindowHeight() - 300, this, "Confirm");
+        confirmButton = new Button(GameWindow.WIDTH - 300, GameWindow.HEIGHT - 300, this, "Confirm");
 
-        warningMessage = new WarningMessage("null", 40, Main.getWindowHeight() - 105, this);
+        warningMessage = new WarningMessage("null", 40, GameWindow.HEIGHT - 105, this);
         warningMessage.setFont(warningMessage.getFont().deriveFont(Component.STD_FONT.getSize2D() * 2));
 
         //inventoryList.setRoundBorder(true);

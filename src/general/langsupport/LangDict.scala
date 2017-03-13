@@ -18,7 +18,6 @@ class LangDict() {
   def addJSON(path: String): LangDict = {
     val source = Source.fromFile("src/resources/data/language/" + path).getLines().mkString("\n");
     data = parse(source).merge(data)
-    System.out.printf("Loaded localisation file: %s\n", path)
     this
   }
 

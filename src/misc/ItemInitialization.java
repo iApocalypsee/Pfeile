@@ -1,7 +1,10 @@
 package misc;
 
 import general.LogFacility;
-import player.item.coin.*;
+import player.item.coin.BronzeCoin;
+import player.item.coin.GoldCoin;
+import player.item.coin.PlatinumCoin;
+import player.item.coin.SilverCoin;
 import player.item.loot.*;
 import player.item.potion.*;
 
@@ -27,7 +30,7 @@ public class ItemInitialization {
             initializePotions();
             initializeItems();
 
-            LogFacility.log("Item images loaded.", "Info", "initprocess");
+            LogFacility.log("Item images loaded.", "Info", "init process");
         });
         x.setDaemon(true);
         x.setName("Item Initialization");

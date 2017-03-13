@@ -5,6 +5,7 @@ import comp.Button;
 import comp.Circle;
 import comp.Component;
 import comp.WarningMessage;
+import general.GameWindow;
 import general.Main;
 import general.PfeileContext;
 import gui.Drawable;
@@ -70,7 +71,7 @@ public class AimSelectionScreen extends Screen {
 		posX_selectedField = -1;
 		posY_selectedField = -1;
 		
-		confirm = new Button ((int) (0.86 * Main.getWindowWidth()), (int) (0.36 * Main.getWindowHeight()), this, "Confirm");
+		confirm = new Button ((int) (0.86 * GameWindow.WIDTH), (int) (0.36 * GameWindow.HEIGHT), this, "Confirm");
 
         animatedLine = new AnimatedLine(0,0,0,0,Color.RED);
         animatedLine.setWidth(3.0f);
@@ -78,7 +79,7 @@ public class AimSelectionScreen extends Screen {
         boundsOvalDamageRadius = new Rectangle (0, 0, 0, 0);
         strokeOvalDamageRadius = new BasicStroke(2.5f);
 
-        warningMessage = new WarningMessage("No warning yet", 40, Main.getWindowHeight() - 105, this);
+        warningMessage = new WarningMessage("No warning yet", 40, GameWindow.HEIGHT - 105, this);
         warningMessage.setFont(warningMessage.getFont().deriveFont(Component.STD_FONT.getSize2D() * 2));
 
         fieldContainer = new FieldContainer();

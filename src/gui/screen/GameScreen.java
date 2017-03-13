@@ -2,6 +2,7 @@ package gui.screen;
 
 import comp.Button;
 import comp.WarningMessage;
+import general.GameWindow;
 import general.Main;
 import general.PfeileContext;
 import gui.FrameContainer;
@@ -115,7 +116,7 @@ public class GameScreen extends Screen implements FrameContainer {
 
 
             // Initialisierung der Buttons
-            endTurnButton = new Button(30, Main.getWindowHeight() - 50, this, endTurnStr);
+            endTurnButton = new Button(30, GameWindow.HEIGHT - 50, this, endTurnStr);
             shootButton = new Button(endTurnButton.getX() + endTurnButton.getWidth() + 20, endTurnButton.getY(), this, shootStr);
             inventoryButton = new Button(this.shootButton.getX() + this.shootButton.getWidth() + 20, this.shootButton.getY(), this, inventoryStr);
             shopWindowButton = new Button(inventoryButton.getX() + inventoryButton.getWidth() + 20, inventoryButton.getY(), this, shopStr);
@@ -125,11 +126,11 @@ public class GameScreen extends Screen implements FrameContainer {
             inventoryButton.setName("Inventory button");
             shopWindowButton.setName("Shop button");
 
-            message = new WarningMessage("          ", 80, Main.getWindowHeight() - 95, this);
+            message = new WarningMessage("          ", 80, GameWindow.HEIGHT - 95, this);
             message.setWarningColor(new Color(221, 49, 77));
             message.setFont(message.getFont().deriveFont(Font.PLAIN));
 
-            moneyDisplay = new MoneyDisplay(Main.getWindowWidth() - 192, Main.getWindowHeight() - 250, this);
+            moneyDisplay = new MoneyDisplay(GameWindow.WIDTH - 192, GameWindow.HEIGHT - 250, this);
 
             endTurnButton.addMouseListener(new MouseAdapter() {
 

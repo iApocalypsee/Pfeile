@@ -52,7 +52,7 @@ public class SoundEffectTimeClock {
 
             isLoaded = true;
 
-            LogFacility.log("Sound effect files loaded.", "Info", "initprocess");
+            LogFacility.log("Sound effect files loaded.", "Info", "init process");
         }, "SoundLoaderTimeClock");
         x.setDaemon(true);
         x.setPriority(2);

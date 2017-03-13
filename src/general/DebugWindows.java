@@ -99,9 +99,9 @@ public class DebugWindows {
 		return windowEnabled;
 	}
 
-	public void setWindowEnabled(boolean windowEnabled) {
-		this.windowEnabled = windowEnabled;
-		debugFrame.setVisible(windowEnabled);
+	public void enable () {
+		this.windowEnabled = true;
+		debugFrame.setVisible(true);
 	}
 
     // <editor-fold desc="Screen control component methods">

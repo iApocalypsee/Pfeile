@@ -214,7 +214,7 @@ public class WanderingTraderList implements Drawable {
         if (removed) {
             updateVisibleTraders();
         } else {
-            LogFacility.log("Can't remove trader: " + trader.toString() + " from the list: " + traders.toString(),
+            LogFacility.log("Can't remove trader: " + trader.toString() + " from the list: " + this.toString(),
                     LogFacility.LoggingLevel.Error);
         }
         return removed;
@@ -233,6 +233,11 @@ public class WanderingTraderList implements Drawable {
                     visibleTraders.add(trader);
             }
         }
+    }
+
+    @Override
+    public String toString () {
+        return "WanderingTraderList{" + traders.size() + " traders registered}";
     }
 
     /**

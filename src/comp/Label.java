@@ -51,6 +51,7 @@ public class Label extends Component {
         setSourceShape(new Rectangle(-text_bounds.width / 2, -text_bounds.height / 2, text_bounds.width, text_bounds.height));
 
         getTransformation().translate(x, y);
+        // TODO: the text location shift bug to the left is in that line
         getTransformation().onTransformed().registerJava(transformationEvent -> recalculateInternalData());
 
         declineInput();
@@ -58,7 +59,7 @@ public class Label extends Component {
     }
 
     public Label(int x, int y, int width, int height, Screen backing) {
-        super(x, y, 0, 0, backing);
+        super(x, y, backing);
         textSequence = new TextSequence();
         textDrawLocation = new Point(getX(), getY());
         imageDrawScale = new Dimension();
@@ -66,6 +67,7 @@ public class Label extends Component {
         setSourceShape(new Rectangle(-width / 2, -height / 2, width, height));
 
         getTransformation().translate(x, y);
+        // TODO: the text location shift bug to the left is in that line
         getTransformation().onTransformed().registerJava(transformationEvent -> recalculateInternalData());
 
         declineInput();
@@ -173,7 +175,7 @@ public class Label extends Component {
     }
 
     /** Resets the width and the height of a label, if the labels' content has changed. */
-    protected Dimension recalculateDimension () {
+    private Dimension recalculateDimension () {
         Dimension dimension = recalculateBounds();
         if (dimension.width > getWidth())
             setWidth(dimension.width);
@@ -183,6 +185,8 @@ public class Label extends Component {
     }
 
     private void recalculateInternalData() {
+        // System.out.println(getName() + ": [" + (optImage==null) + "] " + textDrawLocation);
+
         Dimension d = textSequence.formattedDimension();
 
         // Considers the whole string to be written in one line, does not care about new line chars
@@ -194,6 +198,8 @@ public class Label extends Component {
         } else {
             textDrawLocation = new Point(getX(), getY());
         }
+
+        //System.out.println(getName() + ": [" + (optImage==null) + "] " + textDrawLocation);
     }
 
     /**

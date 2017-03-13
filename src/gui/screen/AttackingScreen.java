@@ -1,6 +1,7 @@
 package gui.screen;
 
 import comp.Button;
+import general.GameWindow;
 import general.Main;
 import newent.AttackProgress;
 import player.weapon.AttackDrawer;
@@ -42,7 +43,7 @@ public class AttackingScreen extends Screen {
 
     public AttackingScreen () {
         super(SCREEN_NAME, SCREEN_INDEX);
-        continueButton = new Button(Main.getWindowWidth() - 100, Main.getWindowHeight() - 50, this, "Weiter");
+        continueButton = new Button(GameWindow.WIDTH - 100, GameWindow.HEIGHT - 50, this, "Weiter");
         continueButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed (MouseEvent e) {

@@ -29,7 +29,7 @@ object LoadingWorldScreen extends Screen("LoadingScreen", 222) {
   def hasLoaded: Boolean = isLoaded
 
   // GO-Button
-  val goButton = new Button(Main.getWindowWidth - 150, Main.getWindowHeight - 90, ImageLoader.load("comp/continueButton.png"), this, "GO...")
+  val goButton = new Button(GameWindow.WIDTH - 150, GameWindow.HEIGHT - 90, ImageLoader.load("comp/continueButton.png"), this, "GO...")
   goButton.declineInput()
   goButton.addMouseListener(new MouseAdapter {
     override def mouseReleased(e: MouseEvent): Unit = {
@@ -146,7 +146,7 @@ object LoadingWorldScreen extends Screen("LoadingScreen", 222) {
 
   private[LoadingWorldScreen] object GUI {
 
-    lazy val stageLabel = new Label(20, 20, LoadingWorldScreen, "Begin!")
+    lazy val stageLabel = new Label(30, 25, LoadingWorldScreen, "Begin!")
     if (!Main.isEnglish)
       stageLabel.setText("Starte!")
     stageLabel.setStatus(ComponentStatus.NO_MOUSE)
