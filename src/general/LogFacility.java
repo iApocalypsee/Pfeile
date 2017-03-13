@@ -8,8 +8,8 @@ import java.util.concurrent.TimeUnit;
  */
 public final class LogFacility {
 
-	private LogFacility() {
-	}
+	/** Should not be instantiated */
+	private LogFacility() {}
 
 	/**
 	 * Logs a message to the console. The message is pushed with {@link LogFacility.LoggingLevel#Info} level.
@@ -44,6 +44,10 @@ public final class LogFacility {
 		log("[(" + label.toLowerCase() + ")] -> " + msg, level);
 	}
 
+	public static void log(String msg, LoggingLevel level, String label) {
+		log ("[(" + label.toLowerCase() + ")] -> " + msg, level);
+	}
+
 	public static void log(Object any) {
 		log(any.toString());
 	}
@@ -57,7 +61,7 @@ public final class LogFacility {
 	}
 
 	public static void putSeparationLine() {
-		System.out.println();
+		System.out.println("-----------------------------------------------------------------------------\n");
 	}
 
 	/**

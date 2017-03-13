@@ -21,10 +21,10 @@ public class ArmingInitialization {
 
         Thread x = new Thread (() -> {
             initializeWeapon();
-            LogFacility.log("Weapon images loaded.", "Info", "initprocess");
+            LogFacility.log("Weapon images loaded.", "Info", "init process");
 
             initializeArmour();
-            LogFacility.log("Armour images loaded.", "Info", "initprocess");
+            LogFacility.log("Armour images loaded.", "Info", "init process");
         });
         x.setDaemon(true);
         x.setName("Arming Initialization");

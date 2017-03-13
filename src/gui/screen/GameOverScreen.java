@@ -3,10 +3,8 @@ package gui.screen;
 import comp.Button;
 import comp.Component;
 import general.GameLoop;
-import general.Main;
+import general.GameWindow;
 import general.io.FontLoader;
-import scala.runtime.AbstractFunction0;
-import scala.runtime.BoxedUnit;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -53,7 +51,7 @@ public class GameOverScreen extends Screen {
         // von g.drawString("Game Over", 50 - scaleCenter.x, 300 - scaleCenter.y);
         scaleCenter = new Point((int) (50 + 0.5 * comp.Component.getTextBounds("Game Over", font_GameOver).getWidth()), (int) (300 + 0.5 * Component.getTextBounds("Game Over", font_GameOver).getHeight()));
 
-        closeGame = new Button(Main.getWindowWidth() - 170, Main.getWindowHeight() - 100, this, "Close Game");
+        closeGame = new Button(GameWindow.WIDTH - 170, GameWindow.HEIGHT - 100, this, "Close Game");
 
         closeGame.addMouseListener(new MouseAdapter() {
             @Override
@@ -158,7 +156,7 @@ public class GameOverScreen extends Screen {
 
         // and now draw a transparent background over it
         g.setColor(transparentBackground);
-        g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
+        g.fillRect(0, 0, GameWindow.WIDTH, GameWindow.HEIGHT);
 
         g.setColor(gameOverColor);
         g.setFont(font_GameOver);

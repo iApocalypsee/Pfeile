@@ -1,8 +1,8 @@
 package player.shop
 
 import java.awt.Color
+import java.util.Optional
 import java.util.function.{Predicate, Supplier}
-import java.util.{Optional, Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
 import general.JavaInterop.JavaPrimitives._
 import general.JavaInterop._

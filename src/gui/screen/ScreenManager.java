@@ -7,26 +7,20 @@ import java.util.Hashtable;
 import java.util.Optional;
 
 /**
- * Der ScreenManager verwaltet die einzelnen Screens. Er ist daf�r zust�ndig,
- * dass die Screens gewechselt werden, <b>nicht daf�r, dass der aktuelle Screen
- * gezeichnet wird.</b> Der aktuelle Screen wird vom ScreenManager durch die
- * Methode {@link ScreenManager#getActiveScreen()} bereitgestellt und dessen
- * {@link Screen#draw(Graphics2D)}-Methode wird von GameWindow aus
- * aufgerufen.
- * <br><br>
- * <b>10.1.2014 (Josip):</b> {@link #getLastScreenChange()} kann jetzt genutzt werden.
- * 
- * @version 10.1.2014
- * 
+ * ScreenManager stores the screens in a hashtable, provides the reference to the active screen
+ * {@link ScreenManager#getActiveScreen()} and handles screen changes with the methods
+ * {@link ScreenManager#requestScreenChange(int)}, {@link ScreenManager#requestScreenChange(Screen)} and the deprecated
+ * method {@link ScreenManager#setActiveScreen(Screen)}. It redirects the draw call to the active screen, but it
+ * ScreenManager has nothing to do with drawing the screens or calling their listeners.
  */
 public final class ScreenManager implements Drawable {
 
 	private Screen activeScreen, transitioning = null;
-	private Hashtable<Integer, Screen> screens = new Hashtable<Integer, Screen>();
+	private Hashtable<Integer, Screen> screens = new Hashtable<>();
 	private long lastScreenChange;
 
 	/**
-	 * Erstellt eine neue Instanz des ScreenManagers.
+	 * Creates a new instance of ScreenManager.
 	 */
 	public ScreenManager() {}
 
@@ -37,6 +31,8 @@ public final class ScreenManager implements Drawable {
 		return activeScreen;
 	}
 
+	/** The returned Optional<Screen> is the screen to be changed at the next {@link ScreenManager#screenCycle()}.
+	 *  If there won't be any screen changes the Optional will contain null.*/
     public Optional<Screen> getTransitioning() {
         return Optional.ofNullable(transitioning);
     }
@@ -47,7 +43,7 @@ public final class ScreenManager implements Drawable {
 
 	/**
 	 * @param activeScreen the activeScreen to set
-	 * @throws RuntimeException wenn kein Screen anhand des Index gefunden werden kann
+	 * @throws RuntimeException if the screen is not registered
      * @deprecated Use requestScreenChange() instead.
      * Changing the active screen in parallel incurs consequences.
      * A better solution is to request a screen change; this request is then processed at the beginning of
@@ -95,14 +91,7 @@ public final class ScreenManager implements Drawable {
 	}
 
 	/**
-	 * @param screens the screens to set
-	 */
-	void setScreens(Hashtable<Integer, Screen> screens) {
-		this.screens = screens;
-	}
-
-	/**
-	 * Passt den letzten Zeitpunkt zur�ck, an dem ein Screen gewechselt wurde.
+	 * Returns the time at which the last screen change happened (via System.getCurrentTimeMillis())
 	 * @return the lastScreenChange
 	 */
 	public long getLastScreenChange() {

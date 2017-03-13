@@ -1,7 +1,7 @@
 package comp;
 
 import general.Delegate;
-import general.Main;
+import general.GameWindow;
 import geom.Vector;
 import gui.screen.Screen;
 import scala.Function1;
@@ -160,7 +160,7 @@ public class Component {
 	 * @return STD_FONT
 	 */
 	private static Font getSTD_FONT() {
-		if (Main.getWindowHeight() > 1080)
+		if (GameWindow.HEIGHT > 1080)
 			return new Font("Consolas", Font.PLAIN, 14);
 		else
 			return new Font("Consolas", Font.PLAIN, 13);

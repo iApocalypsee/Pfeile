@@ -155,8 +155,8 @@ object ShopWindow {
 
   lazy val x = 150
   lazy val y = 200
-  lazy val Width = Main.getWindowWidth - 2 * x
-  lazy val Height = Main.getWindowHeight - 2 * y
+  lazy val Width = GameWindow.WIDTH - 2 * x
+  lazy val Height = GameWindow.HEIGHT - 2 * y
   lazy val BackingScreen = GameScreen.getInstance()
 
   //</editor-fold>

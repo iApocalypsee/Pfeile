@@ -51,6 +51,7 @@ public class SoundPool {
             if (titleMelodie != null && !Main.isMute) {
                 titleMelodie.loop(LOOP_CONTINUOUSLY);
                 titleMelodie.start();
+                LogFacility.log("Title melodie started playing.", LogFacility.LoggingLevel.Info, "init process");
             }
 
             mainThemeMelodie = SoundLoader.load("resources/sfx/mainThemeMelodie.wav", 6);
@@ -59,7 +60,7 @@ public class SoundPool {
             gameOverMelodie = SoundLoader.load("resources/sfx/gameOverMelodie.wav", -9);
 
             loaded = true;
-            LogFacility.log("Background music files loaded.", "Info", "initprocess");
+            LogFacility.log("All background music files loaded.", "Info", "init process");
 
             // That will loaded SoundEffectTimeClock as well
             SoundEffectTimeClock.isLoaded();

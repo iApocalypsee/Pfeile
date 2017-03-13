@@ -5,7 +5,7 @@ import world.WorldViewport;
 import java.io.Serializable;
 
 /**
- * Represents the user that is playing the game on the machine.
+ * Represents the user that is playing the game on the machine. Stores the Viewport for the game.
  * @author Josip Palavra
  */
 public class User implements Serializable {

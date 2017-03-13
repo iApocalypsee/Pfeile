@@ -4,6 +4,7 @@ import comp.Button;
 import comp.ConfirmDialog;
 import comp.Label;
 import comp.List;
+import general.GameWindow;
 import general.LogFacility;
 import general.Main;
 import general.PfeileContext;
@@ -35,8 +36,8 @@ public class ArrowSelectionScreenPreSet extends Screen {
     private Label remainingArrows, playerName;
     private Button readyButton, randomButton;
 
-    /** Liste der Button f�r andere Aufgaben */
-    Button [] buttonListArrows = new Button[8];
+    /** Array for the arrow buttons */
+    private Button [] buttonListArrows = new Button[8];
     private List arrowListSelected;
     private ConfirmDialog confirmDialog;
     public LinkedList<AbstractArrow> selectedArrows;
@@ -105,7 +106,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
                 .map(AbstractArrow::getNameDisplayed).collect(Collectors.toList()));
         arrowListSelected.setName("arrowListSelected");
 
-        remainingArrows = new Label(Main.getWindowWidth() - 232, Main.getWindowHeight() - 200, this, chooseVarArrows);
+        remainingArrows = new Label(GameWindow.WIDTH - 232, GameWindow.HEIGHT - 200, this, chooseVarArrows);
 
         remainingArrows.setDeclineInputColor(new Color(202, 199, 246));
 
@@ -126,11 +127,11 @@ public class ArrowSelectionScreenPreSet extends Screen {
 
         // Compare the following initialisation process with ArrowSelectionScreen, since the design is the same.
 
-        /** Y-Position des ersten Buttons (Bildschirm) */
+        // y position of the first arrow button
         int posYButtons = 60;
-        /** X-Position des ersten Buttons (Screen) */
+        // x position of the first arrow button
         int posXButton = 38;
-        /** the distance between the arrow buttons */
+        // distance between two arrow buttons next to each other
         int gap = 45;
 
         buttonListArrows[0] = new Button(posXButton, posYButtons, ArrowHelper.getArrowImage(FireArrow.INDEX, 0.8f),
@@ -151,10 +152,10 @@ public class ArrowSelectionScreenPreSet extends Screen {
                 ArrowSelectionScreenPreSet.this, Main.tr("ShadowArrow"));
 
         // resizing for higher resolutions, if necessary. The Resolution changes with mini-screens as well, but the Strings of the names can't be read probably.
-        if (Main.getWindowWidth() != 1366) {
+        if (GameWindow.WIDTH != 1366) {
             for (Button button : buttonListArrows) {
-                button.setWidth(button.getWidth() * Main.getWindowWidth() / 1366);
-                button.setX(button.getX() * Main.getWindowWidth() / 1366);
+                button.setWidth(button.getWidth() * GameWindow.WIDTH / 1366);
+                button.setX(button.getX() * GameWindow.WIDTH / 1366);
             }
         }
 
@@ -164,7 +165,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
             button.addMouseListener(buttonHelper);
         }
 
-        playerName = new Label(40, Main.getWindowHeight() - 85, this, Main.getUser().getUsername());
+        playerName = new Label(40, GameWindow.HEIGHT - 85, this, Main.getUser().getUsername());
         playerName.setFont(new Font(comp.Component.STD_FONT.getFontName(), Font.BOLD, 40));
         playerName.setFontColor(new Color(206, 3, 255));
 
@@ -184,7 +185,7 @@ public class ArrowSelectionScreenPreSet extends Screen {
         });
 
         // Position is equal to PreWindowScreen.readyButton
-        readyButton = new Button(Main.getWindowWidth() - 220, Main.getWindowHeight() - 150, this, confirm);
+        readyButton = new Button(GameWindow.WIDTH - 220, GameWindow.HEIGHT - 150, this, confirm);
         readyButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {

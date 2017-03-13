@@ -4,7 +4,7 @@ import java.awt.{Color, Graphics2D, Point}
 
 import comp.Component
 import general.property.{DoubleStaticProperty, IntStaticProperty}
-import general.{Delegate, Main, PfeileContext}
+import general.{Delegate, GameWindow, Main, PfeileContext}
 import gui.LifeUI
 import newent.pathfinding.{AStarPathfinder, Pathfinder}
 import player.Life
@@ -54,7 +54,7 @@ class Bot(world: World, spawnPoint: Point, name: String)
   /** the life of the bot is introduced with standard values */
   override lazy val life = new Life(Bot.maximumLife.get, Bot.lifeRegeneration.get, Bot.maximumLife.get)
 
-  private lazy val lifeUI = new LifeUI(Main.getWindowWidth - 200, Main.getWindowHeight - 150, Main.getContext.getActivePlayer.getLife)
+  private lazy val lifeUI = new LifeUI(GameWindow.WIDTH - 200, GameWindow.HEIGHT - 150, Main.getContext.getActivePlayer.getLife)
   life.onDeath += { () =>
     general.Main.getContext.getTimeClock.stop()
     // TODO: setActiveScreen (GameWonScreen.SCREEN_INDEX)

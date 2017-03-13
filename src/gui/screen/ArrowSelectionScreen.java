@@ -3,6 +3,7 @@ package gui.screen;
 import comp.Button;
 import comp.Component;
 import comp.*;
+import general.GameWindow;
 import general.Main;
 import general.PfeileContext;
 import newent.InventoryLike;
@@ -126,14 +127,14 @@ public class ArrowSelectionScreen extends Screen {
             buttonListArrows.add(shadowArrowButton);
 
 			// resizing for higher resolutions, if necessary. The Resolution changes with mini-screens as well, but the Strings of the names can't be read probably.
-            if (Main.getWindowWidth() != 1366) {
+            if (GameWindow.WIDTH != 1366) {
                 for (Button button : buttonListArrows) {
-                    button.setWidth(button.getWidth() * Main.getWindowWidth() / 1366);
-                    button.setX(button.getX() * Main.getWindowWidth() / 1366);
+                    button.setWidth(button.getWidth() * GameWindow.WIDTH / 1366);
+                    button.setX(button.getX() * GameWindow.WIDTH / 1366);
                 }
             }
 
-            warningMessage = new WarningMessage("No warning yet", 40, Main.getWindowHeight() - 105, this);
+            warningMessage = new WarningMessage("No warning yet", 40, GameWindow.HEIGHT - 105, this);
             warningMessage.setFont(warningMessage.getFont().deriveFont(Component.STD_FONT.getSize() * 2f));
 
             MouseHandler mListener = new MouseHandler();
@@ -169,7 +170,7 @@ public class ArrowSelectionScreen extends Screen {
 			inventoryList.acceptInput();
 
 			String text = Main.tr("selectArrow");
-			selectedArrowBox = new TextBox(Main.getWindowWidth() - (Component.getTextBounds(text, Component.STD_FONT).width + 30) - 37,
+			selectedArrowBox = new TextBox(GameWindow.WIDTH - (Component.getTextBounds(text, Component.STD_FONT).width + 30) - 37,
 					300, text, ArrowSelectionScreen.this);
             selectedArrowBox.setVisible(true);
             selectedArrowBox.setRoundBorder(true);
@@ -251,31 +252,27 @@ public class ArrowSelectionScreen extends Screen {
         AttackingScreen.getInstance().getAttackDrawer().draw(g);
 
         Main.getContext().getTimeClock().draw(g);
-		
-		// Zeichnen der Pfeilauswahl-Buttons
+
 		for (Button buttonListArrow : buttonListArrows) {
 			buttonListArrow.draw(g);
 		}
-		
-		// Zeichen des Pfeilinventars
+
 		inventoryList.draw(g);
-		
-		// Zeichnen der Auswahlbox
+
 		selectedArrowBox.draw(g);
 		
 		if (isConfirmDialogOpen) {
 			g.setColor(COLOR_IS_CONFIRM_DIALOG_OPEN);
-			g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
+			g.fillRect(0, 0, GameWindow.WIDTH, GameWindow.HEIGHT);
 		}
-		
-		// Zeichnen der Button zur Auswahl
+
 		for (Button button : buttonList) {
 			button.draw(g);
 		} 
 		
 		if (confirmDialog.isVisible()) {
 			g.setColor(COLOR_IS_CONFIRM_DIALOG_VISIBLE);
-			g.fillRect(0, 0, Main.getWindowWidth(), Main.getWindowHeight());
+			g.fillRect(0, 0, GameWindow.WIDTH, GameWindow.HEIGHT);
 			confirmDialog.draw(g);
 		}
 
@@ -296,7 +293,7 @@ public class ArrowSelectionScreen extends Screen {
 		return selectedIndex;
 	}
 	
-	/** Listener f�r die Buttons */
+	/** A Listener for handling the mouse events triggered by clicking at the buttons */
 	private class MouseHandler extends MouseAdapter {
 
 		@Override

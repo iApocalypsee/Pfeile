@@ -4,6 +4,7 @@ import comp.Button;
 import comp.Component;
 import comp.*;
 import comp.Label;
+import general.GameWindow;
 import general.LogFacility;
 import general.Main;
 import misc.ImageHelper;
@@ -46,7 +47,7 @@ public class WaitingScreen extends Screen {
         super(SCREEN_NAME, SCREEN_INDEX);
 
         // The continueButton should be on place as the endTurnButton in GameScreen. It's easier to click in that way...
-        continueButton = new Button(30, Main.getWindowHeight() - 50, this, Main.tr("next"));
+        continueButton = new Button(30, GameWindow.HEIGHT - 50, this, Main.tr("next"));
         continueButton.setRoundBorder(true);
         continueButton.iconify(continueImage);
         // It should also have the same size.

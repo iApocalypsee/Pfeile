@@ -63,7 +63,7 @@ public class TimeClock extends Component implements Runnable {
 	// KONSTURCKTOR
 	public TimeClock (PfeileContext context) {
         // these values put the underlying component directly in the upper middle of the screen.
-		super(Main.getWindowWidth() / 2 - 72 / 2, 25, 72, 26, 
+		super(GameWindow.WIDTH / 2 - 72 / 2, 25, 72, 26,
 				GameScreen.getInstance());
 		stop();
         colorTime = Color.BLACK;

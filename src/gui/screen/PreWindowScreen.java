@@ -4,6 +4,7 @@ import comp.Button;
 import comp.*;
 import comp.Component;
 import comp.Label;
+import general.GameWindow;
 import general.Main;
 import general.PfeileContext;
 import general.TimeClock;
@@ -167,7 +168,7 @@ public class PreWindowScreen extends Screen {
         confirmButton = new Button(550, 400, this, confirm);
         confirmButton.setRoundBorder(true);
 
-        readyButton = new Button(Main.getWindowWidth() - 220, Main.getWindowHeight() - 95, this, done);
+        readyButton = new Button(GameWindow.WIDTH - 220, GameWindow.HEIGHT - 95, this, done);
         standardButton = new Button(readyButton.getX(), readyButton.getY() - 60, this, defaultSettings);
         readyButton.setWidth(standardButton.getWidth());
 
@@ -231,8 +232,8 @@ public class PreWindowScreen extends Screen {
         boxSelectTime.declineInput();
 
         confirmDialog = new ConfirmDialog(500, 500, this, "");
-        confirmDialog.setX(Main.getWindowWidth() / 2 - confirmDialog.getWidth() / 2);
-        confirmDialog.setY(Main.getWindowHeight() / 2 - confirmDialog.getHeight() / 2);
+        confirmDialog.setX(GameWindow.WIDTH / 2 - confirmDialog.getWidth() / 2);
+        confirmDialog.setY(GameWindow.HEIGHT / 2 - confirmDialog.getHeight() / 2);
         confirmDialog.addMouseListener(new MouseAdapterConfirmDialog());
         confirmDialog.setVisible(false);
 
