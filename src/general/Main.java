@@ -157,8 +157,8 @@ public class Main {
 
         // window showing process
         boolean isFullscreen = GameWindow.adjustWindow(gameWindow, activateFullscreen);
-        gameWindow.createBufferStrategy();
         gameWindow.setVisible(true);
+        gameWindow.createBufferStrategy();
         LogFacility.log("GameWindow ready. Activated Fullscreen: " + isFullscreen, "Info", "init process");
 
         LogFacility.log("Pfeile is ready...", "Info", "init process");
