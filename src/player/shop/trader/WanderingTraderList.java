@@ -74,11 +74,11 @@ public class WanderingTraderList implements Drawable {
         Point spawnPoint = spawnPoint();
         Random random = new Random();
         registerTrader(new WanderingTrader(generateRandomStock(), (int) spawnPoint.getX(), (int) spawnPoint.getY(),
-                random.nextInt(1200) + 500, random.nextInt(20) + 5, context.getWorld(), "Wandering Trader"));
+                random.nextInt(1200) + 500, random.nextInt(20) + 5, context.getWorld()));
     }
 
     /** Returns the grid position of a randomly chosen grass tile. It is used here to define the spawn position of a
-     * randomly generated wandering trader.
+     *  randomly generated wandering trader.
      *
      * @return the grid position of a random grass tile.
      */

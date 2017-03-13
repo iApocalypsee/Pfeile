@@ -118,9 +118,14 @@ public class Main {
 
         // if deactivated, save time and resources.
         if (activateDbgWindows) {
-            DebugWindows debugWindows = new DebugWindows();
-            debugWindows.enable();
-            LogFacility.log("Activated debug windows. ", LogFacility.LoggingLevel.Debug, "init process");
+            Thread debug = new Thread(() -> {
+                DebugWindows debugWindows = new DebugWindows();
+                debugWindows.enable();
+                LogFacility.log("Activated debug windows. ", LogFacility.LoggingLevel.Debug, "init process");
+            }, "DebugWindowsCreator");
+            debug.setDaemon(true);
+            debug.setPriority(3);
+            debug.start();
         }
 
         Thread langInit = new Thread(() -> {
@@ -159,7 +164,7 @@ public class Main {
         boolean isFullscreen = GameWindow.adjustWindow(gameWindow, activateFullscreen);
         gameWindow.setVisible(true);
         gameWindow.createBufferStrategy();
-        LogFacility.log("GameWindow ready. Activated Fullscreen: " + isFullscreen, "Info", "init process");
+        LogFacility.log("GameWindow ready. Activated fullscreen: " + isFullscreen, "Info", "init process");
 
         LogFacility.log("Pfeile is ready...", "Info", "init process");
         LogFacility.putSeparationLine();

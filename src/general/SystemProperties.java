@@ -26,9 +26,15 @@ public class SystemProperties {
         System.out.println("Maximum memory in JVM: " + Math.round(Runtime.getRuntime().maxMemory() / (1024f * 1024f)) + " MB");
         System.out.println("Total memory in JVM: " + Math.round(Runtime.getRuntime().totalMemory() / (1024f * 1024f)) + " MB");
         System.out.println("Free memory  in JVM: " + Math.round(Runtime.getRuntime().freeMemory() / (1024f * 1024f)) + " MB");
+
+        String refreshRate;
+        if (displayMode.getRefreshRate() == DisplayMode.REFRESH_RATE_UNKNOWN)
+            refreshRate = "unknown";
+        else
+            refreshRate = displayMode.getRefreshRate() + " Hz";
         System.out.println("Display: Size (" + displayMode.getWidth() + " px|" + displayMode.getHeight() + " px) ; " +
                         "Resolution " + Toolkit.getDefaultToolkit().getScreenResolution() + " px/inch ; Refresh rate " +
-                        displayMode.getRefreshRate() + " Hz ; Bit depth " + displayMode.getBitDepth() + " bits/px");
+                        refreshRate + " ; Bit depth " + displayMode.getBitDepth() + " bits/px");
         System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
         LogFacility.putSeparationLine();
     }

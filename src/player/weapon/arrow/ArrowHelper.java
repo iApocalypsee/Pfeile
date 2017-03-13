@@ -36,7 +36,7 @@ public final class ArrowHelper {
         arrows[LightArrow.INDEX] = new LightArrow();
         arrows[ShadowArrow.INDEX] = new ShadowArrow();
 
-        LogFacility.log("Arrow images loaded.", "Info", "initprocess");
+        LogFacility.log("Arrow images loaded.", "Info", "init process");
     }
 
     /**

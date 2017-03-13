@@ -1,12 +1,9 @@
 package world
 
 import java.awt.Point
-import java.util.{Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
-import general.JavaInterop._
 import general._
 import general.io.StageDescriptable
-import general.property.IntStaticProperty
 import gui.screen._
 import misc.ItemInitialization
 import newent.Player
@@ -39,9 +36,9 @@ class ContextCreator(val worldSizeX: Int, val worldSizeY: Int) extends StageOrga
     */
   private[ContextCreator] class InstantiatorStage extends StageDescriptable[Unit] {
 
-    override def stageName = Main.tr("creationStage")
+    override def stageName: String = Main.tr("creationStage")
 
-    override protected def executeStageImpl() = {
+    override protected def executeStageImpl(): Unit = {
       val context = new PfeileContext(new PfeileContext.Values)
       val world = new World(worldSizeX, worldSizeY)
       context.world = world
@@ -61,10 +58,10 @@ class ContextCreator(val worldSizeX: Int, val worldSizeY: Int) extends StageOrga
     override def stageName = Main.tr("populationStage")
 
     /** The implementation of the stage. */
-    override protected def executeStageImpl() = {
+    override protected def executeStageImpl(): Unit = {
       // TODO This stage does not look nice. Very imperative and ugly.
       var spawnPoint: Point = null
-      var spawnPointEnemy: Point = null
+      var spawnPointOpponent: Point = null
       val randomGen: Random = new Random
       var isSpawnValid: Boolean = false
       val terrain = context.world.terrain
@@ -80,14 +77,14 @@ class ContextCreator(val worldSizeX: Int, val worldSizeY: Int) extends StageOrga
         if (spawnPoint != null && tile.isInstanceOf[GrassTile]) {
           if ((spawnPoint.x > tile.getGridX + 2 || spawnPoint.x < tile.getGridX - 2) && (spawnPoint.y > tile.getGridY
             + 2 || spawnPoint.y < tile.getGridY - 2)) {
-            spawnPointEnemy = new Point(tile.getGridX, tile.getGridY)
+            spawnPointOpponent = new Point(tile.getGridX, tile.getGridY)
             isSpawnValid = true
           }
         }
       }
 
       val act = new Player(context.world, spawnPoint, Main.getUser.getUsername)
-      val opponent = new Player(context.world, spawnPointEnemy, "Opponent")
+      val opponent = new Player(context.world, spawnPointOpponent, "Opponent")
 
       act.onTurnGet += { () => context.activePlayer = act }
       opponent.onTurnGet += { () => context.activePlayer = opponent }
@@ -143,7 +140,7 @@ class ContextCreator(val worldSizeX: Int, val worldSizeY: Int) extends StageOrga
       }
     }
 
-    override def stageName = Main.tr("oreGenerationStage")
+    override def stageName: String = Main.tr("oreGenerationStage")
   }
 
   private[ContextCreator] class LootTraderGenerationStage extends StageDescriptable[Unit] {
@@ -172,45 +169,38 @@ class ContextCreator(val worldSizeX: Int, val worldSizeY: Int) extends StageOrga
       traderGenerator.join()
     }
 
-    override def stageName = Main.tr("lootGenerationStage")
+    override def stageName: String = Main.tr("lootGenerationStage")
   }
 
   private[ContextCreator] class OtherStuffStage extends StageDescriptable[Unit] {
 
-    override protected def executeStageImpl() = {
-      // This initialization may take long...
+    override protected def executeStageImpl(): Unit = {
+      val threadExecute: Thread = new Thread(() => {
+        context.getTurnSystem.headOfCommandTeams.foreach(player => {
+          player.tightenComponentToTile(player.tileLocation)
+        })
+
+        ShopInitializer.initalizeShop()
+
+        context.turnSystem.onTurnEnded.register("turn end screen change") { team =>
+          Main.getGameWindow.getScreenManager.requestScreenChange(WaitingScreen.SCREEN_INDEX)
+        }
+
+        // initialize MoneyDisplay --> it will actualize it's string, if the money of a entity has been changed.
+        GameScreen.getInstance().getMoneyDisplay.initializeDataActualization(context)
+
+      }, "OtherStuffExecuterThread")
+      threadExecute.setDaemon(true)
+      threadExecute.start()
+
+      // This initialization may take long --> Threaded internally.
       ArrowSelectionScreen.getInstance().init(context)
-
-      def debugVarTrace = Map(
-        "context" -> context,
-        "turnSystem" -> context.turnSystem,
-        "turnSystem.teams" -> context.turnSystem.teams(),
-        "turnSystem.currentTeam" -> context.turnSystem.currentTeam,
-        "turnSystem.onTurnGet" -> context.turnSystem.onTurnGet
-      )
-
-      // Trying to debug an error which says that no player gets the first turn...
-      assert(context.turnSystem.headOfCommandTeams.nonEmpty, ScalaUtil.errorMessage("Assertion fail for TurnSystem", debugVarTrace))
-
-      // Logging instruction for additional security
-      LogFacility.log(ScalaUtil.infoMessage(debugVarTrace))
-
-      context.getTurnSystem.headOfCommandTeams.foreach(player => {
-        player.tightenComponentToTile(player.tileLocation)
-      })
-
-      ShopInitializer.initalizeShop()
-
-      context.turnSystem.onTurnEnded.register("turn end screen change") { team =>
-        //Main.getGameWindow.getScreenManager.requestScreenChange(AttackingScreen.SCREEN_INDEX)
-        Main.getGameWindow.getScreenManager.requestScreenChange(WaitingScreen.SCREEN_INDEX)
-      }
-
-      // initialize MoneyDisplay --> it will actualize it's string, if the money of a entity has been changed.
-      GameScreen.getInstance().getMoneyDisplay.initializeDataActualization(context)
 
       // initialize TimeClock
       context.getTimeClock
+
+      // make sure everything is loaded correctly before the first turn begins
+      threadExecute.join()
 
       notifyAboutFirstTurn()
     }
@@ -219,7 +209,7 @@ class ContextCreator(val worldSizeX: Int, val worldSizeY: Int) extends StageOrga
       context.turnSystem.onTurnGet(context.turnSystem.currentTeam)
     }
 
-    override def stageName = Main.tr("fineTuningStage")
+    override def stageName: String = Main.tr("fineTuningStage")
   }
 
 }

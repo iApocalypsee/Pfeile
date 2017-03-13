@@ -39,7 +39,6 @@ class StageOrganized {
   def addStage(x: StageDescriptable[_]): Unit = {
     x.onStageExecuted += { result => onStageDone(StageCompletedEvent(x, result)) }
     m_stages += x
-    LogFacility.log(s"Added stage ${x.stageName} to stage collection $this")
   }
 
   /**

@@ -21,7 +21,7 @@ import scala.concurrent.Future
  */
 object LoadingWorldScreen extends Screen("LoadingScreen", 222) {
 
-  lazy val getInstance = this
+  lazy val getInstance: LoadingWorldScreen.type = this
 
   /** If the world (and every other stage) is loaded and LoadingWorldScreen is left, this is <code>true</code> */
   private var isLoaded = false
@@ -42,7 +42,7 @@ object LoadingWorldScreen extends Screen("LoadingScreen", 222) {
   addingArrowList(1) = Seq()
 
   /** The key is the name of the player: either <code>Main.getUser().getUsername()</code> or "Opponent". */
-  def setAddingArrowList (key: String, selectedArrows: java.util.List[AbstractArrow]) = {
+  def setAddingArrowList (key: String, selectedArrows: java.util.List[AbstractArrow]): Unit = {
     if (key.equals(Main.getUser.getUsername)) {
       addingArrowList(0) = selectedArrows.asScala.toSeq
     } else if (key.equals("Opponent")) {
@@ -58,7 +58,7 @@ object LoadingWorldScreen extends Screen("LoadingScreen", 222) {
    *
    * @return the list the selected arrows
    */
-  def getAddingArrowList = addingArrowList
+  def getAddingArrowList: Array[Seq[AbstractArrow]] = addingArrowList
 
 
   override def keyReleased(e: KeyEvent): Unit = {
@@ -98,9 +98,9 @@ object LoadingWorldScreen extends Screen("LoadingScreen", 222) {
   onScreenEnter += { () =>
     val creationProcedure: Future[PfeileContext] = worldCreation().createWorld()
 
-    creationProcedure onSuccess {
-      case context => 
-        
+    creationProcedure.onSuccess {
+      case context =>
+
         Main.setContext(context)
 
         // creates the visualMap; it is used for centering the map later on and creating it before entering GameScreen.
@@ -118,7 +118,7 @@ object LoadingWorldScreen extends Screen("LoadingScreen", 222) {
         context
     }
 
-    creationProcedure onFailure {
+    creationProcedure.onFailure {
       case e: Exception =>
         val errorString = "Error while creating PfeileContext: " + e
         GUI.stageLabel.setText(errorString)
@@ -126,14 +126,14 @@ object LoadingWorldScreen extends Screen("LoadingScreen", 222) {
         e.printStackTrace()
     }
 
-    contextCreationFuture set creationProcedure
+    contextCreationFuture.set(creationProcedure)
   }
 
   onScreenLeft.register(event => {
     Main.getContext.onStartRunningTimeClock.apply()
   })
 
-  override def draw(g: Graphics2D) = {
+  override def draw(g: Graphics2D): Unit = {
     super.draw(g)
     goButton.draw(g)
     GUI.stageLabel.draw(g)

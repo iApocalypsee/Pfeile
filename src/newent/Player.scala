@@ -2,7 +2,6 @@ package newent
 
 import java.awt.geom.PathIterator
 import java.awt.{Color, Graphics2D, Point}
-import java.util.{Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
 import animation.SoundPool
 import com.sun.javafx.geom.Path2D
@@ -20,12 +19,12 @@ import world._
   * Represents a player in the world.
   *
   * @param world The world of the entity. Should not be null.
-  * @param spawnpoint The spawnpoint of the player.
+  * @param spawnPoint The spawnpoint of the player.
   * @param name The name. If null, a name based on the hash code will be generated.
   */
-class Player(world: World, spawnpoint: Point, name: String) extends Entity(world, spawnpoint.x, spawnpoint.y, name) with CombatUnit with MoneyEarner with DisplayRepresentable {
+class Player(world: World, spawnPoint: Point, name: String) extends Entity(world, spawnPoint.x, spawnPoint.y, name) with CombatUnit with MoneyEarner with DisplayRepresentable {
 
-  val onTurnGet = Delegate.createZeroArity
+  val onTurnGet: Function0Delegate with ClearableDelegate = Delegate.createZeroArity
 
   // <editor-fold desc="Initialization code">
 
@@ -82,7 +81,7 @@ class Player(world: World, spawnpoint: Point, name: String) extends Entity(world
   override lazy val life = new Life(Player.maximumLife.get, Player.lifeRegeneration.get, Player.maximumLife.get)
   private lazy val lifeUI = new LifeUI(GameWindow.WIDTH - 200, GameWindow.HEIGHT - 150, life)
   /** This draws the life (lifeBar and values) to the right-hand corner */
-  def drawLifeUI(g: Graphics2D) = {
+  def drawLifeUI(g: Graphics2D): Unit = {
     lifeUI.draw(g)
   }
 
@@ -102,16 +101,16 @@ class Player(world: World, spawnpoint: Point, name: String) extends Entity(world
   override val pathfinderLogic = new AStarPathfinder(20, {
     case sea: SeaTile => false
     case coast: CoastTile => false
-    case anythingElse => true
+    case _ => true
   })
 
   override def defaultMovementPoints = 4
 
   override def toString: String = name
 
-  override def component = super.component.asInstanceOf[PlayerComponent]
+  override def component: PlayerComponent = super.component.asInstanceOf[PlayerComponent]
 
-  override def component_=(a: Component) = {
+  override def component_=(a: Component): Unit = {
     require(a.isInstanceOf[PlayerComponent])
     super.component_=(a)
   }
@@ -128,9 +127,7 @@ class Player(world: World, spawnpoint: Point, name: String) extends Entity(world
 
   //</editor-fold>
 
-  private var gameLoopUpdateHandle: GameLoop.UpdateHandle = null
-
-  override protected def onTraverseSteps(traversedTiles: MovedEvent) = {
+  override protected def onTraverseSteps(traversedTiles: MovedEvent): Unit = {
 
     super.onTraverseSteps(traversedTiles)
 
@@ -147,11 +144,6 @@ class Player(world: World, spawnpoint: Point, name: String) extends Entity(world
     }
 
     component.followNewPath(traversedTiles.steps)
-
-    if(gameLoopUpdateHandle != null) {
-      gameLoopUpdateHandle.invalidate()
-    }
-    
   }
 
   class PlayerComponent extends GameObjectComponent(this) {
@@ -161,6 +153,7 @@ class Player(world: World, spawnpoint: Point, name: String) extends Entity(world
     setBackingScreen(GameScreen.getInstance)
     setName(Player.this.asInstanceOf[Entity].name)
     GameScreen.getInstance.forcePullFront(this)
+    setListenerTransparent(true)
 
     tightenComponentToTile(tileLocation)
 
@@ -173,18 +166,14 @@ class Player(world: World, spawnpoint: Point, name: String) extends Entity(world
     }
 
     override def draw(g: Graphics2D): Unit = {
-
       g.setColor(drawColor)
       g.fill(getBounds)
 
       // Hook for making the player image follow the path defined by its MovableEntity.path
       if(isFollowingPath()) keepFollowingPath()
       else tightenComponentToTile(tileLocation)
-
     }
-
   }
-
 }
 
 object Player {
@@ -194,5 +183,4 @@ object Player {
 
   /** the life regeneration of a player. It is initialized by PreWindowScreen (before that the value will be -1.0) */
   val lifeRegeneration = new DoubleStaticProperty(-1.0)
-
 }

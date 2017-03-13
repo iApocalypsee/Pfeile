@@ -31,6 +31,6 @@ public class ShopInitializer {
         ShopCentral.addArticle(() -> new PotionOfMovement((byte) 0), 15);
         ShopCentral.addArticle(() -> new PotionOfDamage((byte) 1), 45);
         ShopCentral.addArticle(() -> new PotionOfHealing((byte) 0), 50);
-        ShopCentral.addArticle(KeyDefaultChest::new, 100);
+        ShopCentral.addArticle(KeyDefaultChest::new, 200);
     }
 }

@@ -242,8 +242,7 @@ public class Component {
 
         onTransformed.registerJava(event -> {
             children.values().forEach(component -> event.applyTransformation(component.transformation));
-            if (boundsRecalculationIssued)
-            {
+            if (boundsRecalculationIssued) {
                 transformationChangedSince = true;
             }
         });

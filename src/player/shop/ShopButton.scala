@@ -1,7 +1,6 @@
 package player.shop
 
 import java.awt._
-import java.util.{Collection => ICollection, Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet}
 
 import _root_.geom.Vector
 import comp.{Component, _}
@@ -67,20 +66,19 @@ ShopWindow) extends Component {
     * calculations are based on what location this method calculates.
     */
   private def recalculateShopButtonLocation(newGridX: Int, newGridY: Int): Unit = {
-    val rawX = newGridX * (ShopButton.Style.fixedWidth() + ShopButton.Style.insetsBetweenEach().left + ShopButton.Style
-      .insetsBetweenEach().right) + ShopWindow.ButtonsInsetsInsideWindow.left
-    val rawY = newGridY * (ShopButton.Style.fixedHeight() + ShopButton.Style.insetsBetweenEach().top + ShopButton.Style
-      .insetsBetweenEach().bottom) + ShopWindow.ButtonsInsetsInsideWindow.top
+    val rawX = newGridX * (ShopButton.Style.fixedWidth() + ShopButton.Style.insetsBetweenEach().left +
+      ShopButton.Style.insetsBetweenEach().right) + ShopWindow.ButtonsInsetsInsideWindow.left
+    val rawY = newGridY * (ShopButton.Style.fixedHeight() + ShopButton.Style.insetsBetweenEach().top +
+      ShopButton.Style.insetsBetweenEach().bottom) + ShopWindow.ButtonsInsetsInsideWindow.top
 
     setRelativeLocation(rawX, rawY)
   }
 
   private def recalculateImageLocationAndDimension(imageSize: Vector, rawImagePosition: Vector): Unit = {
-    val absolutePosition = new Vector(getX, getY)
-    val imagePosition = rawImagePosition + absolutePosition
-
     imageDrawDimension = new Dimension(imageSize.getX.asInstanceOf[Int], imageSize.getY.asInstanceOf[Int])
-    imageDrawLocation = new Point(imagePosition.getX.asInstanceOf[Int], imagePosition.getY.asInstanceOf[Int])
+    imageDrawLocation = new Point(
+      (getX + rawImagePosition.getX).asInstanceOf[Int],
+      (getY + rawImagePosition.getY).asInstanceOf[Int])
   }
 
   private def recalculateLabelPosition(imageSize: Vector, font: Font, textOrientation: Orientation): Unit = {
@@ -90,8 +88,9 @@ ShopWindow) extends Component {
     val rawTextPosition = new Vector(
       ShopButton.Style.textLeftInset() + textOrientation.horizontal.apply(textBounds.getWidth.asInstanceOf[Int],
         imageSize.getX.asInstanceOf[Int]),
-      ShopButton.Style.textTopInset() + ShopButton.Style.imageInsets().top + textBounds.height + imageSize.getY
-        .asInstanceOf[Int] + textOrientation.vertical.apply(textBounds.height, ShopButton.Style.textGridCellHeight()))
+      ShopButton.Style.textTopInset() + ShopButton.Style.imageInsets().top + ShopButton.Style.imageInsets().bottom +
+        textBounds.height + imageSize.getY.asInstanceOf[Int] + textOrientation.vertical.apply(textBounds.height + 16,
+        ShopButton.Style.textGridCellHeight()))
 
     val finalLabelPosition = rawTextPosition + new Vector(getX, getY)
 
@@ -134,7 +133,7 @@ private[shop] object ShopButton {
       *
       * @param startValue The start value of the property.
       * @tparam A The datatype of the property
-      * @return A property with [[player.shop.ShopButton.Style$#commonSetSideEffect()]] applied.
+      * @return A property with [[player.shop.ShopButton.Style#commonSetSideEffect()]] applied.
       */
     private def commonProperty[A](startValue: A): StaticProperty[A] = {
       val prop = new StaticProperty(startValue) {
@@ -158,7 +157,7 @@ private[shop] object ShopButton {
 
     val textLeftInset: StaticProperty[Int] = commonProperty(10)
 
-    val textTopInset: StaticProperty[Int] = commonProperty(0)
+    val textTopInset: StaticProperty[Int] = commonProperty(7)
 
     val textGridCellHeight: StaticProperty[Int] = commonProperty(15)
 
@@ -171,7 +170,7 @@ private[shop] object ShopButton {
 
     val font: StaticProperty[Font] = commonProperty(Component.STD_FONT)
 
-    val insetsBetweenEach: StaticProperty[Insets] = commonProperty(new Insets(5, 35, 5, 35))
+    val insetsBetweenEach: StaticProperty[Insets] = commonProperty(new Insets(10, 48, 10, 55))
 
     /**
       * Calculates the size of the image contained by the shop button and returns it

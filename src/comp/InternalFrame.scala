@@ -5,7 +5,7 @@ import java.awt.event.{MouseAdapter, MouseEvent}
 import java.util.concurrent.CopyOnWriteArrayList
 
 import general.property.{DynamicProperty, StaticProperty}
-import general.{Delegate, LogFacility}
+import general.{ClearableDelegate, Delegate, Function0Delegate, LogFacility}
 import gui.FrameContainer
 import gui.screen.Screen
 
@@ -26,7 +26,7 @@ import scala.collection.JavaConversions
   * @param height Ditto.
   * @param backingScreen Ditto.
   */
-class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Screen) extends Component(x, y, width,
+class InternalFrame(x: Int, y: Int, width: Int, height: Int, name: String, backingScreen: Screen) extends Component(x, y, width,
   height, backingScreen) {
 
   import comp.InternalFrame._
@@ -34,12 +34,12 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
   /**
     * Called when the internal frame's close button has been pressed.
     */
-  val onClosed = Delegate.createZeroArity
+  val onClosed: Function0Delegate with ClearableDelegate = Delegate.createZeroArity
 
   /**
     * Called when the internal frame has been opened again.
     */
-  val onOpened = Delegate.createZeroArity
+  val onOpened: Function0Delegate with ClearableDelegate = Delegate.createZeroArity
 
   // <editor-fold desc="Constructor code">
 
@@ -63,6 +63,7 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
 
   this.add(ToplineBar)
   this.setVisible(false)
+  this.setName("Internal Frame: " + name)
 
   // </editor-fold>
 
@@ -156,8 +157,8 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     else if (!vvvvvv && wasVisible) onClosed()
   }
 
-  def open() = setVisible(true)
-  def close() = setVisible(false)
+  def open(): Unit = setVisible(true)
+  def close(): Unit = setVisible(false)
 
   /**
     * Adds a component to the internal frame.
@@ -191,6 +192,10 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, backingScreen: Scre
     override def draw(g: Graphics2D): Unit = {
       g.setColor(FrameStyle.DefaultTopBarColor)
       g.fill(getBounds)
+      g.setColor(FrameStyle.TEXT_COLOR)
+      g.setFont(FrameStyle.FONT)
+      g.drawString(name, getBounds.getBounds.x + 9, getBounds.getBounds.y + 16)
+      g.setFont(Component.STD_FONT)
     }
   }
 }
@@ -200,30 +205,36 @@ object InternalFrame {
   /** Style values used by the internal frame. */
   private object FrameStyle {
 
+    /** the Color of the name of the frame, printed on left of the topline bar */
+    val TEXT_COLOR: Color = new Color(221, 218, 193)
+
+    /** the font with which the Text in the Baseline is drawn */
+    val FONT: Font = Component.STD_FONT.deriveFont(Font.PLAIN, 17)
+
     /** Grayish color with a little bit of transparency. */
-    lazy val NoMouseColor_Outer = new Color(173, 155, 154, 75)
+    val NoMouseColor_Outer = new Color(173, 155, 154, 75)
 
     /** A grayish-turquoise color. Without transparency yet. */
-    lazy val MouseColor_Outer = new Color(0x77B595)
+    val MouseColor_Outer = new Color(0x77B595)
 
-    lazy val DefaultBackgroundColor = new Color(45, 45, 45, 75)
+    val DefaultBackgroundColor = new Color(45, 45, 45, 75)
 
     /** Standard red. Nearly standard red. */
-    lazy val CloseButtonColor_Inner = new Color(0xFF672B)
+    val CloseButtonColor_Inner = new Color(0xFF672B)
 
     /** The stroke with which the close button is drawn. */
-    lazy val CloseButton_DrawStroke = new BasicStroke(2.5f)
+    val CloseButton_DrawStroke = new BasicStroke(2.5f)
 
     /** Grayish color with more opaque style, specially picked for the top bar. */
-    lazy val DefaultTopBarColor = new Color(87, 87, 87, 95)
+    val DefaultTopBarColor = new Color(87, 87, 87, 95)
 
-    lazy val CommonInset = 2
+    val CommonInset = 3
 
     /**
       * The dimensions of the close button.
       * On the basis of this value the height of the top line bar is calculated.
       */
-    lazy val CloseButtonDimension = new Dimension(15, 15)
+    val CloseButtonDimension = new Dimension(15, 15)
 
   }
 

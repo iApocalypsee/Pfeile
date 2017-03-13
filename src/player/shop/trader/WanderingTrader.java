@@ -75,10 +75,9 @@ public class WanderingTrader extends Trader implements Drawable {
      * @param initialMoney the money the trader has at the beginning
      * @param initialMoneyPerTurn the change of money per turn.
      * @param world the world, necessary parameter in the initialization process, after that, you can use <code>Main.getContext().getWorld()</code>
-     * @param name the name of the trader
      */
-    public WanderingTrader (int spawnX, int spawnY, int initialMoney, int initialMoneyPerTurn, World world, String name) {
-        super(world, spawnX, spawnY, name);
+    public WanderingTrader (int spawnX, int spawnY, int initialMoney, int initialMoneyPerTurn, World world) {
+        super(world, spawnX, spawnY, "Wandering Trader");
 
         this.initialMoney = initialMoney;
         //Due to the standard deviation of 1.0 used by the JAVA library, the values generated have to scaled
@@ -108,10 +107,9 @@ public class WanderingTrader extends Trader implements Drawable {
      * @param initialMoneyPerTurn the change of money per turn.
      * @param world the world. <code>Main.getContext().getWorld()</code>. It's an necessary parameter, because of a
      *              NullPointerException during the Initialization Process.
-     * @param name the name of the trader
      */
-    public WanderingTrader (Map<Article, Integer> articles, int spawnX, int spawnY, int initialMoney, int initialMoneyPerTurn, World world, String name) {
-        this(spawnX, spawnY, initialMoney, initialMoneyPerTurn, world, name);
+    public WanderingTrader (Map<Article, Integer> articles, int spawnX, int spawnY, int initialMoney, int initialMoneyPerTurn, World world) {
+        this(spawnX, spawnY, initialMoney, initialMoneyPerTurn, world);
         stock = articles;
     }
 
@@ -220,9 +218,10 @@ public class WanderingTrader extends Trader implements Drawable {
         /** creates a new WanderingTraderUI (registered at GameScreen) at the position: (x, y) */
         private WanderingTraderUI (int x, int y) {
             super(x, y, img, GameScreen.getInstance());
+            GameScreen.getInstance().forcePullFront(this);
             setListenerTransparent(true);
 
-            frame = new InternalFrame(200, 100, 500, 400, GameScreen.getInstance());
+            frame = new InternalFrame(200, 100, 500, 400, "Wandering Trader", GameScreen.getInstance());
             frame.setVisible(false);
             frame.setName("Wandering Trader");
 
@@ -238,6 +237,7 @@ public class WanderingTrader extends Trader implements Drawable {
                     System.out.println("   is on tile: " + getPosition().equals(Main.getContext().getActivePlayer().getPosition()));
                 }
             });
+            addMouseListener(this);
 
             //System.out.println(getMouseListeners());
             //System.out.println(getParent());

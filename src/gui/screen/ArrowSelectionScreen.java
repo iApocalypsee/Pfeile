@@ -91,13 +91,13 @@ public class ArrowSelectionScreen extends Screen {
         // inside run
         Thread initThread = new Thread (() -> {
 
-            // Compare the following implemention of the arrow selections buttons with ArrowSelectionScreenPreSet, since the design is the same.
+            // Compare the following implementation of the arrow selections buttons with ArrowSelectionScreenPreSet, since the design is the same.
 
-            /* X-Position des ersten Buttons (Screen) */
+            // x position of the first arrow button
             int posXButton = 38;
-            /* Y-Position des ersten Buttons (Bildschirm) */
+            // y position of the first arrow button on the screen
             int posYButtons = 85;
-            /** the gap between the arrow buttons. */
+            // the gap between the arrow buttons.
             int gap = 45;
 
             fireArrowButton = new Button(posXButton, posYButtons, ArrowHelper.getArrowImage(FireArrow.INDEX, 0.8f),

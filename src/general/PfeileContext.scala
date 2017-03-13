@@ -69,7 +69,7 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
   /**
     * Object that takes care of the turns.
     */
-  lazy val turnSystem = {
+  lazy val turnSystem: TurnSystem = {
 
     val turnSystem = new TurnSystem(() => {
       val players = world.entities.entityList.collect({ case p: Player => p })
@@ -110,9 +110,9 @@ class PfeileContext(val values: PfeileContext.Values) extends Serializable {
     turnSystem
   }
 
-  def getTurnSystem = turnSystem
+  def getTurnSystem: TurnSystem = turnSystem
 
-  def activePlayer = _activePlayer
+  def activePlayer: Player = _activePlayer
   def activePlayerOption = Option(activePlayer)
   def activePlayer_=(p: Player): Unit = {
     _activePlayer = p

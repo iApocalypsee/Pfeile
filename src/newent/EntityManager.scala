@@ -1,7 +1,7 @@
 package newent
 
 import java.util.function._
-import java.util.{Deque => IDeque, List => IList, Map => IMap, Queue => IQueue, Set => ISet, _}
+import java.util.{List => IList, _}
 
 import general.JavaInterop._
 import general.{Delegate, LogFacility, Main}
@@ -129,7 +129,7 @@ class EntityManager {
     * Returns the helper object for this entity manager, containing helper methods for easier entity handling.
     */
   def helper = Helper
-  def getHelper = helper
+  def getHelper: Helper.type = helper
 
   /**
     * Any helper functions related to make finding certain entities easier can go in here.
@@ -147,7 +147,15 @@ class EntityManager {
       getEntityList.stream.filter(_.tileLocation == t).toImmutableList
     }
 
-    def getPlayers: IList[Player] = entityList.collect { case p: Player => p }.asJava
+    def getPlayers: IList[Player] = {
+      entityList.collect { case p: Player => p }.asJava
+    }
+
+    /** returns the player. null, if called before ContextCreator#PopulatorStage */
+    def getPlayer: Player = player
+
+    /** returns the opponent. This is null, if called before ContextCreator#PopulatorStage */
+    def getOpponent: Player = opponent
 
     def getPlayerByName(name: String): Optional[Player] = {
       // it't possible to remove the != null checks, because any use of this method would occur after defining player and opponent

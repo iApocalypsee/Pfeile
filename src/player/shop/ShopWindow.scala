@@ -47,7 +47,7 @@ class ShopWindow(val represented: TraderLike) extends DisplayRepresentable {
   parentComponent.setName("parent: ShopWindow")
 
   @BeanProperty val window: InternalFrame = {
-    val frame = new InternalFrame(0, 0, parentComponent.getWidth, parentComponent.getHeight, parentComponent.getBackingScreen)
+    val frame = new InternalFrame(0, 0, parentComponent.getWidth, parentComponent.getHeight, "Shop Window", parentComponent.getBackingScreen)
     frame.onClosed += { () =>
       parentComponent.setVisible(false)
     }
@@ -155,9 +155,9 @@ object ShopWindow {
 
   lazy val x = 150
   lazy val y = 200
-  lazy val Width = GameWindow.WIDTH - 2 * x
-  lazy val Height = GameWindow.HEIGHT - 2 * y
-  lazy val BackingScreen = GameScreen.getInstance()
+  lazy val Width: Int = GameWindow.WIDTH - 2 * x
+  lazy val Height: Int = GameWindow.HEIGHT - 2 * y
+  lazy val BackingScreen: GameScreen = GameScreen.getInstance()
 
   //</editor-fold>
 
@@ -166,7 +166,7 @@ object ShopWindow {
   /**
     * The insets for the area in which the article buttons are being placed.
     */
-  val ButtonsInsetsInsideWindow = new Insets(20, 40, 20, 40)
+  val ButtonsInsetsInsideWindow = new Insets(38, 38, 25, 40)
 
   /**
     * How many buttons can fit in one row?

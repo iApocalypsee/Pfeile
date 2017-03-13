@@ -441,11 +441,11 @@ public abstract class Screen implements Drawable, MouseListener,
 		
 	}
 
-	public final void add(Component c) {
-		components.add(c);
+	public void add(Component c) {
+	    add(components.size(), c);
 	}
 
-	public final void add(int index, Component c) {
+	public void add(int index, Component c) {
 		components.add(index, c);
 	}
 	
