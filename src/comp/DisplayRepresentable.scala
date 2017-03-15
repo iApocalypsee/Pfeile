@@ -28,13 +28,13 @@ trait DisplayRepresentable {
   /**
     * Sets the represented component.
     */
-  def component_=(a: Component) = {
+  def component_=(a: Component): Unit = {
     require(a != null)
     m_component = a
   }
 
-  def getComponent = component
-  def setComponent(a: Component) = this.component = a
+  def getComponent: Component = component
+  def setComponent(a: Component): Unit = this.component = a
 
   /**
     * The component that the representable object uses first. Method is called only once.

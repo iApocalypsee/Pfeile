@@ -31,7 +31,9 @@ ShopWindow) extends Component {
   setSourceShape(new Rectangle(-(w / 2), -(h / 2), w, h))
   setParent(shopWindow.window)
 
+  @volatile
   private var imageDrawLocation = new Point(0, 0)
+  @volatile
   private var imageDrawDimension = new Dimension(0, 0)
 
   /**

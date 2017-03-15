@@ -18,7 +18,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
@@ -204,13 +203,14 @@ public class WanderingTrader extends Trader implements Drawable {
         graphicRepresentation.draw(g);
     }
 
+
     // graphic representation class: WanderingTraderUI
 
     /**
      *  Every wanderingTrader is represented by a WanderingTraderUI, which is a subclass ImageComponent, but allows to
      *  further functionality. This is needed to resolve e.g. map movement coherently.
      */
-    private class WanderingTraderUI extends ImageComponent implements MouseListener {
+    private class WanderingTraderUI extends ImageComponent {
         private Tile tilePosition;
         private Delegate.Handle activeCallback;
         private InternalFrame frame;
@@ -218,29 +218,25 @@ public class WanderingTrader extends Trader implements Drawable {
         /** creates a new WanderingTraderUI (registered at GameScreen) at the position: (x, y) */
         private WanderingTraderUI (int x, int y) {
             super(x, y, img, GameScreen.getInstance());
-            GameScreen.getInstance().forcePullFront(this);
             setListenerTransparent(true);
 
-            frame = new InternalFrame(200, 100, 500, 400, "Wandering Trader", GameScreen.getInstance());
-            frame.setVisible(false);
-            frame.setName("Wandering Trader");
+            frame = new InternalFrame(200, 100, 500, 400, "Wandering Trader", getBackingScreen());
+            // frame.setVisible(false); is set to false by default in InternalFrame
 
+            // mouse listener for the WanderingTraderUI
             addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseReleased (MouseEvent e) {
                     // open, if the active player is on the same field as the trader and there is a click on the trader image.
-                    if (getSourceShape().contains(e.getPoint()) &&
+                    if (getBounds().contains(e.getPoint()) &&
                             getPosition().equals(Main.getContext().getActivePlayer().getPosition()))
-                        frame.setVisible(true);
-                    System.out.println("\nClick");
-                    System.out.println("   Contains point: " + getSourceShape().contains(e.getPoint()));
-                    System.out.println("   is on tile: " + getPosition().equals(Main.getContext().getActivePlayer().getPosition()));
+                        frame.open();
+                }
+                @Override
+                public String toString () {
+                    return "MouseListener of " + WanderingTrader.this.toString();
                 }
             });
-            addMouseListener(this);
-
-            //System.out.println(getMouseListeners());
-            //System.out.println(getParent());
         }
 
         /** creates a new WanderingTraderUI at the position (0|0). It will be registered to the Screen GameScreen. */
@@ -267,29 +263,5 @@ public class WanderingTrader extends Trader implements Drawable {
             Point centerPoint = tilePosition.component().center();
             setLocation(centerPoint.x - getWidth() / 2, centerPoint.y - getHeight() / 2);
         }
-
-        // Mouse Listener
-
-        @Override
-        public void mouseClicked (MouseEvent e) {
-            if (getSourceShape().contains(e.getPoint())) {
-                frame.setVisible(true);
-                System.out.println("Received call");
-            }
-        }
-
-        // Unused
-
-        @Override
-        public void mousePressed (MouseEvent e) { System.out.println("Pressed with " + e); }
-
-        @Override
-        public void mouseReleased (MouseEvent e) {}
-
-        @Override
-        public void mouseEntered (MouseEvent e) {}
-
-        @Override
-        public void mouseExited (MouseEvent e) {}
     }
 }

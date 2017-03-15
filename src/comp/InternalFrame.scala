@@ -132,13 +132,14 @@ class InternalFrame(x: Int, y: Int, width: Int, height: Int, name: String, backi
       override def mouseReleased(e: MouseEvent): Unit = {
         InternalFrame.this.setVisible(false)
       }
+      override def toString: String = "MouseAdapter: InternalFrame#CloseButton"
     })
     ret.setName("frame: closeButton")
     ret.getBackingScreen.putAfter(this, ret)
     ret
   }
 
-  override def draw(g: Graphics2D) = {
+  override def draw(g: Graphics2D): Unit = {
     background.get.drawImage(g, getX, getY, getWidth, getHeight)
 
     val it = comps.iterator()
@@ -237,5 +238,4 @@ object InternalFrame {
     val CloseButtonDimension = new Dimension(15, 15)
 
   }
-
 }

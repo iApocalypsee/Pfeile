@@ -12,14 +12,20 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MouseHandler extends MouseAdapter {
 
-    private final ScreenManager redirect;
-
     /**
      * Should events fired by AWT be synchronized to the main thread?
      * Could be helpful to resolve some bugs and data races we have not been able to inspect.
      */
     // Declared final to enable the compiler to optimize away calls to 'awtScheduledEvents', if necessary.
-    private final boolean syncAwtEvents = true;
+    private final boolean syncAwtEvents = false;
+
+    private final ScreenManager redirect;
+
+    private static final String METHOD_KEY_MOUSE_PRESSED = "mousePressed";
+    private static final String METHOD_KEY_MOUSE_RELEASED = "mouseReleased";
+    private static final String METHOD_KEY_MOUSE_MOVED = "mouseMoved";
+    private static final String METHOD_KEY_MOUSE_DRAGGED = "mouseDragged";
+    private static final String METHOD_KEY_MOUSE_WHEEL = "mouseWheelMoved";
 
     /**
      * Any callbacks that have been scheduled to be called by the main thread.
@@ -47,27 +53,27 @@ public class MouseHandler extends MouseAdapter {
 
     @Override
     public void mousePressed(final MouseEvent e) {
-        processMouseEvent("mousePressed", () -> redirect.getActiveScreen().mousePressed(e));
+        processMouseEvent(METHOD_KEY_MOUSE_PRESSED, () -> redirect.getActiveScreen().mousePressed(e));
     }
 
     @Override
     public void mouseReleased(final MouseEvent e) {
-        processMouseEvent("mouseReleased", () -> redirect.getActiveScreen().mouseReleased(e));
+        processMouseEvent(METHOD_KEY_MOUSE_RELEASED, () -> redirect.getActiveScreen().mouseReleased(e));
     }
 
     @Override
     public void mouseDragged(final MouseEvent e) {
-        processMouseEvent("mouseDragged", () -> redirect.getActiveScreen().mouseDragged(e));
+        processMouseEvent(METHOD_KEY_MOUSE_DRAGGED, () -> redirect.getActiveScreen().mouseDragged(e));
     }
 
     @Override
     public void mouseMoved(final MouseEvent e) {
-        processMouseEvent("mouseMoved", () -> redirect.getActiveScreen().mouseMoved(e));
+        processMouseEvent(METHOD_KEY_MOUSE_MOVED, () -> redirect.getActiveScreen().mouseMoved(e));
     }
 
     @Override
     public void mouseWheelMoved(final MouseWheelEvent e) {
-        processMouseEvent("mouseWheelMoved", () -> redirect.getActiveScreen().mouseWheelMoved(e));
+        processMouseEvent(METHOD_KEY_MOUSE_WHEEL, () -> redirect.getActiveScreen().mouseWheelMoved(e));
     }
 
     /**

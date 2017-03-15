@@ -3,6 +3,7 @@ package player.shop.trader;
 import general.LogFacility;
 import general.PfeileContext;
 import gui.Drawable;
+import gui.screen.GameScreen;
 import newent.CommandTeam;
 import newent.Player;
 import newent.VisionMap;
@@ -40,7 +41,7 @@ public class WanderingTraderList implements Drawable {
      */
     private final List<WanderingTrader> visibleTraders;
 
-    /** for initialization perposes to avoid NullPointerExceptions */
+    /** for initialization purposes to avoid NullPointerExceptions */
     private final PfeileContext context;
 
     /** Creates a new WanderingTraderList.
@@ -218,6 +219,14 @@ public class WanderingTraderList implements Drawable {
                     LogFacility.LoggingLevel.Error);
         }
         return removed;
+    }
+
+    /** Forces the component to be in front (see: {@link GameScreen#forcePullFront(comp.Component)}).
+     *  Call this method, if the listeners aren't triggered, because other components cover the WanderingTraderUI.
+     *  This method is called at the end of the initialization in ContextCreator. */
+    public void forceComponentFront() {
+        for (Trader trader : traders)
+            GameScreen.getInstance().forcePullFront(trader.getComponent());
     }
 
     /** updates the visible trader list. Adds every wandering trader on a visible field from the traders-list to the

@@ -24,13 +24,13 @@ trait LivingEntity extends Entity with AttackContainer {
   val life: Life
 
   /** The life of the entity. */
-  def getLife = life
+  def getLife: Life = life
 
   /**
     * Override this method to add items, which drop, if the LivingEntity dies. For example, a wolf doesn't have an
     * inventory, but should drop tooth/fur. If the method is not overridden, it returns an empty list.
     */
-  def additionalDrops = Collections.emptyList[Item]()
+  def additionalDrops: IList[Item] = Collections.emptyList[Item]()
 
   /** Every living entity can be poisoned. The implementation of the LivingEntity itself has to instance the value. */
   val poison: Poison
@@ -40,7 +40,7 @@ trait LivingEntity extends Entity with AttackContainer {
     *
     * @return the Poison class of this LivingEntity
     */
-  def getPoisonStat = poison
+  def getPoisonStat: Poison = poison
 
   /**
     * Puts the loot bag for this entity into the world.

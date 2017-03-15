@@ -176,15 +176,12 @@ class ContextCreator(val worldSizeX: Int, val worldSizeY: Int) extends StageOrga
 
     override protected def executeStageImpl(): Unit = {
       val threadExecute: Thread = new Thread(() => {
+
         context.getTurnSystem.headOfCommandTeams.foreach(player => {
           player.tightenComponentToTile(player.tileLocation)
         })
 
         ShopInitializer.initalizeShop()
-
-        context.turnSystem.onTurnEnded.register("turn end screen change") { team =>
-          Main.getGameWindow.getScreenManager.requestScreenChange(WaitingScreen.SCREEN_INDEX)
-        }
 
         // initialize MoneyDisplay --> it will actualize it's string, if the money of a entity has been changed.
         GameScreen.getInstance().getMoneyDisplay.initializeDataActualization(context)
@@ -198,6 +195,13 @@ class ContextCreator(val worldSizeX: Int, val worldSizeY: Int) extends StageOrga
 
       // initialize TimeClock
       context.getTimeClock
+
+      // The components of the wandering traders need to be in front of the players component.
+      context.getWanderingTraders.forceComponentFront()
+
+      context.turnSystem.onTurnEnded.register("turn end screen change") { team =>
+        Main.getGameWindow.getScreenManager.requestScreenChange(WaitingScreen.SCREEN_INDEX)
+      }
 
       // make sure everything is loaded correctly before the first turn begins
       threadExecute.join()
